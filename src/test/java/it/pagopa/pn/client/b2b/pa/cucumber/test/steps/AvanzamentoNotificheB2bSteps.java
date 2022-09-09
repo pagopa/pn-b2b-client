@@ -33,7 +33,7 @@ public class AvanzamentoNotificheB2bSteps {
        this.eventStream  = pnWebhookB2bExternalClient.createEventStream(streamCreationRequest);
     }
 
-    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema")
+    @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id")
     public void laStreamÈStatoCreatoEVieneCorrettamenteRecuperatoDalSistema() {
         Assertions.assertDoesNotThrow(() -> {
             pnWebhookB2bExternalClient.getEventStream(eventStream.getStreamId());

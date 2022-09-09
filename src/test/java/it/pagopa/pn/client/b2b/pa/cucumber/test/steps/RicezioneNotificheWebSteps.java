@@ -16,8 +16,10 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -37,6 +39,7 @@ public class RicezioneNotificheWebSteps {
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
+    private HttpClientErrorException notificationSentError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
@@ -108,11 +111,12 @@ public class RicezioneNotificheWebSteps {
     }
 
 
-    @Then("l'allegato di pagamento può essere correttamente recuperato")
-    public void lAllegatoDiPagamentoPuòEssereCorrettamenteRecuperato() {
+
+    @Then("l'allegato {string} può essere correttamente recuperato")
+    public void lAllegatoPuòEssereCorrettamenteRecuperato(String attachmentName) {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
                 notificationResponseComplete.getIun(),
-                "PAGOPA",
+                attachmentName,
                 null);
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
@@ -122,4 +126,24 @@ public class RicezioneNotificheWebSteps {
         });
         Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
     }
+
+    @And("si tenta il recupero delll'allegato {string}")
+    public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
+        try {
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+                    notificationResponseComplete.getIun(),
+                    attachmentName,
+                    null);
+        } catch (HttpClientErrorException e) {
+            this.notificationSentError = e;
+        }
+    }
+
+    @Then("il download dell'alleggato ha prodotto un errore con status code {string}")
+    public void ilDownloadAllegatoHaProdottoUnErrore(String statusCode) {
+        Assertions.assertTrue((this.notificationSentError != null) &&
+                (this.notificationSentError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
+
+
 }

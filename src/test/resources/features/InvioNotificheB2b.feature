@@ -219,3 +219,60 @@ Feature: invio notifiche b2b
     When si tenta il recupero della notifica dal sistema tramite codice IUN "IUNUGYD-XHEZ-KLRM-202208-X-0"
     Then l'operazione ha prodotto un errore con status code "404"
 
+
+  Scenario: [B2B-PA-SEND_17] Invio notifica digitale mono destinatario Flat_rate_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | FLAT_RATE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve una risposta
+    Then la risposta di ricezione non presenta errori
+
+  Scenario: [B2B-PA-SEND_18] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve una risposta
+    Then la risposta di ricezione non presenta errori
+
+  Scenario: [B2B-PA-SEND_19] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve una risposta
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | FLAT_RATE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    When la notifica viene inviata e si riceve una risposta
+    Then l'operazione ha prodotto un errore con status code "400"
+
