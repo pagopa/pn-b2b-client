@@ -194,6 +194,58 @@
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model</modelPackage>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-external-client-b2b-webhook</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/develop/docs/openapi/api-external-b2b-webhook-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-external-web-recipient</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/develop/docs/openapi/api-external-web-recipient-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model</modelPackage>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

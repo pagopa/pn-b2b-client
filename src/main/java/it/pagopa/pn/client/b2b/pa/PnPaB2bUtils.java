@@ -28,10 +28,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 public class PnPaB2bUtils {
@@ -105,7 +103,7 @@ public class PnPaB2bUtils {
     public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {
 
         for (NotificationDocument doc: fsn.getDocuments()) {
-            log.debug("Check attachment {}", doc.getRef().getKey());
+
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), new BigDecimal(doc.getDocIdx()));
             byte[] content = downloadFile(resp.getUrl());
             String sha256 = computeSha256(new ByteArrayInputStream(content));
@@ -119,17 +117,15 @@ public class PnPaB2bUtils {
         for (NotificationRecipient recipient : fsn.getRecipients()) {
 
             NotificationAttachmentDownloadMetadataResponse resp;
-            log.debug("Check attachment PAGOPA");
+
             resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "PAGOPA");
             checkAttachment( resp );
 
-            log.debug("Check attachment F24_FLAT");
-            resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");
-            checkAttachment( resp );
+            //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");
+            //checkAttachment( resp );
 
-            log.debug("Check attachment F24_STANDARD");
-            resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_STANDARD");
-            checkAttachment( resp );
+            //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_STANDARD");
+            //checkAttachment( resp );
 
             i++;
         }
@@ -141,8 +137,7 @@ public class PnPaB2bUtils {
             resp = client.getLegalFact(
                     fsn.getIun(),
                     LegalFactCategory.SENDER_ACK,
-                    //URLEncoder.encode(legalFactsId.getKey(), StandardCharsets.UTF_8.toString())
-                    legalFactsId.getKey().substring(legalFactsId.getKey().lastIndexOf('/') + 1)
+                    URLEncoder.encode(legalFactsId.getKey(), StandardCharsets.UTF_8.toString())
                 );
 
             byte[] content = downloadFile(resp.getUrl());
@@ -294,4 +289,85 @@ public class PnPaB2bUtils {
     public FullSentNotification getNotificationByIun(String iun) {
         return client.getSentNotification( iun );
     }
+
+
+    public NotificationRecipient newRecipient(String prefix, String taxId, String resourcePath, String creditorTaxId, String noticeCode,
+                                               boolean hasPagopaForm, boolean hasF24Standard, boolean hasF24FlatRate) {
+        long epochMillis = System.currentTimeMillis();
+
+        NotificationPaymentInfo npi =  (new NotificationPaymentInfo()
+                .creditorTaxId(creditorTaxId.equals("")?"77777777777":creditorTaxId)
+                .noticeCode(noticeCode.trim().equals("")? String.format("30201%13d", epochMillis ):noticeCode )
+                .noticeCodeOptional( String.format("30201%13d", epochMillis+1 ))
+                .pagoPaForm(newAttachment(resourcePath)));
+        if(hasPagopaForm){
+            npi.pagoPaForm(newAttachment(resourcePath));
+        }
+        if(hasF24FlatRate){
+            npi.f24flatRate(newAttachment(resourcePath));
+        }
+        if(hasF24Standard){
+            npi.f24standard(newAttachment(resourcePath));
+        }
+
+        return new NotificationRecipient()
+                .denomination( prefix + " denomination")
+                .taxId( taxId )
+                .digitalDomicile( new NotificationDigitalAddress()
+                        .type(NotificationDigitalAddress.TypeEnum.PEC)
+                        .address( "FRMTTR76M06B715E@pnpagopa.postecert.local")
+                )
+                .physicalAddress( new NotificationPhysicalAddress()
+                        .address("Via senza nome")
+                        .municipality("Milano")
+                        .province("MI")
+                        .foreignState("ITALIA")
+                        .zip("40100")
+                )
+                .recipientType( NotificationRecipient.RecipientTypeEnum.PF )
+                .payment(npi);
+
+    }
+
+
+
+    public NewNotificationRequest newNotificationRequest(String oggetto, String mittente, String destinatario, String cf,
+                                        String idempotenceToken, String paProtocolNumber,String creditorTaxId, String noticeCode,
+                                        boolean hasPagopaForm, boolean hasF24Standard, boolean hasF24FlatRate) {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        return new NewNotificationRequest()
+                .subject(oggetto+" "+ dateFormat.format(calendar.getTime()))
+                .cancelledIun("")
+                .group("")
+                .idempotenceToken(idempotenceToken)
+                ._abstract("Abstract della notifica")
+                .senderDenomination(mittente)
+                .senderTaxId("CFComuneMilano")
+                .notificationFeePolicy( NewNotificationRequest.NotificationFeePolicyEnum.FLAT_RATE )
+                .physicalCommunicationType( NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .paProtocolNumber((paProtocolNumber.equals("") ? "" + System.currentTimeMillis() : paProtocolNumber))
+                .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
+                .addRecipientsItem( newRecipient( destinatario, cf,"classpath:/sample.pdf",creditorTaxId,noticeCode,  hasPagopaForm,  hasF24Standard,  hasF24FlatRate));
+    }
+
+
+
+    public NotificationDocument newDocument(String resourcePath ) {
+        return new NotificationDocument()
+                .contentType("application/pdf")
+                .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
+
+    public NotificationPaymentAttachment newAttachment(String resourcePath ) {
+        return new NotificationPaymentAttachment()
+                .contentType("application/pdf")
+                .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
+
+
+
 }

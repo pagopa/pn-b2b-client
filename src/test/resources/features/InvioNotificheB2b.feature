@@ -1,59 +1,221 @@
 Feature: invio notifiche b2b
 
-  Scenario: B2B_1 : invio e recupero nuova notifica tramite api b2b
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E"
+  Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
     When la notifica viene inviata e si riceve una risposta
     Then la risposta di ricezione non presenta errori
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  Scenario: B2B_2 : invio notifiche con uguale paProtocolNumber e diverso idempotenceToken
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E" e idempotenceToken "AME2E3626070001.1"
+  Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | idempotenceToken | AME2E3626070001.1  |
+    And destinatario
+      | denomination | Mario Cucumber |
     And la notifica viene inviata e si riceve una risposta
     And la risposta di ricezione non presenta errori
-    And viene predisposta e inviata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
+    And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
     When la notifica viene inviata e si riceve una risposta
     Then la risposta di ricezione non presenta errori
 
-  Scenario: B2B_3 : invio notifiche con uguale paProtocolNumber e uguale idempotenceToken
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E" e idempotenceToken "AME2E3626070001.1"
+  Scenario: [B2B-PA-SEND_3] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | idempotenceToken | AME2E3626070001.1  |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata e si riceve una risposta
     And la risposta di ricezione non presenta errori
-    And viene predisposta e inviata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
+    And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
     When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "409"
 
-  Scenario: B2B_4 : invio notifiche con uguale codice fiscale del creditore e diverso codice avviso
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E" e creditorTaxId "77777777777"
+  Scenario: [B2B-PA-SEND_4] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | FRMTTR76M06B715E |
+      | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata e si riceve una risposta
     And la risposta di ricezione non presenta errori
-    And viene predisposta e inviata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
     When la notifica viene inviata e si riceve una risposta
     Then la risposta di ricezione non presenta errori
 
-  Scenario: B2B_5 : invio notifiche con uguale codice fiscale del creditore e uguale codice avviso
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E" e creditorTaxId "77777777777"
+  Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | FRMTTR76M06B715E |
+      | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata e si riceve una risposta
     And la risposta di ricezione non presenta errori
-    And viene predisposta e inviata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
     When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "409"
 
-  Scenario: B2B_6 : download documento notificato
-    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E"
+  Scenario: [B2B-PA-SEND_6] download documento notificato_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | document | SI |
+    And destinatario
+      | denomination | Mario Cucumber |
     And la notifica viene inviata e si riceve una risposta
     And la risposta di ricezione non presenta errori
-    When viene richiesto il download del documento notificato
+    When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
   #Scenari in errore
-#  Scenario: B2B_7 : download errato documento notificato
-#    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Mario Cucumber" con codice fiscale "FRMTTR76M06B715E"
-#    And la notifica viene inviata e si riceve una risposta
-#    And la risposta di ricezione non presenta errori
-#    When viene richiesto il download di un documento inesistente
-#    Then l'operazione ha prodotto un errore con status code "400"
-#
-#  Scenario: B2B_8 : invio e recupero nuova notifica tramite api b2b con codice fiscale errato
-#    Given viene predisposta una notifica con oggetto "invio notifica con cucumber" mittente "comune di milano" destinatario "Prova" con codice fiscale "a"
-#    When la notifica viene inviata
-#    Then l'operazione ha prodotto un errore con status code "400"
+  Scenario: [B2B-PA-SEND_7] download documento notificato_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | document | SI |
+    And destinatario
+      | denomination | Mario Cucumber |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "NOTIFICA" inesistente
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_8] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | aaa |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_9] download documento pagopa_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA"
+    Then il download si conclude correttamente
+
+  Scenario: [B2B-PA-SEND_10] download documento pagopa_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA" inesistente
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_11] download documento f24_flat_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA"
+    Then il download si conclude correttamente
+
+  Scenario: [B2B-PA-SEND_12] download documento f24_flat_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA" inesistente
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_13] download documento f24_standard_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA"
+    Then il download si conclude correttamente
+
+  Scenario: [B2B-PA-SEND_14] download documento f24_standard_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | FLAT_RATE |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When viene richiesto il download del documento "PAGOPA" inesistente
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_15] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | physicalAddress | NULL |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+    And destinatario
+      | denomination | Mario Cucumber |
+    And la notifica viene inviata e si riceve una risposta
+    And la risposta di ricezione non presenta errori
+    When si tenta il recupero della notifica dal sistema tramite codice IUN "IUNUGYD-XHEZ-KLRM-202208-X-0"
+    Then l'operazione ha prodotto un errore con status code "404"
+
