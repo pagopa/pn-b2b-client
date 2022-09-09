@@ -35,6 +35,7 @@ Feature: Ricezione notifiche web
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | senderTaxId | CFComuneMilano |
+      | feePolicy | FLAT_RATE |
     And destinatario Cristoforo Colombo and:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
@@ -47,6 +48,7 @@ Feature: Ricezione notifiche web
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
     And destinatario Cristoforo Colombo and:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
@@ -59,10 +61,66 @@ Feature: Ricezione notifiche web
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
     And destinatario Cristoforo Colombo and:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
-    And si tenta il recupero delll'allegato "F24"
-    Then il download dell'alleggato ha prodotto un errore con status code "404"
+    And si tenta il recupero dell'allegato "F24"
+    Then il download dell'allegato ha prodotto un errore con status code "404"
+
+  Scenario: [WEB-PF-RECIPIENT_7] Invio notifica digitale altro destinatario e recupero tramite codice IUN API WEB_scenario negativo
+    Given viene generata una notifica per il test di ricezione
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario alternativo
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
+    And si tenta il recupero della notifica da parte del destinatario
+    Then l'operazione di recupero ha prodotto un errore con status code "500"
+
+  Scenario: [WEB-PF-RECIPIENT_8] Invio notifica digitale altro destinatario e recupero allegato F24_STANDARD_scenario negativo
+    Given viene generata una notifica per il test di ricezione
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario alternativo
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
+    And si tenta il recupero dell'allegato "F24"
+    Then il download dell'allegato ha prodotto un errore con status code "404"
+
+  Scenario: [WEB-PF-RECIPIENT_9] Invio notifica digitale altro destinatario e recupero allegato F24_FLAT_scenario negativo
+    Given viene generata una notifica per il test di ricezione
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+      | feePolicy | FLAT_RATE |
+    And destinatario alternativo
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
+    And si tenta il recupero dell'allegato "F24"
+    Then il download dell'allegato ha prodotto un errore con status code "404"
+
+  Scenario: [WEB-PF-RECIPIENT_10] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
+    Given viene generata una notifica per il test di ricezione
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario alternativo
+      | denomination | Mario Cucumber |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
+    And si tenta il recupero dell'allegato "PAGOPA"
+    Then il download dell'allegato ha prodotto un errore con status code "404"

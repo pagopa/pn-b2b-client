@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -39,7 +39,8 @@ public class RicezioneNotificheWebSteps {
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
-    private HttpClientErrorException notificationSentError;
+    private HttpClientErrorException documentDownloadError;
+    private HttpServerErrorException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
@@ -69,6 +70,11 @@ public class RicezioneNotificheWebSteps {
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC )
                                 .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
+    }
+
+    @And("destinatario alternativo")
+    public void destinatarioAlternativo(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(recipient);
     }
 
     @When("la notifica viene inviata e si riceve il relativo codice IUN valorizzato")
@@ -127,7 +133,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
     }
 
-    @And("si tenta il recupero delll'allegato {string}")
+    @And("si tenta il recupero dell'allegato {string}")
     public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
         try {
             NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
@@ -135,15 +141,30 @@ public class RicezioneNotificheWebSteps {
                     attachmentName,
                     null);
         } catch (HttpClientErrorException e) {
-            this.notificationSentError = e;
+            this.documentDownloadError = e;
         }
     }
 
-    @Then("il download dell'alleggato ha prodotto un errore con status code {string}")
+    @Then("il download dell'allegato ha prodotto un errore con status code {string}")
     public void ilDownloadAllegatoHaProdottoUnErrore(String statusCode) {
-        Assertions.assertTrue((this.notificationSentError != null) &&
-                (this.notificationSentError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+        Assertions.assertTrue((this.documentDownloadError != null) &&
+                (this.documentDownloadError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
 
+    @And("si tenta il recupero della notifica da parte del destinatario")
+    public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario() {
+        try {
+            FullReceivedNotification receivedNotification =
+                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+        } catch (HttpServerErrorException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @Then("l'operazione di recupero ha prodotto un errore con status code {string}")
+    public void lOperazioneDiRecuperoHaProdottoUnErroreConStatusCode(String statusCode) {
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
 }
