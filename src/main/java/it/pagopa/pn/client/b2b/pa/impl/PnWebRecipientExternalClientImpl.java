@@ -56,7 +56,7 @@ public class PnWebRecipientExternalClientImpl {
     }
 
 
-    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, BigDecimal docIdx, String mandateId) throws RestClientException {
+    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, String mandateId) throws RestClientException {
         return recipientReadApi.getReceivedNotificationDocument(iun, docIdx, mandateId);
     }
 

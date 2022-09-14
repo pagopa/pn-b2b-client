@@ -8,3 +8,5 @@
 ```
 - eseguire il run del main() nel file src/main/java/it/pagopa/pn/client/b2b/pa/NewNotification.java
 per invio della notifica e verifica dell'accettazione della stessa da parte di Piattaforma Notifiche
+- eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberB2BTest.java
+  per l'esecuzione dei test e2e delle api b2b di Piattaforma Notifiche

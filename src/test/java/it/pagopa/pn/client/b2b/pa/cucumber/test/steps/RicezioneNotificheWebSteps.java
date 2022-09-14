@@ -12,6 +12,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchRow;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -104,7 +108,7 @@ public class RicezioneNotificheWebSteps {
     public void ilDocumentoNotificatoPuòEssereCorrettamenteRecuperato() {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
                 notificationResponseComplete.getIun(),
-                new BigDecimal(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
+                Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
                 null
         );
         AtomicReference<String> Sha256 = new AtomicReference<>("");
@@ -166,5 +170,18 @@ public class RicezioneNotificheWebSteps {
     public void lOperazioneDiRecuperoHaProdottoUnErroreConStatusCode(String statusCode) {
         Assertions.assertTrue((this.notificationError != null) &&
                 (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
+
+    @Then("la notifica può essere correttamente recuperata con una ricerca")
+    public void laNotificaPuòEssereCorrettamenteRecuperataConUnaRicerca() {
+        OffsetDateTime sentAt = notificationResponseComplete.getSentAt();
+        //OffsetDateTime start = OffsetDateTime.now();
+        //OffsetDateTime end = OffsetDateTime.now();
+
+        NotificationSearchResponse notificationSearchResponse = pnWebRecipientExternalClient.searchReceivedNotification(sentAt, sentAt, null, null, null, null, null, 10, null);
+        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        System.out.println("size: "+resultsPage.size());
+        Assertions.assertTrue(resultsPage.stream().filter(elem -> elem.getIun().equals(notificationResponseComplete.getIun())).findAny().orElse(null) != null);
+
     }
 }

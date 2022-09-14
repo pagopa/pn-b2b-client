@@ -1,4 +1,4 @@
-Feature: Ricezione notifiche web
+Feature: Ricezione notifiche api web con invio tramite api B2B
 
   Scenario: [WEB-PF-RECIPIENT_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una notifica per il test di ricezione
@@ -124,3 +124,12 @@ Feature: Ricezione notifiche web
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     And si tenta il recupero dell'allegato "PAGOPA"
     Then il download dell'allegato ha prodotto un errore con status code "404"
+
+  Scenario: [WEB-PF-RECIPIENT_11] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo
+    Given viene generata una notifica per il test di ricezione
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | CFComuneMilano |
+    And destinatario Cristoforo Colombo
+    When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
+    Then la notifica può essere correttamente recuperata con una ricerca
