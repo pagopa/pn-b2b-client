@@ -10,7 +10,7 @@ Feature: avanzamento notifiche b2b
     When viene creato il nuovo stream
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
 
-  Scenario: [B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
+  Scenario: [B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

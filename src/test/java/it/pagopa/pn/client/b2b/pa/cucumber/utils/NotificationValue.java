@@ -43,8 +43,8 @@ public enum NotificationValue {
     private static final String NULL_VALUE = "NULL";
 
     public final String key;
-    private String defaultValue;
-    private boolean addCurrentTime;
+    private final String defaultValue;
+    private final boolean addCurrentTime;
 
     NotificationValue(String key, String defaultValue, boolean addCurrentTime){
         this.key = key;

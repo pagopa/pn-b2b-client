@@ -8,7 +8,6 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +61,7 @@ public class InvioNotificheB2bSteps  {
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
-        assert notificationRequest.getRecipients().get(0).getPayment() != null;
+        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0).getPayment());
         this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
                 notificationRequest.getSenderDenomination(),
                 notificationRequest.getRecipients().get(0).getDenomination(),
@@ -75,6 +74,7 @@ public class InvioNotificheB2bSteps  {
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEUgualeCodiceAvviso() {
+        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0).getPayment());
         this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
                 notificationRequest.getSenderDenomination(),
                 notificationRequest.getRecipients().get(0).getDenomination(),
@@ -88,6 +88,7 @@ public class InvioNotificheB2bSteps  {
 
     @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualePaProtocolNumberEIdempotenceToken(String idempotenceToken) {
+        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0));
         this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
                 notificationRequest.getSenderDenomination(),
                 notificationRequest.getRecipients().get(0).getDenomination(),
@@ -136,7 +137,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
-    public void laNotificaPuòEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUN(String IUN) {
+    public void laNotificaPuoEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUN(String IUN) {
         try {
             utils.getNotificationByIun(IUN);
         } catch (HttpClientErrorException | HttpServerErrorException e) {

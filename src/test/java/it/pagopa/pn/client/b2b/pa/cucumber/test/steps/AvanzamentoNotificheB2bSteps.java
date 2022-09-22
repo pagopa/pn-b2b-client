@@ -20,8 +20,6 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
@@ -59,7 +57,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id")
-    public void laStreamÈStatoCreatoEVieneCorrettamenteRecuperatoDalSistema() {
+    public void laStreamEStatoCreatoEVieneCorrettamenteRecuperatoDalSistema() {
         Assertions.assertDoesNotThrow(() -> {
             StreamMetadataResponse eventStream = pnWebhookB2bExternalClient.getEventStream(this.eventStream.getStreamId());
             System.out.println("EventStream: "+eventStream);
@@ -131,7 +129,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep( 10 * 1000l);
+                Thread.sleep( 10 * 1000L);
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }

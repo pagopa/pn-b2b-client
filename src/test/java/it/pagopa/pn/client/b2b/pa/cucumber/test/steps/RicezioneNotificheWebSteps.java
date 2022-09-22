@@ -29,10 +29,8 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -40,7 +38,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
+
 
 
 public class RicezioneNotificheWebSteps {
@@ -75,7 +73,7 @@ public class RicezioneNotificheWebSteps {
     @And("destinatario Cristoforo Colombo")
     public void destinatarioCristoforoColombo() {
         this.notificationRequest.addRecipientsItem(
-                dataTableTypeUtil.convertNotificationRecipient(new HashMap<String,String>())
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("Cristoforo Colombo")
                         .taxId("CLMCST42R12D969Z")
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -114,16 +112,15 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Then("la notifica può essere correttamente recuperata dal destinatario")
-    public void laNotificaPuòEssereCorrettamenteRecuperataDalDestinatario() {
+    public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario() {
         Assertions.assertDoesNotThrow(() -> {
-            FullReceivedNotification receivedNotification =
-                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         });
     }
 
 
     @Then("il documento notificato può essere correttamente recuperato")
-    public void ilDocumentoNotificatoPuòEssereCorrettamenteRecuperato() {
+    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato() {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
                 notificationResponseComplete.getIun(),
                 Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
@@ -141,7 +138,7 @@ public class RicezioneNotificheWebSteps {
 
 
     @Then("l'allegato {string} può essere correttamente recuperato")
-    public void lAllegatoPuòEssereCorrettamenteRecuperato(String attachmentName) {
+    public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName) {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
                 notificationResponseComplete.getIun(),
                 attachmentName,
@@ -158,7 +155,7 @@ public class RicezioneNotificheWebSteps {
     @And("si tenta il recupero dell'allegato {string}")
     public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
         try {
-            NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+            pnWebRecipientExternalClient.getReceivedNotificationAttachment(
                     notificationResponseComplete.getIun(),
                     attachmentName,
                     null);
@@ -177,8 +174,7 @@ public class RicezioneNotificheWebSteps {
     @And("si tenta il recupero della notifica da parte del destinatario")
     public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario() {
         try {
-            FullReceivedNotification receivedNotification =
-                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         } catch (HttpServerErrorException e) {
             this.notificationError = e;
         }
@@ -192,7 +188,7 @@ public class RicezioneNotificheWebSteps {
 
 
     @Then("la notifica può essere correttamente recuperata con una ricerca")
-    public void laNotificaPuòEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(@Transpose NotificationSearchParam searchParam) {
+    public void laNotificaPuoEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(@Transpose NotificationSearchParam searchParam) {
         Assertions.assertTrue(searchNotification(searchParam));
     }
 
@@ -231,7 +227,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     private boolean searchNotification(NotificationSearchParam searchParam){
-        boolean beenFound = false;
+        boolean beenFound;
         NotificationSearchResponse notificationSearchResponse = pnWebRecipientExternalClient
                 .searchReceivedNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
@@ -320,15 +316,14 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Then("la notifica può essere correttamente recuperata dal delegato")
-    public void laNotificaPuòEssereCorrettamenteRecuperataDalDelegato() {
+    public void laNotificaPuoEssereCorrettamenteRecuperataDalDelegato() {
         Assertions.assertDoesNotThrow(() -> {
-            FullReceivedNotification receivedNotification =
-                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
         });
     }
 
     @Then("il documento notificato può essere correttamente recuperato dal delegato")
-    public void ilDocumentoNotificatoPuòEssereCorrettamenteRecuperatoDalDelegato() {
+    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato() {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
                 notificationResponseComplete.getIun(),
                 Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
@@ -344,7 +339,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     @Then("l'allegato {string} può essere correttamente recuperato dal delegato")
-    public void lAllegatoPuòEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
+    public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
                 notificationResponseComplete.getIun(),
                 attachmentName,
@@ -441,14 +436,14 @@ public class RicezioneNotificheWebSteps {
     @And("si attende lo scadere della delega")
     public void siAttendeLoScadereDellaDelega() {
         try {
-            Thread.sleep( 120 * 1000l);
+            Thread.sleep( 120 * 1000L);
         } catch (InterruptedException exc) {
             throw new RuntimeException( exc );
         }
     }
 
 
-    private class NotificationSearchParam{
+    private static class  NotificationSearchParam{
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
