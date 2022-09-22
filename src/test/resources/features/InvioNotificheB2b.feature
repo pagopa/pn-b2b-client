@@ -85,7 +85,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-  #Scenari in errore
+  #Scenario in errore
   Scenario: [B2B-PA-SEND_7] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -193,6 +193,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata e si riceve una risposta
     Then la risposta di ricezione non presenta errori
 
+    #Scenario in errore
   Scenario: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -207,6 +208,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata e si riceve una risposta
     Then l'operazione ha prodotto un errore con status code "400"
 
+    #Scenario in errore
   Scenario: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |

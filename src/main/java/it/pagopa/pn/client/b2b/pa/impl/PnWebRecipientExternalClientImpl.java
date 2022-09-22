@@ -29,7 +29,7 @@ public class PnWebRecipientExternalClientImpl {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.webapi.external.bearer-token}") String bearerToken,
+            @Value("${pn.external.bearer-token-CristoforoC.pagopa-dev}") String bearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;

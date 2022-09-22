@@ -14,34 +14,42 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
+import it.pagopa.pn.client.b2b.pa.impl.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchRow;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.pa.impl.PnWebRecipientExternalClientImpl;
+import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 
 
 public class RicezioneNotificheWebSteps {
 
     @Autowired
     private PnWebRecipientExternalClientImpl pnWebRecipientExternalClient;
+
+    @Autowired
+    private PnWebMandateExternalClientImpl pnWebMandateExternalClient;
 
     @Autowired
     private PnPaB2bUtils b2bUtils;
@@ -53,6 +61,8 @@ public class RicezioneNotificheWebSteps {
     private FullSentNotification notificationResponseComplete;
     private HttpClientErrorException documentDownloadError;
     private HttpServerErrorException notificationError;
+    private MandateDto mandateToSearch;
+    private final String verificationCode = "24411";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
@@ -180,27 +190,6 @@ public class RicezioneNotificheWebSteps {
                 (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
-    /*
-    @Then("la notifica può essere correttamente recuperata con una ricerca")
-    public void laNotificaPuòEssereCorrettamenteRecuperataConUnaRicerca() {
-
-        //OffsetDateTime start = OffsetDateTime.now();
-        //OffsetDateTime end = OffsetDateTime.now();
-
-        Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH);
-        System.out.println("DATA: "+now.get(Calendar.DAY_OF_MONTH)+"/"+((month+"").length() == 2?(month+1):("0"+(month+1)))+"/"+now.get(Calendar.YEAR));
-
-        NotificationSearchParam notificationSearchParam = new NotificationSearchParam();
-        notificationSearchParam.startDate = notificationResponseComplete.getSentAt();
-        notificationSearchParam.endDate = notificationResponseComplete.getSentAt();
-        Assertions.assertTrue(searchNotification(notificationSearchParam));
-        //NotificationSearchResponse notificationSearchResponse = pnWebRecipientExternalClient.searchReceivedNotification(sentAt, sentAt, null, null, null, null, null, 10, null);
-        //List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
-        //Assertions.assertTrue(resultsPage.stream().filter(elem -> elem.getIun().equals(notificationResponseComplete.getIun())).findAny().orElse(null) != null);
-
-    }
-     */
 
     @Then("la notifica può essere correttamente recuperata con una ricerca")
     public void laNotificaPuòEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(@Transpose NotificationSearchParam searchParam) {
@@ -221,6 +210,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime sentAt = notificationResponseComplete.getSentAt();
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart,sentAt.getOffset());
+
         OffsetDateTime endDate;
         if(end != null){
             LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
@@ -265,6 +255,196 @@ public class RicezioneNotificheWebSteps {
             }//while
         }//search cycle
         return beenFound;
+    }
+
+    @And("Cristoforo Colombo viene delegato da {string} {string} con cf {string}")
+    public void cristoforoColomboVieneDelegatoDaConCf(String name, String surname, String cf) {
+        if(!pnWebMandateExternalClient.setBearerToken(cf)){
+            throw new IllegalArgumentException();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = (new MandateDto()
+                .delegator(new UserDto()
+                        .displayName(name+" "+surname)
+                        .firstName(name)
+                        .lastName(surname)
+                        .fiscalCode(cf)
+                        .companyName("")
+                        .person(true))
+                .delegate(new UserDto()
+                        .displayName("Cristoforo Colombo")
+                        .firstName("Cristoforo")
+                        .lastName("Colombo")
+                        .fiscalCode("CLMCST42R12D969Z")
+                        .companyName("")
+                        .person(true))
+                .verificationCode(verificationCode)
+                .datefrom(sdf.format(new Date()))
+                .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
+                );
+        pnWebMandateExternalClient.createMandate(mandate);
+    }
+
+    @Given("Cristoforo colombo rifiuta se presente la delega ricevuta da {string} {string} con cf {string}")
+    public void vieneRifiutateSePresenteLaDelegaRicevutaDaConCf(String name, String surname, String cf) {
+        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        MandateDto mandateDto = null;
+        for(MandateDto mandate: mandateList){
+            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
+                mandateDto = mandate;
+                break;
+            }
+        }
+        if(mandateDto != null){
+            pnWebMandateExternalClient.rejectMandate(mandateDto.getMandateId());
+        }
+    }
+
+    @And("Cristoforo Colombo accetta la delega da {string}")
+    public void cristoforoColomboAccettaLaDelegaDa(String cf) {
+        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        MandateDto mandateDto = null;
+        for(MandateDto mandate: mandateList){
+            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
+                mandateDto = mandate;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(mandateDto);
+        this.mandateToSearch = mandateDto;
+        pnWebMandateExternalClient.acceptMandate(mandateDto.getMandateId(),new AcceptRequestDto().verificationCode(verificationCode));
+
+    }
+
+    @Then("la notifica può essere correttamente recuperata dal delegato")
+    public void laNotificaPuòEssereCorrettamenteRecuperataDalDelegato() {
+        Assertions.assertDoesNotThrow(() -> {
+            FullReceivedNotification receivedNotification =
+                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+        });
+    }
+
+    @Then("il documento notificato può essere correttamente recuperato dal delegato")
+    public void ilDocumentoNotificatoPuòEssereCorrettamenteRecuperatoDalDelegato() {
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
+                notificationResponseComplete.getIun(),
+                Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
+                mandateToSearch.getMandateId()
+        );
+        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        Assertions.assertDoesNotThrow(() -> {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(downloadResponse.getUrl()));
+            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+        });
+        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+    }
+
+    @Then("l'allegato {string} può essere correttamente recuperato dal delegato")
+    public void lAllegatoPuòEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+                notificationResponseComplete.getIun(),
+                attachmentName,
+                mandateToSearch.getMandateId());
+        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        Assertions.assertDoesNotThrow(() -> {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(downloadResponse.getUrl()));
+            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+        });
+        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+    }
+
+    @And("{string} {string} con cf {string} revoca la delega a Cristoforo Colombo")
+    public void conCfRevocaLaDelegaACristoforoColombo(String name, String surname, String cf) {
+        pnWebMandateExternalClient.setBearerToken(cf);
+        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegator1();
+        MandateDto mandateDto = null;
+        for(MandateDto mandate: mandateList){
+            if(mandate.getDelegate().getLastName() != null && mandate.getDelegate().getLastName().equalsIgnoreCase("Colombo")){
+                mandateDto = mandate;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(mandateDto);
+        this.mandateToSearch = mandateDto;
+        pnWebMandateExternalClient.revokeMandate(mandateDto.getMandateId());
+
+    }
+
+    @And("Cristoforo Colombo rifiuta la delega da {string}")
+    public void cristoforoColomboRifiutaLaDelegaDa(String cf) {
+        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        MandateDto mandateDto = null;
+        for(MandateDto mandate: mandateList){
+            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
+                mandateDto = mandate;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(mandateDto);
+        this.mandateToSearch = mandateDto;
+        pnWebMandateExternalClient.rejectMandate(mandateDto.getMandateId());
+
+    }
+
+
+
+    @Then("si tenta il recupero della notifica da parte del delegato che produce un errore con status code {string}")
+    public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String statusCode) {
+        HttpClientErrorException httpClientErrorException = null;
+        try {
+            FullReceivedNotification receivedNotification =
+                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+        } catch (HttpClientErrorException e) {
+            httpClientErrorException = e;
+        }
+        Assertions.assertTrue((httpClientErrorException != null) &&
+                (httpClientErrorException.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
+
+    @Given("Cristoforo Colombo viene delegato da {string} {string} con cf {string} con delega in scadenza")
+    public void cristoforoColomboVieneDelegatoDaConCfConDelegaInScadenza(String name, String surname, String cf) {
+        if(!pnWebMandateExternalClient.setBearerToken(cf)){
+            throw new IllegalArgumentException();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = (new MandateDto()
+                .delegator(new UserDto()
+                        .displayName(name+" "+surname)
+                        .firstName(name)
+                        .lastName(surname)
+                        .fiscalCode(cf)
+                        .companyName("")
+                        .person(true))
+                .delegate(new UserDto()
+                        .displayName("Cristoforo Colombo")
+                        .firstName("Cristoforo")
+                        .lastName("Colombo")
+                        .fiscalCode("CLMCST42R12D969Z")
+                        .companyName("")
+                        .person(true))
+                .verificationCode(verificationCode)
+                .datefrom(sdf.format(new Date()))
+                .dateto(sdf.format(DateUtils.addMinutes(new Date(),2)))
+        );
+        pnWebMandateExternalClient.createMandate(mandate);
+
+    }
+
+    @And("si attende lo scadere della delega")
+    public void siAttendeLoScadereDellaDelega() {
+        try {
+            Thread.sleep( 120 * 1000l);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException( exc );
+        }
     }
 
 

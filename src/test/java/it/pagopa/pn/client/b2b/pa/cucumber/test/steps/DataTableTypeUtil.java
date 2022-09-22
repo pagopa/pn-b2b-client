@@ -4,8 +4,6 @@ import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 import static it.pagopa.pn.client.b2b.pa.cucumber.utils.NotificationValue.*;
@@ -55,6 +53,8 @@ public class DataTableTypeUtil {
                 .physicalAddress(getValue(data,PHYSICAL_ADDRES.key) == null? null: new NotificationPhysicalAddress()
                         .address(getValue(data,PHYSICAL_ADDRESS_ADDRESS.key))
                         .municipality(getValue(data,PHYSICAL_ADDRESS_MUNICIPALITY.key))
+                        .at(getValue(data,PHYSICAL_ADDRESS_AT.key))
+                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
                         .province(getValue(data,PHYSICAL_ADDRESS_PROVINCE.key))
                         .foreignState(getValue(data,PHYSICAL_ADDRESS_STATE.key))
                         .zip(getValue(data,PHYSICAL_ADDRESS_ZIP.key))

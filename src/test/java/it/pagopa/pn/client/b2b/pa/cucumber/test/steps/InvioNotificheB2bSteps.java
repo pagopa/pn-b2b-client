@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,11 @@ public class InvioNotificheB2bSteps  {
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
-    private HttpClientErrorException notificationSentError;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
+    private HttpClientErrorException notificationSentError;
+
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
