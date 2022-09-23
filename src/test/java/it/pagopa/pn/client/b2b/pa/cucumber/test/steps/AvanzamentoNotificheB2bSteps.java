@@ -149,7 +149,7 @@ public class AvanzamentoNotificheB2bSteps {
             pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         });
         try {
-            Thread.sleep( 10 * 1000L);
+            Thread.sleep( 50 * 1000L);
         } catch (InterruptedException exc) {
             throw new RuntimeException( exc );
         }
@@ -161,6 +161,5 @@ public class AvanzamentoNotificheB2bSteps {
     public void siVerificaNelloStreamCheLaNotificaAbbiaLoStatoVIEWED() {
         List<ProgressResponseElement> progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
         Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
-
     }
 }
