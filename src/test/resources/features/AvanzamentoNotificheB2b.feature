@@ -23,3 +23,18 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
+  Scenario: [B2B-STREAM_TIMELINE_3] Invio notifica digitale ed attesa stato VIEWED_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario della notifica
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And nuovo stream "stream-test" con eventType "TIMELINE"
+    And viene creato il nuovo stream
+    When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
+    And il destinatario legge la notifica
+    Then si verifica nello stream che la notifica abbia lo stato VIEWED
+

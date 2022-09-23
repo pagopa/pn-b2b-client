@@ -300,8 +300,7 @@ public class PnPaB2bUtils {
         NotificationPaymentInfo npi =  (new NotificationPaymentInfo()
                 .creditorTaxId(creditorTaxId.equals("")?"77777777777":creditorTaxId)
                 .noticeCode(noticeCode.trim().equals("")? String.format("30201%13d", epochMillis ):noticeCode )
-                .noticeCodeOptional( String.format("30201%13d", epochMillis+1 ))
-                .pagoPaForm(newAttachment(resourcePath)));
+                .noticeCodeOptional( String.format("30201%13d", epochMillis+1 )));
         if(hasPagopaForm){
             npi.pagoPaForm(newAttachment(resourcePath));
         }
@@ -341,12 +340,10 @@ public class PnPaB2bUtils {
 
         return new NewNotificationRequest()
                 .subject(oggetto+" "+ dateFormat.format(calendar.getTime()))
-                .cancelledIun("")
-                .group("")
                 .idempotenceToken(idempotenceToken)
                 ._abstract("Abstract della notifica")
                 .senderDenomination(mittente)
-                .senderTaxId("CFComuneMilano")
+                .senderTaxId("01199250158")
                 .notificationFeePolicy( NewNotificationRequest.NotificationFeePolicyEnum.FLAT_RATE )
                 .physicalCommunicationType( NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber((paProtocolNumber.equals("") ? "" + System.currentTimeMillis() : paProtocolNumber))

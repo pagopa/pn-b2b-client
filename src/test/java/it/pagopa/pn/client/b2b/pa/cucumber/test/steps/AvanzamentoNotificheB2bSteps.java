@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipient;
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.impl.PnWebRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
@@ -32,6 +33,9 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Autowired
     PnPaB2bExternalClientImpl pnPaB2bExternalClient;
+
+    @Autowired
+    private PnWebRecipientExternalClientImpl pnWebRecipientExternalClient;
 
     @Autowired
     private PnPaB2bUtils utils;
@@ -139,4 +143,24 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
+    @And("il destinatario legge la notifica")
+    public void ilDestinatarioLeggeLaNotifica() {
+        Assertions.assertDoesNotThrow(() -> {
+            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+        });
+        try {
+            Thread.sleep( 10 * 1000L);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException( exc );
+        }
+    }
+
+
+
+    @Then("si verifica nello stream che la notifica abbia lo stato VIEWED")
+    public void siVerificaNelloStreamCheLaNotificaAbbiaLoStatoVIEWED() {
+        List<ProgressResponseElement> progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
+        Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
+
+    }
 }
