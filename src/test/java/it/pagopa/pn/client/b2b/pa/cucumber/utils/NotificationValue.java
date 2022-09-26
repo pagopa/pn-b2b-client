@@ -6,7 +6,7 @@ import java.util.Map;
 public enum NotificationValue {
 
     SUBJECT("subject","invio notifica con cucumber",true),
-    CANCELLED_IUN("cancelledIun","",false),
+    CANCELLED_IUN("cancelledIun",null,false),//regex
     GROUP("group","",false),
     IDEMPOTENCE_TOKEN("idempotenceToken","",false),
     ABSTRACT("abstract","Abstract della notifica",false),
