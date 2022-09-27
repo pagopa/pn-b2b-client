@@ -341,6 +341,8 @@ public class PnPaB2bUtils {
         return new NewNotificationRequest()
                 .subject(oggetto+" "+ dateFormat.format(calendar.getTime()))
                 .idempotenceToken(idempotenceToken)
+                .cancelledIun(null)
+                .group("")
                 ._abstract("Abstract della notifica")
                 .senderDenomination(mittente)
                 .senderTaxId("01199250158")

@@ -44,6 +44,7 @@ public class InvioNotificheB2bSteps  {
     @Given("viene generata una notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
         this.notificationRequest = notificationRequest;
+        System.out.println("CANCELLED_IUN: "+notificationRequest.getCancelledIun());
     }
 
     @And("destinatario")

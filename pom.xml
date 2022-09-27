@@ -253,7 +253,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/feature/PN-2172_internal-external-api/docs/openapi/pn-mandate-external-web-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/main/docs/openapi/pn-mandate-external-web-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

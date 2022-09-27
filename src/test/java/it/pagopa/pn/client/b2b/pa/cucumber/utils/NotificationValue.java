@@ -7,8 +7,8 @@ public enum NotificationValue {
 
     SUBJECT("subject","invio notifica con cucumber",true),
     CANCELLED_IUN("cancelledIun",null,false),//regex
-    GROUP("group","",false),
-    IDEMPOTENCE_TOKEN("idempotenceToken","",false),
+    GROUP("group",null,false),
+    IDEMPOTENCE_TOKEN("idempotenceToken",null,false),
     ABSTRACT("abstract","Abstract della notifica",false),
     SENDER_DENOMINATION("senderDenomination","Comune di milano",false),
     SENDER_TAX_ID("senderTaxId","01199250158",false),
@@ -55,7 +55,7 @@ public enum NotificationValue {
     public static String getDefaultValue(String key) {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
-        return (notificationValue == null ? null : (notificationValue.defaultValue + (notificationValue.addCurrentTime? (""+String.format("30201%13d",System.currentTimeMillis())) : "")));
+        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("30201%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
     }
 
     public static String getValue(Map<String, String> data, String key){
