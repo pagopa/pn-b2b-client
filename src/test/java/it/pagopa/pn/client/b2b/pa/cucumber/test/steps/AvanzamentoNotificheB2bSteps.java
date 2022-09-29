@@ -13,10 +13,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebhookB2bClient;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequest;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponse;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -148,6 +145,57 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
+    @Then("vengono letti gli eventi dello stream fino all'elemento di timeline {string}")
+    public void vengonoLettiGliEventiDelloStreamFinoAllElementoDiTimeline(String timelineEventCategory) {
+        TimelineElementCategory timelineElementCategory;
+        switch(timelineEventCategory){
+            case "REQUEST_ACCEPTED":
+                timelineElementCategory = TimelineElementCategory.REQUEST_ACCEPTED;
+                break;
+            case "AAR_GENERATION":
+                timelineElementCategory = TimelineElementCategory.AAR_GENERATION;
+                break;
+            case "GET_ADDRESS":
+                timelineElementCategory = TimelineElementCategory.GET_ADDRESS;
+                break;
+            case "SEND_DIGITAL_DOMICILE":
+                timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_DOMICILE;
+                break;
+            case "NOTIFICATION_VIEWED":
+                timelineElementCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
+                break;
+            case "SEND_COURTESY_MESSAGE":
+                timelineElementCategory = TimelineElementCategory.SEND_COURTESY_MESSAGE;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        List<ProgressResponseElement> progressResponseElements;
+        for( int i = 0; i < 200; i++ ) {
+            progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
+
+            ProgressResponseElement progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
+            notificationResponseComplete = b2bClient.getSentNotification( notificationResponseComplete.getIun() );
+            logger.info("IUN: "+notificationResponseComplete.getIun());
+            logger.info("*******************************************"+'\n');
+            logger.info("EventProgress: "+progressResponseElements);
+            logger.info("*******************************************"+'\n');
+            logger.info("NOTIFICATION_TIMELINE: "+notificationResponseComplete.getTimeline());
+            logger.info("*******************************************"+'\n');
+            logger.info("NOTIFICATION_STATUS_HISTORY: "+notificationResponseComplete.getNotificationStatusHistory());
+            if (progressResponseElement != null) {
+                break;
+            }
+            try {
+                Thread.sleep( 10 * 1000L);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException( exc );
+            }
+        }
+        progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
+        logger.info("EventProgress: "+progressResponseElements);
+    }
+
     @And("il destinatario legge la notifica")
     public void ilDestinatarioLeggeLaNotifica() {
         Assertions.assertDoesNotThrow(() -> {
@@ -167,6 +215,7 @@ public class AvanzamentoNotificheB2bSteps {
         List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
         Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
     }
+
 
 
 }
