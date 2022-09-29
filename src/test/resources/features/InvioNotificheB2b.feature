@@ -12,6 +12,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+
   @B2Btest
   Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una notifica
@@ -181,8 +182,29 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
 
+  Scenario Outline: [B2B-PA-SEND_14] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | physicalAddress_municipalityDetails | <name> |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+    Examples:
+      | name |
+      | san donà di piave |
+      | Canneto sull'Oglio |
+      | Erbè |
+      | Forlì |
+      | Nardò |
+
+
      #Scenario in errore
-  Scenario: [B2B-PA-SEND_14] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
+  Scenario: [B2B-PA-SEND_15] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -194,7 +216,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
+  Scenario: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -209,7 +231,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
+  Scenario: [B2B-PA-SEND_17] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |

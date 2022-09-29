@@ -115,6 +115,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "CANCELLED":
                 notificationStatus = NotificationStatus.CANCELLED;
                 break;
+            case "EFFECTIVE_DATE":
+                notificationStatus = NotificationStatus.EFFECTIVE_DATE;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
