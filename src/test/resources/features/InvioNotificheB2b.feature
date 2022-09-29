@@ -8,8 +8,8 @@ Feature: invio notifiche b2b
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @B2Btest
@@ -21,11 +21,11 @@ Feature: invio notifiche b2b
       | idempotenceToken | AME2E3626070001.1  |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
 
   @B2Btest
   Scenario: [B2B-PA-SEND_3] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
@@ -36,8 +36,8 @@ Feature: invio notifiche b2b
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
     When la notifica viene inviata
     Then l'operazione ha prodotto un errore con status code "409"
@@ -51,11 +51,11 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
 
   Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
     Given viene generata una notifica
@@ -65,8 +65,8 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
     When la notifica viene inviata
     Then l'operazione ha prodotto un errore con status code "409"
@@ -80,8 +80,8 @@ Feature: invio notifiche b2b
       | document | SI |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
@@ -95,8 +95,8 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
@@ -110,8 +110,8 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
@@ -126,8 +126,8 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
@@ -147,8 +147,8 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata e si riceve una risposta
-    And la risposta di ricezione non presenta errori
+    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And si verifica la corretta acquisizione della notifica
     When si tenta il recupero della notifica dal sistema tramite codice IUN "IUNUGYD-XHEZ-KLRM-202208-X-0"
     Then l'operazione ha prodotto un errore con status code "404"
 
@@ -164,8 +164,8 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
 
   Scenario: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
     Given viene generata una notifica
@@ -178,8 +178,8 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
 
      #Scenario in errore
   Scenario: [B2B-PA-SEND_14] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
@@ -205,7 +205,7 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-    When la notifica viene inviata e si riceve una risposta
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
@@ -220,5 +220,5 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-    When la notifica viene inviata e si riceve una risposta
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then l'operazione ha prodotto un errore con status code "400"

@@ -1,6 +1,7 @@
-package it.pagopa.pn.client.b2b.pa.impl;
+package it.pagopa.pn.client.b2b.pa.testclient;
 
 
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
@@ -12,11 +13,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.math.BigDecimal;
+
 import java.time.OffsetDateTime;
 
 @Component
-public class PnWebRecipientExternalClientImpl {
+public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
@@ -29,7 +30,7 @@ public class PnWebRecipientExternalClientImpl {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.bearer-token-CristoforoC.pagopa-dev}") String bearerToken,
+            @Value("${pn.external.bearer-token-CristoforoC.pagopa}") String bearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;

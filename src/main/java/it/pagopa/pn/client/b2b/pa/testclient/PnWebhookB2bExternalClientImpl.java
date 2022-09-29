@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.impl;
+package it.pagopa.pn.client.b2b.pa.testclient;
 
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api.EventsApi;
@@ -13,28 +13,32 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient{
+public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final EventsApi eventsApi;
     private final StreamsApi streamsApi;
 
-    private final String apiKey;
+    private final String devApiKey;
+    private final String devBasePath;
+
 
     public PnWebhookB2bExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.external.base-url}") String basePath,
-            @Value("${pn.external.api-key}") String apiKey
+            @Value("${pn.external.base-url}") String devBasePath,
+            @Value("${pn.external.api-key}") String devApiKey
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
-        this.apiKey = apiKey;
+        this.devApiKey = devApiKey;
+        this.devBasePath = devBasePath;
 
-        this.eventsApi = new EventsApi( newApiClient( restTemplate, basePath, apiKey) );
-        this.streamsApi = new StreamsApi( newApiClient( restTemplate, basePath, apiKey) );
+        this.eventsApi = new EventsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
+        this.streamsApi = new StreamsApi( newApiClient( restTemplate, devBasePath, devApiKey) );
     }
+
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
         ApiClient newApiClient = new ApiClient( restTemplate );

@@ -26,10 +26,13 @@ import java.util.concurrent.atomic.AtomicReference;
 public class InvioNotificheB2bSteps  {
 
     @Autowired
-    private PnPaB2bUtils utils;
+    private PnPaB2bUtils b2bUtils;
 
     @Autowired
-    private IPnPaB2bClient client;
+    private IPnPaB2bClient b2bClient;
+
+    @Autowired
+    private DataTableTypeUtil dataTableTypeUtil;
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
@@ -44,7 +47,6 @@ public class InvioNotificheB2bSteps  {
     @Given("viene generata una notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
         this.notificationRequest = notificationRequest;
-        System.out.println("CANCELLED_IUN: "+notificationRequest.getCancelledIun());
     }
 
     @And("destinatario")
@@ -62,50 +64,40 @@ public class InvioNotificheB2bSteps  {
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
-        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0).getPayment());
-        this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
-                notificationRequest.getSenderDenomination(),
-                notificationRequest.getRecipients().get(0).getDenomination(),
-                notificationRequest.getRecipients().get(0).getTaxId(),
-                "",
-                "",
-                notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId(),"",
-                true,false,false);
+        String creditorTaxId = notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId();
+
+        generateNewNotification();
+
+        this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
     }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEUgualeCodiceAvviso() {
-        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0).getPayment());
-        this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
-                notificationRequest.getSenderDenomination(),
-                notificationRequest.getRecipients().get(0).getDenomination(),
-                notificationRequest.getRecipients().get(0).getTaxId(),
-                "",
-                "",
-                notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId(),
-                notificationRequest.getRecipients().get(0).getPayment().getNoticeCode(),
-                true,false,false);
+        String creditorTaxId = notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId();
+        String noticeCode = notificationRequest.getRecipients().get(0).getPayment().getNoticeCode();
+
+        generateNewNotification();
+
+        this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
+        this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCode(noticeCode);
     }
 
     @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualePaProtocolNumberEIdempotenceToken(String idempotenceToken) {
-        Assertions.assertDoesNotThrow(()-> notificationRequest.getRecipients().get(0));
-        this.notificationRequest = utils.newNotificationRequest(notificationRequest.getSubject(),
-                notificationRequest.getSenderDenomination(),
-                notificationRequest.getRecipients().get(0).getDenomination(),
-                notificationRequest.getRecipients().get(0).getTaxId(),
-                idempotenceToken,
-                notificationRequest.getPaProtocolNumber(),
-                "","",
-                true,false,false);
+        String paProtocolNumber = notificationRequest.getPaProtocolNumber();
+
+        generateNewNotification();
+
+        this.notificationRequest.setIdempotenceToken(idempotenceToken);
+        this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
 
-    @When("la notifica viene inviata e si riceve una risposta")
+    @When("la notifica viene inviata tramite api b2b e si attende che venga accettata")
     public void laNotificaVieneInviataOk() {
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification(notificationRequest);
-            notificationResponseComplete = utils.waitForRequestAcceptation( newNotificationRequest );
+            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
+            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
         });
         try {
             Thread.sleep( 10 * 1000);
@@ -118,7 +110,7 @@ public class InvioNotificheB2bSteps  {
     @When("la notifica viene inviata")
     public void laNotificaVieneInviataKO() {
         try {
-            utils.uploadNotification(notificationRequest);
+            b2bUtils.uploadNotification(notificationRequest);
         } catch (HttpClientErrorException | IOException e) {
             if(e instanceof HttpClientErrorException){
                 this.notificationSentError = (HttpClientErrorException)e;
@@ -131,7 +123,7 @@ public class InvioNotificheB2bSteps  {
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
 
         Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(utils.getNotificationByIun(notificationResponseComplete.getIun()))
+                notificationByIun.set(b2bUtils.getNotificationByIun(notificationResponseComplete.getIun()))
         );
 
         Assertions.assertNotNull(notificationByIun.get());
@@ -140,7 +132,7 @@ public class InvioNotificheB2bSteps  {
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUN(String IUN) {
         try {
-            utils.getNotificationByIun(IUN);
+            b2bUtils.getNotificationByIun(IUN);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e instanceof HttpClientErrorException) {
                 this.notificationSentError = (HttpClientErrorException) e;
@@ -154,12 +146,12 @@ public class InvioNotificheB2bSteps  {
         switch(type) {
             case "NOTIFICA":
                 List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
-                this.downloadResponse = client
+                this.downloadResponse = b2bClient
                         .getSentNotificationDocument(notificationResponseComplete.getIun(), new BigDecimal(documents.get(0).getDocIdx()));
 
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                        utils.downloadFile(this.downloadResponse.getUrl()));
-                this.sha256DocumentDownload = utils.computeSha256(new ByteArrayInputStream(bytes));
+                        b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+                this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
                 return;
             case "PAGOPA":
                 downloadType = "PAGOPA";
@@ -172,11 +164,11 @@ public class InvioNotificheB2bSteps  {
                 break;
             default: throw new IllegalArgumentException();
         }
-        this.downloadResponse = client
+        this.downloadResponse = b2bClient
                 .getSentNotificationAttachment(notificationResponseComplete.getIun(), new BigDecimal(0),downloadType);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                utils.downloadFile(this.downloadResponse.getUrl()));
-        this.sha256DocumentDownload = utils.computeSha256(new ByteArrayInputStream(bytes));
+                b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+        this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
     }
 
     @When("viene richiesto il download del documento {string} inesistente")
@@ -186,7 +178,7 @@ public class InvioNotificheB2bSteps  {
             case "NOTIFICA":
                 List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
                 try {
-                    this.downloadResponse = client
+                    this.downloadResponse = b2bClient
                             .getSentNotificationDocument(notificationResponseComplete.getIun(), new BigDecimal(documents.size()));
                 } catch (HttpClientErrorException | HttpServerErrorException e) {
                     if(e instanceof HttpClientErrorException){
@@ -206,7 +198,7 @@ public class InvioNotificheB2bSteps  {
             default: throw new IllegalArgumentException();
         }
         try {
-            this.downloadResponse = client
+            this.downloadResponse = b2bClient
                     .getSentNotificationAttachment(notificationResponseComplete.getIun(), new BigDecimal(100),downloadType);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if(e instanceof HttpClientErrorException){
@@ -227,11 +219,20 @@ public class InvioNotificheB2bSteps  {
     }
 
 
-    @Then("la risposta di ricezione non presenta errori")
+    @Then("si verifica la corretta acquisizione della notifica")
     public void laNotificaCorrettamenteInviata() {
-        Assertions.assertDoesNotThrow(() -> utils.verifyNotification( notificationResponseComplete ));
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( notificationResponseComplete ));
     }
 
 
+    private void generateNewNotification(){
+        assert this.notificationRequest.getRecipients().get(0).getPayment() != null;
+        this.notificationRequest = (dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
+                .subject(notificationRequest.getSubject())
+                .senderDenomination(notificationRequest.getSenderDenomination())
+                .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination(notificationRequest.getRecipients().get(0).getDenomination())
+                        .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
+    }
 
 }

@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.impl;
+package it.pagopa.pn.client.b2b.pa.testclient;
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.api.MandateServiceApi;
@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
-public class PnWebMandateExternalClientImpl {
+public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
@@ -28,8 +28,8 @@ public class PnWebMandateExternalClientImpl {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.bearer-token-FieramoscaE.pagopa-dev}") String fieramoscaEBearerToken,
-            @Value("${pn.external.bearer-token-CristoforoC.pagopa-dev}") String cristoforoCBearerToken,
+            @Value("${pn.external.bearer-token-FieramoscaE.pagopa}") String fieramoscaEBearerToken,
+            @Value("${pn.external.bearer-token-CristoforoC.pagopa}") String cristoforoCBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;

@@ -6,19 +6,23 @@ import it.pagopa.pn.client.b2b.pa.impl.*;
 import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.testclient.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.testclient.PnWebRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.testclient.PnWebhookB2bExternalClientImpl;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
-        PnPaB2bExternalClientImpl.class,
-        PnPaB2bInternalClientImpl.class,
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
         RestTemplateConfiguration.class,
         PnPaB2bUtils.class,
+        PnPaB2bExternalClientImpl.class,
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class
 })
 public class CucumberSpringIntegration {
+
 }

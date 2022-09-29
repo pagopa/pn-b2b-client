@@ -10,9 +10,9 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequest;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipient;
-import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.impl.PnWebhookB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebhookB2bClient;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequest;
@@ -28,21 +28,21 @@ import java.util.List;
 public class AvanzamentoNotificheB2bSteps {
 
     @Autowired
-    PnWebhookB2bExternalClientImpl pnWebhookB2bExternalClient;
-
-
-    @Autowired
-    PnPaB2bExternalClientImpl pnPaB2bExternalClient;
+    IPnWebhookB2bClient webhookB2bClient;
 
     @Autowired
-    private PnWebRecipientExternalClientImpl pnWebRecipientExternalClient;
+    IPnPaB2bClient b2bClient;
 
     @Autowired
-    private PnPaB2bUtils utils;
+    private IPnWebRecipientClient webRecipientClient;
+
+    @Autowired
+    private PnPaB2bUtils b2bUtils;
 
     private StreamCreationRequest streamCreationRequest;
     private StreamMetadataResponse eventStream;
     private NewNotificationRequest notificationRequest;
+    private NewNotificationResponse newNotificationRequest;
     private FullSentNotification notificationResponseComplete;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -57,14 +57,13 @@ public class AvanzamentoNotificheB2bSteps {
 
     @When("viene creato il nuovo stream")
     public void vieneCreatoUnNuovoStreamDiNotifica() {
-       this.eventStream  = pnWebhookB2bExternalClient.createEventStream(streamCreationRequest);
+       this.eventStream  = webhookB2bClient.createEventStream(streamCreationRequest);
     }
 
     @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id")
     public void laStreamEStatoCreatoEVieneCorrettamenteRecuperatoDalSistema() {
         Assertions.assertDoesNotThrow(() -> {
-            StreamMetadataResponse eventStream = pnWebhookB2bExternalClient.getEventStream(this.eventStream.getStreamId());
-            System.out.println("EventStream: "+eventStream);
+            StreamMetadataResponse eventStream = webhookB2bClient.getEventStream(this.eventStream.getStreamId());
         });
     }
 
@@ -72,7 +71,7 @@ public class AvanzamentoNotificheB2bSteps {
     @And("vengono letti gli eventi dello stream")
     public void vengonoLettiGliEventiDelloStream() {
         Assertions.assertDoesNotThrow(() -> {
-            List<ProgressResponseElement> progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
+            List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
             System.out.println("EventProgress: "+progressResponseElements);
         });
     }
@@ -91,8 +90,8 @@ public class AvanzamentoNotificheB2bSteps {
     @When("la notifica viene inviata e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataESiAttendeCheLoStatoDiventiACCEPTED() {
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification(notificationRequest);
-            notificationResponseComplete = utils.waitForRequestAcceptation( newNotificationRequest );
+            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
+            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
         });
         try {
             Thread.sleep( 10 * 1000);
@@ -113,15 +112,21 @@ public class AvanzamentoNotificheB2bSteps {
             case "DELIVERING":
                 notificationStatus = NotificationStatus.DELIVERING;
                 break;
+            case "DELIVERED":
+                notificationStatus = NotificationStatus.DELIVERED;
+                break;
+            case "CANCELLED":
+                notificationStatus = NotificationStatus.CANCELLED;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
         List<ProgressResponseElement> progressResponseElements;
-        for( int i = 0; i < 50; i++ ) {
-            progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
+        for( int i = 0; i < 200; i++ ) {
+            progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
 
             ProgressResponseElement progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
-            notificationResponseComplete = pnPaB2bExternalClient.getSentNotification( notificationResponseComplete.getIun() );
+            notificationResponseComplete = b2bClient.getSentNotification( notificationResponseComplete.getIun() );
             logger.info("IUN: "+notificationResponseComplete.getIun());
             logger.info("*******************************************"+'\n');
             logger.info("EventProgress: "+progressResponseElements);
@@ -138,7 +143,7 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException( exc );
             }
         }
-        progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
+        progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
         logger.info("EventProgress: "+progressResponseElements);
     }
 
@@ -146,7 +151,7 @@ public class AvanzamentoNotificheB2bSteps {
     @And("il destinatario legge la notifica")
     public void ilDestinatarioLeggeLaNotifica() {
         Assertions.assertDoesNotThrow(() -> {
-            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         });
         try {
             Thread.sleep( 50 * 1000L);
@@ -159,7 +164,9 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("si verifica nello stream che la notifica abbia lo stato VIEWED")
     public void siVerificaNelloStreamCheLaNotificaAbbiaLoStatoVIEWED() {
-        List<ProgressResponseElement> progressResponseElements = pnWebhookB2bExternalClient.consumeEventStream(this.eventStream.getStreamId(), null);
+        List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
         Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
     }
+
+
 }

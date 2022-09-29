@@ -14,7 +14,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.impl.PnWebMandateExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
@@ -23,7 +24,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchRow;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
-import it.pagopa.pn.client.b2b.pa.impl.PnWebRecipientExternalClientImpl;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
@@ -44,10 +44,10 @@ import java.util.concurrent.atomic.AtomicReference;
 public class RicezioneNotificheWebSteps {
 
     @Autowired
-    private PnWebRecipientExternalClientImpl pnWebRecipientExternalClient;
+    private IPnWebRecipientClient webRecipientClient;
 
     @Autowired
-    private PnWebMandateExternalClientImpl pnWebMandateExternalClient;
+    private IPnWebMandateClient webMandateClient;
 
     @Autowired
     private PnPaB2bUtils b2bUtils;
@@ -114,14 +114,14 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica può essere correttamente recuperata dal destinatario")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario() {
         Assertions.assertDoesNotThrow(() -> {
-            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         });
     }
 
 
     @Then("il documento notificato può essere correttamente recuperato")
     public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato() {
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 notificationResponseComplete.getIun(),
                 Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
                 null
@@ -139,7 +139,7 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato")
     public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName) {
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 notificationResponseComplete.getIun(),
                 attachmentName,
                 null);
@@ -155,7 +155,7 @@ public class RicezioneNotificheWebSteps {
     @And("si tenta il recupero dell'allegato {string}")
     public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
         try {
-            pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+            webRecipientClient.getReceivedNotificationAttachment(
                     notificationResponseComplete.getIun(),
                     attachmentName,
                     null);
@@ -174,7 +174,7 @@ public class RicezioneNotificheWebSteps {
     @And("si tenta il recupero della notifica da parte del destinatario")
     public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario() {
         try {
-            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
         } catch (HttpServerErrorException e) {
             this.notificationError = e;
         }
@@ -228,7 +228,7 @@ public class RicezioneNotificheWebSteps {
 
     private boolean searchNotification(NotificationSearchParam searchParam){
         boolean beenFound;
-        NotificationSearchResponse notificationSearchResponse = pnWebRecipientExternalClient
+        NotificationSearchResponse notificationSearchResponse = webRecipientClient
                 .searchReceivedNotification(
                         searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                         searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
@@ -239,7 +239,7 @@ public class RicezioneNotificheWebSteps {
             while(Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())){
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
                 for(String pageKey: nextPagesKey){
-                    notificationSearchResponse = pnWebRecipientExternalClient
+                    notificationSearchResponse = webRecipientClient
                             .searchReceivedNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
@@ -255,7 +255,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("Cristoforo Colombo viene delegato da {string} {string} con cf {string}")
     public void cristoforoColomboVieneDelegatoDaConCf(String name, String surname, String cf) {
-        if(!pnWebMandateExternalClient.setBearerToken(cf)){
+        if(!webMandateClient.setBearerToken(cf)){
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -278,13 +278,13 @@ public class RicezioneNotificheWebSteps {
                 .datefrom(sdf.format(new Date()))
                 .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
                 );
-        pnWebMandateExternalClient.createMandate(mandate);
+        webMandateClient.createMandate(mandate);
     }
 
     @Given("Cristoforo colombo rifiuta se presente la delega ricevuta da {string} {string} con cf {string}")
     public void vieneRifiutateSePresenteLaDelegaRicevutaDaConCf(String name, String surname, String cf) {
-        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
-        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        webMandateClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for(MandateDto mandate: mandateList){
             if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
@@ -293,14 +293,14 @@ public class RicezioneNotificheWebSteps {
             }
         }
         if(mandateDto != null){
-            pnWebMandateExternalClient.rejectMandate(mandateDto.getMandateId());
+            webMandateClient.rejectMandate(mandateDto.getMandateId());
         }
     }
 
     @And("Cristoforo Colombo accetta la delega da {string}")
     public void cristoforoColomboAccettaLaDelegaDa(String cf) {
-        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
-        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        webMandateClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for(MandateDto mandate: mandateList){
             if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
@@ -311,20 +311,20 @@ public class RicezioneNotificheWebSteps {
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        pnWebMandateExternalClient.acceptMandate(mandateDto.getMandateId(),new AcceptRequestDto().verificationCode(verificationCode));
+        webMandateClient.acceptMandate(mandateDto.getMandateId(),new AcceptRequestDto().verificationCode(verificationCode));
 
     }
 
     @Then("la notifica può essere correttamente recuperata dal delegato")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDelegato() {
         Assertions.assertDoesNotThrow(() -> {
-            pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
         });
     }
 
     @Then("il documento notificato può essere correttamente recuperato dal delegato")
     public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato() {
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationDocument(
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 notificationResponseComplete.getIun(),
                 Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
                 mandateToSearch.getMandateId()
@@ -340,7 +340,7 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato dal delegato")
     public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = pnWebRecipientExternalClient.getReceivedNotificationAttachment(
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 notificationResponseComplete.getIun(),
                 attachmentName,
                 mandateToSearch.getMandateId());
@@ -355,8 +355,8 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} {string} con cf {string} revoca la delega a Cristoforo Colombo")
     public void conCfRevocaLaDelegaACristoforoColombo(String name, String surname, String cf) {
-        pnWebMandateExternalClient.setBearerToken(cf);
-        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegator1();
+        webMandateClient.setBearerToken(cf);
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegator1();
         MandateDto mandateDto = null;
         for(MandateDto mandate: mandateList){
             if(mandate.getDelegate().getLastName() != null && mandate.getDelegate().getLastName().equalsIgnoreCase("Colombo")){
@@ -367,14 +367,14 @@ public class RicezioneNotificheWebSteps {
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        pnWebMandateExternalClient.revokeMandate(mandateDto.getMandateId());
+        webMandateClient.revokeMandate(mandateDto.getMandateId());
 
     }
 
     @And("Cristoforo Colombo rifiuta la delega da {string}")
     public void cristoforoColomboRifiutaLaDelegaDa(String cf) {
-        pnWebMandateExternalClient.setBearerToken("CLMCST42R12D969Z");
-        List<MandateDto> mandateList = pnWebMandateExternalClient.listMandatesByDelegate1(null);
+        webMandateClient.setBearerToken("CLMCST42R12D969Z");
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for(MandateDto mandate: mandateList){
             if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(cf)){
@@ -385,7 +385,7 @@ public class RicezioneNotificheWebSteps {
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        pnWebMandateExternalClient.rejectMandate(mandateDto.getMandateId());
+        webMandateClient.rejectMandate(mandateDto.getMandateId());
 
     }
 
@@ -396,7 +396,7 @@ public class RicezioneNotificheWebSteps {
         HttpClientErrorException httpClientErrorException = null;
         try {
             FullReceivedNotification receivedNotification =
-                    pnWebRecipientExternalClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+                    webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -406,7 +406,7 @@ public class RicezioneNotificheWebSteps {
 
     @Given("Cristoforo Colombo viene delegato da {string} {string} con cf {string} con delega in scadenza")
     public void cristoforoColomboVieneDelegatoDaConCfConDelegaInScadenza(String name, String surname, String cf) {
-        if(!pnWebMandateExternalClient.setBearerToken(cf)){
+        if(!webMandateClient.setBearerToken(cf)){
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -429,7 +429,7 @@ public class RicezioneNotificheWebSteps {
                 .datefrom(sdf.format(new Date()))
                 .dateto(sdf.format(DateUtils.addMinutes(new Date(),2)))
         );
-        pnWebMandateExternalClient.createMandate(mandate);
+        webMandateClient.createMandate(mandate);
 
     }
 

@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.impl;
+package it.pagopa.pn.client.b2b.pa.testclient;
 
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamCreationRequest;
@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IPnWebhookB2bClient {
-
 
     StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest);
 
