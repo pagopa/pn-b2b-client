@@ -16,8 +16,8 @@ import org.springframework.context.ApplicationContext;
 
 public class SwitchEnv {
 
-    @Value("${pn.execution-type}")
-    private String executionType;
+    @Value("${pn.execution-env}")
+    private String executionEnv;
 
     @Value("${pn.external.api-keys.pagopa-svil}")
     private String apiKeys;
@@ -36,7 +36,7 @@ public class SwitchEnv {
 
     @Before
     public void before_all() {
-        if((executionType!= null && executionType.trim().equalsIgnoreCase("local")) && !setted){
+        if((executionEnv!= null && executionEnv.trim().equalsIgnoreCase("local")) && !setted){
             System.setProperty("pn.external.base-url","https://api.svil.pn.pagopa.it");
             System.setProperty("pn.external.api-key", apiKeys);
             System.setProperty("pn.webapi.external.base-url","https://webapi.svil.pn.pagopa.it");
