@@ -126,7 +126,7 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | physicalAddress | NULL |
     When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "409"
 
   Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
     Given viene generata una notifica
@@ -304,7 +304,7 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | taxId | aaa |
     When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "409"
 
     #Scenario in errore
   Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
