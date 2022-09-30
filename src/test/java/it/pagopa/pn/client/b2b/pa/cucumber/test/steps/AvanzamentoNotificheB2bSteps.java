@@ -122,10 +122,11 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
         List<ProgressResponseElement> progressResponseElements;
-        for( int i = 0; i < 200; i++ ) {
+        ProgressResponseElement progressResponseElement = null;
+        for( int i = 0; i < 36; i++ ) {
             progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
 
-            ProgressResponseElement progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
+            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
             notificationResponseComplete = b2bClient.getSentNotification( notificationResponseComplete.getIun() );
             logger.info("IUN: "+notificationResponseComplete.getIun());
             logger.info("*******************************************"+'\n');
@@ -143,8 +144,8 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException( exc );
             }
         }
-        progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
-        logger.info("EventProgress: "+progressResponseElements);
+        Assertions.assertNotNull(progressResponseElement);
+        logger.info("EventProgress: "+progressResponseElement);
     }
 
 
@@ -174,10 +175,11 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
         List<ProgressResponseElement> progressResponseElements;
-        for( int i = 0; i < 200; i++ ) {
+        ProgressResponseElement progressResponseElement = null;
+        for( int i = 0; i < 36; i++ ) {
             progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
 
-            ProgressResponseElement progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
+            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
             notificationResponseComplete = b2bClient.getSentNotification( notificationResponseComplete.getIun() );
             logger.info("IUN: "+notificationResponseComplete.getIun());
             logger.info("*******************************************"+'\n');
@@ -195,8 +197,8 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException( exc );
             }
         }
-        progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
-        logger.info("EventProgress: "+progressResponseElements);
+        Assertions.assertNotNull(progressResponseElement);
+        logger.info("EventProgress: "+progressResponseElement);
     }
 
     @And("il destinatario legge la notifica")
