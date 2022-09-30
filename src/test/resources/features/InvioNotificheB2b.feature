@@ -189,18 +189,96 @@ Feature: invio notifiche b2b
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
-      | physicalAddress_municipalityDetails | <name> |
+      | physicalAddress_municipality | <comune> |
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
     Examples:
-      | name |
-      | san donà di piave |
+      |  comune            |
+      |  san donà di piave |
+      |  Canneto sull'Oglio|
+      |  Erbè              |
+      |  Forlì             |
+      |  Nardò             |
+
+  Scenario Outline: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | physicalAddress_municipalityDetails | <localita> |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+    Examples:
+      |       localita     |
+      | san donà di piave  |
       | Canneto sull'Oglio |
-      | Erbè |
-      | Forlì |
-      | Nardò |
+      | Erbè               |
+      | Forlì              |
+      | Nardò              |
+
+
+  Scenario Outline: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | physicalAddress_address | <indirizzo> |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+    Examples:
+      |   indirizzo    |
+      |  via dà        |
+      |  via dell'anno |
+      |  via è         |
+      |  via ì         |
+      |  via ò         |
+
+
+  Scenario Outline: [B2B-PA-SEND_17] invio notifica con oggetto contenente caratteri speciali_scenario positivo
+    Given viene generata una notifica
+      | subject | <name> |
+      | senderDenomination | comune di milano  |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata e si riceve una risposta
+    Then la risposta di ricezione non presenta errori
+    Examples:
+      | name |
+      | ò |
+      | à |
+      | ' |
+      | ì |
+      | è |
+      | ù |
+
+  Scenario Outline: [B2B-PA-SEND_18] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano  |
+      | senderTaxId | CFComuneMilano |
+    And destinatario
+      | denomination | <denomination> |
+    When la notifica viene inviata e si riceve una risposta
+    Then la risposta di ricezione non presenta errori
+    Examples:
+      | denomination |
+      | nicolò  |
+      | carrà |
+      | d'amico |
+      | ì |
+      | nicolè |
+      | ù |
 
 
      #Scenario in errore

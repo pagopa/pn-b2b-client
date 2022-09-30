@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 
 config/api-keys.properties
+config/bearer-token.properties
 
 ### STS ###
 .apt_generated

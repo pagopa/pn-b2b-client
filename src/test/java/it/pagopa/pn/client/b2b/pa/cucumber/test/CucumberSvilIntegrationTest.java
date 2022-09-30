@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "src/test/resources/features/InvioNotificheB2b.feature",
+        features = "src/test/resources/features",
         plugin = {"pretty", "json:target/cucumber-report.json"},
         extraGlue = "it.pagopa.pn.client.b2b.pa.cucumber.utils",
         tags = "not @dev")
