@@ -101,22 +101,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  Scenario: [B2B-PA-SEND_8] download documento f24_flat_scenario positivo
-    Given viene generata una notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | SI |
-      | payment_f24standard | NULL |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
-    And si verifica la corretta acquisizione della notifica
-    When viene richiesto il download del documento "PAGOPA"
-    Then il download si conclude correttamente
-
-  Scenario: [B2B-PA-SEND_9] download documento f24_standard_scenario positivo
+  Scenario: [B2B-PA-SEND_8] download documento f24_standard_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -132,7 +117,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  Scenario: [B2B-PA-SEND_10] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
+  Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -143,7 +128,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata
     Then l'operazione ha prodotto un errore con status code "400"
 
-  Scenario: [B2B-PA-SEND_11] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
+  Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -154,7 +139,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
 
-  Scenario: [B2B-PA-SEND_12] Invio notifica digitale mono destinatario Flat_rate_scenario positivo
+  Scenario: [B2B-PA-SEND_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -168,7 +153,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
 
-  Scenario: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
+  Scenario: [B2B-PA-SEND_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -182,7 +167,9 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
 
-  Scenario Outline: [B2B-PA-SEND_14] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+
+    #Scenario in errore
+  Scenario Outline: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -195,14 +182,15 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
     Examples:
-      |  comune            |
-      |  san donà di piave |
-      |  Canneto sull'Oglio|
-      |  Erbè              |
-      |  Forlì             |
-      |  Nardò             |
+      |  comune           |
+      | san donà di piave |
+      | Canneto sull'Oglio|
+      | Erbè              |
+      | Forlì             |
+      | Nardò             |
 
-  Scenario Outline: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    #Scenario in errore
+  Scenario Outline: [B2B-PA-SEND_14] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -215,7 +203,7 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
     Examples:
-      |       localita     |
+      |     localita       |
       | san donà di piave  |
       | Canneto sull'Oglio |
       | Erbè               |
@@ -223,7 +211,8 @@ Feature: invio notifiche b2b
       | Nardò              |
 
 
-  Scenario Outline: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    #Scenario in errore
+  Scenario Outline: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -236,14 +225,35 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
     Examples:
-      |   indirizzo    |
-      |  via dà        |
-      |  via dell'anno |
-      |  via è         |
-      |  via ì         |
-      |  via ò         |
+      |   indirizzo   |
+      | via dà        |
+      | via dell'anno |
+      | via è         |
+      | via ì         |
+      | via ò         |
 
 
+    #Scenario in errore
+  Scenario Outline: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | physicalAddress_State | <stato> |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+    Examples:
+      |   stato             |
+      | Città del Vaticano  |
+      | Costa d'Avorio      |
+      | Perù                |
+
+
+    #Scenario in errore
   Scenario Outline: [B2B-PA-SEND_17] invio notifica con oggetto contenente caratteri speciali_scenario positivo
     Given viene generata una notifica
       | subject | <name> |
@@ -251,17 +261,19 @@ Feature: invio notifiche b2b
       | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
-      | name |
-      | ò |
-      | à |
-      | ' |
-      | ì |
-      | è |
-      | ù |
+      |      name        |
+      | irrinunciabilità |
+      | trentatré        |
+      | altresì          |
+      | bistrò           |
+      | più              |
+      | dall'atto        |
 
+    #Scenario in errore
   Scenario Outline: [B2B-PA-SEND_18] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -269,20 +281,21 @@ Feature: invio notifiche b2b
       | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | <denomination> |
-    When la notifica viene inviata e si riceve una risposta
-    Then la risposta di ricezione non presenta errori
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
-      | denomination |
-      | nicolò  |
-      | carrà |
-      | d'amico |
-      | ì |
-      | nicolè |
-      | ù |
+      | denomination    |
+      | Nicolò Rossi    |
+      | Raffaella Carrà |
+      | Ilaria D'Amico  |
+      | Salvator Dalì   |
+      | Bruno Nicolè    |
+      | dudù            |
 
 
      #Scenario in errore
-  Scenario: [B2B-PA-SEND_15] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
+  Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -294,7 +307,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
+  Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -309,7 +322,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_17] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
+  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |

@@ -65,7 +65,7 @@ Feature: avanzamento notifiche b2b
 
 
   @svil
-  Scenario: [B2B-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
+  Scenario: [B2B-STREAM_TIMELINE_6_SVIL] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

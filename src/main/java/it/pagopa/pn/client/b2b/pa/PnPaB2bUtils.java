@@ -81,7 +81,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 10; i++ ) {
+        for( int i = 0; i < 15; i++ ) {
 
             status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
 
@@ -91,7 +91,7 @@ public class PnPaB2bUtils {
             }
 
             try {
-                Thread.sleep( 20 * 1000l);
+                Thread.sleep( 10 * 1000l);
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }
@@ -99,7 +99,8 @@ public class PnPaB2bUtils {
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms",(endTime - startTime));
         String iun = status.getIun();
-        return client.getSentNotification( iun );
+
+        return iun == null? null : client.getSentNotification( iun );
     }
 
     public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {
@@ -291,68 +292,6 @@ public class PnPaB2bUtils {
     public FullSentNotification getNotificationByIun(String iun) {
         return client.getSentNotification( iun );
     }
-
-
-    public NotificationRecipient newRecipient(String prefix, String taxId, String resourcePath, String creditorTaxId, String noticeCode,
-                                               boolean hasPagopaForm, boolean hasF24Standard, boolean hasF24FlatRate) {
-        long epochMillis = System.currentTimeMillis();
-
-        NotificationPaymentInfo npi =  (new NotificationPaymentInfo()
-                .creditorTaxId(creditorTaxId.equals("")?"77777777777":creditorTaxId)
-                .noticeCode(noticeCode.trim().equals("")? String.format("30201%13d", epochMillis ):noticeCode )
-                .noticeCodeOptional( String.format("30201%13d", epochMillis+1 )));
-        if(hasPagopaForm){
-            npi.pagoPaForm(newAttachment(resourcePath));
-        }
-        if(hasF24FlatRate){
-            npi.f24flatRate(newAttachment(resourcePath));
-        }
-        if(hasF24Standard){
-            npi.f24standard(newAttachment(resourcePath));
-        }
-
-        return new NotificationRecipient()
-                .denomination( prefix + " denomination")
-                .taxId( taxId )
-                .digitalDomicile( new NotificationDigitalAddress()
-                        .type(NotificationDigitalAddress.TypeEnum.PEC)
-                        .address( "FRMTTR76M06B715E@pnpagopa.postecert.local")
-                )
-                .physicalAddress( new NotificationPhysicalAddress()
-                        .address("Via senza nome")
-                        .municipality("Milano")
-                        .province("MI")
-                        .foreignState("ITALIA")
-                        .zip("40100")
-                )
-                .recipientType( NotificationRecipient.RecipientTypeEnum.PF )
-                .payment(npi);
-
-    }
-
-
-
-    public NewNotificationRequest newNotificationRequest(String oggetto, String mittente, String destinatario, String cf,
-                                        String idempotenceToken, String paProtocolNumber,String creditorTaxId, String noticeCode,
-                                        boolean hasPagopaForm, boolean hasF24Standard, boolean hasF24FlatRate) {
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-
-        return new NewNotificationRequest()
-                .subject(oggetto+" "+ dateFormat.format(calendar.getTime()))
-                .idempotenceToken(idempotenceToken)
-                .cancelledIun(null)
-                .group("")
-                ._abstract("Abstract della notifica")
-                .senderDenomination(mittente)
-                .senderTaxId("01199250158")
-                .notificationFeePolicy( NewNotificationRequest.NotificationFeePolicyEnum.FLAT_RATE )
-                .physicalCommunicationType( NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
-                .paProtocolNumber((paProtocolNumber.equals("") ? "" + System.currentTimeMillis() : paProtocolNumber))
-                .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
-                .addRecipientsItem( newRecipient( destinatario, cf,"classpath:/sample.pdf",creditorTaxId,noticeCode,  hasPagopaForm,  hasF24Standard,  hasF24FlatRate));
-    }
-
 
 
     public NotificationDocument newDocument(String resourcePath ) {

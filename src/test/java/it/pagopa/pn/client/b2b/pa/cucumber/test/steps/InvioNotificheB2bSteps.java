@@ -105,6 +105,7 @@ public class InvioNotificheB2bSteps  {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+        Assertions.assertNotNull(notificationResponseComplete);
     }
 
     @When("la notifica viene inviata")

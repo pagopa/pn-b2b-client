@@ -7,6 +7,17 @@
     ./mvnw clean install
 ```
 - eseguire il run del main() nel file src/main/java/it/pagopa/pn/client/b2b/pa/NewNotification.java
-per invio della notifica e verifica dell'accettazione della stessa da parte di Piattaforma Notifiche
-- eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberB2BTest.java
+  per invio della notifica e verifica dell'accettazione della stessa da parte di Piattaforma Notifiche
+
+##Istruzioni aggiuntive per l'esecuzione dei test e2e
+- creare il file 'bearer-token.properties' nel path 'pn-b2b-client/config/'
+- inserire nel file appena creato le stringhe: 
+- 'pn.external.bearer-token-CristoforoC.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
+- 'pn.external.bearer-token-FieramoscaE.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
+
+-eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberB2BTest.java
   per l'esecuzione dei test e2e delle api b2b di Piattaforma Notifiche
+- eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberDevIntegrationTest.java 
+- oppure 
+- src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberSvilIntegrationTest.java 
+- in funzione dell'ambiente di esecuzione per l'esecuzione completa dei test case
