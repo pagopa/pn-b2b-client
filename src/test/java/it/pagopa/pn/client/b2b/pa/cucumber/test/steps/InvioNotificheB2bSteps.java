@@ -54,13 +54,6 @@ public class InvioNotificheB2bSteps  {
         this.notificationRequest.addRecipientsItem(recipient);
     }
 
-    /*
-    @And("^viene generata una notifica .*")
-    public void vieneGenerataUnaNotificaEtc(@Transpose NewNotificationRequest notificationRequest) {
-        System.out.println("sono dentro");
-        this.notificationRequest = notificationRequest;
-    }
-    */
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {

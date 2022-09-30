@@ -69,7 +69,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void vengonoLettiGliEventiDelloStream() {
         Assertions.assertDoesNotThrow(() -> {
             List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
-            System.out.println("EventProgress: "+progressResponseElements);
+            logger.info("EventProgress: " + progressResponseElements);
         });
     }
 
