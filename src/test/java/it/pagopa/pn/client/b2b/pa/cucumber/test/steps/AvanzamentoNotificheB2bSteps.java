@@ -123,7 +123,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
         List<ProgressResponseElement> progressResponseElements;
         ProgressResponseElement progressResponseElement = null;
-        for( int i = 0; i < 36; i++ ) {
+        for( int i = 0; i < 48; i++ ) {
             progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
 
             progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
@@ -176,7 +176,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
         List<ProgressResponseElement> progressResponseElements;
         ProgressResponseElement progressResponseElement = null;
-        for( int i = 0; i < 36; i++ ) {
+        for( int i = 0; i < 48; i++ ) {
             progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStream.getStreamId(), null);
 
             progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);

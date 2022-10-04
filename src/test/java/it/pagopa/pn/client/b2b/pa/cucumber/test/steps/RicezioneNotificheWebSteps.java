@@ -109,6 +109,7 @@ public class RicezioneNotificheWebSteps {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+        Assertions.assertNotNull(notificationResponseComplete);
     }
 
     @Then("la notifica può essere correttamente recuperata dal destinatario")
@@ -198,9 +199,10 @@ public class RicezioneNotificheWebSteps {
 
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
-        String monthString = ((month+"").length() == 2?(month+1):("0"+(month+1)))+"";
-
-        String start = data.getOrDefault("startDate",now.get(Calendar.DAY_OF_MONTH)+"/"+monthString+"/"+now.get(Calendar.YEAR));
+        String monthString = (((month+"").length() == 2 || month == 9)?(month+1):("0"+(month+1)))+"";
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        String dayString = (day+"").length() == 2? (day+""):("0"+day);
+        String start = data.getOrDefault("startDate",dayString+"/"+monthString+"/"+now.get(Calendar.YEAR));
         String end = data.getOrDefault("endDate",null);
 
         OffsetDateTime sentAt = notificationResponseComplete.getSentAt();

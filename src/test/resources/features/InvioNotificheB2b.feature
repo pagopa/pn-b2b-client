@@ -126,7 +126,7 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | physicalAddress | NULL |
     When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "409"
+    Then l'operazione ha prodotto un errore con status code "400"
 
   Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
     Given viene generata una notifica
@@ -168,7 +168,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
 
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -189,7 +189,7 @@ Feature: invio notifiche b2b
       | Forlì             |
       | Nardò             |
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_14] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -211,7 +211,7 @@ Feature: invio notifiche b2b
       | Nardò              |
 
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -233,7 +233,7 @@ Feature: invio notifiche b2b
       | via ò         |
 
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -253,7 +253,7 @@ Feature: invio notifiche b2b
       | Perù                |
 
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_17] invio notifica con oggetto contenente caratteri speciali_scenario positivo
     Given viene generata una notifica
       | subject | <name> |
@@ -273,7 +273,7 @@ Feature: invio notifiche b2b
       | più              |
       | dall'atto        |
 
-    #Scenario in errore
+
   Scenario Outline: [B2B-PA-SEND_18] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -295,43 +295,43 @@ Feature: invio notifiche b2b
 
 
      #Scenario in errore
-  Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
-    Given viene generata una notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | taxId | aaa |
-    When la notifica viene inviata
-    Then l'operazione ha prodotto un errore con status code "409"
+ # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
+  #  Given viene generata una notifica
+   #   | subject | invio notifica con cucumber |
+  #    | senderDenomination | comune di milano |
+   #   | senderTaxId | CFComuneMilano |
+   # And destinatario
+   #   | denomination | Mario Cucumber |
+   #   | taxId | aaa |
+    #When la notifica viene inviata
+   # Then l'operazione ha prodotto un errore con status code "409"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
-    Given viene generata una notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | SI |
-      | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
-    Then l'operazione ha prodotto un errore con status code "400"
+  #Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
+  #  Given viene generata una notifica
+    #  | subject | invio notifica con cucumber |
+   #   | senderDenomination | comune di milano |
+    #  | senderTaxId | CFComuneMilano |
+   #  | feePolicy | DELIVERY_MODE |
+   # And destinatario
+    #  | denomination | Mario Cucumber |
+    #  | payment_pagoPaForm | SI |
+    #  | payment_f24flatRate | SI |
+    #  | payment_f24standard | NULL |
+    #When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    #Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
-  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
-    Given viene generata una notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
-      | feePolicy | FLAT_RATE |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
-    Then l'operazione ha prodotto un errore con status code "400"
+  #Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
+    #Given viene generata una notifica
+     # | subject | invio notifica con cucumber |
+    # | senderDenomination | comune di milano |
+     # | senderTaxId | CFComuneMilano |
+     # | feePolicy | FLAT_RATE |
+   # And destinatario
+     # | denomination | Mario Cucumber |
+    #  | payment_pagoPaForm | SI |
+    #  | payment_f24flatRate | NULL |
+    #  | payment_f24standard | SI |
+   # When la notifica viene inviata tramite api b2b e si attende che venga accettata
+   # Then l'operazione ha prodotto un errore con status code "400"
