@@ -1,6 +1,7 @@
 Feature: invio notifiche b2b
 
   @B2Btest
+  @SmokeTest
   Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -58,6 +59,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -73,6 +75,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "409"
 
   @B2Btest
+  @SmokeTest
   Scenario: [B2B-PA-SEND_6] download documento notificato_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -86,6 +89,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_7] download documento pagopa_scenario positivo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -100,6 +104,7 @@ Feature: invio notifiche b2b
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
+
 
   Scenario: [B2B-PA-SEND_8] download documento f24_standard_scenario positivo
     Given viene generata una notifica
@@ -117,6 +122,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
@@ -166,7 +172,6 @@ Feature: invio notifiche b2b
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
     Then si verifica la corretta acquisizione della notifica
-
 
 
   Scenario Outline: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo

@@ -23,6 +23,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "ACCEPTED"
 
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -36,6 +37,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "REQUEST_ACCEPTED"
 
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -78,6 +80,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
 
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -91,6 +94,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -104,7 +108,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
-
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -120,6 +124,7 @@ Feature: avanzamento notifiche b2b
     And il destinatario legge la notifica
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
+  @Pause
   Scenario: [B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

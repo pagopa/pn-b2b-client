@@ -3,7 +3,8 @@ Feature: Ricezione notifiche destinate al delegante
   Background:
     Given Cristoforo colombo rifiuta se presente la delega ricevuta da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
 
-  Scenario: [WEB-PF-MANDATE_1] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario positivo
+  @SmokeTest
+  Scenario: [WEB-PF-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
     And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"
     When viene generata una notifica per il test di ricezione
@@ -16,6 +17,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     Then la notifica può essere correttamente recuperata dal delegato
 
+  @SmokeTest
   Scenario: [WEB-PF-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
     And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"

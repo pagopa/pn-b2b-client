@@ -1,5 +1,6 @@
 Feature: Ricezione notifiche api web con invio tramite api B2B
 
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una notifica per il test di ricezione
       | subject | invio notifica con cucumber |
@@ -9,6 +10,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     Then la notifica può essere correttamente recuperata dal destinatario
 
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given viene generata una notifica per il test di ricezione
       | subject | invio notifica con cucumber |
@@ -18,6 +20,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     Then il documento notificato può essere correttamente recuperato
 
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo
     Given viene generata una notifica per il test di ricezione
       | subject | invio notifica con cucumber |
@@ -29,6 +32,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | payment_f24standard | NULL |
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     Then l'allegato "PAGOPA" può essere correttamente recuperato
+
 
   Scenario: [WEB-PF-RECIPIENT_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo
     Given viene generata una notifica per il test di ricezione
@@ -135,6 +139,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Then la notifica può essere correttamente recuperata con una ricerca
     |||
 
+
   Scenario: [WEB-PF-RECIPIENT_12] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo
     Given viene generata una notifica per il test di ricezione
       | subject | invio notifica con cucumber |
@@ -157,7 +162,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | startDate | 01/01/2022 |
       | subjectRegExp | cucumber |
 
-
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_14] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo
     Given viene generata una notifica per il test di ricezione
       | subject | invio notifica con cucumber |

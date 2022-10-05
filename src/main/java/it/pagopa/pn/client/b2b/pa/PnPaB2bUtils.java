@@ -81,7 +81,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 15; i++ ) {
+        for( int i = 0; i < 50; i++ ) {
 
             status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
 
@@ -91,7 +91,7 @@ public class PnPaB2bUtils {
             }
 
             try {
-                Thread.sleep( 10 * 1000l);
+                Thread.sleep( 3 * 1000l);
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }
