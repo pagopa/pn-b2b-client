@@ -28,8 +28,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.bearer-token-FieramoscaE.pagopa}") String fieramoscaEBearerToken,
-            @Value("${pn.external.bearer-token-CristoforoC.pagopa}") String cristoforoCBearerToken,
+            @Value("${pn.bearer-token.FieramoscaE}") String fieramoscaEBearerToken,
+            @Value("${pn.bearer-token.CristoforoC}") String cristoforoCBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;

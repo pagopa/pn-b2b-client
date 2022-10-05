@@ -30,7 +30,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.bearer-token-CristoforoC.pagopa}") String bearerToken,
+            @Value("${pn.bearer-token.CristoforoC}") String bearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
