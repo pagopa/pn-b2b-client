@@ -168,7 +168,7 @@ public class PnPaB2bUtils {
     }
 
 
-    private NotificationDocument preloadDocument( NotificationDocument document) throws IOException {
+    public NotificationDocument preloadDocument( NotificationDocument document) throws IOException {
 
         String resourceName = document.getRef().getKey();
         String sha256 = computeSha256( resourceName );
@@ -190,7 +190,7 @@ public class PnPaB2bUtils {
         return document;
     }
 
-    private NotificationPaymentAttachment preloadAttachment( NotificationPaymentAttachment attachment) throws IOException {
+    public NotificationPaymentAttachment preloadAttachment( NotificationPaymentAttachment attachment) throws IOException {
         if( attachment != null ) {
             String resourceName = attachment.getRef().getKey();
 

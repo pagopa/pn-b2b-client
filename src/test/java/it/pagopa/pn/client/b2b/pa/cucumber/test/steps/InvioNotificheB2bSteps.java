@@ -6,18 +6,22 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.testclient.PnSafeStorageInfoExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.math.BigDecimal;
+import java.time.*;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,9 +36,20 @@ public class InvioNotificheB2bSteps  {
     private IPnPaB2bClient b2bClient;
 
     @Autowired
+    private PnSafeStorageInfoExternalClientImpl safeStorageClient;
+
+    @Autowired
     private DataTableTypeUtil dataTableTypeUtil;
 
+    @Value("${pn.retention.time.preload}")
+    private Integer retentionTimePreLoad;
+
+    @Value("${pn.retention.time.load}")
+    private Integer retentionTimeLoad;
+
     private NewNotificationRequest notificationRequest;
+    private NotificationDocument notificationDocumentPreload;
+    private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private FullSentNotification notificationResponseComplete;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
@@ -121,6 +136,78 @@ public class InvioNotificheB2bSteps  {
         );
 
         Assertions.assertNotNull(notificationByIun.get());
+    }
+
+    @Given("viene effettuato il pre-caricamento di un documento")
+    public void vieneEffettuatoIlPreCaricamentoDiUnDocumento() {
+        NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
+        AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
+        Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
+        try {
+            Thread.sleep( 10 * 1000);
+        } catch (InterruptedException e) {
+            logger.error("Thread.sleep error retry");
+            throw new RuntimeException(e);
+        }
+        this.notificationDocumentPreload = notificationDocumentAtomic.get();
+    }
+
+    @Given("viene effettuato il pre-caricamento di un allegato")
+    public void vieneEffettuatoIlPreCaricamentoDiUnAllegato() {
+        NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
+        AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
+        Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
+        try {
+            Thread.sleep( 10 * 1000);
+        } catch (InterruptedException e) {
+            logger.error("Thread.sleep error retry");
+            throw new RuntimeException(e);
+        }
+        this.notificationPaymentAttachmentPreload = notificationDocumentAtomic.get();
+    }
+
+    @Then("viene effettuato un controllo sulla durata della retention di {string} precaricato")
+    public void vieneEffettuatoUnControlloSullaDurataDellaRetentionDelDocumentoPrecaricato(String documentType) {
+        String key = "";
+        switch (documentType){
+            case "ATTO OPPONIBILE":
+                key = this.notificationDocumentPreload.getRef().getKey();
+                break;
+            case "PAGOPA":
+                key = this.notificationPaymentAttachmentPreload.getRef().getKey();
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        Assertions.assertTrue(checkRetetion(key,retentionTimePreLoad));
+    }
+
+    @And("viene effettuato un controllo sulla durata della retention di {string}")
+    public void vieneEffettuatoUnTest(String documentType) {
+        String key = "";
+        switch (documentType){
+            case "ATTO OPPONIBILE":
+                key = notificationResponseComplete.getDocuments().get(0).getRef().getKey();
+                break;
+            case "PAGOPA":
+                key = notificationResponseComplete.getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        Assertions.assertTrue(checkRetetion(key,retentionTimeLoad));
+    }
+
+    private boolean checkRetetion(String fileKey, Integer retentionTime){
+        HashMap<String,String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
+        LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
+        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow,ZoneOffset.of("Z"));
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(stringStringHashMap.get("retentionUntil"));
+        logger.info("now: " + now);
+        logger.info("retentionUntil: "+retentionUntil);
+        long between = ChronoUnit.DAYS.between(now, retentionUntil);
+        logger.info("Difference: "+between);
+        return retentionTime == between;
     }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
@@ -228,5 +315,7 @@ public class InvioNotificheB2bSteps  {
                         .denomination(notificationRequest.getRecipients().get(0).getDenomination())
                         .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
     }
+
+
 
 }

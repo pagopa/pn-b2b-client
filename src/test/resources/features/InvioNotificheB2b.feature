@@ -396,6 +396,37 @@ Feature: invio notifiche b2b
       #3) 11 lettere (ammessi solo numeri)
 
 
+  Scenario: [B2B-PA-SEND_25] verifica retention time dei documenti per la notifica inviata
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+
+  Scenario: [B2B-PA-SEND_26] verifica retention time pagopaForm per la notifica inviata
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And viene effettuato un controllo sulla durata della retention di "PAGOPA"
+
+  Scenario: [B2B-PA-SEND_27] verifica retention time dei documenti pre-caricati
+    Given viene effettuato il pre-caricamento di un documento
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+
+  Scenario: [B2B-PA-SEND_28] verifica retention time  pagopaForm pre-caricato
+    Given viene effettuato il pre-caricamento di un allegato
+    Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
+
+
 
      #Scenario in errore
  # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
