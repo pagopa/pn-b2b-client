@@ -57,7 +57,7 @@ public class RicezioneNotificheWebSteps {
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
-    private HttpClientErrorException documentDownloadError;
+    private HttpClientErrorException httpClientError;
     private HttpServerErrorException notificationError;
     private MandateDto mandateToSearch;
     private final String verificationCode = "24411";
@@ -161,14 +161,14 @@ public class RicezioneNotificheWebSteps {
                     attachmentName,
                     null);
         } catch (HttpClientErrorException e) {
-            this.documentDownloadError = e;
+            this.httpClientError = e;
         }
     }
 
     @Then("il download dell'allegato ha prodotto un errore con status code {string}")
     public void ilDownloadAllegatoHaProdottoUnErrore(String statusCode) {
-        Assertions.assertTrue((this.documentDownloadError != null) &&
-                (this.documentDownloadError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+        Assertions.assertTrue((this.httpClientError != null) &&
+                (this.httpClientError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
 
@@ -280,7 +280,11 @@ public class RicezioneNotificheWebSteps {
                 .datefrom(sdf.format(new Date()))
                 .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
                 );
-        webMandateClient.createMandate(mandate);
+        try {
+            webMandateClient.createMandate(mandate);
+        }catch (HttpClientErrorException e) {
+            this.httpClientError = e;
+        }
     }
 
     @Given("Cristoforo colombo rifiuta se presente la delega ricevuta da {string} {string} con cf {string}")
@@ -442,6 +446,12 @@ public class RicezioneNotificheWebSteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException( exc );
         }
+    }
+
+    @Then("l'operazione di delega ha prodotto un errore con status code {string}")
+    public void lOperazioneDiDelegaHaProdottoUnErroreConStatusCode(String statusCode) {
+        Assertions.assertTrue((httpClientError != null) &&
+                (httpClientError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
 
