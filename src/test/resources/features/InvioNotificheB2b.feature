@@ -19,7 +19,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
       | idempotenceToken | AME2E3626070001.1  |
     And destinatario
       | denomination | Mario Cucumber |
@@ -80,7 +79,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
       | document | SI |
     And destinatario
       | denomination | Mario Cucumber |
@@ -94,7 +92,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | Mario Cucumber |
       | payment_pagoPaForm | SI |
@@ -110,7 +107,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Mario Cucumber |
@@ -127,7 +123,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress | NULL |
@@ -149,7 +144,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
       | feePolicy | FLAT_RATE |
     And destinatario
       | denomination | Mario Cucumber |
@@ -163,7 +157,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | CFComuneMilano |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Mario Cucumber |
@@ -263,7 +256,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | <name> |
       | senderDenomination | comune di milano  |
-      | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
@@ -283,7 +275,6 @@ Feature: invio notifiche b2b
     Given viene generata una notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano  |
-      | senderTaxId | CFComuneMilano |
     And destinatario
       | denomination | <denomination> |
     When la notifica viene inviata tramite api b2b e si attende che venga accettata
@@ -299,12 +290,119 @@ Feature: invio notifiche b2b
       | dudù            |
 
 
+
+  Scenario Outline: [B2B-PA-SEND_19] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | denomination | <denomination> |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | denomination    |
+      | 0_CHAR  |
+      | 81_CHAR |
+
+  Scenario Outline: [B2B-PA-SEND_20] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | <denomination> |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | denomination    |
+      | 0_CHAR  |
+      | 81_CHAR |
+
+  Scenario Outline: [B2B-PA-SEND_21] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | taxId | <taxId> |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | taxId   |
+      | 1000000000 |
+      | 17000000000000000 |
+      | FRMTTR76M06B715 |
+      | FRMTTRZ6M06B715E |
+      | FRMTTR76M0YB715E |
+      | FRMTTR76M06B7W5E |
+      #1) 10 numeri (min 11)
+      #2) 17 numeri (max 16)
+      #3) CF non valido (lettera finale mancante)
+      #4) Lettera omocodia non contemplata (primi 2 numeri)
+      #5) Lettera omocodia non contemplata (seconda serie di 2 numeri)
+      #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
+
+  Scenario Outline: [B2B-PA-SEND_22] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | taxId | <taxId> |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | taxId   |
+      | FRMTTR76M06B715E |
+      | FRMTTR76M0MB715E |
+      | FRMTTR76M06B7P5E |
+      #1) Lettera omocodia contemplata (primi 2 numeri)
+      #2) Lettera omocodia contemplata (seconda serie di 2 numeri)
+      #3) Lettera omocodia contemplata (serie di 3 numeri finale)
+
+
+  Scenario Outline: [B2B-PA-SEND_23] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario
+      | payment_creditorTaxId | <creditorTaxId> |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | creditorTaxId   |
+      | 1000000000 |
+      | 120000000000 |
+      | 11_CHAR |
+      #1) 10 numeri (min 11)
+      #2) 12 numeri (max 11)
+      #3) 11 lettere (ammessi solo numeri)
+
+
+  Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri senderTaxId errati_scenario negativo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | senderTaxId | <senderTaxId> |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | senderTaxId   |
+      | 1000000000 |
+      | 120000000000 |
+      | 11_CHAR |
+      #1) 10 numeri (min 11)
+      #2) 12 numeri (max 11)
+      #3) 11 lettere (ammessi solo numeri)
+
+
+
      #Scenario in errore
  # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
   #  Given viene generata una notifica
    #   | subject | invio notifica con cucumber |
   #    | senderDenomination | comune di milano |
-   #   | senderTaxId | CFComuneMilano |
+   #   | senderTaxId | 01199250158 |
    # And destinatario
    #   | denomination | Mario Cucumber |
    #   | taxId | aaa |
@@ -316,7 +414,7 @@ Feature: invio notifiche b2b
   #  Given viene generata una notifica
     #  | subject | invio notifica con cucumber |
    #   | senderDenomination | comune di milano |
-    #  | senderTaxId | CFComuneMilano |
+    #  | senderTaxId | 01199250158 |
    #  | feePolicy | DELIVERY_MODE |
    # And destinatario
     #  | denomination | Mario Cucumber |
@@ -331,7 +429,7 @@ Feature: invio notifiche b2b
     #Given viene generata una notifica
      # | subject | invio notifica con cucumber |
     # | senderDenomination | comune di milano |
-     # | senderTaxId | CFComuneMilano |
+     # | senderTaxId | 01199250158 |
      # | feePolicy | FLAT_RATE |
    # And destinatario
      # | denomination | Mario Cucumber |

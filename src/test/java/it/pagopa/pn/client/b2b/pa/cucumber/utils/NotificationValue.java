@@ -60,10 +60,19 @@ public enum NotificationValue {
 
     public static String getValue(Map<String, String> data, String key){
         if(data.containsKey(key)){
-            return data.get(key).equals(NULL_VALUE) ? null : data.get(key);
+            return data.get(key).equals(NULL_VALUE) ? null : (data.get(key).contains("_CHAR")? getCharSeq(data.get(key)):data.get(key));
         }else{
             return getDefaultValue(key);
         }
+    }
+
+    public static String getCharSeq(String request){
+        StringBuilder result = new StringBuilder();
+        Integer number = Integer.parseInt(request.substring(0,request.indexOf("_")));
+        for(int i = 0; i < number; i++){
+            result.append("a");
+        }
+        return result.toString();
     }
 
 }
