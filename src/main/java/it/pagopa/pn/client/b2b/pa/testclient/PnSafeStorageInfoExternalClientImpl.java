@@ -66,8 +66,6 @@ public class PnSafeStorageInfoExternalClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-pagopa-safestorage-cx-id","pn-delivery-push");
-        final MultiValueMap<String, String> cookieParams = new LinkedMultiValueMap<String, String>();
-        final MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<String, Object>();
 
 
         final String[] localVarAccepts = {
@@ -76,13 +74,12 @@ public class PnSafeStorageInfoExternalClientImpl {
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        String[] authNames = new String[] { "ApiKeyAuth" };
 
         ParameterizedTypeReference<HashMap<String,String>> returnType = new ParameterizedTypeReference<>() {};
-        return invokeAPI(safeStorageBasePath,"/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, cookieParams, formParams, localVarAccept, localVarContentType, authNames, returnType);
+        return invokeAPI(safeStorageBasePath,"/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private <T> ResponseEntity<T> invokeAPI(String basePath,String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, MultiValueMap<String, String> cookieParams, MultiValueMap<String, Object> formParams, List<MediaType> accept, MediaType contentType, String[] authNames, ParameterizedTypeReference<T> returnType) throws RestClientException {
+    private <T> ResponseEntity<T> invokeAPI(String basePath,String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
 
         Map<String,Object> uriParams = new HashMap<>();
         uriParams.putAll(pathParams);
