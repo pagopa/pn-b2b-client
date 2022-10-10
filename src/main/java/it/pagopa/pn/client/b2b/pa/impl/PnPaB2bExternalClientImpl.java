@@ -48,11 +48,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newApiClient;
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, BigDecimal docidx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
         return senderReadB2BApi.getSentNotificationDocument(iun, docidx);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, BigDecimal recipientIdx, String attachname) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
         return senderReadB2BApi.getSentNotificationAttachment(iun, recipientIdx, attachname);
     }
 

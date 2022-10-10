@@ -16,6 +16,7 @@ public enum NotificationValue {
     NOTIFICATION_FEE_POLICY("feePolicy","FLAT_RATE",false),
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication","REGISTERED_LETTER_890",false),
     DOCUMENT("document","classpath:/sample.pdf",false),
+    TAXONOMY_CODE("taxonomyCode",null,false),
 
     /*RECIPIENT*/
     DENOMINATION("denomination","Mario Cucumber",false),

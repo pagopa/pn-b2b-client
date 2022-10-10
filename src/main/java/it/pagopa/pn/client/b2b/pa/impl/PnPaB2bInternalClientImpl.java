@@ -58,7 +58,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, BigDecimal docidx) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationAttachmentDownloadMetadataResponse response =
                 senderReadB2BApi.getSentNotificationDocument(
                     operatorId
@@ -71,7 +71,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( response, NotificationAttachmentDownloadMetadataResponse.class );
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, BigDecimal recipientIdx, String attachname) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationAttachmentDownloadMetadataResponse response =
                 senderReadB2BApi.getSentNotificationAttachment(
                     operatorId
@@ -88,14 +88,9 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactDownloadMetadataResponse response =
                 legalFactsApi.getLegalFact(
-                        operatorId
-                        , CxTypeAuthFleet.PA
-                        , paId
-                        , iun
-                        , deepCopy(legalFactType
-                        , it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactCategory.class)
-                        , legalFactId
-                        , groups);
+                         iun
+                        , deepCopy(legalFactType, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactCategory.class)
+                        , legalFactId);
         return deepCopy(response, LegalFactDownloadMetadataResponse.class);
     }
 

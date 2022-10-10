@@ -107,7 +107,7 @@ public class PnPaB2bUtils {
 
         for (NotificationDocument doc: fsn.getDocuments()) {
 
-            NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), new BigDecimal(doc.getDocIdx()));
+            NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), Integer.parseInt(doc.getDocIdx()));
             byte[] content = downloadFile(resp.getUrl());
             String sha256 = computeSha256(new ByteArrayInputStream(content));
 
@@ -121,7 +121,7 @@ public class PnPaB2bUtils {
 
             NotificationAttachmentDownloadMetadataResponse resp;
 
-            resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "PAGOPA");
+            resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
             checkAttachment( resp );
 
             //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");

@@ -92,7 +92,6 @@ public class PnSafeStorageInfoExternalClientImpl {
         }
         DefaultUriBuilderFactory uriBuilderFactory = new DefaultUriBuilderFactory();
         uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
-        final RestTemplate restTemplate = new RestTemplate();
         restTemplate.setUriTemplateHandler(uriBuilderFactory);
 
         String expandedPath =  restTemplate.getUriTemplateHandler().expand(finalUri, uriParams).toString();

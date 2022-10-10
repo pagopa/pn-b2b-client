@@ -18,9 +18,9 @@ public interface IPnPaB2bClient {
     NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId);
 
 
-    NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, BigDecimal docidx) ;
+    NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) ;
 
-    NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, BigDecimal recipientIdx, String attachname) ;
+    NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) ;
 
     LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) ;
 }

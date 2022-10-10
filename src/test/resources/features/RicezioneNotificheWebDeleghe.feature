@@ -45,6 +45,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
     Then l'allegato "PAGOPA" può essere correttamente recuperato dal delegato
 
+
   Scenario: [WEB-PF-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
     And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"

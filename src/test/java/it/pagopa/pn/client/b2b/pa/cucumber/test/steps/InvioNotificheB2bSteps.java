@@ -228,7 +228,7 @@ public class InvioNotificheB2bSteps  {
             case "NOTIFICA":
                 List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
                 this.downloadResponse = b2bClient
-                        .getSentNotificationDocument(notificationResponseComplete.getIun(), new BigDecimal(documents.get(0).getDocIdx()));
+                        .getSentNotificationDocument(notificationResponseComplete.getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(this.downloadResponse.getUrl()));
@@ -246,7 +246,7 @@ public class InvioNotificheB2bSteps  {
             default: throw new IllegalArgumentException();
         }
         this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(notificationResponseComplete.getIun(), new BigDecimal(0),downloadType);
+                .getSentNotificationAttachment(notificationResponseComplete.getIun(), 0,downloadType);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(this.downloadResponse.getUrl()));
         this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -260,7 +260,7 @@ public class InvioNotificheB2bSteps  {
                 List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
                 try {
                     this.downloadResponse = b2bClient
-                            .getSentNotificationDocument(notificationResponseComplete.getIun(), new BigDecimal(documents.size()));
+                            .getSentNotificationDocument(notificationResponseComplete.getIun(),documents.size());
                 } catch (HttpClientErrorException | HttpServerErrorException e) {
                     if(e instanceof HttpClientErrorException){
                         this.notificationSentError = (HttpClientErrorException)e;
@@ -280,7 +280,7 @@ public class InvioNotificheB2bSteps  {
         }
         try {
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(notificationResponseComplete.getIun(), new BigDecimal(100),downloadType);
+                    .getSentNotificationAttachment(notificationResponseComplete.getIun(), 100,downloadType);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if(e instanceof HttpClientErrorException){
                 this.notificationSentError = (HttpClientErrorException)e;
@@ -317,5 +317,12 @@ public class InvioNotificheB2bSteps  {
     }
 
 
+    @And("viene controllato la presenza del taxonomyCode")
+    public void vieneControllatoLaPresenzaDelTaxonomyCode() {
+        Assertions.assertNotNull(this.notificationResponseComplete.getTaxonomyCode());
+        if(this.notificationRequest.getTaxonomyCode() != null){
+            Assertions.assertEquals(this.notificationRequest.getTaxonomyCode(),this.notificationResponseComplete.getTaxonomyCode());
+        }
 
+    }
 }

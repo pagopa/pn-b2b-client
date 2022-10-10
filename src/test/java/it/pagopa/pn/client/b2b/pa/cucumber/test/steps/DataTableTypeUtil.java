@@ -25,6 +25,7 @@ public class DataTableTypeUtil {
                 .senderDenomination(getValue(data,SENDER_DENOMINATION.key))
                 .senderTaxId(getValue(data,SENDER_TAX_ID.key))
                 .paProtocolNumber(getValue(data,PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data,TAXONOMY_CODE.key))
                 .notificationFeePolicy(
                         (getValue(data,NOTIFICATION_FEE_POLICY.key) == null? null :
                                 (getValue(data,NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE")?
@@ -66,7 +67,7 @@ public class DataTableTypeUtil {
                 .payment(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentInfo()
                         .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                         .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                        .noticeCodeOptional(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
+                        //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
 
                         .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
                                 null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))

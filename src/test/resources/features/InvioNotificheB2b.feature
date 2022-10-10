@@ -14,6 +14,7 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
+
   @B2Btest
   Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una notifica
@@ -426,7 +427,30 @@ Feature: invio notifiche b2b
     Given viene effettuato il pre-caricamento di un allegato
     Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
 
+  Scenario: [B2B-PA-SEND_29] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+      | taxonomyCode |   NULL   |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And viene controllato la presenza del taxonomyCode
 
+
+  Scenario: [B2B-PA-SEND_30] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo
+    Given viene generata una notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+      | taxonomyCode |   020202201P   |
+    And destinatario
+      | denomination | Mario Cucumber |
+    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    Then si verifica la corretta acquisizione della notifica
+    And viene controllato la presenza del taxonomyCode
 
      #Scenario in errore
  # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
