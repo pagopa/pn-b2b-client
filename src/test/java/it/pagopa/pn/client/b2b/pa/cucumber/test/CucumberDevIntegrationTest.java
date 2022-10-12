@@ -9,6 +9,6 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         features = "src/test/resources/features",
         plugin = {"pretty", "json:target/cucumber-report.json"},
-        tags = "not @svil and not @Pause")
+        tags = "not @svil and not @ignore")
 public class CucumberDevIntegrationTest extends CucumberSpringIntegration {
 }

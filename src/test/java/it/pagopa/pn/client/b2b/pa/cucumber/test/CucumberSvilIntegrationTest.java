@@ -10,7 +10,7 @@ import org.junit.runner.RunWith;
         features = "src/test/resources/features",
         plugin = {"pretty", "json:target/cucumber-report.json"},
         extraGlue = "it.pagopa.pn.client.b2b.pa.cucumber.utils",
-        tags = "not @dev")
+        tags = "not @dev and not @Ignore")
 public class CucumberSvilIntegrationTest extends CucumberSpringIntegration {
 }
 
