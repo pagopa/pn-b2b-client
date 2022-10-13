@@ -90,7 +90,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
 
 
-  @clean
+  @ignore @clean
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
 
-  @clean
+  @ignore @clean
   Scenario: [B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
 
-  @clean
+  @ignore @clean
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -137,7 +137,7 @@ Feature: avanzamento notifiche webhook b2b
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
-  @clean
+  @ignore @clean
   Scenario: [B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
