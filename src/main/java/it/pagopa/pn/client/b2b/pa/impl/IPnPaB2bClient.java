@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import org.springframework.web.client.RestClientException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,4 +24,7 @@ public interface IPnPaB2bClient {
     NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) ;
 
     LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) ;
+
+    NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException;
+
 }

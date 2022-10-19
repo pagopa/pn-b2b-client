@@ -1,5 +1,8 @@
 Feature: avanzamento notifiche webhook b2b
 
+  Background:
+    Given vengono cancellati tutti gli stream presenti
+
   Scenario: [B2B-STREAM_STATUS_1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     When si crea il nuovo stream
@@ -203,20 +206,19 @@ Feature: avanzamento notifiche webhook b2b
     And il destinatario legge la notifica
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
-
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_14] Creazione multi stream notifica
     Given si predispongono 6 nuovi stream denominati "stream-test" con eventType "STATUS"
     When si creano i nuovi stream
     Then l'ultima creazione ha prodotto un errore con status code "409"
-    And si cancellano gli stream creati
-    And viene verificata la corretta cancellazione
 
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_15] Creazione multi stream notifica
     Given si predispongono 6 nuovi stream denominati "stream-test" con eventType "TIMELINE"
     When si creano i nuovi stream
     Then l'ultima creazione ha prodotto un errore con status code "409"
-    And si cancellano gli stream creati
-    And viene verificata la corretta cancellazione
+
+
 
 
   #@svil @clean

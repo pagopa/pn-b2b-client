@@ -8,14 +8,14 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NewNotificationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NotificationPriceApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.SenderReadB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +27,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
     private final LegalFactsApi legalFactsApi;
+    private final NotificationPriceApi notificationPriceApi;
 
     private final String paId;
     private final String operatorId;
@@ -49,6 +50,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, deliveryBasePath) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, deliveryPushBasePath));
+        this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -92,6 +94,14 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                         , deepCopy(legalFactType, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactCategory.class)
                         , legalFactId);
         return deepCopy(response, LegalFactDownloadMetadataResponse.class);
+    }
+
+    @Override
+    public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponse
+                notificationPrice = this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
+
+        return deepCopy( notificationPrice, NotificationPriceResponse.class );
     }
 
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {

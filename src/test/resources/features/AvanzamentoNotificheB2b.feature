@@ -9,7 +9,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato della notifica "ACCEPTED"
+    Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
 
 
   Scenario: [B2B_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
@@ -21,7 +21,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
   Scenario: [B2B_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
@@ -33,7 +33,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "AAR_GENERATION"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
 
 
   Scenario: [B2B_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
@@ -45,7 +45,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "GET_ADDRESS"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 
 
   Scenario: [B2B_TIMELINE_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
@@ -57,7 +57,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERING"
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
 
 
   Scenario: [B2B_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
@@ -69,7 +69,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
   Scenario: [B2B_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
@@ -81,7 +81,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERING"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And il destinatario legge la notifica
     Then si verifica che la notifica abbia lo stato VIEWED
 
@@ -95,9 +95,9 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERING"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And il destinatario legge la notifica
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
 
   Scenario: [B2B_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
@@ -109,7 +109,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERED"
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
   Scenario: [B2B_TIMELINE_10] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
@@ -121,7 +121,7 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERED"
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And il destinatario legge la notifica
     Then si verifica che la notifica abbia lo stato VIEWED
 
@@ -135,8 +135,8 @@ Feature: avanzamento notifiche b2b
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato della notifica "DELIVERED"
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And il destinatario legge la notifica
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
 

@@ -288,7 +288,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi dello stream fino allo stato della notifica {string}")
+    @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void vengonoLettiGliEventiDelloStreamFinoAlloStatoDellaNotifica(String status) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
         switch (status) {
@@ -338,7 +338,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
-    @Then("vengono letti gli eventi dello stream fino all'elemento di timeline della notifica {string}")
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void vengonoLettiGliEventiDelloStreamFinoAllElementoDiTimelineDellaNotifica(String timelineEventCategory) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory timelineElementInternalCategory;
         switch (timelineEventCategory) {
@@ -406,18 +406,33 @@ public class AvanzamentoNotificheB2bSteps {
 
     @After("@clean")
     public void doSomethingAfter() {
-        webhookB2bClient.deleteEventStream(this.eventStreamList.get(0).getStreamId());
-        List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
-        StreamListElement streamListElement = streamListElements.stream().filter(elem -> elem.getStreamId() == this.eventStreamList.get(0).getStreamId()).findAny().orElse(null);
-        logger.info("STREAM SIZE: " + streamListElements.size());
-        logger.info("UUID DELETED: " + this.eventStreamList.get(0).getStreamId());
-        Assertions.assertNull(streamListElement);
+        for(StreamMetadataResponse eventStream: eventStreamList){
+            webhookB2bClient.deleteEventStream(eventStream.getStreamId());
+            List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+            StreamListElement streamListElement = streamListElements.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+            logger.info("STREAM SIZE: " + streamListElements.size());
+            logger.info("UUID DELETED: " + this.eventStreamList.get(0).getStreamId());
+            Assertions.assertNull(streamListElement);
+        }
     }
 
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
     public void lUltimaCreazioneHaProdottoUnErroreConStatusCode(String statusCode) {
+        List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+        System.out.println("streamListElements: "+streamListElements.size());
+        System.out.println("eventStreamList: "+eventStreamList.size());
+        System.out.println("requestNumber: "+requestNumber);
         Assertions.assertTrue((this.clientError != null) &&
                 (this.clientError.getStatusCode().toString().substring(0,3).equals(statusCode)) && (eventStreamList.size() == (requestNumber-1)));
+    }
+
+
+    @Given("vengono cancellati tutti gli stream presenti")
+    public void eliminaTutto() {
+        List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+        for(StreamListElement elem: streamListElements){
+            webhookB2bClient.deleteEventStream(elem.getStreamId());
+        }
     }
 
 }

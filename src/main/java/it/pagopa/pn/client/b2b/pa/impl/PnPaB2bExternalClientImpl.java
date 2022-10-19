@@ -3,12 +3,14 @@ package it.pagopa.pn.client.b2b.pa.impl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.NewNotificationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.NotificationPriceApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.SenderReadB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -23,6 +25,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
     private final LegalFactsApi legalFactsApi;
+    private final NotificationPriceApi notificationPriceApi;
 
     private final String apiKey;
 
@@ -39,6 +42,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKey) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKey) );
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKey));
+        this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKey));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
@@ -58,6 +62,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
         return legalFactsApi.getLegalFact(iun, legalFactType, legalFactId);
+    }
+
+    @Override
+    public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
+        return this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
     }
 
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {
