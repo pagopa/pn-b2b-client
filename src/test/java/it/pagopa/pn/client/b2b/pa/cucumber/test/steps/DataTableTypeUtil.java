@@ -26,6 +26,8 @@ public class DataTableTypeUtil {
                 .senderTaxId(getValue(data,SENDER_TAX_ID.key))
                 .paProtocolNumber(getValue(data,PA_PROTOCOL_NUMBER.key))
                 .taxonomyCode(getValue(data,TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ?  null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ? null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
                 .notificationFeePolicy(
                         (getValue(data,NOTIFICATION_FEE_POLICY.key) == null? null :
                                 (getValue(data,NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE")?

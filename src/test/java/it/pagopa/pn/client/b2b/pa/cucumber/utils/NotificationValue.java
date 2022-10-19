@@ -17,6 +17,8 @@ public enum NotificationValue {
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication","REGISTERED_LETTER_890",false),
     DOCUMENT("document","classpath:/sample.pdf",false),
     TAXONOMY_CODE("taxonomyCode",null,false),
+    AMOUNT("amount",null,false),
+    PAYMENT_EXPIRATION_DATE("paymentExpirationDate", null,false),
 
     /*RECIPIENT*/
     DENOMINATION("denomination","Mario Cucumber",false),

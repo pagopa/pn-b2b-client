@@ -435,6 +435,29 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+
+
+
+    @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
+    public void vengonoVerificatiCostoEDataDiPerfezionamentoDellaNotifica(String price) {
+        priceVerification(price,"");
+    }
+
+    @Then("viene verificato il costo = {string} della notifica")
+    public void vieneVerificatoIlCostoDellaNotifica(String price) {
+        priceVerification(price,null);
+    }
+
+    private void priceVerification(String price, String date){
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(notificationResponseComplete.getRecipients().get(0).getPayment().getCreditorTaxId(), notificationResponseComplete.getRecipients().get(0).getPayment().getNoticeCode());
+        Assertions.assertEquals(notificationPrice.getIun(),notificationResponseComplete.getIun());
+        if(price != null){
+            Assertions.assertEquals(notificationPrice.getAmount(),price);
+        }
+        if(date != null){
+            Assertions.assertNotNull(notificationPrice.getEffectiveDate());
+        }
+    }
 }
 
 
