@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -69,6 +70,11 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     public List<ProgressResponseElement> consumeEventStream(UUID streamId, String lastEventId){
         return this.eventsApi.consumeEventStream(streamId,lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElement>> consumeEventStreamHttp(UUID streamId, String lastEventId) {
+        return this.eventsApi.consumeEventStreamWithHttpInfo(streamId,lastEventId);
     }
 
 

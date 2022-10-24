@@ -9,15 +9,17 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebhookB2bClient;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategory;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -39,6 +41,9 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Autowired
     private PnPaB2bUtils b2bUtils;
+
+    @Autowired
+    private IPnAppIOB2bClient appIOB2bClient;
 
     private List<StreamCreationRequest> streamCreationRequestList;
     private List<StreamMetadataResponse> eventStreamList;
@@ -248,8 +253,10 @@ public class AvanzamentoNotificheB2bSteps {
         int wait = 48;
         boolean finded = false;
         for (int i = 0; i < wait; i++) {
-            progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
-
+            ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), null);
+            String retryAfter = listResponseEntity.getHeaders().get("retry-after").get(0);
+            System.out.println("ReTRY-AFTER: "+retryAfter);
+            progressResponseElements = listResponseEntity.getBody();
             progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationResponseComplete.getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
             notificationResponseComplete = b2bClient.getSentNotification(notificationResponseComplete.getIun());
             logger.info("IUN: " + notificationResponseComplete.getIun());
@@ -366,6 +373,14 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_COURTESY_MESSAGE;
                 break;
+            case "DIGITAL_SUCCESS_WORKFLOW":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
+                break;
+            case "SEND_DIGITAL_PROGRESS":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -387,6 +402,63 @@ public class AvanzamentoNotificheB2bSteps {
             }
         }
         Assertions.assertNotNull(timelineElement);
+    }
+
+    @Then("la PA richiede il download dell'attestazione opponibile {string}")
+    public void vieneRichiestoIlDownloadDellAttestazioneOpponibile(String legalFactCategory) {
+        downloadLegalFact(legalFactCategory,true,false);
+    }
+
+
+    @Then("viene richiesto tramite appIO il download dell'attestazione opponibile {string}")
+    public void ilDestinatarioRichiedeTramiteAppIOIlDownloadDellAttestazioneOpponibile(String legalFactCategory) {
+        downloadLegalFact(legalFactCategory,false,true);
+    }
+
+
+    private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO){
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory timelineElementInternalCategory;
+        TimelineElement timelineElement;
+        LegalFactCategory category;
+        switch (legalFactCategory) {
+            case "SENDER_ACK":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.REQUEST_ACCEPTED;
+                timelineElement = notificationResponseComplete.getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.SENDER_ACK;
+                break;
+            case "RECIPIENT_ACCESS":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOTIFICATION_VIEWED;
+                timelineElement = notificationResponseComplete.getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.RECIPIENT_ACCESS;
+                break;
+            case "PEC_RECEIPT":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                timelineElement = notificationResponseComplete.getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.PEC_RECEIPT;
+                break;
+            case "DIGITAL_DELIVERY":
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
+                timelineElement = notificationResponseComplete.getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        Assertions.assertNotNull(timelineElement.getLegalFactsIds());
+        Assertions.assertEquals(category,timelineElement.getLegalFactsIds().get(0).getCategory());
+        LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+        String key = timelineElement.getLegalFactsIds().get(0).getKey();
+        String keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
+        if(pa){
+            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(notificationResponseComplete.getIun(),categorySearch , keySearch));
+        }
+        if(appIO){
+            Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(notificationResponseComplete.getIun(),categorySearch.toString(), keySearch,notificationResponseComplete.getRecipients().get(0).getTaxId()));
+        }
     }
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
@@ -443,10 +515,12 @@ public class AvanzamentoNotificheB2bSteps {
         priceVerification(price,"");
     }
 
+
     @Then("viene verificato il costo = {string} della notifica")
     public void vieneVerificatoIlCostoDellaNotifica(String price) {
         priceVerification(price,null);
     }
+
 
     private void priceVerification(String price, String date){
         NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(notificationResponseComplete.getRecipients().get(0).getPayment().getCreditorTaxId(), notificationResponseComplete.getRecipients().get(0).getPayment().getNoticeCode());
@@ -458,6 +532,9 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(notificationPrice.getEffectiveDate());
         }
     }
+
+
+
 }
 
 
