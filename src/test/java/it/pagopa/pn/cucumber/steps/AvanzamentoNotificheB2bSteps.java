@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.cucumber.test.steps;
+package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Transpose;
@@ -6,12 +6,15 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebhookB2bClient;
+import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategory;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -28,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-public class AvanzamentoNotificheB2bSteps {
+public class AvanzamentoNotificheB2bSteps  {
 
     @Autowired
     IPnWebhookB2bClient webhookB2bClient;

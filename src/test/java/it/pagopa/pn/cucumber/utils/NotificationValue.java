@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.cucumber.utils;
+package it.pagopa.pn.cucumber.utils;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -58,7 +58,9 @@ public enum NotificationValue {
     public static String getDefaultValue(String key) {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
-        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("30201%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
+        String threadNumber = (Thread.currentThread().getId()+"");
+        String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
+        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
     }
 
     public static String getValue(Map<String, String> data, String key){

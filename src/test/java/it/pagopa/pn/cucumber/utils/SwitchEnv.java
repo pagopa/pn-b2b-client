@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.cucumber.utils;
+package it.pagopa.pn.cucumber.utils;
 
 
 import io.cucumber.java.Before;

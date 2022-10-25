@@ -1,12 +1,13 @@
-package it.pagopa.pn.client.b2b.pa.cucumber.test.steps;
+package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Map;
 
-import static it.pagopa.pn.client.b2b.pa.cucumber.utils.NotificationValue.*;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 
 public class DataTableTypeUtil {
@@ -15,8 +16,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public NewNotificationRequest convertNotificationRequest(Map<String, String> data){
-        return (new NewNotificationRequest()
+    public synchronized NewNotificationRequest convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequest notificationRequest = (new NewNotificationRequest()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -40,11 +41,17 @@ public class DataTableTypeUtil {
                                         NewNotificationRequest.PhysicalCommunicationTypeEnum.SIMPLE_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
         );
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequest;
     }
 
     @DataTableType
-    public NotificationRecipient convertNotificationRecipient(Map<String, String> data){
-        return (new NotificationRecipient()
+    public synchronized NotificationRecipient convertNotificationRecipient(Map<String, String> data){
+        NotificationRecipient notificationRecipient =  (new NotificationRecipient()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 .internalId(getValue(data,INTERNAL_ID.key))
@@ -83,5 +90,11 @@ public class DataTableTypeUtil {
                                         utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 )
         );
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRecipient;
     }
 }

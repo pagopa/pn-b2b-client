@@ -1,36 +1,40 @@
-package it.pagopa.pn.client.b2b.pa.cucumber.test.steps;
+package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.FullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.testclient.PnSafeStorageInfoExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.Consent;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.ConsentAction;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.ConsentType;
+import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.math.BigDecimal;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
 
 
 public class InvioNotificheB2bSteps  {

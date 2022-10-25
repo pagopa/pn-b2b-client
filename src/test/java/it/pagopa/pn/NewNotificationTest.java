@@ -1,5 +1,6 @@
-package it.pagopa.pn.client.b2b.pa;
+package it.pagopa.pn;
 
+import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bInternalClientImpl;
