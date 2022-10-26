@@ -58,8 +58,9 @@ public class RicezioneNotificheWebSteps  {
     @Autowired
     private DataTableTypeUtil dataTableTypeUtil;
 
-    private NewNotificationRequest notificationRequest;
-    private FullSentNotification notificationResponseComplete;
+    @Autowired
+    private GenerazioneInvioNotificaB2bSteps notificationGlue;
+
     private HttpClientErrorException httpClientError;
     private HttpServerErrorException notificationError;
     private MandateDto mandateToSearch;
@@ -68,57 +69,10 @@ public class RicezioneNotificheWebSteps  {
 
 
 
-    @Given("viene generata una notifica per il test di ricezione")
-    public void vieneGenerataUnaNotificaPerIlTestDiRicezione(@Transpose NewNotificationRequest notificationRequest) {
-        this.notificationRequest = notificationRequest;
-    }
-
-    @And("destinatario Cristoforo Colombo")
-    public void destinatarioCristoforoColombo() {
-        this.notificationRequest.addRecipientsItem(
-                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Cristoforo Colombo")
-                        .taxId("CLMCST42R12D969Z")
-                        .digitalDomicile(new NotificationDigitalAddress()
-                                .type(NotificationDigitalAddress.TypeEnum.PEC )
-                                .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
-    }
-
-    @And("destinatario Cristoforo Colombo and:")
-    public void destinatarioCristoforoColomboParam(@Transpose NotificationRecipient recipient) {
-        this.notificationRequest.addRecipientsItem(
-                recipient
-                        .denomination("Cristoforo Colombo")
-                        .taxId("CLMCST42R12D969Z")
-                        .digitalDomicile(new NotificationDigitalAddress()
-                                .type(NotificationDigitalAddress.TypeEnum.PEC )
-                                .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
-    }
-
-    @And("destinatario alternativo")
-    public void destinatarioAlternativo(@Transpose NotificationRecipient recipient) {
-        this.notificationRequest.addRecipientsItem(recipient);
-    }
-
-    @When("la notifica viene inviata e si riceve il relativo codice IUN valorizzato")
-    public void laNotificaVieneInviataESiRiceveIlRelativoCodiceIUNValorizzato() {
-        Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
-        });
-        try {
-            Thread.sleep( 10 * 1000);
-        } catch (InterruptedException e) {
-            logger.error("Thread.sleep error retry");
-            throw new RuntimeException(e);
-        }
-        Assertions.assertNotNull(notificationResponseComplete);
-    }
-
     @Then("la notifica può essere correttamente recuperata dal destinatario")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario() {
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), null);
         });
     }
 
@@ -126,8 +80,8 @@ public class RicezioneNotificheWebSteps  {
     @Then("il documento notificato può essere correttamente recuperato")
     public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato() {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                notificationResponseComplete.getIun(),
-                Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
+                notificationGlue.getSentNotification().getIun(),
+                Integer.parseInt(notificationGlue.getSentNotification().getDocuments().get(0).getDocIdx()),
                 null
         );
         AtomicReference<String> Sha256 = new AtomicReference<>("");
@@ -140,11 +94,10 @@ public class RicezioneNotificheWebSteps  {
     }
 
 
-
     @Then("l'allegato {string} può essere correttamente recuperato")
     public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName) {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                notificationResponseComplete.getIun(),
+                notificationGlue.getSentNotification().getIun(),
                 attachmentName,
                 null);
         AtomicReference<String> Sha256 = new AtomicReference<>("");
@@ -160,7 +113,7 @@ public class RicezioneNotificheWebSteps  {
     public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
         try {
             webRecipientClient.getReceivedNotificationAttachment(
-                    notificationResponseComplete.getIun(),
+                    notificationGlue.getSentNotification().getIun(),
                     attachmentName,
                     null);
         } catch (HttpClientErrorException e) {
@@ -178,7 +131,7 @@ public class RicezioneNotificheWebSteps  {
     @And("si tenta il recupero della notifica da parte del destinatario")
     public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario() {
         try {
-            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), null);
+            webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), null);
         } catch (HttpServerErrorException e) {
             this.notificationError = e;
         }
@@ -208,7 +161,7 @@ public class RicezioneNotificheWebSteps  {
         String start = data.getOrDefault("startDate",dayString+"/"+monthString+"/"+now.get(Calendar.YEAR));
         String end = data.getOrDefault("endDate",null);
 
-        OffsetDateTime sentAt = notificationResponseComplete.getSentAt();
+        OffsetDateTime sentAt = notificationGlue.getSentNotification().getSentAt();
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart,sentAt.getOffset());
 
@@ -226,7 +179,7 @@ public class RicezioneNotificheWebSteps  {
         //searchParam.senderId = data.getOrDefault("senderId",null);
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp",null);
         String iun = data.getOrDefault("iunMatch",null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL")? notificationResponseComplete.getIun():iun));
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL")? notificationGlue.getSentNotification().getIun():iun));
         searchParam.size = Integer.parseInt(data.getOrDefault("size","10"));
         return searchParam;
     }
@@ -239,7 +192,7 @@ public class RicezioneNotificheWebSteps  {
                         searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
                         searchParam.iunMatch, searchParam.size, null);
         List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
-        beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(notificationResponseComplete.getIun())).findAny().orElse(null) != null;
+        beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(notificationGlue.getSentNotification().getIun())).findAny().orElse(null) != null;
         if(!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())){
             while(Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())){
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
@@ -249,7 +202,7 @@ public class RicezioneNotificheWebSteps  {
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
-                    beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(notificationResponseComplete.getIun())).findAny().orElse(null) != null;
+                    beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(notificationGlue.getSentNotification().getIun())).findAny().orElse(null) != null;
                     if(beenFound)break;
                 }//for
                 if(beenFound)break;
@@ -327,15 +280,15 @@ public class RicezioneNotificheWebSteps  {
     @Then("la notifica può essere correttamente recuperata dal delegato")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDelegato() {
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
     }
 
     @Then("il documento notificato può essere correttamente recuperato dal delegato")
     public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato() {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                notificationResponseComplete.getIun(),
-                Integer.parseInt(notificationResponseComplete.getDocuments().get(0).getDocIdx()),
+                notificationGlue.getSentNotification().getIun(),
+                Integer.parseInt(notificationGlue.getSentNotification().getDocuments().get(0).getDocIdx()),
                 mandateToSearch.getMandateId()
         );
         AtomicReference<String> Sha256 = new AtomicReference<>("");
@@ -350,7 +303,7 @@ public class RicezioneNotificheWebSteps  {
     @Then("l'allegato {string} può essere correttamente recuperato dal delegato")
     public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                notificationResponseComplete.getIun(),
+                notificationGlue.getSentNotification().getIun(),
                 attachmentName,
                 mandateToSearch.getMandateId());
         AtomicReference<String> Sha256 = new AtomicReference<>("");
@@ -399,13 +352,12 @@ public class RicezioneNotificheWebSteps  {
     }
 
 
-
     @Then("si tenta il recupero della notifica da parte del delegato che produce un errore con status code {string}")
     public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String statusCode) {
         HttpClientErrorException httpClientErrorException = null;
         try {
             FullReceivedNotification receivedNotification =
-                    webRecipientClient.getReceivedNotification(notificationResponseComplete.getIun(), mandateToSearch.getMandateId());
+                    webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }

@@ -3,42 +3,41 @@ Feature: invio notifiche b2b
   @B2Btest
   @SmokeTest
   Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-
   @B2Btest
   Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | idempotenceToken | AME2E3626070001.1  |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
   @B2Btest
   Scenario: [B2B-PA-SEND_3] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | idempotenceToken | AME2E3626070001.1  |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
     When la notifica viene inviata
@@ -46,29 +45,29 @@ Feature: invio notifiche b2b
 
   @B2Btest
   Scenario: [B2B-PA-SEND_4] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
   @SmokeTest
   Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
     When la notifica viene inviata
@@ -77,20 +76,20 @@ Feature: invio notifiche b2b
   @B2Btest
   @SmokeTest
   Scenario: [B2B-PA-SEND_6] download documento notificato_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | document | SI |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
   @SmokeTest
   Scenario: [B2B-PA-SEND_7] download documento pagopa_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
@@ -98,14 +97,14 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
 
   Scenario: [B2B-PA-SEND_8] download documento f24_standard_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
@@ -114,14 +113,14 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
   @SmokeTest
   Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
@@ -131,18 +130,18 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
   Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
       | denomination | Mario Cucumber |
-    And la notifica viene inviata tramite api b2b e si attende che venga accettata
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When si tenta il recupero della notifica dal sistema tramite codice IUN "IUNUGYD-XHEZ-KLRM-202208-X-0"
     Then l'operazione ha prodotto un errore con status code "404"
 
 
   Scenario: [B2B-PA-SEND_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | FLAT_RATE |
@@ -151,11 +150,11 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
   Scenario: [B2B-PA-SEND_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
@@ -164,19 +163,19 @@ Feature: invio notifiche b2b
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
 
   Scenario Outline: [B2B-PA-SEND_13] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_municipality | <comune> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -190,14 +189,14 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_14] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_municipalityDetails | <localita> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -212,14 +211,14 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_15] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_address | <indirizzo> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -234,14 +233,14 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_16] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_State | <stato> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -254,12 +253,12 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_17] invio notifica con oggetto contenente caratteri speciali_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | <name> |
       | senderDenomination | comune di milano  |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
@@ -273,12 +272,12 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_18] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano  |
     And destinatario
       | denomination | <denomination> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
@@ -293,7 +292,7 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_19] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
@@ -306,7 +305,7 @@ Feature: invio notifiche b2b
       | 81_CHAR |
 
   Scenario Outline: [B2B-PA-SEND_20] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | <denomination> |
     And destinatario
@@ -319,7 +318,7 @@ Feature: invio notifiche b2b
       | 81_CHAR |
 
   Scenario Outline: [B2B-PA-SEND_21] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
@@ -342,12 +341,12 @@ Feature: invio notifiche b2b
       #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
 
   Scenario Outline: [B2B-PA-SEND_22] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
       | taxId | <taxId> |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
@@ -361,7 +360,7 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_23] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
     And destinatario
@@ -379,7 +378,7 @@ Feature: invio notifiche b2b
 
 
   Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri senderTaxId errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | senderTaxId | <senderTaxId> |
@@ -398,24 +397,24 @@ Feature: invio notifiche b2b
 
 
   Scenario: [B2B-PA-SEND_25] verifica retention time dei documenti per la notifica inviata
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
   Scenario: [B2B-PA-SEND_26] verifica retention time pagopaForm per la notifica inviata
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -428,33 +427,33 @@ Feature: invio notifiche b2b
     Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
 
   Scenario: [B2B-PA-SEND_29] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
       | taxonomyCode |   NULL   |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
 
 
   Scenario: [B2B-PA-SEND_30] Invio notifica digitale mono destinatario con taxonomyCode (verifica Default)_scenario positivo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
       | taxonomyCode |   020202201P   |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
 
 
   Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | <subject> |
       | senderDenomination | comune di milano |
     And destinatario
@@ -466,7 +465,7 @@ Feature: invio notifiche b2b
       | 513_CHAR |
 
   Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
-    Given viene generata una notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | abstract | <abstract> |
@@ -481,7 +480,7 @@ Feature: invio notifiche b2b
 
      #Scenario in errore
  # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
-  #  Given viene generata una notifica
+  #  Given viene generata una nuova notifica
    #   | subject | invio notifica con cucumber |
   #    | senderDenomination | comune di milano |
    #   | senderTaxId | 01199250158 |
@@ -493,7 +492,7 @@ Feature: invio notifiche b2b
 
     #Scenario in errore
   #Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario DeliveryMode-Senza-F24_Standard_scenario negativo
-  #  Given viene generata una notifica
+  #  Given viene generata una nuova notifica
     #  | subject | invio notifica con cucumber |
    #   | senderDenomination | comune di milano |
     #  | senderTaxId | 01199250158 |
@@ -503,12 +502,12 @@ Feature: invio notifiche b2b
     #  | payment_pagoPaForm | SI |
     #  | payment_f24flatRate | SI |
     #  | payment_f24standard | NULL |
-    #When la notifica viene inviata tramite api b2b e si attende che venga accettata
+    #When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     #Then l'operazione ha prodotto un errore con status code "400"
 
     #Scenario in errore
   #Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario FLAT_RATE-Senza-F24_FlatRate_scenario negativo
-    #Given viene generata una notifica
+    #Given viene generata una nuova notifica
      # | subject | invio notifica con cucumber |
     # | senderDenomination | comune di milano |
      # | senderTaxId | 01199250158 |
@@ -518,5 +517,5 @@ Feature: invio notifiche b2b
     #  | payment_pagoPaForm | SI |
     #  | payment_f24flatRate | NULL |
     #  | payment_f24standard | SI |
-   # When la notifica viene inviata tramite api b2b e si attende che venga accettata
+   # When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
    # Then l'operazione ha prodotto un errore con status code "400"

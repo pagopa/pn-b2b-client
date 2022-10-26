@@ -1,26 +1,20 @@
 package it.pagopa.pn.cucumber.steps;
 
-import io.cucumber.java.Transpose;
+
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.FullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -49,13 +43,10 @@ public class InvioNotificheB2bSteps  {
     private PnSafeStorageInfoExternalClientImpl safeStorageClient;
 
     @Autowired
-    private IPnAppIOB2bClient iPnAppIOB2bClient;
-
-    @Autowired
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
 
     @Autowired
-    private DataTableTypeUtil dataTableTypeUtil;
+    private GenerazioneInvioNotificaB2bSteps notificationGlue;
 
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
@@ -63,80 +54,20 @@ public class InvioNotificheB2bSteps  {
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
-    private NewNotificationRequest notificationRequest;
+
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
-    private FullSentNotification notificationResponseComplete;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private HttpClientErrorException notificationSentError;
-    private HttpServerErrorException notficationServerError;
-
-
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
-    @Given("viene generata una notifica")
-    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
-        this.notificationRequest = notificationRequest;
-    }
-
-    @And("destinatario")
-    public void destinatario(@Transpose NotificationRecipient recipient) {
-        this.notificationRequest.addRecipientsItem(recipient);
-    }
-
-
-    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
-    public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
-        String creditorTaxId = notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId();
-
-        generateNewNotification();
-
-        this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
-    }
-
-    @And("viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso")
-    public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEUgualeCodiceAvviso() {
-        String creditorTaxId = notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId();
-        String noticeCode = notificationRequest.getRecipients().get(0).getPayment().getNoticeCode();
-
-        generateNewNotification();
-
-        this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
-        this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCode(noticeCode);
-    }
-
-    @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
-    public void vienePredispostaEInviataUnaNuovaNotificaConUgualePaProtocolNumberEIdempotenceToken(String idempotenceToken) {
-        String paProtocolNumber = notificationRequest.getPaProtocolNumber();
-
-        generateNewNotification();
-
-        this.notificationRequest.setIdempotenceToken(idempotenceToken);
-        this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
-    }
-
-
-    @When("la notifica viene inviata tramite api b2b e si attende che venga accettata")
-    public void laNotificaVieneInviataOk() {
-        Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
-        });
-        try {
-            Thread.sleep( 10 * 1000);
-        } catch (InterruptedException e) {
-            logger.error("Thread.sleep error retry");
-            throw new RuntimeException(e);
-        }
-        Assertions.assertNotNull(notificationResponseComplete);
-    }
 
     @When("la notifica viene inviata")
     public void laNotificaVieneInviataKO() {
         try {
-            b2bUtils.uploadNotification(notificationRequest);
+            b2bUtils.uploadNotification(notificationGlue.getNotificationRequest());
         } catch (HttpClientErrorException | IOException e) {
             if(e instanceof HttpClientErrorException){
                 this.notificationSentError = (HttpClientErrorException)e;
@@ -149,7 +80,7 @@ public class InvioNotificheB2bSteps  {
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
 
         Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(b2bUtils.getNotificationByIun(notificationResponseComplete.getIun()))
+                notificationByIun.set(b2bUtils.getNotificationByIun(notificationGlue.getSentNotification().getIun()))
         );
 
         Assertions.assertNotNull(notificationByIun.get());
@@ -204,10 +135,10 @@ public class InvioNotificheB2bSteps  {
         String key = "";
         switch (documentType){
             case "ATTO OPPONIBILE":
-                key = notificationResponseComplete.getDocuments().get(0).getRef().getKey();
+                key = notificationGlue.getSentNotification().getDocuments().get(0).getRef().getKey();
                 break;
             case "PAGOPA":
-                key = notificationResponseComplete.getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
+                key = notificationGlue.getSentNotification().getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -243,9 +174,9 @@ public class InvioNotificheB2bSteps  {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
-                List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
+                List<NotificationDocument> documents = notificationGlue.getSentNotification().getDocuments();
                 this.downloadResponse = b2bClient
-                        .getSentNotificationDocument(notificationResponseComplete.getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
+                        .getSentNotificationDocument(notificationGlue.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(this.downloadResponse.getUrl()));
@@ -263,7 +194,7 @@ public class InvioNotificheB2bSteps  {
             default: throw new IllegalArgumentException();
         }
         this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(notificationResponseComplete.getIun(), 0,downloadType);
+                .getSentNotificationAttachment(notificationGlue.getSentNotification().getIun(), 0,downloadType);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(this.downloadResponse.getUrl()));
         this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -274,10 +205,10 @@ public class InvioNotificheB2bSteps  {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
-                List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
+                List<NotificationDocument> documents = notificationGlue.getSentNotification().getDocuments();
                 try {
                     this.downloadResponse = b2bClient
-                            .getSentNotificationDocument(notificationResponseComplete.getIun(),documents.size());
+                            .getSentNotificationDocument(notificationGlue.getSentNotification().getIun(),documents.size());
                 } catch (HttpClientErrorException | HttpServerErrorException e) {
                     if(e instanceof HttpClientErrorException){
                         this.notificationSentError = (HttpClientErrorException)e;
@@ -297,7 +228,7 @@ public class InvioNotificheB2bSteps  {
         }
         try {
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(notificationResponseComplete.getIun(), 100,downloadType);
+                    .getSentNotificationAttachment(notificationGlue.getSentNotification().getIun(), 100,downloadType);
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if(e instanceof HttpClientErrorException){
                 this.notificationSentError = (HttpClientErrorException)e;
@@ -319,69 +250,20 @@ public class InvioNotificheB2bSteps  {
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void laNotificaCorrettamenteInviata() {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( notificationResponseComplete ));
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( notificationGlue.getSentNotification() ));
     }
 
-
-    private void generateNewNotification(){
-        assert this.notificationRequest.getRecipients().get(0).getPayment() != null;
-        this.notificationRequest = (dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
-                .subject(notificationRequest.getSubject())
-                .senderDenomination(notificationRequest.getSenderDenomination())
-                .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination(notificationRequest.getRecipients().get(0).getDenomination())
-                        .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
-    }
 
 
     @And("viene controllato la presenza del taxonomyCode")
     public void vieneControllatoLaPresenzaDelTaxonomyCode() {
-        Assertions.assertNotNull(this.notificationResponseComplete.getTaxonomyCode());
-        if(this.notificationRequest.getTaxonomyCode() != null){
-            Assertions.assertEquals(this.notificationRequest.getTaxonomyCode(),this.notificationResponseComplete.getTaxonomyCode());
+        Assertions.assertNotNull(this.notificationGlue.getSentNotification().getTaxonomyCode());
+        if(this.notificationGlue.getNotificationRequest().getTaxonomyCode() != null){
+            Assertions.assertEquals(this.notificationGlue.getNotificationRequest().getTaxonomyCode(),
+                    this.notificationGlue.getSentNotification().getTaxonomyCode());
         }
 
     }
 
 
-    @Then("la notifica può essere recuperata tramite AppIO")
-    public void laNotificaPuòEssereRecuperataTramiteAppIO() {
-        AtomicReference<FullReceivedNotification> notificationByIun = new AtomicReference<>();
-
-        Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(notificationResponseComplete.getIun(), notificationResponseComplete.getRecipients().get(0).getTaxId()))
-        );
-
-        Assertions.assertNotNull(notificationByIun.get());
-    }
-
-    @Then("il documento notificato può essere recuperata tramite AppIO")
-    public void ilDocumentoNotificatoPuòEssereRecuperataTramiteAppIO() {
-        List<NotificationDocument> documents = notificationResponseComplete.getDocuments();
-        it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(notificationResponseComplete.getIun(), Integer.parseInt(documents.get(0).getDocIdx()), notificationResponseComplete.getRecipients().get(0).getTaxId());
-
-        byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
-        this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
-
-        Assertions.assertEquals(this.sha256DocumentDownload,sentNotificationDocument.getSha256());
-    }
-
-    @And("si tenta il recupero della notifica tramite AppIO")
-    public void siTentaIlRecuperoDellaNotificaTramiteAppIO() {
-        try {
-            this.iPnAppIOB2bClient.getReceivedNotification(notificationResponseComplete.getIun(), "FRMTTR76M06B715E");
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpServerErrorException) {
-                this.notficationServerError = (HttpServerErrorException) e;
-            }
-        }
-    }
-
-    @Then("il tentativo di recupero ha prodotto un errore con status code {string}")
-    public void ilTentativoDiRecuperoHaProdottoUnErroreConStatusCode(String statusCode) {
-        Assertions.assertTrue((this.notficationServerError != null) &&
-                (this.notficationServerError.getStatusCode().toString().substring(0,3).equals(statusCode)));
-    }
 }
