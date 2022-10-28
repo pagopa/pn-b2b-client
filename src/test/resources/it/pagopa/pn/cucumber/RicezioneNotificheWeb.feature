@@ -69,7 +69,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero dell'allegato "F24"
-    Then il download dell'allegato ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   Scenario: [WEB-PF-RECIPIENT_7] Invio notifica digitale altro destinatario e recupero tramite codice IUN API WEB_scenario negativo
     Given viene generata una nuova notifica
@@ -80,7 +80,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero della notifica da parte del destinatario
-    Then l'operazione di recupero ha prodotto un errore con status code "500"
+    Then il recupero ha prodotto un errore con status code "500"
 
   Scenario: [WEB-PF-RECIPIENT_8] Invio notifica digitale altro destinatario e recupero allegato F24_STANDARD_scenario negativo
     Given viene generata una nuova notifica
@@ -95,7 +95,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero dell'allegato "F24"
-    Then il download dell'allegato ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   Scenario: [WEB-PF-RECIPIENT_9] Invio notifica digitale altro destinatario e recupero allegato F24_FLAT_scenario negativo
     Given viene generata una nuova notifica
@@ -110,7 +110,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero dell'allegato "F24"
-    Then il download dell'allegato ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   Scenario: [WEB-PF-RECIPIENT_10] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
     Given viene generata una nuova notifica
@@ -124,7 +124,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero dell'allegato "PAGOPA"
-    Then il download dell'allegato ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   Scenario: [WEB-PF-RECIPIENT_11] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo
     Given viene generata una nuova notifica

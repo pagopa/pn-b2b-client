@@ -104,6 +104,16 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( notificationPrice, NotificationPriceResponse.class );
     }
 
+    @Override
+    public boolean setApiKeys(ApiKeyType apiKey) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public ApiKeyType getApiKeySetted() {
+        throw new UnsupportedOperationException();
+    }
+
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.PreLoadRequest[] requests;

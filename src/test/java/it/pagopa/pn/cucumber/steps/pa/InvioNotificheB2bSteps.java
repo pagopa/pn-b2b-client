@@ -1,15 +1,15 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.steps.pa;
 
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.FullReceivedNotification;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class InvioNotificheB2bSteps  {
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
 
     @Autowired
-    private GenerazioneInvioNotificaB2bSteps notificationGlue;
+    private SharedSteps sharedSteps;
 
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
@@ -59,7 +60,7 @@ public class InvioNotificheB2bSteps  {
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
-    private HttpClientErrorException notificationSentError;
+    private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
 
@@ -67,10 +68,10 @@ public class InvioNotificheB2bSteps  {
     @When("la notifica viene inviata")
     public void laNotificaVieneInviataKO() {
         try {
-            b2bUtils.uploadNotification(notificationGlue.getNotificationRequest());
-        } catch (HttpClientErrorException | IOException e) {
-            if(e instanceof HttpClientErrorException){
-                this.notificationSentError = (HttpClientErrorException)e;
+            b2bUtils.uploadNotification(sharedSteps.getNotificationRequest());
+        } catch (HttpStatusCodeException | IOException e) {
+            if(e instanceof HttpStatusCodeException){
+                this.notificationError = (HttpStatusCodeException)e;
             }
         }
     }
@@ -80,7 +81,7 @@ public class InvioNotificheB2bSteps  {
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
 
         Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(b2bUtils.getNotificationByIun(notificationGlue.getSentNotification().getIun()))
+                notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
         );
 
         Assertions.assertNotNull(notificationByIun.get());
@@ -135,10 +136,10 @@ public class InvioNotificheB2bSteps  {
         String key = "";
         switch (documentType){
             case "ATTO OPPONIBILE":
-                key = notificationGlue.getSentNotification().getDocuments().get(0).getRef().getKey();
+                key = sharedSteps.getSentNotification().getDocuments().get(0).getRef().getKey();
                 break;
             case "PAGOPA":
-                key = notificationGlue.getSentNotification().getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
+                key = sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -162,10 +163,8 @@ public class InvioNotificheB2bSteps  {
     public void laNotificaPuoEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUN(String IUN) {
         try {
             b2bUtils.getNotificationByIun(IUN);
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpClientErrorException) {
-                this.notificationSentError = (HttpClientErrorException) e;
-            }
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
         }
     }
 
@@ -174,9 +173,9 @@ public class InvioNotificheB2bSteps  {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
-                List<NotificationDocument> documents = notificationGlue.getSentNotification().getDocuments();
+                List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 this.downloadResponse = b2bClient
-                        .getSentNotificationDocument(notificationGlue.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
+                        .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()));
 
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(this.downloadResponse.getUrl()));
@@ -194,7 +193,7 @@ public class InvioNotificheB2bSteps  {
             default: throw new IllegalArgumentException();
         }
         this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(notificationGlue.getSentNotification().getIun(), 0,downloadType);
+                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0,downloadType);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(this.downloadResponse.getUrl()));
         this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -205,14 +204,12 @@ public class InvioNotificheB2bSteps  {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
-                List<NotificationDocument> documents = notificationGlue.getSentNotification().getDocuments();
+                List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 try {
                     this.downloadResponse = b2bClient
-                            .getSentNotificationDocument(notificationGlue.getSentNotification().getIun(),documents.size());
-                } catch (HttpClientErrorException | HttpServerErrorException e) {
-                    if(e instanceof HttpClientErrorException){
-                        this.notificationSentError = (HttpClientErrorException)e;
-                    }
+                            .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(),documents.size());
+                } catch (HttpStatusCodeException e) {
+                    this.notificationError = e;
                 }
                 return;
             case "PAGOPA":
@@ -228,11 +225,9 @@ public class InvioNotificheB2bSteps  {
         }
         try {
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(notificationGlue.getSentNotification().getIun(), 100,downloadType);
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if(e instanceof HttpClientErrorException){
-                this.notificationSentError = (HttpClientErrorException)e;
-            }
+                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100,downloadType);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
         }
     }
 
@@ -243,24 +238,24 @@ public class InvioNotificheB2bSteps  {
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operazioneHaProdottoUnErrore(String statusCode) {
-        Assertions.assertTrue((this.notificationSentError != null) &&
-                (this.notificationSentError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void laNotificaCorrettamenteInviata() {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( notificationGlue.getSentNotification() ));
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( sharedSteps.getSentNotification() ));
     }
 
 
 
     @And("viene controllato la presenza del taxonomyCode")
     public void vieneControllatoLaPresenzaDelTaxonomyCode() {
-        Assertions.assertNotNull(this.notificationGlue.getSentNotification().getTaxonomyCode());
-        if(this.notificationGlue.getNotificationRequest().getTaxonomyCode() != null){
-            Assertions.assertEquals(this.notificationGlue.getNotificationRequest().getTaxonomyCode(),
-                    this.notificationGlue.getSentNotification().getTaxonomyCode());
+        Assertions.assertNotNull(this.sharedSteps.getSentNotification().getTaxonomyCode());
+        if(this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null){
+            Assertions.assertEquals(this.sharedSteps.getNotificationRequest().getTaxonomyCode(),
+                    this.sharedSteps.getSentNotification().getTaxonomyCode());
         }
 
     }

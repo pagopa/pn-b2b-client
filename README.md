@@ -15,9 +15,9 @@
 - 'pn.external.bearer-token-CristoforoC.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
 - 'pn.external.bearer-token-FieramoscaE.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
 
--eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberB2BTest.java
+-eseguire il run della classe nel file src/test/java/it/pagopa/pn/cucumber/CucumberB2BTest.java
   per l'esecuzione dei test e2e delle api b2b di Piattaforma Notifiche
-- eseguire il run della classe nel file src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberDevIntegrationTest.java 
+- eseguire il run della classe nel file src/test/java/it/pagopa/pn/cucumber/CucumberDevIntegrationTest.java 
 - oppure 
-- src/main/java/it/pagopa/pn/client/b2b/pa/cucumber/test/CucumberSvilIntegrationTest.java 
+- src/test/java/it/pagopa/pn/cucumber/CucumberSvilIntegrationTest.java 
 - in funzione dell'ambiente di esecuzione per l'esecuzione completa dei test case

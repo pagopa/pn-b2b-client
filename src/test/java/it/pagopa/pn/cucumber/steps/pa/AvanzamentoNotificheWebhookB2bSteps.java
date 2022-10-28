@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.NotificationStatus;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategory;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.lang.invoke.MethodHandles;
 import java.util.LinkedList;
@@ -40,12 +42,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private PnPaB2bUtils b2bUtils;
 
     @Autowired
-    private GenerazioneInvioNotificaB2bSteps notificationGlue;
+    private SharedSteps sharedSteps;
 
     private List<StreamCreationRequest> streamCreationRequestList;
     private List<StreamMetadataResponse> eventStreamList;
     private Integer requestNumber;
-    private HttpClientErrorException clientError;
+    private HttpStatusCodeException notificationError;
     private NewNotificationRequest notificationRequest;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -71,10 +73,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             try{
             StreamMetadataResponse eventStream = webhookB2bClient.createEventStream(request);
             this.eventStreamList.add(eventStream);
-            }catch (HttpClientErrorException | HttpServerErrorException e) {
-                if (e instanceof HttpClientErrorException) {
-                    this.clientError = (HttpClientErrorException)e;
-                }
+            }catch (HttpStatusCodeException e) {
+                this.notificationError = e;
             }
         }
     }
@@ -155,16 +155,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         for (int i = 0; i < wait; i++) {
             progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
 
-            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationGlue.getSentNotification().getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
-            notificationGlue.setSentNotification(b2bClient.getSentNotification(notificationGlue.getSentNotification().getIun()));
-            logger.info("IUN: " + notificationGlue.getSentNotification().getIun());
+            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(sharedSteps.getSentNotification().getIun()) && elem.getNewStatus().equals(notificationStatus))).findAny().orElse(null);
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("IUN: " + sharedSteps.getSentNotification().getIun());
             logger.info("*******************************************" + '\n');
             logger.info("EventProgress: " + progressResponseElements);
             logger.info("*******************************************" + '\n');
-            logger.info("NOTIFICATION_STATUS_HISTORY: " + notificationGlue.getSentNotification().getNotificationStatusHistory());
-            NotificationStatusHistoryElement notificationStatusHistoryElement = notificationGlue.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
+            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
             if (notificationStatusHistoryElement != null && !finded) {
-                wait = i + 2;
+                wait = i + 4;
                 finded = true;
             }
             if (progressResponseElement != null) {
@@ -226,18 +226,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         for (int i = 0; i < wait; i++) {
             ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), null);
             String retryAfter = listResponseEntity.getHeaders().get("retry-after").get(0);
-            System.out.println("ReTRY-AFTER: "+retryAfter);
             progressResponseElements = listResponseEntity.getBody();
-            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationGlue.getSentNotification().getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
-            notificationGlue.setSentNotification(b2bClient.getSentNotification(notificationGlue.getSentNotification().getIun()));
-            logger.info("IUN: " + notificationGlue.getSentNotification().getIun());
+            progressResponseElement = progressResponseElements.stream().filter(elem -> (elem.getIun().equals(sharedSteps.getSentNotification().getIun()) && elem.getTimelineEventCategory().equals(timelineElementCategory))).findAny().orElse(null);
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("IUN: " + sharedSteps.getSentNotification().getIun());
             logger.info("*******************************************" + '\n');
             logger.info("EventProgress: " + progressResponseElements);
             logger.info("*******************************************" + '\n');
-            logger.info("NOTIFICATION_TIMELINE: " + notificationGlue.getSentNotification().getTimeline());
-            TimelineElement timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+            TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
             if (timelineElement != null && !finded) {
-                wait = i + 2;
+                wait = i + 4;
                 finded = true;
             }
 
@@ -257,7 +256,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("il destinatario legge la notifica")
     public void ilDestinatarioLeggeLaNotifica() {
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
         try {
             Thread.sleep(50 * 1000L);
@@ -270,7 +269,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Then("si verifica nello stream che la notifica abbia lo stato VIEWED")
     public void siVerificaNelloStreamCheLaNotificaAbbiaLoStatoVIEWED() {
         List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
-        Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(notificationGlue.getSentNotification().getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
+        Assertions.assertNotNull(progressResponseElements.stream().filter(elem -> (elem.getIun().equals(sharedSteps.getSentNotification().getIun()) && elem.getNewStatus().equals(NotificationStatus.VIEWED))).findAny().orElse(null));
     }
 
 
@@ -292,8 +291,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         System.out.println("streamListElements: "+streamListElements.size());
         System.out.println("eventStreamList: "+eventStreamList.size());
         System.out.println("requestNumber: "+requestNumber);
-        Assertions.assertTrue((this.clientError != null) &&
-                (this.clientError.getStatusCode().toString().substring(0,3).equals(statusCode)) && (eventStreamList.size() == (requestNumber-1)));
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)) && (eventStreamList.size() == (requestNumber-1)));
     }
 
 

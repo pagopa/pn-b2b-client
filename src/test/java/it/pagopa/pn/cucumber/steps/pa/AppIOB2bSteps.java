@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -6,13 +6,13 @@ import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.mod
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -24,7 +24,7 @@ public class AppIOB2bSteps {
     private IPnAppIOB2bClient iPnAppIOB2bClient;
 
     @Autowired
-    private GenerazioneInvioNotificaB2bSteps notificationGlue;
+    private SharedSteps sharedSteps;
 
     @Autowired
     private PnPaB2bUtils b2bUtils;
@@ -39,18 +39,18 @@ public class AppIOB2bSteps {
         AtomicReference<FullReceivedNotification> notificationByIun = new AtomicReference<>();
 
         Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(),
-                        notificationGlue.getSentNotification().getRecipients().get(0).getTaxId()))
+                notificationByIun.set(this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(),
+                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()))
         );
         Assertions.assertNotNull(notificationByIun.get());
     }
 
     @Then("il documento notificato può essere recuperata tramite AppIO")
     public void ilDocumentoNotificatoPuòEssereRecuperataTramiteAppIO() {
-        List<NotificationDocument> documents = notificationGlue.getSentNotification().getDocuments();
+        List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
-                iPnAppIOB2bClient.getSentNotificationDocument(notificationGlue.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
-                        notificationGlue.getSentNotification().getRecipients().get(0).getTaxId());
+                iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
+                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
 
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
@@ -62,7 +62,7 @@ public class AppIOB2bSteps {
     @And("si tenta il recupero della notifica tramite AppIO")
     public void siTentaIlRecuperoDellaNotificaTramiteAppIO() {
         try {
-            this.iPnAppIOB2bClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), "FRMTTR76M06B715E");
+            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), "FRMTTR76M06B715E");
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e instanceof HttpServerErrorException) {
                 this.notficationServerError = (HttpServerErrorException) e;

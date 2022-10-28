@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class AvanzamentoNotificheB2b {
     IPnPaB2bClient b2bClient;
 
     @Autowired
-    private GenerazioneInvioNotificaB2bSteps notificationGlue;
+    private SharedSteps sharedSteps;
 
     @Autowired
     private IPnAppIOB2bClient appIOB2bClient;
@@ -57,11 +58,11 @@ public class AvanzamentoNotificheB2b {
         NotificationStatusHistoryElement notificationStatusHistoryElement = null;
 
         for (int i = 0; i < 20; i++) {
-            notificationGlue.setSentNotification(b2bClient.getSentNotification(notificationGlue.getSentNotification().getIun()));
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-            logger.info("NOTIFICATION_STATUS_HISTORY: " + notificationGlue.getSentNotification().getNotificationStatusHistory());
+            logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
 
-            notificationStatusHistoryElement = notificationGlue.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 break;
@@ -110,11 +111,11 @@ public class AvanzamentoNotificheB2b {
         TimelineElement timelineElement = null;
 
         for (int i = 0; i < 20; i++) {
-            notificationGlue.setSentNotification(b2bClient.getSentNotification(notificationGlue.getSentNotification().getIun()));
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-            logger.info("NOTIFICATION_TIMELINE: " + notificationGlue.getSentNotification().getTimeline());
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
-            timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
             if (timelineElement != null) {
                 break;
             }
@@ -140,28 +141,34 @@ public class AvanzamentoNotificheB2b {
 
 
     private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO){
+        try {
+            Thread.sleep(10 * 1000L);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
         TimelineElementCategory timelineElementInternalCategory;
         TimelineElement timelineElement;
         LegalFactCategory category;
         switch (legalFactCategory) {
             case "SENDER_ACK":
                 timelineElementInternalCategory = TimelineElementCategory.REQUEST_ACCEPTED;
-                timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.SENDER_ACK;
                 break;
             case "RECIPIENT_ACCESS":
                 timelineElementInternalCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
-                timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.RECIPIENT_ACCESS;
                 break;
             case "PEC_RECEIPT":
                 timelineElementInternalCategory = TimelineElementCategory.SEND_DIGITAL_PROGRESS;
-                timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.PEC_RECEIPT;
                 break;
             case "DIGITAL_DELIVERY":
                 timelineElementInternalCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
-                timelineElement = notificationGlue.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.DIGITAL_DELIVERY;
                 break;
             default:
@@ -173,18 +180,18 @@ public class AvanzamentoNotificheB2b {
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
         if(pa){
-            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(notificationGlue.getSentNotification().getIun(),categorySearch , keySearch));
+            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch , keySearch));
         }
         if(appIO){
-            Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(notificationGlue.getSentNotification().getIun(),categorySearch.toString(), keySearch,
-                    notificationGlue.getSentNotification().getRecipients().get(0).getTaxId()));
+            Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch.toString(), keySearch,
+                    sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
         }
     }
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void siVerificaCheLaNotificaAbbiaLoStatoVIEWED() {
-        notificationGlue.setSentNotification(b2bClient.getSentNotification(notificationGlue.getSentNotification().getIun()));
-        Assertions.assertNotNull(notificationGlue.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED)).findAny().orElse(null));
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        Assertions.assertNotNull(sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED)).findAny().orElse(null));
     }
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
@@ -200,9 +207,9 @@ public class AvanzamentoNotificheB2b {
 
 
     private void priceVerification(String price, String date){
-        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(notificationGlue.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId(),
-                notificationGlue.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
-        Assertions.assertEquals(notificationPrice.getIun(),notificationGlue.getSentNotification().getIun());
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId(),
+                sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
+        Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
         if(price != null){
             Assertions.assertEquals(notificationPrice.getAmount(),price);
         }
@@ -214,7 +221,7 @@ public class AvanzamentoNotificheB2b {
     @And("il destinatario legge la notifica ricevuta")
     public void ilDestinatarioLeggeLaNotificaRicevuta() {
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(notificationGlue.getSentNotification().getIun(), null);
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
         try {
             Thread.sleep(50 * 1000L);

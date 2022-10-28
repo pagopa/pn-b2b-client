@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 
 public interface IPnWebRecipientClient {
 
+    boolean setBearerToken(String user);
+
     FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException;
 
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String mandateId) throws RestClientException;

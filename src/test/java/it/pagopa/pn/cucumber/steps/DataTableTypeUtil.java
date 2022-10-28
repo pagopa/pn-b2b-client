@@ -97,4 +97,6 @@ public class DataTableTypeUtil {
         }
         return notificationRecipient;
     }
+
+
 }

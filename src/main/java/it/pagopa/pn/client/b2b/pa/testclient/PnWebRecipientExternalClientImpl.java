@@ -23,21 +23,26 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
 
-    private final String bearerToken;
+    private final String fieramoscaEBearerToken;
+    private final String cristoforoCBearerToken;
+    private final String basePath;
     private final String userAgent;
 
     public PnWebRecipientExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.bearer-token.CristoforoC}") String bearerToken,
+            @Value("${pn.bearer-token.FieramoscaE}") String fieramoscaEBearerToken,
+            @Value("${pn.bearer-token.CristoforoC}") String cristoforoCBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
-        this.bearerToken = bearerToken;
+        this.fieramoscaEBearerToken = fieramoscaEBearerToken;
+        this.cristoforoCBearerToken = cristoforoCBearerToken;
+        this.basePath = basePath;
         this.userAgent = userAgent;
-        this.recipientReadApi = new RecipientReadApi( newApiClient( restTemplate, basePath, bearerToken,userAgent) );
+        this.recipientReadApi = new RecipientReadApi( newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent) );
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -46,6 +51,23 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         newApiClient.addDefaultHeader("user-agent",userAgent);
         newApiClient.setBearerToken(bearerToken);
         return newApiClient;
+    }
+
+    @Override
+    public boolean setBearerToken(String user) {
+        boolean beenSet = false;
+        user = user.toUpperCase();
+        switch (user){
+            case "CLMCST42R12D969Z":
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+                beenSet = true;
+                break;
+            case "FRMTTR76M06B715E":
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+                beenSet = true;
+                break;
+        }
+        return beenSet;
     }
 
     public FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException {

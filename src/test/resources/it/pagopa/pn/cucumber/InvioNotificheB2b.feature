@@ -43,6 +43,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata
     Then l'operazione ha prodotto un errore con status code "409"
 
+
   @B2Btest
   Scenario: [B2B-PA-SEND_4] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
@@ -452,7 +453,7 @@ Feature: invio notifiche b2b
     And viene controllato la presenza del taxonomyCode
 
 
-  Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_31] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | <subject> |
       | senderDenomination | comune di milano |
@@ -464,7 +465,7 @@ Feature: invio notifiche b2b
       | subject   |
       | 513_CHAR |
 
-  Scenario Outline: [B2B-PA-SEND_24] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_32] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |

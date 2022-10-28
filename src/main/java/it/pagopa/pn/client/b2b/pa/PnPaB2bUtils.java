@@ -6,7 +6,9 @@ import org.apache.commons.io.IOUtils;
 import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -17,21 +19,19 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnPaB2bUtils {
 
     private static Logger log = LoggerFactory.getLogger(PnPaB2bUtils.class);
@@ -39,11 +39,15 @@ public class PnPaB2bUtils {
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
 
-    private final IPnPaB2bClient client;
+    private IPnPaB2bClient client;
 
     public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client) {
         this.restTemplate = newRestTemplate();
         this.ctx = ctx;
+        this.client = client;
+    }
+
+    public void setClient(IPnPaB2bClient client) {
         this.client = client;
     }
 
@@ -64,9 +68,12 @@ public class PnPaB2bUtils {
 
         for (NotificationRecipient recipient : request.getRecipients()) {
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
-            paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-            paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-            paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+
         }
 
         log.info("New Notification Request {}", request);
@@ -113,24 +120,27 @@ public class PnPaB2bUtils {
 
             if( ! sha256.equals(resp.getSha256()) ) {
                 throw new IllegalStateException("SHA256 differs " + doc.getDocIdx() );
-            };
+            }
         }
 
         int i = 0;
         for (NotificationRecipient recipient : fsn.getRecipients()) {
 
-            NotificationAttachmentDownloadMetadataResponse resp;
+            if(fsn.getRecipients().get(i).getPayment() != null){
+                NotificationAttachmentDownloadMetadataResponse resp;
 
-            resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
-            checkAttachment( resp );
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
+                checkAttachment( resp );
 
-            //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");
-            //checkAttachment( resp );
+                //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");
+                //checkAttachment( resp );
 
-            //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_STANDARD");
-            //checkAttachment( resp );
+                //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_STANDARD");
+                //checkAttachment( resp );
 
+            }
             i++;
+
         }
 
         for ( LegalFactsId legalFactsId: fsn.getTimeline().get(0).getLegalFactsIds()) {
@@ -164,7 +174,7 @@ public class PnPaB2bUtils {
         String sha256 = computeSha256(new ByteArrayInputStream(content));
         if( ! sha256.equals(resp.getSha256()) ) {
             throw new IllegalStateException("SHA256 differs " + resp.getFilename() );
-        };
+        }
     }
 
 
@@ -273,7 +283,7 @@ public class PnPaB2bUtils {
         return hexString.toString();
     }
 
-    public byte[] downloadFile(String surl) throws ClientProtocolException, IOException{
+    public byte[] downloadFile(String surl) throws IOException{
         try {
             URL url = new URL(surl);
             return IOUtils.toByteArray(url);
