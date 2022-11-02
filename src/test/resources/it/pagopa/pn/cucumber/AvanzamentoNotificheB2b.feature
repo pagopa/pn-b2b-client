@@ -202,7 +202,7 @@ Feature: avanzamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
-  @ignore
+
   Scenario: [B2B_PA_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -252,7 +252,7 @@ Feature: avanzamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
-  @ignore
+
   Scenario: [B2B_PA_LEGALFACT_IO_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -277,3 +277,39 @@ Feature: avanzamento notifiche b2b
     And il destinatario legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "RECIPIENT_ACCESS"
+
+
+  Scenario: [B2B_PA_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And destinatario
+      | denomination | Mario Gherkin |
+      | taxId | FRMTTR76M06B715E |
+      | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
+    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "GA"
+
+
+  Scenario: [B2B_PA_MULTI_2] Invio notifica multi destinatario con pagamento_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    And destinatario
+      | denomination | Mario Gherkin |
+      | taxId | FRMTTR76M06B715E |
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "GA"

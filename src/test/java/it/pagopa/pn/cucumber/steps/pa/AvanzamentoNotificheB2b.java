@@ -16,21 +16,28 @@ import java.lang.invoke.MethodHandles;
 
 public class AvanzamentoNotificheB2b {
 
-    @Autowired
-    IPnPaB2bClient b2bClient;
 
-    @Autowired
-    private SharedSteps sharedSteps;
-
-    @Autowired
-    private IPnAppIOB2bClient appIOB2bClient;
-
-    @Autowired
-    private IPnWebRecipientClient webRecipientClient;
-
-
+    private final IPnPaB2bClient b2bClient;
+    private final SharedSteps sharedSteps;
+    private final IPnAppIOB2bClient appIOB2bClient;
+    private final IPnWebRecipientClient webRecipientClient;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Autowired
+    public AvanzamentoNotificheB2b(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient, IPnWebRecipientClient webRecipientClient) {
+        this.sharedSteps = sharedSteps;
+        this.b2bClient = sharedSteps.getB2bClient();
+        this.appIOB2bClient = appIOB2bClient;
+        this.webRecipientClient = webRecipientClient;
+    }
+
+
+    @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
+    public void vengonoLettiGliEventiFinoAlloStatoDellaNotificaDallaPA(String status, String pa) {
+        sharedSteps.selectPA(pa);
+        vengonoLettiGliEventiDelloStreamFinoAlloStatoDellaNotifica(status);
+        sharedSteps.selectPA(SharedSteps.DEFAULT_PA);
+    }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void vengonoLettiGliEventiDelloStreamFinoAlloStatoDellaNotifica(String status) {
@@ -50,6 +57,9 @@ public class AvanzamentoNotificheB2b {
                 break;
             case "EFFECTIVE_DATE":
                 notificationInternalStatus = NotificationStatus.EFFECTIVE_DATE;
+                break;
+            case "COMPLETELY_UNREACHABLE":
+                notificationInternalStatus = NotificationStatus.UNREACHABLE;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -178,12 +188,18 @@ public class AvanzamentoNotificheB2b {
         Assertions.assertEquals(category,timelineElement.getLegalFactsIds().get(0).getCategory());
         LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
-        String keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
+        String keySearch = null;
+        if(key.contains("PN_LEGAL_FACTS")){
+            keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
+        }else if(key.contains("PN_NOTIFICATION_ATTACHMENTS")){
+            keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
+        }
+        String finalKeySearch = keySearch;
         if(pa){
-            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch , keySearch));
+            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch , finalKeySearch));
         }
         if(appIO){
-            Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch.toString(), keySearch,
+            Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch.toString(), finalKeySearch,
                     sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
         }
     }
@@ -229,4 +245,6 @@ public class AvanzamentoNotificheB2b {
             throw new RuntimeException(exc);
         }
     }
+
+
 }

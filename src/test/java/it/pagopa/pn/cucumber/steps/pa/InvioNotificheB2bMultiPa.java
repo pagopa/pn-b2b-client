@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
@@ -20,23 +21,25 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class InvioNotificheB2bMultiPa {
 
-    @Autowired
-    private SharedSteps sharedSteps;
+    private final SharedSteps sharedSteps;
+    private final PnPaB2bUtils b2bUtils;
+    private final IPnPaB2bClient b2bClient;
 
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
-
-    @Autowired
-    private IPnPaB2bClient b2bClient;
-
-    private FullSentNotification notificationResponseComplete;
     private HttpStatusCodeException notificationSentError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @Autowired
+    public InvioNotificheB2bMultiPa(SharedSteps sharedSteps) {
+        this.sharedSteps = sharedSteps;
+        this.b2bUtils = this.sharedSteps.getB2bUtils();
+        this.b2bClient = this.sharedSteps.getB2bClient();
+    }
+
 
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA {string}")
     public void laNotificaPuòEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUNDallaPA(String paType) {
-        selectPA(paType);
+        sharedSteps.selectPA(paType);
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
 
         Assertions.assertDoesNotThrow(() ->
@@ -48,26 +51,23 @@ public class InvioNotificheB2bMultiPa {
 
     @Then("si tenta il recupero dal sistema tramite codice IUN dalla PA {string}")
     public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNDallaPA(String paType) {
-        selectPA(paType);
+        sharedSteps.selectPA(paType);
         try{
             b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
-        } catch (HttpClientErrorException | HttpServerErrorException e) {
-        if (e instanceof HttpStatusCodeException) {
+        } catch (HttpStatusCodeException e) {
             this.notificationSentError = e;
         }
-    }
-
     }
 
 
     @When("la notifica viene inviata tramite api b2b dalla PA {string}")
     public void laNotificaVieneInviataTramiteApiBBDallaPA(String paType) {
-        selectPA(paType);
+        sharedSteps.selectPA(paType);
         try {
             b2bUtils.uploadNotification(sharedSteps.getNotificationRequest());
-        } catch (HttpServerErrorException | IOException e) {
-            if(e instanceof HttpServerErrorException){
-                this.notificationSentError = (HttpServerErrorException)e;
+        } catch (HttpStatusCodeException | IOException e) {
+            if(e instanceof HttpStatusCodeException){
+                this.notificationSentError = (HttpStatusCodeException)e;
             }
         }
     }
@@ -77,24 +77,6 @@ public class InvioNotificheB2bMultiPa {
         Assertions.assertTrue((this.notificationSentError != null) &&
                 (this.notificationSentError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
-
-    private void selectPA(String apiKey) {
-        switch (apiKey){
-            case "MVP_1":
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
-                break;
-            case "MVP_2":
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
-                break;
-            case "GA":
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-        this.b2bUtils.setClient(b2bClient);
-    }
-
 
 
 }

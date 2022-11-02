@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps;
 
+import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -19,24 +20,30 @@ import java.util.HashMap;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SharedSteps {
 
-    @Autowired
-    private DataTableTypeUtil dataTableTypeUtil;
-
-    @Autowired
-    private IPnPaB2bClient b2bClient;
-
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
+    private final DataTableTypeUtil dataTableTypeUtil;
+    private final IPnPaB2bClient b2bClient;
+    private final PnPaB2bUtils b2bUtils;
 
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
-    private final String defaultPa = "MVP_1";
+    public static final String DEFAULT_PA = "MVP_1";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Autowired
+    public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils) {
+        this.dataTableTypeUtil = dataTableTypeUtil;
+        this.b2bClient = b2bClient;
+        this.b2bUtils = b2bUtils;
+    }
+
+    @BeforeAll
+    public void before_all() {
+        logger.debug("SHARED_GLUE_ID: "+this);
+        //only for class activation
+    }
 
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
-        System.out.println("SHARED_GLUE_ID: "+this);
         this.notificationRequest = notificationRequest;
     }
 
@@ -121,7 +128,7 @@ public class SharedSteps {
             throw new RuntimeException(e);
         }
         Assertions.assertNotNull(notificationResponseComplete);
-        selectPA(defaultPa);
+        selectPA(DEFAULT_PA);
     }
 
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED")
@@ -166,7 +173,7 @@ public class SharedSteps {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
-    private void selectPA(String apiKey) {
+    public void selectPA(String apiKey) {
         switch (apiKey){
             case "MVP_1":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
@@ -183,5 +190,12 @@ public class SharedSteps {
         this.b2bUtils.setClient(b2bClient);
     }
 
+    public IPnPaB2bClient getB2bClient() {
+        return b2bClient;
+    }
+
+    public PnPaB2bUtils getB2bUtils() {
+        return b2bUtils;
+    }
 
 }

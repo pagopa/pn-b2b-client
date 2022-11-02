@@ -24,7 +24,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
 
   Scenario: [B2B-PA-GA-SEND_2] Invio notifica multi destinatario senza pagamento_scenario positivo
-    Given viene generata una nuova notifica
+    And viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
       | senderTaxId | 80016350821 |
@@ -57,7 +57,22 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
 
-  Scenario: [B2B-PA-GA-SEND_4] Invio notifica multi destinatario uguale codice avviso_scenario positivo
+  Scenario: [B2B-PA-GA-SEND_4] Invio notifica multi destinatario PA non abilitata_scenario negativa
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And destinatario
+      | denomination | Mario Gherkin |
+      | taxId | FRMTTR76M06B715E |
+      | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
+    When la notifica viene inviata tramite api b2b dalla PA "MVP_1"
+    Then l'invio ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-GA-SEND_5] Invio notifica multi destinatario uguale codice avviso_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -73,3 +88,38 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata tramite api b2b dalla PA "GA"
     Then l'invio ha prodotto un errore con status code "500"
 
+
+  Scenario: [B2B-PA-GA-SEND_6] Invio notifica multi destinatario con pagamento_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    And destinatario
+      | denomination | Mario Gherkin |
+      | taxId | FRMTTR76M06B715E |
+      | digitalDomicile | NULL |
+      | physicalAddress | NULL |
+    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
+
+
+  Scenario: [B2B-PA-GA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    When la notifica viene inviata tramite api b2b dalla PA "GA"
+    Then l'invio ha prodotto un errore con status code "400"

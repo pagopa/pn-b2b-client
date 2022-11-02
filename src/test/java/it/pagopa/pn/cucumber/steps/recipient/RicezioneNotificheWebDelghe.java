@@ -30,23 +30,25 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class RicezioneNotificheWebDelghe {
 
-    @Autowired
-    private IPnWebMandateClient webMandateClient;
 
-    @Autowired
-    private IPnWebRecipientClient webRecipientClient;
-
-    @Autowired
-    private SharedSteps sharedSteps;
-
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
+    private final IPnWebMandateClient webMandateClient;
+    private final IPnWebRecipientClient webRecipientClient;
+    private final SharedSteps sharedSteps;
+    private final PnPaB2bUtils b2bUtils;
 
     private MandateDto mandateToSearch;
     private final String verificationCode = "24411";
     private final String baseUserCf = "CLMCST42R12D969Z";
     private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @Autowired
+    public RicezioneNotificheWebDelghe(IPnWebMandateClient webMandateClient, IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
+        this.webMandateClient = webMandateClient;
+        this.webRecipientClient = webRecipientClient;
+        this.sharedSteps = sharedSteps;
+        this.b2bUtils = sharedSteps.getB2bUtils();
+    }
 
     @And("Cristoforo Colombo viene delegato da {string} {string} con cf {string}")
     public void cristoforoColomboVieneDelegatoDaConCf(String name, String surname, String cf) {
@@ -114,7 +116,7 @@ public class RicezioneNotificheWebDelghe {
 
     }
 
-    @Then("la notifica può essere correttamente recuperata dal delegato")
+    @Then("la notifica può essere correttamente letta dal delegato")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDelegato() {
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
@@ -189,7 +191,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
 
-    @Then("si tenta il recupero della notifica da parte del delegato che produce un errore con status code {string}")
+    @Then("si tenta la lettura della notifica da parte del delegato che produce un errore con status code {string}")
     public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String statusCode) {
         HttpClientErrorException httpClientErrorException = null;
         try {
@@ -246,7 +248,7 @@ public class RicezioneNotificheWebDelghe {
                 (notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
-    @And("la notifica può essere correttamente recuperata dal destinatario {string}")
+    @And("la notifica può essere correttamente letta dal destinatario {string}")
     public void laNotificaPuòEssereCorrettamenteRecuperataDalDestinatario(String cf) {
         boolean setted = webRecipientClient.setBearerToken(cf);
         if(!setted)throw new IllegalArgumentException();

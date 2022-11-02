@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
 
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;

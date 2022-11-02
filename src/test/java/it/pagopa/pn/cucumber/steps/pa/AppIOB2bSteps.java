@@ -20,19 +20,21 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class AppIOB2bSteps {
 
-    @Autowired
-    private IPnAppIOB2bClient iPnAppIOB2bClient;
 
-    @Autowired
-    private SharedSteps sharedSteps;
-
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
+    private final IPnAppIOB2bClient iPnAppIOB2bClient;
+    private final SharedSteps sharedSteps;
+    private final PnPaB2bUtils b2bUtils;
 
     private HttpServerErrorException notficationServerError;
     private String sha256DocumentDownload;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Autowired
+    public AppIOB2bSteps(IPnAppIOB2bClient iPnAppIOB2bClient, SharedSteps sharedSteps) {
+        this.iPnAppIOB2bClient = iPnAppIOB2bClient;
+        this.sharedSteps = sharedSteps;
+        this.b2bUtils = sharedSteps.getB2bUtils();
+    }
 
     @Then("la notifica può essere recuperata tramite AppIO")
     public void laNotificaPuòEssereRecuperataTramiteAppIO() {

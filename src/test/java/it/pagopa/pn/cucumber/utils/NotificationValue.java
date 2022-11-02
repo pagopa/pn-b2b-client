@@ -24,6 +24,7 @@ public enum NotificationValue {
     DENOMINATION("denomination","Mario Cucumber",false),
     TAX_ID("taxId","FRMTTR76M06B715E",false),
     INTERNAL_ID("internalId","",false),
+    DIGITAL_DOMICILE("digitalDomicile","",false),
     DIGITAL_DOMICILE_TYPE("digitalDomicile_type","PEC",false),
     DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","FRMTTR76M06B715E@pnpagopa.postecert.local",false),
     PHYSICAL_ADDRES("physicalAddress","",false),

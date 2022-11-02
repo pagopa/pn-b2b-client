@@ -14,7 +14,7 @@ Feature: Ricezione notifiche destinate al delegante
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal delegato
+    Then la notifica può essere correttamente letta dal delegato
 
   @SmokeTest
   Scenario: [WEB-PF-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
@@ -90,7 +90,7 @@ Feature: Ricezione notifiche destinate al delegante
       | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E" revoca la delega a Cristoforo Colombo
-    Then si tenta il recupero della notifica da parte del delegato che produce un errore con status code "404"
+    Then si tenta la lettura della notifica da parte del delegato che produce un errore con status code "404"
 
   Scenario: [WEB-PF-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
@@ -103,7 +103,7 @@ Feature: Ricezione notifiche destinate al delegante
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
-    Then si tenta il recupero della notifica da parte del delegato che produce un errore con status code "404"
+    Then si tenta la lettura della notifica da parte del delegato che produce un errore con status code "404"
 
 
   Scenario: [WEB-PF-MANDATE_8] Delega a se stesso _scenario negativo
@@ -126,8 +126,8 @@ Feature: Ricezione notifiche destinate al delegante
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal delegato
-    And la notifica può essere correttamente recuperata dal destinatario "FRMTTR76M06B715E"
+    Then la notifica può essere correttamente letta dal delegato
+    And la notifica può essere correttamente letta dal destinatario "FRMTTR76M06B715E"
 
   Scenario: [WEB-PF-MANDATE_11] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
@@ -139,21 +139,26 @@ Feature: Ricezione notifiche destinate al delegante
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal destinatario "FRMTTR76M06B715E"
-    And la notifica può essere correttamente recuperata dal delegato
+    Then la notifica può essere correttamente letta dal destinatario "FRMTTR76M06B715E"
+    And la notifica può essere correttamente letta dal delegato
 
+  Scenario: [WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
+    Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
+    And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And destinatario
+      | denomination | Mario Gherkin |
+      | taxId | FRMTTR76M06B715E |
+      | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
+    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta dal destinatario "FRMTTR76M06B715E"
+    And la notifica può essere correttamente letta dal delegato
 
-  #Scenario: [WEB-PF-MANDATE_8] Invio notifica digitale altro destinatario con delega scaduta negativo
-    #Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E" con delega in scadenza
-    #And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"
-    #When viene generata una notifica per il test di ricezione
-      #| subject | invio notifica con cucumber |
-      #| senderDenomination | comune di milano |
-      #| senderTaxId | 01199250158 |
-    #And destinatario alternativo
-      #| denomination | Mario Cucumber |
-      #| taxId | FRMTTR76M06B715E |
-    #And la notifica viene inviata e si riceve il relativo codice IUN valorizzato
-    #And si attende lo scadere della delega
-    #Then si tenta il recupero della notifica da parte del delegato che produce un errore con status code "404"
 

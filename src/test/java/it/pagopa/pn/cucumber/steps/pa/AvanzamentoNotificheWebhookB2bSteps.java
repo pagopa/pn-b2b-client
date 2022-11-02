@@ -29,20 +29,12 @@ import java.util.List;
 
 public class AvanzamentoNotificheWebhookB2bSteps {
 
-    @Autowired
-    IPnWebhookB2bClient webhookB2bClient;
 
-    @Autowired
-    IPnPaB2bClient b2bClient;
-
-    @Autowired
-    private IPnWebRecipientClient webRecipientClient;
-
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
-
-    @Autowired
-    private SharedSteps sharedSteps;
+    private final IPnWebhookB2bClient webhookB2bClient;
+    private final IPnPaB2bClient b2bClient;
+    private final IPnWebRecipientClient webRecipientClient;
+    private final PnPaB2bUtils b2bUtils;
+    private final SharedSteps sharedSteps;
 
     private List<StreamCreationRequest> streamCreationRequestList;
     private List<StreamMetadataResponse> eventStreamList;
@@ -51,6 +43,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private NewNotificationRequest notificationRequest;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Autowired
+    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
+        this.webhookB2bClient = webhookB2bClient;
+        this.webRecipientClient = webRecipientClient;
+        this.sharedSteps = sharedSteps;
+        this.b2bClient = sharedSteps.getB2bClient();
+        this.b2bUtils = sharedSteps.getB2bUtils();
+    }
 
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string}")
     public void vengonoPredispostiNuoviStreamDenominatiConEventType(int number, String title, String eventType) {

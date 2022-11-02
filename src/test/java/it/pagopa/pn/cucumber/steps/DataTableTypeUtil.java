@@ -55,10 +55,10 @@ public class DataTableTypeUtil {
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 .internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile( new NotificationDigitalAddress()
+                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
                         .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
                                 null : NotificationDigitalAddress.TypeEnum.PEC ))
-                        .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key))
+                        .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
                 )
                 .physicalAddress(getValue(data,PHYSICAL_ADDRES.key) == null? null: new NotificationPhysicalAddress()
                         .address(getValue(data,PHYSICAL_ADDRESS_ADDRESS.key))

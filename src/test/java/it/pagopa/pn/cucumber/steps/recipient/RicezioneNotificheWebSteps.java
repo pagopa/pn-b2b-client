@@ -32,19 +32,20 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class RicezioneNotificheWebSteps  {
 
-    @Autowired
-    private IPnWebRecipientClient webRecipientClient;
 
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
-
-    @Autowired
-    private SharedSteps sharedSteps;
+    private final IPnWebRecipientClient webRecipientClient;
+    private final PnPaB2bUtils b2bUtils;
+    private final SharedSteps sharedSteps;
 
     private HttpStatusCodeException notificationError;
-
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    @Autowired
+    public RicezioneNotificheWebSteps(IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
+        this.webRecipientClient = webRecipientClient;
+        this.sharedSteps = sharedSteps;
+        this.b2bUtils = sharedSteps.getB2bUtils();
+    }
 
     @Then("la notifica può essere correttamente recuperata dal destinatario")
     public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario() {

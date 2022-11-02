@@ -34,27 +34,18 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class InvioNotificheB2bSteps  {
 
-    @Autowired
-    private PnPaB2bUtils b2bUtils;
-
-    @Autowired
-    private IPnPaB2bClient b2bClient;
-
-    @Autowired
-    private PnSafeStorageInfoExternalClientImpl safeStorageClient;
-
-    @Autowired
-    private IPnWebUserAttributesClient iPnWebUserAttributesClient;
-
-    @Autowired
-    private SharedSteps sharedSteps;
-
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
 
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
+
+    private final PnPaB2bUtils b2bUtils;
+    private final IPnPaB2bClient b2bClient;
+    private final PnSafeStorageInfoExternalClientImpl safeStorageClient;
+    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private final SharedSteps sharedSteps;
 
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
@@ -63,7 +54,14 @@ public class InvioNotificheB2bSteps  {
     private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-
+    @Autowired
+    public InvioNotificheB2bSteps(PnSafeStorageInfoExternalClientImpl safeStorageClient, IPnWebUserAttributesClient iPnWebUserAttributesClient, SharedSteps sharedSteps) {
+        this.safeStorageClient = safeStorageClient;
+        this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
+        this.sharedSteps = sharedSteps;
+        this.b2bUtils = sharedSteps.getB2bUtils();
+        this.b2bClient = sharedSteps.getB2bClient();
+    }
 
     @When("la notifica viene inviata")
     public void laNotificaVieneInviataKO() {
