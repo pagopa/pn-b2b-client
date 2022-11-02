@@ -37,8 +37,8 @@ public class SharedSteps {
     }
 
     @BeforeAll
-    public void before_all() {
-        logger.debug("SHARED_GLUE_ID: "+this);
+    public static void before_all() {
+        logger.debug("SHARED_GLUE START");
         //only for class activation
     }
 
