@@ -1,6 +1,6 @@
 Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
-  #PROBLEMA
+  @ignore
   Scenario: [B2B-MULTI-PA-SEND_1] Invio notifica digitale_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica multi cucumber |
@@ -108,7 +108,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
 
 
-  Scenario: [B2B-PA-GA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario positivo
+  Scenario: [B2B-PA-GA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |

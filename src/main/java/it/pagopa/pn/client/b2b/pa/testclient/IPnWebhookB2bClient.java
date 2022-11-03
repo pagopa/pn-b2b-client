@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.UUID;
 
-public interface IPnWebhookB2bClient {
+public interface IPnWebhookB2bClient extends SettableApiKey {
 
     StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest);
 

@@ -126,18 +126,12 @@ public class PnPaB2bUtils {
         int i = 0;
         for (NotificationRecipient recipient : fsn.getRecipients()) {
 
-            if(fsn.getRecipients().get(i).getPayment() != null){
+            if(fsn.getRecipients().get(i).getPayment() != null &&
+                    fsn.getRecipients().get(i).getPayment().getPagoPaForm() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
                 resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
                 checkAttachment( resp );
-
-                //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_FLAT");
-                //checkAttachment( resp );
-
-                //resp = client.getSentNotificationAttachment(fsn.getIun(), new BigDecimal(i), "F24_STANDARD");
-                //checkAttachment( resp );
-
             }
             i++;
 

@@ -479,6 +479,21 @@ Feature: invio notifiche b2b
       | 1025_CHAR |
 
 
+  Scenario: [B2B-PA-SEND_33] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+      | taxonomyCode |   020202201P   |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_creditorTaxId | 77777777777 |
+      | payment_pagoPaForm | NULL |
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
      #Scenario in errore
  # Scenario: [B2B-PA-SEND_19] invio notifica digitale mono destinatario (p.fisica)_scenario negativo
   #  Given viene generata una nuova notifica
