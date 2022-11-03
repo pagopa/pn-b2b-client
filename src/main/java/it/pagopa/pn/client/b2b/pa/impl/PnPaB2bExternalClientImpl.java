@@ -105,20 +105,20 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
-        return senderReadB2BApi.getSentNotificationDocument(iun, docidx);
+        return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
-        return senderReadB2BApi.getSentNotificationAttachment(iun, recipientIdx, attachname);
+        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname);
     }
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
-        return legalFactsApi.getLegalFact(iun, legalFactType, legalFactId);
+        return legalFactsApi.retrieveLegalFact(iun, legalFactType, legalFactId);
     }
 
     @Override
     public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
-        return this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
+        return this.notificationPriceApi.retrieveNotificationPrice(paTaxId,noticeCode);
     }
 
 
@@ -133,11 +133,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public FullSentNotification getSentNotification(String iun) {
-        return senderReadB2BApi.getSentNotification( iun );
+        return senderReadB2BApi.retrieveSentNotification( iun );
     }
 
     @Override
     public NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId) {
-        return senderReadB2BApi.getNotificationRequestStatus( notificationRequestId, null, null );
+        return senderReadB2BApi.retrieveNotificationRequestStatus( notificationRequestId, null, null );
     }
 }

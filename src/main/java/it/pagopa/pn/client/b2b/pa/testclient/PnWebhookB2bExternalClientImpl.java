@@ -63,11 +63,11 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     public void deleteEventStream(UUID streamId){
-        this.streamsApi.deleteEventStream(streamId);
+        this.streamsApi.removeEventStream(streamId);
     }
 
     public StreamMetadataResponse getEventStream(UUID streamId){
-        return this.streamsApi.getEventStream(streamId);
+        return this.streamsApi.retrieveEventStream(streamId);
     }
 
     public List<StreamListElement> listEventStreams(){
