@@ -65,6 +65,12 @@ public enum NotificationValue {
     }
 
     public static String getValue(Map<String, String> data, String key){
+        if(key == SENDER_TAX_ID.key){
+            //TODO
+        }
+        if(key == TAX_ID.key){
+            //TODO
+        }
         if(data.containsKey(key)){
             return data.get(key).equals(NULL_VALUE) ? null : (data.get(key).contains("_CHAR")? getCharSeq(data.get(key)):data.get(key));
         }else{
