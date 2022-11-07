@@ -82,6 +82,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     And si tenta il recupero della notifica da parte del destinatario
     Then il recupero ha prodotto un errore con status code "500"
 
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_8] Invio notifica digitale altro destinatario e recupero allegato F24_STANDARD_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -112,6 +113,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     And si tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
 
+  @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_10] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

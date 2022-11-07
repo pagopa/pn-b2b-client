@@ -291,7 +291,7 @@ Feature: invio notifiche b2b
       | dudù            |
 
 
-
+  @SmokeTest
   Scenario Outline: [B2B-PA-SEND_19] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -305,6 +305,7 @@ Feature: invio notifiche b2b
       | 0_CHAR  |
       | 81_CHAR |
 
+  @SmokeTest
   Scenario Outline: [B2B-PA-SEND_20] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -419,10 +420,12 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_27] verifica retention time dei documenti pre-caricati
     Given viene effettuato il pre-caricamento di un documento
     Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_28] verifica retention time  pagopaForm pre-caricato
     Given viene effettuato il pre-caricamento di un allegato
     Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
@@ -452,7 +455,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
 
-
+  @SmokeTest
   Scenario Outline: [B2B-PA-SEND_31] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | <subject> |
@@ -465,6 +468,7 @@ Feature: invio notifiche b2b
       | subject   |
       | 513_CHAR |
 
+  @SmokeTest
   Scenario Outline: [B2B-PA-SEND_32] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -479,6 +483,7 @@ Feature: invio notifiche b2b
       | 1025_CHAR |
 
 
+  @SmokeTest
   Scenario: [B2B-PA-SEND_33] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

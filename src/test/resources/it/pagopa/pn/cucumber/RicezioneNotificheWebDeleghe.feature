@@ -3,7 +3,7 @@ Feature: Ricezione notifiche destinate al delegante
   Background:
     Given Cristoforo colombo rifiuta se presente la delega ricevuta da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
 
-  @SmokeTest
+  #@SmokeTest
   Scenario: [WEB-PF-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
     And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"
@@ -16,7 +16,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta dal delegato
 
-  @SmokeTest
+  #@SmokeTest
   Scenario: [WEB-PF-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given Cristoforo Colombo viene delegato da "Ettore" "Fieramosca" con cf "FRMTTR76M06B715E"
     And Cristoforo Colombo accetta la delega da "FRMTTR76M06B715E"

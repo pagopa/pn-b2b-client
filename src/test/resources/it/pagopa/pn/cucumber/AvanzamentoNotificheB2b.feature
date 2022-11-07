@@ -99,7 +99,7 @@ Feature: avanzamento notifiche b2b
     And il destinatario legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-
+  @SmokeTest
   Scenario: [B2B_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -139,7 +139,7 @@ Feature: avanzamento notifiche b2b
     And il destinatario legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-
+  @SmokeTest
   Scenario: [B2B-PA-PAY_1] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -177,7 +177,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
 
-
+  @SmokeTest
   Scenario: [B2B_PA_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
