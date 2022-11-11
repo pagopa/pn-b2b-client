@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import java.lang.invoke.MethodHandles;
@@ -28,6 +29,9 @@ public class SharedSteps {
     private FullSentNotification notificationResponseComplete;
     public static final String DEFAULT_PA = "MVP_1";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
+    @Value("${pn.sender.tax.id}")
+    private String senderTaxId;
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils) {
@@ -176,12 +180,15 @@ public class SharedSteps {
     public void selectPA(String apiKey) {
         switch (apiKey){
             case "MVP_1":
+                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
                 break;
             case "MVP_2":
+                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
                 break;
             case "GA":
+                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
                 break;
             default:
