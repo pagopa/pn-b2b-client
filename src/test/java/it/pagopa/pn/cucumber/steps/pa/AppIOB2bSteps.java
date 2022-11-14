@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
@@ -25,7 +27,7 @@ public class AppIOB2bSteps {
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
 
-    private HttpServerErrorException notficationServerError;
+    private HttpStatusCodeException notficationServerError;
     private String sha256DocumentDownload;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -66,8 +68,8 @@ public class AppIOB2bSteps {
         try {
             this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), "FRMTTR76M06B715E");
         } catch (HttpClientErrorException | HttpServerErrorException e) {
-            if (e instanceof HttpServerErrorException) {
-                this.notficationServerError = (HttpServerErrorException) e;
+            if (e instanceof HttpStatusCodeException) {
+                this.notficationServerError = e;
             }
         }
     }
