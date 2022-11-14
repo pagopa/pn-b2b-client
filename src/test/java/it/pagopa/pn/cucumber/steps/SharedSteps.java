@@ -49,6 +49,7 @@ public class SharedSteps {
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
         this.notificationRequest = notificationRequest;
+        setSenderTaxIdFromProperties(notificationRequest);
     }
 
     @And("destinatario")
@@ -58,6 +59,7 @@ public class SharedSteps {
 
     @And("destinatario Cristoforo Colombo")
     public void destinatarioCristoforoColombo() {
+        setSenderTaxIdFromProperties(notificationRequest);
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("Cristoforo Colombo")
@@ -69,6 +71,7 @@ public class SharedSteps {
 
     @And("destinatario Cristoforo Colombo e:")
     public void destinatarioCristoforoColomboParam(@Transpose NotificationRecipient recipient) {
+        setSenderTaxIdFromProperties(notificationRequest);
         this.notificationRequest.addRecipientsItem(
                 recipient
                         .denomination("Cristoforo Colombo")
@@ -93,6 +96,7 @@ public class SharedSteps {
         Assertions.assertDoesNotThrow(()->notificationRequest.getRecipients().get(recipientNumber-1).getPayment());
         String noticeCode = notificationRequest.getRecipients().get(recipientNumber-1).getPayment().getNoticeCode();
 
+        setSenderTaxIdFromProperties(notificationRequest);
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
     }
@@ -121,6 +125,7 @@ public class SharedSteps {
     @When("la notifica viene inviata tramite api b2b dalla PA {string} e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk(String paType) {
         selectPA(paType);
+        setSenderTaxIdFromProperties(notificationRequest);
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
             notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
@@ -137,6 +142,7 @@ public class SharedSteps {
 
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk() {
+        setSenderTaxIdFromProperties(notificationRequest);
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
             notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
@@ -156,6 +162,7 @@ public class SharedSteps {
         this.notificationRequest = (dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
                 .subject(notificationRequest.getSubject())
                 .senderDenomination(notificationRequest.getSenderDenomination())
+                .senderTaxId(this.senderTaxId)
                 .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination(notificationRequest.getRecipients().get(0).getDenomination())
                         .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
@@ -163,6 +170,10 @@ public class SharedSteps {
 
     public NewNotificationRequest getNotificationRequest() {
         return notificationRequest;
+    }
+
+    public void setSenderTaxIdFromProperties(NewNotificationRequest notificationRequest) {
+        notificationRequest.setSenderTaxId(this.senderTaxId);
     }
 
     public FullSentNotification getSentNotification() {
@@ -180,15 +191,12 @@ public class SharedSteps {
     public void selectPA(String apiKey) {
         switch (apiKey){
             case "MVP_1":
-                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
                 break;
             case "MVP_2":
-                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
                 break;
             case "GA":
-                this.notificationRequest.senderTaxId(this.senderTaxId);
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
                 break;
             default:
