@@ -1,4 +1,4 @@
-##Istruzioni per l'utilizzo
+## Istruzioni per l'utilizzo
 - creare il file 'api-keys.properties' nel path 'pn-b2b-client/config/'
 - inserire nel file appena creato la stringa 'pn.external.api-keys.pagopa-dev=<api_key>' sostituendo ad <api_key> l'api key corretta
 - nel file 'config/application.properties' settare correttamente il campo 'pn.external.base-url' in funzione dell'ambiente su cui inviare la notifica
@@ -9,7 +9,7 @@
 - eseguire il run del main() nel file src/main/java/it/pagopa/pn/client/b2b/pa/NewNotification.java
   per invio della notifica e verifica dell'accettazione della stessa da parte di Piattaforma Notifiche
 
-##Istruzioni aggiuntive per l'esecuzione dei test e2e
+## Istruzioni aggiuntive per l'esecuzione dei test e2e
 - Inserire nel file 'api-keys.properties' nel path 'pn-b2b-client/config/'
 - 'pn.external.api-keys.pagopa-dev=<api_key>' sostituendo ad <api_key> l'api key corretta
 - 'pn.external.api-keys.pagopa-dev-2*=<api_key>' sostituendo ad <api_key> l'api key corretta
@@ -27,7 +27,7 @@
   per l'esecuzione dei test e2e delle api b2b di Piattaforma Notifiche
 - eseguire il run della classe nel file src/test/java/it/pagopa/pn/cucumber/CucumberDevIntegrationTest.java 
 
-##Istruzioni aggiuntive per l'esecuzione dei test e2e in locale su più ambienti contemporaneamente
+## Istruzioni aggiuntive per l'esecuzione dei test e2e in locale su più ambienti contemporaneamente
 - Inserire nel file 'bearer-token.properties' nel path 'pn-b2b-client/config/'
 - 'pn.external.bearer-token-CristoforoC.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
 - 'pn.external.bearer-token-FieramoscaE.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto 
