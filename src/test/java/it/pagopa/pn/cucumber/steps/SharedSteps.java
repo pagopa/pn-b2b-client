@@ -25,6 +25,7 @@ public class SharedSteps {
     private final IPnPaB2bClient b2bClient;
     private final PnPaB2bUtils b2bUtils;
 
+    private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
     public static final String DEFAULT_PA = "MVP_1";
@@ -127,8 +128,8 @@ public class SharedSteps {
         selectPA(paType);
         setSenderTaxIdFromProperties(notificationRequest);
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
+            newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
         });
         try {
             Thread.sleep( 10 * 1000);
@@ -144,8 +145,8 @@ public class SharedSteps {
     public void laNotificaVieneInviataOk() {
         setSenderTaxIdFromProperties(notificationRequest);
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationRequest );
+            newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
         });
         try {
             Thread.sleep( 10 * 1000);
@@ -166,6 +167,16 @@ public class SharedSteps {
                 .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination(notificationRequest.getRecipients().get(0).getDenomination())
                         .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
+    }
+
+
+
+    public void setNewNotificationResponse(NewNotificationResponse newNotificationResponse) {
+        this.newNotificationResponse = newNotificationResponse;
+    }
+
+    public NewNotificationResponse getNewNotificationResponse() {
+        return newNotificationResponse;
     }
 
     public NewNotificationRequest getNotificationRequest() {

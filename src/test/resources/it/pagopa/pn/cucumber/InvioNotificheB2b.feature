@@ -448,7 +448,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
-      | taxonomyCode |   020202201P   |
+      | taxonomyCode |   010202N   |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
@@ -489,7 +489,6 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | senderTaxId | 01199250158 |
-      | taxonomyCode |   020202201P   |
     And destinatario
       | denomination | Mario Cucumber |
       | payment_creditorTaxId | 77777777777 |
@@ -497,6 +496,31 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+  @ignore @integrationTest
+  Scenario: [TC-INVIO-01] Invio notifica digitale mono destinatario con pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_creditorTaxId | 77777777777 |
+    When la notifica viene inviata
+    And vengono prodotte le evidenze: metadati e requestID
+
+  @ignore @integrationTest
+  Scenario: [TC-INVIO-01] Invio notifica digitale mono destinatario con pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | senderTaxId | 80016350821 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment | NULL |
+    When la notifica viene inviata dalla PA "GA"
+    And vengono prodotte le evidenze: metadati e requestID
 
 
      #Scenario in errore

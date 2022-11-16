@@ -64,6 +64,6 @@ Feature: recupero notifiche tramite api AppIO b2b
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero della notifica tramite AppIO
-    Then il tentativo di recupero con appIO ha prodotto un errore con status code "500"
+    Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 
 

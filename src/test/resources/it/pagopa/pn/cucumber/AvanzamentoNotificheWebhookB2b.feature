@@ -48,39 +48,24 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "REQUEST_ACCEPTED"
 
 
-  #@clean
-  #Scenario: [B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
-   # Given viene generata una nuova notifica
-    #  | subject | invio notifica con cucumber |
-     # | senderDenomination | Comune di milano |
-    #And destinatario della notifica
-    #  | denomination | Cristoforo Colombo |
-    #  | taxId | CLMCST42R12D969Z |
-    #  | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    #And nuovo stream "stream-test" con eventType "TIMELINE"
-    #And viene creato il nuovo stream
-    #When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    #Then vengono letti gli eventi dello stream fino all'elemento di timeline "AAR_GENERATION"
-
-
-  #@svil @clean
-  #Scenario: [B2B-STREAM_TIMELINE_5] Invio notifica digitale ed attesa elemento di timeline SEND_COURTESY_MESSAGE positivo
-   # Given viene generata una nuova notifica
-    #  | subject | invio notifica con cucumber |
-     # | senderDenomination | Comune di milano |
-   # And destinatario della notifica
-    #  | denomination | Cristoforo Colombo |
-     # | taxId | CLMCST42R12D969Z |
-     # | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    #And nuovo stream "stream-test" con eventType "TIMELINE"
-    #And viene creato il nuovo stream
-    #When la notifica viene inviata e si attende che lo stato diventi ACCEPTED
-    #Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_COURTESY_MESSAGE"
+  @clean
+  Scenario: [B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream fino all'elemento di timeline "AAR_GENERATION"
 
 
 
-  @clean @svil
-  Scenario: [B2B-STREAM_TIMELINE_6_SVIL] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
+  @clean
+  Scenario: [B2B-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -94,7 +79,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
 
 
-  @ignore @clean
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -109,7 +94,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
 
-  @ignore @clean
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -124,7 +109,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
 
-  @ignore @clean
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -141,7 +126,7 @@ Feature: avanzamento notifiche webhook b2b
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
-  @ignore @clean
+  @clean
   Scenario: [B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -158,8 +143,8 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
 
-  @svil @clean
-  Scenario: [B2B-STREAM_TIMELINE_11_SVIL] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
+  @clean
+  Scenario: [B2B-STREAM_TIMELINE_11] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -173,8 +158,8 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
 
 
-  @svil @clean
-  Scenario: [B2B-STREAM_TIMELINE_12_SVIL] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
+  @clean
+  Scenario: [B2B-STREAM_TIMELINE_12] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -190,8 +175,8 @@ Feature: avanzamento notifiche webhook b2b
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
-  @svil @clean
-  Scenario: [B2B-STREAM_TIMELINE_13_SVIL] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
+  @clean
+  Scenario: [B2B-STREAM_TIMELINE_13] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -219,18 +204,19 @@ Feature: avanzamento notifiche webhook b2b
     Then l'ultima creazione ha prodotto un errore con status code "409"
 
 
+  @ignore @integrationTest
+  Scenario: [TC-INVIO-02] Invio notifica digitale ed attesa stato DELIVERED
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream
+    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
+    And vengono prodotte le evidenze: metadati, requestID, IUN e stati
 
 
-  #@svil @clean
-  #Scenario: [B2B-STREAM_TIMELINE_14_SVIL] Invio notifica digitale ed attesa stato CANCELLED_scenario negativo
-    #Given viene generata una nuova notifica
-     # | subject | invio notifica con cucumber |
-     # | senderDenomination | Comune di milano |
-   # And destinatario della notifica
-    #  | denomination | Cristoforo Colombo |
-     # | taxId | CLMCST42R12D969Z |
-    #  | digitalDomicile_address | errore-email@test.test |
-  #  And nuovo stream "stream-test" con eventType "TIMELINE"
-   # And viene creato il nuovo stream
-   # When la notifica viene inviata
-   # Then vengono letti gli eventi dello stream fino allo stato "CANCELLED"

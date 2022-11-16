@@ -26,7 +26,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
   @SmokeTest
   Scenario: [B2B-PA-GA-SEND_2] Invio notifica multi destinatario senza pagamento_scenario positivo
-    And viene generata una nuova notifica
+    Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
       | senderTaxId | 80016350821 |

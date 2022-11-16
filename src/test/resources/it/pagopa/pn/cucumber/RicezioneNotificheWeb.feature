@@ -80,7 +80,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero della notifica da parte del destinatario
-    Then il recupero ha prodotto un errore con status code "500"
+    Then il recupero ha prodotto un errore con status code "404"
 
   @SmokeTest
   Scenario: [WEB-PF-RECIPIENT_8] Invio notifica digitale altro destinatario e recupero allegato F24_STANDARD_scenario negativo

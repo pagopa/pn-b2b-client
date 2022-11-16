@@ -20,13 +20,39 @@ public class SwitchEnv {
     private String executionType;
 
     @Value("${pn.external.api-keys.pagopa-svil}")
-    private String apiKeys;
+    private String apiKeysSvil;
+
+    @Value("${pn.external.api-keys.pagopa-svil-2}")
+    private String apiKeysTwoSvil;
+
+    @Value("${pn.external.api.keys.appio.pagopa.svil}")
+    private String apiKeysAppIOSvil;
 
     @Value("${pn.external.bearer-token-CristoforoC.pagopa-svil}")
-    private String bearerTokenCristoforoC;
+    private String bearerTokenCristoforoCSvil;
 
     @Value("${pn.external.bearer-token-FieramoscaE.pagopa-svil}")
-    private String bearerTokenFieramoscaE;
+    private String bearerTokenFieramoscaESvil;
+
+
+
+    @Value("${pn.external.api-keys.pagopa-coll}")
+    private String apiKeysColl;
+
+    @Value("${pn.external.api-keys.pagopa-coll-2}")
+    private String apiKeysTwoColl;
+
+    @Value("${pn.external.api-keys.pagopa-GA-coll}")
+    private String apiKeysGAColl;
+
+    @Value("${pn.external.api.keys.appio.pagopa.coll}")
+    private String apiKeysAppIOColl;
+
+    @Value("${pn.external.bearer-token-CristoforoC.pagopa-coll}")
+    private String bearerTokenCristoforoCColl;
+
+    @Value("${pn.external.bearer-token-FieramoscaE.pagopa-coll}")
+    private String bearerTokenFieramoscaEColl;
 
     @Autowired
     ApplicationContext applicationContext;
@@ -36,30 +62,53 @@ public class SwitchEnv {
 
     @Before
     public void before_all() {
-        if((executionType!= null && executionType.trim().equalsIgnoreCase("local")) && !setted){
-            System.setProperty("pn.external.base-url","https://api.svil.pn.pagopa.it");
-            System.setProperty("pn.external.api-key", apiKeys);
-            System.setProperty("pn.webapi.external.base-url","https://webapi.svil.pn.pagopa.it");
-            System.setProperty("pn.external.bearer-token-CristoforoC.pagopa",bearerTokenCristoforoC);
-            System.setProperty("pn.external.bearer-token-FieramoscaE.pagopa",bearerTokenFieramoscaE);
+        if(executionType!= null  && !setted){
+            if(executionType.trim().equalsIgnoreCase("svil")){
+                System.setProperty("pn.external.base-url","https://api.svil.pn.pagopa.it");
+                System.setProperty("pn.webapi.external.base-url","https://webapi.svil.pn.pagopa.it");
+                System.setProperty("pn.appio.externa.base-url","https://api-io.svil.pn.pagopa.it");
 
+                System.setProperty("pn.external.api-key", apiKeysSvil);
+                System.setProperty("pn.external.appio.api-key-2", apiKeysTwoSvil);
+                System.setProperty("pn.external.appio.api-key", apiKeysAppIOSvil);
+                System.setProperty("pn.external.bearer-token-CristoforoC.pagopa", bearerTokenCristoforoCSvil);
+                System.setProperty("pn.external.bearer-token-FieramoscaE.pagopa", bearerTokenFieramoscaESvil);
 
-            BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
+                switchBean();
+                setted = true;
+            }
+            if(executionType.trim().equalsIgnoreCase("coll")){
+                System.setProperty("pn.external.base-url","https://api.coll.pn.pagopa.it");
+                System.setProperty("pn.webapi.external.base-url","https://webapi.coll.pn.pagopa.it");
+                System.setProperty("pn.appio.externa.base-url","https://api-io.coll.pn.pagopa.it");
 
-            beanRegistry.removeBeanDefinition("pnWebhookB2bExternalClientImpl");
-            beanRegistry.registerBeanDefinition("pnWebhookB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebhookB2bExternalClientImpl.class).getBeanDefinition());
+                System.setProperty("pn.external.api-key", apiKeysColl);
+                System.setProperty("pn.external.appio.api-key-2", apiKeysTwoColl);
+                System.setProperty("pn.external.api-key-GA-taxID", apiKeysGAColl);
+                System.setProperty("pn.external.appio.api-key", apiKeysAppIOColl);
+                System.setProperty("pn.external.bearer-token-CristoforoC.pagopa", bearerTokenCristoforoCColl);
+                System.setProperty("pn.external.bearer-token-FieramoscaE.pagopa", bearerTokenFieramoscaEColl);
 
-            beanRegistry.removeBeanDefinition("pnWebMandateExternalClientImpl");
-            beanRegistry.registerBeanDefinition("pnWebMandateExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebMandateExternalClientImpl.class).getBeanDefinition());
-
-            beanRegistry.removeBeanDefinition("pnWebRecipientExternalClientImpl");
-            beanRegistry.registerBeanDefinition("pnWebRecipientExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebRecipientExternalClientImpl.class).getBeanDefinition());
-
-            beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
-            beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
-
-            setted = true;
+                switchBean();
+                setted = true;
+            }
         }
+    }
+
+    private void switchBean(){
+        BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
+
+        beanRegistry.removeBeanDefinition("pnWebhookB2bExternalClientImpl");
+        beanRegistry.registerBeanDefinition("pnWebhookB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebhookB2bExternalClientImpl.class).getBeanDefinition());
+
+        beanRegistry.removeBeanDefinition("pnWebMandateExternalClientImpl");
+        beanRegistry.registerBeanDefinition("pnWebMandateExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebMandateExternalClientImpl.class).getBeanDefinition());
+
+        beanRegistry.removeBeanDefinition("pnWebRecipientExternalClientImpl");
+        beanRegistry.registerBeanDefinition("pnWebRecipientExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebRecipientExternalClientImpl.class).getBeanDefinition());
+
+        beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
+        beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
 
     }
 

@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +84,12 @@ public class AvanzamentoNotificheB2b {
                 throw new RuntimeException(exc);
             }
         }
-        Assertions.assertNotNull(notificationStatusHistoryElement);
+        try{
+            Assertions.assertNotNull(notificationStatusHistoryElement);
+        }catch (AssertionFailedError assertionFailedError){
+            throw new AssertionFailedError(assertionFailedError.getMessage()+" IUN: "+sharedSteps.getSentNotification().getIun());
+        }
+
 
     }
 
@@ -135,7 +141,12 @@ public class AvanzamentoNotificheB2b {
                 throw new RuntimeException(exc);
             }
         }
-        Assertions.assertNotNull(timelineElement);
+        try{
+            Assertions.assertNotNull(timelineElement);
+        }catch (AssertionFailedError assertionFailedError){
+            throw new AssertionFailedError(assertionFailedError.getMessage()+" IUN: "+sharedSteps.getSentNotification().getIun());
+        }
+
     }
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
