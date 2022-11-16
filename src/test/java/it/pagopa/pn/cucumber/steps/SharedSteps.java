@@ -31,8 +31,14 @@ public class SharedSteps {
     public static final String DEFAULT_PA = "MVP_1";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @Value("${pn.sender.tax.id}")
+    @Value("${pn.external.api-key-taxID}")
     private String senderTaxId;
+
+    @Value("${pn.external.api-key-2-taxID}")
+    private String senderTaxIdTwo;
+
+    @Value("${pn.external.api-key-GA-taxID}")
+    private String senderTaxIdGa;
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils) {
@@ -50,7 +56,6 @@ public class SharedSteps {
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequest notificationRequest) {
         this.notificationRequest = notificationRequest;
-        setSenderTaxIdFromProperties(notificationRequest);
     }
 
     @And("destinatario")
@@ -60,7 +65,6 @@ public class SharedSteps {
 
     @And("destinatario Cristoforo Colombo")
     public void destinatarioCristoforoColombo() {
-        setSenderTaxIdFromProperties(notificationRequest);
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("Cristoforo Colombo")
@@ -72,7 +76,6 @@ public class SharedSteps {
 
     @And("destinatario Cristoforo Colombo e:")
     public void destinatarioCristoforoColomboParam(@Transpose NotificationRecipient recipient) {
-        setSenderTaxIdFromProperties(notificationRequest);
         this.notificationRequest.addRecipientsItem(
                 recipient
                         .denomination("Cristoforo Colombo")
@@ -97,7 +100,6 @@ public class SharedSteps {
         Assertions.assertDoesNotThrow(()->notificationRequest.getRecipients().get(recipientNumber-1).getPayment());
         String noticeCode = notificationRequest.getRecipients().get(recipientNumber-1).getPayment().getNoticeCode();
 
-        setSenderTaxIdFromProperties(notificationRequest);
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
     }

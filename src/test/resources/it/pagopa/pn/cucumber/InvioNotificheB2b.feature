@@ -499,7 +499,7 @@ Feature: invio notifiche b2b
 
 
   @ignore @integrationTest
-  Scenario: [TC-INVIO-01] Invio notifica digitale mono destinatario con pagamento
+  Scenario: [TC-INVIO-01.1] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -511,7 +511,7 @@ Feature: invio notifiche b2b
     And vengono prodotte le evidenze: metadati e requestID
 
   @ignore @integrationTest
-  Scenario: [TC-INVIO-01] Invio notifica digitale mono destinatario con pagamento
+  Scenario: [TC-INVIO-01Bis] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -520,6 +520,19 @@ Feature: invio notifiche b2b
       | denomination | Mario Cucumber |
       | payment | NULL |
     When la notifica viene inviata dalla PA "GA"
+    And vengono prodotte le evidenze: metadati e requestID
+
+  @ignore @integrationTest
+  Scenario: [TC-INVIO-01.2] Invio notifica digitale mono destinatario con pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | senderTaxId | 01199250158 |
+    And destinatario
+      | denomination | Mario Cucumber |
+      | payment_creditorTaxId | 77777777777 |
+      | payment_pagoPaForm | NULL |
+    When la notifica viene inviata
     And vengono prodotte le evidenze: metadati e requestID
 
 

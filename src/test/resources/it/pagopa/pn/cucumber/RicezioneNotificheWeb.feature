@@ -174,15 +174,4 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | endDate | 01/10/2030 |
       | iunMatch | ACTUAL |
       | subjectRegExp | cucumber |
-
-  #Scenario in errore
-  #Scenario: [WEB-PF-RECIPIENT_15] Invio notifica digitale mono destinatario e recupero tramite ricerca solo IUN API WEB_scenario positivo
-   # Given viene generata una notifica per il test di ricezione
-    #  | subject | invio notifica con cucumber |
-     # | senderDenomination | comune di milano |
-     # | senderTaxId | 01199250158 |
-    #And destinatario Cristoforo Colombo
-    #When la notifica viene inviata e si riceve il relativo codice IUN valorizzato
-    #Then la notifica può essere correttamente recuperata con una ricerca
-     # | iunMatch | ACTUAL |
-
+     
