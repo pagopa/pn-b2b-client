@@ -40,9 +40,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Autowired
     public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
+        this.sharedSteps = sharedSteps;
         this.webhookB2bClient = webhookB2bClient;
         this.webRecipientClient = webRecipientClient;
-        this.sharedSteps = sharedSteps;
         this.b2bClient = sharedSteps.getB2bClient();
     }
 
@@ -272,7 +272,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         for(ProgressResponseElement elem: progressResponseElements){
             if(lastProgress == null){
                 lastProgress = elem;
-            }else if (lastProgress.getTimestamp().isBefore(elem.getTimestamp())){
+            }else if (lastProgress.getEventId().compareTo(elem.getEventId()) < 0){
                 lastProgress = elem;
             }
             if(elem.getIun().equals(sharedSteps.getSentNotification().getIun())){
