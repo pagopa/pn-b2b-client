@@ -5,7 +5,6 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -46,7 +45,6 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -58,7 +56,6 @@ Feature: recupero notifiche tramite api AppIO b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |

@@ -6,7 +6,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
@@ -172,7 +171,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_municipality | <comune> |
@@ -193,7 +191,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_municipalityDetails | <localita> |
@@ -215,7 +212,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_address | <indirizzo> |
@@ -237,7 +233,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | physicalAddress_State | <stato> |
@@ -383,7 +378,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | <senderTaxId> |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata
@@ -402,7 +396,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
@@ -413,7 +406,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
@@ -434,7 +426,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | taxonomyCode |   NULL   |
     And destinatario
       | denomination | Mario Cucumber |
@@ -447,7 +438,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | taxonomyCode |   010202N   |
     And destinatario
       | denomination | Mario Cucumber |
@@ -488,7 +478,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment_creditorTaxId | 77777777777 |
@@ -503,7 +492,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment_creditorTaxId | 77777777777 |
@@ -515,7 +503,6 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment | NULL |

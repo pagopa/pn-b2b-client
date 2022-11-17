@@ -35,7 +35,6 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -52,7 +51,6 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -68,7 +66,6 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -84,7 +81,6 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -98,7 +94,6 @@ Feature: Ricezione notifiche destinate al delegante
     When viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | FRMTTR76M06B715E |
@@ -148,7 +143,6 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |

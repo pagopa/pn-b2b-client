@@ -6,7 +6,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
@@ -18,7 +17,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -30,7 +28,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
@@ -42,7 +39,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
@@ -54,7 +50,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
@@ -66,7 +61,6 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Cristoforo Colombo |
-      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -144,7 +138,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Cristoforo Colombo |
@@ -157,7 +150,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Cristoforo Colombo |
@@ -169,7 +161,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | FLAT_RATE |
     And destinatario
       | denomination | Cristoforo Colombo |
@@ -283,7 +274,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -300,7 +290,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |

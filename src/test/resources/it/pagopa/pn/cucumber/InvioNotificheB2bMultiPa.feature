@@ -5,7 +5,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica multi cucumber |
       | senderDenomination | Comune di verona |
-      | senderTaxId | 00215150236 |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b dalla PA "MVP_2" e si attende che lo stato diventi ACCEPTED
@@ -17,7 +16,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment | NULL |
@@ -29,7 +27,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -48,7 +45,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -81,7 +77,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -98,7 +93,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -117,7 +111,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |

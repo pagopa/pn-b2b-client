@@ -35,7 +35,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | FLAT_RATE |
     And destinatario Cristoforo Colombo e:
       | payment_pagoPaForm | SI |
@@ -48,7 +47,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario Cristoforo Colombo e:
       | payment_pagoPaForm | SI |
@@ -61,7 +59,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario Cristoforo Colombo e:
       | payment_pagoPaForm | SI |
@@ -75,7 +72,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
@@ -87,7 +83,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Mario Cucumber |
@@ -102,7 +97,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | FLAT_RATE |
     And destinatario
       | denomination | Mario Cucumber |
@@ -118,7 +112,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment_pagoPaForm | SI |
@@ -132,7 +125,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
@@ -143,7 +135,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
@@ -154,7 +145,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
@@ -166,7 +156,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-      | senderTaxId | 01199250158 |
     And destinatario Cristoforo Colombo
     When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
