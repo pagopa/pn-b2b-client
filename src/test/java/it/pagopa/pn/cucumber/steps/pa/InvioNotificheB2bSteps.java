@@ -15,12 +15,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,9 +47,7 @@ public class InvioNotificheB2bSteps  {
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private String sha256DocumentDownload;
-    private NewNotificationResponse newNotificationResponse;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
-    private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -64,29 +59,6 @@ public class InvioNotificheB2bSteps  {
         this.b2bClient = sharedSteps.getB2bClient();
     }
 
-    @When("la notifica viene inviata")
-    public void laNotificaVieneInviataKO() {
-        try {
-            this.newNotificationResponse = b2bUtils.uploadNotification(sharedSteps.getNotificationRequest());
-        } catch (HttpStatusCodeException | IOException e) {
-            if(e instanceof HttpStatusCodeException){
-                this.notificationError = (HttpStatusCodeException)e;
-            }
-        }
-    }
-
-    @When("la notifica viene inviata dalla PA {string}")
-    public void laNotificaVieneInviataDallaPA(String pa) {
-        this.sharedSteps.selectPA(pa);
-        try {
-            this.newNotificationResponse = b2bUtils.uploadNotification(sharedSteps.getNotificationRequest());
-        } catch (HttpStatusCodeException | IOException e) {
-            if(e instanceof HttpStatusCodeException){
-                this.notificationError = (HttpStatusCodeException)e;
-            }
-        }
-        this.sharedSteps.selectPA(SharedSteps.DEFAULT_PA);
-    }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void laNotificaCorrettamenteRecuperataDalSistemaTramiteCodiceIUN() {
@@ -176,7 +148,7 @@ public class InvioNotificheB2bSteps  {
         try {
             b2bUtils.getNotificationByIun(IUN);
         } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+            this.sharedSteps.setNotificationError(e);
         }
     }
 
@@ -221,7 +193,7 @@ public class InvioNotificheB2bSteps  {
                     this.downloadResponse = b2bClient
                             .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(),documents.size());
                 } catch (HttpStatusCodeException e) {
-                    this.notificationError = e;
+                    this.sharedSteps.setNotificationError(e);
                 }
                 return;
             case "PAGOPA":
@@ -239,7 +211,7 @@ public class InvioNotificheB2bSteps  {
             this.downloadResponse = b2bClient
                     .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100,downloadType);
         } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+            this.sharedSteps.setNotificationError(e);
         }
     }
 
@@ -250,8 +222,9 @@ public class InvioNotificheB2bSteps  {
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operazioneHaProdottoUnErrore(String statusCode) {
-        Assertions.assertTrue((this.notificationError != null) &&
-                (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
 
@@ -276,9 +249,9 @@ public class InvioNotificheB2bSteps  {
 
     @And("vengono prodotte le evidenze: metadati e requestID")
     public void vengonoProdotteLeEvidenzeMetadatiERequestID() {
-        Assertions.assertNotNull(newNotificationResponse);
-        logger.info("METADATI: "+'\n'+newNotificationResponse);
-        logger.info("REQUEST-ID: "+'\n'+newNotificationResponse.getNotificationRequestId());
+        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
+        logger.info("METADATI: "+'\n'+this.sharedSteps.getNewNotificationResponse());
+        logger.info("REQUEST-ID: "+'\n'+this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
     }
 
 

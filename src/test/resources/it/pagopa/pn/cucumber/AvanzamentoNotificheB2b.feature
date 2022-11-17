@@ -8,7 +8,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
 
 
@@ -20,7 +20,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -32,7 +32,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
 
 
@@ -44,7 +44,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 
 
@@ -56,7 +56,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
 
 
@@ -68,7 +68,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
 
@@ -80,7 +80,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And il destinatario legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
@@ -94,7 +94,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     And il destinatario legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -108,7 +108,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And il destinatario legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
@@ -134,7 +134,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And il destinatario legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
@@ -144,12 +144,11 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And il destinatario legge la notifica ricevuta
     Then vengono verificati costo = "200" e data di perfezionamento della notifica
 
@@ -157,24 +156,22 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "200" della notifica
 
   Scenario: [B2B-PA-PAY_3] Invio notifica FLAT e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-      | senderTaxId | 01199250158 |
       | feePolicy | FLAT_RATE |
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
 
   @SmokeTest
@@ -186,7 +183,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
 
@@ -198,7 +195,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
@@ -211,7 +208,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then la PA richiede il download dell'attestazione opponibile "PEC_RECEIPT"
 
@@ -223,7 +220,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And il destinatario legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
@@ -236,7 +233,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "SENDER_ACK"
 
@@ -248,7 +245,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
@@ -261,7 +258,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "PEC_RECEIPT"
 
@@ -273,7 +270,7 @@ Feature: avanzamento notifiche b2b
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And il destinatario legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "RECIPIENT_ACCESS"
@@ -283,7 +280,6 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -292,15 +288,14 @@ Feature: avanzamento notifiche b2b
       | denomination | Mario Gherkin |
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 
 
   Scenario: [B2B_PA_MULTI_2] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -311,5 +306,5 @@ Feature: avanzamento notifiche b2b
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile | NULL |
       | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "Comune_Multi"

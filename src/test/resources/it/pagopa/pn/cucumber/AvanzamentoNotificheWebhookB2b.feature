@@ -29,7 +29,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "ACCEPTED"
 
 
@@ -44,7 +44,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "REQUEST_ACCEPTED"
 
 
@@ -59,7 +59,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "AAR_GENERATION"
 
 
@@ -75,7 +75,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
 
 
@@ -90,7 +90,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
 
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
 
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
     And il destinatario legge la notifica
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
@@ -137,7 +137,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
     And il destinatario legge la notifica
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
@@ -154,7 +154,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
 
 
@@ -169,7 +169,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
     And il destinatario legge la notifica
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
@@ -186,7 +186,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
     And il destinatario legge la notifica
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
@@ -215,7 +215,7 @@ Feature: avanzamento notifiche webhook b2b
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
     And vengono prodotte le evidenze: metadati, requestID, IUN e stati
 

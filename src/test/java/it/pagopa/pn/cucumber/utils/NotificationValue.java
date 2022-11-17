@@ -11,7 +11,7 @@ public enum NotificationValue {
     IDEMPOTENCE_TOKEN("idempotenceToken",null,false),
     ABSTRACT("abstract","Abstract della notifica",false),
     SENDER_DENOMINATION("senderDenomination","Comune di milano",false),
-    SENDER_TAX_ID("senderTaxId","01199250158",false),
+    SENDER_TAX_ID("senderTaxId",null,false),
     PA_PROTOCOL_NUMBER("paProtocolNumber","",true),
     NOTIFICATION_FEE_POLICY("feePolicy","FLAT_RATE",false),
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication","REGISTERED_LETTER_890",false),

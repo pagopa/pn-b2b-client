@@ -20,6 +20,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final RestTemplate restTemplate;
     private final ConsentsApi ConsentsApi;
 
+    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String fieramoscaEBearerToken;
     private final String cristoforoCBearerToken;
     private final String userAgent;
@@ -49,22 +50,27 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
-
-    public boolean setBearerToken(String user){
+    @Override
+    public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
-        user = user.toUpperCase();
-        switch (user){
-            case "CLMCST42R12D969Z":
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+        switch (bearerToken){
+            case USER_1:
+                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
-            case "FRMTTR76M06B715E":
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+            case USER_2:
+                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
         }
         return beenSet;
     }
+
+    @Override
+    public BearerTokenType getBearerTokenSetted() {
+        return this.bearerTokenSetted;
+    }
+
 
     public void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException {
         this.ConsentsApi.consentAction(consentType, consentAction, version);

@@ -15,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.HttpStatusCodeException;
+
+import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 
@@ -28,7 +31,9 @@ public class SharedSteps {
     private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
-    public static final String DEFAULT_PA = "MVP_1";
+    private HttpStatusCodeException notificationError;
+    public static final String DEFAULT_PA = "Comune_1";
+    private String settedPa = "Comune_1";
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${pn.external.api-key-taxID}")
@@ -125,27 +130,33 @@ public class SharedSteps {
         this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
-    @When("la notifica viene inviata tramite api b2b dalla PA {string} e si attende che lo stato diventi ACCEPTED")
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk(String paType) {
         selectPA(paType);
-        setSenderTaxIdFromProperties(notificationRequest);
-        Assertions.assertDoesNotThrow(() -> {
-            newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
-        });
-        try {
-            Thread.sleep( 10 * 1000);
-        } catch (InterruptedException e) {
-            logger.error("Thread.sleep error retry");
-            throw new RuntimeException(e);
-        }
-        Assertions.assertNotNull(notificationResponseComplete);
-        selectPA(DEFAULT_PA);
+        setSenderTaxIdFromProperties();
+        sendNotification();
     }
 
+     /*
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk() {
-        setSenderTaxIdFromProperties(notificationRequest);
+        sendNotification();
+    }
+*/
+
+    @When("la notifica viene inviata dal {string}")
+    public void laNotificaVieneInviataDallaPA(String pa) {
+        selectPA(pa);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithError();
+    }
+
+    @When("la notifica viene inviata tramite api b2b")
+    public void laNotificaVieneInviatatramiteApiB2b() {
+        sendNotificationWithError();
+    }
+
+    private void sendNotification(){
         Assertions.assertDoesNotThrow(() -> {
             newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
             notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
@@ -158,6 +169,17 @@ public class SharedSteps {
         }
         Assertions.assertNotNull(notificationResponseComplete);
     }
+
+    private void sendNotificationWithError(){
+        try {
+            this.newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+        } catch (HttpStatusCodeException | IOException e) {
+            if(e instanceof HttpStatusCodeException){
+                this.notificationError = (HttpStatusCodeException)e;
+            }
+        }
+    }
+
 
 
     private void generateNewNotification(){
@@ -165,7 +187,6 @@ public class SharedSteps {
         this.notificationRequest = (dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
                 .subject(notificationRequest.getSubject())
                 .senderDenomination(notificationRequest.getSenderDenomination())
-                .senderTaxId(this.senderTaxId)
                 .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination(notificationRequest.getRecipients().get(0).getDenomination())
                         .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
@@ -185,8 +206,28 @@ public class SharedSteps {
         return notificationRequest;
     }
 
-    public void setSenderTaxIdFromProperties(NewNotificationRequest notificationRequest) {
-        notificationRequest.setSenderTaxId(this.senderTaxId);
+    public HttpStatusCodeException consumeNotificationError() {
+        HttpStatusCodeException value =  notificationError;
+        this.notificationError = null;
+        return value;
+    }
+
+    public void setNotificationError(HttpStatusCodeException notificationError) {
+        this.notificationError = notificationError;
+    }
+
+    public void setSenderTaxIdFromProperties() {
+        switch (settedPa){
+            case "Comune_1":
+                this.notificationRequest.setSenderTaxId(this.senderTaxId);
+                break;
+            case "Comune_2":
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdTwo);
+                break;
+            case "Comune_Multi":
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdGa);
+                break;
+        }
     }
 
     public FullSentNotification getSentNotification() {
@@ -203,19 +244,20 @@ public class SharedSteps {
 
     public void selectPA(String apiKey) {
         switch (apiKey){
-            case "MVP_1":
+            case "Comune_1":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
                 break;
-            case "MVP_2":
+            case "Comune_2":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
                 break;
-            case "GA":
+            case "Comune_Multi":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
                 break;
             default:
                 throw new IllegalArgumentException();
         }
         this.b2bUtils.setClient(b2bClient);
+        this.settedPa = apiKey;
     }
 
     public IPnPaB2bClient getB2bClient() {

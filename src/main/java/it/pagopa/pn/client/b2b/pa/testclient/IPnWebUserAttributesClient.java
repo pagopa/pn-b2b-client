@@ -7,7 +7,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
-public interface IPnWebUserAttributesClient {
+public interface IPnWebUserAttributesClient extends SettableBearerToken {
 
     void consentAction(ConsentType consentType, ConsentAction consentAction, String version) throws RestClientException;
 

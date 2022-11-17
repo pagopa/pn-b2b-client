@@ -5,11 +5,10 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica multi cucumber |
       | senderDenomination | Comune di verona |
-      | senderTaxId | 00215150236 |
     And destinatario
       | denomination | Mario Cucumber |
-    When la notifica viene inviata tramite api b2b dalla PA "MVP_2" e si attende che lo stato diventi ACCEPTED
-    Then si tenta il recupero dal sistema tramite codice IUN dalla PA "MVP_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_1"
     And l'operazione ha generato un errore con status code "404"
 
   @SmokeTest
@@ -17,19 +16,17 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
   Scenario: [B2B-PA-GA-SEND_2] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -40,15 +37,14 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
       | payment | NULL |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
   Scenario: [B2B-PA-GA-SEND_3] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -57,8 +53,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | denomination | Mario Gherkin |
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
   Scenario: [B2B-PA-GA-SEND_4] Invio notifica multi destinatario PA non abilitata_scenario negativa
@@ -73,7 +69,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | denomination | Mario Gherkin |
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b dalla PA "MVP_1"
+    When la notifica viene inviata dal "Comune_1"
     Then l'invio ha prodotto un errore con status code "400"
 
   @SmokeTest
@@ -81,7 +77,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -90,7 +85,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | denomination | Mario Gherkin |
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b dalla PA "GA"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "500"
 
   @SmokeTest
@@ -98,7 +93,6 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -109,15 +103,14 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | taxId | FRMTTR76M06B715E |
       | digitalDomicile | NULL |
       | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dalla PA "GA" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "GA"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
   Scenario: [B2B-PA-GA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-      | senderTaxId | 80016350821 |
     And destinatario
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
@@ -126,5 +119,5 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
       | denomination | Mario Cucumber |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-    When la notifica viene inviata tramite api b2b dalla PA "GA"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "400"

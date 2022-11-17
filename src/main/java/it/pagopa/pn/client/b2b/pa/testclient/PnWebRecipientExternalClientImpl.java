@@ -22,6 +22,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
 
+    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String fieramoscaEBearerToken;
     private final String cristoforoCBearerToken;
     private final String basePath;
@@ -53,21 +54,29 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public boolean setBearerToken(String user) {
+    public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
-        user = user.toUpperCase();
-        switch (user){
-            case "CLMCST42R12D969Z":
-                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+        switch (bearerToken){
+            case USER_1:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
-            case "FRMTTR76M06B715E":
-                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+            case USER_2:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
         }
         return beenSet;
     }
+
+    @Override
+    public BearerTokenType getBearerTokenSetted() {
+        return this.bearerTokenSetted;
+    }
+
+
 
     public FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException {
         return recipientReadApi.getReceivedNotification(iun, mandateId);
