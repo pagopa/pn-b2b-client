@@ -6,8 +6,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
@@ -19,8 +18,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | idempotenceToken | AME2E3626070001.1  |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
@@ -33,9 +31,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | idempotenceToken | AME2E3626070001.1  |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | taxId | FRMTTR76M06B715E |
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
@@ -48,9 +44,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | taxId | FRMTTR76M06B715E |
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
@@ -63,9 +57,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
-      | taxId | FRMTTR76M06B715E |
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
@@ -80,8 +72,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | document | SI |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "NOTIFICA"
@@ -92,8 +83,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -108,8 +98,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -123,8 +112,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | physicalAddress | NULL |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -132,8 +120,7 @@ Feature: invio notifiche b2b
   Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When si tenta il recupero della notifica dal sistema tramite codice IUN "IUNUGYD-XHEZ-KLRM-202208-X-0"
@@ -145,8 +132,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | FLAT_RATE |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -158,8 +144,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -171,8 +156,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | physicalAddress_municipality | <comune> |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -191,8 +175,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | physicalAddress_municipalityDetails | <localita> |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -212,8 +195,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | physicalAddress_address | <indirizzo> |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -233,8 +215,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | physicalAddress_State | <stato> |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -252,8 +233,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | <name> |
       | senderDenomination | comune di milano  |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
@@ -273,6 +253,7 @@ Feature: invio notifiche b2b
       | senderDenomination | comune di milano  |
     And destinatario
       | denomination | <denomination> |
+      | taxId | FRMTTR76M06B715E |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
@@ -293,6 +274,7 @@ Feature: invio notifiche b2b
       | senderDenomination | comune di milano |
     And destinatario
       | denomination | <denomination> |
+      | taxId | FRMTTR76M06B715E |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -305,8 +287,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | <denomination> |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -360,7 +341,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | <creditorTaxId> |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -379,8 +360,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | senderTaxId | <senderTaxId> |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -397,8 +377,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
@@ -407,8 +386,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
@@ -428,8 +406,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | taxonomyCode |   NULL   |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
@@ -440,8 +417,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | taxonomyCode |   010202N   |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
@@ -451,8 +427,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | <subject> |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -465,8 +440,7 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | abstract | <abstract> |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
@@ -479,8 +453,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -493,8 +466,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata dal "Comune_1"
     And vengono prodotte le evidenze: metadati e requestID
@@ -504,8 +476,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment | NULL |
     When la notifica viene inviata dal "Comune_Multi"
     And vengono prodotte le evidenze: metadati e requestID
@@ -515,8 +486,7 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm | NULL |
     When la notifica viene inviata dal "Comune_1"

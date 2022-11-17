@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,12 @@ public class SharedSteps {
     @Value("${pn.external.api-key-GA-taxID}")
     private String senderTaxIdGa;
 
+    @Value("${pn.bearer-token.user1.taxID}")
+    private String marioCucumberTaxID;
+
+    @Value("${pn.bearer-token.user2.taxID}")
+    private String marioGherkinTaxID;
+
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils) {
         this.dataTableTypeUtil = dataTableTypeUtil;
@@ -63,33 +70,51 @@ public class SharedSteps {
         this.notificationRequest = notificationRequest;
     }
 
+
     @And("destinatario")
     public void destinatario(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(recipient);
     }
 
-    @And("destinatario Cristoforo Colombo")
-    public void destinatarioCristoforoColombo() {
+
+    @And("destinatario Mario Cucumber")
+    public void destinatarioMarioCucumber() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Cristoforo Colombo")
-                        .taxId("CLMCST42R12D969Z")
+                        .denomination("Mario Cucumber")
+                        .taxId(marioCucumberTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC )
-                                .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
+                                .address("FRMTTR76M06B715E@pnpagopa.postecert.local")));
     }
 
-    @And("destinatario Cristoforo Colombo e:")
-    public void destinatarioCristoforoColomboParam(@Transpose NotificationRecipient recipient) {
+    @And("destinatario Mario Cucumber e:")
+    public void destinatarioMarioCucumberParam(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
                 recipient
-                        .denomination("Cristoforo Colombo")
-                        .taxId("CLMCST42R12D969Z")
+                        .denomination("Mario Cucumber")
+                        .taxId(marioCucumberTaxID));
+    }
+
+
+    @And("destinatario Mario Gherkin")
+    public void destinatarioMarioGherkin() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Mario Gherkin")
+                        .taxId(marioGherkinTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC )
                                 .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
     }
 
+    @And("destinatario Mario Gherkin e:")
+    public void destinatarioMarioGherkinParam(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("Mario Gherkin")
+                        .taxId(marioGherkinTaxID));
+    }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
@@ -100,10 +125,21 @@ public class SharedSteps {
         this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
     }
 
-    @And("destinatario con uguale codice avviso del destinario numero {int}")
-    public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(int recipientNumber, @Transpose NotificationRecipient recipient) {
+    @And("destinatario {string} con uguale codice avviso del destinario numero {int}")
+    public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(String recipientName,int recipientNumber, @Transpose NotificationRecipient recipient) {
         Assertions.assertDoesNotThrow(()->notificationRequest.getRecipients().get(recipientNumber-1).getPayment());
         String noticeCode = notificationRequest.getRecipients().get(recipientNumber-1).getPayment().getNoticeCode();
+
+        if(recipientName.trim().equalsIgnoreCase("mario cucumber")){
+            recipient = (recipient.denomination("Mario Cucumber")
+                    .taxId(marioCucumberTaxID));
+        } else if (recipientName.trim().equalsIgnoreCase("mario gherkin")){
+            recipient = (recipient.denomination("Mario Gherkin")
+                    .taxId(marioGherkinTaxID));
+
+        }else{
+            throw new IllegalArgumentException();
+        }
 
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);

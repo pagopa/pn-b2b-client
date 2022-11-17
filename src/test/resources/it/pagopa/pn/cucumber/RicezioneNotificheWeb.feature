@@ -5,7 +5,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal destinatario
 
@@ -14,7 +14,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then il documento notificato può essere correttamente recuperato
 
@@ -23,7 +23,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -36,7 +36,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | FLAT_RATE |
-    And destinatario Cristoforo Colombo e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -48,7 +48,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Cristoforo Colombo e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -60,7 +60,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Cristoforo Colombo e:
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -72,8 +72,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si tenta il recupero della notifica da parte del destinatario
     Then il recupero ha prodotto un errore con status code "404"
@@ -84,8 +83,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -98,8 +96,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
       | feePolicy | FLAT_RATE |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -112,8 +109,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario
-      | denomination | Mario Cucumber |
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -125,7 +121,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
     |||
@@ -135,7 +131,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
       | subjectRegExp | cucumber |
@@ -145,7 +141,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
       | startDate | 01/01/2022 |
@@ -156,7 +152,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
-    And destinatario Cristoforo Colombo
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata con una ricerca
       | startDate | 01/01/2022 |
