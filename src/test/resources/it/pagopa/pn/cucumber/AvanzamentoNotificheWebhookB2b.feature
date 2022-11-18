@@ -101,7 +101,7 @@ Feature: avanzamento notifiche webhook b2b
     And si crea il nuovo stream
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
-    And il destinatario legge la notifica
+    And "Mario Gherkin" legge la notifica
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
@@ -115,7 +115,7 @@ Feature: avanzamento notifiche webhook b2b
     And si crea il nuovo stream
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream fino allo stato "DELIVERING"
-    And il destinatario legge la notifica
+    And "Mario Gherkin" legge la notifica
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
 
@@ -141,7 +141,7 @@ Feature: avanzamento notifiche webhook b2b
     And si crea il nuovo stream
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
-    And il destinatario legge la notifica
+    And "Mario Gherkin" legge la notifica
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
@@ -155,7 +155,7 @@ Feature: avanzamento notifiche webhook b2b
     And si crea il nuovo stream
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
-    And il destinatario legge la notifica
+    And "Mario Gherkin" legge la notifica
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
   @clean

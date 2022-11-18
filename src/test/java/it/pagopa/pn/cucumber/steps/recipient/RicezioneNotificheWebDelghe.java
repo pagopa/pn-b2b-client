@@ -18,10 +18,8 @@ import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -33,7 +31,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class RicezioneNotificheWebDelghe {
 
-
     private final IPnWebMandateClient webMandateClient;
     private final IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
@@ -44,20 +41,20 @@ public class RicezioneNotificheWebDelghe {
     private final String verificationCode = "24411";
     private HttpStatusCodeException notificationError;
 
-    @Value("${pn.bearer-token.user1.taxID}")
-    private String marioCucumberTaxID;
-
-    @Value("${pn.bearer-token.user2.taxID}")
-    private String marioGherkinTaxID;
+    private final String marioCucumberTaxID;
+    private final String marioGherkinTaxID;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public RicezioneNotificheWebDelghe(IPnWebMandateClient webMandateClient, IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
+    public RicezioneNotificheWebDelghe(IPnWebMandateClient webMandateClient, SharedSteps sharedSteps) {
         this.webMandateClient = webMandateClient;
-        this.webRecipientClient = webRecipientClient;
         this.sharedSteps = sharedSteps;
+        this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
+
+        this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
+        this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
     }
 
 
@@ -159,15 +156,17 @@ public class RicezioneNotificheWebDelghe {
 
     }
 
-    @Then("la notifica può essere correttamente letta dal delegato")
-    public void laNotificaPuoEssereCorrettamenteRecuperataDalDelegato() {
+    @And("la notifica può essere correttamente letta da {string} con delega")
+    public void laNotificaPuòEssereCorrettamenteLettaDaConDelega(String recipient) {
+        sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
     }
 
-    @Then("il documento notificato può essere correttamente recuperato dal delegato")
-    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato() {
+    @Then("il documento notificato può essere correttamente recuperato da {string} con delega")
+    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato(String recipient) {
+        sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 sharedSteps.getSentNotification().getIun(),
                 Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
@@ -182,8 +181,9 @@ public class RicezioneNotificheWebDelghe {
         Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
     }
 
-    @Then("l'allegato {string} può essere correttamente recuperato dal delegato")
-    public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName) {
+    @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
+    public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName,String recipient) {
+        sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
@@ -234,8 +234,9 @@ public class RicezioneNotificheWebDelghe {
     }
 
 
-    @Then("si tenta la lettura della notifica da parte del delegato che produce un errore con status code {string}")
-    public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String statusCode) {
+    @Then("si tenta la lettura della notifica da parte del delegato {string} che produce un errore con status code {string}")
+    public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String recipient,String statusCode) {
+        sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
             FullReceivedNotification receivedNotification =
@@ -291,20 +292,17 @@ public class RicezioneNotificheWebDelghe {
                 (notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
-    @And("la notifica può essere correttamente letta dal destinatario {string}")
+    @And("la notifica può essere correttamente letta da {string}")
     public void laNotificaPuòEssereCorrettamenteRecuperataDalDestinatario(String recipient) {
-        if(recipient.trim().equalsIgnoreCase("mario cucumber")){
-             webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")){
-            webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-        }else{
-            throw new IllegalArgumentException();
-        }
+        sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
         webRecipientClient.setBearerToken(baseUser);
     }
+
+
+
 
 
 }

@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ public class SharedSteps {
     private final DataTableTypeUtil dataTableTypeUtil;
     private final IPnPaB2bClient b2bClient;
     private final PnPaB2bUtils b2bUtils;
+    private final IPnWebRecipientClient webRecipientClient;
 
     private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
@@ -53,10 +55,11 @@ public class SharedSteps {
     private String marioGherkinTaxID;
 
     @Autowired
-    public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils) {
+    public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient, PnPaB2bUtils b2bUtils,IPnWebRecipientClient webRecipientClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.b2bUtils = b2bUtils;
+        this.webRecipientClient = webRecipientClient;
     }
 
     @BeforeAll
@@ -173,12 +176,11 @@ public class SharedSteps {
         sendNotification();
     }
 
-     /*
+
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk() {
         sendNotification();
     }
-*/
 
     @When("la notifica viene inviata dal {string}")
     public void laNotificaVieneInviataDallaPA(String pa) {
@@ -215,7 +217,6 @@ public class SharedSteps {
             }
         }
     }
-
 
 
     private void generateNewNotification(){
@@ -296,6 +297,16 @@ public class SharedSteps {
         this.settedPa = apiKey;
     }
 
+    public void selectUser(String recipient){
+        if(recipient.trim().equalsIgnoreCase("mario cucumber")){
+            webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")){
+            webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+        }else{
+            throw new IllegalArgumentException();
+        }
+    }
+
     public IPnPaB2bClient getB2bClient() {
         return b2bClient;
     }
@@ -304,4 +315,15 @@ public class SharedSteps {
         return b2bUtils;
     }
 
+    public IPnWebRecipientClient getWebRecipientClient() {
+        return webRecipientClient;
+    }
+
+    public String getMarioCucumberTaxID() {
+        return marioCucumberTaxID;
+    }
+
+    public String getMarioGherkinTaxID() {
+        return marioGherkinTaxID;
+    }
 }

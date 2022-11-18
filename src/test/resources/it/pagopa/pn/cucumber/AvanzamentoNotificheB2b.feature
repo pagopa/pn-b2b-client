@@ -61,7 +61,7 @@ Feature: avanzamento notifiche b2b
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
 
 
@@ -72,7 +72,7 @@ Feature: avanzamento notifiche b2b
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
   @SmokeTest
@@ -92,7 +92,7 @@ Feature: avanzamento notifiche b2b
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
 
 
@@ -103,7 +103,7 @@ Feature: avanzamento notifiche b2b
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
   @SmokeTest
@@ -114,7 +114,7 @@ Feature: avanzamento notifiche b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     Then vengono verificati costo = "200" e data di perfezionamento della notifica
 
   Scenario: [B2B-PA-PAY_2] Invio notifica e verifica amount
@@ -170,7 +170,7 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
@@ -208,7 +208,7 @@ Feature: avanzamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And il destinatario legge la notifica ricevuta
+    And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 

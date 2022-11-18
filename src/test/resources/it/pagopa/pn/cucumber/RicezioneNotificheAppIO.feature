@@ -50,7 +50,7 @@ Feature: recupero notifiche tramite api AppIO b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And si tenta il recupero della notifica tramite AppIO
+    And "Mario Cucumber" tenta il recupero della notifica tramite AppIO
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 
 
