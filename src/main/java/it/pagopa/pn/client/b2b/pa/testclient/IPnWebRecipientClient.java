@@ -8,9 +8,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.time.OffsetDateTime;
 
-public interface IPnWebRecipientClient {
-
-    boolean setBearerToken(String user);
+public interface IPnWebRecipientClient extends SettableBearerToken {
 
     FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException;
 

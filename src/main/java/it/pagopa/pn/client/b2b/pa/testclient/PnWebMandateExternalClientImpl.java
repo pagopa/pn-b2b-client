@@ -6,13 +6,16 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.A
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateCountsDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     private final ApplicationContext ctx;
@@ -21,6 +24,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     private final String fieramoscaEBearerToken;
     private final String cristoforoCBearerToken;
+    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String userAgent;
     private final String basePath;
 
@@ -49,21 +53,30 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         return newApiClient;
     }
 
-    public boolean setBearerToken(String user){
+    @Override
+    public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
-        user = user.toUpperCase();
-        switch (user){
-            case "CLMCST42R12D969Z":
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+        switch (bearerToken){
+            case USER_1:
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
-            case "FRMTTR76M06B715E":
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+            case USER_2:
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
         }
         return beenSet;
     }
+
+    @Override
+    public BearerTokenType getBearerTokenSetted() {
+        return this.bearerTokenSetted;
+    }
+
+
 
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
         mandateServiceApi.acceptMandate(mandateId, acceptRequestDto);

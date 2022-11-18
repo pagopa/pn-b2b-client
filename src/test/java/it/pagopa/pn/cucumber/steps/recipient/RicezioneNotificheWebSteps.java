@@ -41,21 +41,23 @@ public class RicezioneNotificheWebSteps  {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public RicezioneNotificheWebSteps(IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
-        this.webRecipientClient = webRecipientClient;
+    public RicezioneNotificheWebSteps(SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
+        this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
     }
 
-    @Then("la notifica può essere correttamente recuperata dal destinatario")
-    public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario() {
+    @Then("la notifica può essere correttamente recuperata da {string}")
+    public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario(String recipient) {
+        sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
     }
 
-    @Then("il documento notificato può essere correttamente recuperato")
-    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato() {
+    @Then("il documento notificato può essere correttamente recuperato da {string}")
+    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato(String recipient) {
+        sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 sharedSteps.getSentNotification().getIun(),
                 Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
@@ -71,8 +73,9 @@ public class RicezioneNotificheWebSteps  {
     }
 
 
-    @Then("l'allegato {string} può essere correttamente recuperato")
-    public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName) {
+    @Then("l'allegato {string} può essere correttamente recuperato da {string}")
+    public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName,String recipient) {
+        sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
@@ -86,8 +89,9 @@ public class RicezioneNotificheWebSteps  {
         Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
     }
 
-    @And("si tenta il recupero dell'allegato {string}")
-    public void siTentaIlRecuperoDelllAllegato(String attachmentName) {
+    @And("{string} tenta il recupero dell'allegato {string}")
+    public void siTentaIlRecuperoDelllAllegato(String recipient,String attachmentName) {
+        sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
@@ -106,8 +110,9 @@ public class RicezioneNotificheWebSteps  {
 
 
 
-    @And("si tenta il recupero della notifica da parte del destinatario")
-    public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario() {
+    @And("{string} tenta il recupero della notifica")
+    public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario(String recipient) {
+        sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         } catch (HttpStatusCodeException e) {
@@ -116,8 +121,9 @@ public class RicezioneNotificheWebSteps  {
     }
 
 
-    @Then("la notifica può essere correttamente recuperata con una ricerca")
-    public void laNotificaPuoEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(@Transpose NotificationSearchParam searchParam) {
+    @Then("la notifica può essere correttamente recuperata con una ricerca da {string}")
+    public void laNotificaPuoEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(String recipient,@Transpose NotificationSearchParam searchParam) {
+        sharedSteps.selectUser(recipient);
         Assertions.assertTrue(searchNotification(searchParam));
     }
 

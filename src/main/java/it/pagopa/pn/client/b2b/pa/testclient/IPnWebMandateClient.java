@@ -7,9 +7,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
-public interface IPnWebMandateClient {
-
-     boolean setBearerToken(String user);
+public interface IPnWebMandateClient extends SettableBearerToken{
 
      void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException;
 

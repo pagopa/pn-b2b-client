@@ -29,6 +29,8 @@ public class AppIOB2bSteps {
 
     private HttpStatusCodeException notficationServerError;
     private String sha256DocumentDownload;
+    private final String marioCucumberTaxID;
+    private final String marioGherkinTaxID;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -36,6 +38,9 @@ public class AppIOB2bSteps {
         this.iPnAppIOB2bClient = iPnAppIOB2bClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
+
+        this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
+        this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
@@ -63,10 +68,10 @@ public class AppIOB2bSteps {
         Assertions.assertEquals(this.sha256DocumentDownload,sentNotificationDocument.getSha256());
     }
 
-    @And("si tenta il recupero della notifica tramite AppIO")
-    public void siTentaIlRecuperoDellaNotificaTramiteAppIO() {
+    @And("{string} tenta il recupero della notifica tramite AppIO")
+    public void siTentaIlRecuperoDellaNotificaTramiteAppIO(String recipient) {
         try {
-            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), "FRMTTR76M06B715E");
+            this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), selectTaxIdUser(recipient));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notficationServerError = e;
@@ -78,5 +83,15 @@ public class AppIOB2bSteps {
     public void ilTentativoDiRecuperoHaProdottoUnErroreConStatusCode(String statusCode) {
         Assertions.assertTrue((this.notficationServerError != null) &&
                 (this.notficationServerError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
+
+    private String selectTaxIdUser(String recipient){
+        if(recipient.trim().equalsIgnoreCase("mario cucumber")){
+            return this.marioCucumberTaxID;
+        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")){
+            return this.marioGherkinTaxID;
+        }else{
+            throw new IllegalArgumentException();
+        }
     }
 }

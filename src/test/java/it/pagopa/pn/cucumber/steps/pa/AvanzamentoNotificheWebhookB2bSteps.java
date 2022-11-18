@@ -39,10 +39,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private static final Logger logger = LoggerFactory.getLogger(AvanzamentoNotificheWebhookB2bSteps.class);
 
     @Autowired
-    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, IPnWebRecipientClient webRecipientClient, SharedSteps sharedSteps) {
-        this.webhookB2bClient = webhookB2bClient;
-        this.webRecipientClient = webRecipientClient;
+    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
+        this.webhookB2bClient = webhookB2bClient;
+        this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bClient = sharedSteps.getB2bClient();
     }
 
@@ -272,7 +272,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         for(ProgressResponseElement elem: progressResponseElements){
             if(lastProgress == null){
                 lastProgress = elem;
-            }else if (lastProgress.getTimestamp().isBefore(elem.getTimestamp())){
+            }else if (lastProgress.getEventId().compareTo(elem.getEventId()) < 0){
                 lastProgress = elem;
             }
             if(elem.getIun().equals(sharedSteps.getSentNotification().getIun())){
@@ -305,8 +305,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }//searchInWebhookTimelineElement
 
 
-    @And("il destinatario legge la notifica")
-    public void ilDestinatarioLeggeLaNotifica() {
+    @And("{string} legge la notifica")
+    public void ilDestinatarioLeggeLaNotifica(String recipient) {
+        sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });

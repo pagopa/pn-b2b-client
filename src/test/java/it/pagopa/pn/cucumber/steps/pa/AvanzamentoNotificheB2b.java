@@ -25,11 +25,11 @@ public class AvanzamentoNotificheB2b {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public AvanzamentoNotificheB2b(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient, IPnWebRecipientClient webRecipientClient) {
+    public AvanzamentoNotificheB2b(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient) {
         this.sharedSteps = sharedSteps;
-        this.b2bClient = sharedSteps.getB2bClient();
         this.appIOB2bClient = appIOB2bClient;
-        this.webRecipientClient = webRecipientClient;
+        this.b2bClient = sharedSteps.getB2bClient();
+        this.webRecipientClient = sharedSteps.getWebRecipientClient();
     }
 
 
@@ -245,8 +245,9 @@ public class AvanzamentoNotificheB2b {
         }
     }
 
-    @And("il destinatario legge la notifica ricevuta")
-    public void ilDestinatarioLeggeLaNotificaRicevuta() {
+    @And("{string} legge la notifica ricevuta")
+    public void ilDestinatarioLeggeLaNotificaRicevuta(String recipient) {
+        sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
