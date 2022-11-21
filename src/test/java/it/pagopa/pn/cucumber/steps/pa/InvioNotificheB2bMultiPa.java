@@ -20,7 +20,6 @@ public class InvioNotificheB2bMultiPa {
     private final PnPaB2bUtils b2bUtils;
     private final IPnPaB2bClient b2bClient;
 
-    //private HttpStatusCodeException notificationSentError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired

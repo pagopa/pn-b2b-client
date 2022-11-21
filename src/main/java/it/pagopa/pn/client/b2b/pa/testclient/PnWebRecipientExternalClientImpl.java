@@ -2,11 +2,9 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +22,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
+    private final LegalFactsApi legalFactsApi;
 
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String fieramoscaEBearerToken;
@@ -45,7 +44,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.cristoforoCBearerToken = cristoforoCBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.recipientReadApi = new RecipientReadApi( newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent) );
+        this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, cristoforoCBearerToken,userAgent) );
+        this.legalFactsApi = new LegalFactsApi( newApiClient(restTemplate, basePath, cristoforoCBearerToken,userAgent) );
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -99,7 +99,10 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApi.searchReceivedNotification(startDate, endDate, mandateId, senderId, status, subjectRegExp, iunMatch, size, nextPagesKey);
     }
 
-
+    @Override
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
+        return this.legalFactsApi.getLegalFact(iun,legalFactType,legalFactId);
+    }
 
 
 }

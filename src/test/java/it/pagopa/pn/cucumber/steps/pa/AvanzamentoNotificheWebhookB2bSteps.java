@@ -142,7 +142,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             default:
                 throw new IllegalArgumentException();
         }
-        List<ProgressResponseElement> progressResponseElements;
         ProgressResponseElement progressResponseElement = null;
         int wait = 48;
         boolean finded = false;

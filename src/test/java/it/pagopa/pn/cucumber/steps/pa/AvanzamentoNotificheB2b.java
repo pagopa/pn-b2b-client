@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.invoke.MethodHandles;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AvanzamentoNotificheB2b {
 
@@ -151,17 +152,22 @@ public class AvanzamentoNotificheB2b {
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
     public void vieneRichiestoIlDownloadDellAttestazioneOpponibile(String legalFactCategory) {
-        downloadLegalFact(legalFactCategory,true,false);
+        downloadLegalFact(legalFactCategory,true,false,false);
     }
 
 
     @Then("viene richiesto tramite appIO il download dell'attestazione opponibile {string}")
     public void ilDestinatarioRichiedeTramiteAppIOIlDownloadDellAttestazioneOpponibile(String legalFactCategory) {
-        downloadLegalFact(legalFactCategory,false,true);
+        downloadLegalFact(legalFactCategory,false,true,false);
     }
 
+    @Then("{string} richiede il download dell'attestazione opponibile {string}")
+    public void richiedeIlDownloadDellAttestazioneOpponibile(String user, String legalFactCategory) {
+        sharedSteps.selectUser(user);
+        downloadLegalFact(legalFactCategory,false,false,true);
+    }
 
-    private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO){
+    private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO, boolean webRecipient){
         try {
             Thread.sleep(10 * 1000L);
         } catch (InterruptedException exc) {
@@ -207,13 +213,22 @@ public class AvanzamentoNotificheB2b {
         }
         String finalKeySearch = keySearch;
         if(pa){
-            Assertions.assertDoesNotThrow(()->this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch , finalKeySearch));
+            Assertions.assertDoesNotThrow(()-> this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
         }
         if(appIO){
             Assertions.assertDoesNotThrow(()->this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(),categorySearch.toString(), finalKeySearch,
                     sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
         }
+        if(webRecipient){
+            Assertions.assertDoesNotThrow(()->this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
+                    sharedSteps.deepCopy(categorySearch,
+                            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
+                    finalKeySearch
+            ));
+        }
     }
+
+
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void siVerificaCheLaNotificaAbbiaLoStatoVIEWED() {
@@ -257,6 +272,7 @@ public class AvanzamentoNotificheB2b {
             throw new RuntimeException(exc);
         }
     }
+
 
 
 }
