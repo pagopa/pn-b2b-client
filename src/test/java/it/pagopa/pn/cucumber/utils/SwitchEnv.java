@@ -28,10 +28,10 @@ public class SwitchEnv {
     @Value("${pn.external.api.keys.appio.pagopa.svil}")
     private String apiKeysAppIOSvil;
 
-    @Value("${pn.external.bearer-token-CristoforoC.pagopa-svil}")
+    @Value("${pn.external.bearer-token-user2.pagopa-svil}")
     private String bearerTokenCristoforoCSvil;
 
-    @Value("${pn.external.bearer-token-FieramoscaE.pagopa-svil}")
+    @Value("${pn.external.bearer-token-user1.pagopa-svil}")
     private String bearerTokenFieramoscaESvil;
 
 
@@ -48,10 +48,10 @@ public class SwitchEnv {
     @Value("${pn.external.api.keys.appio.pagopa.coll}")
     private String apiKeysAppIOColl;
 
-    @Value("${pn.external.bearer-token-CristoforoC.pagopa-coll}")
+    @Value("${pn.external.bearer-token-user2.pagopa-coll}")
     private String bearerTokenCristoforoCColl;
 
-    @Value("${pn.external.bearer-token-FieramoscaE.pagopa-coll}")
+    @Value("${pn.external.bearer-token-user1.pagopa-coll}")
     private String bearerTokenFieramoscaEColl;
 
     @Autowired
@@ -69,10 +69,10 @@ public class SwitchEnv {
                 System.setProperty("pn.appio.externa.base-url","https://api-io.svil.pn.pagopa.it");
 
                 System.setProperty("pn.external.api-key", apiKeysSvil);
-                System.setProperty("pn.external.appio.api-key-2", apiKeysTwoSvil);
+                System.setProperty("pn.external.api-key-2", apiKeysTwoSvil);
                 System.setProperty("pn.external.appio.api-key", apiKeysAppIOSvil);
-                System.setProperty("pn.external.bearer-token-CristoforoC.pagopa", bearerTokenCristoforoCSvil);
-                System.setProperty("pn.external.bearer-token-FieramoscaE.pagopa", bearerTokenFieramoscaESvil);
+                System.setProperty("pn.external.bearer-token-user2.pagopa", bearerTokenCristoforoCSvil);
+                System.setProperty("pn.external.bearer-token-user1.pagopa", bearerTokenFieramoscaESvil);
 
                 switchBean();
                 setted = true;
@@ -83,11 +83,11 @@ public class SwitchEnv {
                 System.setProperty("pn.appio.externa.base-url","https://api-io.coll.pn.pagopa.it");
 
                 System.setProperty("pn.external.api-key", apiKeysColl);
-                System.setProperty("pn.external.appio.api-key-2", apiKeysTwoColl);
-                System.setProperty("pn.external.api-key-GA-taxID", apiKeysGAColl);
+                System.setProperty("pn.external.api-key-2", apiKeysTwoColl);
+                System.setProperty("pn.external.api-key-GA", apiKeysGAColl);
                 System.setProperty("pn.external.appio.api-key", apiKeysAppIOColl);
-                System.setProperty("pn.external.bearer-token-CristoforoC.pagopa", bearerTokenCristoforoCColl);
-                System.setProperty("pn.external.bearer-token-FieramoscaE.pagopa", bearerTokenFieramoscaEColl);
+                System.setProperty("pn.external.bearer-token-user2.pagopa", bearerTokenCristoforoCColl);
+                System.setProperty("pn.external.bearer-token-user1.pagopa", bearerTokenFieramoscaEColl);
 
                 switchBean();
                 setted = true;

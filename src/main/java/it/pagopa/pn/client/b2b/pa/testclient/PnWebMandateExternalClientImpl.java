@@ -22,8 +22,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     private final RestTemplate restTemplate;
     private final MandateServiceApi mandateServiceApi;
 
-    private final String fieramoscaEBearerToken;
-    private final String cristoforoCBearerToken;
+    private final String marioCucumberBearerToken;
+    private final String marioGherkinBearerToken;
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String userAgent;
     private final String basePath;
@@ -32,17 +32,17 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.bearer-token.FieramoscaE}") String fieramoscaEBearerToken,
-            @Value("${pn.bearer-token.CristoforoC}") String cristoforoCBearerToken,
+            @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+            @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
-        this.fieramoscaEBearerToken = fieramoscaEBearerToken;
-        this.cristoforoCBearerToken = cristoforoCBearerToken;
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent) );
+        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -58,12 +58,12 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         boolean beenSet = false;
         switch (bearerToken){
             case USER_1:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
