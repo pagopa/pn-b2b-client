@@ -18,7 +18,7 @@ Feature: avanzamento notifiche webhook b2b
     And viene verificata la corretta cancellazione
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -30,7 +30,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "ACCEPTED"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -42,7 +42,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "REQUEST_ACCEPTED"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -55,7 +55,7 @@ Feature: avanzamento notifiche webhook b2b
 
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -67,7 +67,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -79,7 +79,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -91,7 +91,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche webhook b2b
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -119,7 +119,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_11] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -131,7 +131,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_12] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -145,7 +145,7 @@ Feature: avanzamento notifiche webhook b2b
     Then si verifica nello stream che la notifica abbia lo stato VIEWED
 
 
-  @clean
+  @clean @integrationTest
   Scenario: [B2B-STREAM_TIMELINE_13] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -170,17 +170,5 @@ Feature: avanzamento notifiche webhook b2b
     When si creano i nuovi stream
     Then l'ultima creazione ha prodotto un errore con status code "409"
 
-
-  @ignore @integrationTest
-  Scenario: [TC-INVIO-02] Invio notifica digitale ed attesa stato DELIVERED
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
-    And vengono prodotte le evidenze: metadati, requestID, IUN e stati
 
 

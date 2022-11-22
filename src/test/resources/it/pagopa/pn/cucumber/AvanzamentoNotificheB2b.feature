@@ -1,5 +1,6 @@
 Feature: avanzamento notifiche b2b
 
+
   Scenario: [B2B_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -106,7 +107,7 @@ Feature: avanzamento notifiche b2b
     And "Mario Gherkin" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-  @SmokeTest
+  @SmokeTest @integrationTest
   Scenario: [B2B-PA-PAY_1] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -117,6 +118,7 @@ Feature: avanzamento notifiche b2b
     And "Mario Gherkin" legge la notifica ricevuta
     Then vengono verificati costo = "200" e data di perfezionamento della notifica
 
+  @integrationTest
   Scenario: [B2B-PA-PAY_2] Invio notifica e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -158,3 +160,13 @@ Feature: avanzamento notifiche b2b
       | physicalAddress | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "Comune_Multi"
+
+
+  Scenario: [B2B-PA-PAY_GA_1] Invio notifica e verifica amount
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "200" della notifica
