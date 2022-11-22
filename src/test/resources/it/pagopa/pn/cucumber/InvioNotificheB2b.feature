@@ -162,6 +162,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
+
   Scenario: [B2B-PA-SEND_14] verifica retention time pagopaForm per la notifica inviata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

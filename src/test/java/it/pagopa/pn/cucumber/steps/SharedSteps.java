@@ -44,6 +44,7 @@ public class SharedSteps {
     private final ObjectMapper objMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${pn.external.api-key-taxID}")
@@ -333,6 +334,7 @@ public class SharedSteps {
         return marioGherkinTaxID;
     }
 
+
     public  <T> T deepCopy( Object obj, Class<T> toClass) {
         try {
             String json = objMapper.writeValueAsString( obj );
@@ -341,4 +343,5 @@ public class SharedSteps {
             throw new RuntimeException( exc );
         }
     }
+
 }

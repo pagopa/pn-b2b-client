@@ -24,8 +24,10 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final ConsentsApi ConsentsApi;
 
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
+
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
+
     private final String userAgent;
     private final String basePath;
 
@@ -58,13 +60,17 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         boolean beenSet = false;
         switch (bearerToken){
             case USER_1:
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));                this.bearerTokenSetted = BearerTokenType.USER_1;
+
+                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));                this.bearerTokenSetted = BearerTokenType.USER_1;
+                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
+
         }
         return beenSet;
     }

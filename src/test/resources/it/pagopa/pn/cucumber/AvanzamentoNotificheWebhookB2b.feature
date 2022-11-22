@@ -171,4 +171,3 @@ Feature: avanzamento notifiche webhook b2b
     Then l'ultima creazione ha prodotto un errore con status code "409"
 
 
-

@@ -64,7 +64,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                 break;
             case USER_2:
                 this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
+                this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
         }

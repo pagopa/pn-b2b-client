@@ -24,9 +24,11 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RecipientReadApi recipientReadApi;
     private final LegalFactsApi legalFactsApi;
 
-    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
+    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_2;
+
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
+
     private final String basePath;
     private final String userAgent;
 
@@ -67,7 +69,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case USER_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
+                this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
         }
