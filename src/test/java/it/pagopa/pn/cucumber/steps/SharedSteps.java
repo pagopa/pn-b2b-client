@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.steps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
@@ -37,6 +41,10 @@ public class SharedSteps {
     private HttpStatusCodeException notificationError;
     public static final String DEFAULT_PA = "Comune_1";
     private String settedPa = "Comune_1";
+    private final ObjectMapper objMapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${pn.external.api-key-taxID}")
@@ -230,7 +238,6 @@ public class SharedSteps {
     }
 
 
-
     public void setNewNotificationResponse(NewNotificationResponse newNotificationResponse) {
         this.newNotificationResponse = newNotificationResponse;
     }
@@ -326,4 +333,15 @@ public class SharedSteps {
     public String getMarioGherkinTaxID() {
         return marioGherkinTaxID;
     }
+
+
+    public  <T> T deepCopy( Object obj, Class<T> toClass) {
+        try {
+            String json = objMapper.writeValueAsString( obj );
+            return objMapper.readValue( json, toClass );
+        } catch (JsonProcessingException exc ) {
+            throw new RuntimeException( exc );
+        }
+    }
+
 }

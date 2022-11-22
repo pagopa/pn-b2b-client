@@ -255,4 +255,10 @@ public class InvioNotificheB2bSteps  {
     }
 
 
+    @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
+    public void siVerificaLaCorrettaAcquisizioneDellaRichiestaDiInvioNotifica() {
+        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
+        Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
+        Assertions.assertNotNull(b2bClient.getNotificationRequestStatus(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()));
+    }
 }

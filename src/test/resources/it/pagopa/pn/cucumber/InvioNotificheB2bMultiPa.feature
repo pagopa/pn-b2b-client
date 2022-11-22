@@ -1,6 +1,5 @@
 Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
-  @ignore
   Scenario: [B2B-MULTI-PA-SEND_1] Invio notifica digitale_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica multi cucumber |

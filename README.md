@@ -20,8 +20,16 @@
 
 - creare il file 'bearer-token.properties' nel path 'pn-b2b-client/config/'
 - inserire nel file appena creato le stringhe: 
-- 'pn.external.bearer-token-CristoforoC.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
-- 'pn.external.bearer-token-FieramoscaE.pagopa=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
+- 'pn.external.bearer-token-user2.pagopa=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto 
+- 'pn.external.bearer-token-user1.pagopa=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
+
+- Modificare nel file 'application.properties' nel path 'pn-b2b-client/config/'
+- pn.external.api-key-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-dev'
+- pn.external.api-key-2-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-dev-2' 
+- pn.external.api-key-GA-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-GA-dev'
+- NOTA: in caso di necessità, per determinate test suite {CucumberPaIntegrationTest, CucumberB2bTest} è possibile che una o più apiKey e relativi TaxId corrispondano alla stessa PA
+- pn.bearer-token.user1.taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'utente corrispondente a 'pn.external.bearer-token-user2.pagopa' 
+- pn.bearer-token.user2.taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'utente corrispondente a 'pn.external.bearer-token-user1.pagopa'
 
 -eseguire il run della classe nel file src/test/java/it/pagopa/pn/cucumber/CucumberB2BTest.java
   per l'esecuzione dei test e2e delle api b2b di Piattaforma Notifiche
@@ -29,11 +37,11 @@
 
 ## Istruzioni aggiuntive per l'esecuzione dei test e2e in locale su più ambienti contemporaneamente
 - Inserire nel file 'bearer-token.properties' nel path 'pn-b2b-client/config/'
-- 'pn.external.bearer-token-CristoforoC.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
-- 'pn.external.bearer-token-FieramoscaE.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto 
+- 'pn.external.bearer-token-user2.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
+- 'pn.external.bearer-token-user1.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto 
 - e/o
-- 'pn.external.bearer-token-CristoforoC.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
-- 'pn.external.bearer-token-FieramoscaE.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> il bearer token corretto
+- 'pn.external.bearer-token-user2.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
+- 'pn.external.bearer-token-user1.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
 
 - Inserire nel file 'api-keys.properties' nel path 'pn-b2b-client/config/'
 - 'pn.external.api-keys.pagopa-svil=<api_key>' sostituendo ad <api_key> l'api key corretta

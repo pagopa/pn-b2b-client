@@ -36,8 +36,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
             RestTemplate restTemplate,
             @Value("${pn.external.base-url}") String devBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
-            @Value("${pn.external.appio.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.appio.api-key-GA}") String apiKeyGa
+            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+            @Value("${pn.external.api-key-GA}") String apiKeyGa
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;

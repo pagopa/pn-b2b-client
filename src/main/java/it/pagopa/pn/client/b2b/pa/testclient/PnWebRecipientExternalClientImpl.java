@@ -2,11 +2,9 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -24,10 +22,13 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
+    private final LegalFactsApi legalFactsApi;
 
-    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
-    private final String fieramoscaEBearerToken;
-    private final String cristoforoCBearerToken;
+    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_2;
+
+    private final String marioCucumberBearerToken;
+    private final String marioGherkinBearerToken;
+
     private final String basePath;
     private final String userAgent;
 
@@ -35,17 +36,18 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.bearer-token.FieramoscaE}") String fieramoscaEBearerToken,
-            @Value("${pn.bearer-token.CristoforoC}") String cristoforoCBearerToken,
+            @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+            @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
-        this.fieramoscaEBearerToken = fieramoscaEBearerToken;
-        this.cristoforoCBearerToken = cristoforoCBearerToken;
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.recipientReadApi = new RecipientReadApi( newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent) );
+        this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+        this.legalFactsApi = new LegalFactsApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -61,13 +63,13 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         boolean beenSet = false;
         switch (bearerToken){
             case USER_1:
-                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, fieramoscaEBearerToken,userAgent));
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
-                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cristoforoCBearerToken,userAgent));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
         }
@@ -99,7 +101,10 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApi.searchReceivedNotification(startDate, endDate, mandateId, senderId, status, subjectRegExp, iunMatch, size, nextPagesKey);
     }
 
-
+    @Override
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
+        return this.legalFactsApi.getLegalFact(iun,legalFactType,legalFactId);
+    }
 
 
 }
