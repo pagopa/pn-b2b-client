@@ -210,6 +210,8 @@ public class AvanzamentoNotificheB2b {
             keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
         }else if(key.contains("PN_NOTIFICATION_ATTACHMENTS")){
             keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
+        }else if(key.contains("PN_EXTERNAL_LEGAL_FACTS")){
+            keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
         }
         String finalKeySearch = keySearch;
         if(pa){

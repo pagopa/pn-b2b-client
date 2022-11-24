@@ -119,7 +119,6 @@ Feature: Download legalFact
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
 
-    #NUOVI
   Scenario: [B2B_PA_LEGALFACT_KEY_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -139,7 +138,7 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then viene verificato che la chiave dell'attestazione opponibile "DIGITAL_DELIVERY" è "PN_LEGAL_FACTS"
 
-  @ignore
+
   Scenario: [B2B_PA_LEGALFACT_KEY_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
