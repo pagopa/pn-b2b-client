@@ -229,7 +229,7 @@ Feature: invio notifiche b2b
 
 
   @integrationTest
-  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario con pagamento
+  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |

@@ -274,5 +274,43 @@ public class AvanzamentoNotificheB2b {
     }
 
 
+    @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
+    public void vieneVerificatoCheLaChiaveDellAttestazioneOpponibileÈ(String legalFactCategory, String key) {
+        try {
+            Thread.sleep(10 * 1000L);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
 
+        TimelineElementCategory timelineElementInternalCategory;
+        TimelineElement timelineElement;
+        LegalFactCategory category;
+        switch (legalFactCategory) {
+            case "SENDER_ACK":
+                timelineElementInternalCategory = TimelineElementCategory.REQUEST_ACCEPTED;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.SENDER_ACK;
+                break;
+            case "RECIPIENT_ACCESS":
+                timelineElementInternalCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.RECIPIENT_ACCESS;
+                break;
+            case "PEC_RECEIPT":
+                timelineElementInternalCategory = TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.PEC_RECEIPT;
+                break;
+            case "DIGITAL_DELIVERY":
+                timelineElementInternalCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        Assertions.assertNotNull(timelineElement.getLegalFactsIds());
+        Assertions.assertEquals(category,timelineElement.getLegalFactsIds().get(0).getCategory());
+        Assertions.assertTrue(timelineElement.getLegalFactsIds().get(0).getKey().contains(key));
+    }
 }
