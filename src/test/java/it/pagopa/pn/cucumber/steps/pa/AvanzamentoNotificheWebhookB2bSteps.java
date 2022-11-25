@@ -212,6 +212,26 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_COURTESY_MESSAGE;
                 break;
+            case "DIGITAL_FAILURE_WORKFLOW":
+                timelineElementCategory = TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
+                break;
+            case "DIGITAL_SUCCESS_WORKFLOW":
+                timelineElementCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
+                break;
+            case "SCHEDULE_ANALOG_WORKFLOW":
+                timelineElementCategory = TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
+                break;
+            case "NOT_HANDLED":
+                timelineElementCategory = TimelineElementCategory.NOT_HANDLED;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOT_HANDLED;
+                break;
             default:
                 throw new IllegalArgumentException();
         }

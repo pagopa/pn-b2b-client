@@ -170,4 +170,40 @@ Feature: avanzamento notifiche webhook b2b
     When si creano i nuovi stream
     Then l'ultima creazione ha prodotto un errore con status code "409"
 
+  @clean @dev
+  Scenario: [B2B-STREAM_TIMELINE_16] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+
+  @clean @dev
+  Scenario: [B2B-STREAM_TIMELINE_17] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOT_HANDLED"
+
+  @ignore @clean @dev
+  Scenario: [B2B-STREAM_TIMELINE_18] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream fino all'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW"
+
 
