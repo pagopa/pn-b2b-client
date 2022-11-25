@@ -97,7 +97,7 @@ public class SharedSteps {
                         .taxId(marioCucumberTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC )
-                                .address("FRMTTR76M06B715E@pnpagopa.postecert.local")));
+                                .address("testpagopa1@pnpagopa.postecert.local")));
     }
 
     @And("destinatario Mario Cucumber e:")
@@ -117,7 +117,7 @@ public class SharedSteps {
                         .taxId(marioGherkinTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC )
-                                .address("CLMCST42R12D969Z@pnpagopa.postecert.local")));
+                                .address("testpagopa1@pnpagopa.postecert.local")));
     }
 
     @And("destinatario Mario Gherkin e:")

@@ -265,4 +265,13 @@ public class InvioNotificheB2bSteps  {
         logger.info("Difference: "+between);
         return retentionTime == between;
     }
+
+    @And("l'importo della notifica è {int}")
+    public void priceNotificationVerify(Integer price) {
+        try {
+            Assertions.assertEquals(this.sharedSteps.getSentNotification().getAmount(), price);
+        }catch (AssertionFailedError assertionFailedError){
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
 }

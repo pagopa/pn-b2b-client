@@ -239,4 +239,16 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della richiesta di invio notifica
 
 
+  Scenario: [B2B-PA-SEND_22] Invio notifica digitale mono destinatario senza pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | amount | 2550 |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    And l'importo della notifica è 2550
+
+
 
