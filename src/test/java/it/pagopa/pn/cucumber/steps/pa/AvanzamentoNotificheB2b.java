@@ -277,7 +277,7 @@ public class AvanzamentoNotificheB2b {
 
 
     @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
-    public void vieneVerificatoCheLaChiaveDellAttestazioneOpponibileÈ(String legalFactCategory, String key) {
+    public void verifiedThatTheKeyOfTheLegalFactIs(String legalFactCategory, String key) {
         try {
             Thread.sleep(10 * 1000L);
         } catch (InterruptedException exc) {
