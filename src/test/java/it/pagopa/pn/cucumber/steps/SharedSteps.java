@@ -15,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -334,6 +335,11 @@ public class SharedSteps {
         return marioGherkinTaxID;
     }
 
+    public void throwAssertFailerWithIUN(AssertionFailedError assertionFailedError){
+        String message = assertionFailedError.getMessage()+
+                "{IUN: "+notificationResponseComplete.getIun() +" }";
+        throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+    }
 
     public  <T> T deepCopy( Object obj, Class<T> toClass) {
         try {

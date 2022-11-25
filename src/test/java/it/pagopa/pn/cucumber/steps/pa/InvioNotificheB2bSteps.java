@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,12 +64,14 @@ public class InvioNotificheB2bSteps  {
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void laNotificaCorrettamenteRecuperataDalSistemaTramiteCodiceIUN() {
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
-
-        Assertions.assertDoesNotThrow(() ->
-                notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
-        );
-
-        Assertions.assertNotNull(notificationByIun.get());
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
+            );
+            Assertions.assertNotNull(notificationByIun.get());
+        }catch (AssertionFailedError assertionFailedError){
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
 
     @Given("viene effettuato il pre-caricamento di un documento")
@@ -244,7 +247,6 @@ public class InvioNotificheB2bSteps  {
         }
 
     }
-
 
 
     @And("vengono prodotte le evidenze: metadati e requestID")
