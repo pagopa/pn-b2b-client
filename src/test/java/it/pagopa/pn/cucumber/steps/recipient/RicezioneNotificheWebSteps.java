@@ -48,7 +48,7 @@ public class RicezioneNotificheWebSteps  {
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
-    public void laNotificaPuoEssereCorrettamenteRecuperataDalDestinatario(String recipient) {
+    public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
@@ -56,7 +56,7 @@ public class RicezioneNotificheWebSteps  {
     }
 
     @Then("il documento notificato può essere correttamente recuperato da {string}")
-    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperato(String recipient) {
+    public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 sharedSteps.getSentNotification().getIun(),
@@ -74,7 +74,7 @@ public class RicezioneNotificheWebSteps  {
 
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
-    public void lAllegatoPuoEssereCorrettamenteRecuperato(String attachmentName,String recipient) {
+    public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName,String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
@@ -90,7 +90,7 @@ public class RicezioneNotificheWebSteps  {
     }
 
     @And("{string} tenta il recupero dell'allegato {string}")
-    public void siTentaIlRecuperoDelllAllegato(String recipient,String attachmentName) {
+    public void attachmentRetrievedError(String recipient,String attachmentName) {
         sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotificationAttachment(
@@ -103,7 +103,7 @@ public class RicezioneNotificheWebSteps  {
     }
 
     @Then("(il download)(il recupero) ha prodotto un errore con status code {string}")
-    public void ilDownloadAllegatoHaProdottoUnErrore(String statusCode) {
+    public void operationProducedErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((this.notificationError != null) &&
                 (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
@@ -111,7 +111,7 @@ public class RicezioneNotificheWebSteps  {
 
 
     @And("{string} tenta il recupero della notifica")
-    public void siTentaIlRecuperoDellaNotificaDaParteDelDestinatario(String recipient) {
+    public void notificationCanBeCorrectlyReadBy(String recipient) {
         sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
@@ -122,7 +122,7 @@ public class RicezioneNotificheWebSteps  {
 
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da {string}")
-    public void laNotificaPuoEssereCorrettamenteRecuperataConUnaRicercaInBaseAlla(String recipient,@Transpose NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadWithResearch(String recipient,@Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
         Assertions.assertTrue(searchNotification(searchParam));
     }

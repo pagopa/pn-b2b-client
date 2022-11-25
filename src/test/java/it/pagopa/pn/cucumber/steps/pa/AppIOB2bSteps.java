@@ -45,7 +45,7 @@ public class AppIOB2bSteps {
     }
 
     @Then("la notifica può essere recuperata tramite AppIO")
-    public void laNotificaPuòEssereRecuperataTramiteAppIO() {
+    public void notificationCanBeRetrievedAppIO() {
         AtomicReference<FullReceivedNotification> notificationByIun = new AtomicReference<>();
         try{
             Assertions.assertDoesNotThrow(() ->
@@ -60,7 +60,7 @@ public class AppIOB2bSteps {
     }
 
     @Then("il documento notificato può essere recuperata tramite AppIO")
-    public void ilDocumentoNotificatoPuòEssereRecuperataTramiteAppIO() {
+    public void notifiedDocumentCanBeRetrievedAppIO() {
         List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
         it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
                 iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
@@ -77,7 +77,7 @@ public class AppIOB2bSteps {
     }
 
     @And("{string} tenta il recupero della notifica tramite AppIO")
-    public void siTentaIlRecuperoDellaNotificaTramiteAppIO(String recipient) {
+    public void attemptsNotificationRetrievalAppIO(String recipient) {
         try {
             this.iPnAppIOB2bClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), selectTaxIdUser(recipient));
         } catch (HttpClientErrorException | HttpServerErrorException e) {
@@ -88,7 +88,7 @@ public class AppIOB2bSteps {
     }
 
     @Then("il tentativo di recupero con appIO ha prodotto un errore con status code {string}")
-    public void ilTentativoDiRecuperoHaProdottoUnErroreConStatusCode(String statusCode) {
+    public void retrievalAttemptWithAppIOProducedAnErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((this.notficationServerError != null) &&
                 (this.notficationServerError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }

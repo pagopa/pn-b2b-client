@@ -47,7 +47,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream denominat(i)(o) {string} con eventType {string}")
-    public void vengonoPredispostiNuoviStreamDenominatiConEventType(int number, String title, String eventType) {
+    public void setUpStreamsWithEventType(int number, String title, String eventType) {
         this.streamCreationRequestList = new LinkedList<>();
         this.requestNumber = number;
         for(int i = 0; i<number; i++){
@@ -61,7 +61,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @When("si crea(no) i(l) nuov(o)(i) stream")
-    public void vieneCreatoUnNuovoStreamDiNotifica() {
+    public void createdStream() {
         this.eventStreamList = new LinkedList<>();
         for(StreamCreationRequest request: streamCreationRequestList){
             try{
@@ -74,7 +74,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @And("si cancella(no) (lo)(gli) stream creat(o)(i)")
-    public void vieneCancellatoLoStreamCreato() {
+    public void deleteStream() {
         for(StreamMetadataResponse eventStream: eventStreamList){
             webhookB2bClient.deleteEventStream(eventStream.getStreamId());
         }
@@ -82,7 +82,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @And("viene verificata la corretta cancellazione")
-    public void vieneVerificataAlCorrettaCancellazione() {
+    public void verifiedTheCorrectDeletion() {
         List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         for(StreamMetadataResponse eventStream: eventStreamList){
             StreamListElement streamListElement = streamListElements.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
@@ -92,7 +92,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Then("lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id")
-    public void laStreamEStatoCreatoEVieneCorrettamenteRecuperatoDalSistema() {
+    public void streamBeenCreatedAndCorrectlyRetrievedByStreamId() {
         Assertions.assertDoesNotThrow(() -> {
             StreamMetadataResponse eventStream = webhookB2bClient.getEventStream(this.eventStreamList.get(0).getStreamId());
         });
@@ -100,7 +100,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @And("vengono letti gli eventi dello stream")
-    public void vengonoLettiGliEventiDelloStream() {
+    public void readStreamEvents() {
         Assertions.assertDoesNotThrow(() -> {
             List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
             logger.info("EventProgress: " + progressResponseElements);
@@ -110,7 +110,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @And("vengono letti gli eventi dello stream fino allo stato {string}")
-    public void vengonoLettiGliEventiDelloStreamFinoAlloStato(String status) {
+    public void readStreamEventsState(String status) {
         NotificationStatus notificationStatus;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
         switch (status) {
@@ -178,7 +178,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Then("vengono letti gli eventi dello stream fino all'elemento di timeline {string}")
-    public void vengonoLettiGliEventiDelloStreamFinoAllElementoDiTimeline(String timelineEventCategory) {
+    public void readStreamTimelineElement(String timelineEventCategory) {
         TimelineElementCategory timelineElementCategory;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory timelineElementInternalCategory;
         switch (timelineEventCategory) {
@@ -305,7 +305,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @And("{string} legge la notifica")
-    public void ilDestinatarioLeggeLaNotifica(String recipient) {
+    public void userReadNotification(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
@@ -319,7 +319,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Then("si verifica nello stream che la notifica abbia lo stato VIEWED")
-    public void siVerificaNelloStreamCheLaNotificaAbbiaLoStatoVIEWED() {
+    public void checkViewedState() {
         ProgressResponseElement progressResponseElement = searchInWebhook(NotificationStatus.VIEWED, null, 0);
         Assertions.assertNotNull(progressResponseElement);
     }
@@ -338,7 +338,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     @Then("l'ultima creazione ha prodotto un errore con status code {string}")
-    public void lUltimaCreazioneHaProdottoUnErroreConStatusCode(String statusCode) {
+    public void lastCreationProducedAnErrorWithStatusCode(String statusCode) {
         List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         System.out.println("streamListElements: "+streamListElements.size());
         System.out.println("eventStreamList: "+eventStreamList.size());
@@ -349,7 +349,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Given("vengono cancellati tutti gli stream presenti")
-    public void eliminaTutto() {
+    public void deleteAll() {
         List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         for(StreamListElement elem: streamListElements){
             webhookB2bClient.deleteEventStream(elem.getStreamId());
@@ -358,7 +358,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @And("vengono prodotte le evidenze: metadati, requestID, IUN e stati")
-    public void vengonoProdotteLeEvidenzeMetadatiRequestIDIUNEStati() {
+    public void evidenceProducedIunRequestIdAndState() {
         logger.info("METADATI: "+'\n'+sharedSteps.getNewNotificationResponse());
         logger.info("REQUEST-ID: "+'\n'+sharedSteps.getNewNotificationResponse().getNotificationRequestId());
         logger.info("IUN: "+'\n'+sharedSteps.getSentNotification().getIun());

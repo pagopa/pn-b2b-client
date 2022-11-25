@@ -62,7 +62,7 @@ public class InvioNotificheB2bSteps  {
 
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
-    public void laNotificaCorrettamenteRecuperataDalSistemaTramiteCodiceIUN() {
+    public void notificationCanBeRetrievedWithIUN() {
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
@@ -75,7 +75,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Given("viene effettuato il pre-caricamento di un documento")
-    public void vieneEffettuatoIlPreCaricamentoDiUnDocumento() {
+    public void preLoadingOfDocument() {
         NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
@@ -89,7 +89,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Given("viene effettuato il pre-caricamento di un allegato")
-    public void vieneEffettuatoIlPreCaricamentoDiUnAllegato() {
+    public void preLoadingOfAttachment () {
         NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
@@ -103,7 +103,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Then("viene effettuato un controllo sulla durata della retention di {string} precaricato")
-    public void vieneEffettuatoUnControlloSullaDurataDellaRetentionDelDocumentoPrecaricato(String documentType) {
+    public void retentionCheckPreload (String documentType) {
         String key = "";
         switch (documentType){
             case "ATTO OPPONIBILE":
@@ -119,7 +119,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
-    public void vieneEffettuatoUnTest(String documentType) {
+    public void retentionCheckLoad(String documentType) {
         String key = "";
         switch (documentType){
             case "ATTO OPPONIBILE":
@@ -134,20 +134,9 @@ public class InvioNotificheB2bSteps  {
         Assertions.assertTrue(checkRetetion(key,retentionTimeLoad));
     }
 
-    private boolean checkRetetion(String fileKey, Integer retentionTime){
-        HashMap<String,String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
-        LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
-        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow,ZoneOffset.of("Z"));
-        OffsetDateTime retentionUntil = OffsetDateTime.parse(stringStringHashMap.get("retentionUntil"));
-        logger.info("now: " + now);
-        logger.info("retentionUntil: "+retentionUntil);
-        long between = ChronoUnit.DAYS.between(now, retentionUntil);
-        logger.info("Difference: "+between);
-        return retentionTime == between;
-    }
 
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
-    public void laNotificaPuoEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUN(String IUN) {
+    public void retrievalAttemptedIUN(String IUN) {
         try {
             b2bUtils.getNotificationByIun(IUN);
         } catch (HttpStatusCodeException e) {
@@ -156,7 +145,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @When("viene richiesto il download del documento {string}")
-    public void vieneRichiestoIlDownloadDelDocumento(String type) {
+    public void documentDownload(String type) {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
@@ -187,7 +176,7 @@ public class InvioNotificheB2bSteps  {
     }
 
     @When("viene richiesto il download del documento {string} inesistente")
-    public void vieneRichiestoIlDownloadDelDocumentoInesistente(String type) {
+    public void documentAbsentDownload(String type) {
         String downloadType;
         switch(type) {
             case "NOTIFICA":
@@ -219,12 +208,12 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Then("il download si conclude correttamente")
-    public void ilDownloadSiConcludeCorrettamente() {
+    public void correctlyDownload() {
         Assertions.assertEquals(this.sha256DocumentDownload,this.downloadResponse.getSha256());
     }
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
-    public void operazioneHaProdottoUnErrore(String statusCode) {
+    public void operationProducedAnError(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
@@ -232,14 +221,14 @@ public class InvioNotificheB2bSteps  {
 
 
     @Then("si verifica la corretta acquisizione della notifica")
-    public void laNotificaCorrettamenteInviata() {
+    public void correctAcquisitionNotification() {
         Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( sharedSteps.getSentNotification() ));
     }
 
 
 
     @And("viene controllato la presenza del taxonomyCode")
-    public void vieneControllatoLaPresenzaDelTaxonomyCode() {
+    public void checkTaxonomyCode() {
         Assertions.assertNotNull(this.sharedSteps.getSentNotification().getTaxonomyCode());
         if(this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null){
             Assertions.assertEquals(this.sharedSteps.getNotificationRequest().getTaxonomyCode(),
@@ -250,7 +239,7 @@ public class InvioNotificheB2bSteps  {
 
 
     @And("vengono prodotte le evidenze: metadati e requestID")
-    public void vengonoProdotteLeEvidenzeMetadatiERequestID() {
+    public void evidenceProduced() {
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
         logger.info("METADATI: "+'\n'+this.sharedSteps.getNewNotificationResponse());
         logger.info("REQUEST-ID: "+'\n'+this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
@@ -258,9 +247,22 @@ public class InvioNotificheB2bSteps  {
 
 
     @Then("si verifica la corretta acquisizione della richiesta di invio notifica")
-    public void siVerificaLaCorrettaAcquisizioneDellaRichiestaDiInvioNotifica() {
+    public void correctAcquisitionRequest() {
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
         Assertions.assertNotNull(b2bClient.getNotificationRequestStatus(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId()));
+    }
+
+
+    private boolean checkRetetion(String fileKey, Integer retentionTime){
+        HashMap<String,String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
+        LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
+        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow,ZoneOffset.of("Z"));
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(stringStringHashMap.get("retentionUntil"));
+        logger.info("now: " + now);
+        logger.info("retentionUntil: "+retentionUntil);
+        long between = ChronoUnit.DAYS.between(now, retentionUntil);
+        logger.info("Difference: "+between);
+        return retentionTime == between;
     }
 }

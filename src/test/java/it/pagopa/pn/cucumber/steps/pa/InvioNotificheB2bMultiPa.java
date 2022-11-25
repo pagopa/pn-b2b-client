@@ -32,7 +32,7 @@ public class InvioNotificheB2bMultiPa {
 
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA {string}")
-    public void laNotificaPuòEssereCorrettamenteRecuperataDalSistemaTramiteCodiceIUNDallaPA(String paType) {
+    public void notificationCanBeRetrievedWithIUNByPA(String paType) {
         sharedSteps.selectPA(paType);
         AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
@@ -47,7 +47,7 @@ public class InvioNotificheB2bMultiPa {
     }
 
     @Then("si tenta il recupero dal sistema tramite codice IUN dalla PA {string}")
-    public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNDallaPA(String paType) {
+    public void retrievalAttemptedIUNFromPA(String paType) {
         sharedSteps.selectPA(paType);
         try{
             b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
@@ -59,7 +59,7 @@ public class InvioNotificheB2bMultiPa {
 
 
     @Then("(l'invio ha prodotto)(l'operazione ha generato) un errore con status code {string}")
-    public void lInvioHaProdottoUnErroreConStatusCode(String statusCode) {
+    public void operationProducedAnError(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));

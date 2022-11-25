@@ -37,7 +37,7 @@ public class RicezioneNotificheWebDelghe {
     private final PnPaB2bUtils b2bUtils;
 
     private MandateDto mandateToSearch;
-    private SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
+    private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
     private HttpStatusCodeException notificationError;
 
@@ -59,7 +59,7 @@ public class RicezioneNotificheWebDelghe {
 
 
     @And("Mario Gherkin viene delegato da Mario Cucumber")
-    public void cristoforoColomboVieneDelegatoDaConCf() {
+    public void marioGherkinIsDelegatedByMarioCucumber() {
         if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)){
             throw new IllegalArgumentException();
         }
@@ -91,7 +91,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Given("Mario Gherkin viene delegato da Mario Gherkin")
-    public void marioGherkinVieneDelegatoDaMarioGherkin() {
+    public void marioGherkinIsDelegatedByMarioGherkin() {
         if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2)){
             throw new IllegalArgumentException();
         }
@@ -123,7 +123,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Given("Mario Gherkin rifiuta se presente la delega ricevuta Mario Cucumber")
-    public void vieneRifiutateSePresenteLaDelegaRicevutaDaConCf() {
+    public void marioGherkinRejectIfPresentMandateOfMarioCucumber() {
         webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
@@ -139,7 +139,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @And("Mario Gherkin accetta la delega Mario Cucumber")
-    public void cristoforoColomboAccettaLaDelegaDa() {
+    public void marioGherkinAcceptsMandateOfMarioCucumber() {
         webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
@@ -157,7 +157,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
-    public void laNotificaPuòEssereCorrettamenteLettaDaConDelega(String recipient) {
+    public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
@@ -165,7 +165,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Then("il documento notificato può essere correttamente recuperato da {string} con delega")
-    public void ilDocumentoNotificatoPuoEssereCorrettamenteRecuperatoDalDelegato(String recipient) {
+    public void theDocumentCanBeProperlyRetrievedByWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 sharedSteps.getSentNotification().getIun(),
@@ -182,7 +182,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
-    public void lAllegatoPuoEssereCorrettamenteRecuperatoDalDelegato(String attachmentName,String recipient) {
+    public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName,String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
@@ -198,7 +198,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @And("Mario Cucumber revoca la delega a Mario Gherkin")
-    public void conCfRevocaLaDelegaACristoforoColombo() {
+    public void marioCucumberRevokesMandate() {
         webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegator1();
         MandateDto mandateDto = null;
@@ -216,7 +216,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @And("Mario Gherkin rifiuta la delega ricevuta da Mario Cucumber")
-    public void cristoforoColomboRifiutaLaDelegaDa() {
+    public void marioGherkinRefusesMandateReceivedFrom() {
         webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
@@ -235,7 +235,7 @@ public class RicezioneNotificheWebDelghe {
 
 
     @Then("si tenta la lettura della notifica da parte del delegato {string} che produce un errore con status code {string}")
-    public void siTentaIlRecuperoDellaNotificaDaParteDelDelegatoCheProduceUnErroreConStatusCode(String recipient,String statusCode) {
+    public void readNotificationWithError(String recipient,String statusCode) {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
@@ -249,7 +249,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Given("Mario Gherkin viene delegato Mario Cucumber con delega in scadenza")
-    public void cristoforoColomboVieneDelegatoDaConCfConDelegaInScadenza(String name, String surname, String cf) {
+    public void marioGherkinDelegateMarioCucumberWithExpiringMandate() {
         if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)){
             throw new IllegalArgumentException();
         }
@@ -278,7 +278,7 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @And("si attende lo scadere della delega")
-    public void siAttendeLoScadereDellaDelega() {
+    public void awaitExpirationOfMandate() {
         try {
             Thread.sleep( 120 * 1000L);
         } catch (InterruptedException exc) {
@@ -287,13 +287,13 @@ public class RicezioneNotificheWebDelghe {
     }
 
     @Then("l'operazione di delega ha prodotto un errore con status code {string}")
-    public void lOperazioneDiDelegaHaProdottoUnErroreConStatusCode(String statusCode) {
+    public void operationProducedAnErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((notificationError != null) &&
                 (notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 
     @And("la notifica può essere correttamente letta da {string}")
-    public void laNotificaPuòEssereCorrettamenteRecuperataDalDestinatario(String recipient) {
+    public void notificationCanBeCorrectlyReadFrom(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
