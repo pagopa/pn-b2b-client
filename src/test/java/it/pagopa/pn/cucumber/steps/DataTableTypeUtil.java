@@ -38,7 +38,7 @@ public class DataTableTypeUtil {
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
                                         NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.SIMPLE_REGISTERED_LETTER)))
+                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
         );
         try {
