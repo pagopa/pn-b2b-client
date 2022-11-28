@@ -170,6 +170,21 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( resp, NewNotificationRequestStatusResponse.class );
     }
 
+    @Override
+    public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponse resp;
+        resp = senderReadB2BApi.getNotificationRequestStatus(
+                operatorId,
+                CxTypeAuthFleet.PA,
+                paId,
+                groups,
+                notificationRequestId,
+                paProtocolNumber,
+                idempotenceToken
+        );
+        return deepCopy( resp, NewNotificationRequestStatusResponse.class );
+    }
+
     private <T> T deepCopy( Object obj, Class<T> toClass) {
         try {
             String json = objMapper.writeValueAsString( obj );

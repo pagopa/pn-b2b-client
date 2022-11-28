@@ -274,4 +274,34 @@ public class InvioNotificheB2bSteps  {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+
+    @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
+    public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
+        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
+        verifyStatus(null,newNotificationResponse.getPaProtocolNumber(),newNotificationResponse.getIdempotenceToken());
+
+    }
+
+    @Then("viene verificato lo stato di accettazione con requestID")
+    public void vieneVerificatoLoStatoDiAccettazioneConRequestID() {
+        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
+        verifyStatus(newNotificationResponse.getNotificationRequestId(),null,null);
+    }
+
+    @Then("viene verificato lo stato di accettazione con paProtocolNumber")
+    public void vieneVerificatoLoStatoDiAccettazioneConPaProtocolNumber() {
+        NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
+        verifyStatus(null,newNotificationResponse.getPaProtocolNumber(),null);
+    }
+
+    private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken){
+        NewNotificationRequestStatusResponse newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+                this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId,paProtocolNumber,idempotenceToken));
+        Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+        logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+    }
+
+
+
 }

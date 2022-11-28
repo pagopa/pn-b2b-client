@@ -17,6 +17,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId);
 
+    NewNotificationRequestStatusResponse getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
+
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) ;
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) ;

@@ -140,4 +140,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId) {
         return senderReadB2BApi.retrieveNotificationRequestStatus( notificationRequestId, null, null );
     }
+
+    @Override
+    public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+        return senderReadB2BApi.retrieveNotificationRequestStatus(notificationRequestId,paProtocolNumber,idempotenceToken);
+    }
 }

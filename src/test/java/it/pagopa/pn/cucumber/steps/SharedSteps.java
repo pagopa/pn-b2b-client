@@ -178,6 +178,15 @@ public class SharedSteps {
         this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
+    @And("viene generata una nuova notifica con uguale paProtocolNumber")
+    public void vieneGenerataUnaNuovaNotificaConUgualePaProtocolNumber() {
+        String paProtocolNumber = notificationRequest.getPaProtocolNumber();
+
+        generateNewNotification();
+
+        this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk(String paType) {
         selectPA(paType);
@@ -349,5 +358,6 @@ public class SharedSteps {
             throw new RuntimeException( exc );
         }
     }
+
 
 }
