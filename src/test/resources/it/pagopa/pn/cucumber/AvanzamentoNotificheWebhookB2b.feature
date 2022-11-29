@@ -171,7 +171,7 @@ Feature: avanzamento notifiche webhook b2b
     Then l'ultima creazione ha prodotto un errore con status code "409"
 
   @clean @dev
-  Scenario: [B2B-STREAM_TIMELINE_16] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+  Scenario: [B2B-STREAM_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -183,7 +183,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
 
   @clean @dev
-  Scenario: [B2B-STREAM_TIMELINE_17] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+  Scenario: [B2B-STREAM_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline NOT_HANDLED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -195,7 +195,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream fino all'elemento di timeline "NOT_HANDLED"
 
   @ignore @clean @dev
-  Scenario: [B2B-STREAM_TIMELINE_18] Invio notifica digitale ed attesa stato DELIVERED_scenario negativo
+  Scenario: [B2B-STREAM_TIMELINE_18] Invio notifica digitale ed attesa elemento di timeline SCHEDULE_ANALOG_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

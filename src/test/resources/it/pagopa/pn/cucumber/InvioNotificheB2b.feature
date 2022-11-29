@@ -251,7 +251,7 @@ Feature: invio notifiche b2b
     And l'importo della notifica è 2550
 
 
-  Scenario: [B2B-PA-SEND_24] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_24] Invio notifica digitale mono destinatario physicalCommunication-REGISTERED_LETTER_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -262,7 +262,7 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  Scenario: [B2B-PA-SEND_25] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_25] Invio notifica digitale mono destinatario physicalCommunication-AR_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -273,7 +273,7 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  Scenario: [B2B-PA-SEND_26] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_26] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -283,7 +283,7 @@ Feature: invio notifiche b2b
     Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
 
 
-  Scenario: [B2B-PA-SEND_27] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_27] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -292,7 +292,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then viene verificato lo stato di accettazione con requestID
 
-  Scenario: [B2B-PA-SEND_28] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_28] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -303,7 +303,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  Scenario: [B2B-PA-SEND_29] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_29] Invio notifica digitale mono destinatario e controllo paProtocolNumber con uguale pa_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -314,7 +314,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "409"
 
-  Scenario: [B2B-PA-SEND_30] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
+  Scenario: [B2B-PA-SEND_30] invio notifiche digitali e controllo paProtocolNumber e idempotenceToken con diversa pa_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
