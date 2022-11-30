@@ -153,6 +153,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
 
 
+  @dev
   Scenario: [B2B-PA-SEND_13] verifica retention time dei documenti per la notifica inviata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -163,6 +164,7 @@ Feature: invio notifiche b2b
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
 
+  @dev
   Scenario: [B2B-PA-SEND_14] verifica retention time pagopaForm per la notifica inviata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -172,12 +174,12 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
-  @SmokeTest
+  @SmokeTest @dev
   Scenario: [B2B-PA-SEND_15] verifica retention time dei documenti pre-caricati
     Given viene effettuato il pre-caricamento di un documento
     Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
 
-  @SmokeTest
+  @SmokeTest @dev
   Scenario: [B2B-PA-SEND_16] verifica retention time  pagopaForm pre-caricato
     Given viene effettuato il pre-caricamento di un allegato
     Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato

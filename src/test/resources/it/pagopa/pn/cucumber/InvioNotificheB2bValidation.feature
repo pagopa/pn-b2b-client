@@ -9,7 +9,6 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
-
     Examples:
       |  comune           |
       | san donà di piave |
@@ -17,6 +16,16 @@ Feature: Validazione campi invio notifiche b2b
       | Erbè              |
       | Forlì             |
       | Nardò             |
+      | D’Acrco           |
+      | D`Acrco           |
+      | D'Acrco           |
+      | Fær Øer           |
+      | São Tomé          |
+      | Hagåtña           |
+
+
+
+
 
 
   Scenario Outline: [B2B-PA-SEND_VALID_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
@@ -28,7 +37,6 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
-
     Examples:
       |     localita       |
       | san donà di piave  |
@@ -48,7 +56,6 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
-
     Examples:
       |   indirizzo   |
       | via dà        |
@@ -68,7 +75,6 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
-
     Examples:
       |   stato             |
       | Città del Vaticano  |

@@ -37,25 +37,25 @@
 
 ## Istruzioni aggiuntive per l'esecuzione dei test e2e in locale su più ambienti contemporaneamente
 - Inserire nel file 'bearer-token.properties' nel path 'pn-b2b-client/config/'
-- 'pn.external.bearer-token-user2.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
-- 'pn.external.bearer-token-user1.pagopa-svil=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto 
-- e/o
-- 'pn.external.bearer-token-user2.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
-- 'pn.external.bearer-token-user1.pagopa-coll=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto
+- 'pn.external.bearer-token-user2.pagopa-env=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto per l'ambiente scelto
+- 'pn.external.bearer-token-user1.pagopa-env=<bearer-token>' sostituendo ad <bearer-token> un bearer token corretto per l'ambiente scelto
 
 - Inserire nel file 'api-keys.properties' nel path 'pn-b2b-client/config/'
-- 'pn.external.api-keys.pagopa-svil=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api-keys.pagopa-svil-2=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api-keys.pagopa-GA-svil=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api.keys.appio.pagopa.svil=<api_key>' sostituendo ad <api_key> l'api key corretta
-- e/o
-- 'pn.external.api-keys.pagopa-coll=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api-keys.pagopa-coll-2=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api-keys.pagopa-GA-coll=<api_key>' sostituendo ad <api_key> l'api key corretta
-- 'pn.external.api.keys.appio.pagopa.coll=<api_key>' sostituendo ad <api_key> l'api key corretta
+- 'pn.external.api-keys.pagopa-env=<api_key>' sostituendo ad <api_key> l'api key corretta per l'ambiente scelto
+- 'pn.external.api-keys.pagopa-env-2=<api_key>' sostituendo ad <api_key> l'api key corretta per l'ambiente scelto
+- 'pn.external.api-keys.pagopa-GA-env=<api_key>' sostituendo ad <api_key> l'api key corretta per l'ambiente scelto
+- 'pn.external.api.keys.appio.pagopa.env=<api_key>' sostituendo ad <api_key> l'api key correttaper l'ambiente scelto
+
+- Modificare:
+- pn.external.api-key-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-env'
+- pn.external.api-key-2-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-env-2'
+- pn.external.api-key-GA-taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'ente corrispondente a 'pn.external.api-keys.pagopa-GA-env'
+- pn.bearer-token.user1.taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'utente corrispondente a 'pn.external.bearer-token-user2.pagopa-env'
+- pn.bearer-token.user2.taxID=<TaxID> sostituendo a <TaxID> il codice fiscale dell'utente corrispondente a 'pn.external.bearer-token-user1.pagopa-env'
+
 
 - Inserire nel file 'application.properties' nel path 'pn-b2b-client/config/'
-- pn.execution-type=svil OPPURE coll 
+- pn.execution-type=svil OPPURE coll OPPURE hotfix 
 - Eseguire src/test/java/it/pagopa/pn/cucumber/CucumberEnvIntegrationTest.java
 - Questa classe in base al valore di 'pn.execution-type' eseguira i test su ambiente SVILL o COLL
 - NOTA: in caso di assenza o valore non contemplato di 'pn.execution-type' saranno eseguiti i test su DEV
