@@ -213,17 +213,25 @@ public class SharedSteps {
     }
 
     private void sendNotification(){
-        Assertions.assertDoesNotThrow(() -> {
-            newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
-            notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
-        });
-        try {
-            Thread.sleep( 10 * 1000);
-        } catch (InterruptedException e) {
-            logger.error("Thread.sleep error retry");
-            throw new RuntimeException(e);
+        try{
+            Assertions.assertDoesNotThrow(() -> {
+                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+                notificationResponseComplete = b2bUtils.waitForRequestAcceptation( newNotificationResponse );
+            });
+
+            try {
+                Thread.sleep( 10 * 1000);
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(notificationResponseComplete);
+
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    "{RequestID: "+newNotificationResponse.getNotificationRequestId() +" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
         }
-        Assertions.assertNotNull(notificationResponseComplete);
     }
 
     private void sendNotificationWithError(){

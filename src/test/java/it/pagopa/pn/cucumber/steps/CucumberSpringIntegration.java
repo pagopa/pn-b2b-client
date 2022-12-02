@@ -21,7 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
         PnWebMandateExternalClientImpl.class,
         PnSafeStorageInfoExternalClientImpl.class,
         PnWebUserAttributesExternalClientImpl.class,
-        PnAppIOB2bExternalClientImpl.class
+        PnAppIOB2bExternalClientImpl.class,
+        PnApiKeyManagerExternalClientImpl.class
 })
 public class CucumberSpringIntegration {
 }

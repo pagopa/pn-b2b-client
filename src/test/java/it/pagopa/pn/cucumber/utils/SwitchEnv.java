@@ -46,11 +46,9 @@ public class SwitchEnv {
 
     @Before
     public synchronized void before_all() {
-
         if(executionType!= null  && !setted && checkExecutionType()){
-            synchronized (this){
-                setted = true;
-            }
+            setted = true;
+
             System.setProperty("pn.external.base-url","https://api."+executionType+".pn.pagopa.it");
             System.setProperty("pn.webapi.external.base-url","https://webapi."+executionType+".pn.pagopa.it");
             System.setProperty("pn.appio.externa.base-url","https://api-io."+executionType+".pn.pagopa.it");
@@ -87,26 +85,27 @@ public class SwitchEnv {
     }
 
     private void switchBean(){
-        BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
+        if(!setted) {
+            BeanDefinitionRegistry beanRegistry = (BeanDefinitionRegistry) applicationContext.getAutowireCapableBeanFactory();
 
-        beanRegistry.removeBeanDefinition("pnWebhookB2bExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnWebhookB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebhookB2bExternalClientImpl.class).getBeanDefinition());
+            beanRegistry.removeBeanDefinition("pnWebhookB2bExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnWebhookB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebhookB2bExternalClientImpl.class).getBeanDefinition());
 
-        beanRegistry.removeBeanDefinition("pnWebMandateExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnWebMandateExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebMandateExternalClientImpl.class).getBeanDefinition());
+            beanRegistry.removeBeanDefinition("pnWebMandateExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnWebMandateExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebMandateExternalClientImpl.class).getBeanDefinition());
 
-        beanRegistry.removeBeanDefinition("pnWebRecipientExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnWebRecipientExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebRecipientExternalClientImpl.class).getBeanDefinition());
+            beanRegistry.removeBeanDefinition("pnWebRecipientExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnWebRecipientExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnWebRecipientExternalClientImpl.class).getBeanDefinition());
 
-        beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
+            beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
 
-        beanRegistry.removeBeanDefinition("pnAppIOB2bExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnAppIOB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnAppIOB2bExternalClientImpl.class).getBeanDefinition());
+            beanRegistry.removeBeanDefinition("pnAppIOB2bExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnAppIOB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnAppIOB2bExternalClientImpl.class).getBeanDefinition());
 
-        beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
-        beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
-
+            beanRegistry.removeBeanDefinition("pnPaB2bExternalClientImpl");
+            beanRegistry.registerBeanDefinition("pnPaB2bExternalClientImpl", BeanDefinitionBuilder.rootBeanDefinition(PnPaB2bExternalClientImpl.class).getBeanDefinition());
+        }
     }
 
 
