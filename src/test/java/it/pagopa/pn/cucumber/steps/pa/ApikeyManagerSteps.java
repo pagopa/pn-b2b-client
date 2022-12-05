@@ -5,10 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnApiKeyManagerClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ApiKeysResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestApiKeyStatus;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -69,20 +66,7 @@ public class ApikeyManagerSteps {
 
     @When("viene modificato lo stato dell'apiKey in {string}")
     public void vieneModificatoLoStatoDellApiKeyIn(String state) {
-        RequestApiKeyStatus requestApiKeyStatus = new RequestApiKeyStatus();
-        switch (state){
-            case "BLOCK":
-                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.BLOCK);
-                break;
-            case "ENABLE":
-                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ENABLE);
-                break;
-            case "ROTATE":
-                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ROTATE);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        RequestApiKeyStatus requestApiKeyStatus = getRequestApiKeyStatus(state);
         Assertions.assertDoesNotThrow(()->
                 apiKeyManagerClient.changeStatusApiKey(responseNewApiKey.getId(),requestApiKeyStatus));
     }
@@ -100,5 +84,50 @@ public class ApikeyManagerSteps {
         }catch (HttpStatusCodeException httpStatusCodeException){
             this.httpStatusCodeException = httpStatusCodeException;
         }
+    }
+
+    @Then("si verifica lo stato dell'apikey {string}")
+    public void siVerificaLoStatoDellApikey(String state) {
+        ApiKeyStatus apiKeyStatus;
+        switch (state){
+            case "BLOCKED":
+                apiKeyStatus = ApiKeyStatus.BLOCKED;
+                break;
+            case "ENABLED":
+                apiKeyStatus = ApiKeyStatus.ENABLED;
+                break;
+            case "ROTATED":
+                apiKeyStatus = ApiKeyStatus.ROTATED;
+                break;
+            case "CREATED":
+                apiKeyStatus = ApiKeyStatus.CREATED;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        Assertions.assertNotNull(
+                apiKeys.getItems().stream()
+                        .filter(elem -> (elem.getId().equals(responseNewApiKey.getId()))
+                                &&(elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
+    }
+
+
+
+    private RequestApiKeyStatus getRequestApiKeyStatus(String state){
+        RequestApiKeyStatus requestApiKeyStatus = new RequestApiKeyStatus();
+        switch (state){
+            case "BLOCK":
+                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.BLOCK);
+                break;
+            case "ENABLE":
+                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ENABLE);
+                break;
+            case "ROTATE":
+                requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ROTATE);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return requestApiKeyStatus;
     }
 }
