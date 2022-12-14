@@ -138,30 +138,6 @@ Feature: avanzamento notifiche b2b
     Then viene verificato il costo = "0" della notifica
 
 
-  Scenario: [B2B_PA_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
-
-
-  Scenario: [B2B_PA_MULTI_2] Invio notifica multi destinatario con pagamento_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "Comune_Multi"
-
-
   Scenario: [B2B-PA-PAY_GA_1] Invio notifica e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
