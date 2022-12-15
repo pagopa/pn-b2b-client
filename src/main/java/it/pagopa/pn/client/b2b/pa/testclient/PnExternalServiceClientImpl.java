@@ -1,7 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
 
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,7 +20,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

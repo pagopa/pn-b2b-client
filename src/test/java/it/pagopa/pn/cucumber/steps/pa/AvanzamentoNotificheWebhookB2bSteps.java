@@ -232,6 +232,31 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOT_HANDLED;
                 break;
+            case "SEND_DIGITAL_FEEDBACK":
+                timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_FEEDBACK;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_FEEDBACK;
+                break;
+            case "SEND_ANALOG_DOMICILE":
+                timelineElementCategory = TimelineElementCategory.SEND_ANALOG_DOMICILE;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_ANALOG_DOMICILE;
+                break;
+            case "SEND_DIGITAL_PROGRESS":
+                timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                break;
+            case "PUBLIC_REGISTRY_CALL":
+                timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_CALL;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
+                break;
+            case "PUBLIC_REGISTRY_RESPONSE":
+                timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
