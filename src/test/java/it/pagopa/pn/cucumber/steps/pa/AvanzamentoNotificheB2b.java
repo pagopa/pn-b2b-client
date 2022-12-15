@@ -117,15 +117,30 @@ public class AvanzamentoNotificheB2b {
             case "DIGITAL_SUCCESS_WORKFLOW":
                 timelineElementInternalCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
                 break;
+            case "DIGITAL_FAILURE_WORKFLOW":
+                timelineElementInternalCategory = TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
+                break;
+            case "NOT_HANDLED":
+                timelineElementInternalCategory = TimelineElementCategory.NOT_HANDLED;
+                break;
+            case "SEND_DIGITAL_FEEDBACK":
+                timelineElementInternalCategory = TimelineElementCategory.SEND_DIGITAL_FEEDBACK;
+                break;
             case "SEND_DIGITAL_PROGRESS":
                 timelineElementInternalCategory = TimelineElementCategory.SEND_DIGITAL_PROGRESS;
+                break;
+            case "PUBLIC_REGISTRY_CALL":
+                timelineElementInternalCategory = TimelineElementCategory.PUBLIC_REGISTRY_CALL;
+                break;
+            case "PUBLIC_REGISTRY_RESPONSE":
+                timelineElementInternalCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 break;
             default:
                 throw new IllegalArgumentException();
         }
         TimelineElement timelineElement = null;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 30; i++) {
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
