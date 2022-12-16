@@ -9,6 +9,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 
+  @ignore
   Scenario: [B2B_PA_MULTI_2] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -22,6 +23,7 @@ Feature: avanzamento notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE" dalla PA "Comune_Multi"
 
+  @ignore
   Scenario: [B2B_PA_MULTI_3] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
