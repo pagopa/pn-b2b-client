@@ -52,11 +52,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.requestNumber = number;
         for(int i = 0; i<number; i++){
             StreamCreationRequest streamRequest = new StreamCreationRequest();
-            streamRequest.title(title);
+            streamRequest.setTitle(title);
             //STATUS, TIMELINE
-            streamRequest.eventType(eventType.equalsIgnoreCase("STATUS") ?
+            streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
                     StreamCreationRequest.EventTypeEnum.STATUS : StreamCreationRequest.EventTypeEnum.TIMELINE);
             streamCreationRequestList.add(streamRequest);
+            //streamRequest.setFilterValues(new LinkedList<>());
         }
     }
 
