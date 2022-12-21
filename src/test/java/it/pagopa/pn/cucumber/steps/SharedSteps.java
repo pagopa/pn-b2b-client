@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
@@ -16,6 +18,8 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponse;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -34,6 +38,7 @@ import java.util.List;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SharedSteps {
 
+
     private final DataTableTypeUtil dataTableTypeUtil;
     private final IPnPaB2bClient b2bClient;
     private final PnPaB2bUtils b2bUtils;
@@ -49,6 +54,8 @@ public class SharedSteps {
     private final ObjectMapper objMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
+
+    private boolean groutToSet = true;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -304,7 +311,7 @@ public class SharedSteps {
     }
 
     private void setGrup(SettableApiKey.ApiKeyType apiKeyType){
-        if(this.notificationRequest.getGroup() == null){
+        if(groutToSet && this.notificationRequest.getGroup() == null){
             List<HashMap<String, String>> hashMaps = pnExternalServiceClient.paGroupInfo(apiKeyType);
             if(hashMaps == null || hashMaps.size() == 0)return;
             String id = hashMaps.get(0).get("id");
@@ -388,5 +395,10 @@ public class SharedSteps {
         }
     }
 
+
+    @Before("@integrationTest")
+    public void doSomethingAfter() {
+       this.groutToSet = false;
+    }
 
 }

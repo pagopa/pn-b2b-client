@@ -55,4 +55,14 @@ Feature: avanzamento notifiche b2b
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
 
+  Scenario: [B2B_PA_MULTI_6] Invio notifica multi destinatario SCHEDULE_ANALOG_WORKFLOW_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
+
+
 

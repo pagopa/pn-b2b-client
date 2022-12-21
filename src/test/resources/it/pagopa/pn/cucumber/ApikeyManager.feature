@@ -55,3 +55,17 @@ Feature: apiKey manager
     And l'apiKey viene cancellata
 
 
+  Scenario: [API-KEY_7] generazione e verifica stato ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey
+    And vengono lette le apiKey esistenti
+    And l'apiKey creata è presente tra quelle lette
+    Then si verifica lo stato dell'apikey "ENABLED"
+    When viene modificato lo stato dell'apiKey in "BLOCK"
+    And vengono lette le apiKey esistenti
+    Then si verifica lo stato dell'apikey "BLOCKED"
+    Then viene modificato lo stato dell'apiKey in "ENABLE"
+    And vengono lette le apiKey esistenti
+    Then si verifica lo stato dell'apikey "ENABLED"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+

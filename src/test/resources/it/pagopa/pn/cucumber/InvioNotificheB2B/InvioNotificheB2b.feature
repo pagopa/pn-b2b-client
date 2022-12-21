@@ -1,7 +1,6 @@
 Feature: invio notifiche b2b
 
-
-  @B2Btest @SmokeTest @integrationTest
+  @B2Btest @SmokeTest
   Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -39,7 +38,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "409"
 
 
-  @B2Btest @integrationTest
+  @B2Btest
   Scenario: [B2B-PA-SEND_4] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -66,7 +65,7 @@ Feature: invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "409"
 
 
-  @B2Btest @SmokeTest @integrationTest
+  @B2Btest @SmokeTest
   Scenario: [B2B-PA-SEND_6] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -107,7 +106,7 @@ Feature: invio notifiche b2b
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  @SmokeTest @integrationTest
+  @SmokeTest
   Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -139,7 +138,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @integrationTest
+
   Scenario: [B2B-PA-SEND_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -219,7 +218,7 @@ Feature: invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  @integrationTest
+
   Scenario: [B2B-PA-SEND_20] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -230,7 +229,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della richiesta di invio notifica
 
 
-  @integrationTest
+
   Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

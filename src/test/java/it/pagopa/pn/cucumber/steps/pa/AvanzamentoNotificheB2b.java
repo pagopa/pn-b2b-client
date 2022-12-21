@@ -135,6 +135,9 @@ public class AvanzamentoNotificheB2b {
             case "PUBLIC_REGISTRY_RESPONSE":
                 timelineElementInternalCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 break;
+            case "SCHEDULE_ANALOG_WORKFLOW":
+                timelineElementInternalCategory = TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
