@@ -97,7 +97,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return this.apiKeySetted;
     }
 
-    private void setApiKey(String apiKey){
+    public void setApiKey(String apiKey){
         this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
         this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));

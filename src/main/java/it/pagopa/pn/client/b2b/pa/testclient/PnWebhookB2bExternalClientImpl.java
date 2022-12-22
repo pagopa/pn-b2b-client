@@ -122,7 +122,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return this.apiKeySetted;
     }
 
-    private void setApiKey(String apiKey){
+    public void setApiKey(String apiKey){
         this.eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey));
         this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey));
     }

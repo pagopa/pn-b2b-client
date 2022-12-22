@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -13,6 +14,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 public class ApikeyManagerSteps {
 
     private final IPnApiKeyManagerClient apiKeyManagerClient;
+    private final SharedSteps sharedSteps;
 
     private ApiKeysResponse apiKeys;
     private RequestNewApiKey requestNewApiKey;
@@ -20,7 +22,8 @@ public class ApikeyManagerSteps {
     private HttpStatusCodeException httpStatusCodeException;
 
     @Autowired
-    public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient) {
+    public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps) {
+        this.sharedSteps = sharedSteps;
         this.apiKeyManagerClient = apiKeyManagerClient;
     }
 
@@ -129,5 +132,24 @@ public class ApikeyManagerSteps {
                 throw new IllegalArgumentException();
         }
         return requestApiKeyStatus;
+    }
+
+    @When("viene impostata l'apikey appena generata")
+    public void vieneImpostataLApikeyAppenaGenerataPerIl() {
+        sharedSteps.getB2bClient().setApiKey(responseNewApiKey.getApiKey());
+        sharedSteps.getB2bUtils().setClient(sharedSteps.getB2bClient());
+    }
+
+    @Then("l'invio della notifica non ha prodotto errori")
+    public void lInvioDellaNotificaNonHaProdottoErrori() {
+        HttpStatusCodeException httpStatusCodeException = sharedSteps.consumeNotificationError();
+        Assertions.assertNull(httpStatusCodeException);
+    }
+
+    @Then("l'invio della notifica ha sollevato un errore di autenticazione {string}")
+    public void lInvioDellaNotificaHaSollevatoUnErroreDiAutenticazione(String statusCode) {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
 }

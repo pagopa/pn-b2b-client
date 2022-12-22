@@ -110,6 +110,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public void setApiKey(String apiKey) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public ApiKeyType getApiKeySetted() {
         throw new UnsupportedOperationException();
     }

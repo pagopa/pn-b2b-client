@@ -6,5 +6,7 @@ public interface SettableApiKey {
 
     boolean setApiKeys(ApiKeyType apiKey);
 
+    void setApiKey(String apiKey);
+
     ApiKeyType getApiKeySetted();
 }
