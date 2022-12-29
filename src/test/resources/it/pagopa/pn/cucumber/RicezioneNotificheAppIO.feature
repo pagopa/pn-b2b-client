@@ -98,7 +98,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Cucumber" recupera il documento notificato tramite AppIO
 
-  Scenario: [B2B-PA-APP-IO_9] Invio notifica con api b2b e recupero documento notificato con AppIO
+  Scenario: [B2B-PA-APP-IO_10] Invio notifica con api b2b e recupero documento notificato con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
