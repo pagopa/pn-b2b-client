@@ -74,6 +74,8 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    private String gherkinSpaTaxID = "15376371009";
+
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
@@ -141,6 +143,29 @@ public class SharedSteps {
                         .denomination("Mario Gherkin")
                         .taxId(marioGherkinTaxID));
     }
+
+
+    @And("destinatario Gherkin spa")
+    public void destinatarioGherkinSpa() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Gherkin_spa")
+                        .taxId(gherkinSpaTaxID)
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .digitalDomicile(new NotificationDigitalAddress()
+                                .type(NotificationDigitalAddress.TypeEnum.PEC )
+                                .address("testpagopa1@pnpagopa.postecert.local")));
+    }
+
+    @And("destinatario Gherkin spa e:")
+    public void destinatarioGherkinSpaParam(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("Gherkin_spa")
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .taxId(gherkinSpaTaxID));
+    }
+
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
