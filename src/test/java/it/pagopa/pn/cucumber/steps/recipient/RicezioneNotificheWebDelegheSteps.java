@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 
-public class RicezioneNotificheWebDelghe {
+public class RicezioneNotificheWebDelegheSteps {
 
     private final IPnWebMandateClient webMandateClient;
     private final IPnWebRecipientClient webRecipientClient;
@@ -47,7 +47,7 @@ public class RicezioneNotificheWebDelghe {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public RicezioneNotificheWebDelghe(IPnWebMandateClient webMandateClient, SharedSteps sharedSteps) {
+    public RicezioneNotificheWebDelegheSteps(IPnWebMandateClient webMandateClient, SharedSteps sharedSteps) {
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();

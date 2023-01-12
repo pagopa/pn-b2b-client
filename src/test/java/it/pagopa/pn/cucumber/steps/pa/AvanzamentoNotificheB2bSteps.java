@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.invoke.MethodHandles;
 
-public class AvanzamentoNotificheB2b {
+public class AvanzamentoNotificheB2bSteps {
 
 
     private final IPnPaB2bClient b2bClient;
@@ -24,7 +24,7 @@ public class AvanzamentoNotificheB2b {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public AvanzamentoNotificheB2b(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient) {
+    public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient) {
         this.sharedSteps = sharedSteps;
         this.appIOB2bClient = appIOB2bClient;
         this.b2bClient = sharedSteps.getB2bClient();

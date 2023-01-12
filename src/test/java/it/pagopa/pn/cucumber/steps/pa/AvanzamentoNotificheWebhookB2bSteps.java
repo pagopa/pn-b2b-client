@@ -61,9 +61,29 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @When("si crea(no) i(l) nuov(o)(i) stream")
-    public void createdStream() {
+    private void setPaWebhook(String pa){
+        switch (pa){
+            case "Comune_1":
+                webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
+                sharedSteps.selectPA(pa);
+                break;
+            case "Comune_2":
+                webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
+                sharedSteps.selectPA(pa);
+                break;
+            case "Comune_Multi":
+                webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
+                sharedSteps.selectPA(pa);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @When("si crea(no) i(l) nuov(o)(i) stream per il {string}")
+    public void createdStream(String pa) {
         this.eventStreamList = new LinkedList<>();
+        setPaWebhook(pa);
         for(StreamCreationRequest request: streamCreationRequestList){
             try{
             StreamMetadataResponse eventStream = webhookB2bClient.createEventStream(request);
@@ -110,8 +130,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
 
-    @And("vengono letti gli eventi dello stream fino allo stato {string}")
-    public void readStreamEventsState(String status) {
+    @And("vengono letti gli eventi dello stream del {string} fino allo stato {string}")
+    public void readStreamEventsState(String pa,String status) {
+        setPaWebhook(pa);
         NotificationStatus notificationStatus;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
         switch (status) {
@@ -178,8 +199,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
 
-    @Then("vengono letti gli eventi dello stream fino all'elemento di timeline {string}")
-    public void readStreamTimelineElement(String timelineEventCategory) {
+    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string}")
+    public void readStreamTimelineElement(String pa,String timelineEventCategory) {
+        setPaWebhook(pa);
         TimelineElementCategory timelineElementCategory;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory timelineElementInternalCategory;
         switch (timelineEventCategory) {
@@ -364,8 +386,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-    @Then("si verifica nello stream che la notifica abbia lo stato VIEWED")
-    public void checkViewedState() {
+    @Then("si verifica nello stream del {string} che la notifica abbia lo stato VIEWED")
+    public void checkViewedState(String pa) {
+        setPaWebhook(pa);
         ProgressResponseElement progressResponseElement = searchInWebhook(NotificationStatus.VIEWED, null, 0);
         Assertions.assertNotNull(progressResponseElement);
     }
@@ -373,6 +396,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @After("@clean")
     public void doSomethingAfter() {
+        for(StreamMetadataResponse eventStream: eventStreamList){
+            webhookB2bClient.deleteEventStream(eventStream.getStreamId());
+            List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
+            StreamListElement streamListElement = streamListElements.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+            logger.info("STREAM SIZE: " + streamListElements.size());
+            logger.info("UUID DELETED: " + this.eventStreamList.get(0).getStreamId());
+            Assertions.assertNull(streamListElement);
+        }
+    }
+
+    @After("@cleanC2")
+    public void cleanC2() {
+        setPaWebhook("Comune_2");
         for(StreamMetadataResponse eventStream: eventStreamList){
             webhookB2bClient.deleteEventStream(eventStream.getStreamId());
             List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
@@ -394,8 +430,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-    @Given("vengono cancellati tutti gli stream presenti")
-    public void deleteAll() {
+    @Given("vengono cancellati tutti gli stream presenti del {string}")
+    public void deleteAll(String pa) {
+        setPaWebhook(pa);
         List<StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
         for(StreamListElement elem: streamListElements){
             webhookB2bClient.deleteEventStream(elem.getStreamId());

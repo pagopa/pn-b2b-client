@@ -15,7 +15,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.lang.invoke.MethodHandles;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class InvioNotificheB2bMultiPa {
+public class InvioNotificheB2bMultiPaSteps {
 
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
@@ -24,7 +24,7 @@ public class InvioNotificheB2bMultiPa {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public InvioNotificheB2bMultiPa(SharedSteps sharedSteps) {
+    public InvioNotificheB2bMultiPaSteps(SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = this.sharedSteps.getB2bUtils();
         this.b2bClient = this.sharedSteps.getB2bClient();
