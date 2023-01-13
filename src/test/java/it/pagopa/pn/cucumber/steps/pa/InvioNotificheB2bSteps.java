@@ -42,7 +42,6 @@ public class InvioNotificheB2bSteps  {
     private final PnPaB2bUtils b2bUtils;
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
-    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final SharedSteps sharedSteps;
 
     private NotificationDocument notificationDocumentPreload;
@@ -52,9 +51,8 @@ public class InvioNotificheB2bSteps  {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, IPnWebUserAttributesClient iPnWebUserAttributesClient, SharedSteps sharedSteps) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps) {
         this.safeStorageClient = safeStorageClient;
-        this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();

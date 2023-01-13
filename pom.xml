@@ -312,7 +312,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-external-web-userAttributes</id>
+                        <id>generate-external-web-userAttributes-consents</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -324,8 +324,8 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
-                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.api</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model</modelPackage>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
@@ -333,8 +333,60 @@
                                 <useAbstractionForFiles>true</useAbstractionForFiles>
                                 <useBeanValidation>false</useBeanValidation>
                             </configOptions>
-                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.api</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model</modelPackage>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-external-web-userAttributes-address-book</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/develop/docs/openapi/pn-address-book-api-external-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model</modelPackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-external-web-userAttributes-io</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/develop/docs/openapi/pn-address-book-b2b-external-io-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.io.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.io.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.io.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.io.model</modelPackage>
                         </configuration>
                     </execution>
                     <execution>
@@ -389,6 +441,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model</modelPackage>
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
         </plugins>

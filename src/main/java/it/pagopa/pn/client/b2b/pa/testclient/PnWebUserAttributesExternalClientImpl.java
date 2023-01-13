@@ -1,10 +1,18 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.ApiClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.api.ConsentsApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.Consent;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.ConsentAction;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.model.ConsentType;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.AllApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.CourtesyApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.api.LegalApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.api.ConsentsApi;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +20,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 
 @Component
@@ -21,7 +30,16 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objMapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
+
+
     private final ConsentsApi ConsentsApi;
+
+    private final LegalApi legalApi;
+    private final AllApi allApi;
+    private final CourtesyApi courtesyApiAddressBook;
 
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
 
@@ -45,28 +63,52 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
-        this.ConsentsApi = new ConsentsApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.ConsentsApi = new ConsentsApi( newConsentsApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+
+        this.legalApi = new LegalApi(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+        this.allApi = new AllApi(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+        this.courtesyApiAddressBook = new CourtesyApi(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
+    private static it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newConsentsApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
+        it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient newApiClient =
+                new it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
         newApiClient.addDefaultHeader("user-agent",userAgent);
         newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
+
+    private static it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient newAddressBookApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
+        it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient newApiClient =
+                new it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.ApiClient( restTemplate );
+        newApiClient.setBasePath( basePath );
+        newApiClient.addDefaultHeader("user-agent",userAgent);
+        newApiClient.setBearerToken(bearerToken);
+        return newApiClient;
+    }
+
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
         switch (bearerToken){
             case USER_1:
+                this.ConsentsApi.setApiClient(newConsentsApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
 
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.legalApi.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.allApi.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
-                this.ConsentsApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.ConsentsApi.setApiClient(newConsentsApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+
+                this.legalApi.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.allApi.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
@@ -92,6 +134,37 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
 
     public List<Consent> getConsents() throws RestClientException {
         return this.ConsentsApi.getConsents();
+    }
+
+
+    public UserAddresses getAddressesByRecipient() throws RestClientException {
+        return allApi.getAddressesByRecipient();
+    }
+
+
+    public void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException {
+        legalApi.deleteRecipientLegalAddress(senderId, channelType);
+    }
+
+
+    public List<LegalDigitalAddress> getLegalAddressByRecipient() throws RestClientException {
+        return legalApi.getLegalAddressByRecipient();
+    }
+
+    public void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+        legalApi.postRecipientLegalAddress(senderId, channelType, addressVerification);
+    }
+
+    public void deleteRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType) throws RestClientException {
+        courtesyApiAddressBook.deleteRecipientCourtesyAddress(senderId, channelType);
+    }
+
+    public List<CourtesyDigitalAddress> getCourtesyAddressByRecipient() throws RestClientException {
+        return courtesyApiAddressBook.getCourtesyAddressByRecipient();
+    }
+
+    public void postRecipientCourtesyAddress(String senderId, CourtesyChannelType channelType, AddressVerification addressVerification) throws RestClientException {
+        courtesyApiAddressBook.postRecipientCourtesyAddress(senderId, channelType, addressVerification);
     }
 
 

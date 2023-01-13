@@ -5,8 +5,13 @@ import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchRow;
@@ -34,6 +39,7 @@ public class RicezioneNotificheWebSteps  {
 
 
     private final IPnWebRecipientClient webRecipientClient;
+    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
 
@@ -41,10 +47,11 @@ public class RicezioneNotificheWebSteps  {
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
-    public RicezioneNotificheWebSteps(SharedSteps sharedSteps) {
+    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient) {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
+        this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -188,6 +195,37 @@ public class RicezioneNotificheWebSteps  {
         }//search cycle
         return beenFound;
     }
+
+    @When("si predispone addressbook per l'utente {string}")
+    public void siPredisponeAddressbook(String user) {
+        switch (user){
+            case "Mario Cucumber":
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                break;
+            case "Mario Gherkin":
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @When("viene richiesto l'inserimento della pec {string}")
+    public void perLUtenteVieneSettatoLaPec(String pec) {
+        try{
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC,(new AddressVerification().value(pec).verificationCode("00000")));
+        }catch (HttpStatusCodeException httpStatusCodeException){
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @Then("l'inserimento ha prodotto un errore con status code {string}")
+    public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
+    }
+
 
 
     private static class  NotificationSearchParam{

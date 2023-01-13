@@ -1,6 +1,6 @@
 Feature: Validazione campi invio notifiche b2b con persona giuridica
 
-  Scenario Outline: [B2B-PA-SEND_VALID_PG_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -24,7 +24,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
 
 
 
-  Scenario Outline: [B2B-PA-SEND_VALID_PG_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
