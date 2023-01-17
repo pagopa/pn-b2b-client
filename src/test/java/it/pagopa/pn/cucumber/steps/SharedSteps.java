@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Transpose;
@@ -18,8 +17,6 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamListElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.StreamMetadataResponse;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -75,6 +72,7 @@ public class SharedSteps {
     private String marioGherkinTaxID;
 
     private String gherkinSpaTaxID = "15376371009";
+    private String cucumberSocietyTaxID = "CUPSOS66D44A199F";
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
@@ -164,6 +162,28 @@ public class SharedSteps {
                         .denomination("Gherkin_spa")
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .taxId(gherkinSpaTaxID));
+    }
+
+
+    @And("destinatario Cucumber Society")
+    public void destinatarioCucumberSociety() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Cucumber_Society")
+                        .taxId(cucumberSocietyTaxID)
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .digitalDomicile(new NotificationDigitalAddress()
+                                .type(NotificationDigitalAddress.TypeEnum.PEC )
+                                .address("testpagopa1@pnpagopa.postecert.local")));
+    }
+
+    @And("destinatario Cucumber Society e:")
+    public void destinatarioCucumberSocietyParam(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("Cucumber_Society")
+                        .taxId(cucumberSocietyTaxID)
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG));
     }
 
 

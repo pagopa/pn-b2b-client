@@ -1,7 +1,7 @@
 Feature: test di integrazione della pubblica amministrazione
 
   ###TC-INVIO-01
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -11,7 +11,7 @@ Feature: test di integrazione della pubblica amministrazione
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_2] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -24,7 +24,7 @@ Feature: test di integrazione della pubblica amministrazione
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_3] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -36,7 +36,7 @@ Feature: test di integrazione della pubblica amministrazione
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_4] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -46,7 +46,7 @@ Feature: test di integrazione della pubblica amministrazione
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_5] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -59,7 +59,7 @@ Feature: test di integrazione della pubblica amministrazione
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_6] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -70,7 +70,7 @@ Feature: test di integrazione della pubblica amministrazione
     Then si verifica la corretta acquisizione della richiesta di invio notifica
 
 
-  @integrationTest
+  @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_7] Invio notifica digitale mono destinatario senza pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -82,7 +82,7 @@ Feature: test di integrazione della pubblica amministrazione
 
 
     ###TC-INVIO-02
-  @integrationTest
+  @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_0.1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     When si crea il nuovo stream
@@ -90,95 +90,95 @@ Feature: test di integrazione della pubblica amministrazione
     And si cancella lo stream creato
     And viene verificata la corretta cancellazione
 
-  @integrationTest
+  @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_0.2] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    When si crea il nuovo stream
+    When si crea il nuovo stream per il "Comune_1"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
     And si cancella lo stream creato
     And viene verificata la corretta cancellazione
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline "REQUEST_ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline "AAR_GENERATION"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "AAR_GENERATION"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline "GET_ADDRESS"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "GET_ADDRESS"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato "DELIVERING"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERING"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
-  @clean @integrationTest
+  @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream
+    And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream fino allo stato "DELIVERED"
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERED"
 
 
     ###TC-INVIO-03
 
-  @SmokeTest @integrationTest
+  @SmokeTest @integrationTest @TC-INVIO-03
   Scenario: [TC_PA_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -188,7 +188,7 @@ Feature: test di integrazione della pubblica amministrazione
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
 
-  @integrationTest
+  @integrationTest @TC-INVIO-03
   Scenario: [TC_PA_LEGALFACT_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -198,7 +198,7 @@ Feature: test di integrazione della pubblica amministrazione
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
-  @integrationTest
+  @integrationTest @TC-INVIO-03
   Scenario: [TC_PA_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -212,7 +212,7 @@ Feature: test di integrazione della pubblica amministrazione
 
     ###TC-PAGAMENTO-01
 
-  @integrationTest
+  @integrationTest @TC-PAGAMENTO-01
   Scenario: [TC-PA-PAY_1] Invio notifica e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
