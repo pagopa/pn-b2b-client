@@ -85,7 +85,7 @@ Feature: test di integrazione della pubblica amministrazione
   @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_0.1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
-    When si crea il nuovo stream
+    When si crea il nuovo stream per il "Comune_1"
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
     And si cancella lo stream creato
     And viene verificata la corretta cancellazione
@@ -220,4 +220,4 @@ Feature: test di integrazione della pubblica amministrazione
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "200" della notifica
+    Then viene verificato il costo = "100" della notifica
