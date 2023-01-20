@@ -259,16 +259,6 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  Scenario: [B2B-PA-SEND_PG-CF_22] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | idempotenceToken | AME2E3626070001.3  |
-    And destinatario Cucumber Society
-    When la notifica viene inviata dal "Comune_1"
-    Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
-
-
   Scenario: [B2B-PA-SEND_PG-CF_23] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -314,5 +304,14 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
+
+  Scenario: [B2B-PA-SEND_PG-CF_27] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | idempotenceToken | AME2E3626070001.3  |
+    And destinatario Cucumber Society
+    When la notifica viene inviata dal "Comune_1"
+    Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
 
 

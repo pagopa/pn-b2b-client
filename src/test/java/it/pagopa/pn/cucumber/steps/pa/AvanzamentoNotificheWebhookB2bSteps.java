@@ -357,6 +357,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             return progressResponseElement;
         }else if(retryAfter == 0){
             try{
+                Thread.sleep(200);
                 return searchInWebhook(timeLineOrStatus,lastProgress.getEventId(),(deepCount+1));
             }catch (IllegalStateException illegalStateException){
                 if(deepCount == 199 || deepCount == 198 || deepCount == 197){
@@ -365,6 +366,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 }else{
                     throw illegalStateException;
                 }
+            }catch (InterruptedException interruptedException){
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(interruptedException);
             }
         }else{
             return null;

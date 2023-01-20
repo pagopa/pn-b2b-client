@@ -67,7 +67,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         NotificationStatusHistoryElement notificationStatusHistoryElement = null;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 10; i++) {
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
@@ -78,7 +78,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(10 * 1000L);
+                Thread.sleep(31 * 1000L);
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -143,7 +143,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
         TimelineElement timelineElement = null;
 
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 10; i++) {
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
@@ -153,7 +153,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(10 * 1000L);
+                Thread.sleep(31 * 1000L);
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }

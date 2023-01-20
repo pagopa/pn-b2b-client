@@ -279,7 +279,7 @@ public class SharedSteps {
             });
 
             try {
-                Thread.sleep( 10 * 1000);
+                Thread.sleep( 25 * 1000);
             } catch (InterruptedException e) {
                 logger.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
