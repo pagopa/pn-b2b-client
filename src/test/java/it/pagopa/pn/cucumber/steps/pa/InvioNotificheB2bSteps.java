@@ -133,6 +133,13 @@ public class InvioNotificheB2bSteps  {
     }
 
 
+    @Given("viene letta la notifica {string} dal {string}")
+    public void vieneLettaLaNotificaDal(String IUN, String pa) {
+        sharedSteps.selectPA(pa);
+        FullSentNotification notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        sharedSteps.setSentNotification(notificationByIun);
+    }
+
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string}")
     public void retrievalAttemptedIUN(String IUN) {
         try {
@@ -299,5 +306,7 @@ public class InvioNotificheB2bSteps  {
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
+
+
 
 }

@@ -3,7 +3,6 @@ package it.pagopa.pn.client.b2b.pa;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -90,17 +89,17 @@ public class PnPaB2bUtils {
         long startTime = System.currentTimeMillis();
         for( int i = 0; i < 50; i++ ) {
 
+            try {
+                Thread.sleep( 31 * 1000l);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException( exc );
+            }
+
             status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
 
             log.info("New Notification Request status {}", status.getNotificationRequestStatus());
             if ( "ACCEPTED".equals( status.getNotificationRequestStatus() )) {
                 break;
-            }
-
-            try {
-                Thread.sleep( 3 * 1000l);
-            } catch (InterruptedException exc) {
-                throw new RuntimeException( exc );
             }
         }
         long endTime = System.currentTimeMillis();
