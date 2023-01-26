@@ -13,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
+import java.util.LinkedList;
+import java.util.List;
 
 public class AvanzamentoNotificheB2bSteps {
 
@@ -137,6 +140,9 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SCHEDULE_ANALOG_WORKFLOW":
                 timelineElementInternalCategory = TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
+                break;
+            case "PAYMENT":
+                timelineElementInternalCategory = TimelineElementCategory.PAYMENT;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -345,5 +351,40 @@ public class AvanzamentoNotificheB2bSteps {
         }catch (AssertionFailedError assertionFailedError){
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    @And("l'avviso pagopa viene pagato correttamente")
+    public void laNotificaVienePagata() {
+        PaymentEventsRequestPagoPa eventsRequestPagoPa = new PaymentEventsRequestPagoPa();
+
+        PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
+        paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
+        paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
+        paymentEventPagoPa.setPaymentDate(OffsetDateTime.now());
+
+        List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
+        paymentEventPagoPaList.add(paymentEventPagoPa);
+
+        eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
+
+        b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
+    }
+
+    @Then("il modello f24 viene pagato correttamente")
+    public void ilModelloFVienePagatoCorrettamente() {
+        PaymentEventsRequestF24 eventsRequestF24 = new PaymentEventsRequestF24();
+
+        PaymentEventF24 paymentEventF24 = new PaymentEventF24();
+        paymentEventF24.setIun(sharedSteps.getSentNotification().getIun());
+        paymentEventF24.setRecipientTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
+        paymentEventF24.setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().equals(NotificationRecipient.RecipientTypeEnum.PF)? "PF":"PG");
+        paymentEventF24.setPaymentDate(OffsetDateTime.now());
+
+        List<PaymentEventF24> eventF24List = new LinkedList<>();
+        eventF24List.add(paymentEventF24);
+
+        eventsRequestF24.setEvents(eventF24List);
+
+        b2bClient.paymentEventsRequestF24(eventsRequestF24);
     }
 }

@@ -1,10 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.LegalFactsApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.NewNotificationApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.NotificationPriceApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.SenderReadB2BApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -27,6 +24,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final RestTemplate restTemplate;
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
+    private final PaymentEventsApi paymentEventsApi;
     private final LegalFactsApi legalFactsApi;
     private final NotificationPriceApi notificationPriceApi;
     private final String basePath;
@@ -54,6 +52,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1) );
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
+        this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
@@ -102,6 +101,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
         this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
+        this.paymentEventsApi.setApiClient(newApiClient( restTemplate, basePath, apiKey));
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
@@ -144,5 +144,15 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     @Override
     public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         return senderReadB2BApi.retrieveNotificationRequestStatus(notificationRequestId,paProtocolNumber,idempotenceToken);
+    }
+
+    @Override
+    public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
+        this.paymentEventsApi.paymentEventsRequestPagoPaWithHttpInfo(paymentEventsRequestPagoPa);
+    }
+
+    @Override
+    public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException {
+        this.paymentEventsApi.paymentEventsRequestF24WithHttpInfo(paymentEventsRequestF24);
     }
 }

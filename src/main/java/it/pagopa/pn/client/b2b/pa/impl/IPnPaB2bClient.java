@@ -27,4 +27,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException;
 
+    void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException;
+
+    void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException;
+
 }

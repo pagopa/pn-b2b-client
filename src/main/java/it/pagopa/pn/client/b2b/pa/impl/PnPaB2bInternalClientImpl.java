@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.LegalFactsApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NewNotificationApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NotificationPriceApi;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.SenderReadB2BApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -28,6 +25,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     private final SenderReadB2BApi senderReadB2BApi;
     private final LegalFactsApi legalFactsApi;
     private final NotificationPriceApi notificationPriceApi;
+    private final PaymentEventsApi paymentEventsApi;
 
     private final String paId;
     private final String operatorId;
@@ -51,6 +49,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
+        this.paymentEventsApi = new PaymentEventsApi(newApiClient(restTemplate, deliveryPushBasePath));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -102,6 +101,16 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 notificationPrice = this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
 
         return deepCopy( notificationPrice, NotificationPriceResponse.class );
+    }
+
+    @Override
+    public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException,UnsupportedOperationException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException,UnsupportedOperationException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
