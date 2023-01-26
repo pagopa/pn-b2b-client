@@ -57,7 +57,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
                     StreamCreationRequest.EventTypeEnum.STATUS : StreamCreationRequest.EventTypeEnum.TIMELINE);
             streamCreationRequestList.add(streamRequest);
-            //streamRequest.setFilterValues(new LinkedList<>());
+            streamRequest.setFilterValues(new LinkedList<>());
         }
     }
 
@@ -346,7 +346,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 if(!progressResponseElementList.contains(elem)){
                     progressResponseElementList.addLast(elem);
                 }
-                if(((elem.getTimelineEventCategory().equals(timelineElementCategory)) || (elem.getNewStatus().equals(notificationStatus)))){
+                if(((elem.getTimelineEventCategory() != null && (elem.getTimelineEventCategory().equals(timelineElementCategory)))
+                        || (elem.getNewStatus() != null && (elem.getNewStatus().equals(notificationStatus))))){
                     progressResponseElement = elem;
                     break;
                 }

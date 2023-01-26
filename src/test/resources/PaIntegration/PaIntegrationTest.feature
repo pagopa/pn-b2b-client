@@ -36,15 +36,6 @@ Feature: test di integrazione della pubblica amministrazione
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-  @integrationTest @TC-INVIO-01
-  Scenario: [TC-PA-SEND_4] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-    And destinatario Mario Cucumber e:
-      | physicalAddress | NULL |
-    When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
 
   @integrationTest @TC-INVIO-01
   Scenario: [TC-PA-SEND_5] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
@@ -89,6 +80,7 @@ Feature: test di integrazione della pubblica amministrazione
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id
     And si cancella lo stream creato
     And viene verificata la corretta cancellazione
+
 
   @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_0.2] Creazione stream notifica

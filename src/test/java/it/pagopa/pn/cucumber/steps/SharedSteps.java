@@ -52,7 +52,7 @@ public class SharedSteps {
             .addModule(new JavaTimeModule())
             .build();
 
-    private boolean groutToSet = true;
+    private boolean groupToSet = true;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -356,7 +356,7 @@ public class SharedSteps {
     }
 
     private void setGrup(SettableApiKey.ApiKeyType apiKeyType){
-        if(groutToSet && this.notificationRequest.getGroup() == null){
+        if(groupToSet && this.notificationRequest.getGroup() == null){
             List<HashMap<String, String>> hashMaps = pnExternalServiceClient.paGroupInfo(apiKeyType);
             if(hashMaps == null || hashMaps.size() == 0)return;
             String id = hashMaps.get(0).get("id");
@@ -443,7 +443,7 @@ public class SharedSteps {
 
     @Before("@integrationTest")
     public void doSomethingAfter() {
-       this.groutToSet = false;
+       this.groupToSet = false;
     }
 
 }
