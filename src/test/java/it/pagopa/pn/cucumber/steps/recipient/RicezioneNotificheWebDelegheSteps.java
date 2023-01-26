@@ -4,6 +4,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
@@ -302,7 +306,49 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
 
+    @And("si verifica la lettura")
+    public void siVerificaLaLettura() {
+
+    }
+
+    @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
+    public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
+        try{
+            Thread.sleep(31*1000);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
+
+        String userTaxId = "";
+        switch (user){
+            case "Mario Cucumber":
+                userTaxId = marioCucumberTaxID;
+                break;
+            case "Mario Gherkin":
+                userTaxId = marioGherkinTaxID;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        Assertions.assertEquals(userTaxId,timelineElement.getDetails().getDelegateInfo().getTaxId());
+    }
+
+    @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
+    public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
+        try{
+            Thread.sleep(31*1000);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
 
-
+        Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
+    }
 }

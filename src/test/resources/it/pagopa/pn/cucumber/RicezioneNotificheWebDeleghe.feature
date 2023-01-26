@@ -3,7 +3,7 @@ Feature: Ricezione notifiche destinate al delegante
   Background:
     Given Mario Gherkin rifiuta se presente la delega ricevuta Mario Cucumber
 
-  #@SmokeTest
+
   Scenario: [WEB-PF-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given Mario Gherkin viene delegato da Mario Cucumber
     And Mario Gherkin accetta la delega Mario Cucumber
@@ -14,7 +14,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-  #@SmokeTest
+
   Scenario: [WEB-PF-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given Mario Gherkin viene delegato da Mario Cucumber
     And Mario Gherkin accetta la delega Mario Cucumber
@@ -118,6 +118,30 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+
+
+  Scenario: [WEB-PF-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
+    Given Mario Gherkin viene delegato da Mario Cucumber
+    And Mario Gherkin accetta la delega Mario Cucumber
+    When viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And si verifica che l'elemento di timeline della lettura riporti i dati di "Mario Gherkin"
+
+  Scenario: [WEB-PF-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
+    Given Mario Gherkin viene delegato da Mario Cucumber
+    And Mario Gherkin accetta la delega Mario Cucumber
+    When viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Cucumber"
+    And si verifica che l'elemento di timeline della lettura non riporti i dati del delegato
+
 
   Scenario: [WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given Mario Gherkin viene delegato da Mario Cucumber
