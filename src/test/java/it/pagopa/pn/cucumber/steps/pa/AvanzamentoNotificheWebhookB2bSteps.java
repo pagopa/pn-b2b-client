@@ -342,7 +342,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }else if (lastProgress.getEventId().compareTo(elem.getEventId()) < 0){
                 lastProgress = elem;
             }
-            if(elem.getIun().equals(sharedSteps.getSentNotification().getIun())){
+            if(elem.getIun() != null && elem.getIun().equals(sharedSteps.getSentNotification().getIun())){
                 if(!progressResponseElementList.contains(elem)){
                     progressResponseElementList.addLast(elem);
                 }
