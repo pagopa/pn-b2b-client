@@ -65,21 +65,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     Then l'invio ha prodotto un errore con status code "500"
 
 
-  Scenario: [B2B-PA-GA-SEND_PG_6] Invio notifica multi destinatario con pagamento_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Gherkin spa e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-
-
-  Scenario: [B2B-PA-GA-SEND_PG_7] Invio notifica multi destinatario senza pagamento_scenario positivo
+  Scenario: [B2B-PA-GA-SEND_PG_6] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -95,7 +81,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
-  Scenario: [B2B-PA-GA-SEND_PG_8] Invio notifica multi destinatario con pagamento_scenario positivo
+  Scenario: [B2B-PA-GA-SEND_PG_7] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -109,7 +95,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
 
-  Scenario: [B2B-PA-GA-SEND_PG_9] Invio notifica multi destinatario PA non abilitata_scenario negativa
+  Scenario: [B2B-PA-GA-SEND_PG_8] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di milano |
@@ -124,19 +110,3 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
 
 
 
-  Scenario: [B2B-PA-GA-SEND_PG_10] Invio notifica multi destinatario con pagamento_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Gherkin spa e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    And destinatario
-      |  denomination | Cucumber srl |
-      |     taxId     |  11176111009 |
-      | recipientType |      PG      |
-      | digitalDomicile_address | testpagopa2@pnpagopa.postecert.local |
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"

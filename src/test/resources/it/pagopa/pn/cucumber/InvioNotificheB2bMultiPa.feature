@@ -64,22 +64,9 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "500"
 
-  @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_6] Invio notifica multi destinatario con pagamento_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
-      | physicalAddress | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo
+  Scenario: [B2B-PA-GA-SEND_6] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
