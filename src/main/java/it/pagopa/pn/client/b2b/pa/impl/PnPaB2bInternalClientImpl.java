@@ -154,7 +154,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,
-                "",
+                "B2B",
                 request,
                 groups
             );
