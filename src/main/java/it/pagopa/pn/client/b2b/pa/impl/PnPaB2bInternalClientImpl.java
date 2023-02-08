@@ -149,10 +149,12 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         request = deepCopy( newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequest.class );
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
+
         response = newNotificationApi.sendNewNotification(
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,
+                "",
                 request,
                 groups
             );
