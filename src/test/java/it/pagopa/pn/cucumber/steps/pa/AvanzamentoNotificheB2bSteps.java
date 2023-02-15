@@ -159,6 +159,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_FEEDBACK":
                 timelineElementInternalCategory = TimelineElementCategory.SEND_ANALOG_FEEDBACK;
                 break;
+            case "SEND_ANALOG_PREPARE":
+                timelineElementInternalCategory = TimelineElementCategory.SEND_ANALOG_PREPARE;
+                break;
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
                 timelineElementInternalCategory = TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER;
                 break;
