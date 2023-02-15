@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
@@ -26,5 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClientImpl.class
 })
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class CucumberSpringIntegration {
+
 }

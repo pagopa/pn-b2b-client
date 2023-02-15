@@ -4,6 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource( value = "file:config/bearer-token.properties", ignoreResourceNotFound = true )
+@PropertySource( value = "file:config/bearer-token-${spring.profiles.active}.properties", ignoreResourceNotFound = true )
 public class BearerTokenConfiguration {
 }

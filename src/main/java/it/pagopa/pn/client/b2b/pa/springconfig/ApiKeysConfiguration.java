@@ -4,6 +4,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource( value = "file:config/api-keys.properties", ignoreResourceNotFound = true )
+@PropertySource( value = "file:config/api-keys-${spring.profiles.active}.properties", ignoreResourceNotFound = true )
 public class ApiKeysConfiguration {
 }
