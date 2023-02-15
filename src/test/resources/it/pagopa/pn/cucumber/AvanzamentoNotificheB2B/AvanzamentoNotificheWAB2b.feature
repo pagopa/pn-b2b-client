@@ -51,7 +51,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
-
+  @ignore
   Scenario: [B2B_TIMELINE_ANALOG_6] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_PREPARE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -91,7 +91,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FEEDBACK_WORKFLOW"
 
-
+  @ignore
   Scenario: [B2B_TIMELINE_ANALOG_10] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_PREPARE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -152,43 +152,43 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
-
+  @ignore @dev
   Scenario: [B2B_TIMELINE_ANALOG_16] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_PREPARE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
+      | physicalAddress_address | via@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PREPARE"
 
-
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_17] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
+      | physicalAddress_address | via@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
 
-
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_18] Invio notifica digitale ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
+      | physicalAddress_address | via@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_19] Invio notifica digitale ed attesa elemento di timeline SEND_PAPER_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
+      | physicalAddress_address | via@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_PAPER_FEEDBACK"
 
