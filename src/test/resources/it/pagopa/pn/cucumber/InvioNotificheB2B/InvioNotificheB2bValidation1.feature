@@ -62,13 +62,12 @@ Feature: Validazione campi invio notifiche b2b
       | denomination    |
       | Nicolò Rossi    |
       | Raffaella Carrà |
-      | Ilaria D'Amico  |
       | Ilaria D`Amico  |
       | Salvator Dalì   |
       | Bruno Nicolè    |
       | dudù            |
        #problema con | Ilaria D’Amico  |
-
+       #problema con | Ilaria D'Amico  |
 
   Scenario Outline: [B2B-PA-SEND_VALID_4] invio notifica con oggetto contenente caratteri speciali_scenario positivo
     Given viene generata una nuova notifica
