@@ -161,7 +161,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
       | subjectRegExp | cucumber |
      
     
-  Scenario: [USER-ATTR_1] test settaggio pec
+  Scenario: [USER-ATTR_1] inserimento pec errato
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento della pec "test@test@fail.@"
     Then l'inserimento ha prodotto un errore con status code "400"
