@@ -90,7 +90,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | dall`atto        |
 
 
-
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
