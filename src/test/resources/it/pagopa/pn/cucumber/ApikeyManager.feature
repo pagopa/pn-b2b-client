@@ -100,3 +100,80 @@ Feature: apiKey manager
     Then l'invio della notifica ha sollevato un errore di autenticazione "403"
     And l'apiKey viene cancellata
 
+  Scenario: [API-KEY_10] generazione con gruppo e cancellazione ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And vengono lette le apiKey esistenti
+    And l'apiKey creata è presente tra quelle lette
+    When viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    And vengono lette le apiKey esistenti
+    Then l'apiKey non è più presente
+
+  Scenario: [API-KEY_11] generazione con gruppo e invio notifica senza gruppo ApiKey_scenario negativo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | group              | NULL             |
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica ha sollevato un errore di autenticazione "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  Scenario: [API-KEY_12] generazione con gruppo e invio notifica con lo stesso gruppo ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And viene settato il gruppo della notifica con quello dell'apikey
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  Scenario: [API-KEY_13] generazione senza gruppo e invio notifica senza gruppo ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | group              | NULL             |
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  Scenario: [API-KEY_14] generazione senza gruppo e invio notifica con gruppo gruppo ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | group              | NULL             |
+    And viene settato il taxId della notifica con quello dell'apikey
+    And viene settato il primo gruppo valido per il comune "Comune_1"
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @ignore
+  Scenario: [API-KEY_100] generazione con gruppo non valido ApiKey_scenario negativo
+    Given Viene generata una nuova apiKey con il gruppo "AAAAAAAAAA"
+    Then l'operazione ha sollevato un errore con status code "400"
+
+  @ignore
+  Scenario: [API-KEY_101] generazione con gruppo e invio notifica con un gruppo differente ApiKey_scenario negativo
+    Given Viene creata una nuova apiKey per il comune "Comune_3" con il primo gruppo disponibile
+    # configurare bearer comune 3
+
+

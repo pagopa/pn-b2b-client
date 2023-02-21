@@ -33,6 +33,7 @@ public class PnExternalServiceClientImpl {
 
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
+    private final String apiKeyMvp3;
     private final String apiKeyGa;
 
     private final String safeStorageBasePath;
@@ -46,6 +47,7 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.external.base-url}") String gruopInfoBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+            @Value("${pn.external.api-key-3}") String apiKeyMvp3,
             @Value("${pn.external.api-key-GA}") String apiKeyGa
     ) {
         this.ctx = ctx;
@@ -54,20 +56,23 @@ public class PnExternalServiceClientImpl {
         this.gruopInfoBasePath = gruopInfoBasePath;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
+        this.apiKeyMvp3 = apiKeyMvp3;
         this.apiKeyGa = apiKeyGa;
     }
 
 
-    public HashMap<String,String> safeStorageInfo(String fileKey) throws RestClientException {
+    public HashMap<String, String> safeStorageInfo(String fileKey) throws RestClientException {
         return safeStorageInfoWithHttpInfo(fileKey).getBody();
     }
 
-    public List<HashMap<String,String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
-        switch (apiKeyType){
+    public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
+        switch (apiKeyType) {
             case MVP_1:
                 return paGroupInfoWithHttpInfo(apiKeyMvp1).getBody();
             case MVP_2:
                 return paGroupInfoWithHttpInfo(apiKeyMvp2).getBody();
+            case MVP_3:
+                return paGroupInfoWithHttpInfo(apiKeyMvp3).getBody();
             case GA:
                 return paGroupInfoWithHttpInfo(apiKeyGa).getBody();
             default:
@@ -76,17 +81,17 @@ public class PnExternalServiceClientImpl {
     }
 
 
-    private ResponseEntity<List<HashMap<String,String>>> paGroupInfoWithHttpInfo(String apiKey) throws RestClientException {
+    private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey) throws RestClientException {
         Object postBody = null;
 
 
         final Map<String, Object> uriVariables = new HashMap<String, Object>();
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
-        queryParams.add("metadataOnly","true");
+        queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
-        headerParams.add("x-api-key",apiKey);
+        headerParams.add("x-api-key", apiKey);
 
 
         final String[] localVarAccepts = {
@@ -96,11 +101,12 @@ public class PnExternalServiceClientImpl {
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
 
-        ParameterizedTypeReference<List<HashMap<String,String>>> returnType = new ParameterizedTypeReference<>() {};
-        return invokeAPI(gruopInfoBasePath,"/ext-registry-b2b/pa/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        ParameterizedTypeReference<List<HashMap<String, String>>> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(gruopInfoBasePath, "/ext-registry-b2b/pa/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private ResponseEntity<HashMap<String,String>> safeStorageInfoWithHttpInfo(String fileKey) throws RestClientException {
+    private ResponseEntity<HashMap<String, String>> safeStorageInfoWithHttpInfo(String fileKey) throws RestClientException {
         Object postBody = null;
 
         if (fileKey == null) {
@@ -111,10 +117,10 @@ public class PnExternalServiceClientImpl {
         uriVariables.put("fileKey", fileKey);
 
         final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
-        queryParams.add("metadataOnly","true");
+        queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
-        headerParams.add("x-pagopa-safestorage-cx-id","pn-delivery-push");
+        headerParams.add("x-pagopa-safestorage-cx-id", "pn-delivery-push");
 
 
         final String[] localVarAccepts = {
@@ -124,13 +130,14 @@ public class PnExternalServiceClientImpl {
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
 
-        ParameterizedTypeReference<HashMap<String,String>> returnType = new ParameterizedTypeReference<>() {};
-        return invokeAPI(safeStorageBasePath,"/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        ParameterizedTypeReference<HashMap<String, String>> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private <T> ResponseEntity<T> invokeAPI(String basePath,String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
+    private <T> ResponseEntity<T> invokeAPI(String basePath, String path, HttpMethod method, Map<String, Object> pathParams, MultiValueMap<String, String> queryParams, Object body, HttpHeaders headerParams, List<MediaType> accept, MediaType contentType, ParameterizedTypeReference<T> returnType) throws RestClientException {
 
-        Map<String,Object> uriParams = new HashMap<>();
+        Map<String, Object> uriParams = new HashMap<>();
         uriParams.putAll(pathParams);
 
         String finalUri = path;
@@ -143,13 +150,13 @@ public class PnExternalServiceClientImpl {
         uriBuilderFactory.setEncodingMode(DefaultUriBuilderFactory.EncodingMode.NONE);
         restTemplate.setUriTemplateHandler(uriBuilderFactory);
 
-        String expandedPath =  restTemplate.getUriTemplateHandler().expand(finalUri, uriParams).toString();
+        String expandedPath = restTemplate.getUriTemplateHandler().expand(finalUri, uriParams).toString();
         final UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(basePath).path(expandedPath);
 
         URI uri;
         try {
             uri = new URI(builder.build().toUriString());
-        } catch (URISyntaxException ex)  {
+        } catch (URISyntaxException ex) {
             throw new RestClientException("Could not build URL: " + builder.toUriString(), ex);
         }
 
