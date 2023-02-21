@@ -165,3 +165,8 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento della pec "test@test@fail.@"
     Then l'inserimento ha prodotto un errore con status code "400"
+
+  Scenario: [USER-ATTR_1] inserimento telefono errato
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    When viene richiesto l'inserimento del numero di telefono "+0013894516888"
+    Then l'inserimento ha prodotto un errore con status code "400"

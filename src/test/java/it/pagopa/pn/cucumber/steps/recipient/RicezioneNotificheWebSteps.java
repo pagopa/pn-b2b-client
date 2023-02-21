@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
@@ -219,12 +220,22 @@ public class RicezioneNotificheWebSteps  {
         }
     }
 
+    @When("viene richiesto l'inserimento del numero di telefono {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
+        try{
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.SMS,(new AddressVerification().value(phone).verificationCode("00000")));
+        }catch (HttpStatusCodeException httpStatusCodeException){
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
     @Then("l'inserimento ha prodotto un errore con status code {string}")
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
     }
+
 
 
 
