@@ -181,7 +181,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(10 * 1000L);
+                Thread.sleep(sharedSteps.getWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -300,7 +300,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(10 * 1000L);
+                Thread.sleep(sharedSteps.getWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -384,7 +384,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
         try {
-            Thread.sleep(50 * 1000L);
+            Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }

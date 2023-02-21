@@ -5,6 +5,7 @@ import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
@@ -34,6 +35,9 @@ import java.util.*;
 public class PnPaB2bUtils {
 
     private static Logger log = LoggerFactory.getLogger(PnPaB2bUtils.class);
+
+    @Value("${pn.configuration.workflow.wait.millis:31000}")
+    private Integer workFlowWait;
 
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
@@ -90,7 +94,7 @@ public class PnPaB2bUtils {
         for( int i = 0; i < 10; i++ ) {
 
             try {
-                Thread.sleep( 31 * 1000l);
+                Thread.sleep( getWorkFlowWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }
@@ -311,6 +315,10 @@ public class PnPaB2bUtils {
     }
 
 
+    private Integer getWorkFlowWait() {
+        if(workFlowWait == null)return 31000;
+        return workFlowWait;
+    }
 
 
 }
