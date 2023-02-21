@@ -90,7 +90,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | dall`atto        |
 
 
-  Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con errati tax_id corretti_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con errati tax_id errati_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
