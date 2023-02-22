@@ -119,7 +119,7 @@ Feature: apiKey manager
     And viene settato il taxId della notifica con quello dell'apikey
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b
-    Then l'invio della notifica ha sollevato un errore di autenticazione "400"
+    Then l'invio della notifica ha sollevato un errore "400"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

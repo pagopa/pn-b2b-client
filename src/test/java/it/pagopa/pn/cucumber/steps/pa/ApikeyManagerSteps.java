@@ -158,6 +158,13 @@ public class ApikeyManagerSteps {
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
+    @Then("l'invio della notifica ha sollevato un errore {string}")
+    public void lInvioDellaNotificaHaSollevatoUnErrore(String statusCode) {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
     @Given("Viene generata una nuova apiKey con il gruppo {string}")
     public void vieneGenerataUnaNuovaApiKeyConIlGruppo(String group) {
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
@@ -173,22 +180,7 @@ public class ApikeyManagerSteps {
     public void viene_creata_una_nuova_api_key_per_il_comune_con_il_primo_gruppo_disponibile(String settedPa) {
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
 
-        List<HashMap<String, String>> hashMapsList = null;
-        switch (settedPa) {
-            case "Comune_1":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
-                break;
-            case "Comune_2":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
-                break;
-            case "Comune_3":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_3);
-                break;
-            case "Comune_Multi":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.GA);
-                break;
-        }
-
+        List<HashMap<String, String>> hashMapsList = this.sharedSteps.getGroupByPa(settedPa);
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
 
         Assertions.assertNotNull(hashMapsList);
@@ -230,22 +222,7 @@ public class ApikeyManagerSteps {
 
     @Given("viene settato il primo gruppo valido per il comune {string}")
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String settedPa) {
-        List<HashMap<String, String>> hashMapsList = null;
-        switch (settedPa) {
-            case "Comune_1":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
-                break;
-            case "Comune_2":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
-                break;
-            case "Comune_3":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.MVP_3);
-                break;
-            case "Comune_Multi":
-                hashMapsList = this.sharedSteps.getPnExternalServiceClient().paGroupInfo(SettableApiKey.ApiKeyType.GA);
-                break;
-        }
-
+        List<HashMap<String, String>> hashMapsList = this.sharedSteps.getGroupByPa(settedPa);
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
 
         Assertions.assertNotNull(hashMapsList);
@@ -261,4 +238,6 @@ public class ApikeyManagerSteps {
 
         this.sharedSteps.getNotificationRequest().setGroup(id);
     }
+
+
 }

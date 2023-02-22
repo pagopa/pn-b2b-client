@@ -486,10 +486,31 @@ public class SharedSteps {
         }
     }
 
-
     @Before("@integrationTest")
     public void doSomethingAfter() {
         this.groupToSet = false;
+    }
+
+    public List<HashMap<String, String>> getGroupByPa(String settedPa) {
+        List<HashMap<String, String>> hashMapsList = null;
+        switch (settedPa) {
+            case "Comune_1":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
+                break;
+            case "Comune_2":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
+                break;
+            case "Comune_3":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_3);
+                break;
+            case "Comune_Multi":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        return hashMapsList;
     }
 
 }
