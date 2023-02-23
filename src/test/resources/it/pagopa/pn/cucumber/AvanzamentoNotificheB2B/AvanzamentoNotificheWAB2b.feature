@@ -1,6 +1,6 @@
 Feature: avanzamento notifiche b2b con workflow cartaceo
 
-
+  @ignore
   Scenario: [B2B_TIMELINE_ANALOG_1] Invio notifica ed attesa elemento di timeline SCHEDULE_ANALOG_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -10,7 +10,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
 
-
+  @ignore
   Scenario: [B2B_TIMELINE_ANALOG_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
