@@ -25,6 +25,7 @@ public class ApikeyManagerSteps {
     private ResponseNewApiKey responseNewApiKey;
     private HttpStatusCodeException httpStatusCodeException;
 
+    private String firstGroupUsed;
     private String responseNewApiKeyTaxId;
 
     @Autowired
@@ -180,22 +181,10 @@ public class ApikeyManagerSteps {
     public void viene_creata_una_nuova_api_key_per_il_comune_con_il_primo_gruppo_disponibile(String settedPa) {
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
 
-        List<HashMap<String, String>> hashMapsList = this.sharedSteps.getGroupByPa(settedPa);
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
+        firstGroupUsed = this.sharedSteps.getFirstGroupByPa(settedPa);
 
-        Assertions.assertNotNull(hashMapsList);
-        Assertions.assertTrue(hashMapsList.size() > 0);
-
-        String id = null;
-        for (HashMap<String, String> elem : hashMapsList) {
-            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
-                id = elem.get("id");
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(id);
-        requestNewApiKey.setGroups(List.of(id));
+        requestNewApiKey.setGroups(List.of(firstGroupUsed));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
         System.out.println("New ApiKey: " + responseNewApiKey);
@@ -222,21 +211,15 @@ public class ApikeyManagerSteps {
 
     @Given("viene settato il primo gruppo valido per il comune {string}")
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String settedPa) {
-        List<HashMap<String, String>> hashMapsList = this.sharedSteps.getGroupByPa(settedPa);
-        responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
+        this.sharedSteps.getNotificationRequest().setGroup(this.sharedSteps.getFirstGroupByPa(settedPa));
+    }
 
-        Assertions.assertNotNull(hashMapsList);
-        Assertions.assertTrue(hashMapsList.size() > 0);
-
-        String id = null;
-        for (HashMap<String, String> elem : hashMapsList) {
-            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
-                id = elem.get("id");
-                break;
-            }
-        }
-
-        this.sharedSteps.getNotificationRequest().setGroup(id);
+    @Given("viene settato un gruppo differente da quello utilizzato nell'apikey per il comune {string}")
+    public void vieneSettatoUnGruppoDifferenteDaQuelloUtilizzatoNellApikey(String settedPa){
+        String group = this.sharedSteps.getLastGroupByPa(settedPa);
+        Assertions.assertNotNull(firstGroupUsed);
+        Assertions.assertTrue(!firstGroupUsed.equals(group));
+        this.sharedSteps.getNotificationRequest().setGroup(group);
     }
 
 

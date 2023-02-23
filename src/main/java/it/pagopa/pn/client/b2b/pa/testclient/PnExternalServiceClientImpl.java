@@ -33,7 +33,6 @@ public class PnExternalServiceClientImpl {
 
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
-    private final String apiKeyMvp3;
     private final String apiKeyGa;
 
     private final String safeStorageBasePath;
@@ -47,7 +46,6 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.external.base-url}") String gruopInfoBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-3}") String apiKeyMvp3,
             @Value("${pn.external.api-key-GA}") String apiKeyGa
     ) {
         this.ctx = ctx;
@@ -56,7 +54,6 @@ public class PnExternalServiceClientImpl {
         this.gruopInfoBasePath = gruopInfoBasePath;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
-        this.apiKeyMvp3 = apiKeyMvp3;
         this.apiKeyGa = apiKeyGa;
     }
 
@@ -71,8 +68,6 @@ public class PnExternalServiceClientImpl {
                 return paGroupInfoWithHttpInfo(apiKeyMvp1).getBody();
             case MVP_2:
                 return paGroupInfoWithHttpInfo(apiKeyMvp2).getBody();
-            case MVP_3:
-                return paGroupInfoWithHttpInfo(apiKeyMvp3).getBody();
             case GA:
                 return paGroupInfoWithHttpInfo(apiKeyGa).getBody();
             default:

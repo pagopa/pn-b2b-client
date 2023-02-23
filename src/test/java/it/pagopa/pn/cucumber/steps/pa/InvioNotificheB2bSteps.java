@@ -8,7 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class InvioNotificheB2bSteps  {
+public class InvioNotificheB2bSteps {
 
     @Value("${pn.retention.time.preload}")
     private Integer retentionTimePreLoad;
@@ -67,8 +67,18 @@ public class InvioNotificheB2bSteps  {
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
             );
             Assertions.assertNotNull(notificationByIun.get());
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("la notifica viene recuperata dal sistema tramite codice IUN")
+    public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
+        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        try {
+            notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
         }
     }
 
@@ -76,9 +86,9 @@ public class InvioNotificheB2bSteps  {
     public void preLoadingOfDocument() {
         NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
+        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
         try {
-            Thread.sleep( 10 * 1000);
+            Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
@@ -87,12 +97,12 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Given("viene effettuato il pre-caricamento di un allegato")
-    public void preLoadingOfAttachment () {
+    public void preLoadingOfAttachment() {
         NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(()-> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
+        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
         try {
-            Thread.sleep( 10 * 1000);
+            Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
@@ -101,9 +111,9 @@ public class InvioNotificheB2bSteps  {
     }
 
     @Then("viene effettuato un controllo sulla durata della retention di {string} precaricato")
-    public void retentionCheckPreload (String documentType) {
+    public void retentionCheckPreload(String documentType) {
         String key = "";
-        switch (documentType){
+        switch (documentType) {
             case "ATTO OPPONIBILE":
                 key = this.notificationDocumentPreload.getRef().getKey();
                 break;
@@ -113,13 +123,13 @@ public class InvioNotificheB2bSteps  {
             default:
                 throw new IllegalArgumentException();
         }
-        Assertions.assertTrue(checkRetetion(key,retentionTimePreLoad));
+        Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
         String key = "";
-        switch (documentType){
+        switch (documentType) {
             case "ATTO OPPONIBILE":
                 key = sharedSteps.getSentNotification().getDocuments().get(0).getRef().getKey();
                 break;
@@ -129,7 +139,7 @@ public class InvioNotificheB2bSteps  {
             default:
                 throw new IllegalArgumentException();
         }
-        Assertions.assertTrue(checkRetetion(key,retentionTimeLoad));
+        Assertions.assertTrue(checkRetetion(key, retentionTimeLoad));
     }
 
 
@@ -152,7 +162,7 @@ public class InvioNotificheB2bSteps  {
     @When("viene richiesto il download del documento {string}")
     public void documentDownload(String type) {
         String downloadType;
-        switch(type) {
+        switch (type) {
             case "NOTIFICA":
                 List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 this.downloadResponse = b2bClient
@@ -171,10 +181,11 @@ public class InvioNotificheB2bSteps  {
             case "F24_STANDARD":
                 downloadType = "F24_STANDARD";
                 break;
-            default: throw new IllegalArgumentException();
+            default:
+                throw new IllegalArgumentException();
         }
         this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0,downloadType);
+                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(this.downloadResponse.getUrl()));
         this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -183,12 +194,12 @@ public class InvioNotificheB2bSteps  {
     @When("viene richiesto il download del documento {string} inesistente")
     public void documentAbsentDownload(String type) {
         String downloadType;
-        switch(type) {
+        switch (type) {
             case "NOTIFICA":
                 List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
                 try {
                     this.downloadResponse = b2bClient
-                            .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(),documents.size());
+                            .getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), documents.size());
                 } catch (HttpStatusCodeException e) {
                     this.sharedSteps.setNotificationError(e);
                 }
@@ -202,11 +213,12 @@ public class InvioNotificheB2bSteps  {
             case "F24_STANDARD":
                 downloadType = "F24_STANDARD";
                 break;
-            default: throw new IllegalArgumentException();
+            default:
+                throw new IllegalArgumentException();
         }
         try {
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100,downloadType);
+                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100, downloadType);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -214,28 +226,27 @@ public class InvioNotificheB2bSteps  {
 
     @Then("il download si conclude correttamente")
     public void correctlyDownload() {
-        Assertions.assertEquals(this.sha256DocumentDownload,this.downloadResponse.getSha256());
+        Assertions.assertEquals(this.sha256DocumentDownload, this.downloadResponse.getSha256());
     }
 
     @Then("l'operazione ha prodotto un errore con status code {string}")
     public void operationProducedAnError(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
+                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void correctAcquisitionNotification() {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification( sharedSteps.getSentNotification() ));
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification(sharedSteps.getSentNotification()));
     }
-
 
 
     @And("viene controllato la presenza del taxonomyCode")
     public void checkTaxonomyCode() {
         Assertions.assertNotNull(this.sharedSteps.getSentNotification().getTaxonomyCode());
-        if(this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null){
+        if (this.sharedSteps.getNotificationRequest().getTaxonomyCode() != null) {
             Assertions.assertEquals(this.sharedSteps.getNotificationRequest().getTaxonomyCode(),
                     this.sharedSteps.getSentNotification().getTaxonomyCode());
         }
@@ -246,8 +257,8 @@ public class InvioNotificheB2bSteps  {
     @And("vengono prodotte le evidenze: metadati e requestID")
     public void evidenceProduced() {
         Assertions.assertNotNull(this.sharedSteps.getNewNotificationResponse());
-        logger.info("METADATI: "+'\n'+this.sharedSteps.getNewNotificationResponse());
-        logger.info("REQUEST-ID: "+'\n'+this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
+        logger.info("METADATI: " + '\n' + this.sharedSteps.getNewNotificationResponse());
+        logger.info("REQUEST-ID: " + '\n' + this.sharedSteps.getNewNotificationResponse().getNotificationRequestId());
     }
 
 
@@ -259,15 +270,15 @@ public class InvioNotificheB2bSteps  {
     }
 
 
-    private boolean checkRetetion(String fileKey, Integer retentionTime){
-        HashMap<String,String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
+    private boolean checkRetetion(String fileKey, Integer retentionTime) {
+        HashMap<String, String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
         LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
-        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow,ZoneOffset.of("Z"));
+        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow, ZoneOffset.of("Z"));
         OffsetDateTime retentionUntil = OffsetDateTime.parse(stringStringHashMap.get("retentionUntil"));
         logger.info("now: " + now);
-        logger.info("retentionUntil: "+retentionUntil);
+        logger.info("retentionUntil: " + retentionUntil);
         long between = ChronoUnit.DAYS.between(now, retentionUntil);
-        logger.info("Difference: "+between);
+        logger.info("Difference: " + between);
         return retentionTime == between;
     }
 
@@ -275,7 +286,7 @@ public class InvioNotificheB2bSteps  {
     public void priceNotificationVerify(Integer price) {
         try {
             Assertions.assertEquals(this.sharedSteps.getSentNotification().getAmount(), price);
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -284,29 +295,28 @@ public class InvioNotificheB2bSteps  {
     @Then("viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber")
     public void vieneVerificatoLoStatoDiAccettazioneConIdempotenceTokenEPaProtocolNumber() {
         NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-        verifyStatus(null,newNotificationResponse.getPaProtocolNumber(),newNotificationResponse.getIdempotenceToken());
+        verifyStatus(null, newNotificationResponse.getPaProtocolNumber(), newNotificationResponse.getIdempotenceToken());
 
     }
 
     @Then("viene verificato lo stato di accettazione con requestID")
     public void vieneVerificatoLoStatoDiAccettazioneConRequestID() {
         NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-        verifyStatus(newNotificationResponse.getNotificationRequestId(),null,null);
+        verifyStatus(newNotificationResponse.getNotificationRequestId(), null, null);
     }
 
     @Then("viene verificato lo stato di accettazione con paProtocolNumber")
     public void vieneVerificatoLoStatoDiAccettazioneConPaProtocolNumber() {
         NewNotificationResponse newNotificationResponse = this.sharedSteps.getNewNotificationResponse();
-        verifyStatus(null,newNotificationResponse.getPaProtocolNumber(),null);
+        verifyStatus(null, newNotificationResponse.getPaProtocolNumber(), null);
     }
 
-    private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken){
+    private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         NewNotificationRequestStatusResponse newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
-                this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId,paProtocolNumber,idempotenceToken));
+                this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
-
 
 
 }

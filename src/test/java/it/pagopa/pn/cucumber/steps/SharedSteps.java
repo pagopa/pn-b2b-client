@@ -382,8 +382,6 @@ public class SharedSteps {
                 return this.senderTaxId;
             case "Comune_2":
                 return this.senderTaxIdTwo;
-            case "Comune_3":
-                return "77777777777";
             case "Comune_Multi":
                 return this.senderTaxIdGa;
             default:
@@ -491,7 +489,7 @@ public class SharedSteps {
         this.groupToSet = false;
     }
 
-    public List<HashMap<String, String>> getGroupByPa(String settedPa) {
+    public List<HashMap<String, String>> getGroupsByPa(String settedPa) {
         List<HashMap<String, String>> hashMapsList = null;
         switch (settedPa) {
             case "Comune_1":
@@ -500,9 +498,6 @@ public class SharedSteps {
             case "Comune_2":
                 hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
                 break;
-            case "Comune_3":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_3);
-                break;
             case "Comune_Multi":
                 hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
                 break;
@@ -510,7 +505,41 @@ public class SharedSteps {
                 throw new IllegalArgumentException();
         }
 
+        Assertions.assertNotNull(hashMapsList);
+        Assertions.assertTrue(hashMapsList.size() > 0);
         return hashMapsList;
+    }
+
+    public String getFirstGroupByPa(String settedPa) {
+        List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
+
+        String id = null;
+        for (HashMap<String, String> elem : hashMapsList) {
+            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
+                id = elem.get("id");
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(id);
+        return id;
+    }
+
+    public String getLastGroupByPa(String settedPa) {
+        List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
+
+        String id = null;
+        Integer count = 0;
+        for (HashMap<String, String> elem : hashMapsList) {
+            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
+                id = elem.get("id");
+                count++;
+            }
+        }
+
+        Assertions.assertNotNull(id);
+        Assertions.assertTrue(count >= 2);
+        return id;
     }
 
 }
