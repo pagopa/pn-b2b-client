@@ -91,7 +91,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(31 * 1000L);
+                Thread.sleep(sharedSteps.getWorkFlowWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -190,7 +190,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(31 * 1000L);
+                Thread.sleep(sharedSteps.getWorkFlowWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -222,7 +222,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO, boolean webRecipient){
         try {
-            Thread.sleep(10 * 1000L);
+            Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
@@ -334,7 +334,7 @@ public class AvanzamentoNotificheB2bSteps {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
         try {
-            Thread.sleep(50 * 1000L);
+            Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
@@ -344,7 +344,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
     public void verifiedThatTheKeyOfTheLegalFactIs(String legalFactCategory, String key) {
         try {
-            Thread.sleep(10 * 1000L);
+            Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }

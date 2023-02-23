@@ -88,7 +88,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
         try {
-            Thread.sleep(10 * 1000);
+            Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
@@ -102,7 +102,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
         try {
-            Thread.sleep(10 * 1000);
+            Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);

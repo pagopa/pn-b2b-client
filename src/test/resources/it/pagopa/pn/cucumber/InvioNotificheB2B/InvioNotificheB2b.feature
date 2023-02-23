@@ -326,3 +326,30 @@ Feature: invio notifiche b2b
     And viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
+
+  Scenario: [B2B-PA-SEND-31] Invio notifica senza indirizzo fisico scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber e:
+      | physicalAddress | NULL |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND-32] Invio notifica senza indirizzo fisico scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber e:
+      | physicalAddress | NULL |
+    When la notifica viene inviata dal "Comune_2"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  Scenario: [B2B-PA-SEND-33] Invio notifica senza indirizzo fisico scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber e:
+      | physicalAddress | NULL |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"

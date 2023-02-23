@@ -90,8 +90,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | dall`atto        |
 
 
-  @ignore
-  Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con errati tax_id errati_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
@@ -99,17 +98,12 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | denomination  | Società Cucumber |
       | recipientType |      PG          |
       | taxId         |   <taxId>        |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | taxId   |
-      | FRMTTR76M06B715E |
-      | FRMTTR76M0MB715E |
-      | FRMTTR76M06B7P5E |
-      #1) Lettera omocodia contemplata (primi 2 numeri)
-      #2) Lettera omocodia contemplata (seconda serie di 2 numeri)
-      #3) Lettera omocodia contemplata (serie di 3 numeri finale)
+      | FRMTTR76F06B715E |
+      | FRRTTR76M0MB715H |
 
   Scenario Outline: [B2B-PA-SEND_VALID_PG_6] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
     Given viene generata una nuova notifica

@@ -314,7 +314,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
         try{
-            Thread.sleep(31*1000);
+            Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }
@@ -342,7 +342,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
         try{
-            Thread.sleep(31*1000);
+            Thread.sleep(sharedSteps.getWorkFlowWait());
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }

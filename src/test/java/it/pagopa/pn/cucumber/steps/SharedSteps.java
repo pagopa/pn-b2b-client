@@ -71,6 +71,15 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    @Value("${pn.configuration.workflow.wait.millis:31000}")
+    private Integer workFlowWait;
+
+    @Value("${pn.configuration.wait.millis:10000}")
+    private Integer wait;
+
+    private final Integer workFlowWaitDefault = 31000;
+    private final Integer waitDefault = 10000;
+
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
     private String cucumberSocietyTaxID = "MSSLGU51P10A087J";
@@ -301,7 +310,7 @@ public class SharedSteps {
             });
 
             try {
-                Thread.sleep(25 * 1000);
+                Thread.sleep(getWorkFlowWait());
             } catch (InterruptedException e) {
                 logger.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
@@ -482,6 +491,17 @@ public class SharedSteps {
         } catch (JsonProcessingException exc) {
             throw new RuntimeException(exc);
         }
+    }
+
+
+    public Integer getWorkFlowWait() {
+        if(workFlowWait == null)return workFlowWaitDefault;
+        return workFlowWait;
+    }
+
+    public Integer getWait() {
+        if(wait == null)return waitDefault;
+        return wait;
     }
 
     @Before("@integrationTest")

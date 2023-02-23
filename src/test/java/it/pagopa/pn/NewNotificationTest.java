@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -22,7 +23,7 @@ import java.util.Calendar;
         RestTemplateConfiguration.class,
         PnPaB2bUtils.class
 })
-@PropertySource( value = "file:config/api-keys.properties", ignoreResourceNotFound = true )
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class NewNotificationTest {
 
     @Autowired
@@ -36,7 +37,6 @@ public class NewNotificationTest {
         NewNotificationRequest request = new NewNotificationRequest()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
-                .group("TestGroup")
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Milano")
                 .senderTaxId("01199250158")
