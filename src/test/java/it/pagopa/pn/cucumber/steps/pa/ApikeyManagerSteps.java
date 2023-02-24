@@ -223,4 +223,37 @@ public class ApikeyManagerSteps {
     }
 
 
+
+    @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente del invio notifica")
+    public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_differente_del_invio_notifica(String settedPa) {
+
+        String group = this.sharedSteps.getLastGroupByPa(settedPa);
+        Assertions.assertNotNull(firstGroupUsed);
+        Assertions.assertTrue(!firstGroupUsed.equals(group));
+
+        requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
+        responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
+
+        requestNewApiKey.setGroups(List.of(group));
+        Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
+        Assertions.assertNotNull(responseNewApiKey);
+        System.out.println("New ApiKey: " + responseNewApiKey);
+    }
+
+    @Given("Viene creata una nuova apiKey per il comune {string} con gruppo uguale del invio notifica")
+    public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_uguale_del_invio_notifica(String settedPa) {
+
+        String group = this.sharedSteps.getFirstGroupByPa(settedPa);
+        Assertions.assertNotNull(firstGroupUsed);
+        Assertions.assertTrue(firstGroupUsed.equals(group));
+
+        requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
+        responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
+
+        requestNewApiKey.setGroups(List.of(group));
+        Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
+        Assertions.assertNotNull(responseNewApiKey);
+        System.out.println("New ApiKey: " + responseNewApiKey);
+    }
+
 }
