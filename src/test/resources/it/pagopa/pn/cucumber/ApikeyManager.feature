@@ -180,7 +180,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-
   Scenario: [API-KEY_16] generazione con gruppo e invio notifica con gruppo e lettura notifica senza gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -200,8 +199,8 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
-  Scenario: [API-KEY_17] generazione con gruppo e invio notifica con gruppo  e lettura notifica gruppo diverso ApiKey_scenario negativo
+  # verificare comportamento corretto
+  Scenario: [API-KEY_17] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -220,7 +219,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  Scenario: [API-KEY_18] generazione senza gruppo e invio notifica senza gruppo  e lettura notifica senza gruppo  ApiKey_scenario positivo
+  Scenario: [API-KEY_18] generazione senza gruppo e invio notifica senza gruppo e lettura notifica senza gruppo  ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -258,10 +257,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-
-
-  @ignore
-  Scenario: [API-KEY_20] generazione senza gruppo e invio notifica con lettura notifica con apikey con gruppo ApiKey_scenario negativo
+  Scenario: [API-KEY_20] generazione senza gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -275,13 +271,11 @@ Feature: apiKey manager
     And si verifica la corretta acquisizione della notifica
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-    When Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo uguale del invio notifica
     And viene impostata l'apikey appena generata
-    Then la notifica viene recuperata dal sistema tramite codice IUN
-    And l'operazione ha prodotto un errore con status code "403"
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-    #Verificare corretto comportamento
 
   @ignore
   Scenario: [API-KEY_100] generazione con gruppo non valido ApiKey_scenario negativo

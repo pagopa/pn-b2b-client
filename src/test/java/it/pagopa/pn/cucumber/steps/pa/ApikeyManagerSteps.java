@@ -34,7 +34,6 @@ public class ApikeyManagerSteps {
         this.apiKeyManagerClient = apiKeyManagerClient;
     }
 
-
     @Given("vengono lette le apiKey esistenti")
     public void vengonoLetteLeApiKeyPrecedentementeGenerate() {
         Assertions.assertDoesNotThrow(() ->
@@ -120,7 +119,6 @@ public class ApikeyManagerSteps {
                         .filter(elem -> (elem.getId().equals(responseNewApiKey.getId()))
                                 && (elem.getStatus().equals(apiKeyStatus))).findAny().orElse(null));
     }
-
 
     private RequestApiKeyStatus getRequestApiKeyStatus(String state) {
         RequestApiKeyStatus requestApiKeyStatus = new RequestApiKeyStatus();
@@ -211,7 +209,8 @@ public class ApikeyManagerSteps {
 
     @Given("viene settato il primo gruppo valido per il comune {string}")
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String settedPa) {
-        this.sharedSteps.getNotificationRequest().setGroup(this.sharedSteps.getFirstGroupByPa(settedPa));
+        firstGroupUsed = this.sharedSteps.getFirstGroupByPa(settedPa);
+        this.sharedSteps.getNotificationRequest().setGroup(firstGroupUsed);
     }
 
     @Given("viene settato un gruppo differente da quello utilizzato nell'apikey per il comune {string}")
@@ -222,11 +221,8 @@ public class ApikeyManagerSteps {
         this.sharedSteps.getNotificationRequest().setGroup(group);
     }
 
-
-
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente del invio notifica")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_differente_del_invio_notifica(String settedPa) {
-
         String group = this.sharedSteps.getLastGroupByPa(settedPa);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertTrue(!firstGroupUsed.equals(group));
@@ -242,7 +238,6 @@ public class ApikeyManagerSteps {
 
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo uguale del invio notifica")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_uguale_del_invio_notifica(String settedPa) {
-
         String group = this.sharedSteps.getFirstGroupByPa(settedPa);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertTrue(firstGroupUsed.equals(group));
