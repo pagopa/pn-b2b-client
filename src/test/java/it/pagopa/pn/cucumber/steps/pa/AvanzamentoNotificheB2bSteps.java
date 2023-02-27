@@ -291,6 +291,11 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void checksNotificationViewedStatus() {
+        try{
+            Thread.sleep(sharedSteps.getWait()*2);
+        } catch (InterruptedException interruptedException) {
+            logger.error("InterruptedException error");
+        }
         sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
         try {
             Assertions.assertNotNull(sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED)).findAny().orElse(null));
@@ -301,12 +306,24 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
     public void notificationPriceAndDateVerification(String price) {
+        try{
+            Thread.sleep(sharedSteps.getWait()*2);
+        }catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+
         priceVerification(price,"");
     }
 
 
     @Then("viene verificato il costo = {string} della notifica")
     public void notificationPriceVerification(String price) {
+        try{
+            Thread.sleep(sharedSteps.getWait()*2);
+        }catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+
         priceVerification(price,null);
     }
 
