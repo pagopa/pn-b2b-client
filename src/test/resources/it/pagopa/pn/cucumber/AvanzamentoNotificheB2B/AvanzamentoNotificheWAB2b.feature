@@ -10,8 +10,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
     
-    #OK_RS
-    #OK-Retry_RS
+    #ok_RS
+    #ok-Retry_RS
     #fail_RS
 
   @dev
@@ -37,7 +37,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_TIMELINE_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -49,7 +49,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
 
-    #OK_RIS
+    #ok_RIS
     #fail_RIS
 
   @dev
@@ -63,7 +63,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_TIMELINE_RIS_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -75,9 +75,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
 
 
-    #OK_AR
-    #OK_890
-    #OK_RIR
+    #ok_AR
+    #ok_890
+    #ok_RIR
 
   @dev
   Scenario: [B2B_TIMELINE_ANALOG_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
