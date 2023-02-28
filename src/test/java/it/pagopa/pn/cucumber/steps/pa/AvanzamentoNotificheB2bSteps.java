@@ -1,7 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
-import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
@@ -98,14 +97,14 @@ public class AvanzamentoNotificheB2bSteps {
         }
         try {
             Assertions.assertNotNull(notificationStatusHistoryElement);
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
 
 
     }
 
-    private TimelineElementCategory getTimelineElementCategory(String timelineEventCategory){
+    private TimelineElementCategory getTimelineElementCategory(String timelineEventCategory) {
         TimelineElementCategory timelineElementInternalCategory;
         switch (timelineEventCategory) {
             case "REQUEST_ACCEPTED":
@@ -198,9 +197,9 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
         }
-        try{
+        try {
             Assertions.assertNotNull(timelineElement);
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
 
@@ -292,7 +291,7 @@ public class AvanzamentoNotificheB2bSteps {
         downloadLegalFact(legalFactCategory, false, false, true);
     }
 
-    private void downloadLegalFact(String legalFactCategory,boolean pa, boolean appIO, boolean webRecipient){
+    private void downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient) {
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
@@ -355,7 +354,7 @@ public class AvanzamentoNotificheB2bSteps {
                         finalKeySearch
                 ));
             }
-        }catch (AssertionFailedError assertionFailedError){
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -534,35 +533,6 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertEquals(count, number);
     }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con eventCode {string}")
-    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConEventCode(String timelineEventCategory, String code) {
-        TimelineElementCategory timelineElementInternalCategory = getTimelineElementCategory(timelineEventCategory);
-
-        TimelineElement timelineElement = null;
-
-        for (int i = 0; i < 16; i++) {
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
-            if (timelineElement != null) {
-                break;
-            }
-            try {
-                Thread.sleep(sharedSteps.getWorkFlowWait());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-        }
-        try {
-            Assertions.assertNotNull(timelineElement);
-            Assertions.assertEquals(timelineElement.getDetails().getEventCode(), code);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con eventCode {string} per l'utente {int}")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConEventCodePerUtente(String timelineEventCategory, String code, Integer destinatario) {
         TimelineElementCategory timelineElementInternalCategory = getTimelineElementCategory(timelineEventCategory);
@@ -613,10 +583,10 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
         }
-        try{
+        try {
             Assertions.assertNotNull(timelineElement);
-            Assertions.assertEquals(timelineElement.getDetails().getEventCode(),code);
-        }catch (AssertionFailedError assertionFailedError){
+            Assertions.assertEquals(timelineElement.getDetails().getEventCode(), code);
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
