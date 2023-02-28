@@ -231,8 +231,48 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-
     }
+
+    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string}")
+    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEvento(Integer destinatario, String timelineEventCategory) {
+        TimelineElementCategory timelineElementInternalCategory = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementInternalCategory) && element.getDetails().getRecIndex().equals(destinatario)) {
+                timelineElement = element;
+            }
+        }
+
+        try {
+            Assertions.assertNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string} con eventCode {string}")
+    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEvento(Integer destinatario, String timelineEventCategory, String code) {
+        TimelineElementCategory timelineElementInternalCategory = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementInternalCategory)
+                    && element.getDetails().getRecIndex().equals(destinatario)
+                    && element.getDetails().getEventCode().equals(code)) {
+                timelineElement = element;
+            }
+        }
+
+        try {
+            Assertions.assertNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
     public void paRequiresDownloadOfLegalFact(String legalFactCategory) {
