@@ -89,6 +89,7 @@ Feature: Validazione campi invio notifiche b2b
       | dall`atto        |
 
 
+
   Scenario Outline: [B2B-PA-SEND_VALID_5] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
