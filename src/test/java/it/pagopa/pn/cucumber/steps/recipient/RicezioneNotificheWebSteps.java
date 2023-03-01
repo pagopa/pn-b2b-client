@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class RicezioneNotificheWebSteps  {
+public class RicezioneNotificheWebSteps {
 
 
     private final IPnWebRecipientClient webRecipientClient;
@@ -77,12 +77,12 @@ public class RicezioneNotificheWebSteps  {
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
             Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
 
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
-    public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName,String recipient) {
+    public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
@@ -94,11 +94,12 @@ public class RicezioneNotificheWebSteps  {
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
             Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
 
     @And("{string} tenta il recupero dell'allegato {string}")
-    public void attachmentRetrievedError(String recipient,String attachmentName) {
+    public void attachmentRetrievedError(String recipient, String attachmentName) {
+        this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotificationAttachment(
@@ -113,9 +114,8 @@ public class RicezioneNotificheWebSteps  {
     @Then("(il download)(il recupero) ha prodotto un errore con status code {string}")
     public void operationProducedErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((this.notificationError != null) &&
-                (this.notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+                (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
-
 
 
     @And("{string} tenta il recupero della notifica")
@@ -130,32 +130,38 @@ public class RicezioneNotificheWebSteps  {
 
 
     @Then("la notifica può essere correttamente recuperata con una ricerca da {string}")
-    public void notificationCanBeCorrectlyReadWithResearch(String recipient,@Transpose NotificationSearchParam searchParam) {
+    public void notificationCanBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
         Assertions.assertTrue(searchNotification(searchParam));
     }
 
+    @Then("la notifica non viene recuperata con una ricerca da {string}")
+    public void notificationCantBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
+        sharedSteps.selectUser(recipient);
+        Assertions.assertFalse(searchNotification(searchParam));
+    }
+
     @DataTableType
-    public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data){
+    public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         NotificationSearchParam searchParam = new NotificationSearchParam();
 
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
-        String monthString = (((month+"").length() == 2 || month == 9)?(month+1):("0"+(month+1)))+"";
+        String monthString = (((month + "").length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1))) + "";
         int day = now.get(Calendar.DAY_OF_MONTH);
-        String dayString = (day+"").length() == 2? (day+""):("0"+day);
-        String start = data.getOrDefault("startDate",dayString+"/"+monthString+"/"+now.get(Calendar.YEAR));
-        String end = data.getOrDefault("endDate",null);
+        String dayString = (day + "").length() == 2 ? (day + "") : ("0" + day);
+        String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
+        String end = data.getOrDefault("endDate", null);
 
         OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-        OffsetDateTime startDate = OffsetDateTime.of(localDateStart,sentAt.getOffset());
+        OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
         OffsetDateTime endDate;
-        if(end != null){
+        if (end != null) {
             LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-            endDate = OffsetDateTime.of(localDateEnd,sentAt.getOffset());
-        }else{
+            endDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+        } else {
             endDate = sentAt;
         }
 
@@ -163,14 +169,14 @@ public class RicezioneNotificheWebSteps  {
         searchParam.endDate = endDate;
         //searchParam.mandateId = data.getOrDefault("mandateId",null);
         //searchParam.senderId = data.getOrDefault("senderId",null);
-        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp",null);
-        String iun = data.getOrDefault("iunMatch",null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL")? sharedSteps.getSentNotification().getIun():iun));
-        searchParam.size = Integer.parseInt(data.getOrDefault("size","10"));
+        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
+        String iun = data.getOrDefault("iunMatch", null);
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         return searchParam;
     }
 
-    private boolean searchNotification(NotificationSearchParam searchParam){
+    private boolean searchNotification(NotificationSearchParam searchParam) {
         boolean beenFound;
         NotificationSearchResponse notificationSearchResponse = webRecipientClient
                 .searchReceivedNotification(
@@ -179,19 +185,19 @@ public class RicezioneNotificheWebSteps  {
                         searchParam.iunMatch, searchParam.size, null);
         List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
-        if(!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())){
-            while(Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())){
+        if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
+            while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
                 List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
-                for(String pageKey: nextPagesKey){
+                for (String pageKey : nextPagesKey) {
                     notificationSearchResponse = webRecipientClient
                             .searchReceivedNotification(
                                     searchParam.startDate, searchParam.endDate, searchParam.mandateId,
                                     searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
                                     searchParam.iunMatch, searchParam.size, pageKey);
                     beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
-                    if(beenFound)break;
+                    if (beenFound) break;
                 }//for
-                if(beenFound)break;
+                if (beenFound) break;
             }//while
         }//search cycle
         return beenFound;
@@ -199,7 +205,7 @@ public class RicezioneNotificheWebSteps  {
 
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
-        switch (user){
+        switch (user) {
             case "Mario Cucumber":
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 break;
@@ -213,18 +219,18 @@ public class RicezioneNotificheWebSteps  {
 
     @When("viene richiesto l'inserimento della pec {string}")
     public void perLUtenteVieneSettatoLaPec(String pec) {
-        try{
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC,(new AddressVerification().value(pec).verificationCode("00000")));
-        }catch (HttpStatusCodeException httpStatusCodeException){
+        try {
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
-        try{
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.SMS,(new AddressVerification().value(phone).verificationCode("00000")));
-        }catch (HttpStatusCodeException httpStatusCodeException){
+        try {
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.SMS, (new AddressVerification().value(phone).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
@@ -233,13 +239,11 @@ public class RicezioneNotificheWebSteps  {
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
-                (httpStatusCodeException.getStatusCode().toString().substring(0,3).equals(statusCode)));
+                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
 
-
-
-    private static class  NotificationSearchParam{
+    private static class NotificationSearchParam {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
