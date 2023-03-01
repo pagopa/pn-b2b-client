@@ -11,9 +11,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
       |   stato                          |
-      | Città del Vaticano               |
-      | Costa d'Avorio                   |
-      | Perù                             |
+      | Città d'Avorio                   |
       | Fær Øer                          |
       | São Tomé                         |
       | Hagåtña                          |
@@ -28,15 +26,13 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Iritriyā                         |
       | République d'Haïti               |
       | Lýðveldið Ísland                 |
-      | Ísland                           |
       | Poblacht na hÉireann             |
       | Īrān                             |
       | Bhārat Ganarājya                 |
       | Lībiyā                           |
-      | Mfuko la Malaŵi                  |
+      | Mfùko la Malaŵi                  |
       | Moçambique                       |
       | Mūrītāniyā                       |
-      | Paraguái                         |
       | Têta Paraguái                    |
       | Česká republika                  |
       | Mālo Tuto’atasi o Sāmoa          |

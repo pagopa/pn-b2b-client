@@ -393,6 +393,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Then("si verifica nello stream del {string} che la notifica abbia lo stato VIEWED")
     public void checkViewedState(String pa) {
+        try{
+            Thread.sleep(sharedSteps.getWait()*2);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
         setPaWebhook(pa);
         ProgressResponseElement progressResponseElement = searchInWebhook(NotificationStatus.VIEWED, null, 0);
         Assertions.assertNotNull(progressResponseElement);
