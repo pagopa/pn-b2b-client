@@ -13,10 +13,8 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.SettableApiKey;
-import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -41,6 +39,7 @@ public class SharedSteps {
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl pnExternalServiceClient;
+    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
 
     private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
@@ -87,12 +86,14 @@ public class SharedSteps {
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
-                       PnExternalServiceClientImpl pnExternalServiceClient) {
+                       PnExternalServiceClientImpl pnExternalServiceClient,
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.b2bUtils = b2bUtils;
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
+        this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
     }
 
     @BeforeAll
@@ -447,8 +448,10 @@ public class SharedSteps {
     public void selectUser(String recipient) {
         if (recipient.trim().equalsIgnoreCase("mario cucumber")) {
             webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
         } else if (recipient.trim().equalsIgnoreCase("mario gherkin")) {
             webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
         } else {
             throw new IllegalArgumentException();
         }
@@ -562,4 +565,19 @@ public class SharedSteps {
         return id;
     }
 
+    @And("viene rimossa se presente la pec di piattaforma di {string}")
+    public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        try{
+            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+            logger.info("PEC FOUND AND DELETED");
+        }catch (HttpStatusCodeException httpStatusCodeException){
+            if(httpStatusCodeException.getStatusCode().is4xxClientError()){
+                logger.info("PEC NOT FOUND");
+            }else{
+                throw httpStatusCodeException;
+            }
+        }
+
+    }
 }

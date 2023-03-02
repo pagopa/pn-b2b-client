@@ -40,7 +40,7 @@ public class NewNotificationTest {
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Milano")
                 .senderTaxId("01199250158")
-                .notificationFeePolicy( NewNotificationRequest.NotificationFeePolicyEnum.FLAT_RATE )
+                .notificationFeePolicy( NotificationFeePolicy.FLAT_RATE )
                 .physicalCommunicationType( NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )

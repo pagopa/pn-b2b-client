@@ -408,7 +408,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertEquals(notificationPrice.getAmount(), price);
             }
             if (date != null) {
-                Assertions.assertNotNull(notificationPrice.getEffectiveDate());
+                Assertions.assertNotNull(notificationPrice.getRefinementDate());
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);

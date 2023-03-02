@@ -1,15 +1,7 @@
 Feature: avanzamento notifiche b2b con workflow cartaceo
 
-  @ignore
-  Scenario: [B2B_TIMELINE_ANALOG_x] Invio notifica ed attesa elemento di timeline SCHEDULE_ANALOG_WORKFLOW_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
-    
+  Background:
+    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
     #ok_RS
     #ok-Retry_RS

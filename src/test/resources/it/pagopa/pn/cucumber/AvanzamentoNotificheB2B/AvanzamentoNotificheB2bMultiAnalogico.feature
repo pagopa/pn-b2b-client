@@ -1,5 +1,8 @@
 Feature: avanzamento b2b notifica multi destinatario analogico
 
+  Background:
+    Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
+
   Scenario: [B2B_TIMELINE_MULTI_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |

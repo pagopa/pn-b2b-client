@@ -32,8 +32,8 @@ public class DataTableTypeUtil {
                 .notificationFeePolicy(
                         (getValue(data,NOTIFICATION_FEE_POLICY.key) == null? null :
                                 (getValue(data,NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE")?
-                                        NewNotificationRequest.NotificationFeePolicyEnum.FLAT_RATE :
-                                        NewNotificationRequest.NotificationFeePolicyEnum.DELIVERY_MODE)))
+                                        NotificationFeePolicy.FLAT_RATE :
+                                        NotificationFeePolicy.DELIVERY_MODE)))
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
