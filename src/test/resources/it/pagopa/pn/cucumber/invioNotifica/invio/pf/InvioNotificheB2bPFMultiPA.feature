@@ -10,7 +10,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     And l'operazione ha generato un errore con status code "404"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_1] Invio notifica digitale senza pagamento_scenario positivo
+  Scenario: [B2B-MULTI-PA-SEND_2] Invio notifica digitale senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -20,7 +20,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_2] Invio notifica multi destinatario senza pagamento_scenario positivo
+  Scenario: [B2B-MULTI-PA-SEND_3] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -34,7 +34,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_3] Invio notifica multi destinatario con pagamento_scenario positivo
+  Scenario: [B2B-MULTI-PA-SEND_4] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -44,7 +44,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_4] Invio notifica multi destinatario PA non abilitata_scenario negativa
+  Scenario: [B2B-MULTI-PA-SEND_5] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di milano |
@@ -54,7 +54,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then l'invio ha prodotto un errore con status code "400"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_5] Invio notifica multi destinatario uguale codice avviso_scenario positivo
+  Scenario: [B2B-MULTI-PA-SEND_6] Invio notifica multi destinatario uguale codice avviso_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -65,7 +65,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then l'invio ha prodotto un errore con status code "500"
 
   @SmokeTest
-  Scenario: [B2B-PA-GA-SEND_6] Invio notifica multi destinatario destinatario duplicato_scenario negativo
+  Scenario: [B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |

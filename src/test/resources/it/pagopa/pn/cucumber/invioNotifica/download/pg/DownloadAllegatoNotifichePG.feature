@@ -1,6 +1,6 @@
 Feature: Download da persona giuridica
 
-  Scenario: [B2B-PA-SEND_PG_6] download documento notificato_scenario positivo
+  Scenario: [B2B-DOWN-PG_1] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -12,7 +12,7 @@ Feature: Download da persona giuridica
     Then il download si conclude correttamente
 
 
-  Scenario: [B2B-PA-SEND_PG_7] download documento pagopa_scenario positivo
+  Scenario: [B2B-DOWN-PG_2] download documento pagopa_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -25,7 +25,7 @@ Feature: Download da persona giuridica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  Scenario: [B2B-PA-SEND_PG_8] download documento f24_standard_scenario positivo
+  Scenario: [B2B-DOWN-PG_3] download documento f24_standard_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -39,7 +39,7 @@ Feature: Download da persona giuridica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  Scenario: [B2B-PA-SEND_PG-CF_6] download documento notificato_scenario positivo
+  Scenario: [B2B-DOWN-PG_4] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -51,7 +51,7 @@ Feature: Download da persona giuridica
     Then il download si conclude correttamente
 
 
-  Scenario: [B2B-PA-SEND_PG-CF_7] download documento pagopa_scenario positivo
+  Scenario: [B2B-DOWN-PG_5] download documento pagopa_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -65,7 +65,7 @@ Feature: Download da persona giuridica
     Then il download si conclude correttamente
 
 
-  Scenario: [B2B-PA-SEND_PG-CF_8] download documento f24_standard_scenario positivo
+  Scenario: [B2B-DOWN-PG_6] download documento f24_standard_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |

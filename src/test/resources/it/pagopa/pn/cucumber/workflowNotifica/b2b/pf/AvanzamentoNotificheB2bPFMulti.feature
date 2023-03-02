@@ -1,6 +1,6 @@
 Feature: avanzamento notifiche b2b
 
-  Scenario: [B2B_PA_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+  Scenario: [B2B-TIMELINE_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
@@ -29,7 +29,7 @@ Feature: avanzamento notifiche b2b
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-  Scenario: [B2B_PA_MULTI_4] Invio notifica multi destinatario SCHEDULE_ANALOG_WORKFLOW_scenario positivo
+  Scenario: [B2B-TIMELINE_MULTI_4] Invio notifica multi destinatario SCHEDULE_ANALOG_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |

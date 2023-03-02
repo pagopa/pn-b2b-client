@@ -1,7 +1,7 @@
 Feature: Download da persona fisica
 
   @B2Btest @SmokeTest
-  Scenario: [B2B-PA-SEND_6] download documento notificato_scenario positivo
+  Scenario: [B2B-DOWN-PF_1] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -13,7 +13,7 @@ Feature: Download da persona fisica
     Then il download si conclude correttamente
 
   @SmokeTest
-  Scenario: [B2B-PA-SEND_7] download documento pagopa_scenario positivo
+  Scenario: [B2B-DOWN-PF_2] download documento pagopa_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -26,7 +26,7 @@ Feature: Download da persona fisica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
 
-  Scenario: [B2B-PA-SEND_8] download documento f24_standard_scenario positivo
+  Scenario: [B2B-DOWN-PF_3] download documento f24_standard_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |

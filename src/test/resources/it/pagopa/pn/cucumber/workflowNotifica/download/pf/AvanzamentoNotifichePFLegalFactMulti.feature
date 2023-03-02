@@ -1,6 +1,6 @@
 Feature: Download legalFact multi destinatario
 
-  Scenario: [B2B_WEB-RECIPIENT_LEGALFACT_5] Invio notifica multi destinatario_scenario positivo
+  Scenario: [B2B_WEB-MULTI-RECIPIENT_LEGALFACT_1] Invio notifica multi destinatario_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
