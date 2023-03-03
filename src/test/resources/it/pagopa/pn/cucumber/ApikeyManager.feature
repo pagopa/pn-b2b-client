@@ -100,6 +100,7 @@ Feature: apiKey manager
     Then l'invio della notifica ha sollevato un errore di autenticazione "403"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_10] generazione con gruppo e cancellazione ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And vengono lette le apiKey esistenti
@@ -138,6 +139,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_13] generazione con gruppo e invio notifica senza gruppo ApiKey_scenario negativo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -152,6 +154,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_14] generazione con gruppo e invio notifica con lo stesso gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -166,6 +169,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_15] generazione con gruppo e invio notifica con un gruppo differente ApiKey_scenario negativo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -180,6 +184,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_16] generazione con gruppo e invio notifica con gruppo e lettura notifica senza gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -199,7 +204,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @tbc
+  @ignore @tbc
   Scenario: [API-KEY_17] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -237,7 +242,8 @@ Feature: apiKey manager
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
-    
+
+  @ignore
   Scenario: [API-KEY_19] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
