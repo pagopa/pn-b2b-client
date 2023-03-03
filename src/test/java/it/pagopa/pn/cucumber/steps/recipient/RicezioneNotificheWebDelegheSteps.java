@@ -28,6 +28,7 @@ import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -85,6 +86,8 @@ public class RicezioneNotificheWebDelegheSteps {
                         .person(true))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
+                .visibilityIds(new LinkedList<>())
+                .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
         );
         try {

@@ -9,7 +9,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And "Mario Gherkin" legge la notifica ricevuta
-    Then vengono verificati costo = "200" e data di perfezionamento della notifica
+    Then vengono verificati costo = "100" e data di perfezionamento della notifica
 
   Scenario: [B2B-PA-PAY_2] Invio notifica e verifica amount
     Given viene generata una nuova notifica
@@ -18,7 +18,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "200" della notifica
+    Then viene verificato il costo = "100" della notifica
 
   Scenario: [B2B-PA-PAY_3] Invio notifica FLAT e verifica amount
     Given viene generata una nuova notifica
@@ -62,5 +62,5 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "200" della notifica
+    Then viene verificato il costo = "100" della notifica
 
