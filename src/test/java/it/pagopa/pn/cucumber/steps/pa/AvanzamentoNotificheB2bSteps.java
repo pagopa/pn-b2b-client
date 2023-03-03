@@ -383,7 +383,7 @@ public class AvanzamentoNotificheB2bSteps {
             interruptedException.printStackTrace();
         }
 
-        priceVerification(price, "");
+        priceVerification(price, null);
     }
 
 
@@ -405,7 +405,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
             if (price != null) {
-                Assertions.assertEquals(notificationPrice.getAmount(), price);
+                Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
             }
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
@@ -475,12 +475,16 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente")
     public void laNotificaVienePagata() {
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId(),
+                sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
+
         PaymentEventsRequestPagoPa eventsRequestPagoPa = new PaymentEventsRequestPagoPa();
 
         PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
         paymentEventPagoPa.setPaymentDate(OffsetDateTime.now());
+        paymentEventPagoPa.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
         paymentEventPagoPaList.add(paymentEventPagoPa);
@@ -492,13 +496,18 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("il modello f24 viene pagato correttamente")
     public void ilModelloFVienePagatoCorrettamente() {
+
         PaymentEventsRequestF24 eventsRequestF24 = new PaymentEventsRequestF24();
+
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId(),
+                sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
 
         PaymentEventF24 paymentEventF24 = new PaymentEventF24();
         paymentEventF24.setIun(sharedSteps.getSentNotification().getIun());
         paymentEventF24.setRecipientTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
         paymentEventF24.setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().equals(NotificationRecipient.RecipientTypeEnum.PF) ? "PF" : "PG");
         paymentEventF24.setPaymentDate(OffsetDateTime.now());
+        paymentEventF24.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventF24> eventF24List = new LinkedList<>();
         eventF24List.add(paymentEventF24);
