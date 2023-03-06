@@ -4,12 +4,9 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnDowntimeLogsClient;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeEntry;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.slf4j.Logger;
@@ -19,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.ByteArrayInputStream;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class DowntimeLogsSteps {
@@ -41,10 +39,11 @@ public class DowntimeLogsSteps {
     }
 
 
+
     @Given("vengono letti gli eventi di disservizio degli ultimi {int} giorni relativi al(la) {string}")
     public void vengonoLettiGliEventiDegliUltimiGiorniRelativiAlla(int time, String eventType) {
         PnFunctionality pnFunctionality = null;
-        switch (eventType) {
+        switch (eventType){
             case "creazione notifiche":
                 pnFunctionality = PnFunctionality.NOTIFICATION_CREATE;
                 break;
@@ -64,27 +63,26 @@ public class DowntimeLogsSteps {
 
     @When("viene individuato se presente l'evento più recente")
     public void vieneIndividuatoSePresenteLEventoPiùRecente() {
-        logger.info("Elenco eventi {}", pnDowntimeHistoryResponse);
+        logger.info("Elenco eventi {}",pnDowntimeHistoryResponse);
 
         Assertions.assertNotNull(pnDowntimeHistoryResponse);
         PnDowntimeEntry value = null;
-        for (PnDowntimeEntry entry : pnDowntimeHistoryResponse.getResult()) {
-            if (value == null && entry.getFileAvailable()) {
+        for(PnDowntimeEntry entry: pnDowntimeHistoryResponse.getResult()){
+            if(value == null && entry.getFileAvailable()){
                 value = entry;
             }
-
-            if (value != null && entry.getFileAvailable() && value.getEndDate().isBefore(entry.getEndDate())) {
+            if(value != null && value.getEndDate().isBefore(entry.getEndDate()) && entry.getFileAvailable()){
                 value = entry;
             }
         }
         this.pnDowntimeEntry = value;
-        logger.info("evento {}", value);
+        logger.info("evento {}",value);
     }
 
 
     @And("viene scaricata la relativa attestazione opponibile")
     public void vieneScaricataLaRelativaAttestazioneOpponibile() {
-        if (pnDowntimeEntry != null) {
+        if(pnDowntimeEntry != null){
             this.legalFact = downtimeLogsClient.getLegalFact(pnDowntimeEntry.getLegalFactId());
             byte[] content = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(legalFact.getUrl()));
             this.sha256 = b2bUtils.computeSha256(new ByteArrayInputStream(content));
@@ -93,7 +91,7 @@ public class DowntimeLogsSteps {
 
     @Then("l'attestazione opponibile è stata correttamente scaricata")
     public void lAttestazioneOpponibileÈStataCorrettamenteScaricata() {
-        if (pnDowntimeEntry != null) {
+        if(pnDowntimeEntry != null){
             Assertions.assertNotNull(sha256);
         }
     }
