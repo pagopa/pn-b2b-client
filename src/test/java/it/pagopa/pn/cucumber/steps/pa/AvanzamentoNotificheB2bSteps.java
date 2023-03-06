@@ -532,14 +532,36 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("sono presenti {int} attestazioni opponibili RECIPIENT_ACCESS")
     public void sonoPresentiAttestazioniOpponibili(int number) {
+
         TimelineElementCategory timelineElementInternalCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
-        List<TimelineElement> timeline = sharedSteps.getSentNotification().getTimeline();
-        System.out.println("TIMELINE: " + timeline);
-        int count = 0;
-        for (TimelineElement element : timeline) {
-            if (element.getCategory().equals(timelineElementInternalCategory)) count++;
+        boolean findElement=false;
+        for (int i = 0; i < 16; i++) {
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            List<TimelineElement> timeline = sharedSteps.getSentNotification().getTimeline();
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            int count = 0;
+            for (TimelineElement element : timeline) {
+                if (element.getCategory().equals(timelineElementInternalCategory)) count++;
+            }
+
+            if (count == number) {
+                findElement = true;
+                break;
+            }
+
+            try {
+                Thread.sleep(sharedSteps.getWorkFlowWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
         }
-        Assertions.assertEquals(count, number);
+        try {
+            Assertions.assertTrue(findElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con eventCode {string} per l'utente {int}")
