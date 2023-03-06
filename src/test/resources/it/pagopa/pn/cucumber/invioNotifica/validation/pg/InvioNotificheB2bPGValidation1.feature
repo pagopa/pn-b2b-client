@@ -99,7 +99,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | FRMTTR76F06B715E |
       | FRRTTR76M0MB715H |
 
-  Scenario Outline: [B2B-PA-SEND_VALID_PG_6] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_6] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
