@@ -533,22 +533,6 @@ public class SharedSteps {
         return hashMapsList;
     }
 
-    public String getGroupIdByName(String groupName) {
-        List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
-
-        System.out.println("GROUP: "+hashMapsList);
-        String id = null;
-        for (HashMap<String, String> elem : hashMapsList) {
-            if (elem.get("name").equalsIgnoreCase(groupName)) {
-                id = elem.get("id");
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(id);
-        return id;
-    }
-
     public String getFirstGroupIdByPa(String settedPa) {
         List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
 
@@ -564,31 +548,14 @@ public class SharedSteps {
         return id;
     }
 
-    public String getFirstGroupNameByPa(String settedPa) {
-        List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
-
-        String id = null;
-        for (HashMap<String, String> elem : hashMapsList) {
-            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
-                //id = elem.get("id");
-                id = elem.get("name");
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(id);
-        return id;
-    }
-
-    public String getLastGroupNameByPa(String settedPa) {
+    public String getLastGroupIdByPa(String settedPa) {
         List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
 
         String id = null;
         Integer count = 0;
         for (HashMap<String, String> elem : hashMapsList) {
             if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
-                //id = elem.get("id");
-                id = elem.get("name");
+                id = elem.get("id");
                 count++;
             }
         }

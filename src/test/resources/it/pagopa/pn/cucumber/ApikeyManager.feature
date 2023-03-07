@@ -152,7 +152,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
   Scenario: [API-KEY_14] generazione con gruppo e invio notifica con lo stesso gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -181,7 +180,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
   Scenario: [API-KEY_16] generazione con gruppo e invio notifica con gruppo e lettura notifica senza gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -201,7 +199,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore @tbc
   Scenario: [API-KEY_17] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -240,7 +237,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
   Scenario: [API-KEY_19] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -260,7 +256,6 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
   Scenario: [API-KEY_20] generazione senza gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -283,7 +278,7 @@ Feature: apiKey manager
 
   Scenario: [API-KEY_21] generazione con gruppo non valido ApiKey_scenario negativo
     Given Viene generata una nuova apiKey con il gruppo "AAAAAAAAAA"
-    Then l'operazione ha sollevato un errore con status code "500"
+    Then l'operazione ha sollevato un errore con status code "400"
 
 
 
