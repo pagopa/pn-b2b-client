@@ -280,5 +280,51 @@ Feature: apiKey manager
     Given Viene generata una nuova apiKey con il gruppo "AAAAAAAAAA"
     Then l'operazione ha sollevato un errore con status code "400"
 
+  Scenario: [API-KEY_22] generazione con multi gruppi e invio notifica senza gruppo ApiKey_scenario negativo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con due gruppi
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | group              | NULL             |
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica ha sollevato un errore "400"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  Scenario: [API-KEY_23] generazione con multi gruppi e invio notifica con gruppo ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con due gruppi
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And viene settato per la notifica corrente il primo gruppo valido del comune "Comune_1"
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b
+    Then l'invio della notifica non ha prodotto errori
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  Scenario: [API-KEY_24] generazione con multi gruppi e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con due gruppi
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And viene settato il taxId della notifica con quello dell'apikey
+    And viene settato per la notifica corrente il primo gruppo valido del comune "Comune_1"
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo uguale del invio notifica
+    And viene impostata l'apikey appena generata
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
 
 

@@ -187,6 +187,20 @@ public class ApikeyManagerSteps {
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
+    @Given("Viene creata una nuova apiKey per il comune {string} con due gruppi")
+    public void viene_creata_una_nuova_api_key_per_il_comune_con_due_gruppi(String settedPa) {
+        requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
+
+        responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
+        firstGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.FIRST);
+        String lastGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.LAST);
+
+        requestNewApiKey.setGroups(List.of(firstGroupUsed,lastGroupUsed));
+        Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
+        Assertions.assertNotNull(responseNewApiKey);
+        System.out.println("New ApiKey: " + responseNewApiKey);
+    }
+
     @Given("Viene creata una nuova apiKey per il comune {string} senza gruppo")
     public void viene_creata_una_nuova_api_key_per_il_comune_senza_gruppo(String settedPa) {
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
