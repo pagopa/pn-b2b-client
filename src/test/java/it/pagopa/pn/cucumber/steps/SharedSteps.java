@@ -15,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -533,22 +534,7 @@ public class SharedSteps {
         return hashMapsList;
     }
 
-    public String getFirstGroupIdByPa(String settedPa) {
-        List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
-
-        String id = null;
-        for (HashMap<String, String> elem : hashMapsList) {
-            if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
-                id = elem.get("id");
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(id);
-        return id;
-    }
-
-    public String getLastGroupIdByPa(String settedPa) {
+    public String getGroupIdByPa(String settedPa, GroupPosition position) {
         List<HashMap<String, String>> hashMapsList = getGroupsByPa(settedPa);
 
         String id = null;
@@ -557,11 +543,17 @@ public class SharedSteps {
             if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
                 id = elem.get("id");
                 count++;
+                if(GroupPosition.FIRST.equals(position)){
+                    break;
+                }
             }
         }
 
         Assertions.assertNotNull(id);
-        Assertions.assertTrue(count >= 2);
+        if(!GroupPosition.FIRST.equals(position)){
+            Assertions.assertTrue(count >= 2);
+        }
+
         return id;
     }
 
