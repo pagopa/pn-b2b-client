@@ -1,6 +1,5 @@
 Feature: Download legalFact multi destinatario
 
-  @ignore @tbc
   Scenario: [B2B_WEB-MULTI-RECIPIENT_LEGALFACT_1] Invio notifica multi destinatario_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
