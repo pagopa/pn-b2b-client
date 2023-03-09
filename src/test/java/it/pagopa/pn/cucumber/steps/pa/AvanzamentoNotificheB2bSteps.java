@@ -53,15 +53,24 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
+
         NotificationStatus notificationInternalStatus;
         switch (status) {
             case "ACCEPTED":
+                numCheck = 2;
+                waiting = 15000;
                 notificationInternalStatus = NotificationStatus.ACCEPTED;
                 break;
             case "DELIVERING":
+                numCheck = 4;
+                waiting = 61000;
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
+                numCheck = 6;
+                waiting = 61000;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
             case "CANCELLED":
@@ -79,7 +88,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         NotificationStatusHistoryElement notificationStatusHistoryElement = null;
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < numCheck; i++) {
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
@@ -90,7 +99,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             }
             try {
-                Thread.sleep(sharedSteps.getWorkFlowWait());
+                Thread.sleep(waiting);
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
@@ -534,7 +543,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void sonoPresentiAttestazioniOpponibili(int number) {
 
         TimelineElementCategory timelineElementInternalCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
-        boolean findElement=false;
+        boolean findElement = false;
         for (int i = 0; i < 16; i++) {
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
@@ -615,10 +624,10 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
         }
-        try{
+        try {
             Assertions.assertNotNull(timelineElement);
-            Assertions.assertEquals(timelineElement.getDetails().getEventCode(),code);
-        }catch (AssertionFailedError assertionFailedError){
+            Assertions.assertEquals(timelineElement.getDetails().getEventCode(), code);
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }

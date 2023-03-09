@@ -39,6 +39,9 @@ public class PnPaB2bUtils {
     @Value("${pn.configuration.workflow.wait.millis:31000}")
     private Integer workFlowWait;
 
+    @Value("${pn.configuration.workflow.wait.accepted.millis:91000}")
+    private Integer workFlowAcceptedWait;
+
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
 
@@ -91,10 +94,10 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 10; i++ ) {
+        for( int i = 0; i < 2; i++ ) {
 
             try {
-                Thread.sleep( getWorkFlowWait());
+                Thread.sleep( getAcceptedWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }
@@ -320,5 +323,9 @@ public class PnPaB2bUtils {
         return workFlowWait;
     }
 
+    private Integer getAcceptedWait() {
+        if(workFlowAcceptedWait == null)return 91000;
+        return workFlowAcceptedWait;
+    }
 
 }
