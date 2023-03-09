@@ -118,10 +118,10 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementWait timelineElementWait;
         switch (timelineEventCategory) {
             case "REQUEST_ACCEPTED":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_ACCEPTED, 16, waiting);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_ACCEPTED, 2, waiting);
                 break;
             case "AAR_GENERATION":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.AAR_GENERATION, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.AAR_GENERATION, 2, waiting * 2);
                 break;
             case "GET_ADDRESS":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.GET_ADDRESS, 16, sharedSteps.getWorkFlowWait());
@@ -193,6 +193,12 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement timelineElement = null;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
@@ -200,11 +206,6 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null) {
                 break;
-            }
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
             }
         }
         try {
@@ -222,6 +223,12 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement timelineElement = null;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
@@ -229,11 +236,6 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(destinatario)) {
                 break;
-            }
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
             }
         }
         try {
@@ -581,6 +583,12 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement timelineElement = null;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
@@ -588,11 +596,6 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(destinatario)) {
                 break;
-            }
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
             }
         }
         try {
@@ -611,6 +614,12 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement timelineElement = null;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
 
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
@@ -618,11 +627,6 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null) {
                 break;
-            }
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
             }
         }
         try {
