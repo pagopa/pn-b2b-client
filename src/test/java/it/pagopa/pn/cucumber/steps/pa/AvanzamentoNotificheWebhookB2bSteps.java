@@ -132,21 +132,29 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string}")
     public void readStreamEventsState(String pa,String status) {
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
+
         setPaWebhook(pa);
         NotificationStatus notificationStatus;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
         switch (status) {
             case "ACCEPTED":
+                numCheck = 2;
                 notificationStatus = NotificationStatus.ACCEPTED;
                 notificationInternalStatus =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.ACCEPTED;
                 break;
             case "DELIVERING":
+                numCheck = 2;
+                waiting = waiting * 4;
                 notificationStatus = NotificationStatus.DELIVERING;
                 notificationInternalStatus =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
+                numCheck = 3;
+                waiting = waiting * 4;
                 notificationStatus = NotificationStatus.DELIVERED;
                 notificationInternalStatus =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.DELIVERED;
@@ -165,27 +173,42 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 throw new IllegalArgumentException();
         }
         ProgressResponseElement progressResponseElement = null;
-        int wait = 48;
+
         boolean finded = false;
-        for (int i = 0; i < wait; i++) {
-            progressResponseElement = searchInWebhook(notificationStatus,null,0);
-            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+        for (int i = 0; i < numCheck; i++) {
+
+            try {
+                Thread.sleep(waiting);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
             NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
-            if (notificationStatusHistoryElement != null && !finded) {
-                wait = i + 4;
+
+            if (notificationStatusHistoryElement != null) {
                 finded = true;
+                break;
             }
+        }
+
+        Assertions.assertTrue(finded);
+        for (int i = 0; i < 4; i++) {
+            progressResponseElement = searchInWebhook(notificationStatus,null,0);
+            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
             if (progressResponseElement != null) {
                 break;
             }
+
             try {
                 Thread.sleep(sharedSteps.getWait());
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
         }
+
+
         try{
             Assertions.assertNotNull(progressResponseElement);
             logger.info("EventProgress: " + progressResponseElement);
