@@ -124,19 +124,19 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.AAR_GENERATION, 2, waiting * 2);
                 break;
             case "GET_ADDRESS":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.GET_ADDRESS, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.GET_ADDRESS, 2, waiting * 2);
                 break;
             case "SEND_DIGITAL_DOMICILE":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_DIGITAL_DOMICILE, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_DIGITAL_DOMICILE, 2, waiting * 2);
                 break;
             case "NOTIFICATION_VIEWED":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOTIFICATION_VIEWED, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOTIFICATION_VIEWED, 2, waiting * 2);
                 break;
             case "SEND_COURTESY_MESSAGE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_COURTESY_MESSAGE, 16, sharedSteps.getWorkFlowWait());
                 break;
             case "DIGITAL_SUCCESS_WORKFLOW":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 2, waiting * 3);
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
