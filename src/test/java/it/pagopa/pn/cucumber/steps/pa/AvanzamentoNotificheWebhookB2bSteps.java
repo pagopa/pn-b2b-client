@@ -234,7 +234,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
         switch (timelineEventCategory) {
             case "REQUEST_ACCEPTED":
-                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.REQUEST_ACCEPTED, 2, waiting);
+                numCheck = 2;
                 timelineElementCategory = TimelineElementCategory.REQUEST_ACCEPTED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.REQUEST_ACCEPTED;
@@ -352,6 +352,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
             if (progressResponseElement != null) {
                 break;
+            }
+
+            try {
+                Thread.sleep(sharedSteps.getWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
             }
         }
         try{
