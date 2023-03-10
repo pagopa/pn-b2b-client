@@ -12,6 +12,7 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.TimelineElementCategory;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.TimelineElementWait;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -208,7 +209,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
         }
 
-
         try{
             Assertions.assertNotNull(progressResponseElement);
             logger.info("EventProgress: " + progressResponseElement);
@@ -227,78 +227,98 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         setPaWebhook(pa);
         TimelineElementCategory timelineElementCategory;
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory timelineElementInternalCategory;
+
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
+        TimelineElementWait timelineElementWait;
+
         switch (timelineEventCategory) {
             case "REQUEST_ACCEPTED":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.REQUEST_ACCEPTED, 2, waiting);
                 timelineElementCategory = TimelineElementCategory.REQUEST_ACCEPTED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.REQUEST_ACCEPTED;
                 break;
             case "AAR_GENERATION":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.AAR_GENERATION, 2, waiting * 2);
                 timelineElementCategory = TimelineElementCategory.AAR_GENERATION;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.AAR_GENERATION;
                 break;
             case "GET_ADDRESS":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.GET_ADDRESS, 2, waiting * 2);
                 timelineElementCategory = TimelineElementCategory.GET_ADDRESS;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.GET_ADDRESS;
                 break;
             case "SEND_DIGITAL_DOMICILE":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_DOMICILE, 2, waiting * 2);
                 timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_DOMICILE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_DOMICILE;
                 break;
             case "NOTIFICATION_VIEWED":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOTIFICATION_VIEWED, 2, waiting * 2);
                 timelineElementCategory = TimelineElementCategory.NOTIFICATION_VIEWED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOTIFICATION_VIEWED;
                 break;
             case "SEND_COURTESY_MESSAGE":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_COURTESY_MESSAGE, 16, sharedSteps.getWorkFlowWait());
                 timelineElementCategory = TimelineElementCategory.SEND_COURTESY_MESSAGE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_COURTESY_MESSAGE;
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
                 timelineElementCategory = TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
                 break;
             case "DIGITAL_SUCCESS_WORKFLOW":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 2, waiting * 3);
                 timelineElementCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
                 break;
             case "SCHEDULE_ANALOG_WORKFLOW":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
                 timelineElementCategory = TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SCHEDULE_ANALOG_WORKFLOW;
                 break;
             case "NOT_HANDLED":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOT_HANDLED, 16, sharedSteps.getWorkFlowWait());
                 timelineElementCategory = TimelineElementCategory.NOT_HANDLED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.NOT_HANDLED;
                 break;
             case "SEND_DIGITAL_FEEDBACK":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_FEEDBACK, 2, waiting * 3);
                 timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_FEEDBACK;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_FEEDBACK;
                 break;
             case "SEND_ANALOG_DOMICILE":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_ANALOG_DOMICILE, 16, sharedSteps.getWorkFlowWait());
                 timelineElementCategory = TimelineElementCategory.SEND_ANALOG_DOMICILE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_ANALOG_DOMICILE;
                 break;
             case "SEND_DIGITAL_PROGRESS":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_PROGRESS, 2, waiting * 3);
                 timelineElementCategory = TimelineElementCategory.SEND_DIGITAL_PROGRESS;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_DIGITAL_PROGRESS;
                 break;
             case "PUBLIC_REGISTRY_CALL":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.PUBLIC_REGISTRY_CALL, 2, waiting * 3);
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_CALL;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
                 break;
             case "PUBLIC_REGISTRY_RESPONSE":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE, 2, waiting * 3);
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
@@ -307,25 +327,31 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 throw new IllegalArgumentException();
         }
         ProgressResponseElement progressResponseElement = null;
-        int wait = 48;
+
         boolean finish = false;
-        for (int i = 0; i < wait; i++) {
-            progressResponseElement = searchInWebhook(timelineElementCategory,null,0);
-            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+        for (int i = 0; i < numCheck; i++) {
+
+            try {
+                Thread.sleep(waiting);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
             TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
-            if (timelineElement != null && !finish) {
-                wait = i + 4;
+            if (timelineElement != null) {
                 finish = true;
-            }
-            if (progressResponseElement != null) {
                 break;
             }
-            try {
-                Thread.sleep(sharedSteps.getWait());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
+        }
+
+        Assertions.assertTrue(finish);
+        for (int i = 0; i < 4; i++) {
+            progressResponseElement = searchInWebhook(timelineElementCategory,null,0);
+            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
+            if (progressResponseElement != null) {
+                break;
             }
         }
         try{
