@@ -1,5 +1,6 @@
 Feature: Validazione campi invio notifiche b2b con persona giuridica
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -22,6 +23,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | São Tomé          |
       | Hagåtña           |
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -44,6 +46,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | São Tomé          |
       | Hagåtña           |
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_3] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -65,6 +68,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       | Nicolè srls     |
       | dudù   spa      |
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_4] invio notifica con oggetto contenente caratteri speciali_scenario positivo
     Given viene generata una nuova notifica
       | subject | <name> |

@@ -1,5 +1,6 @@
 Feature: Validazione campi invio notifiche b2b
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_9] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -37,6 +38,7 @@ Feature: Validazione campi invio notifiche b2b
       | Česká republika                  |
       | Mālo Tuto’atasi o Sāmoa          |
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

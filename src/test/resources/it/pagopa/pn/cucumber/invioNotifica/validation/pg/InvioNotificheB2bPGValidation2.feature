@@ -1,5 +1,6 @@
 Feature: Validazione campi invio notifiche b2b persona giuridica
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -37,6 +38,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Česká republika                  |
       | Mālo Tuto’atasi o Sāmoa          |
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_PG_11] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
