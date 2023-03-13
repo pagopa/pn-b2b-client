@@ -320,14 +320,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 break;
             case "PUBLIC_REGISTRY_CALL":
                 numCheck = 2;
-                waiting = waiting * 3;
+                waiting = waiting * 4;
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_CALL;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
                 break;
             case "PUBLIC_REGISTRY_RESPONSE":
                 numCheck = 2;
-                waiting = waiting * 3;
+                waiting = waiting * 4;
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
