@@ -154,15 +154,6 @@ public class SharedSteps {
                         .taxId(marioGherkinTaxID));
     }
 
-    @And("destinatario Mario Gherkin con taxid {string}:")
-    public void destinatarioMarioGherkinCFParam(String taxId ,@Transpose NotificationRecipient recipient) {
-        this.notificationRequest.addRecipientsItem(
-                recipient
-                        .denomination("Mario Gherkin")
-                        .taxId(taxId));
-    }
-
-
     @And("destinatario Gherkin spa")
     public void destinatarioGherkinSpa() {
         this.notificationRequest.addRecipientsItem(
