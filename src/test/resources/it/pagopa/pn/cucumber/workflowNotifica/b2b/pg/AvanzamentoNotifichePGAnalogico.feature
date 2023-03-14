@@ -3,12 +3,12 @@ Feature: avanzamento notifiche analogico persona giuridica
     #OK_RS
     #OK-Retry_RS
     #fail_RS
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_PG_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -19,18 +19,18 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok-Retry_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_PG_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -43,7 +43,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -54,7 +54,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -63,13 +63,13 @@ Feature: avanzamento notifiche analogico persona giuridica
     #OK_AR
     #OK_890
     #OK_RIR
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_PG_ANALOG_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

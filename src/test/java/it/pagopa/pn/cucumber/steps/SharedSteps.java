@@ -83,6 +83,7 @@ public class SharedSteps {
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
     private String cucumberSocietyTaxID = "MSSLGU51P10A087J";
+    private String cucumberAnalogicTaxID = "PPPPLT80A01H501V";
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
@@ -216,6 +217,14 @@ public class SharedSteps {
                         .denomination("Cucumber_Society")
                         .taxId(cucumberSocietyTaxID)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG));
+    }
+
+    @And("destinatario Cucumber Analogic e:")
+    public void destinatarioCucumberAnalogicParam(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("Cucumber Analogic")
+                        .taxId(cucumberAnalogicTaxID));
     }
 
 
