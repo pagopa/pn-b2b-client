@@ -1,10 +1,11 @@
 Feature: apiKey manager
 
+  @testLigth
   Scenario: [API-KEY_1] Lettura apiKey generate_scenario positivo
     Given vengono lette le apiKey esistenti
     Then la lettura è avvenuta correttamente
 
-
+  @testLigth
   Scenario: [API-KEY_2] generazione e cancellazione ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -14,7 +15,7 @@ Feature: apiKey manager
     And vengono lette le apiKey esistenti
     Then l'apiKey non è più presente
 
-
+  @testLigth
   Scenario: [API-KEY_3] generazione e cancellazione ApiKey_scenario negativo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -24,7 +25,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-
+  @testLigth
   Scenario: [API-KEY_4] generazione e verifica stato ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -34,7 +35,7 @@ Feature: apiKey manager
     Then si verifica lo stato dell'apikey "BLOCKED"
     And l'apiKey viene cancellata
 
-
+  @testLigth
   Scenario: [API-KEY_5] generazione e verifica stato ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -43,7 +44,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-
+  @testLigth
   Scenario: [API-KEY_6] generazione e verifica stato ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -54,7 +55,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-
+  @testLigth
   Scenario: [API-KEY_7] generazione e verifica stato ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -180,6 +181,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @testLigth
   Scenario: [API-KEY_16] generazione con gruppo e invio notifica con gruppo e lettura notifica senza gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -199,6 +201,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @testLigth
   Scenario: [API-KEY_17] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
@@ -256,6 +259,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @testLigth
   Scenario: [API-KEY_20] generazione senza gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -308,6 +312,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @testLigth
   Scenario: [API-KEY_24] generazione con multi gruppi e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con due gruppi
     And viene impostata l'apikey appena generata

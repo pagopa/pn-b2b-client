@@ -58,7 +58,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | via ì         |
       | via ò         |
 
-  @SmokeTest
+  @SmokeTest  @testLigth
   Scenario Outline: [B2B-PA-SEND_VALID_PG_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -74,7 +74,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | 0_CHAR  |
       | 81_CHAR |
 
-  @SmokeTest
+  @SmokeTest  @testLigth
   Scenario Outline: [B2B-PA-SEND_VALID_PG_13] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -87,7 +87,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | 0_CHAR  |
       | 81_CHAR |
 
-  @SmokeTest
+  @SmokeTest  @testLigth
   Scenario Outline: [B2B-PA-SEND_VALID_PG_14] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
