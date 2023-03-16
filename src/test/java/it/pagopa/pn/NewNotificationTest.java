@@ -90,8 +90,8 @@ public class NewNotificationTest {
                                 .noticeCode( String.format("30201%13d", epochMillis ) )
                                 .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
                                 .pagoPaForm( newAttachment( resourcePath ))
-                                .f24flatRate( newAttachment( resourcePath ) )
-                                .f24standard( newAttachment( resourcePath ) )
+//                                .f24flatRate( newAttachment( resourcePath ) )
+//                                .f24standard( newAttachment( resourcePath ) )
                 );
 
         try {

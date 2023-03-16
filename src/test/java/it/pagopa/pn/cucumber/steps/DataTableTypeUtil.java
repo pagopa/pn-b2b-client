@@ -81,13 +81,13 @@ public class DataTableTypeUtil {
                         .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
                                 null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
 
-                        .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-                                (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-
-                        .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
+//                        .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
+//                                (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
+//                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
+//
+//                        .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+//                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
+//                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 )
         );
         /* TEST
