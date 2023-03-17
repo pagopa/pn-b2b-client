@@ -139,7 +139,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 2, waiting * 3);
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 4, waiting * 5);
                 break;
             case "NOT_HANDLED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOT_HANDLED, 16, sharedSteps.getWorkFlowWait());
@@ -167,6 +167,9 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SEND_ANALOG_DOMICILE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_DOMICILE, 16, sharedSteps.getWorkFlowWait());
+                break;
+            case "SEND_ANALOG_PROGRESS":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_PROGRESS, 4, waiting * 5);
                 break;
             case "SEND_ANALOG_FEEDBACK":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_FEEDBACK, 4, waiting * 6);
@@ -333,6 +336,16 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementInternalCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
                 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            case "DIGITAL_DELIVERY_FAILURE":
+                timelineElementInternalCategory = TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            case "SEND_ANALOG_PROGRESS":
+                timelineElementInternalCategory = TimelineElementCategory.SEND_ANALOG_PROGRESS;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.ANALOG_DELIVERY;
                 break;
             default:
                 throw new IllegalArgumentException();
