@@ -1,6 +1,6 @@
 Feature: invio notifiche b2b
 
-  @B2Btest @SmokeTest @testLigth
+  @B2Btest @SmokeTest @testLite
   Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -10,7 +10,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  @B2Btest @testLigth
+  @B2Btest @testLite
   Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -49,7 +49,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @SmokeTest @testLigth
+  @SmokeTest @testLite
   Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -62,7 +62,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "409"
 
-  @SmokeTest @testLigth
+  @SmokeTest @testLite
   Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -125,7 +125,7 @@ Feature: invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And viene controllato la presenza del taxonomyCode
 
-  @SmokeTest @testLigth
+  @SmokeTest @testLite
   Scenario: [B2B-PA-SEND_19] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

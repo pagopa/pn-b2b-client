@@ -1,6 +1,6 @@
 Feature: Download da persona fisica
 
-  @B2Btest @SmokeTest @testLigth
+  @B2Btest @SmokeTest @testLite
   Scenario: [B2B-DOWN-PF_1] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -12,7 +12,7 @@ Feature: Download da persona fisica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-  @SmokeTest @testLigth
+  @SmokeTest @testLite
   Scenario: [B2B-DOWN-PF_2] download documento pagopa_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

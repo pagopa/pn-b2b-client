@@ -16,6 +16,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps")
 })
 //@ExcludeTags({"svil","ignore"})
-@IncludeTags({"testLigth"})
+@IncludeTags({"testLite"})
 public class CucumberDevIntegrationTest {
 }

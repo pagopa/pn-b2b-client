@@ -18,7 +18,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -44,7 +44,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     #ok_RIS
     #fail_RIS
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_RIS_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -70,7 +70,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     #ok_890
     #ok_RIR
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -82,7 +82,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -93,7 +93,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_3] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -108,7 +108,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     #fail_890
     #fail_RIR
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -131,7 +131,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
 
-  @dev @testLigth
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

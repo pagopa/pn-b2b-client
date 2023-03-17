@@ -9,7 +9,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_1"
     And l'operazione ha generato un errore con status code "404"
 
-  @SmokeTest @testLigth
+  @SmokeTest @testLite
   Scenario: [B2B-MULTI-PA-SEND_2] Invio notifica digitale senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -19,7 +19,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario: [B2B-MULTI-PA-SEND_3] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -33,7 +33,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario: [B2B-MULTI-PA-SEND_4] Invio notifica multi destinatario con pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -43,7 +43,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario: [B2B-MULTI-PA-SEND_5] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -53,7 +53,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata dal "Comune_1"
     Then l'invio ha prodotto un errore con status code "400"
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario: [B2B-MULTI-PA-SEND_6] Invio notifica multi destinatario uguale codice avviso_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -64,7 +64,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "500"
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario: [B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |

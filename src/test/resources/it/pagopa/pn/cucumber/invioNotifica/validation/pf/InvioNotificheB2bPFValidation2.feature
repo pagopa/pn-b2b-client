@@ -81,7 +81,7 @@ Feature: Validazione campi invio notifiche b2b
       #5) Lettera omocodia non contemplata (seconda serie di 2 numeri)
       #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
 
-  @SmokeTest
+  @SmokeTest @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -96,7 +96,7 @@ Feature: Validazione campi invio notifiche b2b
       | 0_CHAR  |
       | 81_CHAR |
 
-  @SmokeTest
+  @SmokeTest @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_13] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -109,7 +109,7 @@ Feature: Validazione campi invio notifiche b2b
       | 0_CHAR  |
       | 81_CHAR |
 
-  @SmokeTest
+  @SmokeTest @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_14] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

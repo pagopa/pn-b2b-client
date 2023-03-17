@@ -88,7 +88,7 @@ Feature: Validazione campi invio notifiche b2b
       | dall’atto        |
       | dall`atto        |
 
-  @testLigth
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_5] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -102,7 +102,7 @@ Feature: Validazione campi invio notifiche b2b
       | FRMTTR76F06B715E |
       | FRRTTR76M0MB715H |
 
-  @testLigth
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_6] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -120,7 +120,7 @@ Feature: Validazione campi invio notifiche b2b
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
 
-  @testLigth
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_7] invio notifiche digitali mono destinatario con parametri senderTaxId errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -138,7 +138,7 @@ Feature: Validazione campi invio notifiche b2b
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
 
-  @SmokeTest  @testLigth
+  @SmokeTest  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_8] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | <subject> |

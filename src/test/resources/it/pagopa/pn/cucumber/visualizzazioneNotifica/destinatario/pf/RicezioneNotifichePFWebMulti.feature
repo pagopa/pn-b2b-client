@@ -1,6 +1,6 @@
 Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatario
 
-  @testLigth
+  @testLite
   Scenario: [WEB-MULTI-PF-RECIPIENT_1] Invio notifica digitale multi destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -11,7 +11,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then la notifica può essere correttamente recuperata da "Mario Gherkin"
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
 
-  @testLigth
+  @testLite
   Scenario: [WEB-MULTI-PF-RECIPIENT_2] Invio notifica digitale multi destinatario e recupero documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

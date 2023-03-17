@@ -1,6 +1,6 @@
 Feature: invio notifiche b2b per la persona giuridica
 
-  @testLigth
+  @testLite
   Scenario: [B2B-PA-SEND_PG_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -10,7 +10,7 @@ Feature: invio notifiche b2b per la persona giuridica
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  @testLigth
+  @testLite
   Scenario: [B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -47,7 +47,7 @@ Feature: invio notifiche b2b per la persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @testLigth
+  @testLite
   Scenario: [B2B-PA-SEND_PG_5] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -60,7 +60,7 @@ Feature: invio notifiche b2b per la persona giuridica
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "409"
 
-  @testLigth
+  @testLite
   Scenario: [B2B-PA-SEND_PG_9] invio notifiche digitali mono destinatario senza physicalAddress (p.giuridica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
