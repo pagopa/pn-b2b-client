@@ -351,7 +351,9 @@ public class SharedSteps {
                 .senderDenomination(notificationRequest.getSenderDenomination())
                 .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination(notificationRequest.getRecipients().get(0).getDenomination())
-                        .taxId(notificationRequest.getRecipients().get(0).getTaxId())));
+                        .taxId(notificationRequest.getRecipients().get(0).getTaxId())
+                        .recipientType(notificationRequest.getRecipients().get(0).getRecipientType())));
+
     }
 
 
