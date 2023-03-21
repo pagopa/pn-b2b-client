@@ -39,7 +39,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
     #ok_RIS
     #fail_RIS
@@ -64,7 +64,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@fail_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
     #ok_AR
     #ok_890
@@ -118,7 +118,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
   @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
@@ -129,7 +129,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
   @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
@@ -140,7 +140,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con eventCode "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
   @dev @ignore
   Scenario: [B2B_TIMELINE_ANALOG_7] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
