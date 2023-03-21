@@ -69,7 +69,7 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
-                numCheck = 3;
+                numCheck = 6;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
