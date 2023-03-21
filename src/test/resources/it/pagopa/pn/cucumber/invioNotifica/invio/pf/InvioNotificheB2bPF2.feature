@@ -95,6 +95,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
+
   Scenario: [B2B-PA-SEND-31] Invio notifica senza indirizzo fisico scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -104,7 +105,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  @testLite
+
   Scenario: [B2B-PA-SEND-33] Invio notifica senza indirizzo fisico scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

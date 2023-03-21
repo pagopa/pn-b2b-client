@@ -70,7 +70,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     And "Mario Gherkin" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
 
-  @testLite
+
   Scenario: [WEB-PF-RECIPIENT_7] Invio notifica digitale altro destinatario e recupero tramite codice IUN API WEB_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

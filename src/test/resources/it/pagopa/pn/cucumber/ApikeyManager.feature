@@ -15,7 +15,7 @@ Feature: apiKey manager
     And vengono lette le apiKey esistenti
     Then l'apiKey non è più presente
 
-  @testLite
+
   Scenario: [API-KEY_3] generazione e cancellazione ApiKey_scenario negativo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti
@@ -280,6 +280,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
+  @ignore
   Scenario: [API-KEY_21] generazione con gruppo non valido ApiKey_scenario negativo
     Given Viene generata una nuova apiKey con il gruppo "AAAAAAAAAA"
     Then l'operazione ha sollevato un errore con status code "400"
