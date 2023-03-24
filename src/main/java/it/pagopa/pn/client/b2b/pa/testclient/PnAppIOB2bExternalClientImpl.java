@@ -53,7 +53,7 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient{
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIdx, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnDocumentsApi.getSentNotificationDocument(iun, docIdx, xPagopaCxTaxid);
+        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid);
     }
 
 
