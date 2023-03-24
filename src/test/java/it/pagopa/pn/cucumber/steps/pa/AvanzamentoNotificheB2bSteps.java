@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -508,7 +509,8 @@ public class AvanzamentoNotificheB2bSteps {
         PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
-        paymentEventPagoPa.setPaymentDate(OffsetDateTime.now());
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
         paymentEventPagoPa.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();

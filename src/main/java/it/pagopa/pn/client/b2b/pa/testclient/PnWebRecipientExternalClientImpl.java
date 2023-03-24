@@ -14,6 +14,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -87,12 +88,12 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApi.getReceivedNotification(iun, mandateId);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String mandateId) throws RestClientException {
+    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
         return recipientReadApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId);
     }
 
 
-    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, String mandateId) throws RestClientException {
+    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, UUID mandateId) throws RestClientException {
         return recipientReadApi.getReceivedNotificationDocument(iun, docIdx, mandateId);
     }
 
