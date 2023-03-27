@@ -409,7 +409,7 @@ public class AvanzamentoNotificheB2bSteps {
             interruptedException.printStackTrace();
         }
 
-        priceVerification(price, null);
+        priceVerification(price, null, 0);
     }
 
 
@@ -421,16 +421,27 @@ public class AvanzamentoNotificheB2bSteps {
             interruptedException.printStackTrace();
         }
 
-        priceVerification(price, null);
+        priceVerification(price, null, 0);
     }
 
+    @Then("viene verificato il costo = {string} della notifica per l'utente {int}")
+    public void notificationPriceVerificationPerDestinatario(String price, Integer destinatario) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 2);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
 
-    private void priceVerification(String price, String date) {
-        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId(),
-                sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
+        priceVerification(price, null, destinatario);
+    }
+
+    private void priceVerification(String price, String date, Integer destinatario) {
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayment().getCreditorTaxId(),
+                sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayment().getNoticeCode());
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
             if (price != null) {
+                logger.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
                 Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
             }
             if (date != null) {
