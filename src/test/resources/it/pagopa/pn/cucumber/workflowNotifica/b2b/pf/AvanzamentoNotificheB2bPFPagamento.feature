@@ -31,7 +31,6 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
 
-  @ignore
   Scenario: [B2B-PA-PAY_4] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
