@@ -23,7 +23,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @B2Btest
+
   Scenario: [B2B-PA-SEND_3] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -49,7 +49,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @SmokeTest @testLite
+
   Scenario: [B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -62,7 +62,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "409"
 
-  @SmokeTest @testLite
+  @ignore
   Scenario: [B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

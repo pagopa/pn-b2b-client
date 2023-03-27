@@ -70,7 +70,7 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
-                numCheck = 6;
+                numCheck = 3;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
@@ -510,8 +510,7 @@ public class AvanzamentoNotificheB2bSteps {
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        //TODO: non appena sarà disponibile l'openapi aggiornata passare stringa formattata
-        paymentEventPagoPa.setPaymentDate(/*fmt.format(*/OffsetDateTime.now());
+        paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
         paymentEventPagoPa.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -648,6 +647,38 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertNotNull(timelineElement);
             Assertions.assertEquals(timelineElement.getDetails().getEventCode(), code);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con responseStatus {string}")
+    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConResponseStatus(String timelineEventCategory, String code) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
+            Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
