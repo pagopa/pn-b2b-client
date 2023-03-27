@@ -1,5 +1,6 @@
 Feature: Download legalFact per la persona giuridica
 
+  @testLite
   Scenario: [B2B_PA_LEGALFACT_PG_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -18,6 +19,7 @@ Feature: Download legalFact per la persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
+  @testLite
   Scenario: [B2B_PA_LEGALFACT_PG_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

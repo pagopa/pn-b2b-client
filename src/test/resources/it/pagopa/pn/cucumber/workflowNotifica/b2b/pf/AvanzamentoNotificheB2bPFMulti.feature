@@ -29,6 +29,7 @@ Feature: avanzamento notifiche b2b
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
+  @dev
   Scenario: [B2B-TIMELINE_MULTI_4] Invio notifica multi destinatario SCHEDULE_ANALOG_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |

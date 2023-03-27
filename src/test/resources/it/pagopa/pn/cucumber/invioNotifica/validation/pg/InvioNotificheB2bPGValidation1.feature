@@ -160,7 +160,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
 
-  @SmokeTest
+
   Scenario Outline: [B2B-PA-SEND_VALID_PG_9] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | <subject> |

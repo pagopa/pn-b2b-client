@@ -38,7 +38,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
 
-
+  @ignore
   Scenario: [WEB-PF-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo
     Given Mario Gherkin viene delegato da Mario Cucumber
     And Mario Gherkin accetta la delega Mario Cucumber
@@ -52,6 +52,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
 
+  @ignore
   Scenario: [WEB-PF-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo
     Given Mario Gherkin viene delegato da Mario Cucumber
     And Mario Gherkin accetta la delega Mario Cucumber

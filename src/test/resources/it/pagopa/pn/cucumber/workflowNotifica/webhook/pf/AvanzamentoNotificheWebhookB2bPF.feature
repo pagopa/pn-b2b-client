@@ -3,6 +3,7 @@ Feature: avanzamento notifiche webhook b2b
   Background:
     Given vengono cancellati tutti gli stream presenti del "Comune_1"
 
+  @testLite
   Scenario: [B2B-STREAM_STATUS_1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
     When si crea il nuovo stream per il "Comune_1"
@@ -10,6 +11,7 @@ Feature: avanzamento notifiche webhook b2b
     And si cancella lo stream creato
     And viene verificata la corretta cancellazione
 
+  @testLite
   Scenario: [B2B-STREAM_TIMELINE_1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     When si crea il nuovo stream per il "Comune_1"
@@ -61,7 +63,7 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "GET_ADDRESS"
 
-  @clean
+  @clean @testLite
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -83,7 +85,7 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
-  @clean
+  @clean @testLite
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -96,7 +98,7 @@ Feature: avanzamento notifiche webhook b2b
     And "Mario Gherkin" legge la notifica
     Then si verifica nello stream del "Comune_1" che la notifica abbia lo stato VIEWED
 
-  @clean
+  @clean @testLite
   Scenario: [B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

@@ -14,7 +14,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "ACCEPTED"
 
-  @cleanC2
+  @cleanC2 @testLite
   Scenario: [B2B-STREAM_TIMELINE_PG_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -36,7 +36,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "AAR_GENERATION"
 
-  @cleanC2
+  @cleanC2  @testLite
   Scenario: [B2B-STREAM_TIMELINE_PG_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -58,7 +58,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERING"
 
-  @cleanC2
+  @cleanC2 @testLite
   Scenario: [B2B-STREAM_TIMELINE_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

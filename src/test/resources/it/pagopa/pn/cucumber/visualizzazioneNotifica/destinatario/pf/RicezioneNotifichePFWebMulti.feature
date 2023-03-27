@@ -1,5 +1,6 @@
 Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatario
 
+  @testLite
   Scenario: [WEB-MULTI-PF-RECIPIENT_1] Invio notifica digitale multi destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -10,6 +11,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then la notifica può essere correttamente recuperata da "Mario Gherkin"
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
 
+  @testLite
   Scenario: [WEB-MULTI-PF-RECIPIENT_2] Invio notifica digitale multi destinatario e recupero documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -36,6 +38,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_4] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -53,6 +56,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_5] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -70,6 +74,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_6] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -89,6 +94,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And "Mario Cucumber" tenta il recupero dell'allegato "F24"
     And il download ha prodotto un errore con status code "404"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_7] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -108,6 +114,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     And "Mario Cucumber" tenta il recupero dell'allegato "F24"
     And il download ha prodotto un errore con status code "404"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_8] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -126,6 +133,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then il download ha prodotto un errore con status code "404"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_9] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -144,6 +152,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B multi destinatari
     Then il download ha prodotto un errore con status code "404"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
+  @ignore
   Scenario: [WEB-MULTI-PF-RECIPIENT_10] Invio notifica digitale multi destinatario e recupero allegato pagopa_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

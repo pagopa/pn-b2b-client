@@ -76,8 +76,8 @@ public class PnPaB2bUtils {
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
 
         }

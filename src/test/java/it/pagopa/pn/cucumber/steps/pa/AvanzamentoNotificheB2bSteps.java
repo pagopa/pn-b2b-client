@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -139,7 +140,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 2, waiting * 3);
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 16, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 4, waiting * 5);
                 break;
             case "NOT_HANDLED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOT_HANDLED, 16, sharedSteps.getWorkFlowWait());
@@ -168,14 +169,17 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_DOMICILE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_DOMICILE, 16, sharedSteps.getWorkFlowWait());
                 break;
+            case "SEND_ANALOG_PROGRESS":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_PROGRESS, 4, waiting * 5);
+                break;
             case "SEND_ANALOG_FEEDBACK":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_FEEDBACK, 3, waiting * 6);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_FEEDBACK, 4, waiting * 6);
                 break;
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER, 3, waiting * 4);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER, 4, waiting * 5);
                 break;
             case "SEND_SIMPLE_REGISTERED_LETTER":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER, 3, waiting * 4);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER, 4, waiting * 5);
                 break;
             case "PAYMENT":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.PAYMENT, 16, sharedSteps.getWorkFlowWait());
@@ -333,6 +337,16 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementInternalCategory = TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW;
                 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
                 category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            case "DIGITAL_DELIVERY_FAILURE":
+                timelineElementInternalCategory = TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+                break;
+            case "SEND_ANALOG_PROGRESS":
+                timelineElementInternalCategory = TimelineElementCategory.SEND_ANALOG_PROGRESS;
+                timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
+                category = LegalFactCategory.ANALOG_DELIVERY;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -495,7 +509,8 @@ public class AvanzamentoNotificheB2bSteps {
         PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
-        paymentEventPagoPa.setPaymentDate(OffsetDateTime.now());
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
         paymentEventPagoPa.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -632,6 +647,38 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertNotNull(timelineElement);
             Assertions.assertEquals(timelineElement.getDetails().getEventCode(), code);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con responseStatus {string}")
+    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConResponseStatus(String timelineEventCategory, String code) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
+            Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }

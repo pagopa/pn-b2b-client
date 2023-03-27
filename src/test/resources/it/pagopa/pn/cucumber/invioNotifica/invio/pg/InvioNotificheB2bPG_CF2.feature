@@ -21,6 +21,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+  @testLite
   Scenario: [B2B-PA-SEND_PG-CF_18] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -39,7 +40,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     When la notifica viene inviata dal "Comune_Multi"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
 
-  Scenario: [B2B-PA-SEND_PG-CF_20] Invio notifica digitale mono destinatario senza pagamento
+  Scenario: [B2B-PA-SEND_PG-CF_20] Invio notifica digitale mono destinatario con pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -50,6 +51,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     And l'importo della notifica è 2550
 
+  @testLite
   Scenario: [B2B-PA-SEND_PG-CF_21] Invio notifica digitale mono destinatario physicalCommunication-REGISTERED_LETTER_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -60,6 +62,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+  @testLite
   Scenario: [B2B-PA-SEND_PG-CF_22] Invio notifica digitale mono destinatario physicalCommunication-AR_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

@@ -1,5 +1,5 @@
 Feature: Download da persona giuridica
-
+  @testLite
   Scenario: [B2B-DOWN-PG_1] download documento notificato_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -11,7 +11,7 @@ Feature: Download da persona giuridica
     When viene richiesto il download del documento "NOTIFICA"
     Then il download si conclude correttamente
 
-
+  @testLite
   Scenario: [B2B-DOWN-PG_2] download documento pagopa_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
