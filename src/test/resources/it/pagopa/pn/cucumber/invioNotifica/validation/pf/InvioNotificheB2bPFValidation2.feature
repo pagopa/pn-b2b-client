@@ -1,6 +1,6 @@
 Feature: Validazione campi invio notifiche b2b
 
-  @ignore
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_9] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -38,7 +38,7 @@ Feature: Validazione campi invio notifiche b2b
       | Česká republika                  |
       | Mālo Tuto’atasi o Sāmoa          |
 
-  @ignore
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -58,6 +58,7 @@ Feature: Validazione campi invio notifiche b2b
       | via ì         |
       | via ò         |
 
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_11] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -81,7 +82,7 @@ Feature: Validazione campi invio notifiche b2b
       #5) Lettera omocodia non contemplata (seconda serie di 2 numeri)
       #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
 
-  @ignore
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -95,7 +96,7 @@ Feature: Validazione campi invio notifiche b2b
       | 0_CHAR  |
       | 81_CHAR |
 
-  @ignore
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_13] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -108,7 +109,7 @@ Feature: Validazione campi invio notifiche b2b
       | 0_CHAR  |
       | 81_CHAR |
 
-  @ignore
+  @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_14] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

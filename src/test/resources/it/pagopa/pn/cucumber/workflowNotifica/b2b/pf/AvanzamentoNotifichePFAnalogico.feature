@@ -172,7 +172,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | senderDenomination | Comune di palermo |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
+      | physicalAddress_address | Via@fail-Discovery_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
@@ -183,7 +183,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | senderDenomination | Comune di palermo |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Discovery_890 |
+      | physicalAddress_address | Via@fail-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
