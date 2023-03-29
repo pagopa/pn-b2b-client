@@ -61,10 +61,10 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
-    And viene verificato il costo = "267" della notifica per l'utente 0
+    And viene verificato il costo = "277" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica con allegato e verifica costo con FCU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

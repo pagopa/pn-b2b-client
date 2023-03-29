@@ -18,7 +18,6 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "277" della notifica
 
-   #Non Viene Incrementato il Costo che è sempre zero forfettario non specificato
   @dev
   Scenario: [B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
@@ -49,7 +48,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And viene verificato il costo = "277" della notifica
+    And viene verificato il costo = "399" della notifica
 
   @dev
   Scenario: [B2B_COSTO_ANALOG_PF_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
