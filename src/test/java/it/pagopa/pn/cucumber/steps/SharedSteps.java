@@ -32,6 +32,9 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashMap;
 import java.util.List;
 
+import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_NOTICE_CODE_OPTIONAL;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
+
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SharedSteps {
 
@@ -267,6 +270,16 @@ public class SharedSteps {
 
         this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
         this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCode(noticeCode);
+    }
+
+    @And("viene configurato noticeCodeAlternative uguale a noticeCode")
+    public void vieneConfiguratoNoticeCodeAlternativeUgualeNoticeCode() {
+        this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCodeAlternative(this.notificationRequest.getRecipients().get(0).getPayment().getNoticeCode());
+    }
+
+    @And("viene configurato noticeCodeAlternative diversi a noticeCode")
+    public void vieneConfiguratoNoticeCodeAlternativeDiversiNoticeCode() {
+        this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCodeAlternative(getValue(new HashMap<>(), PAYMENT_NOTICE_CODE_OPTIONAL.key));
     }
 
     @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
@@ -510,12 +523,12 @@ public class SharedSteps {
 
 
     public Integer getWorkFlowWait() {
-        if(workFlowWait == null)return workFlowWaitDefault;
+        if (workFlowWait == null) return workFlowWaitDefault;
         return workFlowWait;
     }
 
     public Integer getWait() {
-        if(wait == null)return waitDefault;
+        if (wait == null) return waitDefault;
         return wait;
     }
 
@@ -554,14 +567,14 @@ public class SharedSteps {
             if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
                 id = elem.get("id");
                 count++;
-                if(GroupPosition.FIRST.equals(position)){
+                if (GroupPosition.FIRST.equals(position)) {
                     break;
                 }
             }
         }
 
         Assertions.assertNotNull(id);
-        if(!GroupPosition.FIRST.equals(position)){
+        if (!GroupPosition.FIRST.equals(position)) {
             Assertions.assertTrue(count >= 2);
         }
 
@@ -571,16 +584,16 @@ public class SharedSteps {
     @And("viene rimossa se presente la pec di piattaforma di {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
-        try{
+        try {
             List<LegalDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if(legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()){
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
                 logger.info("PEC FOUND AND DELETED");
             }
-        }catch (HttpStatusCodeException httpStatusCodeException){
-            if(httpStatusCodeException.getStatusCode().is4xxClientError()){
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 logger.info("PEC NOT FOUND");
-            }else{
+            } else {
                 throw httpStatusCodeException;
             }
         }
