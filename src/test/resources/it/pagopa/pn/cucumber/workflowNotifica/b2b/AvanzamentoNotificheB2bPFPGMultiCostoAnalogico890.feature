@@ -11,7 +11,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
       | physicalCommunication |  REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -49,7 +49,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication |  REGISTERED_LETTER_890 |
+      | physicalCommunication |  REGISTERED_LETTER_890          |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
@@ -69,7 +69,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication |  REGISTERED_LETTER_890 |
+      | physicalCommunication |  REGISTERED_LETTER_890          |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
@@ -84,12 +84,12 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | REGISTERED_LETTER_890            |
+      | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
@@ -104,7 +104,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "251" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

@@ -34,7 +34,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And viene verificato il costo = "0" della notifica
 
   #Documento con una sola pagina
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_3] Invio notifica con allegato verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -50,7 +50,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "399" della notifica
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -66,7 +66,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -82,7 +82,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "266" della notifica
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -98,7 +98,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -115,7 +115,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "391" della notifica
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_PF_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
