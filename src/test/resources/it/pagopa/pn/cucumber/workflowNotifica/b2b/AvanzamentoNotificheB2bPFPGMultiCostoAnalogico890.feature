@@ -22,7 +22,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "277" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
