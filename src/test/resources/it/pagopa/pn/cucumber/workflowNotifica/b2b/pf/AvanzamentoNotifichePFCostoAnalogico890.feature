@@ -97,7 +97,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_COSTO_ANALOG_PF_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -112,9 +112,9 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And viene verificato il costo = "391" della notifica
+    And viene verificato il costo = "266" della notifica
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_COSTO_ANALOG_PF_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
