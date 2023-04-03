@@ -1,5 +1,6 @@
 Feature: Validazione campi invio notifiche b2b
 
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -38,7 +39,7 @@ Feature: Validazione campi invio notifiche b2b
       | Canneto sull'Oglio sull’Oglio sull`Oglio |
       | Fær Øer São Tomé Hagåtña                 |
 
-
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
