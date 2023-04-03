@@ -63,3 +63,19 @@ Feature: avanzamento b2b persona giuridica pagamento
     And destinatario Cucumber srl
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
+
+  @ignore
+  Scenario: [B2B-PA-PG-PAY_7] Invio e visualizzazione notifica e verifica amount e effectiveDate
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | 70472431207         |
+      | denomination     | VeryBadCaligola Snc |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente
