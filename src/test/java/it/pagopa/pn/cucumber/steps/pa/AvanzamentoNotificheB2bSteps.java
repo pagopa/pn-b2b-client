@@ -217,7 +217,20 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
 
+    @And("viene verificato il campo sendRequestId dell' evento di timeline {string}")
+    public void vieneVerificatoCampoSendRequestIdEventoTimeline(String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+        Assertions.assertNotNull(timelineElement);
+        Assertions.assertNotNull(timelineElement.getDetails());
+        Assertions.assertNotNull(timelineElement.getDetails().getSendRequestId());
+        String sendRequestId = timelineElement.getDetails().getSendRequestId();
+        TimelineElement timelineElementRelative = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getElementId().equals(sendRequestId)).findAny().orElse(null);
+        Assertions.assertNotNull(timelineElementRelative);
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} per l'utente {int}")
