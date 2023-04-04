@@ -32,6 +32,8 @@ public enum NotificationValue {
     PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Milano",false),
     PHYSICAL_ADDRESS_MUNICIPALITYDETAILS("physicalAddress_municipalityDetails","Milano",false),
     PHYSICAL_ADDRESS_AT("at","Presso",false),
+
+    PHYSICAL_ADDRESS_DETAILS("physicalAddress_addressDetails","scala b",false),
     PHYSICAL_ADDRESS_PROVINCE("physicalAddress_province","MI",false),
     PHYSICAL_ADDRESS_STATE("physicalAddress_State","ITALIA",false),
     PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","40100",false),

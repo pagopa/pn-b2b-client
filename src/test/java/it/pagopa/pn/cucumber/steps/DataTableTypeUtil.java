@@ -62,6 +62,7 @@ public class DataTableTypeUtil {
                 )
                 .physicalAddress(getValue(data,PHYSICAL_ADDRES.key) == null? null: new NotificationPhysicalAddress()
                         .address(getValue(data,PHYSICAL_ADDRESS_ADDRESS.key))
+                        .addressDetails(getValue(data,PHYSICAL_ADDRESS_DETAILS.key))
                         .municipality(getValue(data,PHYSICAL_ADDRESS_MUNICIPALITY.key))
                         .at(getValue(data,PHYSICAL_ADDRESS_AT.key))
                         .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
