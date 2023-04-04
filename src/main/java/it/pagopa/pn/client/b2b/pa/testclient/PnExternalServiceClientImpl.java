@@ -58,7 +58,7 @@ public class PnExternalServiceClientImpl {
     }
 
 
-    public HashMap<String, String> safeStorageInfo(String fileKey) throws RestClientException {
+    public SafeStorageResponse safeStorageInfo(String fileKey) throws RestClientException {
         return safeStorageInfoWithHttpInfo(fileKey).getBody();
     }
 
@@ -101,7 +101,141 @@ public class PnExternalServiceClientImpl {
         return invokeAPI(gruopInfoBasePath, "/ext-registry-b2b/pa/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
-    private ResponseEntity<HashMap<String, String>> safeStorageInfoWithHttpInfo(String fileKey) throws RestClientException {
+    public static class SafeStorageResponse{
+
+            String key;
+            String versionId;
+            String documentType;
+            String documentStatus;
+            String contentType;
+            Integer contentLength;
+            String checksum;
+           String retentionUntil;
+           Download download;
+
+           public SafeStorageResponse(){}
+
+        public String getKey() {
+            return key;
+        }
+
+        public void setKey(String key) {
+            this.key = key;
+        }
+
+        public String getVersionId() {
+            return versionId;
+        }
+
+        public void setVersionId(String versionId) {
+            this.versionId = versionId;
+        }
+
+        public String getDocumentType() {
+            return documentType;
+        }
+
+        public void setDocumentType(String documentType) {
+            this.documentType = documentType;
+        }
+
+        public String getDocumentStatus() {
+            return documentStatus;
+        }
+
+        public void setDocumentStatus(String documentStatus) {
+            this.documentStatus = documentStatus;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+
+        public void setContentType(String contentType) {
+            this.contentType = contentType;
+        }
+
+        public Integer getContentLength() {
+            return contentLength;
+        }
+
+        public void setContentLength(Integer contentLength) {
+            this.contentLength = contentLength;
+        }
+
+        public String getChecksum() {
+            return checksum;
+        }
+
+        public void setChecksum(String checksum) {
+            this.checksum = checksum;
+        }
+
+        public String getRetentionUntil() {
+            return retentionUntil;
+        }
+
+        public void setRetentionUntil(String retentionUntil) {
+            this.retentionUntil = retentionUntil;
+        }
+
+        public Download getDownload() {
+            return download;
+        }
+
+        public void setDownload(Download download) {
+            this.download = download;
+        }
+
+        @Override
+        public String toString() {
+            return "SafeStorageResponse{" +
+                    "key='" + key + '\'' +
+                    ", versionId='" + versionId + '\'' +
+                    ", documentType='" + documentType + '\'' +
+                    ", documentStatus='" + documentStatus + '\'' +
+                    ", contentType='" + contentType + '\'' +
+                    ", contentLength=" + contentLength +
+                    ", checksum='" + checksum + '\'' +
+                    ", retentionUntil='" + retentionUntil + '\'' +
+                    ", download=" + download +
+                    '}';
+        }
+
+        public static class Download{
+               String url;
+               String retryAfter;
+
+            @Override
+            public String toString() {
+                return "Download{" +
+                        "url='" + url + '\'' +
+                        ", retryAfter='" + retryAfter + '\'' +
+                        '}';
+            }
+
+            public Download(){}
+
+            public String getUrl() {
+                return url;
+            }
+
+            public void setUrl(String url) {
+                this.url = url;
+            }
+
+            public String getRetryAfter() {
+                return retryAfter;
+            }
+
+            public void setRetryAfter(String retryAfter) {
+                this.retryAfter = retryAfter;
+            }
+        }
+
+    }
+
+    private ResponseEntity<SafeStorageResponse> safeStorageInfoWithHttpInfo(String fileKey) throws RestClientException {
         Object postBody = null;
 
         if (fileKey == null) {
@@ -119,13 +253,13 @@ public class PnExternalServiceClientImpl {
 
 
         final String[] localVarAccepts = {
-                "application/json", "application/problem+json"
+                "application/json", "application/problem+json","*/*"
         };
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
 
-        ParameterizedTypeReference<HashMap<String, String>> returnType = new ParameterizedTypeReference<>() {
+        ParameterizedTypeReference<SafeStorageResponse> returnType = new ParameterizedTypeReference<>() {
         };
         return invokeAPI(safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }

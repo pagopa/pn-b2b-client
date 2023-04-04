@@ -217,7 +217,8 @@ Feature: apiKey manager
     And l'apiKey viene cancellata
     When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo differente del invio notifica
     And viene impostata l'apikey appena generata
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Then si tenta il recupero dal sistema tramite codice IUN
+    And il recupero della notifica ha sollevato un errore "404"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 

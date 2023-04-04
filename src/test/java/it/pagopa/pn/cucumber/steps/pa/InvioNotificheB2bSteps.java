@@ -271,10 +271,11 @@ public class InvioNotificheB2bSteps {
 
 
     private boolean checkRetetion(String fileKey, Integer retentionTime) {
-        HashMap<String, String> stringStringHashMap = safeStorageClient.safeStorageInfo(fileKey);
+        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
+        System.out.println(safeStorageResponse);
         LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
         OffsetDateTime now = OffsetDateTime.of(localDateTimeNow, ZoneOffset.of("Z"));
-        OffsetDateTime retentionUntil = OffsetDateTime.parse(stringStringHashMap.get("retentionUntil"));
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
         logger.info("now: " + now);
         logger.info("retentionUntil: " + retentionUntil);
         long between = ChronoUnit.DAYS.between(now, retentionUntil);

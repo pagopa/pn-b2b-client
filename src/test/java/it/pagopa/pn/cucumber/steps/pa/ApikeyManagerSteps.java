@@ -156,7 +156,7 @@ public class ApikeyManagerSteps {
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
-    @Then("l'invio della notifica ha sollevato un errore {string}")
+    @Then("(l'invio)(il recupero) della notifica ha sollevato un errore {string}")
     public void lInvioDellaNotificaHaSollevatoUnErrore(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
@@ -264,4 +264,12 @@ public class ApikeyManagerSteps {
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
+    @Then("si tenta il recupero dal sistema tramite codice IUN")
+    public void siTentaIlRecuperoDalSistemaTramiteCodiceIUN() {
+        try {
+            sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getSentNotification().getIun());
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
 }
