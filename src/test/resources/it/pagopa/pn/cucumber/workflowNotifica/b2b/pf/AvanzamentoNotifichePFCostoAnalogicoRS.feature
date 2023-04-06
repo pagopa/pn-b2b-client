@@ -8,14 +8,13 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin e:
-      | digitalDomicile | NULL |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "233" della notifica
 
   @dev @ignore
