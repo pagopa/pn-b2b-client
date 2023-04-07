@@ -5,14 +5,13 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "233" della notifica
 
   @dev @ignore
@@ -20,14 +19,13 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -35,10 +33,9 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -46,7 +43,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "224" della notifica
 
   @dev @ignore
@@ -54,10 +51,9 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -65,7 +61,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -73,15 +69,14 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "355" della notifica
 
   @dev @ignore
@@ -89,15 +84,14 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -105,11 +99,10 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm           | SI             |
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -117,7 +110,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "325" della notifica
 
   @dev @ignore
@@ -125,11 +118,10 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm           | SI             |
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -137,7 +129,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -145,15 +137,14 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
       | physicalAddress_zip     | 39100     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "212" della notifica
 
   @dev @ignore
@@ -161,15 +152,14 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
       | physicalAddress_zip     | 39100     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -177,10 +167,9 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -188,7 +177,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "302" della notifica
 
   @dev @ignore
@@ -196,10 +185,9 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -207,7 +195,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -215,16 +203,15 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_zip     | 39100     |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "313" della notifica
 
   @dev @ignore
@@ -232,16 +219,15 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_zip     | 39100     |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
   @dev @ignore
@@ -249,11 +235,10 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm           | SI         |
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -261,7 +246,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "413" della notifica
 
   @dev @ignore
@@ -269,11 +254,10 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm           | SI         |
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -281,6 +265,6 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_address      | Via@ok_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 

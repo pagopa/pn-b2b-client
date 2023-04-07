@@ -8,17 +8,16 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "233" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -27,17 +26,16 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -46,10 +44,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_State        | Francia    |
       | physicalAddress_municipality | Parigi     |
       | physicalAddress_zip          | 75007      |
@@ -60,7 +57,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "223" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -69,10 +66,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Francia    |
       | physicalAddress_municipality | Parigi     |
       | physicalAddress_zip          | 75007      |
@@ -83,7 +79,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -92,10 +88,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -106,7 +101,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "223" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -115,10 +110,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -129,7 +123,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -138,18 +132,17 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "355" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -158,18 +151,17 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -178,11 +170,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm           | SI             |
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -193,7 +184,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "325" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -202,11 +193,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm           | SI             |
-      | digitalDomicile              | NULL           |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -217,7 +207,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -226,10 +216,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
       | physicalAddress_zip     | 39100     |
     And destinatario Cucumber Society
@@ -237,7 +226,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "212" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -246,10 +235,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_AR |
       | physicalAddress_zip     | 38121     |
     And destinatario Cucumber Society
@@ -257,7 +245,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -266,10 +254,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -280,7 +267,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "302" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -289,10 +276,9 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -303,7 +289,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -312,11 +298,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_zip     | 39100     |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
@@ -324,7 +309,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "212" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -333,11 +318,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI        |
-      | digitalDomicile         | NULL      |
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_zip     | 39100     |
       | physicalAddress_address | Via@ok_RS |
     And destinatario Cucumber Society
@@ -345,7 +329,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
@@ -354,11 +338,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm           | SI         |
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -369,7 +352,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "413" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
@@ -378,11 +361,10 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | SIMPLE_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm           | SI         |
-      | digitalDomicile              | NULL       |
+      | digitalDomicile_address      | test@fail.it |
       | physicalAddress_State        | Brasile        |
       | physicalAddress_municipality | Florianópolis  |
       | physicalAddress_zip          | 75007          |
@@ -393,6 +375,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     Then viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
