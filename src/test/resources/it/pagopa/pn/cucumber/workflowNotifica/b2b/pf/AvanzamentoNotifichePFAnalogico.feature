@@ -187,7 +187,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  #@ok_AR
+   #@ok_AR
    #@ok_890
   @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_11] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
@@ -199,7 +199,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | denomination | Giovanna D'Arco |
       | taxId | DRCGNN12A46A326K |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@fail_AR |
+      | physicalAddress_address | Via@ok_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
