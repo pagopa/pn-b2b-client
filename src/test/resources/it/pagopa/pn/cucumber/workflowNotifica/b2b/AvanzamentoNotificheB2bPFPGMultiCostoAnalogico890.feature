@@ -3,7 +3,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -23,7 +23,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "399" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -43,7 +43,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -83,7 +83,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -125,7 +125,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_7] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

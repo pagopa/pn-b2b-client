@@ -1,6 +1,6 @@
 Feature: costo notifica con workflow analogico per persona giuridica 890
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_PG_890_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -16,7 +16,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "399" della notifica
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_PG_890_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -32,7 +32,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_PG_890_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -64,7 +64,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_PG_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -98,7 +98,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "0" della notifica
 
-  @dev
+  @dev @costoCart
   Scenario: [B2B_COSTO_ANALOG_PG_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
