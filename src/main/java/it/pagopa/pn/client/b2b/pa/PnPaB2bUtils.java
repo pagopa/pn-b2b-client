@@ -79,10 +79,37 @@ public class PnPaB2bUtils {
 //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
-
         }
 
         log.info("New Notification Request {}", request);
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequest request) throws IOException {
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-00000000000000000000000000000000.pdf");
+        }
+
         NewNotificationResponse response = client.sendNewNotification( request );
         log.info("New Notification Request response {}", response);
         return response;

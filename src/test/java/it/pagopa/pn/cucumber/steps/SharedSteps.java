@@ -326,6 +326,11 @@ public class SharedSteps {
         sendNotificationWithError();
     }
 
+    @When("la notifica viene inviata tramite api b2b senza preload allegato")
+    public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato() {
+        sendNotificationWithErrorNotFindAllegato();
+    }
+
     private void sendNotification() {
         try {
             Assertions.assertDoesNotThrow(() -> {
@@ -357,6 +362,19 @@ public class SharedSteps {
             }
         }
     }
+
+    private void sendNotificationWithErrorNotFindAllegato() {
+        try {
+            this.newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
+        } catch (HttpStatusCodeException | IOException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+
 
     private void generateNewNotification() {
         assert this.notificationRequest.getRecipients().get(0).getPayment() != null;

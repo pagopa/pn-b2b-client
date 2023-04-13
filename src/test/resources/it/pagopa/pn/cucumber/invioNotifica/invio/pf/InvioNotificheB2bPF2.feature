@@ -114,3 +114,11 @@ Feature: invio notifiche b2b
       | physicalAddress | NULL |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
+
+  @testLite
+  Scenario: [B2B-PA-SEND_34] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b senza preload allegato
+    Then l'operazione ha prodotto un errore con status code "400"
