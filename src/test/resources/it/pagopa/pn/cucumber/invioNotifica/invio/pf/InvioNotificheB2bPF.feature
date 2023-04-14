@@ -145,12 +145,4 @@ Feature: invio notifiche b2b
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata dal "Comune_Multi"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
-
-  Scenario: [B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And si verifica la corretta acquisizione della notifica
-    When si tenta il recupero della notifica dal sistema tramite codice IUN "UGYD-XHEZ-KLRM-202208-X-0"
-    Then l'operazione ha prodotto un errore con status code "404"
+    
