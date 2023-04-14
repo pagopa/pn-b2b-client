@@ -143,6 +143,34 @@ public class PnPaB2bUtils {
         return iun == null? null : client.getSentNotification( iun );
     }
 
+
+    public String waitForRequestRefused( NewNotificationResponse response) {
+
+        log.info("Request status for " + response.getNotificationRequestId() );
+        NewNotificationRequestStatusResponse status = null;
+        long startTime = System.currentTimeMillis();
+        for( int i = 0; i < 2; i++ ) {
+
+            try {
+                Thread.sleep( getAcceptedWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException( exc );
+            }
+
+            status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
+
+            log.info("New Notification Request status {}", status.getNotificationRequestStatus());
+            if ( "REFUSED".equals( status.getNotificationRequestStatus() )) {
+                break;
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("Execution time {}ms",(endTime - startTime));
+        String iun = status.getIun();
+
+        return iun == null? null : iun;
+    }
+
     public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {
 
         for (NotificationDocument doc: fsn.getDocuments()) {

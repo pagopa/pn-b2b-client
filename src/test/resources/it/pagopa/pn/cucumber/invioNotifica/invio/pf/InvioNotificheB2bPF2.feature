@@ -120,5 +120,5 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata

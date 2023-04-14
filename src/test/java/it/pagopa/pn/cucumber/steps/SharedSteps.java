@@ -58,6 +58,7 @@ public class SharedSteps {
             .build();
 
     private boolean groupToSet = true;
+    private String iun = null;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -309,7 +310,7 @@ public class SharedSteps {
         sendNotification();
     }
 
-    @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi ACCEPTED")
+    @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paType) {
         selectPA(paType);
         setSenderTaxIdFromProperties();
@@ -378,7 +379,7 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+                iun = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
             try {
@@ -387,7 +388,6 @@ public class SharedSteps {
                 logger.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
             }
-           // Assertions.assertNull(notificationResponseComplete);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -645,7 +645,7 @@ public class SharedSteps {
 
     @Then("si verifica che la notifica non viene accettata")
     public void verificaNotificaNoAccept() {
-        Assertions.assertNull(notificationResponseComplete);
+        Assertions.assertNull(iun);
     }
 
 }
