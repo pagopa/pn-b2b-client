@@ -236,6 +236,30 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertNotNull(timelineElementRelative);
     }
 
+    @And("viene verificato il campo serviceLevel dell' evento di timeline {string} sia valorizzato con {string}")
+    public void vieneVerificatoCampoServiceLevelEventoTimeline(String timelineEventCategory, String value) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        ServiceLevel level;
+        switch (value){
+            case "AR_REGISTERED_LETTER":
+                level = ServiceLevel.AR_REGISTERED_LETTER;
+                break;
+            case "REGISTERED_LETTER_890":
+                level = ServiceLevel.REGISTERED_LETTER_890;
+                break;
+            default:
+                throw new IllegalArgumentException();
+
+        }
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+        System.out.println("TIMELINE_ELEMENT: " + timelineElement);
+        Assertions.assertNotNull(timelineElement);
+        Assertions.assertNotNull(timelineElement.getDetails());
+        Assertions.assertEquals(timelineElement.getDetails().getServiceLevel(), level);
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} per l'utente {int}")
     public void readingEventUpToTheTimelineElementOfNotificationPerUtente(String timelineEventCategory, Integer destinatario) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
