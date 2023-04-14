@@ -297,6 +297,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
@@ -321,6 +322,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
@@ -345,6 +347,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |

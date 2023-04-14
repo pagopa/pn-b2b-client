@@ -161,6 +161,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Cucumber Analogic e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
@@ -185,6 +186,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Cucumber Analogic e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
@@ -209,6 +211,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Cucumber Analogic e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
