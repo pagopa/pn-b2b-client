@@ -389,6 +389,8 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
 
+            Assertions.assertNull(iun);
+
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";

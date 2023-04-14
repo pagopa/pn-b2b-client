@@ -238,5 +238,5 @@ Feature: avanzamento notifiche webhook b2b
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"
-    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica che la notifica non viene accettata
+    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_1" e si attende che lo stato diventi REFUSED
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "REFUSED"

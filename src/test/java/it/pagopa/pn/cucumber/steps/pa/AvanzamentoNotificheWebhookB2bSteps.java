@@ -170,6 +170,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 notificationInternalStatus =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.EFFECTIVE_DATE;
                 break;
+
+            case "REFUSED":
+                notificationStatus = NotificationStatus.REFUSED;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.REFUSED;
+                break;
+
             default:
                 throw new IllegalArgumentException();
         }
