@@ -9,6 +9,7 @@ import io.cucumber.java.BeforeAll;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -308,6 +309,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi ACCEPTED")
+    public void laNotificaVieneInviataSenzaPreloadAllegato(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithErrorNotFindAllegato();
+    }
+
 
     @When("la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk() {
@@ -326,8 +334,10 @@ public class SharedSteps {
         sendNotificationWithError();
     }
 
-    @When("la notifica viene inviata tramite api b2b senza preload allegato")
-    public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato() {
+    @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string}")
+    public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato(String pa) {
+        selectPA(pa);
+        setSenderTaxIdFromProperties();
         sendNotificationWithErrorNotFindAllegato();
     }
 
@@ -364,13 +374,27 @@ public class SharedSteps {
     }
 
     private void sendNotificationWithErrorNotFindAllegato() {
+
         try {
-            this.newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
-        } catch (HttpStatusCodeException | IOException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notificationError = (HttpStatusCodeException) e;
+            Assertions.assertDoesNotThrow(() -> {
+                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
+                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
             }
+           // Assertions.assertNull(notificationResponseComplete);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+
     }
 
 
@@ -617,4 +641,11 @@ public class SharedSteps {
         }
 
     }
+
+
+    @Then("si verifica che la notifica non viene accettata")
+    public void verificaNotificaNoAccept() {
+        Assertions.assertNull(notificationResponseComplete);
+    }
+
 }

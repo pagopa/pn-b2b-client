@@ -120,5 +120,5 @@ Feature: invio notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b senza preload allegato
-    Then l'operazione ha prodotto un errore con status code "400"
+    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica che la notifica non viene accettata

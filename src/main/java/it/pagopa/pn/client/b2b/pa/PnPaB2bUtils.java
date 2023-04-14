@@ -107,7 +107,7 @@ public class PnPaB2bUtils {
         log.info("New Notification Request {}", request);
         if (request.getDocuments()!= null && request.getDocuments().size()>0){
             NotificationDocument notificationDocument = request.getDocuments().get(0);
-            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-00000000000000000000000000000000.pdf");
+            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
         }
 
         NewNotificationResponse response = client.sendNewNotification( request );
