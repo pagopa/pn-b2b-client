@@ -168,7 +168,10 @@ public class PnPaB2bUtils {
         log.info("Execution time {}ms",(endTime - startTime));
         String iun = status.getIun();
 
-        return iun == null? null : iun;
+        String error = status.getErrors().get(0).getCode();
+
+
+        return error == null? null : error;
     }
 
     public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {

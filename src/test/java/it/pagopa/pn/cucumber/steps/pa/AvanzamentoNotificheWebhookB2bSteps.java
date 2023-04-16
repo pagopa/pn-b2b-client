@@ -227,7 +227,46 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     }
 
+    @And("vengono letti gli eventi dello stream del {string} con la verifica di Allegato non trovato")
+    public void readStreamEventsStateRefused(String pa) {
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
 
+        setPaWebhook(pa);
+        NotificationStatus notificationStatus;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
+
+        notificationStatus = NotificationStatus.REFUSED;
+        notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.REFUSED;
+
+        ProgressResponseElement progressResponseElement = null;
+
+
+        for (int i = 0; i < 4; i++) {
+            progressResponseElement = searchInWebhookFileNotFound(notificationStatus,null,0);
+            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
+            if (progressResponseElement != null) {
+                break;
+            }
+
+            try {
+                Thread.sleep(sharedSteps.getWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+
+        try{
+            Assertions.assertNotNull(progressResponseElement);
+            logger.info("EventProgress: " + progressResponseElement);
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    " {IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
+
+    }
 
     @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string}")
     public void readStreamTimelineElement(String pa,String timelineEventCategory) {
@@ -445,6 +484,37 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }else{
             return null;
         }
+    }//searchInWebhookTimelineElement
+
+
+    private <T> ProgressResponseElement searchInWebhookFileNotFound(T timeLineOrStatus,String lastEventId, int deepCount){
+
+        TimelineElementCategory timelineElementCategory = null;
+        NotificationStatus notificationStatus = null;
+        if(timeLineOrStatus instanceof TimelineElementCategory){
+            timelineElementCategory = (TimelineElementCategory)timeLineOrStatus;
+        }else if(timeLineOrStatus instanceof NotificationStatus){
+            notificationStatus = (NotificationStatus)timeLineOrStatus;
+        }else{
+            throw new IllegalArgumentException();
+        }
+        ProgressResponseElement progressResponseElement = null;
+        ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
+        int retryAfter = Integer.parseInt(listResponseEntity.getHeaders().get("retry-after").get(0));
+        List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
+        if(deepCount >= 200){
+            throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
+                    +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount);
+        }
+        ProgressResponseElement lastProgress = null;
+        for(ProgressResponseElement elem: progressResponseElements){
+            if("REFUSED".equalsIgnoreCase(elem.getNewStatus().getValue()) && elem.getValidationErrors() != null && elem.getValidationErrors().size()>0){
+               if (elem.getValidationErrors().get(0).getErrorCode()!= null && "FILE_NOTFOUND".equalsIgnoreCase(elem.getValidationErrors().get(0).getErrorCode()) )
+                   progressResponseElement = elem;
+               break;
+            }
+        }//for
+        return progressResponseElement;
     }//searchInWebhookTimelineElement
 
 

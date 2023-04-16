@@ -60,6 +60,8 @@ public class SharedSteps {
     private boolean groupToSet = true;
     private String iun = null;
 
+    private String errorCode = null;
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Value("${pn.external.api-key-taxID}")
@@ -379,7 +381,7 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
-                iun = b2bUtils.waitForRequestRefused(newNotificationResponse);
+                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
             try {
@@ -389,7 +391,7 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
 
-            Assertions.assertNull(iun);
+            Assertions.assertNotNull(errorCode);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -645,9 +647,9 @@ public class SharedSteps {
     }
 
 
-    @Then("si verifica che la notifica non viene accettata")
+    @Then("si verifica che la notifica non viene accettata per Allegato non trovato")
     public void verificaNotificaNoAccept() {
-        Assertions.assertNull(iun);
+        Assertions.assertTrue("FILE_NOTFOUND".equalsIgnoreCase(errorCode));
     }
 
 }

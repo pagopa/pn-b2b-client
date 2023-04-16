@@ -119,4 +119,4 @@ Feature: invio notifiche b2b per la persona giuridica
       | senderDenomination | Comune di milano |
     And destinatario Gherkin spa
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-    Then si verifica che la notifica non viene accettata
+    Then si verifica che la notifica non viene accettata per Allegato non trovato
