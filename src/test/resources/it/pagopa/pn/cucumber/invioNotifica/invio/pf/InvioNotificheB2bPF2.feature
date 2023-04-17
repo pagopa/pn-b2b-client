@@ -115,7 +115,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
-  @ignore
+
   Scenario: [B2B-PA-SEND_34] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

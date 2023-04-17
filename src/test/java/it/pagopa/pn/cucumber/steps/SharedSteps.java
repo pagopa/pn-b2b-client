@@ -58,7 +58,6 @@ public class SharedSteps {
             .build();
 
     private boolean groupToSet = true;
-    private String iun = null;
 
     private String errorCode = null;
 

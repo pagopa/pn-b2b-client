@@ -229,18 +229,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("vengono letti gli eventi dello stream del {string} con la verifica di Allegato non trovato")
     public void readStreamEventsStateRefused(String pa) {
-        Integer numCheck = 10;
-        Integer waiting = sharedSteps.getWorkFlowWait();
 
         setPaWebhook(pa);
         NotificationStatus notificationStatus;
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
-
         notificationStatus = NotificationStatus.REFUSED;
-        notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.REFUSED;
-
         ProgressResponseElement progressResponseElement = null;
-
 
         for (int i = 0; i < 4; i++) {
             progressResponseElement = searchInWebhookFileNotFound(notificationStatus,null,0);
@@ -265,7 +258,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     " {IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
             throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
         }
-
     }
 
     @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string}")

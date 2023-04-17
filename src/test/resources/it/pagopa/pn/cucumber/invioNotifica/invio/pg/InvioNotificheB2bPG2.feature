@@ -112,7 +112,6 @@ Feature: invio notifiche b2b per la persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @ignore
   Scenario: [B2B-PA-SEND_PG_27] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

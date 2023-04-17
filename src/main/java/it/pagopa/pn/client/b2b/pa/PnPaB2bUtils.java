@@ -166,11 +166,12 @@ public class PnPaB2bUtils {
         }
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms",(endTime - startTime));
-        String iun = status.getIun();
 
-        String error = status.getErrors().get(0).getCode();
-
-
+        String error = null;
+        if (status != null && status.getErrors()!= null && status.getErrors().size()>0) {
+            log.info("Detail status {}", status.getErrors().get(0).getDetail());
+            error = status.getErrors().get(0).getCode();
+        }
         return error == null? null : error;
     }
 
