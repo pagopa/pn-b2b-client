@@ -121,4 +121,13 @@ Feature: invio notifiche b2b
       | subject | invio notifica con cucumber |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-    Then si verifica che la notifica non viene accettata per Allegato non trovato
+    Then si verifica che la notifica non viene accettata causa "ALLEGATO"
+
+  @dev
+  Scenario: [B2B-PA-SEND_35] Invio notifica mono destinatario con taxId non valido scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario
+      | taxId        | LNALNI80A01H501T |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then si verifica che la notifica non viene accettata causa "TAX_ID"

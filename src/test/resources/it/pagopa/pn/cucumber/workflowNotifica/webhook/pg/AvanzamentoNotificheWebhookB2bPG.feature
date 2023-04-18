@@ -147,5 +147,5 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_2"
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_2" e si attende che lo stato diventi REFUSED
-    And si verifica che la notifica non viene accettata per Allegato non trovato
+    And si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then vengono letti gli eventi dello stream del "Comune_2" con la verifica di Allegato non trovato

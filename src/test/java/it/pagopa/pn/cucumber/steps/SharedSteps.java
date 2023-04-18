@@ -311,6 +311,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi REFUSED")
+    public void laNotificaVieneInviataRefused(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationRefused();
+    }
+
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paType) {
         selectPA(paType);
@@ -400,7 +407,27 @@ public class SharedSteps {
 
     }
 
+    private void sendNotificationRefused() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+            });
 
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(errorCode);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
 
 
     private void generateNewNotification() {
@@ -645,10 +672,19 @@ public class SharedSteps {
 
     }
 
+    @Then("si verifica che la notifica non viene accettata causa {string}")
+    public void verificaNotificaNoAccept(String causa) {
+        switch (causa) {
+            case "ALLEGATO":
+                Assertions.assertTrue("FILE_NOTFOUND".equalsIgnoreCase(errorCode));
+                break;
+            case "TAX_ID":
+                Assertions.assertTrue("TAXID_NOT_VALID".equalsIgnoreCase(errorCode));
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
-    @Then("si verifica che la notifica non viene accettata per Allegato non trovato")
-    public void verificaNotificaNoAccept() {
-        Assertions.assertTrue("FILE_NOTFOUND".equalsIgnoreCase(errorCode));
     }
 
 }
