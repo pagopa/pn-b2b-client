@@ -26,7 +26,7 @@ public enum NotificationValue {
     INTERNAL_ID("internalId","",false),
     DIGITAL_DOMICILE("digitalDomicile","",false),
     DIGITAL_DOMICILE_TYPE("digitalDomicile_type","PEC",false),
-    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","testpagopa1@pnpagopa.postecert.local",false),
+    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","testpagopa3@pnpagopa.postecert.local",false),
     PHYSICAL_ADDRES("physicalAddress","",false),
     PHYSICAL_ADDRESS_ADDRESS("physicalAddress_address","Via senza nome",false),
     PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Milano",false),
