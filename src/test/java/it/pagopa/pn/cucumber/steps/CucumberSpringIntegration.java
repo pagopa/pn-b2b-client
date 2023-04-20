@@ -27,7 +27,7 @@ import org.springframework.test.context.TestPropertySource;
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=svil"})
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class CucumberSpringIntegration {
 
 }

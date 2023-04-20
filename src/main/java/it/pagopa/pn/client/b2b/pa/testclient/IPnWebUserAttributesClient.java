@@ -21,7 +21,7 @@ public interface IPnWebUserAttributesClient extends SettableBearerToken {
 
     void deleteRecipientLegalAddress(String senderId, LegalChannelType channelType) throws RestClientException;
 
-    List<LegalDigitalAddress> getLegalAddressByRecipient() throws RestClientException;
+    List<LegalAndUnverifiedDigitalAddress> getLegalAddressByRecipient() throws RestClientException;
 
     void postRecipientLegalAddress(String senderId, LegalChannelType channelType, AddressVerification addressVerification) throws RestClientException;
 
