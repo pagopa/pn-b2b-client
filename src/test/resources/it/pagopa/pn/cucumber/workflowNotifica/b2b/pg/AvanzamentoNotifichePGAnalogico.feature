@@ -230,3 +230,40 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_FEEDBACK" sia valorizzato con "REGISTERED_LETTER_890"
+
+    #fail_AR
+    #fail_890
+    #fail_RIR
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_PG_ANALOG_15] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di milano |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_PG_ANALOG_16] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_PG_ANALOG_17] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_RIR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"

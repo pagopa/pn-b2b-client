@@ -187,6 +187,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "PREPARE_ANALOG_DOMICILE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
                 break;
+            case "COMPLETELY_UNREACHABLE":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.COMPLETELY_UNREACHABLE, 16, sharedSteps.getWorkFlowWait());
+                break;
             default:
                 throw new IllegalArgumentException();
         }

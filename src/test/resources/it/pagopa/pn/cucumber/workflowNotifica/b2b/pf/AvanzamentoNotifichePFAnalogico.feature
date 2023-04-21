@@ -142,7 +142,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
 
-  @dev @ignore
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_7] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_fail_890_NR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -153,7 +153,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev @ignore
+  @dev @testLite
   Scenario: [B2B_TIMELINE_ANALOG_8] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_fail_AR_NR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -366,3 +366,99 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_FEEDBACK" sia valorizzato con "REGISTERED_LETTER_890"
+
+      #fail_AR
+      #fail_890
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_ANALOG_25] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_NR negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail |
+      | taxId | MNDLCU98T68C933T |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @ignore
+  Scenario: [B2B_TIMELINE_ANALOG_26] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890_NR negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Test 890 Fail |
+      | taxId | PRVMNL80A01F205M |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
+    #fail_AR
+    #fail_890
+    #fail_RIR
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_27] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_ANALOG_28] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_ANALOG_29] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_RIR_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_RIR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  #fail_AR
+  #fail_890
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_ANALOG_30] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_NR negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | MNTMRA03M71C615V |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via NationalRegistries @fail_AR 5 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite
+  Scenario: [B2B_TIMELINE_ANALOG_31] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890_NR negativo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Test 890 Fail 2 |
+      | taxId | MNZLSN99E05F205J |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via NationalRegistries @fail_890 5 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"

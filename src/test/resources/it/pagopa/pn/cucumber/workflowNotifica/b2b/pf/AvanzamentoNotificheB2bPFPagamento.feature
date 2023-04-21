@@ -66,3 +66,16 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
+  @ignore
+  Scenario: [B2B-PA-PAY_7] Invio e visualizzazione notifica e verifica amount e effectiveDate
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | payment_creditorTaxId | 77777777777 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente
