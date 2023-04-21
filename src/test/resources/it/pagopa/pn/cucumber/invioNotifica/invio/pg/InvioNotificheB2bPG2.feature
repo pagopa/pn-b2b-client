@@ -112,10 +112,13 @@ Feature: invio notifiche b2b per la persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
+  @dev
   Scenario: [B2B-PA-SEND_PG_27] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Gherkin spa
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | CCRMCT06A03A433H    |
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata causa "ALLEGATO"
