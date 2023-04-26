@@ -12,6 +12,7 @@ Feature: Validazione campi invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
       | comune             |
+      | Cantù              |
       | san donà di piave  |
       | Canneto sull'Oglio |
       | Erbè               |
