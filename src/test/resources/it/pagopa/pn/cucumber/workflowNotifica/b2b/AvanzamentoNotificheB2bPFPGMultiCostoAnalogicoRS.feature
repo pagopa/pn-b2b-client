@@ -312,12 +312,13 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_address      | Via@ok_RIS     |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "0" della notifica per l'utente 0
-    And viene verificato il costo = "0" della notifica per l'utente 1
+    Then viene verificato il costo = "100" della notifica per l'utente 0
+    And viene verificato il costo = "100" della notifica per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And viene verificato il costo = "302" della notifica per l'utente 0
-    And viene verificato il costo = "0" della notifica per l'utente 1
+    And viene verificato il costo = "100" della notifica per l'utente 1
+
 
   @dev
   Scenario: [B2B_COSTO_ANALOG_RIS_MULTI_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
