@@ -344,6 +344,27 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string} con responseStatus {string}")
+    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEventoWithResponseStatus(Integer destinatario, String timelineEventCategory, String responseStatus) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory())
+                    && element.getDetails().getRecIndex().equals(destinatario)
+                    && element.getDetails().getResponseStatus().getValue().equals(responseStatus)) {
+                timelineElement = element;
+            }
+        }
+
+        try {
+            Assertions.assertNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
     public void paRequiresDownloadOfLegalFact(String legalFactCategory) {
