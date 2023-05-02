@@ -139,3 +139,38 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  @testLite
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_19] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | FRANCIA    |
+      | physicalAddress_municipality | Parigi     |
+      | physicalAddress_zip          | <zip_code> |
+      | physicalAddress_province     | Paris      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | zip_code |
+      | 750077750077 |
+
+  Scenario Outline: [B2B-PA-SEND_VALID_PG_20] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | FRANCIA    |
+      | physicalAddress_municipality | Parigi     |
+      | physicalAddress_zip          | <zip_code> |
+      | physicalAddress_province     | Paris      |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | zip_code |
+      | 7500777500779987 |
+       #1) 15 max Length
