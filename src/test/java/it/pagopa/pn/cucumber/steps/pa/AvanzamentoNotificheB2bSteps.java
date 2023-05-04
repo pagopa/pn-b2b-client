@@ -422,6 +422,10 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementInternalCategory = TimelineElementCategory.SEND_ANALOG_PROGRESS;
                 category = LegalFactCategory.ANALOG_DELIVERY;
                 break;
+            case "COMPLETELY_UNREACHABLE":
+                timelineElementInternalCategory = TimelineElementCategory.COMPLETELY_UNREACHABLE;
+                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
