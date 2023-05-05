@@ -42,6 +42,7 @@ public class SharedSteps {
 
     private final DataTableTypeUtil dataTableTypeUtil;
     private final IPnPaB2bClient b2bClient;
+    private final IPnWebPaClient webClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl pnExternalServiceClient;
@@ -96,9 +97,10 @@ public class SharedSteps {
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
+        this.webClient = webClient;
         this.b2bUtils = b2bUtils;
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
@@ -556,6 +558,10 @@ public class SharedSteps {
 
     public IPnPaB2bClient getB2bClient() {
         return b2bClient;
+    }
+
+    public IPnWebPaClient getWebPaClient() {
+        return webClient;
     }
 
     public PnPaB2bUtils getB2bUtils() {

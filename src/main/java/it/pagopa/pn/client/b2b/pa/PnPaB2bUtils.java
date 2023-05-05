@@ -2,6 +2,8 @@ package it.pagopa.pn.client.b2b.pa;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +49,14 @@ public class PnPaB2bUtils {
 
     private IPnPaB2bClient client;
 
+
     public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client) {
         this.restTemplate = newRestTemplate();
         this.ctx = ctx;
         this.client = client;
     }
+
+
 
     public void setClient(IPnPaB2bClient client) {
         this.client = client;
@@ -361,6 +366,7 @@ public class PnPaB2bUtils {
     public FullSentNotification getNotificationByIun(String iun) {
         return client.getSentNotification( iun );
     }
+
 
 
     public NotificationDocument newDocument(String resourcePath ) {

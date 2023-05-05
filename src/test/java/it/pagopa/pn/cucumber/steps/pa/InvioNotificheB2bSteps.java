@@ -8,7 +8,9 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -40,6 +42,7 @@ public class InvioNotificheB2bSteps {
 
 
     private final PnPaB2bUtils b2bUtils;
+    private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
     private final SharedSteps sharedSteps;
@@ -56,6 +59,7 @@ public class InvioNotificheB2bSteps {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
+        this.webPaClient = sharedSteps.getWebPaClient();
     }
 
 
@@ -71,6 +75,60 @@ public class InvioNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+    @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
+    public void notificationCanBeRetrievedWithIUNWebPA() {
+        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(),null,null,null,sharedSteps.getSentNotification().getIun(),1,null))
+            );
+            Assertions.assertNotNull(notificationByIun.get());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
+    public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
+        sharedSteps.selectPA(paType);
+
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus notificationInternalStatus;
+        switch (status) {
+            case "ACCEPTED":
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.ACCEPTED;
+                break;
+            case "DELIVERING":
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.DELIVERING;
+                break;
+            case "DELIVERED":
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.DELIVERED;
+                break;
+            case "CANCELLED":
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.CANCELLED;
+                break;
+            case "EFFECTIVE_DATE":
+               notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.EFFECTIVE_DATE;
+                break;
+            case "REFUSED":
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.REFUSED;
+                break;
+
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(),null,notificationInternalStatus,null,null,1,null))
+            );
+            Assertions.assertNotNull(notificationByIun.get());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
