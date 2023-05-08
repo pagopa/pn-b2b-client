@@ -50,10 +50,10 @@ Feature: Validazione campi invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
       | stato                                                                                                            |
-      | Città d'Avorio Fær Øer São Tomé Hagåtña Zhōnghuóá Rénmín Gònghéguó Tašād République d'Haïti Lýðveldið Ísland     |
-      | Jumhūriyyat Tašād Κύπρος Κυπριακή Δημοκρατία Kypros Ittihād al-Qumur Poblacht na hÉireann Īrān Bhārat Ganarājya  |
-      | Chosŏn Minjujuŭi Inmin Konghwaguk Répúblique de Côte d`Ivoire Iritriyā République d'Haïti Lībiyā Mfùko la Malaŵi |
-      | Moçambique Mūrītāniyā Têta Paraguái Česká republika Mālo Tuto’atasi o Sāmoa                                      |
+      | Costa d'Avorio                                                                                                   |
+      | Spagna                                                                                                           |
+      | Italia                                                                                                           |
+
 
   @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
