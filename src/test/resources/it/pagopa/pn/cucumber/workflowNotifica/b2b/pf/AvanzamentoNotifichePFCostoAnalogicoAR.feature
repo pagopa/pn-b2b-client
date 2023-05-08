@@ -46,7 +46,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
       | payment_pagoPaForm           | NULL           |
@@ -66,7 +66,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
       | payment_pagoPaForm           | NULL           |
@@ -119,7 +119,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -139,7 +139,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

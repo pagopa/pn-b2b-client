@@ -54,7 +54,7 @@ Feature: costo notifica con workflow analogico per multi destinatario
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
       | payment_pagoPaForm           | NULL           |
@@ -78,7 +78,7 @@ Feature: costo notifica con workflow analogico per multi destinatario
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     And destinatario Cucumber Society
@@ -142,7 +142,7 @@ Feature: costo notifica con workflow analogico per multi destinatario
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     And destinatario Cucumber Society
@@ -166,7 +166,7 @@ Feature: costo notifica con workflow analogico per multi destinatario
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 75007          |
+      | physicalAddress_zip          | 88010          |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     And destinatario Cucumber Society
