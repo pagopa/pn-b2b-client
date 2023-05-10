@@ -128,10 +128,11 @@ Feature: Download legalFact analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
-      | denomination | Test AR Fail |
-      | taxId | MNDLCU98T68C933T |
+      | denomination | Test AR Fail 2 |
+      | taxId | MNTMRA03M71C615V |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@fail_AR |
+      | physicalAddress_address | Via NationalRegistries @fail_AR 5 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
+

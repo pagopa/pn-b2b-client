@@ -464,3 +464,17 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | physicalAddress_address | Via NationalRegistries @fail_890 5 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_32] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo numero pagine AAR
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" verifica numero pagine 1
+
+
