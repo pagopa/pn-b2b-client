@@ -325,7 +325,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} verifica numero pagine {int}")
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} verifica numero pagine AAR {int}")
     public void readingEventUpToTheTimelineElementOfNotificationPerVerificaNumPagine(String timelineEventCategory, Integer numPagine) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
 
