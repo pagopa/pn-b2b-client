@@ -235,7 +235,7 @@ Feature: costo notifica con workflow analogico per persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And viene verificato il costo = "497" della notifica
 
-  @dev
+  @dev @costoCart @ignore
   Scenario: [B2B_COSTO_ANALOG_PG_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

@@ -261,7 +261,7 @@ Feature: Validazione campi invio notifiche b2b
       | 7500777500779987 |
 
   @ignore
-  Scenario: [B2B-PA-SEND_VALID_22] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
+  Scenario: [B2B-PA-SEND_VALID_23] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |

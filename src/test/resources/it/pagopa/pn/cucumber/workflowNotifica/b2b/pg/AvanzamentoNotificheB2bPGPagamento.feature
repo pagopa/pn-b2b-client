@@ -104,7 +104,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | recipientType    | PG                  |
-      | taxId            | CCRMCT06A03A433H         |
-      | denomination     | Test Snc |
+      | taxId            | LELPTR04A01C352E         |
+      | denomination     | Le Epistolae srl |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica

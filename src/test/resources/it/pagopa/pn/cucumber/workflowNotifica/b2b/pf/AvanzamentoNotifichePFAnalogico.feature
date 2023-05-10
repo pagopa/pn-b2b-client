@@ -370,7 +370,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
       #fail_AR
       #fail_890
-  @dev @testLite
+  @dev @testLite @ignore
   Scenario: [B2B_TIMELINE_ANALOG_25] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -383,6 +383,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    #MNDLCU98T68C933T CF non valido per eseguire il test sul nuovo DEV2
 
   @dev @ignore
   Scenario: [B2B_TIMELINE_ANALOG_26] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890 negativo

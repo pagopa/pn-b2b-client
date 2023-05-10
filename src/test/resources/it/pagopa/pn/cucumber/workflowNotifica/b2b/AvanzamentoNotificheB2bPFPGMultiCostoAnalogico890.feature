@@ -93,7 +93,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | payment_pagoPaForm      | NULL       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -114,7 +114,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | payment_pagoPaForm      | NULL       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -135,7 +135,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -156,7 +156,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

@@ -74,7 +74,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | payment_pagoPaForm      | NULL       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
@@ -91,7 +91,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And destinatario Cucumber Analogic e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | payment_pagoPaForm      | NULL       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
@@ -108,7 +108,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
@@ -125,7 +125,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And destinatario Cucumber Analogic e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
