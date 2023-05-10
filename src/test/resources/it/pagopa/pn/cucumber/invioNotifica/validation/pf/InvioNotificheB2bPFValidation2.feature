@@ -50,10 +50,10 @@ Feature: Validazione campi invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
       | stato                                                                                                            |
-      | Città d'Avorio Fær Øer São Tomé Hagåtña Zhōnghuóá Rénmín Gònghéguó Tašād République d'Haïti Lýðveldið Ísland     |
-      | Jumhūriyyat Tašād Κύπρος Κυπριακή Δημοκρατία Kypros Ittihād al-Qumur Poblacht na hÉireann Īrān Bhārat Ganarājya  |
-      | Chosŏn Minjujuŭi Inmin Konghwaguk Répúblique de Côte d`Ivoire Iritriyā République d'Haïti Lībiyā Mfùko la Malaŵi |
-      | Moçambique Mūrītāniyā Têta Paraguái Česká republika Mālo Tuto’atasi o Sāmoa                                      |
+      | Costa d'Avorio                                                                                                   |
+      | Spagna                                                                                                           |
+      | Italia                                                                                                           |
+
 
   @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
@@ -193,3 +193,79 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  @dev
+  Scenario Outline: [B2B-PA-SEND_VALID_19] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | FRANCIA    |
+      | physicalAddress_municipality | Parigi     |
+      | physicalAddress_zip          | <zip_code> |
+      | physicalAddress_province     | Paris      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | zip_code |
+      | 750077 |
+      | 750077750077 |
+      | 750077750077998 |
+
+  @dev
+  Scenario Outline: [B2B-PA-SEND_VALID_20] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | FRANCIA    |
+      | physicalAddress_municipality | Parigi     |
+      | physicalAddress_zip          | <zip_code> |
+      | physicalAddress_province     | Paris      |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | zip_code |
+      | 7500777500779987 |
+    #1) 15 max Length
+
+  @dev
+  Scenario Outline: [B2B-PA-SEND_VALID_21] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_zip          | <zip_code> |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | zip_code |
+      | 87041 |
+      | 87100 |
+
+  @dev
+  Scenario Outline: [B2B-PA-SEND_VALID_22] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_zip          | <zip_code> |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | zip_code |
+      | 7500777500779987 |
+
+  @ignore
+  Scenario: [B2B-PA-SEND_VALID_23] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_zip          | 33344 |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"

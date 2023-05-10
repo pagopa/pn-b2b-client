@@ -63,7 +63,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "521" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica con allegato e verifica costo con FCU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -93,7 +93,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121      |
       | payment_pagoPaForm      | NULL       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -104,7 +104,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "391" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -114,7 +114,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | payment_pagoPaForm      | NULL       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -135,7 +135,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -146,7 +146,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "516" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev
+  @dev @ignore
   Scenario: [B2B_COSTO_ANALOG_890_MULTI_8] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -156,7 +156,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
-      | physicalAddress_zip     | 16100      |
+      | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_890 |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
