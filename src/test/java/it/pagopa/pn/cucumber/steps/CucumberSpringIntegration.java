@@ -25,7 +25,8 @@ import org.springframework.test.context.TestPropertySource;
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
-        PnIoUserAttributerExternaClientImpl.class
+        PnIoUserAttributerExternaClientImpl.class,
+        PnWebPaClientImpl.class
 })
 @TestPropertySource(properties = {"spring.profiles.active=dev2"})
 public class CucumberSpringIntegration {

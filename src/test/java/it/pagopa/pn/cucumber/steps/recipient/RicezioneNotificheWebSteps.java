@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
@@ -19,6 +20,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,7 @@ public class RicezioneNotificheWebSteps {
     private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
 
+    private final IPnWebPaClient webPaClient;
     private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -53,6 +56,7 @@ public class RicezioneNotificheWebSteps {
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
+        this.webPaClient = sharedSteps.getWebPaClient();
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -135,6 +139,12 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertTrue(searchNotification(searchParam));
     }
 
+    @Then("la notifica può essere correttamente recuperata con una ricerca da web PA {string}")
+    public void notificationCanBeCorrectlyReadWithResearchWebPA(String paType, @Transpose NotificationSearchParamWebPA searchParam) {
+        sharedSteps.selectPA(paType);
+        Assertions.assertTrue(searchNotificationWebPA(searchParam));
+    }
+
     @Then("la notifica non viene recuperata con una ricerca da {string}")
     public void notificationCantBeCorrectlyReadWithResearch(String recipient, @Transpose NotificationSearchParam searchParam) {
         sharedSteps.selectUser(recipient);
@@ -144,6 +154,41 @@ public class RicezioneNotificheWebSteps {
     @DataTableType
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         NotificationSearchParam searchParam = new NotificationSearchParam();
+
+        Calendar now = Calendar.getInstance();
+        int month = now.get(Calendar.MONTH);
+        String monthString = (((month + "").length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1))) + "";
+        int day = now.get(Calendar.DAY_OF_MONTH);
+        String dayString = (day + "").length() == 2 ? (day + "") : ("0" + day);
+        String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
+        String end = data.getOrDefault("endDate", null);
+
+        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
+        LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
+        OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
+
+        OffsetDateTime endDate;
+        if (end != null) {
+            LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
+            endDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+        } else {
+            endDate = sentAt;
+        }
+
+        searchParam.startDate = startDate;
+        searchParam.endDate = endDate;
+        //searchParam.mandateId = data.getOrDefault("mandateId",null);
+        //searchParam.senderId = data.getOrDefault("senderId",null);
+        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
+        String iun = data.getOrDefault("iunMatch", null);
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
+        return searchParam;
+    }
+
+    @DataTableType
+    public NotificationSearchParamWebPA convertNotificationSearchParamWebPA(Map<String, String> data) {
+        NotificationSearchParamWebPA searchParam = new NotificationSearchParamWebPA();
 
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
@@ -203,6 +248,33 @@ public class RicezioneNotificheWebSteps {
         return beenFound;
     }
 
+    private boolean searchNotificationWebPA(NotificationSearchParamWebPA searchParam) {
+        boolean beenFound;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse notificationSearchResponse = webPaClient
+                .searchSentNotification(
+                        searchParam.startDate, searchParam.endDate, searchParam.mandateId,
+                        searchParam.status, searchParam.subjectRegExp,
+                        searchParam.iunMatch, searchParam.size, null);
+        List<it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+        if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
+            while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
+                List<String> nextPagesKey = notificationSearchResponse.getNextPagesKey();
+                for (String pageKey : nextPagesKey) {
+                    notificationSearchResponse = webPaClient
+                            .searchSentNotification(
+                                    searchParam.startDate, searchParam.endDate, searchParam.mandateId,
+                                    searchParam.status, searchParam.subjectRegExp,
+                                    searchParam.iunMatch, searchParam.size, pageKey);
+                    beenFound = resultsPage.stream().filter(elem -> elem.getIun().equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
+                    if (beenFound) break;
+                }//for
+                if (beenFound) break;
+            }//while
+        }//search cycle
+        return beenFound;
+    }
+
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
@@ -249,6 +321,16 @@ public class RicezioneNotificheWebSteps {
         String mandateId;
         String senderId;
         NotificationStatus status;
+        String subjectRegExp;
+        String iunMatch;
+        Integer size = 10;
+    }
+
+    private static class NotificationSearchParamWebPA {
+        OffsetDateTime startDate;
+        OffsetDateTime endDate;
+        String mandateId;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;

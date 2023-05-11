@@ -32,3 +32,47 @@ Feature: invio notifiche e2e web PA
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     Then la notifica può essere correttamente recuperata dal sistema tramite Stato "ACCEPTED" dalla web PA "Comune_1"
+
+  @SmokeTest  @WebPAtest @testLite
+  Scenario: [WEB_PA-SEND_4] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
+      | startDate | 01/01/2022 |
+      | endDate | 01/10/2030 |
+      | iunMatch | ACTUAL |
+      | subjectRegExp | cucumber |
+
+  @WebPAtest
+  Scenario: [WEB_PA-SEND_5] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
+      |||
+
+  @WebPAtest
+  Scenario: [WEB_PA-SEND_6] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
+      | subjectRegExp | cucumber |
+
+  @WebPAtest
+  Scenario: [WEB_PA-SEND_7] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata con una ricerca da web PA "Comune_1"
+      | startDate | 01/01/2022 |
+      | subjectRegExp | cucumber |
