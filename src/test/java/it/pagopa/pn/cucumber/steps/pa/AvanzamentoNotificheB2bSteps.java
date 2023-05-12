@@ -190,6 +190,13 @@ public class AvanzamentoNotificheB2bSteps {
             case "COMPLETELY_UNREACHABLE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.COMPLETELY_UNREACHABLE, 16, sharedSteps.getWorkFlowWait());
                 break;
+            case "PREPARE_DIGITAL_DOMICILE":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_DIGITAL_DOMICILE, 2, waiting * 3);
+                break;
+            case "SCHEDULE_DIGITAL_WORKFLOW":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SCHEDULE_DIGITAL_WORKFLOW, 2,waiting * 3);
+                break;
+
             default:
                 throw new IllegalArgumentException();
         }
@@ -841,6 +848,23 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(timelineElement.getDetails().getResponseStatus().getValue(), code);
             Assertions.assertNotNull(timelineElement.getDetails().getDeliveryDetailCode());
             Assertions.assertNotNull(timelineElement.getDetails().getDeliveryFailureCause());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address")
+    public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddress(String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+        try {
+            logger.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getDigitalAddress());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
