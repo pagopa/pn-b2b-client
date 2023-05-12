@@ -42,6 +42,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
 
   @ignore
   Scenario: [B2B-PA-PAY_5] Invio e visualizzazione notifica e verifica amount e effectiveDate
@@ -55,6 +56,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | payment_f24standard | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then il modello f24 viene pagato correttamente
+    And si attende il corretto pagamento della notifica
 
   @testLite
   Scenario: [B2B-PA-PAY_6] Invio notifica e verifica amount
@@ -79,3 +81,4 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica

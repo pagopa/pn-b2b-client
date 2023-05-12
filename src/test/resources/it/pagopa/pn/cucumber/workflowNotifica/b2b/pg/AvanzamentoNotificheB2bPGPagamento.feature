@@ -41,6 +41,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
 
   @ignore
   Scenario: [B2B-PA-PG-PAY_5] Invio e visualizzazione notifica e verifica amount e effectiveDate
@@ -79,6 +80,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
 
   @ignore
   Scenario: [B2B-PA-PG-PAY_8] Invio e visualizzazione notifica e verifica amount e effectiveDate
@@ -110,7 +112,7 @@ Feature: avanzamento b2b persona giuridica pagamento
     Then viene verificato il costo = "100" della notifica
 
   @ignore
-  Scenario: [B2B-PA-PAY_10] Invio e visualizzazione notifica e verifica amount e effectiveDate
+  Scenario: [B2B-PA-PG-PAY_10] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -125,3 +127,40 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
+
+  @ignore
+  Scenario: [B2B-PA-PG-PAY_11] Invio e visualizzazione notifica e verifica amount e effectiveDate
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | LELPTR04A01C352E         |
+      | denomination     | Le Epistolae srl |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | payment_creditorTaxId | 77777777777 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
+
+
+  @ignore
+  Scenario: [B2B-PA-PG-PAY_12] Invio e visualizzazione notifica e verifica amount e effectiveDate
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | 70412331207         |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | payment_creditorTaxId | 77777777777 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
