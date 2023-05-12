@@ -349,12 +349,13 @@ public class AvanzamentoNotificheB2bSteps {
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
-            if (timelineElement != null && timelineElement.getDetails().getNumberOfPages().equals(numPagine)) {
+            if (timelineElement != null) {
                 break;
             }
         }
         try {
             Assertions.assertNotNull(timelineElement);
+            Assertions.assertEquals(timelineElement.getDetails().getNumberOfPages(), numPagine);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
