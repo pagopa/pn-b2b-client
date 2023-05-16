@@ -370,7 +370,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
       #fail_AR
       #fail_890
-  @dev @testLite @ignore
+  @dev @ignore
   Scenario: [B2B_TIMELINE_ANALOG_25] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
