@@ -28,7 +28,7 @@ import org.springframework.test.context.TestPropertySource;
         PnIoUserAttributerExternaClientImpl.class,
         PnWebPaClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=dev2"})
+@TestPropertySource(properties = {"spring.profiles.active=svil"})
 public class CucumberSpringIntegration {
 
 }
