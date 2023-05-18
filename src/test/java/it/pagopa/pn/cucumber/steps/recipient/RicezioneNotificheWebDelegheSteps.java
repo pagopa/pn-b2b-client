@@ -114,7 +114,7 @@ public class RicezioneNotificheWebDelegheSteps {
                         .firstName("gherkin")
                         .lastName("srl")
                         .fiscalCode(pg1taxId)
-                        .companyName("aziendaSrl")
+                        .companyName("individuale")
                         .person(false);
                 break;
             case "cucumberspa":
@@ -123,7 +123,7 @@ public class RicezioneNotificheWebDelegheSteps {
                         .firstName("cucumber")
                         .lastName("spa")
                         .fiscalCode(pg2taxId)
-                        .companyName("aziendaSrl")
+                        .companyName("LuAnSe SpA")
                         .person(false);
                 break;
             default:
@@ -205,6 +205,7 @@ public class RicezioneNotificheWebDelegheSteps {
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        System.out.println("MANDATE-LIST: "+mandateList);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {

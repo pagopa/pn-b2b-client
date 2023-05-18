@@ -474,6 +474,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | document | NO |
     And destinatario Mario Gherkin e:
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@fail_890 |
+      | physicalAddress_address | Via minzoni |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" verifica numero pagine AAR 1
