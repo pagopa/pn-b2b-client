@@ -80,13 +80,13 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
     Examples:
       |      name        |
       | irrinunciabilità |
-      | trentatré        |
-      | altresì          |
-      | bistrò           |
-      | più              |
-      | dall'atto        |
-      | dall’atto        |
-      | dall`atto        |
+      | trentatrrré      |
+      | altresssssì      |
+      | bistrrrrrrò      |
+      | piiiiiiiiiù      |
+      | dall'atttto      |
+      | dall’atttto      |
+      | dall`atttto      |
 
   Scenario Outline: [B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con errati tax_id errati_scenario positivo
     Given viene generata una nuova notifica

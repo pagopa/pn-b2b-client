@@ -128,13 +128,13 @@ Feature: Validazione campi invio notifiche b2b
     Examples:
       | name             |
       | irrinunciabilità |
-      | trentatré        |
-      | altresì          |
-      | bistrò           |
-      | più              |
-      | dall'atto        |
-      | dall’atto        |
-      | dall`atto        |
+      | trentatrrré      |
+      | altresssssì      |
+      | bistrrrrrrò      |
+      | piiiiiiiiiù      |
+      | dall'atttto      |
+      | dall’atttto      |
+      | dall`atttto      |
 
 
   Scenario Outline: [B2B-PA-SEND_VALID_5] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario positivo
@@ -196,4 +196,4 @@ Feature: Validazione campi invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | subject  |
-      | 513_CHAR |
+      | 513_CHARRRR |
