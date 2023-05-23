@@ -24,8 +24,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
-    private final String pg1BearerToken;
-    private final String pg2BearerToken;
+    private final String gherkinSrlBearerToken;
+    private final String cucumberSpaBearerToken;
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
     private final String userAgent;
     private final String basePath;
@@ -36,16 +36,16 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             @Value("${pn.webapi.external.base-url}") String basePath,
             @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-            @Value("${pn.bearer-token.pg1}") String pg1BearerToken,
-            @Value("${pn.bearer-token.pg2}") String pg2BearerToken,
+            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.pg1BearerToken = pg1BearerToken;//TODO recuperare valore dalle properties
-        this.pg2BearerToken = pg2BearerToken;//TODO recuperare valore dalle properties
+        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
@@ -74,12 +74,12 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
                 beenSet = true;
                 break;
             case PG_1:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, pg1BearerToken,userAgent));
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
                 break;
             case PG_2:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, pg2BearerToken,userAgent));
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;

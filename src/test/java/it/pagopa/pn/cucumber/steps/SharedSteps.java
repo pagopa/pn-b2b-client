@@ -92,8 +92,8 @@ public class SharedSteps {
     private String cucumberSrlTaxID = "12345678903";
     private String cucumberSocietyTaxID = "MSSLGU51P10A087J";
     private String cucumberAnalogicTaxID = "PPPPLT80A01H501V";
-    private String pg1taxId = "CCRMCT06A03A433H";//TODO configurare
-    private String pg2taxId = "20517490320";//TODO configurare
+    private String gherkinSrltaxId = "CCRMCT06A03A433H";
+    private String cucumberSpataxId = "20517490320";
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
@@ -183,7 +183,7 @@ public class SharedSteps {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("PG 1")
-                        .taxId(pg1taxId)
+                        .taxId(gherkinSrltaxId)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
@@ -196,7 +196,7 @@ public class SharedSteps {
                 recipient
                         .denomination("PG 1")
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
-                        .taxId(pg1taxId));
+                        .taxId(gherkinSrltaxId));
     }
 
     @And("destinatario CucumberSpa")
@@ -204,7 +204,7 @@ public class SharedSteps {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("PG 2")
-                        .taxId(pg1taxId)
+                        .taxId(cucumberSpataxId)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
@@ -638,12 +638,12 @@ public class SharedSteps {
         return marioGherkinTaxID;
     }
 
-    public String getPg1taxId() {
-        return pg1taxId;
+    public String getGherkinSrltaxId() {
+        return gherkinSrltaxId;
     }
 
-    public String getPg2taxId() {
-        return pg2taxId;
+    public String getCucumberSpataxId() {
+        return cucumberSpataxId;
     }
 
     public PnExternalServiceClientImpl getPnExternalServiceClient() {
