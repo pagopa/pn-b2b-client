@@ -697,7 +697,7 @@ public class SharedSteps {
     }
 
     @Before
-    public void doSomeThing(Scenario scenario) {
+    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put( RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName );
     }

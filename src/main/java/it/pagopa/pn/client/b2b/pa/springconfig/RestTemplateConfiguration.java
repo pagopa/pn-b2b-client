@@ -60,9 +60,8 @@ public class RestTemplateConfiguration {
         private void doLog(HttpRequest request, ClientHttpResponse response) {
             String httpMethod = request.getMethodValue();
             String requestUrl = request.getURI().toString();
-            String traceId;
+            String traceId = getTraceIdFromHttpResponse( response );
 
-            traceId = getTraceIdFromHttpResponse( response );
             String scenarioName = MDC.get( CUCUMBER_SCENARIO_NAME_MDC_ENTRY );
             log.info("Request TraceId, method, url, scenario: [" + traceId + ", " + httpMethod + ", " + requestUrl + ", " + scenarioName + "]");
         }
