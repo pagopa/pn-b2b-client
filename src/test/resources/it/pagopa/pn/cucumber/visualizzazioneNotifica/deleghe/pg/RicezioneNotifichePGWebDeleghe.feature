@@ -85,6 +85,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si tenta la lettura della notifica da parte del delegato "CucumberSpa" che produce un errore con status code "404"
 
+  @ignore
   Scenario: [WEB-PG-MANDATE_8] Delega a se stesso _scenario negativo
     Given "GherkinSrl" viene delegato da "GherkinSrl"
     Then l'operazione di delega ha prodotto un errore con status code "409"

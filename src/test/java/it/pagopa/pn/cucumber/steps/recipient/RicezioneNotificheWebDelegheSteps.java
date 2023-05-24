@@ -114,7 +114,7 @@ public class RicezioneNotificheWebDelegheSteps {
                         .firstName("gherkin")
                         .lastName("srl")
                         .fiscalCode(gherkinSrltaxId)
-                        .companyName("individuale")
+                        .companyName("gherkinsrl")
                         .person(false);
                 break;
             case "cucumberspa":
@@ -123,7 +123,7 @@ public class RicezioneNotificheWebDelegheSteps {
                         .firstName("cucumber")
                         .lastName("spa")
                         .fiscalCode(cucumberSpataxId)
-                        .companyName("LuAnSe SpA")
+                        .companyName("cucumberspa")
                         .person(false);
                 break;
             default:
