@@ -14,7 +14,7 @@ async function main() {
 
 
 
-  const awsClient = new AwsClientsWrapper( envName );
+  const awsClient = new AwsClientsWrapper( envName ); // FIXME parametrizzare profilo e regione
   const logExtractor = new TestCaseLogExtractor( awsClient );
   const xmlReportParser = new XmlReportParser();
   const htmlReportGenerator = new HtmlReportGenerator();

@@ -72,6 +72,7 @@ class CustomDomainsMappings {
 
 class AwsClientsWrapper {
 
+  // FIXME parametri profilo e regione
   constructor( env /* dev, test, uat, prod */ ) {
     this._cloudWatchClient = new CloudWatchLogsClient( awsClientCfg( env ));
     this._apiGwClient = new APIGatewayClient( awsClientCfg( env ));
@@ -82,6 +83,13 @@ class AwsClientsWrapper {
     this._ecsLogGroupsNames = await this._fetchEcsLogGroups();
   }
 
+  /**
+   * Connect to AWS and read the information needed to figure out which 
+   * REST API serve an HTTP Request.
+   * 
+   * See https://pagopa.atlassian.net/wiki/spaces/PN/pages/704676100/R+5+Diagnostica+Invocazione+alle+API+di+Piattaforma+Notifiche#Individuare-l%E2%80%99API-invocata-su-API-Gateway
+   * @returns 
+   */
   async _fetchAllApiGwMappings() {
     const stageName = "unique";
 
@@ -113,7 +121,10 @@ class AwsClientsWrapper {
     return allMappings;
   }
 
-
+  /**
+   * List all LogGroup that contains log of ECS microservices
+   * @returns a list of log-group names
+   */
   async _fetchEcsLogGroups() {
     const logGroupNamePrefix = '/aws/ecs/';
     const listEcsLogGroupsCommand = new DescribeLogGroupsCommand({ logGroupNamePrefix, limit: 50 });
@@ -123,27 +134,15 @@ class AwsClientsWrapper {
     return ecsLogGroupsNames;
   }
 
-
-  async _fetchQueryResult( queryId ) {
-    const queryPollCommand = new GetQueryResultsCommand({ queryId });
-    const queryPollResponse = await this._cloudWatchClient.send( queryPollCommand );
-
-    let logs = null;
-    if( ! ["Scheduled", "Running"].includes( queryPollResponse.status )) {
-      logs = queryPollResponse.results || []
-    }
-    return logs;
-  }
-
-  _remapLogQueryResults( results ) {
-    return results
-        .map( fieldsArray => {
-          const obj = {}
-          fieldsArray.forEach( field => { obj[field.field] = field.value})
-          return obj;
-        });
-  }
-
+  /**
+   * Execute a LogInsight query and download results.
+   * N.B.: This implementation do not use parallelization. Yes, it is very slow.
+   * @param {Execute query inside listed Log Groups } logGroupNames 
+   * @param {Log scan time range starting point} fromEpochMs 
+   * @param {Log scan time range end} toEpochMs 
+   * @param {LogInsight query} queryString 
+   * @returns 
+   */
   async executeLogInsightQuery( logGroupNames, fromEpochMs, toEpochMs, queryString ) {
     const scheduleQueryCommand = new StartQueryCommand({ 
           logGroupNames, queryString,
@@ -167,6 +166,28 @@ class AwsClientsWrapper {
     
     return this._remapLogQueryResults( logs );
   }
+
+  // FIXME: same result for cancelled query and empty result set
+  async _fetchQueryResult( queryId ) {
+    const queryPollCommand = new GetQueryResultsCommand({ queryId });
+    const queryPollResponse = await this._cloudWatchClient.send( queryPollCommand );
+
+    let logs = null;
+    if( ! ["Scheduled", "Running"].includes( queryPollResponse.status )) {
+      logs = queryPollResponse.results || []
+    }
+    return logs;
+  }
+
+  _remapLogQueryResults( results ) {
+    return results
+        .map( fieldsArray => {
+          const obj = {}
+          fieldsArray.forEach( field => { obj[field.field] = field.value})
+          return obj;
+        });
+  }
+
 
   async fetchSynchronousLogs( httpMethod, url, traceId, approximateEpochMs ) {
     
