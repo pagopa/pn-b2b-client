@@ -30,6 +30,9 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
 
+    private final String gherkinSrlBearerToken;
+    private final String cucumberSpaBearerToken;
+
     private final String basePath;
     private final String userAgent;
 
@@ -39,12 +42,19 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             @Value("${pn.webapi.external.base-url}") String basePath,
             @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
+            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
+
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
+
+        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
@@ -71,6 +81,16 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             case USER_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
+                beenSet = true;
+                break;
+            case PG_1:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.PG_1;
+                beenSet = true;
+                break;
+            case PG_2:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;
         }
@@ -100,6 +120,10 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         return recipientReadApi.searchReceivedNotification(startDate, endDate, mandateId, senderId, status, subjectRegExp, iunMatch, size, nextPagesKey);
+    }
+
+    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId,String group, String senderId, NotificationStatus status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+        return recipientReadApi.searchReceivedDelegatedNotification(startDate, endDate, senderId, recipientId, group, iunMatch, status, size, nextPagesKey);
     }
 
     @Override

@@ -182,7 +182,7 @@ public class SharedSteps {
     public void destinatarioPg1() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("PG 1")
+                        .denomination("GherkinSrl")
                         .taxId(gherkinSrltaxId)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -194,7 +194,7 @@ public class SharedSteps {
     public void destinatarioPg1param(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
                 recipient
-                        .denomination("PG 1")
+                        .denomination("GherkinSrl")
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .taxId(gherkinSrltaxId));
     }
@@ -203,7 +203,7 @@ public class SharedSteps {
     public void destinatarioPg2() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("PG 2")
+                        .denomination("CucumberSpa")
                         .taxId(cucumberSpataxId)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -216,7 +216,7 @@ public class SharedSteps {
     public void destinatarioGherkinSpaParam(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
                 recipient
-                        .denomination("Gherkin_spa")
+                        .denomination("GherkinSpa")
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .taxId(gherkinSpaTaxID));
     }
@@ -225,7 +225,7 @@ public class SharedSteps {
     public void destinatarioCucumberSrl() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Cucumber_srl")
+                        .denomination("CucumberSrl")
                         .taxId(cucumberSrlTaxID)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -237,7 +237,7 @@ public class SharedSteps {
     public void destinatarioCucumberSrlParam(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
                 recipient
-                        .denomination("Cucumber_srl")
+                        .denomination("CucumberSrl")
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .taxId(cucumberSrlTaxID));
     }
@@ -601,11 +601,11 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 break;
-            case "pg_1":
+            case "gherkinsrl":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 break;
-            case "pg_2":
+            case "cucumberspa":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 break;
