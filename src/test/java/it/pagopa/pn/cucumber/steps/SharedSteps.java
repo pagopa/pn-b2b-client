@@ -95,11 +95,26 @@ public class SharedSteps {
     private String gherkinSrltaxId = "CCRMCT06A03A433H";
     private String cucumberSpataxId = "20517490320";
 
+    @Value("${pn.interop.base-url}")
+    private String interopBaseUrl;
+    @Value("${pn.interop.token-oauth2.path}")
+    private String tokenOauth2Path;
+    @Value("${pn.interop.token-oauth2.client-assertion}")
+    private String clientAssertion;
+
+   
+    private String enableInterop;
+
+    private final PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
+    private  String bearerTokenInterop = null;
+
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
+                       @Value("${pn.interop.enable}") String enableInterop,
+                       PnInteropTokenOauth2Client pnInteropTokenOauth2Client) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -107,6 +122,12 @@ public class SharedSteps {
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
+        this.enableInterop = enableInterop;
+        this.pnInteropTokenOauth2Client = pnInteropTokenOauth2Client;
+
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = pnInteropTokenOauth2Client.getBearerToken();
+        }
     }
 
     @BeforeAll
@@ -547,7 +568,7 @@ public class SharedSteps {
 
     private void setGrup(SettableApiKey.ApiKeyType apiKeyType) {
         if (groupToSet && this.notificationRequest.getGroup() == null) {
-            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType);
+            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType, bearerTokenInterop);
             if (hashMapsList == null || hashMapsList.size() == 0) return;
             String id = null;
             for (HashMap<String, String> elem : hashMapsList) {
@@ -685,13 +706,13 @@ public class SharedSteps {
         List<HashMap<String, String>> hashMapsList = null;
         switch (settedPa) {
             case "Comune_1":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1, bearerTokenInterop);
                 break;
             case "Comune_2":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2, bearerTokenInterop);
                 break;
             case "Comune_Multi":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA, bearerTokenInterop);
                 break;
             default:
                 throw new IllegalArgumentException();

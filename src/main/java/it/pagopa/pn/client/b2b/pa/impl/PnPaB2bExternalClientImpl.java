@@ -1,14 +1,23 @@
 package it.pagopa.pn.client.b2b.pa.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.testclient.PnInteropTokenOauth2Client;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -33,13 +42,31 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final String apiKeyGa;
     private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
 
+    //private PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
+
+    private String bearerTokenInterop;
+
+    private final String interopBaseUrl;
+
+    private final String tokenOauth2Path;
+
+    private final String clientAssertion;
+
+    private final String enableInterop;
+
     public PnPaB2bExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.external.base-url}") String basePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-GA}") String apiKeyGa
+            @Value("${pn.external.api-key-GA}") String apiKeyGa,
+            @Value("${pn.interop.base-url}") String interopBaseUrl,
+            @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
+            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${pn.interop.enable}") String enableInterop
+
+            //PnInteropTokenOauth2Client pnInteropTokenOauth2Client
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
@@ -47,18 +74,30 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+        //this.pnInteropTokenOauth2Client = pnInteropTokenOauth2Client;
+        this.enableInterop = enableInterop;
+        this.interopBaseUrl = interopBaseUrl;
+        this.tokenOauth2Path = tokenOauth2Path;
+        this.clientAssertion = clientAssertion;
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = getBearerToken();
+        }
+        this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
 
-        this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1) );
-        this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1) );
-        this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
-        this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
-        this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1));
+
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop ) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
         newApiClient.addDefaultHeader("x-api-key", apikey );
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+        }
         return newApiClient;
     }
 
@@ -97,11 +136,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     public void setApiKey(String apiKey){
-        this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
-        this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
-        this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
-        this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey));
-        this.paymentEventsApi.setApiClient(newApiClient( restTemplate, basePath, apiKey));
+        this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
+        this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
+        this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
+        this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
+        this.paymentEventsApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
@@ -154,5 +193,79 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     @Override
     public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException {
         this.paymentEventsApi.paymentEventsRequestF24WithHttpInfo(paymentEventsRequestF24);
+    }
+
+
+    public String getBearerToken() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("client_assertion", clientAssertion);
+        map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+        map.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        ResponseEntity<InteropResponse> response = this.restTemplate.postForEntity( interopBaseUrl + tokenOauth2Path, request , InteropResponse.class );
+
+        return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
+
+    }
+
+    public static class InteropResponse {
+        private String correlationId;
+        private Integer status;
+        private String title;
+        private String type;
+        private List<PnInteropTokenOauth2Client.Error> errors;
+
+        @JsonProperty("access_token")
+        private String accessToken;
+        @JsonProperty("expires_in")
+        private Integer expiresIn;
+        @JsonProperty("token_type")
+        private String tokenType;
+
+        public String getCorrelationId() {
+            return correlationId;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public List<PnInteropTokenOauth2Client.Error> getErrors() {
+            return errors;
+        }
+
+        public String getAccessToken() {
+            return accessToken;
+        }
+
+        public Integer getExpiresIn() {
+            return expiresIn;
+        }
+
+        public String getTokenType() {
+            return tokenType;
+        }
+    }
+
+    public static class Error {
+        private String code;
+        private String detail;
+
+        public String getCode() {
+            return code;
+        }
+
+        public String getDetail() {
+            return detail;
+        }
     }
 }
