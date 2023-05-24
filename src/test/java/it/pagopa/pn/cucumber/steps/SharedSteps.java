@@ -95,12 +95,29 @@ public class SharedSteps {
     private String cucumberSrlTaxID = "12345678903";
     private String cucumberSocietyTaxID = "MSSLGU51P10A087J";
     private String cucumberAnalogicTaxID = "PPPPLT80A01H501V";
+    private String pg1taxId = "CCRMCT06A03A433H";//TODO configurare
+    private String pg2taxId = "20517490320";//TODO configurare
+
+    @Value("${pn.interop.base-url}")
+    private String interopBaseUrl;
+    @Value("${pn.interop.token-oauth2.path}")
+    private String tokenOauth2Path;
+    @Value("${pn.interop.token-oauth2.client-assertion}")
+    private String clientAssertion;
+
+   
+    private String enableInterop;
+
+    private final PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
+    private  String bearerTokenInterop = null;
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
+                       @Value("${pn.interop.enable}") String enableInterop,
+                       PnInteropTokenOauth2Client pnInteropTokenOauth2Client) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -108,6 +125,12 @@ public class SharedSteps {
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
+        this.enableInterop = enableInterop;
+        this.pnInteropTokenOauth2Client = pnInteropTokenOauth2Client;
+
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = pnInteropTokenOauth2Client.getBearerToken();
+        }
     }
 
     @BeforeAll
@@ -179,6 +202,40 @@ public class SharedSteps {
                                 .address("testpagopa3@pnpagopa.postecert.local")));
     }
 
+    @And("destinatario GherkinSrl")
+    public void destinatarioPg1() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("PG 1")
+                        .taxId(pg1taxId)
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .digitalDomicile(new NotificationDigitalAddress()
+                                .type(NotificationDigitalAddress.TypeEnum.PEC)
+                                .address("testpagopa3@pnpagopa.postecert.local")));
+    }
+
+    @And("destinatario GherkinSrl e:")
+    public void destinatarioPg1param(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("PG 1")
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .taxId(pg1taxId));
+    }
+
+    @And("destinatario CucumberSpa")
+    public void destinatarioPg2() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("PG 2")
+                        .taxId(pg1taxId)
+                        .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
+                        .digitalDomicile(new NotificationDigitalAddress()
+                                .type(NotificationDigitalAddress.TypeEnum.PEC)
+                                .address("testpagopa3@pnpagopa.postecert.local")));
+    }
+    
+
     @And("destinatario Gherkin spa e:")
     public void destinatarioGherkinSpaParam(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
@@ -208,7 +265,6 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .taxId(cucumberSrlTaxID));
     }
-
 
     @And("destinatario Cucumber Society")
     public void destinatarioCucumberSociety() {
@@ -267,6 +323,18 @@ public class SharedSteps {
 
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
+    }
+
+    @Then("viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso")
+    public void vieneGenerataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEUgualeCodiceAvvisoConTaxIdCorretto() {
+        String creditorTaxId = notificationRequest.getRecipients().get(0).getPayment().getCreditorTaxId();
+        String noticeCode = notificationRequest.getRecipients().get(0).getPayment().getNoticeCode();
+
+        this.notificationRequest = (dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
+                .addRecipientsItem(dataTableTypeUtil.convertNotificationRecipient(new HashMap<>()).taxId(marioCucumberTaxID)));
+
+        this.notificationRequest.getRecipients().get(0).getPayment().setCreditorTaxId(creditorTaxId);
+        this.notificationRequest.getRecipients().get(0).getPayment().setNoticeCode(noticeCode);
     }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso")
@@ -503,7 +571,7 @@ public class SharedSteps {
 
     private void setGrup(SettableApiKey.ApiKeyType apiKeyType) {
         if (groupToSet && this.notificationRequest.getGroup() == null) {
-            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType);
+            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType, bearerTokenInterop);
             if (hashMapsList == null || hashMapsList.size() == 0) return;
             String id = null;
             for (HashMap<String, String> elem : hashMapsList) {
@@ -548,14 +616,25 @@ public class SharedSteps {
     }
 
     public void selectUser(String recipient) {
-        if (recipient.trim().equalsIgnoreCase("mario cucumber")) {
-            webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-        } else if (recipient.trim().equalsIgnoreCase("mario gherkin")) {
-            webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-        } else {
-            throw new IllegalArgumentException();
+        switch (recipient.trim().toLowerCase()){
+            case "mario cucumber":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                break;
+            case "mario gherkin":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                break;
+            case "pg_1":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                break;
+            case "pg_2":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
@@ -581,6 +660,14 @@ public class SharedSteps {
 
     public String getMarioGherkinTaxID() {
         return marioGherkinTaxID;
+    }
+
+    public String getPg1taxId() {
+        return pg1taxId;
+    }
+
+    public String getPg2taxId() {
+        return pg2taxId;
     }
 
     public PnExternalServiceClientImpl getPnExternalServiceClient() {
@@ -622,13 +709,13 @@ public class SharedSteps {
         List<HashMap<String, String>> hashMapsList = null;
         switch (settedPa) {
             case "Comune_1":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1, bearerTokenInterop);
                 break;
             case "Comune_2":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2, bearerTokenInterop);
                 break;
             case "Comune_Multi":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA, bearerTokenInterop);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -695,6 +782,7 @@ public class SharedSteps {
         }
 
     }
+
 
     @Before
     public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {

@@ -4,8 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
@@ -24,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -32,7 +31,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
-
 
 
 public class RicezioneNotificheWebDelegheSteps {
@@ -50,6 +48,9 @@ public class RicezioneNotificheWebDelegheSteps {
     private final String marioCucumberTaxID;
     private final String marioGherkinTaxID;
 
+    private final String pg1taxId;
+    private final String pg2taxId;
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -61,94 +62,153 @@ public class RicezioneNotificheWebDelegheSteps {
 
         this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
         this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
+
+        this.pg1taxId = sharedSteps.getPg1taxId();
+        this.pg2taxId = sharedSteps.getPg2taxId();
     }
 
-
-    @And("Mario Gherkin viene delegato da Mario Cucumber")
-    public void marioGherkinIsDelegatedByMarioCucumber() {
-        if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)){
-            throw new IllegalArgumentException();
+    private String getTaxIdByUser(String user) {
+        String userTaxId;
+        switch (user) {
+            case "Mario Cucumber":
+                userTaxId = marioCucumberTaxID;
+                break;
+            case "Mario Gherkin":
+                userTaxId = marioGherkinTaxID;
+                break;
+            case "GherkinSrl":
+                userTaxId = pg1taxId;
+                break;
+            case "CucumberSpa":
+                userTaxId = pg2taxId;
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(new UserDto()
+
+        return userTaxId;
+    }
+
+    private UserDto getUserDtoByuser(String user) {
+        UserDto userDto;
+        switch (user.trim().toLowerCase()) {
+            case "mario cucumber":
+                userDto = new UserDto()
                         .displayName("Mario Cucumber")
                         .firstName("Mario")
                         .lastName("Cucumber")
                         .fiscalCode(marioCucumberTaxID)
-                        .person(true))
-                .delegate(new UserDto()
+                        .person(true);
+                break;
+            case "mario gherkin":
+                userDto = new UserDto()
                         .displayName("Mario Gherkin")
                         .firstName("Mario")
                         .lastName("Gherkin")
                         .fiscalCode(marioGherkinTaxID)
-                        .person(true))
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
-        );
-        try {
-            webMandateClient.createMandate(mandate);
-        }catch (HttpStatusCodeException e) {
-            this.notificationError = e;
+                        .person(true);
+                break;
+            case "gherkinsrl":
+                userDto = new UserDto()
+                        .displayName("gherkinsrl")
+                        .firstName("gherkin")
+                        .lastName("srl")
+                        .fiscalCode(pg1taxId)
+                        .companyName("individuale")
+                        .person(false);
+                break;
+            case "cucumberspa":
+                userDto = new UserDto()
+                        .displayName("cucumberspa")
+                        .firstName("cucumber")
+                        .lastName("spa")
+                        .fiscalCode(pg2taxId)
+                        .companyName("LuAnSe SpA")
+                        .person(false);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
+
+        return userDto;
     }
 
-    @Given("Mario Gherkin viene delegato da Mario Gherkin")
-    public void marioGherkinIsDelegatedByMarioGherkin() {
-        if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2)){
+    private boolean setBearerToken(String user) {
+        boolean beenSet = false;
+        switch (user.trim().toLowerCase()) {
+            case "mario cucumber":
+                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                break;
+            case "mario gherkin":
+                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                break;
+            case "gherkinsrl":
+                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                break;
+            case "cucumberspa":
+                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                break;
+        }
+
+        return beenSet;
+    }
+
+    @And("{string} viene delegato da {string}")
+    public void delegateUser(String delegate, String delegator) {
+        if (!setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
-                .delegator(new UserDto()
-                        .displayName("Mario Gherkin")
-                        .firstName("Mario")
-                        .lastName("Gherkin")
-                        .fiscalCode(marioGherkinTaxID)
-                        .person(true))
-                .delegate(new UserDto()
-                        .displayName("Mario Gherkin")
-                        .firstName("Mario")
-                        .lastName("Gherkin")
-                        .fiscalCode(marioGherkinTaxID)
-                        .person(true))
+                .delegator(getUserDtoByuser(delegator))
+                .delegate(getUserDtoByuser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
-                .dateto(sdf.format(DateUtils.addDays(new Date(),1)))
+                .visibilityIds(new LinkedList<>())
+                .status(MandateDto.StatusEnum.PENDING)
+                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
         );
+
+        System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
-        }catch (HttpStatusCodeException e) {
+        } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
     }
 
-    @Given("Mario Gherkin rifiuta se presente la delega ricevuta Mario Cucumber")
-    public void marioGherkinRejectIfPresentMandateOfMarioCucumber() {
-        webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+    @Given("{string} rifiuta se presente la delega ricevuta {string}")
+    public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
+        if (!setBearerToken(delegate)) {
+            throw new IllegalArgumentException();
+        }
+        String delegatorTaxId = getTaxIdByUser(delegator);
+
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
-        for(MandateDto mandate: mandateList){
-            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(marioCucumberTaxID)){
+        for (MandateDto mandate : mandateList) {
+            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
         }
-        if(mandateDto != null){
+        if (mandateDto != null) {
             webMandateClient.rejectMandate(mandateDto.getMandateId());
         }
     }
 
-    @And("Mario Gherkin accetta la delega Mario Cucumber")
-    public void marioGherkinAcceptsMandateOfMarioCucumber() {
-        webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+    @And("{string} accetta la delega {string}")
+    public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
+        if (!setBearerToken(delegate)) {
+            throw new IllegalArgumentException();
+        }
+        String delegatorTaxId = getTaxIdByUser(delegator);
+
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        System.out.println("MANDATE-LIST: "+mandateList);
         MandateDto mandateDto = null;
-        for(MandateDto mandate: mandateList){
-            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(marioCucumberTaxID)){
+        for (MandateDto mandate : mandateList) {
+            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
@@ -156,8 +216,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        webMandateClient.acceptMandate(mandateDto.getMandateId(),new AcceptRequestDto().verificationCode(verificationCode));
-
+        webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
@@ -182,11 +241,11 @@ public class RicezioneNotificheWebDelegheSteps {
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
             Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
-    public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName,String recipient) {
+    public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
@@ -198,16 +257,21 @@ public class RicezioneNotificheWebDelegheSteps {
                     b2bUtils.downloadFile(downloadResponse.getUrl()));
             Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
-        Assertions.assertEquals(Sha256.get(),downloadResponse.getSha256());
+        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
 
-    @And("Mario Cucumber revoca la delega a Mario Gherkin")
-    public void marioCucumberRevokesMandate() {
-        webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+    @And("{string} revoca la delega a {string}")
+    public void userRevokesMandate(String delegator, String delegate) {
+        if (!setBearerToken(delegator)) {
+            throw new IllegalArgumentException();
+        }
+
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegator1();
+        System.out.println("MANDATE LIST: " + mandateList);
         MandateDto mandateDto = null;
-        for(MandateDto mandate: mandateList){
-            if(mandate.getDelegate().getLastName() != null && mandate.getDelegate().getLastName().equalsIgnoreCase("Gherkin")){
+        for (MandateDto mandate : mandateList) {
+            if (mandate.getDelegate().getLastName() != null &&
+                    mandate.getDelegate().getDisplayName().toLowerCase().equalsIgnoreCase(delegate.toLowerCase())) {
                 mandateDto = mandate;
                 break;
             }
@@ -216,16 +280,18 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
         webMandateClient.revokeMandate(mandateDto.getMandateId());
-
     }
 
-    @And("Mario Gherkin rifiuta la delega ricevuta da Mario Cucumber")
-    public void marioGherkinRefusesMandateReceivedFrom() {
-        webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+    @And("{string} rifiuta la delega ricevuta da {string}")
+    public void delegateRefusesMandateReceivedFromDelegator(String delegate, String delegator) {
+        if (!setBearerToken(delegate)) {
+            throw new IllegalArgumentException();
+        }
+        String delegatorTaxId = getTaxIdByUser(delegator);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
-        for(MandateDto mandate: mandateList){
-            if(mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(marioCucumberTaxID)){
+        for (MandateDto mandate : mandateList) {
+            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
@@ -234,12 +300,10 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
         webMandateClient.rejectMandate(mandateDto.getMandateId());
-
     }
 
-
     @Then("si tenta la lettura della notifica da parte del delegato {string} che produce un errore con status code {string}")
-    public void readNotificationWithError(String recipient,String statusCode) {
+    public void readNotificationWithError(String recipient, String statusCode) {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
@@ -249,12 +313,12 @@ public class RicezioneNotificheWebDelegheSteps {
             httpClientErrorException = e;
         }
         Assertions.assertTrue((httpClientErrorException != null) &&
-                (httpClientErrorException.getStatusCode().toString().substring(0,3).equals(statusCode)));
+                (httpClientErrorException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     @Given("Mario Gherkin viene delegato Mario Cucumber con delega in scadenza")
     public void marioGherkinDelegateMarioCucumberWithExpiringMandate() {
-        if(!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)){
+        if (!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)) {
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -275,25 +339,24 @@ public class RicezioneNotificheWebDelegheSteps {
                         .person(true))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
-                .dateto(sdf.format(DateUtils.addMinutes(new Date(),2)))
+                .dateto(sdf.format(DateUtils.addMinutes(new Date(), 2)))
         );
         webMandateClient.createMandate(mandate);
-
     }
 
     @And("si attende lo scadere della delega")
     public void awaitExpirationOfMandate() {
         try {
-            Thread.sleep( 120 * 1000L);
+            Thread.sleep(120 * 1000L);
         } catch (InterruptedException exc) {
-            throw new RuntimeException( exc );
+            throw new RuntimeException(exc);
         }
     }
 
     @Then("l'operazione di delega ha prodotto un errore con status code {string}")
     public void operationProducedAnErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((notificationError != null) &&
-                (notificationError.getStatusCode().toString().substring(0,3).equals(statusCode)));
+                (notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     @And("la notifica può essere correttamente letta da {string}")
@@ -305,16 +368,10 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-
-    @And("si verifica la lettura")
-    public void siVerificaLaLettura() {
-
-    }
-
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        try{
-            Thread.sleep(sharedSteps.getWorkFlowWait());
+        try {
+            Thread.sleep(sharedSteps.getWorkFlowWait() * 2);
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }
@@ -322,27 +379,18 @@ public class RicezioneNotificheWebDelegheSteps {
 
         TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
-        String userTaxId = "";
-        switch (user){
-            case "Mario Cucumber":
-                userTaxId = marioCucumberTaxID;
-                break;
-            case "Mario Gherkin":
-                userTaxId = marioGherkinTaxID;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        String userTaxId = getTaxIdByUser(user);
+        System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNotNull(timelineElement.getDetails().getDelegateInfo());
-        Assertions.assertEquals(userTaxId,timelineElement.getDetails().getDelegateInfo().getTaxId());
+        Assertions.assertEquals(userTaxId, timelineElement.getDetails().getDelegateInfo().getTaxId());
     }
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        try{
-            Thread.sleep(sharedSteps.getWorkFlowWait());
+        try {
+            Thread.sleep(sharedSteps.getWorkFlowWait() * 2);
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }
@@ -350,6 +398,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
         TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
+        System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());

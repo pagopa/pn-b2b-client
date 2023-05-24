@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
+import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api.EventsApi;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api.StreamsApi;
@@ -8,8 +9,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -29,7 +35,15 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String apiKeyGa;
     private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
     private final String devBasePath;
+    private String bearerTokenInterop;
 
+    private final String interopBaseUrl;
+
+    private final String tokenOauth2Path;
+
+    private final String clientAssertion;
+
+    private final String enableInterop;
 
     public PnWebhookB2bExternalClientImpl(
             ApplicationContext ctx,
@@ -37,25 +51,57 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
             @Value("${pn.external.base-url}") String devBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-GA}") String apiKeyGa
+            @Value("${pn.external.api-key-GA}") String apiKeyGa,
+            @Value("${pn.interop.base-url}") String interopBaseUrl,
+            @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
+            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${pn.interop.enable}") String enableInterop
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+
+        this.enableInterop = enableInterop;
+        this.interopBaseUrl = interopBaseUrl;
+        this.tokenOauth2Path = tokenOauth2Path;
+        this.clientAssertion = clientAssertion;
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = getBearerToken();
+        }
         this.devBasePath = devBasePath;
 
-        this.eventsApi = new EventsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1) );
-        this.streamsApi = new StreamsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1) );
+        this.eventsApi = new EventsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.streamsApi = new StreamsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
     }
 
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey ) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
         newApiClient.addDefaultHeader("x-api-key", apikey );
+        if ("true".equalsIgnoreCase(enableInterop)) {
+            newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+        }
         return newApiClient;
+    }
+
+    public String getBearerToken() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("client_assertion", clientAssertion);
+        map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
+        map.add("grant_type", "client_credentials");
+
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+
+        ResponseEntity<PnPaB2bExternalClientImpl.InteropResponse> response = this.restTemplate.postForEntity( interopBaseUrl + tokenOauth2Path, request , PnPaB2bExternalClientImpl.InteropResponse.class );
+
+        return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
+
     }
 
     public StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest){
@@ -123,7 +169,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     public void setApiKey(String apiKey){
-        this.eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey));
-        this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey));
+        this.eventsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop,enableInterop));
+        this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop,enableInterop));
     }
 }
