@@ -3,13 +3,16 @@ package it.pagopa.pn.cucumber.steps;
 import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 
 import java.util.Map;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
-
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class DataTableTypeUtil {
 
     @Autowired
@@ -42,7 +45,7 @@ public class DataTableTypeUtil {
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
         );
         try {
-            Thread.sleep(2);
+            Thread.sleep(Thread.currentThread().getId());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -102,7 +105,7 @@ public class DataTableTypeUtil {
 
          */
         try {
-            Thread.sleep(2);
+            Thread.sleep(Thread.currentThread().getId());
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -3,6 +3,7 @@ Feature: Ricezione notifiche destinate al delegante
   Background:
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -13,6 +14,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -23,6 +25,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then il documento notificato può essere correttamente recuperato da "CucumberSpa" con delega
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -36,7 +39,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
-  @ignore
+  @mandate2 @ignore
   Scenario: [WEB-PG-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -50,7 +53,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
-  @ignore
+  @mandate2 @ignore
   Scenario: [WEB-PG-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -64,6 +67,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_6] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -75,6 +79,7 @@ Feature: Ricezione notifiche destinate al delegante
     And "GherkinSrl" revoca la delega a "CucumberSpa"
     Then si tenta la lettura della notifica da parte del delegato "CucumberSpa" che produce un errore con status code "404"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" rifiuta la delega ricevuta da "GherkinSrl"
@@ -85,17 +90,19 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si tenta la lettura della notifica da parte del delegato "CucumberSpa" che produce un errore con status code "404"
 
-  @ignore
+  @mandate2 @ignore
   Scenario: [WEB-PG-MANDATE_8] Delega a se stesso _scenario negativo
     Given "GherkinSrl" viene delegato da "GherkinSrl"
     Then l'operazione di delega ha prodotto un errore con status code "409"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_9] delega duplicata_scenario negativo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     And "CucumberSpa" viene delegato da "GherkinSrl"
     Then l'operazione di delega ha prodotto un errore con status code "409"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_10] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -107,6 +114,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
     And la notifica può essere correttamente letta da "GherkinSrl"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_11] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -118,6 +126,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "GherkinSrl"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -129,6 +138,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
     And si verifica che l'elemento di timeline della lettura riporti i dati di "CucumberSpa"
 
+  @mandate2
   Scenario: [WEB-PG-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -140,6 +150,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "GherkinSrl"
     And si verifica che l'elemento di timeline della lettura non riporti i dati del delegato
 
+  @mandate2
   Scenario: [WEB-PG-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"

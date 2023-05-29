@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -46,6 +50,7 @@ public enum NotificationValue {
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/sample.pdf",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false);
 
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";
 
@@ -63,8 +68,11 @@ public enum NotificationValue {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
         String threadNumber = (Thread.currentThread().getId()+"");
-        String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
-        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
+        String numberOfThread = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
+        String timeNano = System.nanoTime()+"";
+        String finalNumber = "" + String.format("302" + numberOfThread + "%13s", timeNano.substring(0, timeNano.length()-2));
+        logger.error("GENERATED NUMBER: "+finalNumber);
+        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + finalNumber ) : notificationValue.defaultValue));
     }
 
     public static String getValue(Map<String, String> data, String key){

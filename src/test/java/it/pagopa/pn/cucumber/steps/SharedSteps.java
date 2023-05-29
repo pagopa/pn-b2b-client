@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
+import io.cucumber.java.Scenario;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -374,11 +375,19 @@ public class SharedSteps {
         this.notificationRequest.setPaProtocolNumber(paProtocolNumber);
     }
 
+    private String scenario;
+    @Before
+    public void printScenarioName(Scenario scenario) {
+       this.scenario= scenario.getName();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOk(String paType) {
         selectPA(paType);
         setSenderTaxIdFromProperties();
         sendNotification();
+        scenario = scenario.substring(0,scenario.indexOf("]")+1);
+        logger.info("Scenario: [{}] --> IUN {}",scenario,notificationResponseComplete.getIun());
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi REFUSED")

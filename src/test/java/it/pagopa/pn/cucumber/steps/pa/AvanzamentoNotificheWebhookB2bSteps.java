@@ -433,7 +433,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
         int retryAfter = Integer.parseInt(listResponseEntity.getHeaders().get("retry-after").get(0));
         List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
-        if(deepCount >= 200){
+        if(deepCount >= 600){
             throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                     +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount);
         }
@@ -463,7 +463,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 Thread.sleep(200);
                 return searchInWebhook(timeLineOrStatus,lastProgress.getEventId(),(deepCount+1));
             }catch (IllegalStateException illegalStateException){
-                if(deepCount == 199 || deepCount == 198 || deepCount == 197){
+                if(deepCount == 599 || deepCount == 598 || deepCount == 597){
                     throw new IllegalStateException((illegalStateException.getMessage()+("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                             +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount)));
                 }else{
@@ -494,7 +494,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
         int retryAfter = Integer.parseInt(listResponseEntity.getHeaders().get("retry-after").get(0));
         List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
-        if(deepCount >= 200){
+        if(deepCount >= 600){
             throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                     +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount);
         }
