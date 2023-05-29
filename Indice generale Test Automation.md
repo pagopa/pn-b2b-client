@@ -8,22 +8,7 @@
 
 ##### Invio notifiche b2b
 
-<style>
-details {
-    border:1px solid black;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 20px
-}
-
-@media (prefers-color-scheme: dark) {
-  details {
-    border-color: white;
-  }
-}
-</style>
-
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -35,7 +20,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -49,7 +34,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_3] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo</summary>
 
 **Descrizione**
@@ -62,7 +47,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_4] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -76,7 +61,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_5] invio notifiche digitali mono destinatario (p.fisica)_scenario negativo</summary>
 
 **Descrizione**
@@ -90,7 +75,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_9] invio notifiche digitali mono destinatario senza physicalAddress (p.fisica)_scenario negativo</summary>
 
 **Descrizione**
@@ -101,7 +86,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo</summary>
 
 **Descrizione**
@@ -114,7 +99,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo</summary>
 
 **Descrizione**
@@ -125,7 +110,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo</summary>
 
 **Descrizione**
@@ -136,7 +121,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_17] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -148,7 +133,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_18] Invio notifica digitale mono destinatario con taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -160,7 +145,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_19] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo</summary>
 
 **Descrizione**
@@ -172,7 +157,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_20] Invio notifica digitale mono destinatario con pagamento</summary>
 
 **Descrizione**
@@ -183,7 +168,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_21] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata</summary>
 
 **Descrizione**
@@ -196,7 +181,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_21] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -207,7 +192,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_22] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -220,7 +205,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_24] Invio notifica digitale mono destinatario physicalCommunication-REGISTERED_LETTER_890_scenario positivo</summary>
 
 **Descrizione**
@@ -232,7 +217,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_25] Invio notifica digitale mono destinatario physicalCommunication-AR_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -244,7 +229,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_26] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -255,7 +240,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_27] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -266,7 +251,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_28] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo</summary>
 
 **Descrizione**
@@ -280,7 +265,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_29] Invio notifica digitale mono destinatario e controllo paProtocolNumber con uguale pa_scenario negativo</summary>
 
 **Descrizione**
@@ -293,7 +278,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_30] invio notifiche digitali e controllo paProtocolNumber e idempotenceToken con diversa pa_scenario positivo</summary>
 
 **Descrizione**
@@ -307,7 +292,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND-31] Invio notifica senza indirizzo fisico scenario negativo</summary>
 
 **Descrizione**
@@ -318,7 +303,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND-33] Invio notifica senza indirizzo fisico scenario negativo</summary>
 
 **Descrizione**
@@ -329,7 +314,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_34] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo</summary>
 
 **Descrizione**
@@ -340,7 +325,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_35] Invio notifica mono destinatario con taxId non valido scenario negativo</summary>
 
 **Descrizione**
@@ -354,7 +339,7 @@ details {
 
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_1] Invio notifica digitale_scenario negativo</summary>
 
 **Descrizione**
@@ -363,7 +348,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_2] Invio notifica digitale senza pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -372,7 +357,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_3] Invio notifica multi destinatario senza pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -381,7 +366,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_4] Invio notifica multi destinatario con pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -390,7 +375,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_5] Invio notifica multi destinatario PA non abilitata_scenario negativa</summary>
 
 **Descrizione**
@@ -399,7 +384,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_6] Invio notifica multi destinatario uguale codice avviso_scenario positivo</summary>
 
 **Descrizione**
@@ -408,7 +393,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo</summary>
 
 **Descrizione**
@@ -420,7 +405,7 @@ details {
 
 ##### Invio notifiche e2e web PA
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN web PA_scenario positivo</summary>
 
 **Descrizione**
@@ -429,7 +414,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_2] Invio notifica digitale senza pagamento e recupero tramite codice IUN web PA_scenario positivo</summary>
 
 **Descrizione**
@@ -438,7 +423,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_3] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -447,7 +432,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_4] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo</summary>
 
 **Descrizione**
@@ -456,7 +441,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_5] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo</summary>
 
 **Descrizione**
@@ -465,7 +450,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_6] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo</summary>
 
 **Descrizione**
@@ -474,7 +459,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB_PA-SEND_7] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_PA_scenario positivo</summary>
 
 **Descrizione**
@@ -488,7 +473,7 @@ details {
 
 ##### Invio notifiche b2b per la persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -497,7 +482,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -506,7 +491,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_3] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -515,7 +500,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_4] invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -524,7 +509,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_5] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -533,7 +518,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_9] invio notifiche digitali mono destinatario senza physicalAddress (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -542,7 +527,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo</summary>
 
 **Descrizione**
@@ -551,7 +536,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo</summary>
 
 **Descrizione**
@@ -560,7 +545,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo</summary>
 
 **Descrizione**
@@ -569,7 +554,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_15] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -578,7 +563,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_16] Invio notifica digitale mono destinatario con taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -587,7 +572,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_17] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo</summary>
 
 **Descrizione**
@@ -596,7 +581,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_18] Invio notifica digitale mono destinatario con pagamento</summary>
 
 **Descrizione**
@@ -605,7 +590,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_19] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -614,7 +599,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_20] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -623,7 +608,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_21] Invio notifica digitale mono destinatario physicalCommunication-REGISTERED_LETTER_890_scenario positivo</summary>
 
 **Descrizione**
@@ -632,7 +617,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_22] Invio notifica digitale mono destinatario physicalCommunication-AR_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -641,7 +626,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_22] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -650,7 +635,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_23] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -659,7 +644,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_24] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo</summary>
 
 **Descrizione**
@@ -668,7 +653,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_25] Invio notifica digitale mono destinatario e controllo paProtocolNumber con uguale pa_scenario negativo</summary>
 
 **Descrizione**
@@ -677,7 +662,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_26] invio notifiche digitali e controllo paProtocolNumber e idempotenceToken con diversa pa_scenario positivo</summary>
 
 **Descrizione**
@@ -686,7 +671,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_27] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo</summary>
 
 **Descrizione**
@@ -698,7 +683,7 @@ details {
 
 ##### Invio notifiche b2b per la persona giuridica con codice fiscale (società semplice)
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -707,7 +692,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -716,7 +701,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_3] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -725,7 +710,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_4] invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -734,7 +719,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_5] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -743,7 +728,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_9] invio notifiche digitali mono destinatario senza physicalAddress (p.giuridica)_scenario negativo</summary>
 
 **Descrizione**
@@ -752,7 +737,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo</summary>
 
 **Descrizione**
@@ -761,7 +746,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo</summary>
 
 **Descrizione**
@@ -770,7 +755,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo</summary>
 
 **Descrizione**
@@ -779,7 +764,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_15] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -788,7 +773,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_16] Invio notifica digitale mono destinatario con taxonomyCode (verifica Default)_scenario positivo</summary>
 
 **Descrizione**
@@ -797,7 +782,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_17] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo</summary>
 
 **Descrizione**
@@ -806,7 +791,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_18] Invio notifica digitale mono destinatario con pagamento</summary>
 
 **Descrizione**
@@ -815,7 +800,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_19] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -824,7 +809,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_20] Invio notifica digitale mono destinatario con pagamento</summary>
 
 **Descrizione**
@@ -833,7 +818,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_21] Invio notifica digitale mono destinatario physicalCommunication-REGISTERED_LETTER_890_scenario positivo</summary>
 
 **Descrizione**
@@ -842,7 +827,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_22] Invio notifica digitale mono destinatario physicalCommunication-AR_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -851,7 +836,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_23] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -860,7 +845,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_24] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo</summary>
 
 **Descrizione**
@@ -869,7 +854,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_25] Invio notifica digitale mono destinatario e controllo paProtocolNumber con uguale pa_scenario negativo</summary>
 
 **Descrizione**
@@ -878,7 +863,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_26] invio notifiche digitali e controllo paProtocolNumber e idempotenceToken con diversa pa_scenario positivo</summary>
 
 **Descrizione**
@@ -887,7 +872,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_27] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
 **Descrizione**
@@ -899,7 +884,7 @@ details {
 
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento per persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_01] Invio notifica digitale_scenario negativo</summary>
 
 **Descrizione**
@@ -908,7 +893,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_02] Invio notifica digitale senza pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -917,7 +902,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_03] Invio notifica multi destinatario senza pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -926,7 +911,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_04] Invio notifica multi destinatario con pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -935,7 +920,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_05] Invio notifica multi destinatario PA non abilitata_scenario negativa</summary>
 
 **Descrizione**
@@ -944,7 +929,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_06] Invio notifica multi destinatario uguale codice avviso_scenario positivo</summary>
 
 **Descrizione**
@@ -953,7 +938,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_07] Invio notifica multi destinatario senza pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -962,7 +947,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_08] Invio notifica multi destinatario con pagamento_scenario positivo</summary>
 
 **Descrizione**
@@ -971,7 +956,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PG-MULTI-PA_09] Invio notifica multi destinatario PA non abilitata_scenario negativa</summary>
 
 **Descrizione**
@@ -987,7 +972,7 @@ details {
 
 ##### Download da persona fisica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PF_1] download documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -996,7 +981,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PF_2] download documento pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1005,7 +990,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PF_3] download documento f24_standard_scenario positivo</summary>
 
 **Descrizione**
@@ -1019,7 +1004,7 @@ details {
 
 ##### Download da persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_1] download documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -1028,7 +1013,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_2] download documento pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1037,7 +1022,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_3] download documento f24_standard_scenario positivo</summary>
 
 **Descrizione**
@@ -1046,7 +1031,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_4] download documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -1055,7 +1040,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_5] download documento pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1064,7 +1049,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_6] download documento f24_standard_scenario positivo</summary>
 
 **Descrizione**
@@ -1080,7 +1065,7 @@ details {
 
 ##### Validazione campi invio notifiche b2b
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1089,7 +1074,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_1_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1098,7 +1083,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1107,7 +1092,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_2_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1116,7 +1101,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_3] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo</summary>
 
 **Descrizione**
@@ -1125,7 +1110,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_3_LITE] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo</summary>
 
 **Descrizione**
@@ -1134,7 +1119,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_4] invio notifica con oggetto contenente caratteri speciali_scenario positivo</summary>
 
 **Descrizione**
@@ -1143,7 +1128,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_5] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario positivo</summary>
 
 **Descrizione**
@@ -1152,7 +1137,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_6] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1161,7 +1146,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_7] invio notifiche digitali mono destinatario con parametri senderTaxId errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1170,7 +1155,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_8] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1179,7 +1164,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_9] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1188,7 +1173,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_9_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1197,7 +1182,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1206,7 +1191,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_10_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1215,7 +1200,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_11] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1224,7 +1209,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1233,7 +1218,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_13] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1242,7 +1227,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_14] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1251,7 +1236,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_15] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative uguali_scenario negativo</summary>
 
 **Descrizione**
@@ -1260,7 +1245,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_16] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative diversi_scenario positivo</summary>
 
 **Descrizione**
@@ -1269,7 +1254,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_17] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative uguali_scenario negativo</summary>
 
 **Descrizione**
@@ -1278,7 +1263,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_18] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative diversi_scenario positivo</summary>
 
 **Descrizione**
@@ -1287,7 +1272,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_19] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo</summary>
 
 **Descrizione**
@@ -1296,7 +1281,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_20] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo</summary>
 
 **Descrizione**
@@ -1305,7 +1290,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_21] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo</summary>
 
 **Descrizione**
@@ -1314,7 +1299,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_22] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo</summary>
 
 **Descrizione**
@@ -1323,7 +1308,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_23] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo</summary>
 
 **Descrizione**
@@ -1337,7 +1322,7 @@ details {
 
 ##### Validazione campi invio notifiche b2b con persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1346,7 +1331,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1355,7 +1340,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_3] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo</summary>
 
 **Descrizione**
@@ -1364,7 +1349,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_4] invio notifica con oggetto contenente caratteri speciali_scenario positivo</summary>
 
 **Descrizione**
@@ -1373,7 +1358,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_5] invio notifiche digitali mono destinatario con errati tax_id errati_scenario positivo</summary>
 
 **Descrizione**
@@ -1382,7 +1367,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_6] invio notifiche digitali mono destinatario con parametri tax_id corretti_scenario negativo</summary>
 
 **Descrizione**
@@ -1391,7 +1376,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_7] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1400,7 +1385,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_8] invio notifiche digitali mono destinatario con parametri senderTaxId errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1409,7 +1394,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_9] invio notifiche digitali mono destinatario con parametri subject errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1418,7 +1403,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1427,7 +1412,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_11] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
@@ -1436,7 +1421,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1445,7 +1430,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_13] invio notifiche digitali mono destinatario con parametri senderDenomination errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1454,7 +1439,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_14] invio notifiche digitali mono destinatario con parametri abstract errati_scenario negativo</summary>
 
 **Descrizione**
@@ -1463,7 +1448,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG-15] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative uguali_scenario negativo</summary>
 
 **Descrizione**
@@ -1472,7 +1457,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_16] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative diversi_scenario positivo</summary>
 
 **Descrizione**
@@ -1481,7 +1466,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG-17] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative uguali_scenario negativo</summary>
 
 **Descrizione**
@@ -1490,7 +1475,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_18] invio notifiche digitali mono destinatario con noticeCode e noticeCodeAlternative diversi_scenario positivo</summary>
 
 **Descrizione**
@@ -1499,7 +1484,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_19] invio notifiche digitali mono destinatario con physicalAddress_zip corretti scenario positivo</summary>
 
 **Descrizione**
@@ -1508,7 +1493,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_VALID_PG_20] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo</summary>
 
 **Descrizione**
@@ -1526,7 +1511,7 @@ details {
 
 ##### Ricezione notifiche destinate al delegante
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1535,7 +1520,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -1544,7 +1529,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1553,7 +1538,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo</summary>
 
 **Descrizione**
@@ -1562,7 +1547,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo</summary>
 
 **Descrizione**
@@ -1571,7 +1556,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_6] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1580,7 +1565,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1589,7 +1574,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_8] Delega a se stesso _scenario negativo</summary>
 
 **Descrizione**
@@ -1598,7 +1583,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_9] delega duplicata_scenario negativo</summary>
 
 **Descrizione**
@@ -1607,7 +1592,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_10] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1616,7 +1601,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_11] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1625,7 +1610,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1634,7 +1619,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1643,7 +1628,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1657,7 +1642,7 @@ details {
 
 ##### Ricezione notifiche destinate al delegante
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1666,7 +1651,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -1675,7 +1660,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1684,7 +1669,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo</summary>
 
 **Descrizione**
@@ -1693,7 +1678,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo</summary>
 
 **Descrizione**
@@ -1702,7 +1687,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_6] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1711,7 +1696,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1720,7 +1705,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_8] Delega a se stesso _scenario negativo</summary>
 
 **Descrizione**
@@ -1729,7 +1714,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_9] delega duplicata_scenario negativo</summary>
 
 **Descrizione**
@@ -1738,7 +1723,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_10] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1747,7 +1732,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_11] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1756,7 +1741,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1765,7 +1750,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1774,7 +1759,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PG-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1788,7 +1773,7 @@ details {
 
 ##### Ricezione notifiche destinate al delegante
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1797,7 +1782,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -1806,7 +1791,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -1815,7 +1800,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo</summary>
 
 **Descrizione**
@@ -1824,7 +1809,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo</summary>
 
 **Descrizione**
@@ -1833,7 +1818,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_6] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1842,7 +1827,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -1851,7 +1836,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_8] delega duplicata_scenario negativo</summary>
 
 **Descrizione**
@@ -1860,7 +1845,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_9] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1869,7 +1854,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_10] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1878,7 +1863,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_11] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1887,7 +1872,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo</summary>
 
 **Descrizione**
@@ -1896,7 +1881,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PFPG-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
@@ -1910,7 +1895,7 @@ details {
 
 #### Recupero notifiche tramite api AppIO b2b
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_1] Invio notifica con api b2b e recupero tramite AppIO</summary>
 
 **Descrizione**
@@ -1920,7 +1905,7 @@ details {
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
   [B2B-PA-APP-IO_2] Invio notifica con api b2b paProtocolNumber e idemPotenceToken e recupero tramite AppIO
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_3] Invio notifica con api b2b uguale creditorTaxId e diverso codice avviso recupero tramite AppIO</summary>
 
 **Descrizione**
@@ -1929,7 +1914,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_4] Invio notifica con api b2b e recupero documento notificato con AppIO</summary>
 
 **Descrizione**
@@ -1938,7 +1923,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_5] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo</summary>
 
 **Descrizione**
@@ -1950,7 +1935,7 @@ details {
 
 #### Recupero notifiche tramite api AppIO b2b multi destinatario
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_6] Invio notifica con api b2b e recupero tramite AppIO</summary>
 
 **Descrizione**
@@ -1959,7 +1944,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_7] Invio notifica con api b2b paProtocolNumber e idemPotenceToken e recupero tramite AppIO</summary>
 
 **Descrizione**
@@ -1968,7 +1953,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_8] Invio notifica con api b2b uguale creditorTaxId e diverso codice avviso recupero tramite AppIO</summary>
 
 **Descrizione**
@@ -1977,7 +1962,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_9] Invio notifica con api b2b e recupero documento notificato con AppIO</summary>
 
 **Descrizione**
@@ -1986,7 +1971,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_10] Invio notifica con api b2b e recupero documento notificato con AppIO</summary>
 
 **Descrizione**
@@ -1995,7 +1980,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_11] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo</summary>
 
 **Descrizione**
@@ -2004,7 +1989,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-APP-IO_12] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo</summary>
 
 **Descrizione**
@@ -2016,7 +2001,7 @@ details {
 
 #### Ricezione notifiche api web con invio tramite api B2B
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2025,7 +2010,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -2034,7 +2019,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -2043,7 +2028,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo</summary>
 
 **Descrizione**
@@ -2052,7 +2037,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo</summary>
 
 **Descrizione**
@@ -2061,7 +2046,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_6] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario negativo</summary>
 
 **Descrizione**
@@ -2070,7 +2055,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_7] Invio notifica digitale altro destinatario e recupero tramite codice IUN API WEB_scenario negativo</summary>
 
 **Descrizione**
@@ -2079,7 +2064,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_8] Invio notifica digitale altro destinatario e recupero allegato F24_STANDARD_scenario negativo</summary>
 
 **Descrizione**
@@ -2088,7 +2073,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_9] Invio notifica digitale altro destinatario e recupero allegato F24_FLAT_scenario negativo</summary>
 
 **Descrizione**
@@ -2097,7 +2082,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_10] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -2106,7 +2091,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_11] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2115,7 +2100,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_12] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2124,7 +2109,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_13] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2133,7 +2118,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-RECIPIENT_14] Invio notifica digitale mono destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2145,7 +2130,7 @@ details {
 
 #### Ricezione notifiche api web con invio tramite api B2B multi destinatario
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_1] Invio notifica digitale multi destinatario e recupero tramite codice IUN API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2154,7 +2139,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_2] Invio notifica digitale multi destinatario e recupero documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -2163,7 +2148,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_3] Invio notifica digitale multi destinatario e recupero allegato pagopa_scenario positivo</summary>
 
 **Descrizione**
@@ -2172,7 +2157,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_4] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario positivo</summary>
 
 **Descrizione**
@@ -2181,7 +2166,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_5] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario positivo</summary>
 
 **Descrizione**
@@ -2190,7 +2175,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_6] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario negativo</summary>
 
 **Descrizione**
@@ -2199,7 +2184,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_7] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario negativo</summary>
 
 **Descrizione**
@@ -2208,7 +2193,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_8] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario negativo</summary>
 
 **Descrizione**
@@ -2217,7 +2202,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_9] Invio notifica digitale multi destinatario e recupero allegato F24_FLAT_scenario negativo</summary>
 
 **Descrizione**
@@ -2226,7 +2211,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_10] Invio notifica digitale multi destinatario e recupero allegato pagopa_scenario negativo</summary>
 
 **Descrizione**
@@ -2235,7 +2220,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_11] Invio notifica digitale multi destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2244,7 +2229,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_12] Invio notifica digitale multi destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2253,7 +2238,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_13] Invio notifica digitale multi destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2262,7 +2247,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_14] Invio notifica digitale multi destinatario e recupero tramite ricerca API WEB_scenario positivo</summary>
 
 **Descrizione**
@@ -2271,7 +2256,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_15] Invio notifica digitale multi destinatario e recupero tramite ricerca API WEB_scenario negativo</summary>
 
 **Descrizione**
@@ -2289,7 +2274,7 @@ details {
 
 ##### Avanzamento notifiche b2b persona fisica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -2298,7 +2283,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -2307,7 +2292,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -2316,7 +2301,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -2325,7 +2310,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -2334,7 +2319,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -2343,7 +2328,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -2352,7 +2337,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -2361,7 +2346,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -2370,7 +2355,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_10] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -2379,7 +2364,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_11] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -2388,7 +2373,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_12] Invio notifica digitale ed attesa elemento di timeline PREPARE_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -2397,7 +2382,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_13] Invio notifica digitale ed attesa elemento di timeline NOT_HANDLED_scenario positivo</summary>
 
 **Descrizione**
@@ -2406,7 +2391,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_14] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -2415,7 +2400,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_15] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -2424,7 +2409,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -2433,7 +2418,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -2442,7 +2427,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_18] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campo deliveryDetailCode positivo</summary>
 
 **Descrizione**
@@ -2451,7 +2436,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_19] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo</summary>
 
 **Descrizione**
@@ -2460,7 +2445,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_20] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo</summary>
 
 **Descrizione**
@@ -2469,7 +2454,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_21] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo</summary>
 
 **Descrizione**
@@ -2478,7 +2463,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_22] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo</summary>
 
 **Descrizione**
@@ -2490,7 +2475,7 @@ details {
 
 ##### Avanzamento notifiche b2b multi destinatario
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-TIMELINE_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -2499,7 +2484,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-TIMELINE_MULTI_2] Invio notifica multi destinatario_scenario positivo</summary>
 
 **Descrizione**
@@ -2508,7 +2493,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-TIMELINE_MULTI_3] Invio notifica multi destinatario_scenario positivo</summary>
 
 **Descrizione**
@@ -2517,7 +2502,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-TIMELINE_MULTI_4] Invio notifica multi destinatario SCHEDULE_ANALOG_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2526,7 +2511,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_5] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -2535,7 +2520,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_6] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -2544,7 +2529,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_7] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -2553,7 +2538,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_8] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -2562,7 +2547,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_9] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -2571,7 +2556,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_10] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -2580,7 +2565,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_11] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -2592,7 +2577,7 @@ details {
 
 #####  Avanzamento notifiche b2b persona fisica pagamento
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_1] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -2601,7 +2586,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_2] Invio notifica e verifica amount</summary>
 
 **Descrizione**
@@ -2610,7 +2595,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_3] Invio notifica FLAT e verifica amount</summary>
 
 **Descrizione**
@@ -2619,7 +2604,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_4] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -2628,7 +2613,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_5] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -2637,7 +2622,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_6] Invio notifica e verifica amount</summary>
 
 **Descrizione**
@@ -2646,7 +2631,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PAY_7] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -2658,7 +2643,7 @@ details {
 
 ##### Avanzamento notifiche b2b con workflow cartaceo
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -2667,7 +2652,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -2676,7 +2661,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario negativo</summary>
 
 **Descrizione**
@@ -2685,7 +2670,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RIS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER positivo</summary>
 
 **Descrizione**
@@ -2694,7 +2679,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RIS_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -2703,7 +2688,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2712,7 +2697,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2721,7 +2706,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_3] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2730,7 +2715,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_4] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_AR_scenario negativo</summary>
 
 **Descrizione**
@@ -2739,7 +2724,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_5] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_890_scenario negativo</summary>
 
 **Descrizione**
@@ -2748,7 +2733,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_6] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_RIR_scenario negativo</summary>
 
 **Descrizione**
@@ -2757,7 +2742,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_7] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_fail_890_NR_scenario positivo</summary>
 
 **Descrizione**
@@ -2766,7 +2751,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_8] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_fail_AR_NR_scenario positivo</summary>
 
 **Descrizione**
@@ -2775,7 +2760,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_9] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo</summary>
 
 **Descrizione**
@@ -2784,7 +2769,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_10] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo</summary>
 
 **Descrizione**
@@ -2793,7 +2778,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_11] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2802,7 +2787,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_12] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2811,7 +2796,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_13] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -2820,7 +2805,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_14] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -2829,7 +2814,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_15] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -2838,7 +2823,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_16] Attesa elemento di timeline SEND_ANALOG_FEEDBACK e verifica campo SEND_ANALOG_FEEDBACK positivo</summary>
 
 **Descrizione**
@@ -2847,7 +2832,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_17] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo</summary>
 
 **Descrizione**
@@ -2856,7 +2841,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_18] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campi municipalityDetails e foreignState positivo</summary>
 
 **Descrizione**
@@ -2865,7 +2850,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_19] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2874,7 +2859,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_20] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2883,7 +2868,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_21] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2892,7 +2877,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_22] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2901,7 +2886,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_23] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2910,7 +2895,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_24] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -2919,7 +2904,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_25] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo</summary>
 
 **Descrizione**
@@ -2928,7 +2913,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_26] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890 negativo</summary>
 
 **Descrizione**
@@ -2937,7 +2922,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_27] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_scenario negativo</summary>
 
 **Descrizione**
@@ -2946,7 +2931,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_28] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890_scenario negativo</summary>
 
 **Descrizione**
@@ -2955,7 +2940,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_29] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_RIR_scenario negativo</summary>
 
 **Descrizione**
@@ -2964,7 +2949,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_30] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_NR negativo</summary>
 
 **Descrizione**
@@ -2973,7 +2958,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_31] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_890_NR negativo</summary>
 
 **Descrizione**
@@ -2982,7 +2967,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_ANALOG_32] Invio notifica digitale senza allegato ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo numero pagine AAR</summary>
 
 **Descrizione**
@@ -2994,7 +2979,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona fisica 890
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_1] Invio notifica verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3003,7 +2988,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3012,7 +2997,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_3] Invio notifica con allegato verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3021,7 +3006,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3030,7 +3015,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3039,7 +3024,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3048,7 +3033,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3057,7 +3042,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3069,7 +3054,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona fisica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3078,7 +3063,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3087,7 +3072,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3096,7 +3081,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3105,7 +3090,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3114,7 +3099,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3123,7 +3108,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3132,7 +3117,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3141,7 +3126,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3150,7 +3135,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3159,7 +3144,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3168,7 +3153,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3177,7 +3162,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3186,7 +3171,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3195,7 +3180,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3204,7 +3189,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3216,7 +3201,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona fisica RIS
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3225,7 +3210,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3234,7 +3219,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3243,7 +3228,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3252,7 +3237,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3261,7 +3246,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3270,7 +3255,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3279,7 +3264,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3288,7 +3273,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3297,7 +3282,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3306,7 +3291,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3315,7 +3300,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3324,7 +3309,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3333,7 +3318,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RS_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3342,7 +3327,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3351,7 +3336,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PF_RIS_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3365,7 +3350,7 @@ details {
 
 ##### Avanzamento b2b persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3374,7 +3359,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3383,7 +3368,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -3392,7 +3377,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -3401,7 +3386,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -3410,7 +3395,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -3419,7 +3404,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -3428,7 +3413,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_8] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -3437,7 +3422,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_9] Invio notifica digitale ed attesa elemento di timeline NOT_HANDLED_scenario positivo</summary>
 
 **Descrizione**
@@ -3446,7 +3431,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_10] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -3455,7 +3440,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_11] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -3464,7 +3449,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_12] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -3473,7 +3458,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_13] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -3482,7 +3467,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_14] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campo deliveryDetailCode positivo</summary>
 
 **Descrizione**
@@ -3491,7 +3476,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_15] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo</summary>
 
 **Descrizione**
@@ -3500,7 +3485,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG-CF_1] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3509,7 +3494,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG-CF_2] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -3518,7 +3503,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG-CF_3] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -3530,7 +3515,7 @@ details {
 
 ##### Avanzamento b2b notifica multi destinatario persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3539,7 +3524,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3548,7 +3533,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -3557,7 +3542,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -3566,7 +3551,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -3575,7 +3560,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -3584,7 +3569,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -3593,7 +3578,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG_8] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3602,7 +3587,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG-CF_1] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -3611,7 +3596,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG-CF_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -3620,7 +3605,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PG-CF_3] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -3632,7 +3617,7 @@ details {
 
 ##### Avanzamento b2b persona giuridica pagamento
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_1] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3641,7 +3626,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_2] Invio notifica e verifica amount</summary>
 
 **Descrizione**
@@ -3650,7 +3635,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_3] Invio notifica FLAT e verifica amount</summary>
 
 **Descrizione**
@@ -3659,7 +3644,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_4] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3668,7 +3653,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_5] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3677,7 +3662,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_6] Invio notifica e verifica amount</summary>
 
 **Descrizione**
@@ -3686,7 +3671,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_7] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3695,7 +3680,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_8] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3704,7 +3689,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_9] Invio notifica e verifica amount</summary>
 
 **Descrizione**
@@ -3713,7 +3698,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_10] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3722,7 +3707,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_11] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3731,7 +3716,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-PG-PAY_12] Invio e visualizzazione notifica e verifica amount e effectiveDate</summary>
 
 **Descrizione**
@@ -3743,7 +3728,7 @@ details {
 
 #####  Avanzamento notifiche analogico persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -3752,7 +3737,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -3761,7 +3746,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -3770,7 +3755,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_RIS_1] Invio notifica digitale ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -3779,7 +3764,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_RIS_2] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -3788,7 +3773,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -3797,7 +3782,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -3806,7 +3791,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_3] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -3815,7 +3800,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -3824,7 +3809,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -3833,7 +3818,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -3842,7 +3827,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_7] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo</summary>
 
 **Descrizione**
@@ -3851,7 +3836,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_8] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo</summary>
 
 **Descrizione**
@@ -3860,7 +3845,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_9] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3869,7 +3854,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_10] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3878,7 +3863,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_11] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3887,7 +3872,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_12] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3896,7 +3881,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_13] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3905,7 +3890,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_14] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo</summary>
 
 **Descrizione**
@@ -3914,7 +3899,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_15] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo</summary>
 
 **Descrizione**
@@ -3923,7 +3908,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_16] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo</summary>
 
 **Descrizione**
@@ -3932,7 +3917,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_17] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo</summary>
 
 **Descrizione**
@@ -3941,7 +3926,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_PG_ANALOG_18] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo</summary>
 
 **Descrizione**
@@ -3953,7 +3938,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona giuridica 890
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3962,7 +3947,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3971,7 +3956,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3980,7 +3965,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -3989,7 +3974,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -3998,7 +3983,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4007,7 +3992,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4016,7 +4001,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4028,7 +4013,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4037,7 +4022,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4046,7 +4031,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4055,7 +4040,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4064,7 +4049,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4073,7 +4058,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4082,7 +4067,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4091,7 +4076,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4100,7 +4085,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4109,7 +4094,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4118,7 +4103,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4127,7 +4112,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4136,7 +4121,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4145,7 +4130,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4154,7 +4139,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4163,7 +4148,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4175,7 +4160,7 @@ details {
 
 ##### Costo notifica con workflow analogico per persona giuridica RS
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4184,7 +4169,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4193,7 +4178,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4202,7 +4187,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4211,7 +4196,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4220,7 +4205,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4229,7 +4214,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4238,7 +4223,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4247,7 +4232,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4256,7 +4241,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4265,7 +4250,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4274,7 +4259,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4283,7 +4268,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4292,7 +4277,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RS_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4301,7 +4286,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4310,7 +4295,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_RIS_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4324,7 +4309,7 @@ details {
 
 ##### Avanzamento notifiche b2b multi destinatario con persona fisica e giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PF_PG_01] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -4333,7 +4318,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PF_PG_02] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -4342,7 +4327,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PF_PG_03] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -4351,7 +4336,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PF_PG_04] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -4360,7 +4345,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_PF_PG_05] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -4372,7 +4357,7 @@ details {
 
 ##### Avanzamento b2b notifica multi destinatario analogico
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -4381,7 +4366,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
 **Descrizione**
@@ -4390,7 +4375,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario negativo</summary>
 
 **Descrizione**
@@ -4399,7 +4384,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_RIS_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4408,7 +4393,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_RIS_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -4417,7 +4402,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_1] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4426,7 +4411,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_2] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4435,7 +4420,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_3] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4444,7 +4429,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -4453,7 +4438,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -4462,7 +4447,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo</summary>
 
 **Descrizione**
@@ -4471,7 +4456,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_7] Invio notifica e atteso stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -4480,7 +4465,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_8] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo</summary>
 
 **Descrizione**
@@ -4489,7 +4474,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_MULTI_ANALOG_9] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario  positivo</summary>
 
 **Descrizione**
@@ -4501,7 +4486,7 @@ details {
 
 ##### Costo notifica con workflow analogico per multi destinatario 890
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4510,7 +4495,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4519,7 +4504,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4528,7 +4513,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica con allegato e verifica costo con FCU + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4537,7 +4522,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4546,7 +4531,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4555,7 +4540,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_7] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4564,7 +4549,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_890_MULTI_8] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4576,7 +4561,7 @@ details {
 
 ##### Costo notifica con workflow analogico per multi destinatario
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4585,7 +4570,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4594,7 +4579,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4603,7 +4588,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4612,7 +4597,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4621,7 +4606,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4630,7 +4615,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4639,7 +4624,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4648,7 +4633,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4657,7 +4642,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4666,7 +4651,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4675,7 +4660,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4684,7 +4669,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4693,7 +4678,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4702,7 +4687,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4711,7 +4696,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4723,7 +4708,7 @@ details {
 
 ##### Costo notifica con workflow analogico per multi destinatario RS
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4732,7 +4717,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4741,7 +4726,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4750,7 +4735,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4759,7 +4744,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4768,7 +4753,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4777,7 +4762,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4786,7 +4771,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4795,7 +4780,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4804,7 +4789,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4813,7 +4798,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4822,7 +4807,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4831,7 +4816,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4840,7 +4825,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RS_MULTI_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4849,7 +4834,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
@@ -4858,7 +4843,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_RIS_MULTI_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
@@ -4874,7 +4859,7 @@ details {
 
 ##### Download legalFact
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4883,7 +4868,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -4892,7 +4877,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -4901,7 +4886,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo</summary>
 
 **Descrizione**
@@ -4910,7 +4895,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_IO_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4919,7 +4904,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_IO_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -4928,7 +4913,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_IO_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -4937,7 +4922,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_IO_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo</summary>
 
 **Descrizione**
@@ -4946,7 +4931,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_WEB-RECIPIENT_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4955,7 +4940,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_WEB-RECIPIENT_LEGALFACT_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -4964,7 +4949,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_WEB-RECIPIENT_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -4973,7 +4958,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_WEB-RECIPIENT_LEGALFACT_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo</summary>
 
 **Descrizione**
@@ -4982,7 +4967,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -4991,7 +4976,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -5000,7 +4985,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -5009,7 +4994,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5021,7 +5006,7 @@ details {
 
 ##### Download legalFact analogico
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_1] Invio notifica con @fail_RS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo</summary>
 
 **Descrizione**
@@ -5030,7 +5015,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_2] Invio notifica con @ok_RS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo</summary>
 
 **Descrizione**
@@ -5039,7 +5024,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_3] Invio notifica con @fail_AR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5049,7 +5034,7 @@ details {
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
   [B2B_PA_ANALOGICO_LEGALFACT_4] Invio notifica con @ok_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_5] Invio notifica con @fail_RIS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo</summary>
 
 **Descrizione**
@@ -5058,7 +5043,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_6] Invio notifica con @ok_RIR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5067,7 +5052,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_7] Invio notifica con @fail_RIR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5076,7 +5061,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_8] Invio notifica con @fail_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5085,7 +5070,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_9_TEST] Invio notifica con @FAIL-Discovery_AR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5094,7 +5079,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_10_TEST] Invio notifica con @FAIL-Discovery_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo</summary>
 
 **Descrizione**
@@ -5103,7 +5088,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_11_TEST] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo</summary>
 
 **Descrizione**
@@ -5115,7 +5100,7 @@ details {
 
 ##### Download legalFact multi destinatario
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_WEB-MULTI-RECIPIENT_LEGALFACT_1] Invio notifica multi destinatario_scenario positivo</summary>
 
 **Descrizione**
@@ -5129,7 +5114,7 @@ details {
 
 ##### Download legalFact per la persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_PG_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5138,7 +5123,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_PG_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -5147,7 +5132,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_PG_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -5156,7 +5141,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_PG_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5165,7 +5150,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_PG_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -5174,7 +5159,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_KEY_PG_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -5190,7 +5175,7 @@ details {
 
 ##### Avanzamento notifiche webhook b2b
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_STATUS_1] Creazione stream notifica</summary>
 
 **Descrizione**
@@ -5199,7 +5184,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_1] Creazione stream notifica</summary>
 
 **Descrizione**
@@ -5208,7 +5193,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -5217,7 +5202,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -5226,7 +5211,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -5235,7 +5220,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5244,7 +5229,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -5253,7 +5238,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -5262,7 +5247,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -5271,7 +5256,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_10] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -5280,7 +5265,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_11] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -5289,7 +5274,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_12] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -5298,7 +5283,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_13] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo</summary>
 
 **Descrizione**
@@ -5307,7 +5292,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_14] Creazione multi stream notifica</summary>
 
 **Descrizione**
@@ -5316,7 +5301,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_15] Creazione multi stream notifica</summary>
 
 **Descrizione**
@@ -5325,7 +5310,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -5334,7 +5319,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline NOT_HANDLED_scenario positivo</summary>
 
 **Descrizione**
@@ -5343,7 +5328,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_19] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5352,7 +5337,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_20] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5361,7 +5346,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_21] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -5370,7 +5355,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_22] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -5379,7 +5364,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_23] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage scenario negativo</summary>
 
 **Descrizione**
@@ -5391,7 +5376,7 @@ details {
 
 #####  Avanzamento notifiche webhook b2b multi
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_1] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5400,7 +5385,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_2] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -5409,7 +5394,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_3] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -5418,7 +5403,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_4] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -5427,7 +5412,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_5] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5436,7 +5421,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5445,7 +5430,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_1] Invio notifica digitale multi PG ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5454,7 +5439,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_2] Invio notifica digitale multi PG ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -5463,7 +5448,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_3] Invio notifica digitale multi PG ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -5472,7 +5457,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_4] Invio notifica digitale multi PG ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -5481,7 +5466,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_5] Invio notifica digitale multi PG ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5490,7 +5475,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM-TIMELINE_MULTI_PG_6] Invio notifica digitale multi PG ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5504,7 +5489,7 @@ details {
 
 ##### Avanzamento notifiche webhook b2b per persona giuridica
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -5513,7 +5498,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -5522,7 +5507,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -5531,7 +5516,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5540,7 +5525,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -5549,7 +5534,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -5558,7 +5543,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -5567,7 +5552,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_8] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo</summary>
 
 **Descrizione**
@@ -5576,7 +5561,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_9] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo</summary>
 
 **Descrizione**
@@ -5585,7 +5570,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_10] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -5594,7 +5579,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_11] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo</summary>
 
 **Descrizione**
@@ -5603,7 +5588,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_12] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo</summary>
 
 **Descrizione**
@@ -5612,7 +5597,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-STREAM_TIMELINE_PG_13] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage scenario negativo</summary>
 
 **Descrizione**
@@ -5624,7 +5609,7 @@ details {
 
 ## Allegati
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_15] verifica retention time dei documenti pre-caricati</summary>
 
 **Descrizione**
@@ -5633,7 +5618,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_16] verifica retention time  pagopaForm pre-caricato</summary>
 
 **Descrizione**
@@ -5642,7 +5627,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_13] verifica retention time dei documenti per la notifica inviata</summary>
 
 **Descrizione**
@@ -5651,7 +5636,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG-CF_14] verifica retention time pagopaForm per la notifica inviata</summary>
 
 **Descrizione**
@@ -5660,7 +5645,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_13] verifica retention time dei documenti per la notifica inviata</summary>
 
 **Descrizione**
@@ -5669,7 +5654,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_14] verifica retention time pagopaForm per la notifica inviata</summary>
 
 **Descrizione**
@@ -5678,7 +5663,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_13] verifica retention time dei documenti per la notifica inviata</summary>
 
 **Descrizione**
@@ -5687,7 +5672,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_14] verifica retention time pagopaForm per la notifica inviata</summary>
 
 **Descrizione**
@@ -5699,7 +5684,7 @@ details {
 
 ## Api Key Manager
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_1] Lettura apiKey generate_scenario positivo</summary>
 
 **Descrizione**
@@ -5708,7 +5693,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_2] generazione e cancellazione ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5717,7 +5702,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_3] generazione e cancellazione ApiKey_scenario negativo</summary>
 
 **Descrizione**
@@ -5726,7 +5711,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_4] generazione e verifica stato ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5735,7 +5720,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_5] generazione e verifica stato ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5744,7 +5729,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_6] generazione e verifica stato ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5753,7 +5738,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_7] generazione e verifica stato ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5762,7 +5747,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_8] generazione e test ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5771,7 +5756,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_9] generazione e test ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5780,7 +5765,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_10] generazione con gruppo e cancellazione ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5789,7 +5774,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_11] generazione senza gruppo e invio notifica senza gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5798,7 +5783,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_12] generazione senza gruppo e invio notifica con gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5807,7 +5792,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_13] generazione con gruppo e invio notifica senza gruppo ApiKey_scenario negativo</summary>
 
 **Descrizione**
@@ -5816,7 +5801,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_14] generazione con gruppo e invio notifica con lo stesso gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5825,7 +5810,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_15] generazione con gruppo e invio notifica con un gruppo differente ApiKey_scenario negativo</summary>
 
 **Descrizione**
@@ -5834,7 +5819,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_16] generazione con gruppo e invio notifica con gruppo e lettura notifica senza gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5843,7 +5828,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_17] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo</summary>
 
 **Descrizione**
@@ -5852,7 +5837,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_18] generazione senza gruppo e invio notifica senza gruppo e lettura notifica senza gruppo  ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5861,7 +5846,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_19] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5870,7 +5855,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_20] generazione senza gruppo e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5879,7 +5864,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_21] generazione con gruppo non valido ApiKey_scenario negativo</summary>
 
 **Descrizione**
@@ -5888,7 +5873,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_22] generazione con multi gruppi e invio notifica senza gruppo ApiKey_scenario negativo</summary>
 
 **Descrizione**
@@ -5897,7 +5882,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_23] generazione con multi gruppi e invio notifica con gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5906,7 +5891,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-KEY_24] generazione con multi gruppi e invio notifica con gruppo e lettura notifica con gruppo ApiKey_scenario positivo</summary>
 
 **Descrizione**
@@ -5918,7 +5903,7 @@ details {
 
 ## Downtime logs
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[DOWNTIME-LOGS_1] lettura downtime-logs</summary>
 
 **Descrizione**
@@ -5927,7 +5912,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[DOWNTIME-LOGS_2] lettura downtime-logs</summary>
 
 **Descrizione**
@@ -5936,7 +5921,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[DOWNTIME-LOGS_3] lettura downtime-logs</summary>
 
 **Descrizione**
@@ -5948,7 +5933,7 @@ details {
 
 ## User Attributes
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PF-TOS_1] Viene recuperato il consenso TOS e verificato che sia accepted TOS_scenario positivo</summary>
 
 **Descrizione**
@@ -5957,7 +5942,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[USER-ATTR_2] inserimento pec errato</summary>
 
 **Descrizione**
@@ -5966,7 +5951,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[USER-ATTR_3] inserimento telefono errato</summary>
 
 **Descrizione**
@@ -5978,7 +5963,7 @@ details {
 
 ## Test di integrazione della pubblica amministrazione
 
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -5987,7 +5972,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_2] invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
@@ -5996,7 +5981,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_3] download documento notificato_scenario positivo</summary>
 
 **Descrizione**
@@ -6005,7 +5990,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_5] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo</summary>
 
 **Descrizione**
@@ -6014,7 +5999,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_6] Invio notifica digitale mono destinatario con pagamento</summary>
 
 **Descrizione**
@@ -6023,7 +6008,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-SEND_7] Invio notifica digitale mono destinatario senza pagamento</summary>
 
 **Descrizione**
@@ -6032,7 +6017,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_0.1] Creazione stream notifica</summary>
 
 **Descrizione**
@@ -6041,7 +6026,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_0.2] Creazione stream notifica</summary>
 
 **Descrizione**
@@ -6050,7 +6035,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -6059,7 +6044,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
@@ -6068,7 +6053,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo</summary>
 
 **Descrizione**
@@ -6077,7 +6062,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo</summary>
 
 **Descrizione**
@@ -6086,7 +6071,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo</summary>
 
 **Descrizione**
@@ -6095,7 +6080,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo</summary>
 
 **Descrizione**
@@ -6104,7 +6089,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo</summary>
 
 **Descrizione**
@@ -6113,7 +6098,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC_PA_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo</summary>
 
 **Descrizione**
@@ -6122,7 +6107,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC_PA_LEGALFACT_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo</summary>
 
 **Descrizione**
@@ -6131,7 +6116,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC_PA_LEGALFACT_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo</summary>
 
 **Descrizione**
@@ -6140,7 +6125,7 @@ details {
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 </details>
-<details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[TC-PA-PAY_1] Invio notifica e verifica amount</summary>
 
 **Descrizione**
