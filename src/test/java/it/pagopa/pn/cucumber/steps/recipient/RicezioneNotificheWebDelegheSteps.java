@@ -48,8 +48,8 @@ public class RicezioneNotificheWebDelegheSteps {
     private final String marioCucumberTaxID;
     private final String marioGherkinTaxID;
 
-    private final String pg1taxId;
-    private final String pg2taxId;
+    private final String gherkinSrltaxId;
+    private final String cucumberSpataxId;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -63,8 +63,8 @@ public class RicezioneNotificheWebDelegheSteps {
         this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
         this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
 
-        this.pg1taxId = sharedSteps.getPg1taxId();
-        this.pg2taxId = sharedSteps.getPg2taxId();
+        this.gherkinSrltaxId = sharedSteps.getGherkinSrltaxId();
+        this.cucumberSpataxId = sharedSteps.getCucumberSpataxId();
     }
 
     private String getTaxIdByUser(String user) {
@@ -77,10 +77,10 @@ public class RicezioneNotificheWebDelegheSteps {
                 userTaxId = marioGherkinTaxID;
                 break;
             case "GherkinSrl":
-                userTaxId = pg1taxId;
+                userTaxId = gherkinSrltaxId;
                 break;
             case "CucumberSpa":
-                userTaxId = pg2taxId;
+                userTaxId = cucumberSpataxId;
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -113,8 +113,8 @@ public class RicezioneNotificheWebDelegheSteps {
                         .displayName("gherkinsrl")
                         .firstName("gherkin")
                         .lastName("srl")
-                        .fiscalCode(pg1taxId)
-                        .companyName("individuale")
+                        .fiscalCode(gherkinSrltaxId)
+                        .companyName("gherkinsrl")
                         .person(false);
                 break;
             case "cucumberspa":
@@ -122,8 +122,8 @@ public class RicezioneNotificheWebDelegheSteps {
                         .displayName("cucumberspa")
                         .firstName("cucumber")
                         .lastName("spa")
-                        .fiscalCode(pg2taxId)
-                        .companyName("LuAnSe SpA")
+                        .fiscalCode(cucumberSpataxId)
+                        .companyName("cucumberspa")
                         .person(false);
                 break;
             default:
@@ -316,42 +316,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 (httpClientErrorException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
-    @Given("Mario Gherkin viene delegato Mario Cucumber con delega in scadenza")
-    public void marioGherkinDelegateMarioCucumberWithExpiringMandate() {
-        if (!webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1)) {
-            throw new IllegalArgumentException();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(new UserDto()
-                        .displayName("Mario Cucumber")
-                        .firstName("Mario")
-                        .lastName("Cucumber")
-                        .fiscalCode(marioCucumberTaxID)
-                        .companyName("")
-                        .person(true))
-                .delegate(new UserDto()
-                        .displayName("Mario Gherkin")
-                        .firstName("Mario")
-                        .lastName("Gherkin")
-                        .fiscalCode(marioGherkinTaxID)
-                        .companyName("")
-                        .person(true))
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .dateto(sdf.format(DateUtils.addMinutes(new Date(), 2)))
-        );
-        webMandateClient.createMandate(mandate);
-    }
-
-    @And("si attende lo scadere della delega")
-    public void awaitExpirationOfMandate() {
-        try {
-            Thread.sleep(120 * 1000L);
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-    }
 
     @Then("l'operazione di delega ha prodotto un errore con status code {string}")
     public void operationProducedAnErrorWithStatusCode(String statusCode) {
@@ -402,5 +366,24 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
+    }
+
+
+
+    //for debug
+    @And("{string} visualizza le deleghe")
+    public void visualizzaLeDeleghe(String user) {
+        if (!setBearerToken(user)) {
+            throw new IllegalArgumentException();
+        }
+
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        List<MandateDto> mandateDtos = webMandateClient.listMandatesByDelegator1();
+
+        System.out.println("TOKEN SETTED (user: +"+user+") : "+webMandateClient.getBearerTokenSetted());
+        System.out.println("MANDATE-LIST (user: +"+user+") : "+mandateList);
+        System.out.println("TOKEN SETTED (user: +"+user+") : "+webMandateClient.getBearerTokenSetted());
+        System.out.println("MANDATE-LIST-DELEGATOR (user: +"+user+") : "+mandateDtos);
+
     }
 }

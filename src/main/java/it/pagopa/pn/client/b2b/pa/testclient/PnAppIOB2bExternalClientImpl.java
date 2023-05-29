@@ -53,17 +53,17 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient{
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docIdx, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid);
+        return this.appIoPnDocumentsApi.getReceivedNotificationDocument(iun, docIdx, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
     }
 
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnLegalFactsApi.getLegalFact(iun, legalFactType, legalFactId, xPagopaCxTaxid);
+        return this.appIoPnLegalFactsApi.getLegalFact(iun, legalFactType, legalFactId, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
     }
 
 
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid) throws RestClientException {
-        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid);
+        return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
     }
 
 }

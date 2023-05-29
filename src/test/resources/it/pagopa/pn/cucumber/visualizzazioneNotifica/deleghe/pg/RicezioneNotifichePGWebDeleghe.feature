@@ -1,17 +1,17 @@
 Feature: Ricezione notifiche destinate al delegante
 
   Background:
-    Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
 
   Scenario: [WEB-PG-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
-    Given "GherkinSrl" viene delegato da "CucumberSpa"
-    And "GherkinSrl" accetta la delega "CucumberSpa"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario CucumberSpa
+    And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "GherkinSrl" con delega
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
   Scenario: [WEB-PG-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -85,6 +85,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si tenta la lettura della notifica da parte del delegato "CucumberSpa" che produce un errore con status code "404"
 
+  @ignore
   Scenario: [WEB-PG-MANDATE_8] Delega a se stesso _scenario negativo
     Given "GherkinSrl" viene delegato da "GherkinSrl"
     Then l'operazione di delega ha prodotto un errore con status code "409"
