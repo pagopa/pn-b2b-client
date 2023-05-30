@@ -1,14 +1,38 @@
 const { APIGatewayClient, GetDomainNamesCommand, GetBasePathMappingsCommand, GetStageCommand } = require("@aws-sdk/client-api-gateway");
 const { fromIni } = require("@aws-sdk/credential-provider-ini");
+const { STSClient, AssumeRoleCommand } = require("@aws-sdk/client-sts");
 const { CloudWatchLogsClient, StartQueryCommand, GetQueryResultsCommand, DescribeLogGroupsCommand } = require("@aws-sdk/client-cloudwatch-logs");
 
-function awsClientCfg( env ) {
+function awsClientCfg( envName, profileName, roleArn ) {
   const self = this;
-  return { 
-    region: "eu-south-1", 
-    credentials: fromIni({ 
-      profile: `sso_pn-core-${env}`
-    })
+  if(!profileName){
+    return { 
+      region: "eu-south-1", 
+      credentials: fromIni({ 
+        profile: `sso_pn-core-${envName}`,
+      })
+    }
+  }else{
+    return { 
+      region: "eu-south-1", 
+      credentials: fromIni({ 
+        profile: profileName,
+        roleAssumer: async (sourceCredentials, params) => {
+          const stsClient = new STSClient({ credentials: sourceCredentials });
+          const command = new AssumeRoleCommand({
+            RoleArn: roleArn,
+            RoleSessionName: "session1"
+          });
+          const response = await stsClient.send(command);
+          return {
+            accessKeyId: response.Credentials.AccessKeyId,
+            secretAccessKey: response.Credentials.SecretAccessKey,
+            sessionToken: response.Credentials.SessionToken,
+            expiration: response.Credentials.Expiration
+          };
+        }
+      })
+    }
   }
 }
 
@@ -72,10 +96,9 @@ class CustomDomainsMappings {
 
 class AwsClientsWrapper {
 
-  // FIXME parametri profilo e regione
-  constructor( env /* dev, test, uat, prod */ ) {
-    this._cloudWatchClient = new CloudWatchLogsClient( awsClientCfg( env ));
-    this._apiGwClient = new APIGatewayClient( awsClientCfg( env ));
+  constructor( envName, profileName, roleArn ) {
+    this._cloudWatchClient = new CloudWatchLogsClient( awsClientCfg( envName, profileName, roleArn ));
+    this._apiGwClient = new APIGatewayClient( awsClientCfg( envName, profileName, roleArn ));
   }
 
   async init() {

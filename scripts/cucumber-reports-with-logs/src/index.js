@@ -4,7 +4,15 @@ const { HtmlReportGenerator } = require("./libs/HtmlReportGenerator");
 const { TestCaseLogExtractor } = require("./libs/TestCaseLogExtractor");
 
 async function main() {
-  const envName = 'dev';
+
+  if(!process.argv[2] ||(process.argv[3] && !process.argv[4])){
+    console.log("Error: node src/index.js evn_name profileName*[optional] roleArn*[optional] (*jointly)")
+  }
+  
+  const envName = process.argv[2];
+  let profileName = process.argv[3];
+  let roleArn = process.argv[4];
+  console.log('PARAM{envName: '+ envName +', profileName: '+profileName+', roleArn: '+roleArn);
   
   const inputXmlReportPath = '../../target/surefire-reports/TEST-it.pagopa.pn.cucumber.CucumberB2BTest.xml';
   const inputJsonReportPath = '../../target/cucumber-report.json';
@@ -14,7 +22,7 @@ async function main() {
 
 
 
-  const awsClient = new AwsClientsWrapper( envName ); // FIXME parametrizzare profilo e regione
+  const awsClient = new AwsClientsWrapper( envName, profileName, roleArn); 
   const logExtractor = new TestCaseLogExtractor( awsClient );
   const xmlReportParser = new XmlReportParser();
   const htmlReportGenerator = new HtmlReportGenerator();

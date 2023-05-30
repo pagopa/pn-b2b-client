@@ -29,7 +29,7 @@ import org.springframework.test.context.TestPropertySource;
         PnWebPaClientImpl.class,
         PnInteropTokenOauth2Client.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=svil"})
+@TestPropertySource(properties = {"spring.profiles.active=dev2"})
 public class CucumberSpringIntegration {
 
 }
