@@ -490,7 +490,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[WEB_PA-SEND_3] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[WEB_PA-SEND_3] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -933,7 +933,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Cucumber Society(codice fiscale) e creditorTaxId
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
@@ -948,8 +948,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Cucumber Society(codice fiscale) e creditorTaxId
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+1. viene generata una nuova notifica con destinatario Cucumber Society(codice fiscale) e creditorTaxId 
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
@@ -1215,7 +1215,7 @@
 
 **Descrizione**
 
-1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber entrambi con payment `NULL`
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e `Mario Cucumber` entrambi con payment `NULL`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
@@ -1227,7 +1227,7 @@
 
 **Descrizione**
 
-1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber con pagamento
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e `Mario Cucumber` con pagamento
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
@@ -1239,7 +1239,7 @@
 
 **Descrizione**
 
-1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber con senderDenomination `Comune di milano`
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e `Mario Cucumber` con senderDenomination `Comune di milano`
 2. la notifica viene inviata dal `Comune_1`
 3. Then l'invio ha prodotto un errore con status code `400`
 
@@ -1252,7 +1252,7 @@
 **Descrizione**
 
 1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva)
-2. e Mario Cucumber con uguale codice avviso del destinatario numero 1
+2. e `Mario Cucumber` con uguale codice avviso del destinatario numero 1
 3. la notifica viene inviata dal `Comune_1`
 4. Then l'invio ha prodotto un errore con status code `500`
 
@@ -1307,7 +1307,7 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
+1. con destinatario `Mario Cucumber`
 2. viene generata la notifica
 3. la notifica viene inviata tramite api b2b dal `Comune_1`
 4. lo stato diventa `ACCEPTED`
@@ -1323,7 +1323,7 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
+1. con destinatario `Mario Cucumber`
 2. viene generata la notifica
 3. la notifica viene inviata tramite api b2b dal `Comune_1`
 4. lo stato diventa `ACCEPTED`
@@ -1340,7 +1340,7 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
+1. con destinatario `Mario Cucumber`
 2. viene generata la notifica
 3. la notifica viene inviata tramite api b2b dal `Comune_1`
 4. lo stato diventa `ACCEPTED`
@@ -1470,9 +1470,9 @@
 **Descrizione**
 :warning: _Ignored_
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1483,9 +1483,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1498,9 +1498,9 @@
 
 :warning: _Ignored_
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1511,9 +1511,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1525,8 +1525,8 @@
 **Descrizione**
 
 1. con destinatario avente denominazione con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1538,8 +1538,8 @@
 **Descrizione**
 
 1. con destinatario avente denominazione con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1551,8 +1551,8 @@
 **Descrizione**
 
 1. con destinatario avente oggetto con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1564,8 +1564,8 @@
 **Descrizione**
 
 1. con destinatario avente tax_id errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1575,8 +1575,8 @@
 **Descrizione**
 
 1. con destinatario avente creditorTaxId errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1586,8 +1586,8 @@
 **Descrizione**
 
 1. con destinatario avente senderTaxId errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1597,8 +1597,8 @@
 **Descrizione**
 
 1. con destinatario avente subject errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1608,9 +1608,9 @@
 **Descrizione**
 :warning: _Ignored_
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1621,9 +1621,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1635,9 +1635,9 @@
 **Descrizione**
 :warning: _Ignored_
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1648,9 +1648,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+1. con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1662,8 +1662,8 @@
 **Descrizione**
 
 1. con destinatario avente tax_id errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1673,8 +1673,8 @@
 **Descrizione**
 
 1. con destinatario avente denomination errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1684,8 +1684,8 @@
 **Descrizione**
 
 1. con destinatario avente senderDenomination errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1695,8 +1695,8 @@
 **Descrizione**
 
 1. con destinatario avente abstract errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1707,7 +1707,7 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative uguali
 2. viene configurato noticeCodeAlternative uguale a noticeCode
-3. l'operazione ha prodotto un errore con status code "400"
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1718,8 +1718,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative diversi
 2. viene configurato noticeCodeAlternative diversi a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_1"
-4. si attende che lo stato diventi ACCEPTED
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
 5. si verifica la corretta acquisizione della notifica
 6. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1732,8 +1732,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative uguali
 2. viene configurato noticeCodeAlternative uguale a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-4. l'operazione ha prodotto un errore con status code "400"
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1744,8 +1744,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative diversi
 2. viene configurato noticeCodeAlternative diversi a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-4. si attende che lo stato diventi ACCEPTED
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
 5. si verifica la corretta acquisizione della notifica
 6. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1757,8 +1757,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip corretto
-2. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1770,8 +1770,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1781,8 +1781,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip corretto
-2. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1794,8 +1794,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1806,8 +1806,8 @@
 :warning: _Ignored_
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -2821,9 +2821,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dalla persona fisica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2831,9 +2833,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. il documento notificato può essere correttamente recuperato dalla persona fisica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2841,9 +2845,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. l'allegato `PAGOPA` può essere correttamente recuperato dalla persona fisica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2851,9 +2857,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. l'allegato `F24` può essere correttamente recuperato dalla persona fisica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2861,9 +2869,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica con payment_pagoPaForm SI e payment_f24flatRate NULL e payment_f24standard SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. l'allegato `F24` può essere correttamente recuperato dalla persona fisica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2871,9 +2881,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica con payment_pagoPaForm SI e payment_f24flatRate NULL e payment_f24standard NULL
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la persona fisica tenta il recupero dell'allegato `F24`
+4. il download ha prodotto un errore con status code `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2881,9 +2894,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. Mario Gherkin tenta il recupero della notifica
+4. il recupero ha prodotto un errore con status code `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2891,9 +2907,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` tenta il recupero dell'allegato `F24`
+4. il download ha prodotto un errore con status code `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2901,9 +2920,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` tenta il recupero dell'allegato `F24`
+4. il download ha prodotto un errore con status code `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2911,9 +2933,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` tenta il recupero dell'allegato `PAGOPA`
+4. il download ha prodotto un errore con status code `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2921,9 +2946,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Mario Gherkin con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2931,9 +2958,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Mario Gherkin con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` con `subjectRegExp cucumber`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2941,9 +2970,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Mario Gherkin con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` con `subjectRegExp cucumber` e `startDate 01/01/2022`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2951,9 +2982,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Mario Gherkin con payment_pagoPaForm SI e payment_f24flatRate SI
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` con `subjectRegExp cucumber`, `startDate 01/01/2022`,
+`endDate 01/10/2030` e `iunMatch ACTUAL`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/destinatario/pf/RicezioneNotifichePFWeb.feature)
 
 </details>
 
@@ -3119,7 +3153,7 @@
 ##### Avanzamento notifiche b2b persona fisica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -3382,7 +3416,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_MULTI_5] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_MULTI_5] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -4312,7 +4346,7 @@
 ##### Avanzamento b2b persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -4495,7 +4529,7 @@
 ##### Avanzamento b2b notifica multi destinatario persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -6353,7 +6387,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -6681,7 +6715,7 @@
 ##### Avanzamento notifiche webhook b2b per persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-STREAM_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[B2B-STREAM_TIMELINE_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
@@ -7173,7 +7207,7 @@
 ## User Attributes
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PF-TOS_1] Viene recuperato il consenso TOS e verificato che sia accepted TOS_scenario positivo</summary>
+  <summary>[B2B-PF-TOS_1] Viene recuperato il consenso TOS e verificato che sia `accepted` TOS_scenario positivo</summary>
 
 **Descrizione**
 
@@ -7286,7 +7320,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+  <summary>[TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
 
 **Descrizione**
 
