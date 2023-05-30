@@ -490,7 +490,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[WEB_PA-SEND_3] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[WEB_PA-SEND_3] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -3304,7 +3304,7 @@
 ##### Avanzamento notifiche b2b persona fisica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -3656,7 +3656,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_MULTI_5] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_MULTI_5] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -4600,13 +4600,15 @@
 ##### Avanzamento b2b persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4614,9 +4616,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4624,9 +4628,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `AAR_GENERATION`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4634,9 +4640,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4644,9 +4652,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4654,9 +4664,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_DOMICILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4664,9 +4676,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4674,9 +4688,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4684,9 +4701,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4694,9 +4714,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4704,9 +4726,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_PROGRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4714,9 +4738,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_CALL`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4724,9 +4750,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_RESPONSE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4734,9 +4763,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK`
+4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo deliveryDetailCode
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4744,9 +4776,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO`
+4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO` sia presenti i campi deliveryDetailCode e deliveryFailureCause
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4754,9 +4789,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4764,9 +4801,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4774,16 +4813,18 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
 
 </details>
 
 ##### Avanzamento b2b notifica multi destinatario persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -6641,7 +6682,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -6969,7 +7010,7 @@
 ##### Avanzamento notifiche webhook b2b per persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-STREAM_TIMELINE_PG_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[B2B-STREAM_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
@@ -7574,7 +7615,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato `ACCEPTED`_scenario positivo</summary>
+  <summary>[TC-STREAM_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
 
 **Descrizione**
 
