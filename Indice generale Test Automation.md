@@ -15,7 +15,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Si recupera la notifica tramite IUN
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
@@ -28,7 +28,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale paProtocolNumber ma diverso idempotenceToken
 5. Si attende che la notifica passi in stato `ACCEPTED`
 6. Se ne verifica la corretta acquisizione
@@ -43,7 +43,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken
 5. L'operazione va in errore con codice 409
 
@@ -57,7 +57,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale codice fiscale del creditore ma diverso codice avviso
 5. Si attende che la notifica passi in stato `ACCEPTED`
 6. Se ne verifica la corretta acquisizione
@@ -72,7 +72,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
 5. Si attende che la notifica passi in stato `ACCEPTED`
 6. L'operazione va in errore con codice 409
@@ -99,7 +99,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Si tenta il recupero della notifica tramite IUN errato
 5. L'operazione va in errore con codice 404
 
@@ -113,7 +113,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con feePolicy `FLAT_RATE` e avviso PagoPA
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 
@@ -125,7 +125,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con feePolicy `DELIVERY_MODE` e avviso PagoPA
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 
@@ -137,7 +137,7 @@
 
 1. Viene creata una nuova notifica mono destinatario senza taxonomyCode
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene controllata la presenza del taxonomyCode
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
@@ -150,7 +150,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con taxonomyCode
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene controllata la presenza del taxonomyCode
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
@@ -163,7 +163,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con creditorTaxId, ma senza avviso PagoPA
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
@@ -214,7 +214,7 @@
 
 1. Viene creata una nuova notifica mono destinatario senza pagamento, ma con il campo amount valorizzato
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Si recupera la notifica tramite IUN
 5. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -228,7 +228,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con il campo `physicalCommunication` valorizzato con `REGISTERED_LETTER_890`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
@@ -241,7 +241,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con il campo `physicalCommunication` valorizzato con `AR_REGISTERED_LETTER`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
@@ -278,7 +278,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale paProtocolNumber, ma sender `Comune_2`
 5. Si attende che la notifica passi in stato `ACCEPTED`
 6. Se ne verifica la corretta acquisizione
@@ -293,7 +293,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale paProtocolNumber e sender dal `Comune_1`
 5. L'operazione va in errore con codice 409
 
@@ -307,7 +307,7 @@
 
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
-3. Si verifica la corretta acqusizione della notifica
+3. Si verifica la corretta acquisizione della notifica
 4. Viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken, ma sender `Comune_2`
 5. Si attende che la notifica passi in stato `ACCEPTED`
 6. Se ne verifica la corretta acquisizione
@@ -459,9 +459,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Si verifica la corretta acquisizione della notifica
+4. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -469,9 +472,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -479,9 +484,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
+4. La notifica può essere correttamente recuperata dal sistema tramite stato `ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -489,9 +497,15 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata con una ricerca:
+   - **startDate**: 01/01/2022
+   - **endDate**: 01/10/2030
+   - **iunMatch**: ACTUAL
+   - **subjectRegExp**: cucumber
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -499,9 +513,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata con una ricerca senza filtri
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -509,9 +525,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata con una ricerca:
+    - **subjectRegExp**: cucumber
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -519,9 +538,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata con una ricerca:
+    - **startDate**: 01/01/2022
+    - **subjectRegExp**: cucumber
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheE2eWebPA.feature)
 
 </details>
 
