@@ -1468,13 +1468,14 @@
   <summary>[B2B-PA-SEND_VALID_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
+
 :warning: _Ignored_
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
-5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+5. la notifica può essere correttamente recuperata dal sistema tramite codice `IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1484,8 +1485,8 @@
 **Descrizione**
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1499,8 +1500,8 @@
 :warning: _Ignored_
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1512,8 +1513,8 @@
 **Descrizione**
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1525,8 +1526,8 @@
 **Descrizione**
 
 1. con destinatario avente denominazione con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1538,8 +1539,8 @@
 **Descrizione**
 
 1. con destinatario avente denominazione con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1551,8 +1552,8 @@
 **Descrizione**
 
 1. con destinatario avente oggetto con caretteri speciali
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
@@ -1564,8 +1565,8 @@
 **Descrizione**
 
 1. con destinatario avente tax_id errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1575,8 +1576,8 @@
 **Descrizione**
 
 1. con destinatario avente creditorTaxId errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1586,8 +1587,8 @@
 **Descrizione**
 
 1. con destinatario avente senderTaxId errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1597,8 +1598,8 @@
 **Descrizione**
 
 1. con destinatario avente subject errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation1.feature)
 
 </details>
@@ -1606,11 +1607,12 @@
   <summary>[B2B-PA-SEND_VALID_9] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
+
 :warning: _Ignored_
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1622,10 +1624,10 @@
 **Descrizione**
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
-5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+5. la notifica può essere correttamente recuperata dal sistema tramite codice` IUN`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1633,11 +1635,12 @@
   <summary>[B2B-PA-SEND_VALID_10] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo</summary>
 
 **Descrizione**
+
 :warning: _Ignored_
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b al `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1649,8 +1652,8 @@
 **Descrizione**
 
 1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1662,8 +1665,8 @@
 **Descrizione**
 
 1. con destinatario avente tax_id errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1673,8 +1676,8 @@
 **Descrizione**
 
 1. con destinatario avente denomination errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1684,8 +1687,8 @@
 **Descrizione**
 
 1. con destinatario avente senderDenomination errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1695,8 +1698,8 @@
 **Descrizione**
 
 1. con destinatario avente abstract errato
-2. la notifica viene inviata tramite api b2b dal "Comune_1"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata tramite api b2b dal `Comune_1`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1707,7 +1710,7 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative uguali
 2. viene configurato noticeCodeAlternative uguale a noticeCode
-3. l'operazione ha prodotto un errore con status code "400"
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1718,8 +1721,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative diversi
 2. viene configurato noticeCodeAlternative diversi a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_1"
-4. si attende che lo stato diventi ACCEPTED
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
 5. si verifica la corretta acquisizione della notifica
 6. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1732,8 +1735,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative uguali
 2. viene configurato noticeCodeAlternative uguale a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-4. l'operazione ha prodotto un errore con status code "400"
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1744,8 +1747,8 @@
 
 1. con destinatario avente noticeCode e noticeCodeAlternative diversi
 2. viene configurato noticeCodeAlternative diversi a noticeCode
-3. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-4. si attende che lo stato diventi ACCEPTED
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
 5. si verifica la corretta acquisizione della notifica
 6. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1757,8 +1760,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip corretto
-2. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1770,8 +1773,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1781,8 +1784,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip corretto
-2. la notifica viene inviata tramite api b2b dal "Comune_Multi"
-3. si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+3. si attende che lo stato diventi `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
@@ -1794,8 +1797,8 @@
 **Descrizione**
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
@@ -1803,11 +1806,12 @@
   <summary>[B2B-PA-SEND_VALID_23] invio notifiche digitali mono destinatario con physicalAddress_zip non corretti scenario negativo</summary>
 
 **Descrizione**
+
 :warning: _Ignored_
 
 1. con destinatario Mario Gherkin avente physicalAddress_zip non corretto
-2. la notifica viene inviata dal "Comune_Multi"
-3. l'operazione ha prodotto un errore con status code "400"
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
    [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
