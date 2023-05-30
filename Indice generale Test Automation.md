@@ -558,7 +558,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
-2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -572,10 +572,10 @@
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
 2. la notifica viene inviata tramite api b2b
-3. aspetta che la notifica passi in stato ACCEPTED
+3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken
-6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato ACCEPTED
+6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato `ACCEPTED`
 7. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
@@ -588,10 +588,10 @@
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
 2. la notifica viene inviata tramite api b2b
-3. aspetta che la notifica passi in stato ACCEPTED
+3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken
-6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato ACCEPTED)
+6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato `ACCEPTED`)
 7. l'operazione ha prodotto un errore con status code "409"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
@@ -604,10 +604,10 @@
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e creditorTaxId
 2. la notifica viene inviata tramite api b2b
-3. aspetta che la notifica passi in stato ACCEPTED
+3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
-6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato ACCEPTED
+6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato `ACCEPTED`
 7. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
@@ -620,10 +620,10 @@
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e creditorTaxId
 2. la notifica viene inviata tramite api b2b
-3. aspetta che la notifica passi in stato ACCEPTED
+3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
-6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato ACCEPTED)
+6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato `ACCEPTED`)
 7. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
@@ -649,7 +649,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
-2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. si tenta il recupero della notifica dal sistema tramite codice IUN
 5. l'operazione ha prodotto un errore con status code "404"
@@ -662,8 +662,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy FLAT_RATE
-2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy `FLAT_RATE`
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
@@ -674,8 +674,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy DELIVERY_MODE
-2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy `DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 
 
@@ -688,7 +688,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) senza taxonomy code
-2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. viene controllata la presenza del taxonomyCode
 
@@ -701,7 +701,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con taxonomy code
-2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. viene controllata la presenza del taxonomyCode
 
@@ -714,7 +714,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva), creditorTaxId e senza PagoPA payment form
-2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED 
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED` 
 3. si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -751,7 +751,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con importo(amount) 2550
-2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 5. l'importo della notifica è 2550
@@ -764,8 +764,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication REGISTERED_LETTER_890
-2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication `REGISTERED_LETTER_890`
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -777,8 +777,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication AR_REGISTERED_LETTER
-2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication `AR_REGISTERED_LETTER`
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -790,7 +790,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken AME2E3626070001.3
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken `AME2E3626070001.3`
 2. la notifica viene inviata 
 3. viene verificato lo stato di accettazione con requestID
 
@@ -802,10 +802,10 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. viene generata una nuova notifica con uguale paProtocolNumber
-5. la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+5. la notifica viene inviata tramite api b2b dal `Comune_2` e si attende che lo stato diventi `ACCEPTED`
 6. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
@@ -817,10 +817,10 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. viene generata una nuova notifica con uguale paProtocolNumber
-5. la notifica viene inviata dal "Comune_1"
+5. la notifica viene inviata dal `Comune_1`
 6. l'operazione ha prodotto un errore con status code "409"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
@@ -831,11 +831,11 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken AME2E3626070001.3
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken `AME2E3626070001.3`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
-4. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
-5. la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+4. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken `AME2E3626070001.1`
+5. la notifica viene inviata tramite api b2b dal `Comune_2` e si attende che lo stato diventi `ACCEPTED`
 6. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
@@ -846,9 +846,9 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con recipientType PG e taxId CCRMCT06A03A433H
-2. la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-3. si verifica che la notifica non viene accettata causa "ALLEGATO"
+1. viene generata una nuova notifica con recipientType PG e taxId `CCRMCT06A03A433H`
+2. la notifica viene inviata tramite api b2b senza preload allegato dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+3. si verifica che la notifica non viene accettata causa `ALLEGATO`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 </details>
@@ -857,8 +857,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e idempotenceToken AME2E3626070001.3
-2. la notifica viene inviata dal "Comune_1"
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e idempotenceToken `AME2E3626070001.3`
+2. la notifica viene inviata dal `Comune_1`
 3. viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
@@ -873,7 +873,7 @@
 
 1. viene generata una nuova notifica con destinatario codice fiscale(Cucumber Society)
 2. la notifica viene inviata tramite api b2b
-3. aspetta che la notifica passi in stato ACCEPTED
+3. aspetta che la notifica passi in stato `ACCEPTED`
 4. si verifica la corretta acquisizione della notifica
 5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
