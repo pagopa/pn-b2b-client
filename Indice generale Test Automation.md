@@ -3092,8 +3092,8 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. la notifica può essere correttamente recuperata da "Mario Gherkin" e "Mario Cucumber"
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3105,7 +3105,7 @@
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. il documento notificato può essere correttamente recuperato da "Mario Gherkin" e "Mario Cucumber"
+3. il documento notificato può essere correttamente recuperato da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3117,7 +3117,7 @@
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e `Mario Cucumber` con payment_pagoPaForm SI e payment_f24flatRate SI
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. l'allegato `PAGOPA` può essere correttamente recuperato da "Mario Gherkin" e "Mario Cucumber"
+3. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3130,8 +3130,8 @@
 :warning: _Ignored_
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e `Mario Cucumber` con payment_pagoPaForm SI e payment_f24flatRate SI
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. l'allegato `F24` può essere correttamente recuperato da "Mario Gherkin" e "Mario Cucumber"
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'allegato `F24` può essere correttamente recuperato da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3144,8 +3144,8 @@
 :warning: _Ignored_
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e `Mario Cucumber` con payment_pagoPaForm SI e payment_f24standard SI
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. l'allegato `F24` può essere correttamente recuperato da "Mario Gherkin" e "Mario Cucumber"
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'allegato `F24` può essere correttamente recuperato da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3158,9 +3158,9 @@
 :warning: _Ignored_
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e`Mario Cucumber`con payment_pagoPaForm SI, payment_f24standard NULL e payment_f24flatRate NULL
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. "Mario Gherkin" tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
-4. "Mario Cucumber" tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
+4. `Mario Cucumber` tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3172,9 +3172,9 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e `Mario Cucumber` con payment_pagoPaForm SI, payment_f24standard NULL e payment_f24flatRate NULL
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. "Mario Gherkin" tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
-4. "Mario Cucumber" tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
+4. `Mario Cucumber` tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3189,8 +3189,8 @@
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
 2. `Mario Gherkin` con payment_pagoPaForm NULL, payment_f24flatRate SI e payment_f24standard NULL
 3. `Mario Cucumber` con payment_pagoPaForm SI, payment_f24flatRate NULL e payment_f24standard SI
-4. "Mario Gherkin" tenta il recupero dell'allegato `PAGOPA`, ma il download ha prodotto un errore con status code `404`
-5. l'allegato `PAGOPA` può essere correttamente recuperato da "Mario Cucumber"
+4. `Mario Gherkin` tenta il recupero dell'allegato `PAGOPA`, ma il download ha prodotto un errore con status code `404`
+5. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3205,8 +3205,8 @@
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
 2. `Mario Gherkin` con payment_pagoPaForm SI, payment_f24flatRate NULL e payment_f24standard NULL
 3. `Mario Cucumber` con payment_pagoPaForm SI, payment_f24flatRate SI e payment_f24standard NULL
-4. "Mario Gherkin" tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
-5. l'allegato `F24` può essere correttamente recuperato da "Mario Cucumber"
+4. `Mario Gherkin` tenta il recupero dell'allegato `F24`, ma il download ha prodotto un errore con status code `404`
+5. l'allegato `F24` può essere correttamente recuperato da `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3221,8 +3221,8 @@
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
 2. `Mario Gherkin` con payment_pagoPaForm NULL, payment_f24flatRate SI e payment_f24standard NULL
 3. `Mario Cucumber` con payment_pagoPaForm SI, payment_f24flatRate SI e payment_f24standard NULL
-4. "Mario Gherkin" tenta il recupero dell'allegato `PAGOPA`, ma il download ha prodotto un errore con status code `404`
-5. l'allegato `PAGOPA` può essere correttamente recuperato da "Mario Cucumber"
+4. `Mario Gherkin` tenta il recupero dell'allegato `PAGOPA`, ma il download ha prodotto un errore con status code `404`
+5. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3233,8 +3233,8 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin" e "Mario Cucumber"
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` e `Mario Cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3245,8 +3245,8 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin" e "Mario Cucumber" con `subjectRegExp cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` e `Mario Cucumber` con `subjectRegExp cucumber`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3257,8 +3257,8 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin" e "Mario Cucumber" con `subjectRegExp cucumber` e `startDate 01/01/2023`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` e `Mario Cucumber` con `subjectRegExp cucumber` e `startDate 01/01/2023`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -3269,8 +3269,8 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
-3. la notifica può essere correttamente recuperata con una ricerca da "Mario Gherkin" e "Mario Cucumber" con `subjectRegExp cucumber`,
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata con una ricerca da `Mario Gherkin` e `Mario Cucumber` con `subjectRegExp cucumber`,
    `startDate 01/01/2023`, `endDate 01/10/2030` e `iunMatch ACTUAL`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
@@ -3282,7 +3282,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. la notifica NON può essere correttamente recuperata con una ricerca da `Mario Gherkin` e `Mario Cucumber` con `subjectRegExp cucumber`,
    `startDate 01/01/2030` e `endDate 01/10/2033`
 
@@ -3605,9 +3605,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED` dalla PA `Comune_Multi`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3615,9 +3617,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3625,9 +3630,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Cucumber` legge la notifica ricevuta
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3635,9 +3643,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_ANALOG_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3645,9 +3655,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3655,9 +3667,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3665,9 +3679,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3675,9 +3691,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3685,9 +3703,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3695,9 +3715,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3705,9 +3727,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica multi destinatario
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
 
 </details>
 
