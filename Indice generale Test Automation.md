@@ -1205,8 +1205,6 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pf/DownloadAllegatoNotifichePF.feature)
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PF_2] download documento pagopa_scenario positivo</summary>
@@ -1224,8 +1222,6 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pf/DownloadAllegatoNotifichePF.feature)
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PF_3] download documento f24_standard_scenario positivo</summary>
@@ -1242,8 +1238,6 @@
 8. il download si conclude correttamente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pf/DownloadAllegatoNotifichePF.feature)
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 
@@ -1266,8 +1260,6 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_2] download documento pagopa_scenario positivo</summary>
@@ -1284,8 +1276,6 @@
 8. il download si conclude correttamente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -1304,8 +1294,6 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_4] download documento notificato_scenario positivo</summary>
@@ -1321,8 +1309,6 @@
 7. il download si conclude correttamente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -1341,8 +1327,6 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-DOWN-PG_6] download documento f24_standard_scenario positivo</summary>
@@ -1359,8 +1343,6 @@
 8. il download si conclude correttamente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/download/pg/DownloadAllegatoNotifichePG.feature)
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 
