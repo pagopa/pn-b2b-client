@@ -3725,9 +3725,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. "Mario Gherkin" legge la notifica ricevuta
+4. vengono verificati costo = "100" e data di perfezionamento della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3735,9 +3738,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. "Mario Gherkin" legge la notifica ricevuta
+4. viene verificato il costo = "100" della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3745,9 +3751,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. "Mario Gherkin" legge la notifica ricevuta
+4. viene verificato il costo = "0" della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3755,9 +3764,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. l'avviso pagopa viene pagato correttamente
+4. si attende il corretto pagamento della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3765,9 +3777,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI` e `payment_f24standard SI`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. il modello f24 viene pagato correttamente
+4. si attende il corretto pagamento della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3775,9 +3791,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
+3. "Mario Gherkin" legge la notifica ricevuta
+4. viene verificato il costo = "100" della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -3785,9 +3804,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI` e `payment_creditorTaxId 77777777777`
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. l'avviso pagopa viene pagato correttamente
+4. si attende il corretto pagamento della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
 </details>
 
