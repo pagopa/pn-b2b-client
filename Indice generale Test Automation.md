@@ -344,63 +344,78 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_2` e si aspetta che lo stato passi in `ACCEPTED`
+3. Si tenta il recupero tramite `Comune_1`
+4. L'operazione va in errore con stato 404
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_2] Invio notifica digitale senza pagamento_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_3] Invio notifica multi destinatario senza pagamento_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_4] Invio notifica multi destinatario con pagamento_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. La notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_5] Invio notifica multi destinatario PA non abilitata_scenario negativa</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario
+2. Viene inviata dal `Comune_1`
+3. L'operazione va in errore con stato 400
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_6] Invio notifica multi destinatario uguale codice avviso_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario dove il secondo destinatario ha lo stesso codice avviso
+2. Viene inviata dal `Comune_Multi`
+3. L'operazione va in errore con stato 500
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumbe/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario con due destinatari uguali
+2. Viene inviata dal `Comune_Multi`
+3. L'operazione va in errore con stato 400
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 </details>
 
 ##### Invio notifiche e2e web PA
