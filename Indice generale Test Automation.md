@@ -3308,10 +3308,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3321,10 +3320,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3334,10 +3332,9 @@
 
 **Descrizione**
 
-11. con destinatario Mario Gherkin
-12. la notifica viene inviata tramite api b2b dal `Comune_1`
-13. si attende che lo stato diventi `ACCEPTED`
-14. vengono letti gli eventi fino allo stato della notifica `AAR_GENERATION`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3347,10 +3344,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `GET_ADDRESS`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3360,10 +3356,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3373,10 +3368,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_DOMICILE`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3386,12 +3380,12 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
-5. `Mario Cucumber` legge la notifica ricevuta
-6. si verifica che la notifica abbia lo stato `VIEWED`
+:warning: _Ignored_
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
+4. `Mario Cucumber` legge la notifica ricevuta
+5. si verifica che la notifica abbia lo stato `VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3401,12 +3395,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
-5. `Mario Cucumber` legge la notifica ricevuta
-6. si verifica che la notifica abbia lo stato `NOTIFICATION_VIEWED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `NOTIFICATION_VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3416,10 +3407,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3429,12 +3419,11 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
-5. `Mario Gherkin` legge la notifica ricevuta
-6. si verifica che la notifica abbia lo stato `VIEWED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. `Mario Gherkin` legge la notifica ricevuta
+5. si verifica che la notifica abbia lo stato `VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3444,12 +3433,11 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
-5. `Mario Gherkin` legge la notifica ricevuta
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. `Mario Gherkin` legge la notifica ricevuta
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3459,10 +3447,10 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_Multi`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
+:warning: _Ignored_
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3472,10 +3460,10 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+:warning: _Ignored_
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3485,10 +3473,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SEND_DIGITAL_FEEDBACK`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3498,10 +3485,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SEND_DIGITAL_PROGRESS`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3511,10 +3497,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `PUBLIC_REGISTRY_CALL`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PUBLIC_REGISTRY_CALL`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3524,10 +3509,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `PUBLIC_REGISTRY_RESPONSE`
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3537,11 +3521,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK`
-5. viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo deliveryDetailCode
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo `deliveryDetailCode`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3551,11 +3533,9 @@
 
 **Descrizione**
 
-1. con destinatario Mario Gherkin
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO`
-5. viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO` sia presente il campo deliveryDetailCode
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo `deliveryDetailCode` e `deliveryFailureCause`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3565,11 +3545,11 @@
 
 **Descrizione**
 
-1.  destinatario taxId e digitalDomicile_address
-2.  la notifica viene inviata tramite api b2b dal `Comune_1`
-3.  si attende che lo stato diventi `ACCEPTED`
-4.  vengono letti gli eventi fino all'elemento della notifica `DIGITAL_SUCCESS_WORKFLOW`
-5.  viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` e' presente il campo Digital Address di piattaforma. ha un indirizzo digitale configurato non valido su NR serve un CF con indirizzo digitale in piattaforma
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+4. viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` è presente il campo Digital Address di piattaforma
+5. "#PLOMRC01P30L736Y" ha un indirizzo digitale configurato non valido su NR serve un CF con indirizzo digitale in piattaforma
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3579,11 +3559,10 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `PREPARE_DIGITAL_DOMICILE`
-5. viene verificato che nell'elemento di timeline della notifica `PREPARE_DIGITAL_DOMICILE` sia presente il campo Digital Address
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_DIGITAL_DOMICILE`
+4. viene verificato che nell'elemento di timeline della notifica `PREPARE_DIGITAL_DOMICILE` sia presente il campo Digital Address
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3593,11 +3572,10 @@
 
 **Descrizione**
 
-1. con destinatario Mario Cucumber
-2. la notifica viene inviata tramite api b2b dal `Comune_1`
-3. si attende che lo stato diventi `ACCEPTED`
-4. vengono letti gli eventi fino all'elemento della notifica `SCHEDULE_DIGITAL_WORKFLOW`
-5. viene verificato che nell'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW` sia presente il campo Digital Address
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW`
+4. viene verificato che nell'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW` sia presente il campo Digital Address
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3610,8 +3588,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+1. viene generata una nuova notifica multi destinatario 
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED` dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3623,7 +3601,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. `Mario Gherkin` legge la notifica ricevuta
 4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
 
@@ -3636,7 +3614,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. `Mario Cucumber` legge la notifica ricevuta
 4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
 
@@ -3649,7 +3627,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_ANALOG_WORKFLOW`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3661,7 +3639,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3673,7 +3651,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3685,7 +3663,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3697,7 +3675,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `GET_ADDRESS`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3709,7 +3687,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3721,7 +3699,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
@@ -3733,7 +3711,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica multi destinatario
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMulti.feature)
