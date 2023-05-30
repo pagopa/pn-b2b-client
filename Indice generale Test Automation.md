@@ -648,7 +648,7 @@
 
 :warning: _Ignored_
 
-1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e physical address NULL
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e physical address `NULL`
 2. quando la notifica viene inviata
 3. si verifica la corretta acquisizione della notifica
 4. l'operazione ha prodotto un errore con status code `400`
@@ -965,7 +965,7 @@
 
 :warning: _Ignored_
 
-1. viene generata una nuova notifica con destinatario Cucumber Society(codice fiscale) e physical address NULL
+1. viene generata una nuova notifica con destinatario Cucumber Society(codice fiscale) e physical address `NULL`
 2. la notifica viene inviata
 3. l'operazione ha prodotto un errore con status code `400`
 
@@ -1190,7 +1190,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva)
+2. la notifica viene inviata tramite api b2b dal `Comune_2` e si attende che lo stato diventi `ACCEPTED`
+3. si tenta il recupero dal sistema tramite codice IUN dalla PA `Comune_1`
+4. l'operazione ha generato un errore con status code `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1200,7 +1203,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) con payment `NULL`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1210,7 +1215,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber entrambi con payment `NULL`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1220,7 +1227,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber con pagamento
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1230,7 +1239,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Mario Cucumber con senderDenomination `Comune di milano`
+2. la notifica viene inviata dal `Comune_1`
+3. Then l'invio ha prodotto un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1240,7 +1251,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva)
+2. e Mario Cucumber con uguale codice avviso del destinatario numero 1
+3. la notifica viene inviata dal `Comune_1`
+4. Then l'invio ha prodotto un errore con status code `500`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1250,7 +1264,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Cucumber srl(P.Iva) entrambi con payment `NULL`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1260,7 +1276,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Cucumber srl(P.Iva) entrambi con payment
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA `Comune_Multi`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -1270,7 +1288,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Cucumber srl(P.Iva) con senderDenomination `Comune di milano`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'invio ha prodotto un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
