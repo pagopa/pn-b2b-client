@@ -4689,6 +4689,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
@@ -4702,6 +4703,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
@@ -4751,6 +4753,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_RESPONSE`
@@ -5708,9 +5711,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. destinatario `Gherkin spa`
+2. destinatario `Mario Cucumber`
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5718,9 +5725,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. destinatario `Gherkin spa`
+2. destinatario `Mario Cucumber`
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5728,9 +5739,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. destinatario `Gherkin spa`
+2. destinatario `Mario Cucumber`
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5738,9 +5753,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. destinatario `Gherkin spa`
+2. destinatario `Mario Cucumber`
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5748,9 +5767,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. destinatario `Gherkin spa`
+2. destinatario `Mario Cucumber`
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
 
