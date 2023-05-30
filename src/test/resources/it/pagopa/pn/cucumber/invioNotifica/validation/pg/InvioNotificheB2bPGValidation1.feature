@@ -123,7 +123,7 @@ Feature: Validazione campi invio notifiche b2b con persona giuridica
       #1) P.Iva numero in meno (8 cifre)
       #2) P.Iva numero in più (10 cifre)
       #3) P.Iva con lettera (8 cifre e una lettera)
-      #4) P.Iva con letta (9 cifre e una lettera)
+      #4) P.Iva con lettera (9 cifre e una lettera)
       #5) P.Iva numero in meno con lettera alla fine (8 cifre e una lettera)
 
   Scenario Outline: [B2B-PA-SEND_VALID_PG_7] invio notifiche digitali mono destinatario con parametri creditorTaxId errati_scenario negativo
