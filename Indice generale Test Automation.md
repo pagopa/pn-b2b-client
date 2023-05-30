@@ -87,7 +87,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con indirizzo fisico nullo
 2. Viene inviata tramite api b2b dal `Comune_1`
-3. L'operazione va in errore con codice 400
+3. L'operazione va in errore con codice `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 
@@ -101,7 +101,7 @@
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Si verifica la corretta acquisizione della notifica
 4. Si tenta il recupero della notifica tramite IUN errato
-5. L'operazione va in errore con codice 404
+5. L'operazione va in errore con codice `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF.feature)
 
@@ -322,7 +322,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con indirizzo fisico nullo
 2. Viene inviata dal `Comune_1`
-3. L'operazione va in errore con codice 400
+3. L'operazione va in errore con codice `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 
@@ -334,7 +334,7 @@
 
 1. Viene creata una nuova notifica mono destinatario con indirizzo fisico nullo
 2. Viene inviata dal `Comune_Multi`
-3. L'operazione va in errore con codice 400
+3. L'operazione va in errore con codice `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 
@@ -374,7 +374,7 @@
 1. Viene creata una nuova notifica mono destinatario
 2. Viene inviata tramite api b2b dal `Comune_2` e si aspetta che lo stato passi in `ACCEPTED`
 3. Si tenta il recupero tramite `Comune_1`
-4. L'operazione va in errore con stato 404
+4. L'operazione va in errore con stato `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 
@@ -422,7 +422,7 @@
 
 1. Viene creata una nuova notifica multi destinatario
 2. Viene inviata dal `Comune_1`
-3. L'operazione va in errore con stato 400
+3. L'operazione va in errore con stato `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 
@@ -434,7 +434,7 @@
 
 1. Viene creata una nuova notifica multi destinatario dove il secondo destinatario ha lo stesso codice avviso
 2. Viene inviata dal `Comune_Multi`
-3. L'operazione va in errore con stato 500
+3. L'operazione va in errore con stato `500`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 
@@ -446,7 +446,7 @@
 
 1. Viene creata una nuova notifica multi destinatario con due destinatari uguali
 2. Viene inviata dal `Comune_Multi`
-3. L'operazione va in errore con stato 400
+3. L'operazione va in errore con stato `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 
@@ -638,7 +638,7 @@
 1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e physical address NULL
 2. quando la notifica viene inviata 
 3. si verifica la corretta acquisizione della notifica
-4. l'operazione ha prodotto un errore con status code "400"
+4. l'operazione ha prodotto un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
@@ -652,7 +652,7 @@
 2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato `ACCEPTED`
 3. si verifica la corretta acquisizione della notifica
 4. si tenta il recupero della notifica dal sistema tramite codice IUN
-5. l'operazione ha prodotto un errore con status code "404"
+5. l'operazione ha prodotto un errore con status code `404`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
