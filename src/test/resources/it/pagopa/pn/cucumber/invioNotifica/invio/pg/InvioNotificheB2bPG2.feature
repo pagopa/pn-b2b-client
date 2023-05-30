@@ -60,15 +60,6 @@ Feature: invio notifiche b2b per la persona giuridica
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  Scenario: [B2B-PA-SEND_PG_22] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | idempotenceToken | AME2E3626070001.3  |
-    And destinatario Gherkin spa
-    When la notifica viene inviata dal "Comune_1"
-    Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
-
   Scenario: [B2B-PA-SEND_PG_23] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -122,3 +113,12 @@ Feature: invio notifiche b2b per la persona giuridica
       | taxId            | CCRMCT06A03A433H    |
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata causa "ALLEGATO"
+
+  Scenario: [B2B-PA-SEND_PG_28] Invio notifica digitale mono destinatario e verifica stato_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | idempotenceToken | AME2E3626070001.3  |
+    And destinatario Gherkin spa
+    When la notifica viene inviata dal "Comune_1"
+    Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber

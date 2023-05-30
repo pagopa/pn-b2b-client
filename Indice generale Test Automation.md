@@ -436,7 +436,7 @@
 2. Viene inviata dal `Comune_Multi`
 3. L'operazione va in errore con stato 500
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumbe/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -553,33 +553,48 @@
 ##### Invio notifiche b2b per la persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo</summary>
+  <summary>[B2B-PA-SEND_PG_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica con P.Iva)_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo</summary>
+  <summary>[B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. la notifica viene inviata tramite api b2b
+3. aspetta che la notifica passi in stato ACCEPTED
+4. si verifica la corretta acquisizione della notifica
+5. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken
+6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato ACCEPTED
+7. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_3] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo</summary>
+  <summary>[B2B-PA-SEND_PG_3] invio notifiche digitali mono destinatario (p.giuridica con P.Iva)_scenario negativo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. la notifica viene inviata tramite api b2b
+3. aspetta che la notifica passi in stato ACCEPTED
+4. si verifica la corretta acquisizione della notifica
+5. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken
+6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato ACCEPTED)
+7. l'operazione ha prodotto un errore con status code "409"
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -587,9 +602,15 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e creditorTaxId
+2. la notifica viene inviata tramite api b2b
+3. aspetta che la notifica passi in stato ACCEPTED
+4. si verifica la corretta acquisizione della notifica
+5. viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso
+6. quando la notifica viene inviata tramite api b2b aspetta che la notifica passi in stato ACCEPTED
+7. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -597,9 +618,15 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e creditorTaxId
+2. la notifica viene inviata tramite api b2b
+3. aspetta che la notifica passi in stato ACCEPTED
+4. si verifica la corretta acquisizione della notifica
+5. viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+6. quando la notifica viene inviata tramite api b2b (NON aspetta che passi in stato ACCEPTED)
+7. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -607,9 +634,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e physical address NULL
+2. quando la notifica viene inviata 
+3. si verifica la corretta acquisizione della notifica
+4. l'operazione ha prodotto un errore con status code "400"
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -617,9 +648,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. quando la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. si tenta il recupero della notifica dal sistema tramite codice IUN
+5. l'operazione ha prodotto un errore con status code "404"
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -627,9 +662,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy FLAT_RATE
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -637,9 +674,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e con PagoPA payment form fee policy DELIVERY_MODE
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -647,9 +687,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) senza taxonomy code
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene controllata la presenza del taxonomyCode
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -657,9 +700,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con taxonomy code
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene controllata la presenza del taxonomyCode
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -667,9 +713,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva), creditorTaxId e senza PagoPA payment form
+2. la notifica viene inviata tramite api b2b e aspetta che la notifica passi in stato ACCEPTED 
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -677,9 +726,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva), creditorTaxId
+2. la notifica viene inviata 
+3. si verifica la corretta acquisizione della richiesta di invio notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -687,9 +738,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e senza pagamento
+2. la notifica viene inviata
+3. si verifica la corretta acquisizione della richiesta di invio notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -697,9 +750,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con importo(amount) 2550
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+5. l'importo della notifica è 2550
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -707,9 +764,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication REGISTERED_LETTER_890
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -717,19 +777,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con physicalCommunication AR_REGISTERED_LETTER
+2. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_22] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
-
-**Descrizione**
-
-1. scrivere step di esecuzione del test
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -737,19 +790,25 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken AME2E3626070001.3
+2. la notifica viene inviata 
+3. viene verificato lo stato di accettazione con requestID
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
-
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_PG_24] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene generata una nuova notifica con uguale paProtocolNumber
+5. la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+6. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -757,9 +816,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene generata una nuova notifica con uguale paProtocolNumber
+5. la notifica viene inviata dal "Comune_1"
+6. l'operazione ha prodotto un errore con status code "409"
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -767,32 +831,53 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) con idempotenceToken AME2E3626070001.3
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.1"
+5. la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+6. si verifica la corretta acquisizione della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_27] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo</summary>
+  <summary>[B2B-PA-SEND_PG_27] Invio notifica mono destinatario con documenti pre-caricati non trovati su safestorage  scenario negativo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con recipientType PG e taxId CCRMCT06A03A433H
+2. la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa "ALLEGATO"
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_PG_28] Invio notifica digitale mono destinatario e verifica stato_scenario positivo</summary>
 
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario Gherkin spa(P.Iva) e idempotenceToken AME2E3626070001.3
+2. la notifica viene inviata dal "Comune_1"
+3. viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 </details>
 
 ##### Invio notifiche b2b per la persona giuridica con codice fiscale (società semplice)
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG-CF_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo</summary>
+  <summary>[B2B-PA-SEND_PG-CF_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica con CF)_scenario positivo</summary>
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario codice fiscale(Cucumber Society)
+2. la notifica viene inviata tramite api b2b
+3. aspetta che la notifica passi in stato ACCEPTED
+4. si verifica la corretta acquisizione della notifica
+5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -802,7 +887,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -812,7 +897,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -822,7 +907,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -832,7 +917,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -842,7 +927,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -852,7 +937,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -862,7 +947,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -872,7 +957,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -882,7 +967,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -892,7 +977,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -902,7 +987,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -912,7 +997,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -922,7 +1007,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -932,7 +1017,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -942,7 +1027,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -952,7 +1037,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -962,7 +1047,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -972,7 +1057,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -982,7 +1067,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -992,7 +1077,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -1002,7 +1087,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
 
