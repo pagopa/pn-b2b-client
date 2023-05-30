@@ -2095,9 +2095,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2105,9 +2109,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. Il documento notificato può essere correttamente recuperato da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2115,9 +2123,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. L'allegato `PAGOPA` può essere correttamente recuperato da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2125,9 +2137,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. L'allegato `F24` può essere correttamente recuperato da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2135,9 +2152,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+:warning: _Ignored_
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. L'allegato `F24` può essere correttamente recuperato da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2145,9 +2167,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. `Mario Cucumber` revoca la delega a `Mario Gherkin`
+6. La lettura della notifica da parte di `Mario Gherkin` produce un errore con stato `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2155,9 +2182,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` rifiuta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La lettura della notifica da parte di `Mario Gherkin` produce un errore con stato `404`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2165,9 +2196,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Gherkin`
+2. L'operazione va in errore con stato `409`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2175,9 +2207,12 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. `Mario Gherkin` viene delegato da `Mario Cucumber`
+4. L'operazione va in errore con stato `409`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2185,9 +2220,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Gherkin`
+6. La notifica può essere correttamente letta da `Mario Cucumber`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2195,9 +2235,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Cucumber`
+6. La notifica può essere correttamente letta da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2205,9 +2250,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Gherkin`
+6. L'elemento di timeline della lettura riporta i dati di `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2215,9 +2265,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Cucumber`
+6. L'elemento di timeline della lettura non riporta i dati di `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -2225,9 +2280,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatari `Mario Cucumber`e `Mario Gherkin`
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. La notifica può essere correttamente letta da `Mario Cucumber`
+6. La notifica può essere correttamente letta da `Mario Gherkin`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
 
