@@ -2824,7 +2824,7 @@
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Lo stato diventa `ACCEPTED`
 6. La notifica può essere recuperata tramite AppIO
-7. Viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken "AME2E3626070001.2"
+7. Viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken `AME2E3626070001.2`
 8. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 9. Lo stato diventa `ACCEPTED`
 10. la notifica può essere recuperata tramite AppIO
@@ -3553,7 +3553,7 @@
 2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
 4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` è presente il campo Digital Address di piattaforma
-5. "#PLOMRC01P30L736Y" ha un indirizzo digitale configurato non valido su NR serve un CF con indirizzo digitale in piattaforma
+5. `#PLOMRC01P30L736Y` ha un indirizzo digitale configurato non valido su NR serve un CF con indirizzo digitale in piattaforma
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -3758,7 +3758,7 @@
 1. Viene generata una nuova notifica con feePolicy `FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. `Mario Gherkin` legge la notifica ricevuta
-4. Viene verificato il costo = "0" della notifica
+4. Viene verificato il costo = `0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
@@ -5130,7 +5130,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
@@ -5142,7 +5142,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
@@ -5154,7 +5154,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `AAR_GENERATION`
 
@@ -5166,7 +5166,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
@@ -5178,7 +5178,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
@@ -5190,7 +5190,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_DOMICILE`
 
@@ -5202,7 +5202,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
@@ -5216,7 +5216,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
 
@@ -5230,7 +5230,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -5242,7 +5242,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK`
 
@@ -5254,7 +5254,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_PROGRESS`
 
@@ -5266,7 +5266,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_CALL`
 
@@ -5280,7 +5280,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_RESPONSE`
 
@@ -5292,7 +5292,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK`
 4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo deliveryDetailCode
@@ -5305,7 +5305,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@gmail.it`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa` con digitalAddress `test@gmail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO`
 4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO` sia presenti i campi deliveryDetailCode e deliveryFailureCause
@@ -5318,7 +5318,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
@@ -5330,7 +5330,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
@@ -5342,7 +5342,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
@@ -5492,7 +5492,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber srl`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber srl`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Il destinatario legge la notifica ricevuta
 4. Vengono verificati costo e data di perfezionamento della notifica
@@ -5505,7 +5505,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber srl`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber srl`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo della notifica
 
@@ -5531,7 +5531,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber srl`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber srl`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. L'avviso pagopa viene pagato correttamente
 4. Si attende il corretto pagamento della notifica
@@ -5558,7 +5558,7 @@ Dati destinatario
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario a `Cucumber srl`
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber srl`
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo della notifica
 
@@ -5572,7 +5572,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a
+1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
    - **taxId**: 70472431207
    - **denomination**: VeryBadCaligola Snc
@@ -5607,7 +5607,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a
+1. Viene creata una nuova notifica mono destinatario con destinatario 
    - **recipientType**: PG
    - **taxId**: LELPTR04A01C352E
    - **denomination**: Le Epistolae srl
@@ -5624,7 +5624,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a
+1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
    - **taxId**: LELPTR04A01C352E
    - **denomination**: Le Epistolae srl
@@ -5646,7 +5646,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a
+1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
    - **taxId**: LELPTR04A01C352E
    - **denomination**: Le Epistolae srl
@@ -5668,7 +5668,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario a
+1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
    - **taxId**: 70412331207
    - **payment_pagoPaForm**: SI
@@ -5690,9 +5690,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile_address**: test@fail.it
+    - **physicalAddress_address**: Via@ok_RS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5700,9 +5704,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile_address**: test@fail.it
+    - **physicalAddress_address**: Via@ok-Retry_RS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5710,9 +5718,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile_address**: test@fail.it
+    - **physicalAddress_address**: Via@fail_RS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5720,9 +5732,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile_address**: test@fail.it
+    - **physicalAddress_address**: Via@ok_RIS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5730,9 +5746,15 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+:warning: _Ignored_
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile_address**: test@fail.it
+    - **physicalAddress_address**: Via@fail_RIS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5740,9 +5762,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   | physicalCommunication |  AR_REGISTERED_LETTER |
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5750,9 +5777,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5760,9 +5791,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_RIR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5770,9 +5805,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **physicalCommunication**: AR_REGISTERED_LETTER
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5780,9 +5820,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5790,9 +5834,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_RIR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5800,9 +5848,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail-Discovery_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5810,9 +5862,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail-Discovery_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5820,9 +5876,15 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   | physicalCommunication |  AR_REGISTERED_LETTER |
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_DOMICILE` sia valorizzato con `AR_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5830,9 +5892,15 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_DOMICILE` sia valorizzato con `REGISTERED_LETTER_890`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5840,9 +5908,15 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   | physicalCommunication |  AR_REGISTERED_LETTER |
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_ANALOG_DOMICILE`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `PREPARE_ANALOG_DOMICILE` sia valorizzato con `AR_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5850,9 +5924,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_ANALOG_DOMICILE`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `PREPARE_ANALOG_DOMICILE` sia valorizzato con `REGISTERED_LETTER_890`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5860,9 +5939,15 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   | physicalCommunication |  AR_REGISTERED_LETTER |
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_FEEDBACK` sia valorizzato con `AR_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5870,9 +5955,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
+4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_FEEDBACK` sia valorizzato con `REGISTERED_LETTER_890`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5880,9 +5970,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   | physicalCommunication |  AR_REGISTERED_LETTER |
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_AR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5890,9 +5985,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5900,9 +5999,13 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@fail_RIR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5910,9 +6013,14 @@ Dati destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+    - **digitalDomicile**: NULL
+    - **physicalAddress_address**: Via@ok_890
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. L'avviso pagopa viene pagato correttamente
+4. Si attende la corretta sospensione dell'invio cartaceo
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
 
