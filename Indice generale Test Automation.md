@@ -7945,7 +7945,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `233` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8004,7 +8005,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `223` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8063,7 +8065,8 @@ Dati Destinatario
 19. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 20. viene verificato il costo = `233` della notifica per l'utente 0
 21. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8122,7 +8125,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `233` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8182,7 +8186,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `212` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8242,7 +8247,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `302` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8302,7 +8308,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `212` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8362,7 +8369,8 @@ Dati Destinatario
 9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
 10. viene verificato il costo = `302` della notifica per l'utente 0
 11. viene verificato il costo = `100` della notifica per l'utente 1
-    [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9862,9 +9870,12 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Vengono letti gli eventi di disservizio degli ultimi 30 giorni relativi alla `creazione notifiche`
+2. Viene individuato se presente l'evento più recente 
+3. Viene scaricata la relativa attestazione opponibile
+4. L'attestazione opponibile è stata correttamente scaricata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DowntimeLogs.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9872,9 +9883,12 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Vengono letti gli eventi di disservizio degli ultimi 30 giorni relativi alla `visualizzazione notifiche`
+2. Viene individuato se presente l'evento più recente
+3. Viene scaricata la relativa attestazione opponibile
+4. L'attestazione opponibile è stata correttamente scaricata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DowntimeLogs.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9882,9 +9896,12 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Vengono letti gli eventi di disservizio degli ultimi 30 giorni relativi alla `workflow notifiche`
+2. Viene individuato se presente l'evento più recente
+3. Viene scaricata la relativa attestazione opponibile
+4. L'attestazione opponibile è stata correttamente scaricata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DowntimeLogs.feature)
 
 </details>
 
