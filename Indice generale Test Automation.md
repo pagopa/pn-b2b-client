@@ -3173,8 +3173,9 @@
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-MULTI-PF-RECIPIENT_7] Invio notifica digitale multi destinatario e recupero allegato F24_STANDARD_scenario negativo</summary>
 
-:warning: _Ignored_
 **Descrizione**
+
+:warning: _Ignored_
 
 1. viene generata una nuova notifica con destinatari `Mario Gherkin` e `Mario Cucumber` con payment_pagoPaForm SI, payment_f24standard NULL e payment_f24flatRate NULL
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -3381,6 +3382,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
 2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
@@ -3448,6 +3450,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
 2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
@@ -3461,6 +3464,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
 2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
@@ -3725,10 +3729,10 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-3. "Mario Gherkin" legge la notifica ricevuta
-4. vengono verificati costo = "100" e data di perfezionamento della notifica
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
+4. vengono verificati costo = `100` e data di perfezionamento della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
@@ -3738,10 +3742,10 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-3. "Mario Gherkin" legge la notifica ricevuta
-4. viene verificato il costo = "100" della notifica
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
+4. viene verificato il costo = `100` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
@@ -3751,9 +3755,9 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con `feePolicy FLAT_RATE`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-3. "Mario Gherkin" legge la notifica ricevuta
+1. viene generata una nuova notifica con feePolicy `FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
 4. viene verificato il costo = "0" della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
@@ -3764,8 +3768,8 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`, `payment_pagoPaForm`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. l'avviso pagopa viene pagato correttamente
 4. si attende il corretto pagamento della notifica
 
@@ -3778,8 +3782,9 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI` e `payment_f24standard SI`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`, `payment_pagoPaForm` e `payment_f24standard`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. il modello f24 viene pagato correttamente
 4. si attende il corretto pagamento della notifica
 
@@ -3791,10 +3796,10 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`
-2. la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi "ACCEPTED"
-3. "Mario Gherkin" legge la notifica ricevuta
-4. viene verificato il costo = "100" della notifica
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
+4. viene verificato il costo = `100` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
 
@@ -3805,8 +3810,9 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. viene generata una nuova notifica con `feePolicy DELIVERY_MODE`, `payment_pagoPaForm SI` e `payment_creditorTaxId 77777777777`
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+
+1. viene generata una nuova notifica con feePolicy `DELIVERY_MODE`, `payment_pagoPaForm` e creditorTaxId `77777777777`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. l'avviso pagopa viene pagato correttamente
 4. si attende il corretto pagamento della notifica
 
@@ -3821,7 +3827,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_RS`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_RS`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -3833,7 +3839,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok-Retry_RS`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok-Retry_RS`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -3847,7 +3853,7 @@
 
 :warning: _ignored_
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_RS`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_RS`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -3859,7 +3865,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_RIS`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_RIS`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -3871,7 +3877,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_RIS`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_RIS`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -3883,7 +3889,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3895,7 +3901,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3907,7 +3913,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_RIR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_RIR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3919,7 +3925,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@fail_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@fail_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -3931,7 +3937,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -3943,7 +3949,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_RIR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_RIR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -3956,7 +3962,7 @@
 **Descrizione**
 
 :warning: _ignored_
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3969,7 +3975,7 @@
 **Descrizione**
 
 :warning: _ignored_
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_AR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3981,7 +3987,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail-Discovery_AR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail-Discovery_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -3993,7 +3999,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail-Discovery_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail-Discovery_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -4005,7 +4011,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `denomination Giovanna D'Arco` e `taxId DRCGNN12A46A326K`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER`, physicalAddress `Via@ok_AR`, denomination `Giovanna D'Arco` e taxId `DRCGNN12A46A326K`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -4017,7 +4023,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalAddress_address Via@ok_890`, `denomination Test 890 ok` e `taxId PRTCAE90A01D086M`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalAddress `Via@ok_890`, denomination `Test 890 ok` e taxId `PRTCAE90A01D086M`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -4029,7 +4035,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@fail_AR`, `denomination Test AR Fail` e `taxId MNDLCU98T68C933T`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER`, physicalAddress `Via@fail_AR`, denomination `Test AR Fail` e taxId `MNDLCU98T68C933T`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -4042,7 +4048,7 @@
 **Descrizione**
 
 :warning: _ignored_
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalAddress_address Via@fail_890`, `denomination Test 890 Fail` e `taxId PRVMNL80A01F205M`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalAddress `Via@fail_890`, denomination `Test 890 Fail` e taxId `PRVMNL80A01F205M`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -4055,7 +4061,8 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -4067,7 +4074,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalAddress_address Via@fail_890`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK`
 4. viene verificato il campo sendRequestId dell' evento di timeline `SEND_ANALOG_FEEDBACK`
@@ -4080,7 +4087,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_AR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE` siano configurati i campi `municipalityDetails` e `foreignState`
@@ -4093,7 +4100,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` siano configurati i campi `municipalityDetails` e `foreignState`
@@ -4106,7 +4113,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
@@ -4119,7 +4126,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
@@ -4132,7 +4139,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
@@ -4145,7 +4152,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
@@ -4158,7 +4165,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
@@ -4172,7 +4179,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
@@ -4186,7 +4193,8 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. viene generata una nuova notifica con destinatario persona fisica, `taxId MNDLCU98T68C933T`, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@fail_AR`
+
+1. viene generata una nuova notifica con destinatario persona fisica, taxId `MNDLCU98T68C933T`, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@fail_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 4. `MNDLCU98T68C933T` CF non valido per eseguire il test sul nuovo DEV2
@@ -4200,7 +4208,8 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. viene generata una nuova notifica con destinatario persona fisica, `taxId PRVMNL80A01F205M` e `physicalAddress_address Via@fail_890`
+
+1. viene generata una nuova notifica con destinatario persona fisica, taxId `PRVMNL80A01F205M` e physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 4. `PRVMNL80A01F205M` ha un indirizzo PEC
@@ -4213,7 +4222,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@fail_AR`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER` e physicalAddress `Via@fail_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
@@ -4225,7 +4234,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_890`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
@@ -4237,7 +4246,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_RIR`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@fail_RIR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
@@ -4249,7 +4258,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `taxId MNTMRA03M71C615V` e `physicalAddress_address Via NationalRegistries @fail_AR 5`
+1. viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `AR_REGISTERED_LETTER`, taxId `MNTMRA03M71C615V` e physicalAddress `Via NationalRegistries @fail_AR 5`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
@@ -4261,7 +4270,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica, `taxId MNZLSN99E05F205J` e `physicalAddress_address Via NationalRegistries @fail_890 5`
+1. viene generata una nuova notifica con destinatario persona fisica, taxId `MNZLSN99E05F205J` e physicalAddress `Via NationalRegistries @fail_890 5`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
@@ -4273,7 +4282,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via minzoni`
+1. viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via minzoni`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` verifica numero pagine AAR 1
 
