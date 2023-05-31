@@ -9682,8 +9682,8 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Viene effettuato il pre-caricamento di un documento
-2. Viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+1. viene effettuato il pre-caricamento di un documento
+2. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE` precaricato
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9693,8 +9693,8 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Viene effettuato il pre-caricamento di un documento
-2. Viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
+1. viene effettuato il pre-caricamento di un documento
+2. viene effettuato un controllo sulla durata della retention di `PAGOPA` precaricato
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9704,10 +9704,10 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Viene generata una nuova notifica con destinatario persona giuridica(CF)
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+1. viene generata una nuova notifica con destinatario persona giuridica(CF)
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9717,10 +9717,10 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Viene generata una nuova notifica con destinatario persona giuridica(CF)
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
-3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "PAGOPA"
+1. viene generata una nuova notifica con destinatario persona giuridica(CF)
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9731,9 +9731,9 @@ Dati Destinatario
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona fisica
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+4. Viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9744,9 +9744,9 @@ Dati Destinatario
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona fisica
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "PAGOPA"
+4. Viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9757,9 +9757,9 @@ Dati Destinatario
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona giuridica(P.Iva)
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+4. Viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9770,9 +9770,9 @@ Dati Destinatario
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona giuridica(P.Iva)
-2. La notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Si verifica la corretta acquisizione della notifica
-4. Viene effettuato un controllo sulla durata della retention di "PAGOPA"
+4. Viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9785,7 +9785,8 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. vengono lette le apiKey esistenti
+2. la lettura è avvenuta correttamente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9795,7 +9796,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. viene modificato lo stato dell'apiKey in `BLOCK`
+5. l'apiKey viene cancellata
+6. vengono lette le apiKey esistenti
+7. l'apiKey non è più presente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9805,7 +9812,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. si tenta la cancellazione dell'apiKey
+5. l'operazione ha sollevato un errore con status code `409`
+6. viene modificato lo stato dell'apiKey in `BLOCK`
+7. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9815,7 +9828,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. viene modificato lo stato dell'apiKey in `BLOCK`
+5. vengono lette le apiKey esistenti
+6. si verifica lo stato dell'apikey `BLOCKED`
+7. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9825,7 +9844,12 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. si verifica lo stato dell'apikey `ENABLED`
+5. viene modificato lo stato dell'apiKey in `BLOCK`
+6. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9835,7 +9859,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. viene modificato lo stato dell'apiKey in `ROTATE`
+5. vengono lette le apiKey esistenti
+6. si verifica lo stato dell'apikey `ROTATED`
+7. viene modificato lo stato dell'apiKey in `BLOCK`
+8. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9845,7 +9876,18 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. si verifica lo stato dell'apikey `ENABLED`
+5. viene modificato lo stato dell'apiKey in `BLOCK`
+6. vengono lette le apiKey esistenti
+7. si verifica lo stato dell'apikey `BLOCKED`
+8. viene modificato lo stato dell'apiKey in `ENABLE`
+9. vengono lette le apiKey esistenti
+10. si verifica lo stato dell'apikey `ENABLED`
+11. viene modificato lo stato dell'apiKey in `BLOCK`
+12. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9855,7 +9897,17 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. si verifica lo stato dell'apikey `ENABLED`
+5. viene impostata l'apikey appena generata
+6. viene generata una nuova notifica
+7. destinatario persona fisica
+8. la notifica viene inviata dal `Comune_1`
+9. l'invio della notifica non ha prodotto errori
+10. viene modificato lo stato dell'apiKey in `BLOCK`
+11. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9865,7 +9917,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. viene modificato lo stato dell'apiKey in `BLOCK`
+5. viene impostata l'apikey appena generata
+6. viene generata una nuova notifica
+7. destinatario persona fisica
+8. la notifica viene inviata dal `Comune_1`
+9. l'invio della notifica ha sollevato un errore di autenticazione `403`
+10. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9875,7 +9936,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. vengono lette le apiKey esistenti
+3. l'apiKey creata è presente tra quelle lette
+4. viene modificato lo stato dell'apiKey in `BLOCK`
+5. l'apiKey viene cancellata
+6. vengono lette le apiKey esistenti
+7. l'apiKey non è più presente
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9885,7 +9952,15 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. destinatario persona fisica
+6. la notifica viene inviata tramite api b2b
+7. l'invio della notifica non ha prodotto errori
+8. viene modificato lo stato dell'apiKey in `BLOCK`
+9. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9895,7 +9970,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. viene settato per la notifica corrente il primo gruppo valido del comune `Comune_1`
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b
+8. l'invio della notifica non ha prodotto errori
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9905,7 +9989,15 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. destinatario persona fisica
+6. la notifica viene inviata tramite api b2b
+7. l'invio della notifica ha sollevato un errore `400`
+8. viene modificato lo stato dell'apiKey in `BLOCK`
+9. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9915,7 +10007,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il gruppo della notifica con quello dell'apikey
+5. viene settato il taxId della notifica con quello dell'apikey
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b
+8. l'invio della notifica non ha prodotto errori
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9925,7 +10026,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il taxId della notifica con quello dell'apikey
+5. viene settato un gruppo differente da quello utilizzato nell'apikey per il comune `Comune_1`
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b
+8. l'invio della notifica ha sollevato un errore `400`
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9935,7 +10045,21 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il gruppo della notifica con quello dell'apikey
+5. viene settato il taxId della notifica con quello dell'apikey
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+8. si verifica la corretta acquisizione della notifica
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
+11. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+12. viene impostata l'apikey appena generata
+13. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+14. viene modificato lo stato dell'apiKey in `BLOCK`
+15. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9945,7 +10069,22 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il gruppo della notifica con quello dell'apikey
+5. viene settato il taxId della notifica con quello dell'apikey
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+8. si verifica la corretta acquisizione della notifica
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
+11. Viene creata una nuova apiKey per il comune `Comune_1` con gruppo differente del invio notifica
+12. viene impostata l'apikey appena generata
+13. si tenta il recupero dal sistema tramite codice IUN
+14. il recupero della notifica ha sollevato un errore `404`
+15. viene modificato lo stato dell'apiKey in `BLOCK`
+16. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9955,7 +10094,20 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. destinatario persona fisica
+6. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+7. si verifica la corretta acquisizione della notifica
+8. viene modificato lo stato dell'apiKey in `BLOCK`
+9. l'apiKey viene cancellata
+10. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+11. viene impostata l'apikey appena generata
+12. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+13. viene modificato lo stato dell'apiKey in `BLOCK`
+14. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9965,7 +10117,21 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con il primo gruppo disponibile
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il gruppo della notifica con quello dell'apikey
+5. viene settato il taxId della notifica con quello dell'apikey
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+8. si verifica la corretta acquisizione della notifica
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
+11. Viene creata una nuova apiKey per il comune `Comune_1` con gruppo uguale del invio notifica
+12. viene impostata l'apikey appena generata
+13. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+14. viene modificato lo stato dell'apiKey in `BLOCK`
+15. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9975,7 +10141,21 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` senza gruppo
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. viene settato per la notifica corrente il primo gruppo valido del comune `Comune_1`
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+8. si verifica la corretta acquisizione della notifica
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
+11. Viene creata una nuova apiKey per il comune `Comune_1` con gruppo uguale del invio notifica
+12. viene impostata l'apikey appena generata
+13. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+14. viene modificato lo stato dell'apiKey in `BLOCK`
+15. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9985,7 +10165,8 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene generata una nuova apiKey con il gruppo `AAAAAAAAAA`
+2. l'operazione ha sollevato un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9995,7 +10176,15 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con due gruppi
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notificacon `group NULL`
+4. viene settato il taxId della notifica con quello dell'apikey
+5. destinatario persona fisica
+6. la notifica viene inviata tramite api b2b
+7. l'invio della notifica ha sollevato un errore `400`
+8. viene modificato lo stato dell'apiKey in `BLOCK`
+9. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -10005,7 +10194,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con due gruppi
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato per la notifica corrente il primo gruppo valido del comune `Comune_1`
+5. viene settato il taxId della notifica con quello dell'apikey
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b
+8. l'invio della notifica non ha prodotto errori
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -10015,7 +10213,21 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene creata una nuova apiKey per il comune `Comune_1` con due gruppi
+2. viene impostata l'apikey appena generata
+3. viene generata una nuova notifica
+4. viene settato il taxId della notifica con quello dell'apikey
+5. viene settato per la notifica corrente il primo gruppo valido del comune `Comune_1`
+6. destinatario persona fisica
+7. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+8. si verifica la corretta acquisizione della notifica
+9. viene modificato lo stato dell'apiKey in `BLOCK`
+10. l'apiKey viene cancellata
+11. Viene creata una nuova apiKey per il comune `Comune_1` con gruppo uguale del invio notifica
+12. viene impostata l'apikey appena generata
+13. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+14. viene modificato lo stato dell'apiKey in `BLOCK`
+15. l'apiKey viene cancellata
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
