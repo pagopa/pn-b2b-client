@@ -3381,6 +3381,7 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
 2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
@@ -3396,7 +3397,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `NOTIFICATION_VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3408,7 +3409,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3420,7 +3421,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 4. `Mario Gherkin` legge la notifica ricevuta
 5. si verifica che la notifica abbia lo stato `VIEWED`
@@ -3434,7 +3435,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 4. `Mario Gherkin` legge la notifica ricevuta
 5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
@@ -3448,8 +3449,9 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3461,8 +3463,9 @@
 **Descrizione**
 
 :warning: _Ignored_
+
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3474,7 +3477,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3486,7 +3489,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3498,7 +3501,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PUBLIC_REGISTRY_CALL`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3510,7 +3513,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3522,7 +3525,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo `deliveryDetailCode`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3534,7 +3537,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo `deliveryDetailCode` e `deliveryFailureCause`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
@@ -3546,7 +3549,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
 4. viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` è presente il campo Digital Address di piattaforma
 5. "#PLOMRC01P30L736Y" ha un indirizzo digitale configurato non valido su NR serve un CF con indirizzo digitale in piattaforma
@@ -3560,7 +3563,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_DIGITAL_DOMICILE`
 4. viene verificato che nell'elemento di timeline della notifica `PREPARE_DIGITAL_DOMICILE` sia presente il campo Digital Address
 
@@ -3573,7 +3576,7 @@
 **Descrizione**
 
 1. viene generata una nuova notifica con destinatario persona fisica
-2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi  `ACCEPTED`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW`
 4. viene verificato che nell'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW` sia presente il campo Digital Address
 
@@ -3588,7 +3591,7 @@
 
 **Descrizione**
 
-1. viene generata una nuova notifica multi destinatario 
+1. viene generata una nuova notifica multi destinatario
 2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino allo stato della notifica `DELIVERED` dalla PA `Comune_Multi`
 
@@ -5762,9 +5765,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5772,9 +5782,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5782,9 +5799,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5792,9 +5816,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_SIMPLE_REGISTERED_LETTER`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5802,9 +5833,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5812,9 +5850,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5822,9 +5867,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5832,9 +5884,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `ANALOG_SUCCESS_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5842,9 +5901,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5852,9 +5918,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5862,9 +5935,16 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO` per l'utente 0
+8. vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5872,9 +5952,14 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+6. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5882,9 +5967,15 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5892,9 +5983,15 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
 </details>
 
