@@ -5763,7 +5763,7 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **physicalCommunication**: AR_REGISTERED_LETTER
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
@@ -5877,7 +5877,7 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **physicalCommunication**: AR_REGISTERED_LETTER
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
@@ -5908,7 +5908,7 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **physicalCommunication**: AR_REGISTERED_LETTER
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
@@ -5970,7 +5970,7 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **physicalCommunication**: AR_REGISTERED_LETTER
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@fail_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
