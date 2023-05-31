@@ -4699,7 +4699,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
@@ -4711,7 +4711,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
@@ -4723,7 +4723,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `AAR_GENERATION`
 
@@ -4735,7 +4735,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
@@ -4747,7 +4747,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
@@ -4759,7 +4759,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_DOMICILE`
 
@@ -4771,7 +4771,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
@@ -4785,7 +4785,7 @@
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_SIMPLE_REGISTERED_LETTER`
 
@@ -4799,7 +4799,7 @@
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -4811,7 +4811,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK`
 
@@ -4823,7 +4823,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_PROGRESS`
 
@@ -4835,7 +4835,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_CALL`
 
@@ -4849,7 +4849,7 @@
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@fail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PUBLIC_REGISTRY_RESPONSE`
 
@@ -4861,7 +4861,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK`
 4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` sia presente il campo deliveryDetailCode
@@ -4874,7 +4874,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Gherkin spa` con digitalAddress `test@gmail.it`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO`
 4. Viene verificato che nell'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `KO` sia presenti i campi deliveryDetailCode e deliveryFailureCause
@@ -4887,7 +4887,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
@@ -4899,7 +4899,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
@@ -4911,7 +4911,7 @@
 
 **Descrizione**
 
-1. Viene creata una nuova notifica mono destinatario
+1. Viene creata una nuova notifica mono destinatario a `Cucumber Society`
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
@@ -4926,9 +4926,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4936,9 +4938,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4946,9 +4950,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `AAR_GENERATION`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4956,9 +4962,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4966,9 +4974,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4976,9 +4986,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `SEND_DIGITAL_DOMICILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4986,9 +4998,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4996,9 +5010,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Mario Cucumber`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5006,9 +5022,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERING`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5016,9 +5034,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `REQUEST_ACCEPTED`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -5026,9 +5046,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. Viene creata una nuova notifica multi destinatario a `Gherkin spa` e `Cucumber Society`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino allo stato della notifica `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
 
