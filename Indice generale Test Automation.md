@@ -4109,7 +4109,7 @@
 1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
-4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` siano configurati i campi `serviceLevel`
+4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4122,7 +4122,7 @@
 1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
-4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` siano configurati i campi `serviceLevel`
+4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4132,7 +4132,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE`
+4. viene verificato che nell'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4142,7 +4145,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE`
+4. viene verificato che nell'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4152,7 +4158,11 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@ok_AR`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK`
+4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` sia valorizzato il campo `serviceLevel` con `AR_REGISTERED_LETTER`
+
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4162,7 +4172,10 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@ok_890`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK`
+4. viene verificato che nell'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` sia valorizzato il campo `serviceLevel` con `REGISTERED_LETTER_890`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4173,7 +4186,10 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `taxId MNDLCU98T68C933T`, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@fail_AR`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
+4. `MNDLCU98T68C933T` CF non valido per eseguire il test sul nuovo DEV2
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4184,7 +4200,10 @@
 **Descrizione**
 
 :warning: _Ignored_
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `taxId PRVMNL80A01F205M` e `physicalAddress_address Via@fail_890`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
+4. `PRVMNL80A01F205M` ha un indirizzo PEC
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4194,7 +4213,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER` e `physicalAddress_address Via@fail_AR`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4204,7 +4225,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_890`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4214,7 +4237,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via@fail_RIR`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4224,7 +4249,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `taxId MNTMRA03M71C615V` e `physicalAddress_address Via NationalRegistries @fail_AR 5`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4234,7 +4261,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `taxId MNZLSN99E05F205J` e `physicalAddress_address Via NationalRegistries @fail_890 5`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
@@ -4244,7 +4273,9 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica e `physicalAddress_address Via minzoni`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` verifica numero pagine AAR 1
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
 
