@@ -4445,7 +4445,7 @@
 Dati destinatario
 
 | parameter                    | value          |
-|------------------------------|----------------|
+| ---------------------------- | -------------- |
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
@@ -4471,7 +4471,7 @@ Dati destinatario
 Dati destinatario
 
 | parameter                    | value          |
-|------------------------------|----------------|
+| ---------------------------- | -------------- |
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
@@ -4525,7 +4525,7 @@ Dati destinatario
 Dati destinatario
 
 | parameter                    | value          |
-|------------------------------|----------------|
+| ---------------------------- | -------------- |
 | payment_pagoPaForm           | SI             |
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
@@ -4551,7 +4551,7 @@ Dati destinatario
 Dati destinatario
 
 | parameter                    | value          |
-|------------------------------|----------------|
+| ---------------------------- | -------------- |
 | payment_pagoPaForm           | SI             |
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
@@ -4604,15 +4604,15 @@ Dati destinatario
 
 Dati destinatario
 
-| parameter                    | value        |
-|------------------------------|--------------|
-| digitalDomicile              | NULL         |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| physicalAddress_address      | Via@ok_RIR   |
-| payment_pagoPaForm           | NULL         |
+| parameter                    | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -4630,15 +4630,15 @@ Dati destinatario
 
 Dati destinatario
 
-| parameter                    | value        |
-|------------------------------|--------------|
-| digitalDomicile              | NULL         |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| physicalAddress_address      | Via@ok_RIR   |
-| payment_pagoPaForm           | NULL         |
+| parameter                    | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -4684,15 +4684,15 @@ Dati destinatario
 
 Dati destinatario
 
-| parameter                    | value        |
-|------------------------------|--------------|
-| payment_pagoPaForm           | SI           |
-| digitalDomicile              | NULL         |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| physicalAddress_address      | Via@ok_RIR   |
+| parameter                    | value      |
+| ---------------------------- | ---------- |
+| payment_pagoPaForm           | SI         |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
 
 1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -4710,15 +4710,15 @@ Dati destinatario
 
 Dati destinatario
 
-| parameter                    | value        |
-|------------------------------|--------------|
-| payment_pagoPaForm           | SI           |
-| digitalDomicile              | NULL         |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| physicalAddress_address      | Via@ok_RIR   |
+| parameter                    | value      |
+| ---------------------------- | ---------- |
+| payment_pagoPaForm           | SI         |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
 
 1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
 2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -6504,9 +6504,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `400` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6514,9 +6524,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6524,9 +6544,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `565` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6534,9 +6564,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6544,9 +6584,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `533` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6554,9 +6604,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6564,9 +6624,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `798` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6574,9 +6644,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6584,9 +6664,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `374` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6594,9 +6684,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6604,9 +6704,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `511` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6614,9 +6724,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6624,9 +6744,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `497` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6634,9 +6764,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6644,9 +6784,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `100` della notifica per l'utente 0
+7. viene verificato il costo = `100` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `700` della notifica per l'utente 0
+11. viene verificato il costo = `100` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6654,9 +6804,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Cucumber Society
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. viene verificato il costo = `0` della notifica per l'utente 0
+7. viene verificato il costo = `0` della notifica per l'utente 1
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+10. viene verificato il costo = `0` della notifica per l'utente 0
+11. viene verificato il costo = `0` della notifica per l'utente 1
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
 
 </details>
 
