@@ -9180,7 +9180,8 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene effettuato il pre-caricamento di un documento
+2. viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
@@ -9190,67 +9191,86 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene effettuato il pre-caricamento di un documento
+2. viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG-CF_13] verifica retention time dei documenti per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_PG-CF_13] verifica retention time dei documenti per la notifica inviata PG - CF</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona giuridica(CF)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG-CF_14] verifica retention time pagopaForm per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_PG-CF_14] verifica retention time pagopaForm per la notifica inviata PG - CF</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona giuridica(CF)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_13] verifica retention time dei documenti per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_13] verifica retention time dei documenti per la notifica inviata PF</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_14] verifica retention time pagopaForm per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_14] verifica retention time pagopaForm per la notifica inviata PF</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_13] verifica retention time dei documenti per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_PG_13] verifica retention time dei documenti per la notifica inviata PG - P.Iva</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona giuridica(P.Iva)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_PG_14] verifica retention time pagopaForm per la notifica inviata</summary>
+  <summary>[B2B-PA-SEND_PG_14] verifica retention time pagopaForm per la notifica inviata PG - P.Iva</summary>
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona giuridica(P.Iva)
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi "ACCEPTED"
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber)
 
