@@ -1,4 +1,20 @@
 # Questo elenco riporta i Test Automatici che sono attualmente implementati
+## Table of Contents
+
+1. [Invio Notifica](#invio-notifica)
+   1. [Invio](#invio)
+   2. [Download](#download)
+   3. [Validation](#validation)
+2. [Visualizzazione notifica](#visualizzazione-notifica)
+   1. [Deleghe](#deleghe)
+   2. [Destinatario persona fisica](#destinatario-persona-fisica)
+3. [Workflow notifica](#workflow-notifica)
+4. [Allegati](#allegati)
+5. [Api Key Manager](#api-key-manager)
+6. [Downtime logs](#downtime-logs)
+7. [User Attributes](#user-attributes)
+8. [Test di integrazione della pubblica amministrazione](#test-di-integrazione-della-pubblica-amministrazione)
+
 
 ## Invio Notifica
 
