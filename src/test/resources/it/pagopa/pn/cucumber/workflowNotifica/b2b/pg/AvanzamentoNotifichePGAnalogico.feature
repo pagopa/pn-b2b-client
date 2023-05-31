@@ -240,7 +240,7 @@ Feature: avanzamento notifiche analogico persona giuridica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di milano |
       | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Cucumber Analogic e:
+    And destinatario Cucumber Society e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
