@@ -4737,7 +4737,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 233` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4747,7 +4759,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4757,7 +4781,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                    | value        |
+|------------------------------|--------------|
+| physicalAddress_State        | FRANCIA      |
+| physicalAddress_municipality | Parigi       |
+| physicalAddress_zip          | 75007        |
+| physicalAddress_province     | Paris        |
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
+| payment_pagoPaForm           | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 233` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4767,7 +4807,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                    | value        |
+|------------------------------|--------------|
+| physicalAddress_State        | FRANCIA      |
+| physicalAddress_municipality | Parigi       |
+| physicalAddress_zip          | 75007        |
+| physicalAddress_province     | Paris        |
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
+| payment_pagoPaForm           | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4777,7 +4833,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 233` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4787,7 +4855,19 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4797,7 +4877,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                    | value        |
+|------------------------------|--------------|
+| payment_pagoPaForm           | SI           |
+| physicalAddress_State        | FRANCIA      |
+| physicalAddress_municipality | Parigi       |
+| physicalAddress_zip          | 75007        |
+| physicalAddress_province     | Paris        |
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 233` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4807,7 +4903,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                    | value        |
+|------------------------------|--------------|
+| payment_pagoPaForm           | SI           |
+| physicalAddress_State        | FRANCIA      |
+| physicalAddress_municipality | Parigi       |
+| physicalAddress_zip          | 75007        |
+| physicalAddress_province     | Paris        |
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4817,7 +4929,20 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| physicalAddress_zip       | 39100        |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 212` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4827,7 +4952,20 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| physicalAddress_zip       | 39100        |
+| payment_pagoPaForm        | NULL         |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4837,7 +4975,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                     | value          |
+|-------------------------------|----------------|
+| digitalDomicile_address       | test@fail.it   |
+| physicalAddress_State         | BRASILE        |
+| physicalAddress_municipality  | Florianopolis  |
+| physicalAddress_zip           | 88010          |
+| physicalAddress_province      | Santa Catarina |
+| physicalAddress_address       | Via@ok_RIS     |
+| payment_pagoPaForm            | NULL           |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 302` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4847,7 +5001,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                     | value          |
+|-------------------------------|----------------|
+| digitalDomicile_address       | test@fail.it   |
+| physicalAddress_State         | BRASILE        |
+| physicalAddress_municipality  | Florianopolis  |
+| physicalAddress_zip           | 88010          |
+| physicalAddress_province      | Santa Catarina |
+| physicalAddress_address       | Via@ok_RIS     |
+| payment_pagoPaForm            | NULL           |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4857,7 +5027,20 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| payment_pagoPaForm        | SI           |
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| physicalAddress_zip       | 39100        |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 212` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4867,7 +5050,20 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                 | value        |
+|---------------------------|--------------|
+| payment_pagoPaForm        | SI           |
+| digitalDomicile_address   | test@fail.it |
+| physicalAddress_address   | Via@ok_RS    |
+| physicalAddress_zip       | 39100        |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4877,7 +5073,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                     | value          |
+|-------------------------------|----------------|
+| payment_pagoPaForm            | SI             |
+| digitalDomicile_address       | test@fail.it   |
+| physicalAddress_State         | BRASILE        |
+| physicalAddress_municipality  | Florianopolis  |
+| physicalAddress_zip           | 88010          |
+| physicalAddress_province      | Santa Catarina |
+| physicalAddress_address       | Via@ok_RIS     |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 302` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -4887,7 +5099,23 @@ Dati destinatario
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+Dati destinatario
+
+| parameter                     | value          |
+|-------------------------------|----------------|
+| payment_pagoPaForm            | SI             |
+| digitalDomicile_address       | test@fail.it   |
+| physicalAddress_State         | BRASILE        |
+| physicalAddress_municipality  | Florianopolis  |
+| physicalAddress_zip           | 88010          |
+| physicalAddress_province      | Santa Catarina |
+| physicalAddress_address       | Via@ok_RIS     |
+
+1. viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
