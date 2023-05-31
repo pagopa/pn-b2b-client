@@ -45,12 +45,12 @@ class XmlReportParser {
     const testCases = new TestCasesInfos();
 
     for( let testCaseXmlObj of xmlObj.testsuite.testcase ) {
-      
-      const allLines = testCaseXmlObj['system-out'].split("\n")
-
-      for( let line of allLines ) {
-        if( line.includes( HTTP_CALL_LINE_STRING ) ) {
-          this._parseOneLine( testCases, line );
+      if (testCaseXmlObj['system-out']){
+        const allLines = testCaseXmlObj['system-out'].split("\n")
+           for( let line of allLines ) {
+             if( line.includes( HTTP_CALL_LINE_STRING ) ) {
+               this._parseOneLine( testCases, line );
+            }
         }
       }
     }

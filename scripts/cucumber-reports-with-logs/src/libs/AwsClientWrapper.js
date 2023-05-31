@@ -237,7 +237,7 @@ class AwsClientsWrapper {
     const allLogGroupsNames = [ ... apiGwLogGroups, ... this._ecsLogGroupsNames ]
     const fullQueryResult = await this.executeLogInsightQuery( 
       allLogGroupsNames, approximateEpochMs.start, approximateEpochMs.end, 
-      `sort @timestamp asc | filter ${fullQueryFilterClause}`
+      `fields @timestamp, @log, @message | sort @timestamp asc | filter ${fullQueryFilterClause}`
     );
   
     return fullQueryResult;

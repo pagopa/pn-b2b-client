@@ -27,7 +27,7 @@ class HtmlReportGenerator {
               "Parallel": "Scenarios",
               "Executed": "Remote"
           },
-          failedSummaryReport: true,
+          failedSummaryReport: false,
         };
     
     const promise = new Promise( (accept, reject) => {
@@ -96,7 +96,7 @@ class HtmlReportGenerator {
 
     for( let httpCall of testCaseLogs.httpCalls ) {
       const logsString = httpCall.logs
-                .map( el => `${el['@timestamp']} - ${el['@message']}`)
+                .map( el => `${el['@timestamp']} - ${el['@log']} - ${el['@message']}`)
                 .join('\n');
       
       const hc = httpCall.httpCall
