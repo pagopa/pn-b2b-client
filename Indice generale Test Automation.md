@@ -6198,11 +6198,11 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6219,11 +6219,11 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6238,15 +6238,15 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: BRASILE 
-    - **physicalAddress_municipality**: Florianopolis 
-    - **physicalAddress_zip**: 88010 
-    - **physicalAddress_province**: Santa Catarina
-    - **physicalAddress_address**: Via@ok_RIR 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: BRASILE
+   - **physicalAddress_municipality**: Florianopolis
+   - **physicalAddress_zip**: 88010
+   - **physicalAddress_province**: Santa Catarina
+   - **physicalAddress_address**: Via@ok_RIR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6263,15 +6263,15 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: BRASILE 
-    - **physicalAddress_municipality**: Florianopolis 
-    - **physicalAddress_zip**: 88010 
-    - **physicalAddress_province**: Santa Catarina
-    - **physicalAddress_address**: Via@ok_RIR 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: BRASILE
+   - **physicalAddress_municipality**: Florianopolis
+   - **physicalAddress_zip**: 88010
+   - **physicalAddress_province**: Santa Catarina
+   - **physicalAddress_address**: Via@ok_RIR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6286,11 +6286,11 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6307,11 +6307,11 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6326,15 +6326,15 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: BRASILE 
-    - **physicalAddress_municipality**: Florianopolis 
-    - **physicalAddress_zip**: 88010 
-    - **physicalAddress_province**: Santa Catarina
-    - **physicalAddress_address**: Via@ok_RIR 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: BRASILE
+   - **physicalAddress_municipality**: Florianopolis
+   - **physicalAddress_zip**: 88010
+   - **physicalAddress_province**: Santa Catarina
+   - **physicalAddress_address**: Via@ok_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6351,15 +6351,15 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: BRASILE 
-    - **physicalAddress_municipality**: Florianopolis 
-    - **physicalAddress_zip**: 88010 
-    - **physicalAddress_province**: Santa Catarina
-    - **physicalAddress_address**: Via@ok_RIR 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: BRASILE
+   - **physicalAddress_municipality**: Florianopolis
+   - **physicalAddress_zip**: 88010
+   - **physicalAddress_province**: Santa Catarina
+   - **physicalAddress_address**: Via@ok_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6374,12 +6374,12 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
-    - **physicalAddress_zip**: 38121 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
+   - **physicalAddress_zip**: 38121
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6396,12 +6396,12 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_AR
-    - **physicalAddress_zip**: 38121 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
+   - **physicalAddress_zip**: 38121
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6416,15 +6416,15 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: FRANCIA 
-    - **physicalAddress_municipality**: Parigi 
-    - **physicalAddress_zip**: 75007 
-    - **physicalAddress_province**: Paris 
-    - **physicalAddress_address**: Via@ok_RIR
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: FRANCIA
+   - **physicalAddress_municipality**: Parigi
+   - **physicalAddress_zip**: 75007
+   - **physicalAddress_province**: Paris
+   - **physicalAddress_address**: Via@ok_RIR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6441,15 +6441,15 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: FRANCIA 
-    - **physicalAddress_municipality**: Parigi 
-    - **physicalAddress_zip**: 75007 
-    - **physicalAddress_province**: Paris 
-    - **physicalAddress_address**: Via@ok_RIR
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: FRANCIA
+   - **physicalAddress_municipality**: Parigi
+   - **physicalAddress_zip**: 75007
+   - **physicalAddress_province**: Paris
+   - **physicalAddress_address**: Via@ok_RIR
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6464,12 +6464,12 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_zip**: 38121 
-    - **physicalAddress_address**: Via@ok_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_zip**: 38121
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6486,12 +6486,12 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_zip**: 38121 
-    - **physicalAddress_address**: Via@ok_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_zip**: 38121
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6506,15 +6506,15 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: FRANCIA 
-    - **physicalAddress_municipality**: Parigi 
-    - **physicalAddress_zip**: 75007 
-    - **physicalAddress_province**: Paris 
-    - **physicalAddress_address**: Via@ok_RIR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: FRANCIA
+   - **physicalAddress_municipality**: Parigi
+   - **physicalAddress_zip**: 75007
+   - **physicalAddress_province**: Paris
+   - **physicalAddress_address**: Via@ok_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6531,15 +6531,15 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_State**: FRANCIA 
-    - **physicalAddress_municipality**: Parigi 
-    - **physicalAddress_zip**: 75007 
-    - **physicalAddress_province**: Paris 
-    - **physicalAddress_address**: Via@ok_RIR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: FRANCIA
+   - **physicalAddress_municipality**: Parigi
+   - **physicalAddress_zip**: 75007
+   - **physicalAddress_province**: Paris
+   - **physicalAddress_address**: Via@ok_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -8232,9 +8232,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+6. la PA richiede il download dell'attestazione opponibile `SENDER_ACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8242,9 +8247,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8252,9 +8262,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. la PA richiede il download dell'attestazione opponibile `PEC_RECEIPT`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8262,9 +8277,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+6. la PA richiede il download dell'attestazione opponibile `RECIPIENT_ACCESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8272,9 +8292,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+6. viene richiesto tramite appIO il download dell'attestazione opponibile `SENDER_ACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8282,9 +8307,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. viene richiesto tramite appIO il download dell'attestazione opponibile `DIGITAL_DELIVERY`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8292,9 +8322,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. viene richiesto tramite appIO il download dell'attestazione opponibile`PEC_RECEIPT`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8302,9 +8337,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+6. viene richiesto tramite appIO il download dell'attestazione opponibile `RECIPIENT_ACCESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8312,9 +8352,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+6. `Mario Gherkin` richiede il download dell'attestazione opponibile `SENDER_ACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8322,9 +8367,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. `Mario Gherkin` richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8332,9 +8382,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. `Mario Gherkin` richiede il download dell'attestazione opponibile `PEC_RECEIPT`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8342,9 +8397,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+6. `Mario Gherkin` richiede il download dell'attestazione opponibile `RECIPIENT_ACCESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8352,9 +8412,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+6. viene verificato che la chiave dell'attestazione opponibile `SENDER_ACK` è `PN_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8362,9 +8427,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. viene verificato che la chiave dell'attestazione opponibile `DIGITAL_DELIVERY` è `PN_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8372,9 +8442,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. viene verificato che la chiave dell'attestazione opponibile `PEC_RECEIPT` è `PN_EXTERNAL_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8382,9 +8457,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata la notifica
+2. destinatario Mario Gherkin
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+6. viene verificato che la chiave dell'attestazione opponibile `DIGITAL_RECIPIENT_ACCESSDELIVERY` è `PN_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
 
