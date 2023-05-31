@@ -8539,9 +8539,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8549,9 +8553,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `PUBLIC_REGISTRY_CALL`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8559,9 +8567,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `PUBLIC_REGISTRY_RESPONSE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8569,9 +8581,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `PUBLIC_REGISTRY_CALL`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8579,9 +8595,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `SEND_DIGITAL_PROGRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8589,9 +8609,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona fisica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `SEND_DIGITAL_FEEDBACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8599,9 +8623,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona giuridica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `GET_ADDRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8609,9 +8637,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari giuridica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `PUBLIC_REGISTRY_CALL`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8619,9 +8651,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari giuridica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `PUBLIC_REGISTRY_RESPONSE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8629,9 +8665,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+:warning: _ignored_
+1. viene generata una nuova notifica con `2` destinatari giuridica, entrambi con `digitalDomicile_address test@fail.it`
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `DIGITAL_FAILURE_WORKFLOW`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8639,9 +8680,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona giuridica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `SEND_DIGITAL_PROGRESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8649,9 +8694,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata una nuova notifica con `2` destinatari persona giuridica
+2. si predispone `1` nuovo stream denominato `stream-test` con `eventType TIMELINE`
+3. si crea il nuovo stream per il `Comune_Multi`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi dello stream del `Comune_Multi` fino all'elemento di timeline `SEND_DIGITAL_FEEDBACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPFMulti.feature)
 
 </details>
 
