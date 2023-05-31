@@ -4288,9 +4288,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy DELIVERY_MODE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 399` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4298,9 +4302,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy FLAT_RATE`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 0` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4308,9 +4316,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy DELIVERY_MODE` e `payment_pagoPaForm SI`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 521` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4318,9 +4330,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy FLAT_RATE` e `payment_pagoPaForm SI`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 0` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4328,9 +4344,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy DELIVERY_MODE` e `physicalAddress_zip 16121`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 391` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4338,9 +4358,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy FLAT_RATE` e `physicalAddress_zip 16121`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 0` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4348,9 +4372,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy DELIVERY_MODE`, `physicalAddress_zip 16121` e `payment_pagoPaForm SI`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 100` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 521` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4358,9 +4386,13 @@
 
 **Descrizione**
 
-1. scrivere step di esecuzione del test
+1. viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication REGISTERED_LETTER_890 `, `physicalAddress_address Via@ok_890`, `feePolicy FLAT_RATE`, `physicalAddress_zip 16121` e `payment_pagoPaForm SI`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il `costo = 0` della notifica
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+5. viene verificato il `costo = 0` della notifica
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
 
@@ -4373,7 +4405,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4383,7 +4415,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4393,7 +4425,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4403,7 +4435,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4413,7 +4445,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4423,7 +4455,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4433,7 +4465,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4443,7 +4475,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4453,7 +4485,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4463,7 +4495,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4473,7 +4505,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4483,7 +4515,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4493,7 +4525,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4503,7 +4535,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4513,7 +4545,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4523,7 +4555,7 @@
 
 1. scrivere step di esecuzione del test
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 
