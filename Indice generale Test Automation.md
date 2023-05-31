@@ -8885,9 +8885,16 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Mario Gherkin
+3. destinatario Mario Cucumber
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. si attende che lo stato diventi `ACCEPTED`
+6. `Mario Gherkin` legge la notifica ricevuta
+7. `Mario Cucumber` legge la notifica ricevuta
+8. sono presenti 2 attestazioni opponibili `RECIPIENT_ACCESS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFactMulti.feature)
 
 </details>
 
@@ -8900,9 +8907,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Gherkin spa
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+6. la PA richiede il download dell'attestazione opponibile `SENDER_ACK`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8910,9 +8922,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Gherkin spa
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8920,9 +8937,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Gherkin spa
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. la PA richiede il download dell'attestazione opponibile `PEC_RECEIPT`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8930,9 +8952,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+11. viene generata nuova notifica
+12. destinatario Gherkin spa
+13. la notifica viene inviata tramite api b2b dal `Comune_1`
+14. si attende che lo stato diventi `ACCEPTED`
+15. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+16. la PA richiede il download dell'attestazione opponibile `SENDER_ACK` è `PN_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8940,9 +8967,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. viene generata nuova notifica
+2. destinatario Gherkin spa
+3. la notifica viene inviata tramite api b2b dal `Comune_1`
+4. si attende che lo stato diventi `ACCEPTED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+6. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY` è `PN_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -8950,9 +8982,14 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+11. viene generata nuova notifica
+12. destinatario Gherkin spa
+13. la notifica viene inviata tramite api b2b dal `Comune_1`
+14. si attende che lo stato diventi `ACCEPTED`
+15. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+16. la PA richiede il download dell'attestazione opponibile `PEC_RECEIPT` è `PN_EXTERNAL_LEGAL_FACTS`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pg/AvanzamentoNotifichePGLegalFact.feature)
 
 </details>
 
@@ -9992,7 +10029,7 @@ Dati Destinatario
 **Descrizione**
 
 1. Vengono letti gli eventi di disservizio degli ultimi 30 giorni relativi alla `creazione notifiche`
-2. Viene individuato se presente l'evento più recente 
+2. Viene individuato se presente l'evento più recente
 3. Viene scaricata la relativa attestazione opponibile
 4. L'attestazione opponibile è stata correttamente scaricata
 
@@ -10034,7 +10071,7 @@ Dati Destinatario
 **Descrizione**
 
 1. Viene richiesto l'ultimo consenso di tipo `TOS`
-2. Il recupero del consenso non ha prodotto errori 
+2. Il recupero del consenso non ha prodotto errori
 3. Il consenso è accettato
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
