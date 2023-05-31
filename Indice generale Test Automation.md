@@ -5607,7 +5607,7 @@ Dati destinatario
 
 :warning: _Ignored_
 
-1. Viene creata una nuova notifica mono destinatario con destinatario 
+1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
    - **taxId**: LELPTR04A01C352E
    - **denomination**: Le Epistolae srl
@@ -5691,8 +5691,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile_address**: test@fail.it
-    - **physicalAddress_address**: Via@ok_RS
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_address**: Via@ok_RS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -5705,8 +5705,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile_address**: test@fail.it
-    - **physicalAddress_address**: Via@ok-Retry_RS
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_address**: Via@ok-Retry_RS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -5719,8 +5719,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile_address**: test@fail.it
-    - **physicalAddress_address**: Via@fail_RS
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_address**: Via@fail_RS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -5733,8 +5733,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile_address**: test@fail.it
-    - **physicalAddress_address**: Via@ok_RIS
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_address**: Via@ok_RIS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_SIMPLE_REGISTERED_LETTER`
 
@@ -5749,8 +5749,8 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile_address**: test@fail.it
-    - **physicalAddress_address**: Via@fail_RIS
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_address**: Via@fail_RIS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
 
@@ -5763,9 +5763,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication |  AR_REGISTERED_LETTER |
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_AR
+   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -5778,8 +5778,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -5792,8 +5792,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_RIR
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -5806,9 +5806,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -5821,8 +5821,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -5835,8 +5835,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_RIR
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `KO`
 
@@ -5849,8 +5849,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail-Discovery_AR
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail-Discovery_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -5863,8 +5863,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail-Discovery_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail-Discovery_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `ANALOG_SUCCESS_WORKFLOW`
 
@@ -5877,9 +5877,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication |  AR_REGISTERED_LETTER |
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_AR
+   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_DOMICILE`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_DOMICILE` sia valorizzato con `AR_REGISTERED_LETTER`
@@ -5893,12 +5893,11 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_DOMICILE`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_DOMICILE` sia valorizzato con `REGISTERED_LETTER_890`
-
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
@@ -5909,9 +5908,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication |  AR_REGISTERED_LETTER |
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_AR
+   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_ANALOG_DOMICILE`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `PREPARE_ANALOG_DOMICILE` sia valorizzato con `AR_REGISTERED_LETTER`
@@ -5925,8 +5924,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `PREPARE_ANALOG_DOMICILE`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `PREPARE_ANALOG_DOMICILE` sia valorizzato con `REGISTERED_LETTER_890`
@@ -5940,9 +5939,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: AR_REGISTERED_LETTER
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_AR
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_FEEDBACK` sia valorizzato con `AR_REGISTERED_LETTER`
@@ -5956,8 +5955,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `SEND_ANALOG_FEEDBACK`
 4. Viene verificato che il campo serviceLevel dell'evento di timeline `SEND_ANALOG_FEEDBACK` sia valorizzato con `REGISTERED_LETTER_890`
@@ -5971,9 +5970,9 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   | physicalCommunication |  AR_REGISTERED_LETTER |
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_AR
+   | physicalCommunication | AR_REGISTERED_LETTER |
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_AR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
@@ -5986,8 +5985,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
@@ -6000,8 +5999,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@fail_RIR
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@fail_RIR
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
 
@@ -6014,8 +6013,8 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **digitalDomicile**: NULL
-    - **physicalAddress_address**: Via@ok_890
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. L'avviso pagopa viene pagato correttamente
 4. Si attende la corretta sospensione dell'invio cartaceo
@@ -6032,11 +6031,11 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6053,11 +6052,11 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6072,11 +6071,11 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6093,11 +6092,11 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6112,12 +6111,12 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: DELIVERY_MODE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
-    - **physicalAddress_zip**: 16121 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
+   - **physicalAddress_zip**: 16121
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6134,12 +6133,12 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: FLAT_RATE 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_address**: Via@ok_890
-    - **physicalAddress_zip**: 16121 
-    - **payment_pagoPaForm**: NULL 
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@ok_890
+   - **physicalAddress_zip**: 16121
+   - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6154,12 +6153,12 @@ Dati destinatario
 **Descrizione**
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: DELIVERY_MODE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_zip**: 16121 
-    - **physicalAddress_address**: Via@ok_890
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: DELIVERY_MODE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_zip**: 16121
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `100` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -6176,12 +6175,12 @@ Dati destinatario
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-    - **physicalCommunication**: REGISTERED_LETTER_890 
-    - **feePolicy**: FLAT_RATE 
-    - **payment_pagoPaForm**: SI 
-    - **digitalDomicile**: NULL 
-    - **physicalAddress_zip**: 16121 
-    - **physicalAddress_address**: Via@ok_890
+   - **physicalCommunication**: REGISTERED_LETTER_890
+   - **feePolicy**: FLAT_RATE
+   - **payment_pagoPaForm**: SI
+   - **digitalDomicile**: NULL
+   - **physicalAddress_zip**: 16121
+   - **physicalAddress_address**: Via@ok_890
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
@@ -7034,9 +7033,11 @@ Dati destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm | NULL |
+| payment_pagoPaForm      | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7060,9 +7061,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm | NULL |
+| payment_pagoPaForm      | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7086,9 +7089,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm | SI |
+| payment_pagoPaForm      | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7112,9 +7117,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm | SI |
+| payment_pagoPaForm      | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7138,10 +7145,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| physicalAddress_zip | 16121 |
-| payment_pagoPaForm | NULL |
+| payment_pagoPaForm      | NULL       |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7165,10 +7174,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| physicalAddress_zip | 16121 |
-| payment_pagoPaForm | NULL |
+| payment_pagoPaForm      | NULL       |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7192,10 +7203,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| physicalAddress_zip | 16121 |
-| payment_pagoPaForm | SI |
+| payment_pagoPaForm      | SI         |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7219,10 +7232,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| physicalAddress_zip | 16121 |
-| payment_pagoPaForm | SI |
+| payment_pagoPaForm      | SI         |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7249,9 +7264,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
-| payment_pagoPaForm | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7275,9 +7292,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
-| payment_pagoPaForm | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7301,13 +7320,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIR |
-| payment_pagoPaForm | NULL |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | NULL           |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7331,13 +7352,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIR |
-| payment_pagoPaForm | NULL |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | NULL           |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7361,9 +7384,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7387,9 +7412,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7413,13 +7440,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIR |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | SI             |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7443,13 +7472,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIR |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | SI             |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7473,10 +7504,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
-| physicalAddress_zip | 38121 |
-| payment_pagoPaForm | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | NULL       |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7500,10 +7533,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_address | Via@ok_AR |
-| physicalAddress_zip | 38121 |
-| payment_pagoPaForm | NULL |
+| paramter                | value      |
+| ----------------------- | ---------- |
+| digitalDomicile         | NULL       |
+| physicalAddress_address | Via@ok_890 |
+| payment_pagoPaForm      | NULL       |
+| physicalAddress_zip     | 16121      |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7527,13 +7562,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIR |
-| payment_pagoPaForm | NULL |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7557,13 +7594,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile | NULL |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIR |
-| payment_pagoPaForm | NULL |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7587,9 +7626,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_zip | 38121 |
+| paramter                | value     |
+| ----------------------- | --------- |
+| payment_pagoPaForm      | SI        |
+| digitalDomicile         | NULL      |
+| physicalAddress_zip     | 38121     |
 | physicalAddress_address | Via@ok_AR |
 
 1. viene generata nuova notifica
@@ -7614,9 +7655,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_zip | 38121 |
+| paramter                | value     |
+| ----------------------- | --------- |
+| payment_pagoPaForm      | SI        |
+| digitalDomicile         | NULL      |
+| physicalAddress_zip     | 38121     |
 | physicalAddress_address | Via@ok_AR |
 
 1. viene generata nuova notifica
@@ -7641,13 +7684,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIR |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7671,13 +7716,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile | NULL |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIR |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7704,9 +7751,11 @@ Dati Destinatario
 
 Dati Destinatario
 
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
-| payment_pagoPaForm | NULL |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | NULL         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7729,9 +7778,11 @@ Dati Destinatario
 
 Dati Destinatario
 
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
-| payment_pagoPaForm | NULL |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | NULL         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7755,13 +7806,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RIS |
-| payment_pagoPaForm | NULL |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7784,13 +7837,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RIS |
-| payment_pagoPaForm | NULL |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | NULL       |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7814,9 +7869,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | SI           |
 
 11. viene generata nuova notifica
 12. destinatario Mario Gherkin
@@ -7839,9 +7896,11 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | SI           |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7865,13 +7924,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIS |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7894,13 +7955,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | FRANCIA |
-| physicalAddress_municipality | Parigi |
-| physicalAddress_zip | 75007 |
-| physicalAddress_province | Paris |
-| physicalAddress_address | Via@ok_RIS |
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | FRANCIA    |
+| physicalAddress_municipality | Parigi     |
+| physicalAddress_zip          | 75007      |
+| physicalAddress_province     | Paris      |
+| physicalAddress_address      | Via@ok_RIR |
+| payment_pagoPaForm           | SI         |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7924,10 +7987,12 @@ Dati Destinatario
 
 Dati Destinatario
 
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
-| physicalAddress_zip | 39100 |
-| payment_pagoPaForm | NULL |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | NULL         |
+| physicalAddress_zip     | 39100        |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7950,10 +8015,12 @@ Dati Destinatario
 
 Dati Destinatario
 
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS |
-| physicalAddress_zip | 39100 |
-| payment_pagoPaForm | NULL |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | NULL         |
+| physicalAddress_zip     | 39100        |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -7977,13 +8044,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIS |
-| payment_pagoPaForm | NULL |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | NULL           |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -8006,13 +8075,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIS |
-| payment_pagoPaForm | NULL |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | NULL           |
 
 11. viene generata nuova notifica
 12. destinatario Mario Gherkin
@@ -8036,10 +8107,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_zip | 39100 |
-| physicalAddress_address | Via@ok_RS |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | SI           |
+| physicalAddress_zip     | 39100        |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -8062,10 +8135,12 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
+| paramter                | value        |
+| ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
-| physicalAddress_zip | 39100 |
-| physicalAddress_address | Via@ok_RS |
+| physicalAddress_address | Via@ok_RS    |
+| payment_pagoPaForm      | SI           |
+| physicalAddress_zip     | 39100        |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -8089,13 +8164,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIS |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | SI             |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -8118,13 +8195,15 @@ Dati Destinatario
 
 Dati Destinatario
 
-| payment_pagoPaForm | SI |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_State | BRASILE |
-| physicalAddress_municipality | Florianopolis |
-| physicalAddress_zip | 88010 |
-| physicalAddress_province | Santa Catarina |
-| physicalAddress_address | Via@ok_RIS |
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | BRASILE        |
+| physicalAddress_municipality | Florianopolis  |
+| physicalAddress_zip          | 88010          |
+| physicalAddress_province     | Santa Catarina |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment_pagoPaForm           | SI             |
 
 1. viene generata nuova notifica
 2. destinatario Mario Gherkin
@@ -8619,7 +8698,7 @@ Dati Destinatario
 3. si crea il nuovo stream per il `Comune_1`
 4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 5. vengono letti gli eventi dello stream del `Comune_1` fino allo stato `DELIVERING`
-6. la persona fisica legge la notifica 
+6. la persona fisica legge la notifica
 7. si verifica nello stream del `Comune_1` che la notifica abbia lo stato `VIEWED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPF.feature)
