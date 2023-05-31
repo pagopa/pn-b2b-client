@@ -9912,9 +9912,11 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+1. Viene richiesto l'ultimo consenso di tipo `TOS`
+2. Il recupero del consenso non ha prodotto errori 
+3. Il consenso è accettato
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9922,9 +9924,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+:warning: _Ignored_
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. Viene richiesto l'inserimento della pec `test@test@fail.@`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9932,9 +9938,13 @@ Dati Destinatario
 
 **Descrizione**
 
-1. Scrivere step di esecuzione del test
+:warning: _Ignored_
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. Viene richiesto l'inserimento del numero di telefono `+0013894516888v
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
 
 </details>
 
