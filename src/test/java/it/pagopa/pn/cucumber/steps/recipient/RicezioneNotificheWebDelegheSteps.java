@@ -251,13 +251,16 @@ public class RicezioneNotificheWebDelegheSteps {
         //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp =  sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
 
-        //TODO Recuperare la Lista dei gruppi della delega;
-            List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
+         //TODO Gruppi Disponibili della PG Admin
+        List<String> xPagopaPnCxGroups = new ArrayList<>();
 
-            List<String> xPagopaPnCxGroups = new ArrayList<>();
+        //TODO Recuperare la Lista dei gruppi della delega;
+        List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
+
+          List<String> listGruppi  = new ArrayList<>();
             if (gruppiDelega!= null ){
                 for (GroupDto gruppo : gruppiDelega) {
-                    xPagopaPnCxGroups.add(gruppo.getName());
+                    //xPagopaPnCxGroups.add(gruppo.getName());
                 }
             }
             //xPagopaPnCxGroups.add("test1");
@@ -273,9 +276,16 @@ public class RicezioneNotificheWebDelegheSteps {
             case PG_2:
                 xPagopaPnCxId = sharedSteps.getIdOrganizationCucumberSpa();
         }
+
+        List<String> gruppi = new ArrayList<>();
+        gruppi.add("test1");
+        //gruppi.add("test2");
+        UpdateRequestDto updateRequestDto = new UpdateRequestDto();
+        updateRequestDto.setGroups(gruppi);
+
         String finalXPagopaPnCxId = xPagopaPnCxId;
         Assertions.assertDoesNotThrow(() -> {
-        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  xPagopaPnCxGroups,  xPagopaPnCxRole,  null);
+        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
         });
 
     }
