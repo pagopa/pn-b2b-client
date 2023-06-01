@@ -16,6 +16,9 @@ config/bearer-token-svil.properties
 config/bearer-token-test.properties
 config/bearer-token-uat.properties
 
+### Node ###
+**/node_modules/
+
 ### STS ###
 .apt_generated
 .classpath
