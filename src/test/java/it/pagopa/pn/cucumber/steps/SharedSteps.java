@@ -102,6 +102,52 @@ public class SharedSteps {
     @Value("${pn.interop.token-oauth2.client-assertion}")
     private String clientAssertion;
 
+    @Value("${pn.bearer-token.pg1}")
+    private String gherkinSrlBearerToken;
+    @Value("${pn.bearer-token.pg2}")
+    private String cucumberSpaBearerToken;
+
+    public DataTableTypeUtil getDataTableTypeUtil() {
+        return dataTableTypeUtil;
+    }
+
+    public String getGherkinSrlBearerToken() {
+        return gherkinSrlBearerToken;
+    }
+
+    public void setGherkinSrlBearerToken(String gherkinSrlBearerToken) {
+        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
+    }
+
+    public String getCucumberSpaBearerToken() {
+        return cucumberSpaBearerToken;
+    }
+
+    public void setCucumberSpaBearerToken(String cucumberSpaBearerToken) {
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+    }
+
+    public String getIdOrganizationGherkinSrl() {
+        return idOrganizationGherkinSrl;
+    }
+
+    public void setIdOrganizationGherkinSrl(String idOrganizationGherkinSrl) {
+        this.idOrganizationGherkinSrl = idOrganizationGherkinSrl;
+    }
+
+    public String getIdOrganizationCucumberSpa() {
+        return idOrganizationCucumberSpa;
+    }
+
+    public void setIdOrganizationCucumberSpa(String idOrganizationCucumberSpa) {
+        this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
+    }
+
+    @Value("${pn.external.bearer-token-pg1.id}")
+    private String idOrganizationGherkinSrl;
+    @Value("${pn.external.bearer-token-pg2.id}")
+    private String idOrganizationCucumberSpa;
+
    
     private String enableInterop;
 

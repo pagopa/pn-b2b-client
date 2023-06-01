@@ -2,9 +2,7 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.ApiClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.api.MandateServiceApi;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateCountsDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -30,6 +28,10 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     private final String userAgent;
     private final String basePath;
 
+    private final String idOrganizationGherkinSrl;
+
+    private final String idOrganizationCucumberSpa;
+
     public PnWebMandateExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
@@ -38,6 +40,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+            @Value("${pn.external.bearer-token-pg1.id}") String idOrganizationGherkinSrl,
+            @Value("${pn.external.bearer-token-pg2.id}") String idOrganizationCucumberSpa,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
@@ -46,6 +50,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.idOrganizationGherkinSrl = idOrganizationGherkinSrl;
+        this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
@@ -104,6 +110,10 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     }
 
 
+    public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
+         mandateServiceApi.updateMandate( xPagopaPnCxId,  xPagopaPnCxType,  mandateId, xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
+    }
+
     public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
         return mandateServiceApi.createMandate(mandateDto);
     }
@@ -128,6 +138,12 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         mandateServiceApi.revokeMandate(mandateId);
     }
 
+    public String getIdOrganizationGherkinSrl() {
+        return idOrganizationGherkinSrl;
+    }
 
+    public String getIdOrganizationCucumberSpa() {
+        return idOrganizationCucumberSpa;
+    }
 
 }

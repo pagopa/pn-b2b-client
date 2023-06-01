@@ -1,8 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateCountsDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import org.springframework.web.client.RestClientException;
 
 import java.util.List;
@@ -14,6 +12,8 @@ public interface IPnWebMandateClient extends SettableBearerToken{
      MandateCountsDto countMandatesByDelegate(String status) throws RestClientException;
 
      MandateDto createMandate(MandateDto mandateDto) throws RestClientException;
+
+     void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException;
 
      List<MandateDto> listMandatesByDelegate1(String status) throws RestClientException;
 

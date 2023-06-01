@@ -151,3 +151,14 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "GherkinSrl"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
+
+    @ignore
+  Scenario: [WEB-PG-MANDATE_14] Invio notifica digitale altro destinatario e modifica gruppo delega positivo
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario GherkinSrl
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente modificata da "GherkinSrl" con delega

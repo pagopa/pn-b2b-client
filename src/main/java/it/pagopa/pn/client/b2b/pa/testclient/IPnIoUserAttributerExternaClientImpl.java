@@ -7,5 +7,5 @@ public interface IPnIoUserAttributerExternaClientImpl {
 
     IoCourtesyDigitalAddressActivation getCourtesyAddressIo(String xPagopaCxTaxid) throws RestClientException;
 
-    void setCourtesyAddressIo(String xPagopaCxTaxid, IoCourtesyDigitalAddressActivation ioCourtesyDigitalAddressActivation) throws RestClientException;
+    void setCourtesyAddressIo(IoCourtesyDigitalAddressActivation ioCourtesyDigitalAddressActivation, String xPagopaCxTaxid) throws RestClientException;
 }

@@ -9,9 +9,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.UserDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -26,10 +24,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -225,6 +220,64 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
+    }
+
+    @And("la notifica può essere correttamente modificata da {string} con delega")
+    public void notificationCanBeCorrectlyModificataFromWithMandate(String recipient) {
+        sharedSteps.selectUser(recipient);
+      //  Assertions.assertDoesNotThrow(() -> {
+           // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+
+              //      * @param xPagopaPnCxId Customer/Receiver Identifier (required)
+              //      * @param xPagopaPnCxType Customer/Receiver Type (required)
+           //         * @param mandateId  (required)
+            //        * @param xPagopaPnCxGroups Customer Groups (optional)
+             //       * @param xPagopaPnCxRole Ruolo (estratto da token di Self Care) (optional)
+             //       * @param updateRequestDto  (optional)
+           // url --location --request PATCH 'http://localhost:8080/mandate/api/v1/mandate/1748533a-7020-4d47-9e4d-c95f558d8845/update' \
+           // --header 'x-pagopa-pn-cx-id: PG-1748533a-7020-4d47-9e4d-c95f558d8845' \
+           // --header 'x-pagopa-pn-cx-type: PG' \
+          //  --header 'x-pagopa-pn-cx-groups;' \
+          //  --header 'x-pagopa-pn-cx-role: ADMIN' \
+         //   --header 'Content-Type: application/json' \
+         //   --data '{
+           // "groups":[
+          //  "test1",
+           //         "test4"
+    //]
+       // }'
+      //  });
+
+        //TODO Recuperare i gruppi della PG come Admin....
+        List<HashMap<String, String>> resp =  sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
+
+        //TODO Recuperare la Lista dei gruppi della delega;
+            List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
+
+            List<String> xPagopaPnCxGroups = new ArrayList<>();
+            if (gruppiDelega!= null ){
+                for (GroupDto gruppo : gruppiDelega) {
+                    xPagopaPnCxGroups.add(gruppo.getName());
+                }
+            }
+            //xPagopaPnCxGroups.add("test1");
+            //xPagopaPnCxGroups.add("test2");
+
+            String xPagopaPnCxRole="ADMIN";
+            //TODO capire dove recuperare il dato
+            //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
+        String xPagopaPnCxId =null;
+        switch (webRecipientClient.getBearerTokenSetted()) {
+            case PG_1:
+                xPagopaPnCxId = sharedSteps.getIdOrganizationGherkinSrl();
+            case PG_2:
+                xPagopaPnCxId = sharedSteps.getIdOrganizationCucumberSpa();
+        }
+        String finalXPagopaPnCxId = xPagopaPnCxId;
+        Assertions.assertDoesNotThrow(() -> {
+        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  xPagopaPnCxGroups,  xPagopaPnCxRole,  null);
+        });
+
     }
 
     @Then("il documento notificato può essere correttamente recuperato da {string} con delega")
