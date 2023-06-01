@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.Before;
 import io.cucumber.java.BeforeAll;
-import io.cucumber.java.Scenario;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -15,7 +14,6 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
@@ -24,7 +22,6 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -784,10 +781,5 @@ public class SharedSteps {
     }
 
 
-    @Before
-    public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
-        String scenarioName = scenario.getName();
-        MDC.put( RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName );
-    }
 
 }
