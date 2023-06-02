@@ -300,7 +300,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         String gruppoAssegnato = "";
         if (mandateDto.getGroups()!= null && mandateDto.getGroups().size()>0) {
-            gruppoAssegnato = mandateDto.getGroups().get(1).getName();
+            gruppoAssegnato = mandateDto.getGroups().get(0).getName();
         }
 
         Assertions.assertTrue(gruppoInput.equals(gruppoAssegnato));
