@@ -223,7 +223,7 @@ public class RicezioneNotificheWebDelegheSteps {
         });
     }
 
-    @Then("come amministratore {string} voglio modificare una delega per associarla ad un gruppo {string}")
+    @Then("come amministratore {string} associa alla delega il gruppo {string}")
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String gruppoInput){
         sharedSteps.selectUser(recipient);
       //  Assertions.assertDoesNotThrow(() -> {
@@ -293,14 +293,14 @@ public class RicezioneNotificheWebDelegheSteps {
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+            if (mandate.getDelegator() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
         }
         String gruppoAssegnato = "";
         if (mandateDto.getGroups()!= null && mandateDto.getGroups().size()>0) {
-            gruppoAssegnato = mandateDto.getGroups().get(0).getName();
+            gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
         Assertions.assertTrue(gruppoInput.equals(gruppoAssegnato));
