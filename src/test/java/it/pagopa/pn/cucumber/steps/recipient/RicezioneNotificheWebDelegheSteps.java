@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import javax.validation.constraints.AssertTrue;
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -222,8 +223,8 @@ public class RicezioneNotificheWebDelegheSteps {
         });
     }
 
-    @And("la notifica può essere correttamente modificata da {string} con delega")
-    public void notificationCanBeCorrectlyModificataFromWithMandate(String recipient) {
+    @Then("come amministratore {string} voglio modificare una delega per associarla ad un gruppo {string}")
+    public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String gruppoInput){
         sharedSteps.selectUser(recipient);
       //  Assertions.assertDoesNotThrow(() -> {
            // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
@@ -278,7 +279,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         List<String> gruppi = new ArrayList<>();
-        gruppi.add("test1");
+        gruppi.add(gruppoInput);
         //gruppi.add("test2");
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
         updateRequestDto.setGroups(gruppi);
@@ -287,6 +288,22 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertDoesNotThrow(() -> {
         webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
         });
+
+        String delegatorTaxId = getTaxIdByUser(recipient);
+        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        MandateDto mandateDto = null;
+        for (MandateDto mandate : mandateList) {
+            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+                mandateDto = mandate;
+                break;
+            }
+        }
+        String gruppoAssegnato = "";
+        if (mandateDto.getGroups()!= null && mandateDto.getGroups().size()>0) {
+            gruppoAssegnato = mandateDto.getGroups().get(1).getName();
+        }
+
+        Assertions.assertTrue(gruppoInput.equals(gruppoAssegnato));
 
     }
 
@@ -449,4 +466,5 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE-LIST-DELEGATOR (user: +"+user+") : "+mandateDtos);
 
     }
+
 }
