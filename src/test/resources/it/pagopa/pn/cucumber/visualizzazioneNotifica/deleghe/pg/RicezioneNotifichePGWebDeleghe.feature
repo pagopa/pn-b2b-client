@@ -162,4 +162,4 @@ Feature: Ricezione notifiche destinate al delegante
     And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
    # Then la notifica può essere correttamente modificata da "GherkinSrl" con delega
-    Then come amministratore "GherkinSrl" associa alla delega il gruppo "Test1"
+    Then come amministratore "GherkinSrl" associa alla delega il gruppo "Test2"
