@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -941,6 +942,28 @@ public class AvanzamentoNotificheB2bSteps {
 
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+    }
+
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo {string}")
+    public void vieneVerificatoCheElementoTimelineAbbiaIlCampo(String timelineEventCategory, String detailsField) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && elem.getElementId().contains("SOURCE_PLATFORM")).findAny().orElse(null);
+        try {
+            logger.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
+            TimelineElementDetails details = timelineElement.getDetails();
+            Field field = details.getClass().getField(detailsField);
+            Assertions.assertNotNull(field);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
         }
 
     }
