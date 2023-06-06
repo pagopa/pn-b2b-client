@@ -496,7 +496,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_34] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECAG005C positivo PN-6093
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -507,7 +507,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG005C"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_35] Attesa elemento di timeline SEND_ANALOG_DOMICILE_scenario positivo PN-5283 Presente
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -519,7 +519,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" e verifica indirizzo secondo tentativo "ATTEMPT_1"
     #verificato che al secondo tentativo l'indirizzo sia riportato in maiuscolo
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_36] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -533,7 +533,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
 
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_37] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -546,7 +546,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_38] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -559,7 +559,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B_TIMELINE_ANALOG_39] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
