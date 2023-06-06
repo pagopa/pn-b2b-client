@@ -120,6 +120,65 @@ public class PnPaB2bUtils {
         return response;
     }
 
+    public NewNotificationResponse uploadNotificationNotEqualSha( NewNotificationRequest request) throws IOException {
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            String sha256 = notificationDocument.getDigests().getSha256();
+            // reverse the sha256
+            StringBuilder sb = new StringBuilder(sha256);
+            sb.reverse();
+            notificationDocument.getDigests().setSha256(sb.toString());
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationWrongExtension( NewNotificationRequest request) throws IOException {
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.txt");
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
 
     public FullSentNotification waitForRequestAcceptation( NewNotificationResponse response) {
 
