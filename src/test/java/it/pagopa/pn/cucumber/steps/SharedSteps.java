@@ -82,6 +82,9 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    @Value("${pn.bearer-token.user3.taxID}")
+    private String louisArmstrongTaxID;
+
     @Value("${pn.configuration.workflow.wait.millis:31000}")
     private Integer workFlowWait;
 
@@ -349,6 +352,23 @@ public class SharedSteps {
 
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
+    }
+
+    @And("destinatario {string}")
+    public void destinatario(String denomination) {
+        String taxId = null;
+        switch (denomination) {
+            case ("Cristoforo Colombo"):
+                taxId = marioGherkinTaxID;
+                break;
+            case ("Louis Armstrong"):
+                taxId = louisArmstrongTaxID;
+                break;
+        }
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination(denomination)
+                        .taxId(taxId));
     }
 
     @Then("viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso")
@@ -859,6 +879,12 @@ public class SharedSteps {
         switch (causa) {
             case "ALLEGATO":
                 Assertions.assertTrue("FILE_NOTFOUND".equalsIgnoreCase(errorCode));
+                break;
+            case "EXTENSION":
+                Assertions.assertTrue("FILE_PDF_INVALID_ERROR".equalsIgnoreCase(errorCode));
+                break;
+            case "SHA_256":
+                Assertions.assertTrue("FILE_SHA_ERROR".equalsIgnoreCase(errorCode));
                 break;
             case "TAX_ID":
                 Assertions.assertTrue("TAXID_NOT_VALID".equalsIgnoreCase(errorCode));

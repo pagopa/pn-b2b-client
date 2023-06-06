@@ -140,11 +140,10 @@ public class PnPaB2bUtils {
         log.info("New Notification Request {}", request);
         if (request.getDocuments()!= null && request.getDocuments().size()>0){
             NotificationDocument notificationDocument = request.getDocuments().get(0);
-            String sha256 = notificationDocument.getDigests().getSha256();
-            // reverse the sha256
-            StringBuilder sb = new StringBuilder(sha256);
-            sb.reverse();
-            notificationDocument.getDigests().setSha256(sb.toString());
+            // the document uploaded to safe storage is sample.pdf
+            // I compute a different sha256 and I replace the old one
+            String sha256 = computeSha256( "classpath:/multa.pdf" );
+            notificationDocument.getDigests().setSha256(sha256);
         }
 
         NewNotificationResponse response = client.sendNewNotification( request );
@@ -153,6 +152,11 @@ public class PnPaB2bUtils {
     }
 
     public NewNotificationResponse uploadNotificationWrongExtension( NewNotificationRequest request) throws IOException {
+
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("classpath:/sample.txt");
+        }
 
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
@@ -170,11 +174,6 @@ public class PnPaB2bUtils {
         }
 
         log.info("New Notification Request {}", request);
-        if (request.getDocuments()!= null && request.getDocuments().size()>0){
-            NotificationDocument notificationDocument = request.getDocuments().get(0);
-            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.txt");
-        }
-
         NewNotificationResponse response = client.sendNewNotification( request );
         log.info("New Notification Request response {}", response);
         return response;
