@@ -96,10 +96,10 @@ Feature: test di integrazione della pubblica amministrazione
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED"
+    Then vengono letti gli eventi dello stream del "Comune_1" del validatore fino allo stato "ACCEPTED"
 
   @clean @integrationTest @TC-INVIO-02
   Scenario: [TC-STREAM_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
@@ -162,10 +162,10 @@ Feature: test di integrazione della pubblica amministrazione
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS"
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERED"
+    Then vengono letti gli eventi dello stream del "Comune_1" del validatore fino allo stato "DELIVERED"
 
 
     ###TC-INVIO-03

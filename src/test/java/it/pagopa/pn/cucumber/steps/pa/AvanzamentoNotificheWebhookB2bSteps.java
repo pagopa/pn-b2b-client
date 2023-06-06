@@ -227,6 +227,74 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     }
 
+
+    @And("vengono letti gli eventi dello stream del {string} del validatore fino allo stato {string}")
+    public void readStreamEventsStateValidatore(String pa,String status) {
+        setPaWebhook(pa);
+        NotificationStatus notificationStatus;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus notificationInternalStatus;
+        switch (status) {
+            case "ACCEPTED":
+                notificationStatus = NotificationStatus.ACCEPTED;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.ACCEPTED;
+                break;
+            case "DELIVERING":
+                notificationStatus = NotificationStatus.DELIVERING;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.DELIVERING;
+                break;
+            case "DELIVERED":
+                notificationStatus = NotificationStatus.DELIVERED;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.DELIVERED;
+                break;
+            case "CANCELLED":
+                notificationStatus = NotificationStatus.CANCELLED;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.CANCELLED;
+                break;
+            case "EFFECTIVE_DATE":
+                notificationStatus = NotificationStatus.EFFECTIVE_DATE;
+                notificationInternalStatus =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.EFFECTIVE_DATE;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        ProgressResponseElement progressResponseElement = null;
+        int wait = 48;
+        boolean finded = false;
+        for (int i = 0; i < wait; i++) {
+            progressResponseElement = searchInWebhook(notificationStatus,null,0);
+            logger.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            if (notificationStatusHistoryElement != null && !finded) {
+                wait = i + 4;
+                finded = true;
+            }
+            if (progressResponseElement != null) {
+                break;
+            }
+            try {
+                Thread.sleep(10 * 1000L);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        try{
+            Assertions.assertNotNull(progressResponseElement);
+            logger.info("EventProgress: " + progressResponseElement);
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    " {IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
+
+    }
+
     @And("vengono letti gli eventi dello stream del {string} con la verifica di Allegato non trovato")
     public void readStreamEventsStateRefused(String pa) {
 
