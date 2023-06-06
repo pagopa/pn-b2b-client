@@ -295,6 +295,32 @@ public class SharedSteps {
                         .taxId(cucumberAnalogicTaxID));
     }
 
+    @And("destinatario Louis Armstrong")
+    public void destinatarioLouisArmstrong() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Louis Armstrong")
+                        .taxId("RMSLSO31M04Z404R")
+                        .digitalDomicile(null));
+    }
+
+    @And("destinatario Dino De Sauro")
+    public void destinatarioDinoDeSauro() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Dino De Sauro")
+                        .taxId("DSRDNI00A01A225I")
+                        .digitalDomicile(null));
+    }
+
+    @And("destinatario Cristoforo Colombo")
+    public void destinatarioCristoforoColombo() {
+        this.notificationRequest.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
+                        .denomination("Cristoforo Colombo")
+                        .taxId("CLMCST42R12D969Z")
+                        .digitalDomicile(null));
+    }
 
     @And("viene generata una nuova notifica con uguale codice fiscale del creditore e diverso codice avviso")
     public void vienePredispostaEInviataUnaNuovaNotificaConUgualeCodiceFiscaleDelCreditoreEDiversoCodiceAvviso() {
