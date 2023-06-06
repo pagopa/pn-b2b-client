@@ -968,6 +968,41 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica GET_ADDRESS con il campo digitalAddressSource a {string} e isAvailable a {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDigitalAddressSourceAndIsAvailable(String digitalAddressSource, String isAvailable) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory("GET_ADDRESS");
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) &&
+                        element.getDetails().getDigitalAddressSource().getValue().equals(digitalAddressSource) &&
+                        element.getDetails().getIsAvailable().equals(Boolean.valueOf(isAvailable))
+                ) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
 
     /*
     UTILE PER TEST 
