@@ -46,7 +46,6 @@ public class PnIoUserAttributerExternaClientImpl implements IPnIoUserAttributerE
     public IoCourtesyDigitalAddressActivation getCourtesyAddressIo(String xPagopaCxTaxid) throws RestClientException {
         return courtesyApiIo.getCourtesyAddressIo(xPagopaCxTaxid);
     }
-
     public void setCourtesyAddressIo( IoCourtesyDigitalAddressActivation ioCourtesyDigitalAddressActivation,String xPagopaCxTaxid) throws RestClientException {
        courtesyApiIo.setCourtesyAddressIo(ioCourtesyDigitalAddressActivation, xPagopaCxTaxid);
     }
