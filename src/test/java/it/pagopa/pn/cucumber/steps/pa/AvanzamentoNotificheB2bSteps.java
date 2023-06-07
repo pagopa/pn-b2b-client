@@ -1017,6 +1017,43 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK")
+    public void vieneVerificatoCheElementoTimelineSiaPresenteLegalFactsIds (String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && "SENDER_ACK".equals(elem.getLegalFactsIds().get(0).getCategory().getValue())).findAny().orElse(null);
+        try {
+            logger.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo generatedAarUrl valorizzato")
+    public void vieneVerificatoCheElementoTimelineSiaPresenteGeneratedAarUrl (String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && !elem.getDetails().getGeneratedAarUrl().isEmpty()).findAny().orElse(null);
+        try {
+            logger.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+    }
+
+
+
     /*
     UTILE PER TEST 
 

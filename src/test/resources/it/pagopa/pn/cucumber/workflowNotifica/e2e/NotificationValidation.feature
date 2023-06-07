@@ -47,3 +47,25 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_REFUSED"
         Then l'operazione ha prodotto un errore con status code "400"
+
+
+    @e2e
+    Scenario: [E2E-NOTIFICATION_VALIDATION_ASINC_OK] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED e controllo che sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK positivo
+        Given viene generata una nuova notifica
+            | subject | invio notifica con cucumber |
+            | senderDenomination | Comune di milano |
+        And destinatario Mario Cucumber
+        When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+        Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+        And viene verificato che nell'elemento di timeline della notifica "REQUEST_ACCEPTED" sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK
+
+    @e2e
+    Scenario: [E2E-NOTIFICATION_VALIDATION_AAR_GENERATION] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION sia presente il campo generatedAarUrl valorizzato positivo
+        Given viene generata una nuova notifica
+            | subject | invio notifica con cucumber |
+            | senderDenomination | Comune di milano |
+        And destinatario Mario Cucumber
+        When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+        Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+        And viene verificato che nell'elemento di timeline della notifica "AAR_GENERATION" sia presente il campo generatedAarUrl valorizzato
+        
