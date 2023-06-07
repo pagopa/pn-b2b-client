@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.Map;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
@@ -112,11 +113,12 @@ public class DataTableTypeUtil {
 
     @DataTableType
     public synchronized TimelineElementDetails convertTimelineElementDetails(Map<String, String> data) throws JsonProcessingException {
+        String recIndex = getValue(data, REC_INDEX.key);
 
         TimelineElementDetails timelineElementDetails = (new TimelineElementDetails()
-                .recIndex(Integer.parseInt(getValue(data, REC_INDEX.key)))
+                .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                 .digitalAddress(getObjValue(DigitalAddress.class, data, DIGITAL_ADDRESS.key))
-
+                .refusalReasons(getListValue(NotificationRefusedError.class, data, REFUSAL_REASONS.key))
         );
         try {
             Thread.sleep(2);

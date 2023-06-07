@@ -33,6 +33,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,6 +56,7 @@ public class SharedSteps {
     private NewNotificationRequest notificationRequest;
     private FullSentNotification notificationResponseComplete;
     private HttpStatusCodeException notificationError;
+    private OffsetDateTime notificationCreationDate;
     public static final String DEFAULT_PA = "Comune_1";
     private String settedPa = "Comune_1";
     private final ObjectMapper objMapper = JsonMapper.builder()
@@ -466,6 +468,7 @@ public class SharedSteps {
     private void sendNotification() {
         try {
             Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
@@ -487,6 +490,7 @@ public class SharedSteps {
 
     private void sendNotificationWithError() {
         try {
+            notificationCreationDate = OffsetDateTime.now();
             this.newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
         } catch (HttpStatusCodeException | IOException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -499,6 +503,7 @@ public class SharedSteps {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
@@ -523,6 +528,7 @@ public class SharedSteps {
     private void sendNotificationWithErrorSha() {
         try {
             Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
@@ -546,6 +552,7 @@ public class SharedSteps {
     private void sendNotificationWithWrongExtension() {
         try {
             Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotificationWrongExtension(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
@@ -569,6 +576,7 @@ public class SharedSteps {
     private void sendNotificationRefused() {
         try {
             Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
@@ -673,6 +681,10 @@ public class SharedSteps {
 
     public FullSentNotification getSentNotification() {
         return notificationResponseComplete;
+    }
+
+    public OffsetDateTime getNotificationCreationDate() {
+        return notificationCreationDate;
     }
 
     public void setNotificationRequest(NewNotificationRequest notificationRequest) {

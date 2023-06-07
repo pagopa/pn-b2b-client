@@ -5,10 +5,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnAppIOB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnIoUserAttributerExternaClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,17 +32,19 @@ public class AvanzamentoNotificheB2bSteps {
     private final IPnWebRecipientClient webRecipientClient;
     private final IPnWebUserAttributesClient webUserAttributesClient;
     private final IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient;
+    private final IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient,
-                                        IPnWebUserAttributesClient webUserAttributesClient, IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient) {
+                                        IPnWebUserAttributesClient webUserAttributesClient, IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient, IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.appIOB2bClient = appIOB2bClient;
         this.b2bClient = sharedSteps.getB2bClient();
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.webUserAttributesClient = webUserAttributesClient;
         this.ioUserAttributerExternaClient = ioUserAttributerExternaClient;
+        this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
     }
 
 
@@ -203,6 +204,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "REFINEMENT":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.REFINEMENT, 2, waiting);
                 break;
+            case "REQUEST_REFUSED":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_REFUSED, 2, waiting);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -214,6 +218,13 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_COURTESY_MESSAGE":
                 Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
                 Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                break;
+            case "REQUEST_REFUSED":
+                Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
+                Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
+                for (int i = 0; i < detailsFromNotification.getRefusalReasons().size(); i ++) {
+                    Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
+                }
                 break;
         }
     }
@@ -966,6 +977,7 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
 
         TimelineElement timelineElement = null;
+        List<TimelineElement> timelineElementList;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
             try {
@@ -974,11 +986,22 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
 
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            if (timelineEventCategory.equals("REQUEST_REFUSED")) {
+                String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+                byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+                String iun = new String(decodedBytes);
+                NewNotificationRequest newNotificationRequest = sharedSteps.getNotificationRequest();
+                // get timeline from delivery-push
+                NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
+                timelineElementList = notificationHistory.getTimeline();
+            } else {
+                // proceed with default flux
+                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+                timelineElementList = sharedSteps.getSentNotification().getTimeline();
+            }
 
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            logger.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+            timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null) {
                 break;
             }

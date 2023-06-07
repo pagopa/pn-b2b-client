@@ -2,9 +2,11 @@ package it.pagopa.pn.cucumber.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public enum NotificationValue {
@@ -52,7 +54,8 @@ public enum NotificationValue {
 
     /*TIMELINE DETAILS*/
     REC_INDEX("recIndex",null,false),
-    DIGITAL_ADDRESS("digitalAddress",null,false);
+    DIGITAL_ADDRESS("digitalAddress",null,false),
+    REFUSAL_REASONS("refusalReasons", null, false);
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";
@@ -60,6 +63,7 @@ public enum NotificationValue {
     public final String key;
     private final String defaultValue;
     private final boolean addCurrentTime;
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     NotificationValue(String key, String defaultValue, boolean addCurrentTime){
         this.key = key;
@@ -105,8 +109,17 @@ public enum NotificationValue {
 
     public static <T> T getObjValue(Class<T> clazz, Map<String, String> data, String key) throws JsonProcessingException {
         if(data.containsKey(key)){
-            ObjectMapper mapper = new ObjectMapper();
             T map = mapper.readValue(data.get(key), clazz);
+            return data.get(key).equals(NULL_VALUE) ? null : map;
+        }else{
+            return getDefaultValueObj(key);
+        }
+    }
+
+    public static <T> List<T> getListValue(Class<T> clazz, Map<String, String> data, String key) throws JsonProcessingException {
+        if(data.containsKey(key)){
+            JavaType type = mapper.getTypeFactory().constructParametricType(List.class, clazz);
+            List<T> map = mapper.readValue(data.get(key), type);
             return data.get(key).equals(NULL_VALUE) ? null : map;
         }else{
             return getDefaultValueObj(key);
