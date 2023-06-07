@@ -197,6 +197,12 @@ public class AvanzamentoNotificheB2bSteps {
             case "SCHEDULE_DIGITAL_WORKFLOW":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SCHEDULE_DIGITAL_WORKFLOW, 2,waiting * 3);
                 break;
+            case "SCHEDULE_REFINEMENT":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SCHEDULE_REFINEMENT, 2, waiting);
+                break;
+            case "REFINEMENT":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.REFINEMENT, 2, waiting);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
