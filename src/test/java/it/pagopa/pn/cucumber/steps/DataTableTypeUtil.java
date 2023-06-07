@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -107,6 +108,22 @@ public class DataTableTypeUtil {
             e.printStackTrace();
         }
         return notificationRecipient;
+    }
+
+    @DataTableType
+    public synchronized TimelineElementDetails convertTimelineElementDetails(Map<String, String> data) throws JsonProcessingException {
+
+        TimelineElementDetails timelineElementDetails = (new TimelineElementDetails()
+                .recIndex(Integer.parseInt(getValue(data, REC_INDEX.key)))
+                .digitalAddress(getObjValue(DigitalAddress.class, data, DIGITAL_ADDRESS.key))
+
+        );
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return timelineElementDetails;
     }
 
 

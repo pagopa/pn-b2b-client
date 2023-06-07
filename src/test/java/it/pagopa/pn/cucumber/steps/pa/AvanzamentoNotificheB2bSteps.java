@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -18,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Field;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -201,6 +201,15 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
         return timelineElementWait;
+    }
+
+    private void checkDetailsEquality(String timelineEventCategory, TimelineElementDetails detailsFromNotification, TimelineElementDetails detailsFromTest) {
+        switch (timelineEventCategory) {
+            case "SEND_COURTESY_MESSAGE":
+                Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+                Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                break;
+        }
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
@@ -946,8 +955,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
-    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo {string}")
-    public void vieneVerificatoCheElementoTimelineAbbiaIlCampo(String timelineEventCategory, String detailsField) {
+    @Then("viene verificato che l'elemento di timeline {string} esista e che abbia details")
+    public void vieneVerificatoCheElementoTimelineEsistaEControllatoDetails(String timelineEventCategory, @Transpose TimelineElementDetails timelineElementDetails) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
 
         TimelineElement timelineElement = null;
@@ -971,13 +980,11 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
-            TimelineElementDetails details = timelineElement.getDetails();
-            Field field = details.getClass().getField(detailsField);
-            Assertions.assertNotNull(field);
+            if (timelineElementDetails != null) {
+                checkDetailsEquality(timelineEventCategory, timelineElement.getDetails(), timelineElementDetails);
+            }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
         }
     }
 

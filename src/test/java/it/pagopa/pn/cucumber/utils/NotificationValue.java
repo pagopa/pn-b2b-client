@@ -1,5 +1,9 @@
 package it.pagopa.pn.cucumber.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.Arrays;
 import java.util.Map;
 
@@ -44,7 +48,11 @@ public enum NotificationValue {
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/sample.pdf",false),
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/sample.pdf",false),
-    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false);
+    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false),
+
+    /*TIMELINE DETAILS*/
+    REC_INDEX("recIndex",null,false),
+    DIGITAL_ADDRESS("digitalAddress",null,false);
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";
@@ -87,6 +95,22 @@ public enum NotificationValue {
             result.append("a");
         }
         return result.toString();
+    }
+
+    public static <T> T getDefaultValueObj(String key) {
+        NotificationValue notificationValue =
+                Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
+        return notificationValue == null ? null : (T) notificationValue.defaultValue;
+    }
+
+    public static <T> T getObjValue(Class<T> clazz, Map<String, String> data, String key) throws JsonProcessingException {
+        if(data.containsKey(key)){
+            ObjectMapper mapper = new ObjectMapper();
+            T map = mapper.readValue(data.get(key), clazz);
+            return data.get(key).equals(NULL_VALUE) ? null : map;
+        }else{
+            return getDefaultValueObj(key);
+        }
     }
 
 }

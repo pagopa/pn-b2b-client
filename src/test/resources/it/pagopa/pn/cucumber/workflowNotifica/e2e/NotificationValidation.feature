@@ -6,8 +6,6 @@ Feature: Validazione notifica e2e
         And destinatario Mario Cucumber
         When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "ALLEGATO"
-        # And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "REQUEST_REFUSED"
-        # And viene verificato che nell'elemento di timeline della notifica "REQUEST_REFUSED" sia presente il campo "refusalReasons"
 
     @e2e @ignore
     Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_2] validazione fallita allegati notifica - Sha256 differenti

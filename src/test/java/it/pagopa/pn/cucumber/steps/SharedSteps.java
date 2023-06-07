@@ -82,9 +82,6 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
-    @Value("${pn.bearer-token.user3.taxID}")
-    private String louisArmstrongTaxID;
-
     @Value("${pn.configuration.workflow.wait.millis:31000}")
     private Integer workFlowWait;
 
@@ -352,23 +349,6 @@ public class SharedSteps {
 
         recipient.getPayment().setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
-    }
-
-    @And("destinatario {string}")
-    public void destinatario(String denomination) {
-        String taxId = null;
-        switch (denomination) {
-            case ("Cristoforo Colombo"):
-                taxId = marioGherkinTaxID;
-                break;
-            case ("Louis Armstrong"):
-                taxId = louisArmstrongTaxID;
-                break;
-        }
-        this.notificationRequest.addRecipientsItem(
-                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination(denomination)
-                        .taxId(taxId));
     }
 
     @Then("viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso")
