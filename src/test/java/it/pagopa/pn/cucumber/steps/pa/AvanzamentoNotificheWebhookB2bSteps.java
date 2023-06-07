@@ -429,14 +429,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 waiting = waiting * 4;
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_CALL;
                 timelineElementInternalCategory =
-                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.PUBLIC_REGISTRY_CALL;
                 break;
             case "PUBLIC_REGISTRY_RESPONSE":
                 numCheck = 2;
                 waiting = waiting * 4;
                 timelineElementCategory = TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 timelineElementInternalCategory =
-                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER;
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory.PUBLIC_REGISTRY_RESPONSE;
                 break;
             default:
                 throw new IllegalArgumentException();

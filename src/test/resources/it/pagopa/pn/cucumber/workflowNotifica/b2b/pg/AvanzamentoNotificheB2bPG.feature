@@ -67,7 +67,7 @@ Feature: avanzamento b2b persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_SIMPLE_REGISTERED_LETTER"
 
   @dev @ignore
-  Scenario: [B2B_TIMELINE_PG_9] Invio notifica digitale ed attesa elemento di timeline NOT_HANDLED_scenario positivo
+  Scenario: [B2B_TIMELINE_PG_9] Invio notifica digitale ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

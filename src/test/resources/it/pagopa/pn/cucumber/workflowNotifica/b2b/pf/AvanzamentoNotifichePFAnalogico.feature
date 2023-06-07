@@ -466,7 +466,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @dev @Ignore
+  @dev @ignore
   Scenario: [B2B_TIMELINE_ANALOG_32] Invio notifica digitale senza allegato ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo numero pagine AAR
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -477,3 +477,90 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | physicalAddress_address | Via minzoni |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" verifica numero pagine AAR 1
+
+  @dev @ignore
+  Scenario: [B2B_TIMELINE_ANALOG_33] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECAG011A positivo PN-5783
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_34] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECAG005C positivo PN-6093
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via@OK-Giacenza-lte10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG005C"
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_35] Attesa elemento di timeline SEND_ANALOG_DOMICILE_scenario positivo PN-5283 Presente
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@fail-Discovery_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" e verifica indirizzo secondo tentativo "ATTEMPT_1"
+    #verificato che al secondo tentativo l'indirizzo sia riportato in maiuscolo
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_36] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | OK-Giacenza-gt10_890 |
+      | taxId | LVLDAA85T50G702B |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via@OK-Giacenza-gt10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
+
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_37] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | OK-GiacenzaDelegato-gt10_890 |
+      | taxId | LVLDAA85T50G702B |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via@OK-GiacenzaDelegato-gt10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_38] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | FAIL-Giacenza-gt10_890 |
+      | taxId | LVLDAA85T50G702B |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
+
+  @dev
+  Scenario: [B2B_TIMELINE_ANALOG_39] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | OK-GiacenzaDelegato-gt10_890 |
+      | taxId | LVLDAA85T50G702B |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"

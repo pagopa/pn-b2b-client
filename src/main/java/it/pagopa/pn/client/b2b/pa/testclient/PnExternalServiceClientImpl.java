@@ -47,7 +47,10 @@ public class PnExternalServiceClientImpl {
     private final String clientAssertion;
 
     private final String enableInterop;
+    private final String gherkinSrlBearerToken;
+    private final String cucumberSpaBearerToken;
 
+    private final String basePathWebApi;
     public PnExternalServiceClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
@@ -59,12 +62,16 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
             @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
-            @Value("${pn.interop.enable}") String enableInterop
+            @Value("${pn.interop.enable}") String enableInterop,
+            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+            @Value("${pn.webapi.external.base-url}") String basePathWebApi
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.safeStorageBasePath = safeStorageBasePath;
         this.gruopInfoBasePath = gruopInfoBasePath;
+        this.basePathWebApi = basePathWebApi;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
@@ -72,6 +79,8 @@ public class PnExternalServiceClientImpl {
         this.interopBaseUrl = interopBaseUrl;
         this.tokenOauth2Path = tokenOauth2Path;
         this.clientAssertion = clientAssertion;
+        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         if ("true".equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = getBearerToken();
         }
@@ -110,6 +119,43 @@ public class PnExternalServiceClientImpl {
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    public List<HashMap<String, String>> pgGroupInfo(SettableBearerToken.BearerTokenType settableBearerToken) throws RestClientException {
+        switch (settableBearerToken) {
+            case PG_1:
+                return pgGroupInfoWithHttpInfo(gherkinSrlBearerToken).getBody();
+            case PG_2:
+                return pgGroupInfoWithHttpInfo(cucumberSpaBearerToken).getBody();
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+
+
+    private ResponseEntity<List<HashMap<String, String>>> pgGroupInfoWithHttpInfo(String bearerToken) throws RestClientException {
+        Object postBody = null;
+
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        queryParams.add("metadataOnly", "true");
+
+        final HttpHeaders headerParams = new HttpHeaders();
+
+        headerParams.add("Authorization","Bearer "+bearerToken);
+
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json"
+        };
+        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
+        final MediaType localVarContentType = MediaType.APPLICATION_JSON;
+
+
+        ParameterizedTypeReference<List<HashMap<String, String>>> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
 
