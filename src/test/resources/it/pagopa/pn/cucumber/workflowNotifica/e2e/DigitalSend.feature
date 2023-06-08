@@ -9,5 +9,11 @@ Feature: Digital send e2e
       | digitalDomicile_address | test@OK-pecFirstFailSecondSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista e che abbia details
+      | digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | recIndex | 0 |
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And viene verificato che l'elemento di timeline "DELIVERED" esista e che abbia details
+      | digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | recIndex | 0 |
     
