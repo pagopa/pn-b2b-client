@@ -18,13 +18,11 @@ public class UserAttributesSteps {
     private Consent consent;
     private HttpStatusCodeException consentError;
 
-    private final AddressManagerOTP addressManagerOTP;
+
 
     @Autowired
-    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient, AddressManagerOTP addressManagerOTP) {
+    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
-        this.addressManagerOTP = addressManagerOTP;
-
     }
 
     @Given("Viene richiesto l'ultimo consenso di tipo {string}")
@@ -62,5 +60,9 @@ public class UserAttributesSteps {
     @Given("viene effettuata la query")
     public void vieneEffettuataLaQuery() {
         addressManagerOTP.getOtp();
+    }
+
+    @Given("viene testato l'otp")
+    public void vieneTestatoLOtp() {
     }
 }
