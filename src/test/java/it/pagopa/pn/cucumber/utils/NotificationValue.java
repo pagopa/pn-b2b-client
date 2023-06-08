@@ -53,11 +53,17 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false),
 
     /*TIMELINE DETAILS*/
-    REC_INDEX("recIndex",null,false),
-    DIGITAL_ADDRESS("digitalAddress",null,false),
-    REFUSAL_REASONS("refusalReasons", null, false),
-    GENERATED_AAR_URL("generatedAarUrl", null, false),
-    RESPONSE_STATUS("responseStatus", null, false);
+    LEGAL_FACT_IDS("legalFactsIds", null, false),
+    DETAILS("details", null, false),
+    DETAILS_REC_INDEX("details_recIndex",null,false),
+    DETAILS_DIGITAL_ADDRESS("details_digitalAddress",null,false),
+    DETAILS_REFUSAL_REASONS("details_refusalReasons", null, false),
+    DETAILS_GENERATED_AAR_URL("details_generatedAarUrl", null, false),
+    DETAILS_RESPONSE_STATUS("details_responseStatus", null, false),
+    DETAILS_DIGITAL_ADDRESS_SOURCE("details_digitalAddressSource", null, false),
+    DETAILS_RETRY_NUMBER("details_retryNumber", "0", false),
+    DETAILS_SENT_ATTEMPT_MADE("details_sentAttemptMade", "0", false),
+    DETAILS_SENDING_RECEIPT("details_sendingReceipts", null, false);
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";
@@ -103,7 +109,7 @@ public enum NotificationValue {
         return result.toString();
     }
 
-    public static <T> T getDefaultValueObj(String key) {
+    public static <T> T getCastedDefaultValue(String key) {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
         return notificationValue == null ? null : (T) notificationValue.defaultValue;
@@ -114,7 +120,7 @@ public enum NotificationValue {
             T map = mapper.readValue(data.get(key), clazz);
             return data.get(key).equals(NULL_VALUE) ? null : map;
         }else{
-            return getDefaultValueObj(key);
+            return getCastedDefaultValue(key);
         }
     }
 
@@ -124,7 +130,7 @@ public enum NotificationValue {
             List<T> map = mapper.readValue(data.get(key), type);
             return data.get(key).equals(NULL_VALUE) ? null : map;
         }else{
-            return getDefaultValueObj(key);
+            return getCastedDefaultValue(key);
         }
     }
 

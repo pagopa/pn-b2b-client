@@ -9,9 +9,11 @@ Feature: Invio messaggi cortesia e2e
             | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista e che abbia details
-            | digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-            | recIndex | 0 |
+        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
+        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | details | NOT_NULL |
+            | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+            | details_recIndex | 0 |
 
     @e2e @ignore
     Scenario: [E2E-SEND_COURTESY_MESSAGE_2] invio messaggio di cortesia - invio per SMS
@@ -23,9 +25,11 @@ Feature: Invio messaggi cortesia e2e
             | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista e che abbia details
-             | digitalAddress | {"address": "+393214210000", "type": "SMS"} |
-             | recIndex | 0 |
+        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
+        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | details | NOT_NULL |
+            | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
+            | details_recIndex | 0 |
 
     @e2e @ignore
     Scenario: [E2E-SEND_COURTESY_MESSAGE_3] invio messaggio di cortesia - invio per AppIO
@@ -34,9 +38,11 @@ Feature: Invio messaggi cortesia e2e
         And destinatario Mario Cucumber
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista e che abbia details
-             | digitalAddress | {"address": "...", "type": "APPIO"} |
-             | recIndex | 0 |
+        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
+        And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | details | NOT_NULL |
+            | details_digitalAddress | {"address": "...", "type": "APPIO"} |
+            | details_recIndex | 0 |
 
     @e2e @ignore
       Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato

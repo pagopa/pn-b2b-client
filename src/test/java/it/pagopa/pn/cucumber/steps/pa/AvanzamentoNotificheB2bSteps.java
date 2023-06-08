@@ -8,7 +8,10 @@ import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
+import it.pagopa.pn.cucumber.utils.TimelineEventId;
+import it.pagopa.pn.cucumber.utils.TimelineEventIdBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -214,25 +217,98 @@ public class AvanzamentoNotificheB2bSteps {
         return timelineElementWait;
     }
 
-    private void checkDetailsEquality(String timelineEventCategory, TimelineElementDetails detailsFromNotification, TimelineElementDetails detailsFromTest) {
+    private String getTimelineEventId(String timelineEventCategory, String iun, TimelineElement timelineElement) {
+        TimelineElementDetails timelineElementDetails = timelineElement.getDetails();
+        DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
+        DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
+
+        EventId event = new EventId();
+        event.setIun(iun);
+        event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
+        event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
+        event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
+        event.setIsFirstSendRetry(timelineElementDetails.getRetryNumber() == 1);
+        event.setSentAttemptMade(timelineElementDetails.getSentAttemptMade());
+
         switch (timelineEventCategory) {
             case "SEND_COURTESY_MESSAGE":
-                Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
-                Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                return TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
+            case "REQUEST_REFUSED":
+                return TimelineEventId.REQUEST_REFUSED.buildEventId(event);
+            case "AAR_GENERATION":
+                return TimelineEventId.AAR_GENERATION.buildEventId(event);
+            case "REQUEST_ACCEPTED":
+                return TimelineEventId.REQUEST_ACCEPTED.buildEventId(event);
+            case "SEND_DIGITAL_DOMICILE":
+                return TimelineEventId.SEND_DIGITAL_DOMICILE.buildEventId(event);
+            case "SEND_DIGITAL_FEEDBACK":
+                return TimelineEventId.SEND_DIGITAL_FEEDBACK.buildEventId(event);
+            case "GET_ADDRESS":
+                return TimelineEventId.GET_ADDRESS.buildEventId(event);
+            case "DIGITAL_SUCCESS_WORKFLOW":
+                return TimelineEventId.DIGITAL_SUCCESS_WORKFLOW.buildEventId(event);
+        }
+        return null;
+    }
+
+    private void checkTimelineElementEquality(String timelineEventCategory, TimelineElement elementFromNotification, TimelineElement elementFromTest) {
+        TimelineElementDetails detailsFromNotification = elementFromNotification.getDetails();
+        TimelineElementDetails detailsFromTest = elementFromTest.getDetails();
+
+        switch (timelineEventCategory) {
+            case "SEND_COURTESY_MESSAGE":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+                    Assertions.assertEquals(detailsFromNotification.getRecIndex(), detailsFromTest.getRecIndex());
+                }
                 break;
             case "REQUEST_REFUSED":
-                Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
-                Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
-                for (int i = 0; i < detailsFromNotification.getRefusalReasons().size(); i ++) {
-                    Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
+                if (detailsFromTest != null) {
+                    Assertions.assertNotNull(detailsFromNotification.getRefusalReasons());
+                    Assertions.assertEquals(detailsFromNotification.getRefusalReasons().size(), detailsFromTest.getRefusalReasons().size());
+                    for (int i = 0; i < detailsFromNotification.getRefusalReasons().size(); i++) {
+                        Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
+                    }
                 }
                 break;
             case "AAR_GENERATION":
-                Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
+                if (detailsFromTest != null) {
+                    Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
+                }
                 break;
             case "SEND_DIGITAL_FEEDBACK":
-                Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
-                Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                if (detailsFromTest != null) {
+                    Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
+                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                    if (detailsFromNotification.getResponseStatus().getValue().equals(ResponseStatus.OK.getValue())) {
+                        Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+                        Assertions.assertEquals(detailsFromNotification.getSendingReceipts().size(), detailsFromTest.getSendingReceipts().size());
+                    }
+                }
+                break;
+            case "REQUEST_ACCEPTED":
+                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
+                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                }
+                break;
+            case "SEND_DIGITAL_DOMICILE":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+                }
+                break;
+            case "DIGITAL_SUCCESS_WORKFLOW":
+                Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
+                Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                }
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getDigitalAddress(), detailsFromTest.getDigitalAddress());
+                }
                 break;
         }
     }
@@ -980,12 +1056,10 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
-
-    @Then("viene verificato che l'elemento di timeline {string} esista e che abbia details")
-    public void vieneVerificatoCheElementoTimelineEsistaEControllatoDetails(String timelineEventCategory, @Transpose TimelineElementDetails timelineElementDetails) {
+    @Then("viene letta la timeline fino all'elemento {string}")
+    public void vieneLettaLaTimeline(String timelineEventCategory) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
 
-        TimelineElement timelineElement = null;
         List<TimelineElement> timelineElementList;
 
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
@@ -994,32 +1068,48 @@ public class AvanzamentoNotificheB2bSteps {
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
-
-            if (timelineEventCategory.equals("REQUEST_REFUSED")) {
-                String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
-                byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-                String iun = new String(decodedBytes);
-                NewNotificationRequest newNotificationRequest = sharedSteps.getNotificationRequest();
-                // get timeline from delivery-push
-                NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
-                timelineElementList = notificationHistory.getTimeline();
-            } else {
-                // proceed with default flux
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-                timelineElementList = sharedSteps.getSentNotification().getTimeline();
-            }
-
-            logger.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-            timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
-            if (timelineElement != null) {
-                break;
-            }
         }
+
+        if (timelineEventCategory.equals("REQUEST_REFUSED")) {
+            String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            String iun = new String(decodedBytes);
+            NewNotificationRequest newNotificationRequest = sharedSteps.getNotificationRequest();
+            // get timeline from delivery-push
+            NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
+            timelineElementList = notificationHistory.getTimeline();
+        } else {
+            // proceed with default flux
+            String iun = sharedSteps.getSentNotification().getIun();
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+            timelineElementList = sharedSteps.getSentNotification().getTimeline();
+        }
+
+        logger.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+        this.sharedSteps.setNotificationTimeline(timelineElementList);
+        Assertions.assertNotEquals(timelineElementList.size(), 0);
+    }
+
+    @And("viene verificato che l'elemento di timeline {string} esista")
+    public void vieneVerificatoCheElementoTimelineEsista(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) {
+        List<TimelineElement> timelineElementList = sharedSteps.getNotificationTimeline();
+        String iun;
+        if (timelineEventCategory.equals("REQUEST_REFUSED")) {
+            String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            iun = new String(decodedBytes);
+        } else {
+            // proceed with default flux
+            iun = sharedSteps.getSentNotification().getIun();
+        }
+        // get timeline event id
+        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, timelineElementFromTest);
+        TimelineElement timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
         try {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
-            if (timelineElementDetails != null) {
-                checkDetailsEquality(timelineEventCategory, timelineElement.getDetails(), timelineElementDetails);
+            if (timelineElementFromTest != null) {
+                checkTimelineElementEquality(timelineEventCategory, timelineElement, timelineElementFromTest);
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -1062,24 +1152,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK")
-    public void vieneVerificatoCheElementoTimelineSiaPresenteLegalFactsIds (String timelineEventCategory) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-
-        TimelineElement timelineElement = null;
-
-        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && "SENDER_ACK".equals(elem.getLegalFactsIds().get(0).getCategory().getValue())).findAny().orElse(null);
-        try {
-            logger.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(timelineElement);
-
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
     @Then("viene verficato che il numero di elementi di timeline {string} della notifica sia di {long}")
     public void checkNumElOfTimelineCategory(String timelineEventCategory, Long numEl) {
         Long actualNumElements = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).count();
@@ -1089,114 +1161,6 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-    }
-
-    @And("vengono letti gli eventi fino all'elemento di timeline {string} della notifica con deliveryDetailCode {string}, legalFactId con category {string} e documentType {string}")
-    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndLegalFactIdCategoryAndDocumentType(String timelineEventCategory, String deliveryDetailCode, String legalFactIdCategory, String documentType) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-        TimelineElement timelineElement = null;
-
-        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            //TODO: verificare condizione sempre falsa
-            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
-                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory())
-                        && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)
-                        && Objects.nonNull(element.getLegalFactsIds()) && element.getLegalFactsIds().size() > 0
-                        && element.getLegalFactsIds().get(0).getCategory().equals(legalFactIdCategory)
-                        && Objects.nonNull(element.getDetails().getAttachments()) && element.getDetails().getAttachments().size() > 0
-                        && element.getDetails().getAttachments().get(0).getDocumentType().equals(documentType)
-                ) {
-                    timelineElement = element;
-                    break;
-                }
-            }
-
-            if (timelineElement != null) {
-                break;
-            }
-        }
-        try {
-            Assertions.assertNotNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
-    public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-        TimelineElement timelineElement = null;
-
-        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
-                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getElementId().contains(attempt)) {
-                    timelineElement = element;
-                    break;
-                }
-            }
-
-            if (timelineElement != null) {
-                break;
-            }
-        }
-        try {
-            Assertions.assertNotNull(timelineElement);
-            Assertions.assertNotNull(timelineElement.getDetails().getPhysicalAddress());
-            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_\\.\\-:@' ]*$"));
-
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
-
-    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")
-    public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddressNationalRegistry(String timelineEventCategory) {
-
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-
-        TimelineElement timelineElement = null;
-
-        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
-            if (timelineElement != null) {
-                break;
-            }
-        }
-        try {
-            logger.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(timelineElement);
-            Assertions.assertNotNull(timelineElement.getDetails().getDigitalAddress());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-
     }
 
     /*

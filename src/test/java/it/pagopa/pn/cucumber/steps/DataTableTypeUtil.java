@@ -112,22 +112,32 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized TimelineElementDetails convertTimelineElementDetails(Map<String, String> data) throws JsonProcessingException {
-        String recIndex = getValue(data, REC_INDEX.key);
+    public synchronized TimelineElement convertTimelineElement(Map<String, String> data) throws JsonProcessingException {
+        String recIndex = getValue(data, DETAILS_REC_INDEX.key);
+        String sentAttemptMade = getValue(data, DETAILS_SENT_ATTEMPT_MADE.key);
+        String retryNumber = getValue(data, DETAILS_RETRY_NUMBER.key);
+        String responseStatus = getValue(data, DETAILS_RESPONSE_STATUS.key);
+        String digitalAddressSource = getValue(data, DETAILS_DIGITAL_ADDRESS_SOURCE.key);
 
-        TimelineElementDetails timelineElementDetails = (new TimelineElementDetails()
-                .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
-                .digitalAddress(getObjValue(DigitalAddress.class, data, DIGITAL_ADDRESS.key))
-                .refusalReasons(getListValue(NotificationRefusedError.class, data, REFUSAL_REASONS.key))
-                .generatedAarUrl(getValue(data, GENERATED_AAR_URL.key))
-                .responseStatus(getObjValue(ResponseStatus.class, data, RESPONSE_STATUS.key))
-        );
+        TimelineElement timelineElement = new TimelineElement()
+                .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetails()
+                        .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
+                        .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
+                        .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
+                        .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
+                        .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
+                        .sentAttemptMade(sentAttemptMade != null ? Integer.parseInt(sentAttemptMade) : null)
+                        .retryNumber(retryNumber != null ? Integer.parseInt(retryNumber) : null)
+                        .sendingReceipts(getListValue(SendingReceipt.class, data, DETAILS_SENDING_RECEIPT.key))
+                );
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return timelineElementDetails;
+        return timelineElement;
     }
 
 
