@@ -315,6 +315,16 @@ public class SharedSteps {
                         .digitalDomicile(null));
     }
 
+    @And("destinatario Dino De Sauro e:")
+    public void destinatarioDinoDeSauro(@Transpose NotificationRecipient recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("Dino De Sauro")
+                        .taxId("DSRDNI00A01A225I"));
+
+
+    }
+
     @And("destinatario Cristoforo Colombo")
     public void destinatarioCristoforoColombo() {
         this.notificationRequest.addRecipientsItem(

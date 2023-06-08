@@ -22,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class AvanzamentoNotificheB2bSteps {
 
@@ -1073,6 +1074,56 @@ public class AvanzamentoNotificheB2bSteps {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
 
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verficato che il numero di elementi di timeline {string} della notifica sia di {long}")
+    public void checkNumElOfTimelineCategory(String timelineEventCategory, Long numEl) {
+        Long actualNumElements = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).count();
+
+        try {
+            Assertions.assertEquals(numEl, actualNumElements);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @And("vengono letti gli eventi fino all'elemento di timeline {string} della notifica con deliveryDetailCode {string}, legalFactId con category {string} e documentType {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndLegalFactIdCategoryAndDocumentType(String timelineEventCategory, String deliveryDetailCode, String legalFactIdCategory, String documentType) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory())
+                        && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)
+                        && Objects.nonNull(element.getLegalFactsIds()) && element.getLegalFactsIds().size() > 0
+                        && element.getLegalFactsIds().get(0).getCategory().equals(legalFactIdCategory)
+                        && Objects.nonNull(element.getDetails().getAttachments()) && element.getDetails().getAttachments().size() > 0
+                        && element.getDetails().getAttachments().get(0).getDocumentType().equals(documentType)
+                ) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
