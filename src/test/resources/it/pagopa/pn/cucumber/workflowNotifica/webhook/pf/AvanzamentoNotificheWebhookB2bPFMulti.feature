@@ -50,8 +50,9 @@ Feature: avanzamento notifiche webhook b2b multi
     | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
     | digitalDomicile_address | test@fail.it |
-    And destinatario Mario Cucumber e:
-    | digitalDomicile_address | test@fail.it |
+    And destinatario
+      | taxId        | LVLDAA85T50G702B|
+      | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_Multi"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

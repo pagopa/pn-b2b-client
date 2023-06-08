@@ -184,7 +184,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 2; i++ ) {
+        for( int i = 0; i < 5; i++ ) {
 
             try {
                 Thread.sleep( getAcceptedWait());

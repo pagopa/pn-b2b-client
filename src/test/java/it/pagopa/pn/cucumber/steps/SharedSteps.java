@@ -107,7 +107,10 @@ public class SharedSteps {
     @Value("${pn.interop.token-oauth2.client-assertion}")
     private String clientAssertion;
 
-   
+    @Value("${pn.external.bearer-token-pg1.id}")
+    private String idOrganizationGherkinSrl;
+    @Value("${pn.external.bearer-token-pg2.id}")
+    private String idOrganizationCucumberSpa;
     private String enableInterop;
 
     private final PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
@@ -905,6 +908,23 @@ public class SharedSteps {
     public void injectScenarioNameInsideSfl4jMdc(Scenario scenario) {
         String scenarioName = scenario.getName();
         MDC.put( RestTemplateConfiguration.CUCUMBER_SCENARIO_NAME_MDC_ENTRY, scenarioName );
+    }
+
+
+    public String getIdOrganizationGherkinSrl() {
+        return idOrganizationGherkinSrl;
+    }
+
+    public void setIdOrganizationGherkinSrl(String idOrganizationGherkinSrl) {
+        this.idOrganizationGherkinSrl = idOrganizationGherkinSrl;
+    }
+
+    public String getIdOrganizationCucumberSpa() {
+        return idOrganizationCucumberSpa;
+    }
+
+    public void setIdOrganizationCucumberSpa(String idOrganizationCucumberSpa) {
+        this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
     }
 
 }
