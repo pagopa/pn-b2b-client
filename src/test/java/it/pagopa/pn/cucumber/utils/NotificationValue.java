@@ -55,7 +55,8 @@ public enum NotificationValue {
     /*TIMELINE DETAILS*/
     REC_INDEX("recIndex",null,false),
     DIGITAL_ADDRESS("digitalAddress",null,false),
-    REFUSAL_REASONS("refusalReasons", null, false);
+    REFUSAL_REASONS("refusalReasons", null, false),
+    GENERATED_AAR_URL("generatedAarUrl", null, false);
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";

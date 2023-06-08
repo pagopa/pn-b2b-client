@@ -40,8 +40,8 @@ Feature: Validazione notifica e2e
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista e che abbia details
             | refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
-    @e2e @ignore
-    Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisisco non valido scenario negativo
+    @e2e
+    Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
         And destinatario
@@ -50,8 +50,9 @@ Feature: Validazione notifica e2e
             | physicalAddress_zip          | 111111111111 |
             | physicalAddress_province     | yyyyy      |
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-        And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_REFUSED"
-        Then l'operazione ha prodotto un errore con status code "400"
+        Then si verifica che la notifica non viene accettata causa "TAX_ID"
+        And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista e che abbia details
+            | refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
 
     @e2e @ignore
@@ -71,6 +72,6 @@ Feature: Validazione notifica e2e
             | senderDenomination | Comune di milano |
         And destinatario Mario Cucumber
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-        Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
-        And viene verificato che nell'elemento di timeline della notifica "AAR_GENERATION" sia presente il campo generatedAarUrl valorizzato
+        Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista e che abbia details
+            | generatedAarUrl | NOT_NULL |
         

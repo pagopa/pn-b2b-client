@@ -119,6 +119,7 @@ public class DataTableTypeUtil {
                 .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                 .digitalAddress(getObjValue(DigitalAddress.class, data, DIGITAL_ADDRESS.key))
                 .refusalReasons(getListValue(NotificationRefusedError.class, data, REFUSAL_REASONS.key))
+                .generatedAarUrl(getValue(data, GENERATED_AAR_URL.key))
         );
         try {
             Thread.sleep(2);

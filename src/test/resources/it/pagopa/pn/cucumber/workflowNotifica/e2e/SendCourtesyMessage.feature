@@ -44,4 +44,4 @@ Feature: Invio messaggi cortesia e2e
           | subject | invio notifica con cucumber |
         And destinatario Dino De Sauro
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-        Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"
+        Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"

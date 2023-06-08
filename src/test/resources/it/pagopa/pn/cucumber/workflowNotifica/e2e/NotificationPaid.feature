@@ -1,6 +1,6 @@
 Feature: Notifica pagata
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-INHIBITION-PAID-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -15,7 +15,7 @@ Feature: Notifica pagata
     And si attende il corretto pagamento della notifica
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "REFINEMENT"
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

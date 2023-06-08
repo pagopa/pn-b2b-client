@@ -226,6 +226,9 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(detailsFromNotification.getRefusalReasons().get(i).getErrorCode(), detailsFromTest.getRefusalReasons().get(i).getErrorCode());
                 }
                 break;
+            case "AAR_GENERATION":
+                Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
+                break;
         }
     }
 
@@ -1070,25 +1073,6 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
-
-    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo generatedAarUrl valorizzato")
-    public void vieneVerificatoCheElementoTimelineSiaPresenteGeneratedAarUrl (String timelineEventCategory) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-
-        TimelineElement timelineElement = null;
-
-        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-        timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && !elem.getDetails().getGeneratedAarUrl().isEmpty()).findAny().orElse(null);
-        try {
-            logger.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(timelineElement);
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-
-    }
-
-
 
     /*
     UTILE PER TEST 
