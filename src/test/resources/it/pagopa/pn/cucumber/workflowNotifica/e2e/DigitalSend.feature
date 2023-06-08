@@ -16,4 +16,3 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "DELIVERED" esista e che abbia details
       | digitalAddress | {"address": "test@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | recIndex | 0 |
-    
