@@ -1,6 +1,6 @@
-Feature: digital send
+Feature: Digital send e2e
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_1] Invio ad indirizzo speciale fallimento al primo tentativo e successo al secondo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

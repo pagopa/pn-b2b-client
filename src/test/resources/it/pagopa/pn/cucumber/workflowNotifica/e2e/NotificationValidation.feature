@@ -45,14 +45,12 @@ Feature: Validazione notifica e2e
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
         And destinatario
-            | physicalAddress_foreignState        | ZZZZZZ     |
-            | physicalAddress_municipality | xxxxxx     |
-            | physicalAddress_zip          | 111111111111 |
-            | physicalAddress_province     | yyyyy      |
+            | taxId | CLMCST42R12D969Z |
+            | physicalAddress_zip          | 00000 |
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-        Then si verifica che la notifica non viene accettata causa "TAX_ID"
+        Then si verifica che la notifica non viene accettata causa "ADDRESS"
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista e che abbia details
-            | refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
+            | refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
 
     @e2e @ignore

@@ -881,6 +881,9 @@ public class SharedSteps {
             case "TAX_ID":
                 Assertions.assertTrue("TAXID_NOT_VALID".equalsIgnoreCase(errorCode));
                 break;
+            case "ADDRESS":
+                Assertions.assertTrue("NOT_VALID_ADDRESS".equalsIgnoreCase(errorCode));
+                break;
             default:
                 throw new IllegalArgumentException();
         }

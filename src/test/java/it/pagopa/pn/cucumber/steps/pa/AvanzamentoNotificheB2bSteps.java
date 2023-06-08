@@ -229,6 +229,10 @@ public class AvanzamentoNotificheB2bSteps {
             case "AAR_GENERATION":
                 Assertions.assertNotNull(detailsFromNotification.getGeneratedAarUrl());
                 break;
+            case "SEND_DIGITAL_FEEDBACK":
+                Assertions.assertNotNull(detailsFromNotification.getResponseStatus());
+                Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                break;
         }
     }
 
