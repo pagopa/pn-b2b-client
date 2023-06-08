@@ -398,8 +398,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     #PRVMNL80A01F205M ha un indirizzo PEC
-
-    #fail_AR
+  
+  #fail_AR
     #fail_890
     #fail_RIR
   @dev
@@ -408,7 +408,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
       | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | MNTMRA03M71C615V |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -419,7 +421,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | MNTMRA03M71C615V |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -430,11 +434,14 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | MNTMRA03M71C615V |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
 
   #fail_AR
   #fail_890
