@@ -981,6 +981,36 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato che nell'elemento di timeline della notifica {string} sia presente il campo Digital Address da National Registry")
+    public void vieneVerificatoCheElementoTimelineSianoConfiguratoCampoDigitalAddressNationalRegistry(String timelineEventCategory) {
+
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            logger.info("TIMELINE_ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getDigitalAddress());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+    }
 
     /*
     UTILE PER TEST 
