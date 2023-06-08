@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pf;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.testclient.AddressManagerOTP;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
@@ -17,9 +18,12 @@ public class UserAttributesSteps {
     private Consent consent;
     private HttpStatusCodeException consentError;
 
+    private final AddressManagerOTP addressManagerOTP;
+
     @Autowired
-    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
+    public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient, AddressManagerOTP addressManagerOTP) {
         this.webUserAttributesClient = webUserAttributesClient;
+        this.addressManagerOTP = addressManagerOTP;
 
     }
 
@@ -55,4 +59,8 @@ public class UserAttributesSteps {
         Assertions.assertTrue(consent.getAccepted());
     }
 
+    @Given("viene effettuata la query")
+    public void vieneEffettuataLaQuery() {
+        addressManagerOTP.getOtp();
+    }
 }

@@ -7,11 +7,13 @@ import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.Notificatio
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 
+@Component
 public class PnWebPaClientImpl implements IPnWebPaClient{
 
 

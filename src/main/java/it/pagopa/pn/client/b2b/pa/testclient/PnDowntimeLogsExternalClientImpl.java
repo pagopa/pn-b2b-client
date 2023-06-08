@@ -7,12 +7,14 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLog
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 import java.util.*;
 
+@Component
 public class PnDowntimeLogsExternalClientImpl implements IPnDowntimeLogsClient {
 
     private final ApplicationContext ctx;

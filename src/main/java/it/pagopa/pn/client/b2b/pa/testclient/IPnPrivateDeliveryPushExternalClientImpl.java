@@ -7,5 +7,5 @@ import java.time.OffsetDateTime;
 
 public interface IPnPrivateDeliveryPushExternalClientImpl {
 
-    public NotificationHistoryResponse getNotificationHistory(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException;
+    NotificationHistoryResponse getNotificationHistory(String iun, Integer numberOfRecipients, OffsetDateTime createdAt) throws RestClientException;
 }

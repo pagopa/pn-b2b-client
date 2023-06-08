@@ -5,11 +5,13 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
 
+@Component
 public class PnPrivateDeliveryPushExternalClientImpl implements IPnPrivateDeliveryPushExternalClientImpl {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
