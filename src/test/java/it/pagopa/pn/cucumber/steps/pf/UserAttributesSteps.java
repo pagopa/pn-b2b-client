@@ -57,10 +57,7 @@ public class UserAttributesSteps {
         Assertions.assertTrue(consent.getAccepted());
     }
 
-    @Given("viene effettuata la query")
-    public void vieneEffettuataLaQuery() {
-        addressManagerOTP.getOtp();
-    }
+ 
 
     @Given("viene testato l'otp")
     public void vieneTestatoLOtp() {
