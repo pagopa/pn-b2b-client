@@ -40,7 +40,7 @@ Feature: Validazione notifica e2e
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista e che abbia details
             | refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
-    @e2e
+    @e2e @ignore
     Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |

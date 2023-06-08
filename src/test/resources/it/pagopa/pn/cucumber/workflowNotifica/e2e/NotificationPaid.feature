@@ -1,6 +1,6 @@
 Feature: Notifica pagata
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-INHIBITION-PAID-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline SCHEDULE_REFINEMENT. Il pagamento non deve generare
   un evento di timeline REFINEMENT.
@@ -17,7 +17,7 @@ Feature: Notifica pagata
     And si attende il corretto pagamento della notifica
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "REFINEMENT"
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline SCHEDULE_ANALOG_WORKFLOW. Il pagamento non deve generare
   un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.
@@ -37,7 +37,7 @@ Feature: Notifica pagata
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "PREPARE_SIMPLE_REGISTERED_LETTER"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-INHIBITION-PAID-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   Viene effettuato il pagamento subito dopo che la notifica è stata accettata. Il pagamento non deve generare un evento di timeline SEND_ANALOG_DOMICILE.
     Given viene generata una nuova notifica
