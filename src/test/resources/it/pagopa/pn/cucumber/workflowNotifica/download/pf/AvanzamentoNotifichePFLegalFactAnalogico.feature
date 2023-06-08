@@ -136,3 +136,14 @@ Feature: Download legalFact analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
 
+  @dev
+  Scenario: [B2B_PA_ANALOGICO_LEGALFACT_12_TEST] Invio notifica presenza allegato in corrispondenza dello stato "Aggiornamento sull'invio cartaceo" e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo PN-6090
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | via@OK-Giacenza_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
+    Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
