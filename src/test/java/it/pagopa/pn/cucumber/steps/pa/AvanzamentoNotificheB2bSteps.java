@@ -186,7 +186,10 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER, 4, waiting * 3);
                 break;
             case "SEND_SIMPLE_REGISTERED_LETTER":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER, 6, waiting * 3);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER, 16, waiting * 3);
+                break;
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS, 16, waiting * 3);
                 break;
             case "PAYMENT":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.PAYMENT, 15, sharedSteps.getWorkFlowWait());
