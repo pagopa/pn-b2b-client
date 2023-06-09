@@ -301,34 +301,6 @@ public class SharedSteps {
                         .taxId(cucumberAnalogicTaxID));
     }
 
-    @And("destinatario Louis Armstrong")
-    public void destinatarioLouisArmstrong() {
-        this.notificationRequest.addRecipientsItem(
-                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Louis Armstrong")
-                        .taxId("RMSLSO31M04Z404R")
-                        .digitalDomicile(null));
-    }
-
-    @And("destinatario Dino De Sauro")
-    public void destinatarioDinoDeSauro() {
-        this.notificationRequest.addRecipientsItem(
-                dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Dino De Sauro")
-                        .taxId("DSRDNI00A01A225I")
-                        .digitalDomicile(null));
-    }
-
-    @And("destinatario Dino De Sauro e:")
-    public void destinatarioDinoDeSauro(@Transpose NotificationRecipient recipient) {
-        this.notificationRequest.addRecipientsItem(
-                recipient
-                        .denomination("Dino De Sauro")
-                        .taxId("DSRDNI00A01A225I"));
-
-
-    }
-
     @And("destinatario Cristoforo Colombo")
     public void destinatarioCristoforoColombo() {
         this.notificationRequest.addRecipientsItem(

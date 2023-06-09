@@ -7,11 +7,12 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "ALLEGATO"
         And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_NOTFOUND"}] |
 
-    @e2e @ignore
+    @e2e
     Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_2] validazione fallita allegati notifica - Sha256 differenti
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -19,11 +20,12 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b con sha256 differente dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "SHA_256"
         And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_SHA_ERROR"}] |
 
-    @e2e @ignore
+    @e2e
     Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_3] validazione fallita allegati notifica - estensione errata
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -31,6 +33,7 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b con estensione errata dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "EXTENSION"
         And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_PDF_INVALID_ERROR"}] |
@@ -44,11 +47,12 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "TAX_ID"
         And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
-    @e2e @ignore
+    @e2e
     Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -58,6 +62,7 @@ Feature: Validazione notifica e2e
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "ADDRESS"
         And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
@@ -70,6 +75,7 @@ Feature: Validazione notifica e2e
         And destinatario Mario Cucumber
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
             | legalFactsIds | [{"category": "SENDER_ACK"}] |
 
@@ -81,6 +87,7 @@ Feature: Validazione notifica e2e
         And destinatario Mario Cucumber
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then viene letta la timeline fino all'elemento "AAR_GENERATION"
+            | NULL | NULL |
         And viene verificato che l'elemento di timeline "AAR_GENERATION" esista
             | details | NOT_NULL |
             | details_recIndex | 0 |

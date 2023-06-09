@@ -1,6 +1,6 @@
 Feature: Digital send e2e
 
-  @e2e @ignore
+  @e2e
   Scenario: [B2B_DIGITAL_SEND_6] Invio ad indirizzo speciale successo al primo tentativo
     Given viene generata una nuova notifica
         | subject | invio notifica con cucumber |
@@ -8,7 +8,9 @@ Feature: Digital send e2e
     And destinatario Mario Gherkin e:
         | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
+    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT_WORKFLOW"
+        | NULL | NULL |
+    And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
         | details | NOT_NULL |
         | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
         | details_recIndex | 0 |
@@ -24,15 +26,30 @@ Feature: Digital send e2e
         | details_digitalAddressSource | SPECIAL |
         | details_retryNumber | 0 |
         | details_sentAttemptMade | 0 |
-    # Then viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-    #    | details | NOT_NULL |
-    #    | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
-    #    | details_recIndex | 0 |
-    #    | details_digitalAddressSource | SPECIAL |
-    #    | details_retryNumber | 0 |
-    #    | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+        | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
+        | details | NOT_NULL |
+        | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+        | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT_WORKFLOW" esista
+        | details | NOT_NULL |
+        | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+        | details | NOT_NULL |
+        | details_recIndex | 0 |
+        | details_digitalAddressSource | PLATFORM |
+        | details_retryNumber | 0 |
+        | details_sentAttemptMade | 0 |
+        | details_isAvailable | false |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+        | details | NOT_NULL |
+        | details_recIndex | 0 |
+        | details_digitalAddressSource | SPECIAL |
+        | details_retryNumber | 0 |
+        | details_sentAttemptMade | 0 |
+        | details_isAvailable | true |
 
-  @e2e @ignore
+  @e2e
   Scenario: [B2B_DIGITAL_SEND_7] Invio ad indirizzo speciale fallimento al primo tentativo e successo al secondo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

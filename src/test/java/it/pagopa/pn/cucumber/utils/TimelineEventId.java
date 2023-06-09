@@ -289,17 +289,6 @@ public enum TimelineEventId {
                     .build();
         }
     },
-
-    SCHEDULE_REFINEMENT_WORKFLOW("SCHEDULE_REFINEMENT_WORKFLOW") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
     */
 
     REQUEST_REFUSED("REQUEST_REFUSED") {
@@ -398,6 +387,17 @@ public enum TimelineEventId {
     },
 
     DIGITAL_SUCCESS_WORKFLOW("DIGITAL_SUCCESS_WORKFLOW") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
+
+    SCHEDULE_REFINEMENT_WORKFLOW("SCHEDULE_REFINEMENT_WORKFLOW") {
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()
