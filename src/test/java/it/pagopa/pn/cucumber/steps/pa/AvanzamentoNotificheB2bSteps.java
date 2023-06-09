@@ -147,7 +147,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW, 3, waiting * 3);
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 4, waiting * 3);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW, 15, waiting * 3);
                 break;
             case "NOT_HANDLED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOT_HANDLED, 15, sharedSteps.getWorkFlowWait());
@@ -183,7 +183,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_FEEDBACK, 4, waiting * 3);
                 break;
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER, 4, waiting * 3);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_SIMPLE_REGISTERED_LETTER, 16, waiting * 3);
                 break;
             case "SEND_SIMPLE_REGISTERED_LETTER":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER, 16, waiting * 3);

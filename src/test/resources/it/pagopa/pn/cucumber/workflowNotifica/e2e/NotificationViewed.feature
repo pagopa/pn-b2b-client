@@ -27,17 +27,17 @@ Feature: Notifica visualizzata
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
-  La notifica viene letta subito dopo la generazione dell'evento di timeline SCHEDULE_ANALOG_WORKFLOW. Questa lettura non deve generare
+  La notifica viene letta subito dopo la generazione dell'evento di timeline DIGITAL_FAILURE_WORKFLOW. Questa lettura non deve generare
   un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile | NULL |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    Then la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "PREPARE_SIMPLE_REGISTERED_LETTER"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
 
