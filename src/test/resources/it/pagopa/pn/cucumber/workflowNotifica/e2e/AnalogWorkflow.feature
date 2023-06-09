@@ -1,6 +1,6 @@
 Feature: Workflow analogico
 
-  @e2e @ignore
+  @e2e
   Scenario: [E2E-WF-ANALOG-1] Invio notifica con percorso analogico 890 con verifica elementi di timeline SEND_ANALOG_PROGRESS con legalFactId di category ANALOG_DELIVERY
     e documentType 23L, SEND_ANALOG_FEEDBACK e ANALOG_SUCCESS_WORKFLOW
     Given viene generata una nuova notifica
@@ -16,7 +16,7 @@ Feature: Workflow analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @e2e @ignore
+  @e2e
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico 890. Invio 890 con persona abilitata.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

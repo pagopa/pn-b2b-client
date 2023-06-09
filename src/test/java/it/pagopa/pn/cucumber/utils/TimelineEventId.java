@@ -176,28 +176,6 @@ public enum TimelineEventId {
         }
     },
 
-    DIGITAL_FAILURE_WORKFLOW("DIGITAL_FAILURE_WORKFLOW") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
-    ANALOG_SUCCESS_WORKFLOW("ANALOG_SUCCESS_WORKFLOW") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
     ANALOG_FAILURE_WORKFLOW("ANALOG_FAILURE_WORKFLOW") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -244,17 +222,6 @@ public enum TimelineEventId {
     },
 
     COMPLETELY_UNREACHABLE("COMPLETELY_UNREACHABLE") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
-    REFINEMENT("REFINEMENT") {
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()
@@ -398,6 +365,39 @@ public enum TimelineEventId {
     },
 
     SCHEDULE_REFINEMENT_WORKFLOW("SCHEDULE_REFINEMENT_WORKFLOW") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
+
+    REFINEMENT("REFINEMENT") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
+
+    ANALOG_SUCCESS_WORKFLOW("ANALOG_SUCCESS_WORKFLOW") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
+
+    DIGITAL_FAILURE_WORKFLOW("DIGITAL_FAILURE_WORKFLOW") {
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()

@@ -12,9 +12,14 @@ Feature: Scelta canale di invio (Digitale o analogico)
         | details | NOT_NULL |
         | details_recIndex | 0 |
         | details_digitalAddressSource | PLATFORM |
-        | details_retryNumber | 0 |
         | details_sentAttemptMade | 0 |
-        | details_isAvailable | true |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | PLATFORM |
+      | details_retryNumber | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_isAvailable | true |
 
   @e2e
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-2] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma MA ha valorizzato l’indirizzo Speciale
@@ -23,6 +28,11 @@ Feature: Scelta canale di invio (Digitale o analogico)
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "GET_ADDRESS"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS"
         | details | NOT_NULL |
         | details_recIndex | 0 |
         | details_digitalAddressSource | SPECIAL |
@@ -48,6 +58,11 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "GET_ADDRESS"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | GENERAL |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |

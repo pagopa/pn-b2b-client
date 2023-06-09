@@ -91,8 +91,16 @@ public class SharedSteps {
     @Value("${pn.configuration.wait.millis:10000}")
     private Integer wait;
 
+    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6}")
+    private Integer schedulingDaysSuccessDigitalRefinement;
+
+    @Value("${pn.configuration.non.visibility.time:10}")
+    private Integer timeToAddInNonVisibilityTimeCase;
+
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
+    private final Integer schedulingDaysSuccessDigitalRefinementDefault = 6;
+    private final Integer timeToAddInNonVisibilityTimeCaseDefault = 10;
 
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
@@ -790,6 +798,16 @@ public class SharedSteps {
     public Integer getWait() {
         if (wait == null) return waitDefault;
         return wait;
+    }
+
+    public Integer getSchedulingDaysSuccessDigitalRefinement() {
+        if (schedulingDaysSuccessDigitalRefinement == null) return schedulingDaysSuccessDigitalRefinementDefault;
+        return schedulingDaysSuccessDigitalRefinement;
+    }
+
+    public Integer getTimeToAddInNonVisibilityTimeCase() {
+        if (schedulingDaysSuccessDigitalRefinement == null) return timeToAddInNonVisibilityTimeCaseDefault;
+        return timeToAddInNonVisibilityTimeCase;
     }
 
     @Before("@integrationTest")
