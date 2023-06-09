@@ -1163,6 +1163,81 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("vengono letti gli eventi fino all'elemento di timeline {string} della notifica con deliveryDetailCode {string}, legalFactId con category {string} e documentType {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndLegalFactIdCategoryAndDocumentType(String timelineEventCategory, String deliveryDetailCode, String legalFactIdCategory, String documentType) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory())
+                        && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)
+                        && Objects.nonNull(element.getLegalFactsIds()) && element.getLegalFactsIds().size() > 0
+                        && element.getLegalFactsIds().get(0).getCategory().getValue().equals(legalFactIdCategory)
+                        && Objects.nonNull(element.getDetails().getAttachments()) && element.getDetails().getAttachments().size() > 0
+                        && element.getDetails().getAttachments().get(0).getDocumentType().equals(documentType)
+                ) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @And("vengono letti gli eventi fino all'elemento di timeline {string} della notifica con deliveryDetailCode {string} e con deliveryFailureCause {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndDeliveryFailureCause(String timelineEventCategory, String deliveryDetailCode, String deliveryFailureCause) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory())
+                        && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)
+                        && element.getDetails().getDeliveryFailureCause().equals(deliveryFailureCause)
+                ) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     /*
     UTILE PER TEST 
 
