@@ -64,7 +64,10 @@ public enum NotificationValue {
     DETAILS_RETRY_NUMBER("details_retryNumber", "0", false),
     DETAILS_SENT_ATTEMPT_MADE("details_sentAttemptMade", "0", false),
     DETAILS_SENDING_RECEIPT("details_sendingReceipts", null, false),
-    DETAILS_IS_AVAILABLE("details_isAvailable", null, false);
+    DETAILS_IS_AVAILABLE("details_isAvailable", null, false),
+    DETAILS_IS_DELIVERY_DETAIL_CODE("details_deliveryDetailCode", null, false),
+    DETAILS_IS_DELIVERY_FAILURE_CAUSE("details_DeliveryFailureCause", null, false);
+
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";

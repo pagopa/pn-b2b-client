@@ -67,7 +67,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-
+    */
     SEND_ANALOG_FEEDBACK("SEND_ANALOG_FEEDBACK") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -79,7 +79,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-
+    /*
     SEND_ANALOG_PROGRESS("SEND_ANALOG_PROGRESS") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -88,7 +88,7 @@ public enum TimelineEventId {
                     .withIun(eventId.getIun())
                     .withRecIndex(eventId.getRecIndex())
                     .withSentAttemptMade(eventId.getSentAttemptMade())
-                    .withProgressIndex(eventId.getProgressIndex())
+                    //.withProgressIndex(eventId.getProgressIndex())
                     .build();
         }
     },
@@ -105,7 +105,7 @@ public enum TimelineEventId {
                     .withCorrelationId(eventId.getRelatedTimelineId())
                     .build();
         }
-    },
+    }, */
 
     PREPARE_SIMPLE_REGISTERED_LETTER("PREPARE_SIMPLE_REGISTERED_LETTER") {
         @Override
@@ -136,11 +136,11 @@ public enum TimelineEventId {
                     .withCategory(this.getValue())
                     .withIun(eventId.getIun())
                     .withRecIndex(eventId.getRecIndex())
-                    .withProgressIndex(eventId.getProgressIndex())
+                    //.withProgressIndex(eventId.getProgressIndex())
                     .build();
         }
     },
-
+/*
     PREPARE_ANALOG_DOMICILE("PREPARE_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {

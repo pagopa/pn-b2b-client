@@ -119,6 +119,8 @@ public class DataTableTypeUtil {
         String responseStatus = getValue(data, DETAILS_RESPONSE_STATUS.key);
         String digitalAddressSource = getValue(data, DETAILS_DIGITAL_ADDRESS_SOURCE.key);
         String isAvailable = getValue(data, DETAILS_IS_AVAILABLE.key);
+        String deliveryDetailCode = getValue(data, DETAILS_IS_DELIVERY_DETAIL_CODE.key);
+        String deliveryFailureCause = getValue(data, DETAILS_IS_DELIVERY_FAILURE_CAUSE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -137,6 +139,8 @@ public class DataTableTypeUtil {
                         .retryNumber(retryNumber != null ? Integer.parseInt(retryNumber) : null)
                         .sendingReceipts(getListValue(SendingReceipt.class, data, DETAILS_SENDING_RECEIPT.key))
                         .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
+                        .deliveryDetailCode(deliveryDetailCode != null ? getValue(data, DETAILS_IS_DELIVERY_DETAIL_CODE.key) : null)
+                        .deliveryFailureCause(deliveryFailureCause != null ? getValue(data, DETAILS_IS_DELIVERY_FAILURE_CAUSE.key) : null)
                 );
         try {
             Thread.sleep(2);
