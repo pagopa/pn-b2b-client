@@ -37,7 +37,10 @@ Feature: Invio messaggi cortesia e2e
     Scenario: [E2E-SEND_COURTESY_MESSAGE_3] invio messaggio di cortesia - invio per AppIO
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
-        And destinatario Mario Cucumber
+        And destinatario
+            | denomination | Cristoforo Colombo |
+            | taxId | CLMCST42R12D969Z |
+            | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
         And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
@@ -48,12 +51,12 @@ Feature: Invio messaggi cortesia e2e
             | details_recIndex | 0 |
 
     @e2e
-      Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato
-        Given viene generata una nuova notifica
-          | subject | invio notifica con cucumber |
-        And destinatario
-            | denomination | Dino Sauro |
-            | taxId | DSRDNI00A01A225I |
-            | digitalDomicile | NULL |
-        When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-        Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"
+  Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato
+    Given viene generata una nuova notifica
+        | subject | invio notifica con cucumber |
+    And destinatario
+        | denomination | Dino Sauro |
+        | taxId | DSRDNI00A01A225I |
+        | digitalDomicile | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"

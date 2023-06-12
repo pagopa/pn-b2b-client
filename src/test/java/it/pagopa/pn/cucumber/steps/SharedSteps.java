@@ -94,13 +94,21 @@ public class SharedSteps {
     @Value("${pn.configuration.scheduling.days.success.digital.refinement:6}")
     private Integer schedulingDaysSuccessDigitalRefinement;
 
+    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6}")
+    private Integer schedulingDaysFailureDigitalRefinement;
+
+    @Value("${pn.configuration.second.notification.workflow.waiting.time:6}")
+    private Integer secondNotificationWorkflowWaitingTime;
+
     @Value("${pn.configuration.non.visibility.time:10}")
     private Integer timeToAddInNonVisibilityTimeCase;
 
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
     private final Integer schedulingDaysSuccessDigitalRefinementDefault = 6;
+    private final Integer schedulingDaysFailureDigitalRefinementDefault = 6;
     private final Integer timeToAddInNonVisibilityTimeCaseDefault = 10;
+    private final Integer secondNotificationWorkflowWaitingTimeDefault = 6;
 
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
@@ -805,9 +813,19 @@ public class SharedSteps {
         return schedulingDaysSuccessDigitalRefinement;
     }
 
+    public Integer getSchedulingDaysFailureDigitalRefinement() {
+        if (schedulingDaysFailureDigitalRefinement == null) return schedulingDaysFailureDigitalRefinementDefault;
+        return schedulingDaysFailureDigitalRefinement;
+    }
+
     public Integer getTimeToAddInNonVisibilityTimeCase() {
         if (schedulingDaysSuccessDigitalRefinement == null) return timeToAddInNonVisibilityTimeCaseDefault;
         return timeToAddInNonVisibilityTimeCase;
+    }
+
+    public Integer getSecondNotificationWorkflowWaitingTime() {
+        if (secondNotificationWorkflowWaitingTime == null) return secondNotificationWorkflowWaitingTimeDefault;
+        return secondNotificationWorkflowWaitingTime;
     }
 
     @Before("@integrationTest")

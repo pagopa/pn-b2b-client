@@ -25,14 +25,17 @@ Feature: Scelta canale di invio (Digitale o analogico)
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-2] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma MA ha valorizzato l’indirizzo Speciale
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario Mario Cucumber
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "GET_ADDRESS"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS"
+    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
         | details | NOT_NULL |
         | details_recIndex | 0 |
         | details_digitalAddressSource | SPECIAL |

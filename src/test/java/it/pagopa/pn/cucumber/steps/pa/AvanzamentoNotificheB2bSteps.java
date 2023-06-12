@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
+import java.sql.Time;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -270,6 +271,22 @@ public class AvanzamentoNotificheB2bSteps {
         return null;
     }
 
+    private TimelineElement getTimelineElementByEventId (String timelineEventCategory, TimelineElement timelineElementFromTest) {
+        List<TimelineElement> timelineElementList = sharedSteps.getNotificationTimeline();
+        String iun;
+        if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
+            String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            iun = new String(decodedBytes);
+        } else {
+            // proceed with default flux
+            iun = sharedSteps.getSentNotification().getIun();
+        }
+        // get timeline event id
+        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, timelineElementFromTest);
+        return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
+    }
+
     private void checkTimelineElementEquality(String timelineEventCategory, TimelineElement elementFromNotification, TimelineElement elementFromTest) {
         TimelineElementDetails detailsFromNotification = elementFromNotification.getDetails();
         TimelineElementDetails detailsFromTest = elementFromTest.getDetails();
@@ -320,6 +337,7 @@ public class AvanzamentoNotificheB2bSteps {
                 }
                 break;
             case "DIGITAL_SUCCESS_WORKFLOW":
+            case "DIGITAL_FAILURE_WORKFLOW":
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
@@ -345,24 +363,6 @@ public class AvanzamentoNotificheB2bSteps {
                 }
                 break;
         }
-    }
-
-    private void checkScheduleRefinementStep(List<TimelineElement> timelineElementList, TimelineElement timelineElement) {
-        TimelineElement lastOkFeedback = Lists.reverse(timelineElementList).stream().filter(elem ->
-                elem.getCategory().getValue().equals(TimelineElementCategory.SEND_DIGITAL_FEEDBACK.getValue()) &&
-                        elem.getDetails().getResponseStatus().getValue().equals(ResponseStatus.OK.getValue())
-        ).findFirst().orElse(null);
-        Assertions.assertNotNull(lastOkFeedback);
-        OffsetDateTime notificationDate = lastOkFeedback.getDetails().getNotificationDate();
-        Integer schedulingDaysSuccessDigitalRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
-        OffsetDateTime schedulingDate = notificationDate.plusMinutes(schedulingDaysSuccessDigitalRefinement);
-        Integer hour = schedulingDate.getHour();
-        Integer minutes = schedulingDate.getMinute();
-        if ((hour == 21 && minutes > 0) || hour > 21) {
-            Integer timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
-            schedulingDate = schedulingDate.plusMinutes(timeToAddInNonVisibilityTimeCase);
-        }
-        Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
@@ -1150,49 +1150,85 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("viene verificato che l'elemento di timeline {string} esista")
     public void vieneVerificatoCheElementoTimelineEsista(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) {
-        List<TimelineElement> timelineElementList = sharedSteps.getNotificationTimeline();
-        String iun;
-        if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
-            String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
-            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-            iun = new String(decodedBytes);
-        } else {
-            // proceed with default flux
-            iun = sharedSteps.getSentNotification().getIun();
-        }
-        // get timeline event id
-        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, timelineElementFromTest);
-        TimelineElement timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
+        TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, timelineElementFromTest);
         try {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
             if (timelineElementFromTest != null) {
                 checkTimelineElementEquality(timelineEventCategory, timelineElement, timelineElementFromTest);
             }
-            // SCHEDULE_REFINEMENT checks
-            if (timelineEventCategory.equals(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue())) {
-                checkScheduleRefinementStep(timelineElementList, timelineElement);
-            }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
 
+    @And("viene schedulato il perfezionamento per decorrenza termini per il caso {string}")
+    public void vieneSchedulatoIlPerfezionamento(String timelineCategory, @Transpose TimelineElement timelineElementFromTest) {
+        TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), timelineElementFromTest);
+
+        TimelineElement timelineElementForDateCalculation = null;
+        if (timelineCategory.equals(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
+            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.SEND_DIGITAL_FEEDBACK.getValue(), timelineElementFromTest);
+        } else if (timelineCategory.equals(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue())) {
+            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue(), timelineElementFromTest);
+        }
+
+        Assertions.assertNotNull(timelineElementForDateCalculation);
+
+        OffsetDateTime notificationDate = null;
+        Integer schedulingDaysDigitalRefinement = null;
+        if (timelineCategory.equals(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
+            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+            schedulingDaysDigitalRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
+        } else if (timelineCategory.equals(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue())) {
+            notificationDate = timelineElementForDateCalculation.getTimestamp();
+            schedulingDaysDigitalRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
+        }
+
+        OffsetDateTime schedulingDate = notificationDate.plusMinutes(schedulingDaysDigitalRefinement);
+        Integer hour = schedulingDate.getHour();
+        Integer minutes = schedulingDate.getMinute();
+        if ((hour == 21 && minutes > 0) || hour > 21) {
+            Integer timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
+            schedulingDate = schedulingDate.plusMinutes(timeToAddInNonVisibilityTimeCase);
+        }
+        Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
+    }
+
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
     public void siAttendePresenzaPerfezionamentoDecorrenzaTermini(@Transpose TimelineElement timelineElementFromTest) throws InterruptedException {
-        List<TimelineElement> timelineElementList = sharedSteps.getNotificationTimeline();
         String iun = sharedSteps.getSentNotification().getIun();
-        String timelineEventId = getTimelineEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), iun, timelineElementFromTest);
-        TimelineElement timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
         if (timelineElementFromTest != null) {
+            TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), timelineElementFromTest);
             OffsetDateTime schedulingDate = timelineElement.getDetails().getSchedulingDate();
             OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
             Long remainingTime = ChronoUnit.MILLIS.between(currentDate, schedulingDate);
             if (remainingTime > 0) {
                 Thread.sleep(remainingTime + 30 * 1000);
             }
+            // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-            timelineElementList = sharedSteps.getSentNotification().getTimeline();
+            List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
+            sharedSteps.setNotificationTimeline(timelineElementList);
+        }
+    }
+
+    @And("si attende che si ritenti l'invio dopo l'evento {string}")
+    public void siAttendeCheSiRitentiInvio(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) throws InterruptedException {
+        String iun = sharedSteps.getSentNotification().getIun();
+        if (timelineElementFromTest != null) {
+            TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, timelineElementFromTest);
+            OffsetDateTime firstSend = timelineElement.getTimestamp();
+            Integer secondNotificationWorkflowWaitingTime = sharedSteps.getSecondNotificationWorkflowWaitingTime();
+            OffsetDateTime nextSend = firstSend.plusMinutes(secondNotificationWorkflowWaitingTime);
+            OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
+            Long remainingTime = ChronoUnit.MILLIS.between(currentDate, nextSend);
+            if (remainingTime > 0) {
+                Thread.sleep(remainingTime + 30 * 1000);
+            }
+            // get the updated notification
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+            List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
             sharedSteps.setNotificationTimeline(timelineElementList);
         }
     }
