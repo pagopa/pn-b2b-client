@@ -139,7 +139,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And si verifica che l'elemento di timeline della lettura non riporti i dati del delegato
 
-  Scenario: [WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
+  Scenario: [WEB-PF-MULTI-MANDATE_14] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
@@ -150,3 +150,13 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+
+  Scenario: [WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibil
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario
+      | denomination | Dino Sauro |
+      | taxId | DSRDNI00A01A225I |
+      | digitalDomicile | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
