@@ -734,6 +734,10 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 break;
+            case "leonardo da vinci":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
