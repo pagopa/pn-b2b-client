@@ -378,10 +378,11 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                     }
                     Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
-
-                    if(Objects.nonNull(detailsFromTest.getAttachments()))  {
-                        for (int i = 0; i < elementFromNotification.getDetails().getAttachments().size(); i++) {
-                            Assertions.assertEquals(elementFromNotification.getDetails().getAttachments().get(i).getDocumentType(), detailsFromTest.getAttachments().get(i).getDocumentType());
+                    if (Objects.nonNull(detailsFromTest.getAttachments())) {
+                        Assertions.assertNotNull(detailsFromNotification.getAttachments());
+                        Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
+                        for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
+                            Assertions.assertEquals(detailsFromNotification.getAttachments().get(i).getDocumentType(), detailsFromTest.getAttachments().get(i).getDocumentType());
                         }
                     }
                 }

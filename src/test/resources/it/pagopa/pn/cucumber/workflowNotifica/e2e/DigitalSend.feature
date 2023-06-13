@@ -313,7 +313,7 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
@@ -322,7 +322,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_responseStatus | OK |
       | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
@@ -330,12 +330,12 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     # secondo invio
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
@@ -343,7 +343,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_responseStatus | KO |
       | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
