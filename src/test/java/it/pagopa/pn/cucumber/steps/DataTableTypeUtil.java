@@ -144,6 +144,7 @@ public class DataTableTypeUtil {
                         .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
                         .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
                         .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
+                        .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENT.key))
                 );
 
         dataTest.setTimelineElement(timelineElement);

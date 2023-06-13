@@ -371,7 +371,19 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SEND_ANALOG_PROGRESS":
                 if (detailsFromTest != null) {
+                    if(Objects.nonNull(elementFromTest.getLegalFactsIds()))
+                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+                    for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                        Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                    }
                     Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+
+                    if(Objects.nonNull(detailsFromTest.getAttachments()))  {
+                        for (int i = 0; i < elementFromNotification.getDetails().getAttachments().size(); i++) {
+                            Assertions.assertEquals(elementFromNotification.getDetails().getAttachments().get(i).getDocumentType(), detailsFromTest.getAttachments().get(i).getDocumentType());
+                        }
+                    }
                 }
                 break;
         }
