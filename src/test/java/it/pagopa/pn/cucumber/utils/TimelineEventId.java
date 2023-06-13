@@ -164,7 +164,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-/*
+
     SEND_ANALOG_DOMICILE("SEND_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -176,6 +176,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
+/*
 
     DIGITAL_DELIVERY_CREATION_REQUEST("DIGITAL_DELIVERY_CREATION_REQUEST") {
         @Override
@@ -244,6 +245,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
+    */
 
     SCHEDULE_ANALOG_WORKFLOW("SCHEDULE_ANALOG_WORKFLOW") {
         @Override
@@ -256,7 +258,6 @@ public enum TimelineEventId {
                     .build();
         }
     },
-    */
 
     REQUEST_REFUSED("REQUEST_REFUSED") {
         @Override

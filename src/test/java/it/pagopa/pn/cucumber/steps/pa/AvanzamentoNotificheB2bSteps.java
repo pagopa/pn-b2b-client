@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import java.lang.invoke.MethodHandles;
+import java.sql.Time;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -270,6 +271,10 @@ public class AvanzamentoNotificheB2bSteps {
                 return TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
             case "PREPARE_ANALOG_DOMICILE":
                 return TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
+            case "SCHEDULE_ANALOG_WORKFLOW":
+                return TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
+            case "SEND_ANALOG_DOMICILE":
+                return TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
         }
         return null;
     }
@@ -394,6 +399,17 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
+            case "PREPARE_SIMPLE_REGISTERED_LETTER":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                }
+                break;
+            case "SEND_SIMPLE_REGISTERED_LETTER":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    Assertions.assertEquals(detailsFromNotification.getAnalogCost(), detailsFromTest.getAnalogCost());
+                }
+                break;
         }
     }
 
@@ -443,6 +459,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
         return timelineElement;
     }
+
     @And("viene verificato che il numero di elementi di timeline {string} sia di {long}")
     public void getTimelineElementListSize(String timelineEventCategory, Long size, @Transpose DataTest dataFromTest) {
         List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();

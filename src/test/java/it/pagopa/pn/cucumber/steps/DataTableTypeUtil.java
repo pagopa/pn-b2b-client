@@ -122,6 +122,7 @@ public class DataTableTypeUtil {
         String isAvailable = getValue(data, DETAILS_IS_AVAILABLE.key);
         String isFirstRetry = getValue(data, IS_FIRST_SEND_RETRY.key);
         String progressIndex = getValue(data, PROGRESS_INDEX.key);
+        String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -145,6 +146,8 @@ public class DataTableTypeUtil {
                         .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
                         .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
                         .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
+                        .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
+                        .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
                 );
 
         dataTest.setTimelineElement(timelineElement);
