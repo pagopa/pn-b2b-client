@@ -3,18 +3,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+config/api-keys-*.properties
+config/bearer-token-*.properties
 config/api-keys.properties
-config/api-keys-test.properties
-config/api-keys-dev2.properties
-config/api-keys-svil.properties
-config/api-keys-test.properties
-config/api-keys-uat.properties
 config/bearer-token.properties
-config/bearer-token-dev.properties
-config/bearer-token-dev2.properties
-config/bearer-token-svil.properties
-config/bearer-token-test.properties
-config/bearer-token-uat.properties
+
 
 ### Node ###
 **/node_modules/
