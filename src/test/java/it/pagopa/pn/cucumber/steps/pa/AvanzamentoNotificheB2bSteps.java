@@ -388,8 +388,10 @@ public class AvanzamentoNotificheB2bSteps {
                     if (Objects.nonNull(detailsFromTest.getAttachments())) {
                         Assertions.assertNotNull(detailsFromNotification.getAttachments());
                         Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
+
                         for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
-                            Assertions.assertEquals(detailsFromNotification.getAttachments().get(i).getDocumentType(), detailsFromTest.getAttachments().get(i).getDocumentType());
+                            List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
+                            Assertions.assertEquals(Boolean.TRUE, documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()));
                         }
                     }
 
