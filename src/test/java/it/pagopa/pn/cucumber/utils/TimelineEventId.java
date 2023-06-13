@@ -141,6 +141,17 @@ public enum TimelineEventId {
                     .build();
         }
     },
+
+    ANALOG_FAILURE_WORKFLOW("ANALOG_FAILURE_WORKFLOW") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
 /*
     PREPARE_ANALOG_DOMICILE("PREPARE_ANALOG_DOMICILE") {
         @Override
@@ -176,18 +187,6 @@ public enum TimelineEventId {
                     .build();
         }
     },
-
-    ANALOG_FAILURE_WORKFLOW("ANALOG_FAILURE_WORKFLOW") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
 
     COMPLETELY_UNREACHABLE_CREATION_REQUEST("COMPLETELY_UNREACHABLE_CREATION_REQUEST") {
         @Override

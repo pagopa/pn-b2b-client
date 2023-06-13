@@ -266,6 +266,8 @@ public class AvanzamentoNotificheB2bSteps {
                 return TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
             case "SEND_ANALOG_PROGRESS":
                 return TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
+            case "ANALOG_FAILURE_WORKFLOW":
+                return TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
         }
         return null;
     }
