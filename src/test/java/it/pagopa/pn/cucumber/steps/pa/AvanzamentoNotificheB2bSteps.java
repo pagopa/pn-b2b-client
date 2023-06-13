@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
-import com.google.common.collect.Lists;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -12,18 +11,13 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
-import it.pagopa.pn.cucumber.utils.TimelineEventIdBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
-import javax.annotation.Nullable;
 import java.lang.invoke.MethodHandles;
-import java.sql.Time;
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -81,7 +75,7 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
-                numCheck = 3;
+                numCheck = 4;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
@@ -272,7 +266,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private TimelineElement getTimelineElementByEventId (String timelineEventCategory, TimelineElement timelineElementFromTest) {
-        List<TimelineElement> timelineElementList = sharedSteps.getNotificationTimeline();
+        List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
             String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();

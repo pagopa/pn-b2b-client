@@ -689,9 +689,7 @@ public class SharedSteps {
         return notificationCreationDate;
     }
 
-    public List<TimelineElement> getNotificationTimeline() {
-        return notificationTimeline;
-    }
+
 
     public void setNotificationRequest(NewNotificationRequest notificationRequest) {
         this.notificationRequest = notificationRequest;
