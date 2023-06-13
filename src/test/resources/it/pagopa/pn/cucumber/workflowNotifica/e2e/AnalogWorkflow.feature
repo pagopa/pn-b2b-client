@@ -8,26 +8,30 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci|
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline "SEND_ANALOG_PROGRESS" della notifica per il destinatario 0 con deliveryDetailCode "CON080"
-    And vengono letti gli eventi fino all'elemento di timeline "SEND_ANALOG_PROGRESS" della notifica per il destinatario 0, con deliveryDetailCode "RECAG001B", legalFactId con category "ANALOG_DELIVERY" e documentType "23L"
-    And viene letta la timeline fino all'elemento "SEND_ANALOG_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG001B |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
-    And viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
 
   @e2e
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
@@ -36,7 +40,7 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-PersonaAbilitata_890 |
@@ -64,7 +68,7 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Retry_890 |
@@ -94,7 +98,7 @@ Feature: Workflow analogico
       | subject | notifica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
@@ -111,7 +115,7 @@ Feature: Workflow analogico
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Mario Gherkin |
+      | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
@@ -125,7 +129,7 @@ Feature: Workflow analogico
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-Retry_RS |
@@ -147,7 +151,7 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-lte10_890 |
@@ -172,7 +176,7 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-gt10_890 |
@@ -197,7 +201,7 @@ Feature: Workflow analogico
       | senderDenomination | Comune di palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
-      | denomination | Leonardo |
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-gt10-23L_890 |

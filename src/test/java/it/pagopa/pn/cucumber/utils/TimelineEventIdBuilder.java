@@ -80,14 +80,14 @@ public class TimelineEventIdBuilder {
         return this;
     }
 
-    /*
-
     public TimelineEventIdBuilder withProgressIndex(@Nullable Integer progressIndex) {
         // se passo un progressindex negativo, è perchè non voglio che venga inserito nell'eventid. Usato per cercare con l'inizia per
         if(progressIndex != null && progressIndex >= 0)
             this.progressIndex = DELIMITER.concat("IDX_").concat(progressIndex + "");
         return this;
     }
+
+    /*
 
     public TimelineEventIdBuilder withDeliveryMode(@Nullable DeliveryModeInt deliveryMode) {
         if(deliveryMode != null)

@@ -7,11 +7,11 @@ public class EventId {
     private String source;
     private Boolean isFirstSendRetry;
     private Integer sentAttemptMade;
-    /*
+    private Integer progressIndex;
 
+    /*
     private ContactPhaseInt contactPhase;
     private DeliveryModeInt deliveryMode;
-    private Integer progressIndex;
     private DocumentCreationTypeInt documentCreationType;
     private CourtesyDigitalAddressInt.COURTESY_DIGITAL_ADDRESS_TYPE_INT courtesyAddressType;
     private String creditorTaxId;
@@ -66,5 +66,13 @@ public class EventId {
 
     public void setSentAttemptMade(Integer sentAttemptMade) {
         this.sentAttemptMade = sentAttemptMade;
+    }
+
+    public Integer getProgressIndex() {
+        return progressIndex;
+    }
+
+    public void setProgressIndex(Integer progressIndex) {
+        this.progressIndex = progressIndex;
     }
 }

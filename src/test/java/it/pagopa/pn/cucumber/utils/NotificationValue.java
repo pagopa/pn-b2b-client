@@ -53,6 +53,8 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false),
 
     /*TIMELINE DETAILS*/
+    PROGRESS_INDEX("progressIndex", "-1", false),
+    IS_FIRST_SEND_RETRY("isFirstSendRetry", "false", false),
     LEGAL_FACT_IDS("legalFactsIds", null, false),
     DETAILS("details", null, false),
     DETAILS_REC_INDEX("details_recIndex",null,false),
@@ -65,8 +67,8 @@ public enum NotificationValue {
     DETAILS_SENT_ATTEMPT_MADE("details_sentAttemptMade", "0", false),
     DETAILS_SENDING_RECEIPT("details_sendingReceipts", null, false),
     DETAILS_IS_AVAILABLE("details_isAvailable", null, false),
-    DETAILS_IS_DELIVERY_DETAIL_CODE("details_deliveryDetailCode", null, false),
-    DETAILS_IS_DELIVERY_FAILURE_CAUSE("details_DeliveryFailureCause", null, false);
+    DETAILS_DELIVERY_DETAIL_CODE("details_deliveryDetailCode", null, false),
+    DETAILS_DELIVERY_FAILURE_CAUSE("details_DeliveryFailureCause", null, false);
 
 
     private static final String NULL_VALUE = "NULL";

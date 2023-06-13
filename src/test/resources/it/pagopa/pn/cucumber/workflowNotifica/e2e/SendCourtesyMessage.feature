@@ -59,4 +59,5 @@ Feature: Invio messaggi cortesia e2e
         | taxId | DSRDNI00A01A225I |
         | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"
+    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
+        | NULL | NULL |

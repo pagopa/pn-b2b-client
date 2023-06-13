@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -112,19 +113,21 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized TimelineElement convertTimelineElement(Map<String, String> data) throws JsonProcessingException {
+    public synchronized DataTest convertTimelineElement(Map<String, String> data) throws JsonProcessingException {
         String recIndex = getValue(data, DETAILS_REC_INDEX.key);
         String sentAttemptMade = getValue(data, DETAILS_SENT_ATTEMPT_MADE.key);
         String retryNumber = getValue(data, DETAILS_RETRY_NUMBER.key);
         String responseStatus = getValue(data, DETAILS_RESPONSE_STATUS.key);
         String digitalAddressSource = getValue(data, DETAILS_DIGITAL_ADDRESS_SOURCE.key);
         String isAvailable = getValue(data, DETAILS_IS_AVAILABLE.key);
-        String deliveryDetailCode = getValue(data, DETAILS_IS_DELIVERY_DETAIL_CODE.key);
-        String deliveryFailureCause = getValue(data, DETAILS_IS_DELIVERY_FAILURE_CAUSE.key);
+        String isFirstRetry = getValue(data, IS_FIRST_SEND_RETRY.key);
+        String progressIndex = getValue(data, PROGRESS_INDEX.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
         }
+
+        DataTest dataTest = new DataTest();
 
         TimelineElement timelineElement = new TimelineElement()
                 .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
@@ -139,15 +142,19 @@ public class DataTableTypeUtil {
                         .retryNumber(retryNumber != null ? Integer.parseInt(retryNumber) : null)
                         .sendingReceipts(getListValue(SendingReceipt.class, data, DETAILS_SENDING_RECEIPT.key))
                         .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
-                        .deliveryDetailCode(deliveryDetailCode != null ? getValue(data, DETAILS_IS_DELIVERY_DETAIL_CODE.key) : null)
-                        .deliveryFailureCause(deliveryFailureCause != null ? getValue(data, DETAILS_IS_DELIVERY_FAILURE_CAUSE.key) : null)
+                        .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
+                        .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
                 );
+
+        dataTest.setTimelineElement(timelineElement);
+        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(getValue(data, IS_FIRST_SEND_RETRY.key)) : null);
+        dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return timelineElement;
+        return dataTest;
     }
 
 

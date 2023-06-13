@@ -57,7 +57,6 @@ public class SharedSteps {
     private FullSentNotification notificationResponseComplete;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime notificationCreationDate;
-    private List<TimelineElement> notificationTimeline;
     public static final String DEFAULT_PA = "Comune_1";
     private String settedPa = "Comune_1";
     private final ObjectMapper objMapper = JsonMapper.builder()
@@ -697,10 +696,6 @@ public class SharedSteps {
 
     public void setSentNotification(FullSentNotification notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
-    }
-
-    public void setNotificationTimeline(List<TimelineElement> notificationTimeline) {
-        this.notificationTimeline = notificationTimeline;
     }
 
     public void selectPA(String apiKey) {

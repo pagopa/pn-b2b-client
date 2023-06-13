@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.*;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
@@ -219,7 +220,8 @@ public class AvanzamentoNotificheB2bSteps {
         return timelineElementWait;
     }
 
-    private String getTimelineEventId(String timelineEventCategory, String iun, TimelineElement timelineElement) {
+    private String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
+        TimelineElement timelineElement = dataFromTest.getTimelineElement();
         TimelineElementDetails timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
@@ -229,8 +231,9 @@ public class AvanzamentoNotificheB2bSteps {
         event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
         event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
         event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
-        event.setIsFirstSendRetry(timelineElementDetails == null ? null : timelineElementDetails.getRetryNumber() == 1);
+        event.setIsFirstSendRetry(dataFromTest.getIsFirstSendRetry());
         event.setSentAttemptMade(timelineElementDetails == null ? null : timelineElementDetails.getSentAttemptMade());
+        event.setProgressIndex(dataFromTest.getProgressIndex());
 
         switch (timelineEventCategory) {
             case "SEND_COURTESY_MESSAGE":
@@ -261,11 +264,13 @@ public class AvanzamentoNotificheB2bSteps {
                 return TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
             case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
                 return TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
+            case "SEND_ANALOG_PROGRESS":
+                return TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
         }
         return null;
     }
 
-    private TimelineElement getTimelineElementByEventId (String timelineEventCategory, TimelineElement timelineElementFromTest) {
+    private TimelineElement getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
         List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
@@ -277,11 +282,17 @@ public class AvanzamentoNotificheB2bSteps {
             iun = sharedSteps.getSentNotification().getIun();
         }
         // get timeline event id
-        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, timelineElementFromTest);
-        return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
+        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+        if (timelineEventCategory.equals(TimelineElementCategory.SEND_ANALOG_PROGRESS.getValue())) {
+            TimelineElement timelineElementFromTest = dataFromTest.getTimelineElement();
+            TimelineElementDetails timelineElementDetails = timelineElementFromTest.getDetails();
+            return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId) && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).findAny().orElse(null);
+        }
+        return timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
     }
 
-    private void checkTimelineElementEquality(String timelineEventCategory, TimelineElement elementFromNotification, TimelineElement elementFromTest) {
+    private void checkTimelineElementEquality(String timelineEventCategory, TimelineElement elementFromNotification, DataTest dataFromTest) {
+        TimelineElement elementFromTest = dataFromTest.getTimelineElement();
         TimelineElementDetails detailsFromNotification = elementFromNotification.getDetails();
         TimelineElementDetails detailsFromTest = elementFromTest.getDetails();
 
@@ -356,7 +367,59 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
                 }
                 break;
+            case "SEND_ANALOG_PROGRESS":
+                if (detailsFromTest != null) {
+                    Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                }
+                break;
         }
+    }
+
+    private TimelineElement getAndStoreTimeline(String timelineEventCategory, DataTest dataFromTest) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        List<TimelineElement> timelineElementList = null;
+        String iun;
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
+                String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+                byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+                iun = new String(decodedBytes);
+                NewNotificationRequest newNotificationRequest = sharedSteps.getNotificationRequest();
+                // get timeline from delivery-push
+                NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
+                timelineElementList = notificationHistory.getTimeline();
+                FullSentNotification fullSentNotification = new FullSentNotification();
+                fullSentNotification.setTimeline(timelineElementList);
+                sharedSteps.setSentNotification(fullSentNotification);
+            } else {
+                // proceed with default flux
+                iun = sharedSteps.getSentNotification().getIun();
+                sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+                timelineElementList = sharedSteps.getSentNotification().getTimeline();
+            }
+
+            // get timeline event id
+            if (dataFromTest != null) {
+                String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+                timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
+            } else {
+                timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        return timelineElement;
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
@@ -1093,78 +1156,50 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("viene letta la timeline fino all'elemento {string}")
-    public void vieneLettaLaTimeline(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
-
-        List<TimelineElement> timelineElementList = null;
-        String iun;
-        TimelineElement timelineElement = null;
-
-        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
-            try {
-                Thread.sleep(timelineElementWait.getWaiting());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
-
-            if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
-                String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
-                byte[] decodedBytes = Base64.getDecoder().decode(requestId);
-                iun = new String(decodedBytes);
-                NewNotificationRequest newNotificationRequest = sharedSteps.getNotificationRequest();
-                // get timeline from delivery-push
-                NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
-                timelineElementList = notificationHistory.getTimeline();
-            } else {
-                // proceed with default flux
-                iun = sharedSteps.getSentNotification().getIun();
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-                timelineElementList = sharedSteps.getSentNotification().getTimeline();
-            }
-
-            // get timeline event id
-            if (timelineElementFromTest != null) {
-                String timelineEventId = getTimelineEventId(timelineEventCategory, iun, timelineElementFromTest);
-                timelineElement = timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).findAny().orElse(null);
-            } else {
-                timelineElement = timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
-            }
-
-            if (timelineElement != null) {
-                break;
-            }
-        }
+    public void vieneLettaLaTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        TimelineElement timelineElement = getAndStoreTimeline(timelineEventCategory, dataFromTest);
+        List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
 
         logger.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-        sharedSteps.setNotificationTimeline(timelineElementList);
         Assertions.assertNotNull(timelineElementList);
         Assertions.assertNotEquals(timelineElementList.size(), 0);
         Assertions.assertNotNull(timelineElement);
     }
 
     @And("viene verificato che l'elemento di timeline {string} esista")
-    public void vieneVerificatoCheElementoTimelineEsista(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) {
-        TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, timelineElementFromTest);
+    public void vieneVerificatoCheElementoTimelineEsista(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         try {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
-            if (timelineElementFromTest != null) {
-                checkTimelineElementEquality(timelineEventCategory, timelineElement, timelineElementFromTest);
+            if (dataFromTest != null) {
+                checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
 
+    @And("viene verificato che l'elemento di timeline {string} non esista")
+    public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        TimelineElement timelineElement = getAndStoreTimeline(timelineEventCategory, dataFromTest);
+        List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
+
+        logger.info("NOTIFICATION_TIMELINE: " + timelineElementList);
+        Assertions.assertNotNull(timelineElementList);
+        Assertions.assertNotEquals(timelineElementList.size(), 0);
+        Assertions.assertNull(timelineElement);
+    }
+
     @And("viene schedulato il perfezionamento per decorrenza termini per il caso {string}")
-    public void vieneSchedulatoIlPerfezionamento(String timelineCategory, @Transpose TimelineElement timelineElementFromTest) {
-        TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), timelineElementFromTest);
+    public void vieneSchedulatoIlPerfezionamento(String timelineCategory, @Transpose DataTest dataFromTest) {
+        TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), dataFromTest);
 
         TimelineElement timelineElementForDateCalculation = null;
         if (timelineCategory.equals(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
-            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.SEND_DIGITAL_FEEDBACK.getValue(), timelineElementFromTest);
+            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.SEND_DIGITAL_FEEDBACK.getValue(), dataFromTest);
         } else if (timelineCategory.equals(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue())) {
-            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue(), timelineElementFromTest);
+            timelineElementForDateCalculation = getTimelineElementByEventId(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue(), dataFromTest);
         }
 
         Assertions.assertNotNull(timelineElementForDateCalculation);
@@ -1190,10 +1225,10 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
-    public void siAttendePresenzaPerfezionamentoDecorrenzaTermini(@Transpose TimelineElement timelineElementFromTest) throws InterruptedException {
+    public void siAttendePresenzaPerfezionamentoDecorrenzaTermini(@Transpose DataTest dataFromTest) throws InterruptedException {
         String iun = sharedSteps.getSentNotification().getIun();
-        if (timelineElementFromTest != null) {
-            TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), timelineElementFromTest);
+        if (dataFromTest != null) {
+            TimelineElement timelineElement = getTimelineElementByEventId(TimelineElementCategory.SCHEDULE_REFINEMENT.getValue(), dataFromTest);
             OffsetDateTime schedulingDate = timelineElement.getDetails().getSchedulingDate();
             OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
             Long remainingTime = ChronoUnit.MILLIS.between(currentDate, schedulingDate);
@@ -1202,16 +1237,14 @@ public class AvanzamentoNotificheB2bSteps {
             }
             // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-            List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
-            sharedSteps.setNotificationTimeline(timelineElementList);
         }
     }
 
     @And("si attende che si ritenti l'invio dopo l'evento {string}")
-    public void siAttendeCheSiRitentiInvio(String timelineEventCategory, @Transpose TimelineElement timelineElementFromTest) throws InterruptedException {
+    public void siAttendeCheSiRitentiInvio(String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
         String iun = sharedSteps.getSentNotification().getIun();
-        if (timelineElementFromTest != null) {
-            TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, timelineElementFromTest);
+        if (dataFromTest != null) {
+            TimelineElement timelineElement = getTimelineElementByEventId(timelineEventCategory, dataFromTest);
             OffsetDateTime firstSend = timelineElement.getTimestamp();
             Integer secondNotificationWorkflowWaitingTime = sharedSteps.getSecondNotificationWorkflowWaitingTime();
             OffsetDateTime nextSend = firstSend.plusMinutes(secondNotificationWorkflowWaitingTime);
@@ -1222,8 +1255,6 @@ public class AvanzamentoNotificheB2bSteps {
             }
             // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-            List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
-            sharedSteps.setNotificationTimeline(timelineElementList);
         }
     }
 
@@ -1351,7 +1382,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     /*
-    UTILE PER TEST 
+    UTILE PER TEST
 
     @Given("viene vista la pec per l'utente {string}")
     public void vieneRimossaLaPecPerLUtente(String arg0) {

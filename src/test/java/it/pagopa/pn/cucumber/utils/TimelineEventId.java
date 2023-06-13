@@ -79,7 +79,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-    /*
+
     SEND_ANALOG_PROGRESS("SEND_ANALOG_PROGRESS") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -88,10 +88,11 @@ public enum TimelineEventId {
                     .withIun(eventId.getIun())
                     .withRecIndex(eventId.getRecIndex())
                     .withSentAttemptMade(eventId.getSentAttemptMade())
-                    //.withProgressIndex(eventId.getProgressIndex())
+                    .withProgressIndex(eventId.getProgressIndex())
                     .build();
         }
     },
+    /*
 
     PREPARE_DIGITAL_DOMICILE("PREPARE_DIGITAL_DOMICILE") {
         @Override
