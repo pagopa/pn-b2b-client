@@ -152,7 +152,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-/*
+
     PREPARE_ANALOG_DOMICILE("PREPARE_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -164,7 +164,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-
+/*
     SEND_ANALOG_DOMICILE("SEND_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {

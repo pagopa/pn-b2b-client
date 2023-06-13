@@ -268,6 +268,8 @@ public class AvanzamentoNotificheB2bSteps {
                 return TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
             case "ANALOG_FAILURE_WORKFLOW":
                 return TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
+            case "PREPARE_ANALOG_DOMICILE":
+                return TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
         }
         return null;
     }
@@ -385,6 +387,11 @@ public class AvanzamentoNotificheB2bSteps {
                             Assertions.assertEquals(detailsFromNotification.getAttachments().get(i).getDocumentType(), detailsFromTest.getAttachments().get(i).getDocumentType());
                         }
                     }
+
+                    if(Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
+                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
+                        Assertions.assertEquals(Boolean.TRUE, failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+                    }
                 }
                 break;
         }
@@ -435,6 +442,28 @@ public class AvanzamentoNotificheB2bSteps {
             }
         }
         return timelineElement;
+    }
+    @And("viene verificato che il numero di elementi di timeline {string} sia di {long}")
+    public void getTimelineElementListSize(String timelineEventCategory, Long size, @Transpose DataTest dataFromTest) {
+        List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
+        String iun;
+        if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
+            String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            iun = new String(decodedBytes);
+        } else {
+            // proceed with default flux
+            iun = sharedSteps.getSentNotification().getIun();
+        }
+        // get timeline event id
+        String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+        if (timelineEventCategory.equals(TimelineElementCategory.SEND_ANALOG_PROGRESS.getValue())) {
+            TimelineElement timelineElementFromTest = dataFromTest.getTimelineElement();
+            TimelineElementDetails timelineElementDetails = timelineElementFromTest.getDetails();
+            Assertions.assertEquals(size, timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId) && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).count());
+        } else {
+            Assertions.assertEquals(size, timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId)).count());
+        }
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
