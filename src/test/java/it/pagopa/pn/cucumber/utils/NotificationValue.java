@@ -71,7 +71,8 @@ public enum NotificationValue {
     DETAILS_DELIVERY_FAILURE_CAUSE("details_deliveryFailureCause", null, false),
     DETAILS_ATTACHMENTS("details_attachments", null, false),
     DETAILS_PHYSICALADDRESS("details_physicalAddress", null, false),
-    DETAILS_ANALOG_COST("details_analogCost", null, false);
+    DETAILS_ANALOG_COST("details_analogCost", null, false),
+    DETAILS_DELEGATE_INFO("details_delegateInfo", null, false);
 
 
     private static final String NULL_VALUE = "NULL";

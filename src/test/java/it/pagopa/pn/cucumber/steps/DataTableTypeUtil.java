@@ -148,6 +148,7 @@ public class DataTableTypeUtil {
                         .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                         .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                         .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
+                        .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                 );
 
         dataTest.setTimelineElement(timelineElement);

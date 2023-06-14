@@ -225,6 +225,8 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement elementFromTest = dataFromTest.getTimelineElement();
         TimelineElementDetails detailsFromNotification = elementFromNotification.getDetails();
         TimelineElementDetails detailsFromTest = elementFromTest.getDetails();
+        DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
+        DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
 
         switch (timelineEventCategory) {
             case "SEND_COURTESY_MESSAGE":
@@ -340,6 +342,11 @@ public class AvanzamentoNotificheB2bSteps {
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
                     Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                }
+                if (delegateInfoFromTest != null) {
+                    Assertions.assertEquals(delegateInfoFromNotification.getTaxId(), delegateInfoFromTest.getTaxId());
+                    Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
+                    Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
                 }
         }
     }

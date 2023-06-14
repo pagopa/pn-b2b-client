@@ -25,6 +25,33 @@ Feature: Notifica visualizzata
       | details_recIndex | 0 |
 
   @e2e
+  Scenario: [E2E-NOTIFICATION-VIEWED-2] Visualizzazione da parte del delegato della notifica
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario
+      | denomination | Ettore Fieramosca |
+      | taxId        | FRMTTR76M06B715E  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
+      | NULL | NULL |
+    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
+    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
+      | details_delegateInfo | {"taxId": "CLMCST42R12D969Z", "denomination": "Cristoforo Colombo", "delegateType": "PF"} |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e
   Scenario: [E2E-NOTIFICATION-VIEWED-4] A valle della visualizzazione della notifica non deve essere generato un nuovo elemento di timeline NOTIFICATION VIEWED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
