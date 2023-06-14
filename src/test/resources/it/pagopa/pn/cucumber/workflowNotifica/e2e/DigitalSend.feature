@@ -9,9 +9,8 @@ Feature: Digital send e2e
       | denomination | Galileo Galilei |
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -61,11 +60,10 @@ Feature: Digital send e2e
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Galileo Galilei |
       | taxId | GLLGLL64B15G702I |
-      | digitalDomicile_address | NULL |
+      | digitalDomicile | NULL |
     #And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
@@ -366,9 +364,8 @@ Feature: Digital send e2e
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -513,9 +510,8 @@ Feature: Digital send e2e
       | denomination | Louis Armstrong |
       | taxId | RMSLSO31M04Z404R |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -581,9 +577,8 @@ Feature: Digital send e2e
       | denomination | Sara Bianchi |
       | taxId | SHRSWP58T71D544X |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -731,9 +726,8 @@ Feature: Digital send e2e
       | denomination | Mario Rossi |
       | taxId | PGVCKH47H05A521N |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -880,9 +874,8 @@ Feature: Digital send e2e
       | denomination | Mario Gialli |
       | taxId | PTRVTL34D21F890A |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1024,14 +1017,15 @@ Feature: Digital send e2e
   Scenario: [B2B_DIGITAL_SEND_13] Invio ad indirizzo generale fallimento al primo tentativo, al ritentativo e al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890 |
     And destinatario
       | denomination | Mario Gialli |
       | taxId | VHGRBT95E07L215U |
       | digitalDomicile | NULL |
-    #And viene effettuato il pre-caricamento di un documento
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
     And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1094,7 +1088,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
@@ -1153,6 +1146,9 @@ Feature: Digital send e2e
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
       | isFirstSendRetry | true |
+    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1164,11 +1160,12 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_physicalAddress | {address: "Via senza nome", municipality: "Milano", "municipalityDetails": "Milano", at: "Presso", addressDetails: "scala b", province: "MI", zip: "87100", state: "Italia"} |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_physicalAddress | {address: "Via senza nome", municipality: "Milano", "municipalityDetails": "Milano", at: "Presso", addressDetails: "scala b", province: "MI", zip: "87100", state: "Italia"} |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |
