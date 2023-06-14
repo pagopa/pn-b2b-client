@@ -322,6 +322,7 @@ public class AvanzamentoNotificheB2bSteps {
                     }
                 }
                 break;
+            case "ANALOG_SUCCESS_WORKFLOW":
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
                 if (detailsFromTest != null) {
                     Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());

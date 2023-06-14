@@ -56,10 +56,13 @@ Feature: Notifica visualizzata
     un evento di timeline REFINEMENT.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-    And destinatario Mario Cucumber
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "REFINEMENT"
 
   @e2e
@@ -69,12 +72,14 @@ Feature: Notifica visualizzata
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    Then la notifica può essere correttamente recuperata da "Mario Gherkin"
+    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "PREPARE_SIMPLE_REGISTERED_LETTER"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
 
@@ -83,9 +88,12 @@ Feature: Notifica visualizzata
   La notifica viene letta subito dopo essere stata accettata. Questa lettura non deve generare un evento di timeline SEND_ANALOG_DOMICILE.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
-    And destinatario Mario Cucumber e:
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_ANALOG_DOMICILE"
