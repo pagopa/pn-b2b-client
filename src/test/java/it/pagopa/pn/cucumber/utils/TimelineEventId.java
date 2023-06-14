@@ -137,7 +137,7 @@ public enum TimelineEventId {
                     .withCategory(this.getValue())
                     .withIun(eventId.getIun())
                     .withRecIndex(eventId.getRecIndex())
-                    //.withProgressIndex(eventId.getProgressIndex())
+                    .withProgressIndex(eventId.getProgressIndex())
                     .build();
         }
     },

@@ -10,7 +10,7 @@ Feature: Notifica visualizzata
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
       | NULL | NULL |
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
     And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
@@ -36,7 +36,7 @@ Feature: Notifica visualizzata
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
       | NULL | NULL |
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
@@ -55,27 +55,32 @@ Feature: Notifica visualizzata
   Scenario: [E2E-NOTIFICATION-VIEWED-4] A valle della visualizzazione della notifica non deve essere generato un nuovo elemento di timeline NOTIFICATION VIEWED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
       | denomination | Ettore Fieramosca |
       | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
-    And viene effettuato un controllo sulla durata della retention di "PAGOPA"
+    Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
+      | NULL | NULL |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
+    And la notifica può essere correttamente recuperata da "Mario Cucumber"
     And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | legalFactsIds | [{"category": "RECIPIENT_ACCESS", "key": "ciao"}] |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
     # seconda lettura
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
+    And verifico che l'atto opponibile a terzi di "NOTIFICATION_VIEWED" sia lo stesso
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
     And viene verificato che il numero di elementi di timeline "NOTIFICATION_VIEWED" della notifica sia di 1
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.

@@ -13,6 +13,8 @@ Feature: Digital send e2e
     Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "PEC"} |
@@ -52,8 +54,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -61,7 +61,8 @@ Feature: Digital send e2e
   @e2e
   # DA TESTARE
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
-    Given viene generata una nuova notifica
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
       | denomination | Galileo Galilei |
@@ -369,6 +370,8 @@ Feature: Digital send e2e
     Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
@@ -414,8 +417,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -518,6 +519,8 @@ Feature: Digital send e2e
     Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
@@ -569,8 +572,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -590,6 +591,8 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
@@ -721,8 +724,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -742,6 +743,8 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
@@ -872,8 +875,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -893,6 +894,8 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
@@ -1023,8 +1026,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1046,6 +1047,8 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
@@ -1187,8 +1190,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |

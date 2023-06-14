@@ -7,6 +7,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
@@ -14,11 +15,9 @@ import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchRow;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.DataTest;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -44,6 +43,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnWebRecipientClient webRecipientClient;
     private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnPaB2bUtils b2bUtils;
+    private final IPnPaB2bClient b2bClient;
     private final SharedSteps sharedSteps;
 
     private final IPnWebPaClient webPaClient;
@@ -55,6 +55,7 @@ public class RicezioneNotificheWebSteps {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
+        this.b2bClient = sharedSteps.getB2bClient();
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.webPaClient = sharedSteps.getWebPaClient();
     }
@@ -312,6 +313,22 @@ public class RicezioneNotificheWebSteps {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
         Assertions.assertTrue((httpStatusCodeException != null) &&
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
+    public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement timelineElement =
+                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        // get new timeline
+        String iun = sharedSteps.getSentNotification().getIun();
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement newTimelineElement =
+                sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        // check legal fact key
+        Assertions.assertEquals(timelineElement.getLegalFactsIds().size(), newTimelineElement.getLegalFactsIds().size());
+        for (int i = 0; i < newTimelineElement.getLegalFactsIds().size(); i++) {
+            Assertions.assertEquals(newTimelineElement.getLegalFactsIds().get(i).getKey(), timelineElement.getLegalFactsIds().get(i).getKey());
+        }
     }
 
 
