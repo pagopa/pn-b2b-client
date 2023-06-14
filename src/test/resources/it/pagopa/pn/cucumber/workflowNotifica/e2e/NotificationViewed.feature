@@ -88,12 +88,32 @@ Feature: Notifica visualizzata
   La notifica viene letta subito dopo essere stata accettata. Questa lettura non deve generare un evento di timeline SEND_ANALOG_DOMICILE.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_ANALOG_DOMICILE"
+
+
+  Scenario: [E2E-WF-INHIBITION-6] Invio notifica con percorso analogico. Notifica visualizzata tra un tentativo e l'altro
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890           |
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_RS |
+      | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "SEND_ANALOG_DOMICILE"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
     Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_ANALOG_DOMICILE"
+    Then viene letta la timeline fino all'elemento "SEND_ANALOG_FEEDBACK"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    Then viene verificato che il numero di elementi di timeline "SEND_ANALOG_DOMICILE" della notifica sia di 1
