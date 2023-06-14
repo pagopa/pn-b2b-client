@@ -208,7 +208,7 @@ public class InvioNotificheB2bSteps {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
                     String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
-                    Assertions.assertTrue(checkRetetion(key, retentionTimeLoad, timelineElement.getTimestamp()));
+                    Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
                 }
                 break;
             default:
@@ -357,12 +357,11 @@ public class InvioNotificheB2bSteps {
         return retentionTime == between;
     }
 
-    private boolean checkRetetion(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
+    private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
         Thread.sleep(2 * 60 * 1000);
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
         OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime().truncatedTo(ChronoUnit.MINUTES);
-        OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime().truncatedTo(ChronoUnit.MINUTES);
         OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
         logger.info("now: " + timelineEventDate);
         logger.info("retentionUntil: " + retentionUntil);
