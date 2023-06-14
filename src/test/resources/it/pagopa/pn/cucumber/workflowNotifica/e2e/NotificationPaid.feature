@@ -6,8 +6,11 @@ Feature: Notifica pagata
   un evento di timeline REFINEMENT.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -23,9 +26,11 @@ Feature: Notifica pagata
   un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
       | payment_pagoPaForm | SI |
@@ -43,8 +48,11 @@ Feature: Notifica pagata
   Viene effettuato il pagamento subito dopo che la notifica è stata accettata. Il pagamento non deve generare un evento di timeline SEND_ANALOG_DOMICILE.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_RS |
       | payment_pagoPaForm | SI |
