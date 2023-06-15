@@ -123,6 +123,8 @@ public class DataTableTypeUtil {
         String isFirstRetry = getValue(data, IS_FIRST_SEND_RETRY.key);
         String progressIndex = getValue(data, PROGRESS_INDEX.key);
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
+        String pollingTime = getValue(data, POLLING_TIME.key);
+        String numCheck = getValue(data, NUM_CHECK.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -148,16 +150,15 @@ public class DataTableTypeUtil {
                         .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
                         .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
                         .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
+                        .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                 );
 
         dataTest.setTimelineElement(timelineElement);
         dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(getValue(data, IS_FIRST_SEND_RETRY.key)) : null);
         dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        dataTest.setPollingTime(pollingTime != null ? Integer.parseInt(pollingTime) : null);
+        dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
+
         return dataTest;
     }
 

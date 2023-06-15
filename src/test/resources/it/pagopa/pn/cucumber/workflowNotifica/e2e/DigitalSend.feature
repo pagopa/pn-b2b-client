@@ -9,12 +9,12 @@ Feature: Digital send e2e
       | denomination | Galileo Galilei |
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "PEC"} |
@@ -54,22 +54,23 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   # DA TESTARE
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
-    Given viene generata una nuova notifica
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Galileo Galilei |
       | taxId | GLLGLL64B15G702I |
-      | digitalDomicile_address | NULL |
-    #And viene effettuato il pre-caricamento di un documento
+      | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
@@ -366,12 +367,12 @@ Feature: Digital send e2e
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
@@ -417,7 +418,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_7] Invio ad indirizzo speciale fallimento al primo tentativo e successo al secondo
@@ -513,12 +516,12 @@ Feature: Digital send e2e
       | denomination | Louis Armstrong |
       | taxId | RMSLSO31M04Z404R |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
@@ -570,7 +573,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_10] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
@@ -581,14 +586,14 @@ Feature: Digital send e2e
       | denomination | Sara Bianchi |
       | taxId | SHRSWP58T71D544X |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
@@ -720,7 +725,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_11] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e al secondo tentativo
@@ -731,14 +738,14 @@ Feature: Digital send e2e
       | denomination | Mario Rossi |
       | taxId | PGVCKH47H05A521N |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
@@ -869,7 +876,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_12] Invio ad indirizzo generale fallimento al primo tentativo e al ritentativo, successo al secondo tentativo
@@ -880,14 +889,14 @@ Feature: Digital send e2e
       | denomination | Mario Gialli |
       | taxId | PTRVTL34D21F890A |
       | digitalDomicile | NULL |
-    And viene effettuato il pre-caricamento di un documento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
@@ -1018,25 +1027,29 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_13] Invio ad indirizzo generale fallimento al primo tentativo, al ritentativo e al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890 |
     And destinatario
       | denomination | Mario Gialli |
       | taxId | VHGRBT95E07L215U |
       | digitalDomicile | NULL |
-    #And viene effettuato il pre-caricamento di un documento
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
@@ -1094,7 +1107,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
@@ -1153,6 +1165,9 @@ Feature: Digital send e2e
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
       | isFirstSendRetry | true |
+    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1164,18 +1179,21 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_physicalAddress | {address: "Via senza nome", municipality: "Milano", "municipalityDetails": "Milano", at: "Presso", addressDetails: "scala b", province: "MI", zip: "87100", state: "Italia"} |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_physicalAddress | {address: "Via senza nome", municipality: "Milano", "municipalityDetails": "Milano", at: "Presso", addressDetails: "scala b", province: "MI", zip: "87100", state: "Italia"} |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    #And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
 
 

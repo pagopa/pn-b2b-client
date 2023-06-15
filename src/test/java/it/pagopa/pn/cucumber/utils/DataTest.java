@@ -6,6 +6,8 @@ public class DataTest {
     TimelineElement timelineElement;
     boolean isFirstSendRetry;
     Integer progressIndex;
+    Integer pollingTime;
+    Integer numCheck;
 
     public boolean getIsFirstSendRetry() {
         return isFirstSendRetry;
@@ -29,5 +31,21 @@ public class DataTest {
 
     public void setProgressIndex(Integer progressIndex) {
         this.progressIndex = progressIndex;
+    }
+
+    public Integer getPollingTime() {
+        return pollingTime;
+    }
+
+    public void setPollingTime(Integer pollingTime) {
+        this.pollingTime = pollingTime;
+    }
+
+    public Integer getNumCheck() {
+        return numCheck;
+    }
+
+    public void setNumCheck(Integer numCheck) {
+        this.numCheck = numCheck;
     }
 }

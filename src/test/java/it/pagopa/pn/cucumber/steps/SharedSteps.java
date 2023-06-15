@@ -20,7 +20,9 @@ import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
+import it.pagopa.pn.cucumber.utils.TimelineEventId;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -35,6 +37,7 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.OffsetDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 
@@ -724,10 +727,12 @@ public class SharedSteps {
     public void selectUser(String recipient) {
         switch (recipient.trim().toLowerCase()){
             case "mario cucumber":
+            case "ettore fieramosca":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 break;
             case "mario gherkin":
+            case "cristoforo colombo":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 break;
@@ -950,5 +955,93 @@ public class SharedSteps {
     public void setIdOrganizationCucumberSpa(String idOrganizationCucumberSpa) {
         this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
     }
-    
+
+    public String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
+        TimelineElement timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetails timelineElementDetails = timelineElement.getDetails();
+        DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
+        DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
+
+        EventId event = new EventId();
+        event.setIun(iun);
+        event.setRecIndex(timelineElementDetails == null ? null : timelineElementDetails.getRecIndex());
+        event.setCourtesyAddressType(digitalAddress == null ? null : digitalAddress.getType());
+        event.setSource(digitalAddressSource == null ? null : digitalAddressSource.getValue());
+        event.setIsFirstSendRetry(dataFromTest.getIsFirstSendRetry());
+        event.setSentAttemptMade(timelineElementDetails == null ? null : timelineElementDetails.getSentAttemptMade());
+        event.setProgressIndex(dataFromTest.getProgressIndex());
+
+        switch (timelineEventCategory) {
+            case "SEND_COURTESY_MESSAGE":
+                return TimelineEventId.SEND_COURTESY_MESSAGE.buildEventId(event);
+            case "REQUEST_REFUSED":
+                return TimelineEventId.REQUEST_REFUSED.buildEventId(event);
+            case "AAR_GENERATION":
+                return TimelineEventId.AAR_GENERATION.buildEventId(event);
+            case "REQUEST_ACCEPTED":
+                return TimelineEventId.REQUEST_ACCEPTED.buildEventId(event);
+            case "SEND_DIGITAL_DOMICILE":
+                return TimelineEventId.SEND_DIGITAL_DOMICILE.buildEventId(event);
+            case "SEND_DIGITAL_FEEDBACK":
+                return TimelineEventId.SEND_DIGITAL_FEEDBACK.buildEventId(event);
+            case "GET_ADDRESS":
+                return TimelineEventId.GET_ADDRESS.buildEventId(event);
+            case "DIGITAL_SUCCESS_WORKFLOW":
+                return TimelineEventId.DIGITAL_SUCCESS_WORKFLOW.buildEventId(event);
+            case "SCHEDULE_REFINEMENT":
+                return TimelineEventId.SCHEDULE_REFINEMENT_WORKFLOW.buildEventId(event);
+            case "REFINEMENT":
+                return TimelineEventId.REFINEMENT.buildEventId(event);
+            case "ANALOG_SUCCESS_WORKFLOW":
+                return TimelineEventId.ANALOG_SUCCESS_WORKFLOW.buildEventId(event);
+            case "DIGITAL_FAILURE_WORKFLOW":
+                return TimelineEventId.DIGITAL_FAILURE_WORKFLOW.buildEventId(event);
+            case "SEND_ANALOG_FEEDBACK":
+                return TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+                return TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
+            case "SEND_ANALOG_PROGRESS":
+                return TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
+            case "ANALOG_FAILURE_WORKFLOW":
+                return TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
+            case "PREPARE_ANALOG_DOMICILE":
+                return TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
+            case "SCHEDULE_ANALOG_WORKFLOW":
+                return TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
+            case "SEND_ANALOG_DOMICILE":
+                return TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
+            case "SEND_SIMPLE_REGISTERED_LETTER":
+                return TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case "PREPARE_SIMPLE_REGISTERED_LETTER":
+                return TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case "NOTIFICATION_VIEWED":
+                return TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+        }
+        return null;
+    }
+
+    public TimelineElement getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElement> timelineElementList = notificationResponseComplete.getTimeline();
+        String iun;
+        if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
+            String requestId = newNotificationResponse.getNotificationRequestId();
+            byte[] decodedBytes = Base64.getDecoder().decode(requestId);
+            iun = new String(decodedBytes);
+        } else {
+            // proceed with default flux
+            iun = notificationResponseComplete.getIun();
+        }
+        if (dataFromTest != null) {
+            // get timeline event id
+            String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
+            if (timelineEventCategory.equals(TimelineElementCategory.SEND_ANALOG_PROGRESS.getValue())) {
+                TimelineElement timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetails timelineElementDetails = timelineElementFromTest.getDetails();
+                return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId) && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).findAny().orElse(null);
+            }
+            return timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
+        }
+        return timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+    }
+
 }
