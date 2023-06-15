@@ -251,7 +251,16 @@ public class RicezioneNotificheWebDelegheSteps {
 
         //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp =  sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
-
+        String gruppoAttivo = null;
+        if (resp!= null && !resp.isEmpty()){
+            for (HashMap<String, String> entry: resp) {
+                if ("ACTIVE".equals(entry.get("status"))){
+                    gruppoAttivo = entry.get("name");
+                    break;
+                }
+            }
+        }
+        
          //TODO Gruppi Disponibili della PG Admin
         List<String> xPagopaPnCxGroups = new ArrayList<>();
 
@@ -279,7 +288,12 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         List<String> gruppi = new ArrayList<>();
-        gruppi.add(gruppoInput);
+        if (gruppoAttivo!= null && !gruppoAttivo.isEmpty()){
+            gruppi.add(gruppoAttivo);
+        }else {
+            gruppi.add(gruppoInput);
+        }
+
         //gruppi.add("test2");
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
         updateRequestDto.setGroups(gruppi);
