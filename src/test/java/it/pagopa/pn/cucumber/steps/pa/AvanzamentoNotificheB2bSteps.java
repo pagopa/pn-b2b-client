@@ -1223,21 +1223,26 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.SEND_DIGITAL_FEEDBACK.getValue(), dataFromTest);
         } else if (timelineCategory.equals(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue())) {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue(), dataFromTest);
+        }  else if (timelineCategory.equals(TimelineElementCategory.ANALOG_SUCCESS_WORKFLOW.getValue())) {
+            timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.SEND_ANALOG_FEEDBACK.getValue(), dataFromTest);
         }
 
         Assertions.assertNotNull(timelineElementForDateCalculation);
 
         OffsetDateTime notificationDate = null;
-        Integer schedulingDaysDigitalRefinement = null;
+        Integer schedulingDaysRefinement = null;
         if (timelineCategory.equals(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
             notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
-            schedulingDaysDigitalRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
         } else if (timelineCategory.equals(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue())) {
             notificationDate = timelineElementForDateCalculation.getTimestamp();
-            schedulingDaysDigitalRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureDigitalRefinement();
+        } else if (timelineCategory.equals(TimelineElementCategory.ANALOG_SUCCESS_WORKFLOW.getValue())) {
+            notificationDate = timelineElementForDateCalculation.getTimestamp();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
         }
 
-        OffsetDateTime schedulingDate = notificationDate.plusMinutes(schedulingDaysDigitalRefinement);
+        OffsetDateTime schedulingDate = notificationDate.plusMinutes(schedulingDaysRefinement);
         Integer hour = schedulingDate.getHour();
         Integer minutes = schedulingDate.getMinute();
         if ((hour == 21 && minutes > 0) || hour > 21) {

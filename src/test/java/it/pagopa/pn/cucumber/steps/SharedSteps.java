@@ -100,6 +100,9 @@ public class SharedSteps {
     @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6}")
     private Integer schedulingDaysFailureDigitalRefinement;
 
+    @Value("${pn.configuration.scheduling.days.success.analog.refinement:2}")
+    private Integer schedulingDaysSuccessAnalogRefinement;
+
     @Value("${pn.configuration.second.notification.workflow.waiting.time:6}")
     private Integer secondNotificationWorkflowWaitingTime;
 
@@ -113,6 +116,7 @@ public class SharedSteps {
     private final Integer waitDefault = 10000;
     private final Integer schedulingDaysSuccessDigitalRefinementDefault = 6;
     private final Integer schedulingDaysFailureDigitalRefinementDefault = 6;
+    private final Integer schedulingDaysSuccessAnalogRefinementDefault = 2;
     private final Integer timeToAddInNonVisibilityTimeCaseDefault = 10;
     private final Integer secondNotificationWorkflowWaitingTimeDefault = 6;
     private final Integer waitingForReadCourtesyMessageDefault = 5;
@@ -823,6 +827,11 @@ public class SharedSteps {
     public Integer getSchedulingDaysFailureDigitalRefinement() {
         if (schedulingDaysFailureDigitalRefinement == null) return schedulingDaysFailureDigitalRefinementDefault;
         return schedulingDaysFailureDigitalRefinement;
+    }
+
+    public Integer getSchedulingDaysSuccessAnalogRefinement() {
+        if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysSuccessAnalogRefinementDefault;
+        return schedulingDaysSuccessAnalogRefinement;
     }
 
     public Integer getTimeToAddInNonVisibilityTimeCase() {
