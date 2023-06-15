@@ -19,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.cucumber.utils.DataTest;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -102,12 +103,16 @@ public class SharedSteps {
     @Value("${pn.configuration.non.visibility.time:10}")
     private Integer timeToAddInNonVisibilityTimeCase;
 
+    @Value("${pn.configuration.waiting.for.read.courtesy.message:5}")
+    private Integer waitingForReadCourtesyMessage;
+
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
     private final Integer schedulingDaysSuccessDigitalRefinementDefault = 6;
     private final Integer schedulingDaysFailureDigitalRefinementDefault = 6;
     private final Integer timeToAddInNonVisibilityTimeCaseDefault = 10;
     private final Integer secondNotificationWorkflowWaitingTimeDefault = 6;
+    private final Integer waitingForReadCourtesyMessageDefault = 5;
 
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
@@ -825,6 +830,11 @@ public class SharedSteps {
         return secondNotificationWorkflowWaitingTime;
     }
 
+    public Integer getWaitingForReadCourtesyMessage() {
+        if (waitingForReadCourtesyMessage == null) return waitingForReadCourtesyMessageDefault;
+        return waitingForReadCourtesyMessage;
+    }
+
     @Before("@integrationTest")
     public void doSomethingAfter() {
         this.groupToSet = false;
@@ -940,5 +950,5 @@ public class SharedSteps {
     public void setIdOrganizationCucumberSpa(String idOrganizationCucumberSpa) {
         this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
     }
-
+    
 }

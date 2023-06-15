@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.utils.*;
 import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
 import it.pagopa.pn.cucumber.utils.TimelineEventId;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import java.lang.invoke.MethodHandles;
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -1442,6 +1444,26 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    @And("controlla che il timestamp di {string} sia dopo quello di invio e di attesa di lettura del messaggio di cortesia")
+    public void verificaTimestamp(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        TimelineElement timelineElementCategory = getAndStoreTimeline(timelineEventCategory, dataFromTest);
+        TimelineElement timelineElementSendCourtesyMessage = getAndStoreTimeline("SEND_COURTESY_MESSAGE", dataFromTest);
+
+        Integer waitingForReadCourtesyMessage = sharedSteps.getWaitingForReadCourtesyMessage();
+
+        OffsetDateTime timestampEventCategory = timelineElementCategory.getTimestamp();
+        OffsetDateTime timestampEventSendCourtesyMessage = timelineElementSendCourtesyMessage.getTimestamp();
+        OffsetDateTime timestampEventSendCourtesyMessageWithWaitingTime = timestampEventSendCourtesyMessage.plusMinutes(waitingForReadCourtesyMessage);
+
+        Boolean test = timestampEventCategory.isEqual(timestampEventSendCourtesyMessageWithWaitingTime) || timestampEventCategory.isAfter(timestampEventSendCourtesyMessageWithWaitingTime);
+
+        logger.info("timestamp " + timelineEventCategory + ": " + timestampEventCategory);
+        logger.info("timestamp SEND_COURTESY_MESSAGE ( +" + waitingForReadCourtesyMessage + " minutes): " + timestampEventSendCourtesyMessageWithWaitingTime);
+        logger.info("timestamp " + timelineEventCategory + " is after or equal timestamp SEND_COURTESY_MESSAGE?: " + test);
+
+        Assertions.assertTrue(test);
     }
 
     /*

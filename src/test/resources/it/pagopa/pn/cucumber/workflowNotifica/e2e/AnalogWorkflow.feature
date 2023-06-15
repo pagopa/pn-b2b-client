@@ -323,6 +323,28 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG006C |
 
   @e2e
+  Scenario: [E2E-WF-ANALOG-11] Partenza workflow cartaceo se viene inviato un messaggio di cortesia
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890 |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile | NULL |
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "SCHEDULE_ANALOG_WORKFLOW"
+      | NULL | NULL |
+    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+      | details | NOT_NULL |
+      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+      | details_recIndex | 0 |
+    And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
+      | NULL | NULL |
+
+  @e2e
   Scenario: [E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
