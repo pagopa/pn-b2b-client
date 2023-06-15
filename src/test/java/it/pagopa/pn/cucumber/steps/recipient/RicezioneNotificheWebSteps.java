@@ -8,10 +8,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
@@ -44,6 +41,7 @@ public class RicezioneNotificheWebSteps {
     private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnPaB2bClient b2bClient;
+    private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
 
     private final IPnWebPaClient webPaClient;
@@ -58,6 +56,7 @@ public class RicezioneNotificheWebSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.webPaClient = sharedSteps.getWebPaClient();
+        this.externalClient = sharedSteps.getPnExternalServiceClient();
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
@@ -285,9 +284,21 @@ public class RicezioneNotificheWebSteps {
             case "Mario Gherkin":
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 break;
+            case "Galileo Galilei":
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    @And("viene inserito un recapito legale {string}")
+    public void nuovoRecapitoLegale(String pec) {
+        // inserimento
+        this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec)));
+        // validazione
+        String verificationCode = this.externalClient.getVerificationCode(pec);
+        this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode(verificationCode)));
     }
 
     @When("viene richiesto l'inserimento della pec {string}")

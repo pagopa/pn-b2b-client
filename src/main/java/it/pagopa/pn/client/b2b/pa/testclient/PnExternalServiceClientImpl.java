@@ -213,7 +213,7 @@ public class PnExternalServiceClientImpl {
 
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
         };
-        return invokeAPI(extChannelsBasePath, "/ext-channels/verification-code/{digitalAddress}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+        return invokeAPI(extChannelsBasePath, "/external-channels/verification-code/{digitalAddress}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     public static class SafeStorageResponse{

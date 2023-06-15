@@ -15,10 +15,22 @@ Feature: Notifica pagata
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    Then l'avviso pagopa viene pagato correttamente
+    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "REFINEMENT"
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
@@ -36,12 +48,18 @@ Feature: Notifica pagata
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    Then l'avviso pagopa viene pagato correttamente
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "DIGITAL_FAILURE_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "PREPARE_SIMPLE_REGISTERED_LETTER"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
+    And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-PAID-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
@@ -58,7 +76,10 @@ Feature: Notifica pagata
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_ANALOG_DOMICILE"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |

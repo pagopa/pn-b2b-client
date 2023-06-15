@@ -62,6 +62,7 @@ Feature: Digital send e2e
   # DA TESTARE
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario

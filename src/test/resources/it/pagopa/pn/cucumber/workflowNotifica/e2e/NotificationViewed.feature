@@ -63,7 +63,7 @@ Feature: Notifica visualizzata
       | NULL | NULL |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
-    And la notifica può essere correttamente recuperata da "Mario Cucumber"
+    And la notifica può essere correttamente recuperata da "Ettore Fieramosca"
     And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -93,9 +93,23 @@ Feature: Notifica visualizzata
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "REFINEMENT"
+    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+      | pollingTime | 180000 |
+      | numCheck    | 1     |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
@@ -110,24 +124,35 @@ Feature: Notifica visualizzata
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "PREPARE_SIMPLE_REGISTERED_LETTER"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene letta la timeline fino all'elemento "DIGITAL_FAILURE_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
+    And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [E2E-WF-INHIBITION-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   La notifica viene letta subito dopo essere stata accettata. Questa lettura non deve generare un evento di timeline SEND_ANALOG_DOMICILE.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
-    And destinatario Mario Cucumber e:
+    And destinatario
+      | denomination | Ettore Fieramosca |
+      | taxId        | FRMTTR76M06B715E  |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_ANALOG_DOMICILE"
+    Then la notifica può essere correttamente recuperata da "Ettore Fieramosca"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-
+  @e2e
   Scenario: [E2E-WF-INHIBITION-6] Invio notifica con percorso analogico. Notifica visualizzata tra un tentativo e l'altro
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
