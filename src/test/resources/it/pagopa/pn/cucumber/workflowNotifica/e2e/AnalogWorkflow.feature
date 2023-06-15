@@ -1,6 +1,6 @@
 Feature: Workflow analogico
 
-  @e2e
+  @e2e #NAME-NZTE-HQND-202306-R-1
   Scenario: [E2E-WF-ANALOG-1] Invio notifica con percorso analogico 890 con verifica elementi di timeline SEND_ANALOG_PROGRESS con legalFactId di category ANALOG_DELIVERY
   e documentType 23L, SEND_ANALOG_FEEDBACK e ANALOG_SUCCESS_WORKFLOW
     Given viene generata una nuova notifica
@@ -39,11 +39,15 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #EVAQ-GMQZ-MWXN-202306-H-1
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -81,12 +85,16 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-PERSONAABILITATA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
 
-  @e2e
+  @e2e #MQMW-PMHQ-XYRH-202306-R-1
   Scenario: [E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -125,20 +133,20 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
-    And viene verificato che il numero di elementi di timeline "PREPARE_ANALOG_DOMICILE" sia di 2
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #EMPH-PHXR-PGUX-202306-W-1
   Scenario: [E2E-WF-ANALOG-4] Invio notifica con percorso analogico. Successo invio RS (OK_RS)
     Given viene generata una nuova notifica
       | subject | notifica con cucumber |
@@ -149,20 +157,33 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
+    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
 
-  @e2e
+  @e2e #UWAQ-PDZJ-LPZY-202306-V-1
   Scenario: [E2E-WF-ANALOG-5] Invio notifica con percorso analogico. Successo invio RS (OK_RS) in cui la notifica viene visualizzata prima
   dell’evento SEND_SIMPLE_REGISTERED_LETTER
     Given viene generata una nuova notifica
@@ -175,9 +196,16 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
+    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
     Then viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 0
 
-  @e2e
+  @e2e #MQGQ-EAWU-GEAY-202306-T-1
   Scenario: [E2E-WF-ANALOG-6] Invio notifica con percorso analogico. Successo al secondo tentativo invio RS (OK-Retry_RS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -188,25 +216,38 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-Retry_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
+    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    Then viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 2
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
+    And viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
 
-  @e2e
+  @e2e #GUPE-EKWQ-QDPV-202306-K-1
   Scenario: [E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -238,22 +279,21 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | PNAG012 |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG005C |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #KVAK-DLWZ-JMDM-202306-X-1
   Scenario: [E2E-WF-ANALOG-8] Invio notifica con percorso analogico. Successo giacenza gt 890 (OK-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -296,11 +336,15 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #expected: not <null> ANALOG_SUCCESS_WORKFLOW APGK-HQND-TVKD-202306-H-1
   Scenario: [E2E-WF-ANALOG-9] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -343,9 +387,13 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
   @e2e
   Scenario: [E2E-WF-ANALOG-10] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-GiacenzaDelegato-gt10-23L_890).
@@ -408,7 +456,7 @@ Feature: Workflow analogico
     And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
       | NULL | NULL |
 
-  @e2e
+  @e2e #RVGA-KQRG-JNLX-202306-J-1
   Scenario: [E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -440,22 +488,21 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | PNAG012 |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #expected: <RECAG006C> but was: <PNAG012>{IUN: ETHG-UNZD-TVNJ-202306-R-1 }
   Scenario: [E2E-WF-ANALOG-13] Invio notifica con percorso analogico. Successo giacenza delegato gt 23L 890 (OK-GiacenzaDelegato-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -498,11 +545,15 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e #PJEG-XTNZ-PYET-202306-K-1
   Scenario: [E2E-WF-ANALOG-14] Invio notifica con percorso analogico. Fallimento giacenza gt 890 (FAIL-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -541,7 +592,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e
+  @e2e #expected: <RECAG007C> but was: <PNAG012>{IUN: EDUY-LGXD-ANQH-202306-R-1 }
   Scenario: [E2E-WF-ANALOG-15] Invio notifica con percorso analogico. Fallimento giacenza gt 23L 890 (FAIL-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -580,7 +631,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e
+  @e2e #expected: not <null>{IUN: VAWY-UKEJ-MUKJ-202306-U-1 } SEND_ANALOG_PROGRESS
   Scenario: [E2E-WF-ANALOG-16] Invio notifica con percorso analogico. Compiuta giacenza 890 (OK-CompiutaGiacenza_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -593,6 +644,8 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+      | pollingTime | 30000 |
+      | numCheck    | 20    |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -630,6 +683,10 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_physicalAddress | {"address": "VIA@OK-COMPIUTA-GIACENZA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+    Then viene letta la timeline fino all'elemento "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
