@@ -223,8 +223,8 @@ public class RicezioneNotificheWebDelegheSteps {
         });
     }
 
-    @Then("come amministratore {string} associa alla delega il gruppo {string}")
-    public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String gruppoInput){
+    @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo")
+    public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient){
         sharedSteps.selectUser(recipient);
       //  Assertions.assertDoesNotThrow(() -> {
            // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
@@ -273,8 +273,6 @@ public class RicezioneNotificheWebDelegheSteps {
                     //xPagopaPnCxGroups.add(gruppo.getName());
                 }
             }
-            //xPagopaPnCxGroups.add("test1");
-            //xPagopaPnCxGroups.add("test2");
 
             String xPagopaPnCxRole="ADMIN";
             //TODO capire dove recuperare il dato
@@ -290,11 +288,8 @@ public class RicezioneNotificheWebDelegheSteps {
         List<String> gruppi = new ArrayList<>();
         if (gruppoAttivo!= null && !gruppoAttivo.isEmpty()){
             gruppi.add(gruppoAttivo);
-        }else {
-            gruppi.add(gruppoInput);
         }
 
-        //gruppi.add("test2");
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
         updateRequestDto.setGroups(gruppi);
 
@@ -317,7 +312,8 @@ public class RicezioneNotificheWebDelegheSteps {
             gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
-        Assertions.assertTrue(gruppoInput.equals(gruppoAssegnato));
+
+        Assertions.assertTrue(gruppoAttivo.equals(gruppoAssegnato));
 
     }
 
