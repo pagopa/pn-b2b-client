@@ -631,7 +631,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e #expected: not <null>{IUN: VAWY-UKEJ-MUKJ-202306-U-1 } SEND_ANALOG_PROGRESS
+  @e2e
   Scenario: [E2E-WF-ANALOG-16] Invio notifica con percorso analogico. Compiuta giacenza 890 (OK-CompiutaGiacenza_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
