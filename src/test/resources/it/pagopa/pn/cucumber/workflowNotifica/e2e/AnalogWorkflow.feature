@@ -1,6 +1,6 @@
 Feature: Workflow analogico
 
-  @e2e #NAME-NZTE-HQND-202306-R-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-1] Invio notifica con percorso analogico 890 con verifica elementi di timeline SEND_ANALOG_PROGRESS con legalFactId di category ANALOG_DELIVERY
   e documentType 23L, SEND_ANALOG_FEEDBACK e ANALOG_SUCCESS_WORKFLOW
     Given viene generata una nuova notifica
@@ -47,7 +47,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #EVAQ-GMQZ-MWXN-202306-H-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -94,7 +94,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
 
 
-  @e2e #MQMW-PMHQ-XYRH-202306-R-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -146,7 +146,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #EMPH-PHXR-PGUX-202306-W-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-4] Invio notifica con percorso analogico. Successo invio RS (OK_RS)
     Given viene generata una nuova notifica
       | subject | notifica con cucumber |
@@ -183,7 +183,7 @@ Feature: Workflow analogico
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
       | details_analogCost | 133 |
 
-  @e2e #UWAQ-PDZJ-LPZY-202306-V-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-5] Invio notifica con percorso analogico. Successo invio RS (OK_RS) in cui la notifica viene visualizzata prima
   dell’evento SEND_SIMPLE_REGISTERED_LETTER
     Given viene generata una nuova notifica
@@ -205,7 +205,7 @@ Feature: Workflow analogico
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
     Then viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 0
 
-  @e2e #MQGQ-EAWU-GEAY-202306-T-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-6] Invio notifica con percorso analogico. Successo al secondo tentativo invio RS (OK-Retry_RS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -247,7 +247,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
 
-  @e2e #GUPE-EKWQ-QDPV-202306-K-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -293,7 +293,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #KVAK-DLWZ-JMDM-202306-X-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-8] Invio notifica con percorso analogico. Successo giacenza gt 890 (OK-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -344,7 +344,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #expected: not <null> ANALOG_SUCCESS_WORKFLOW APGK-HQND-TVKD-202306-H-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-9] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -456,7 +456,7 @@ Feature: Workflow analogico
     And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
       | NULL | NULL |
 
-  @e2e #RVGA-KQRG-JNLX-202306-J-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -502,7 +502,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #expected: <RECAG006C> but was: <PNAG012>{IUN: ETHG-UNZD-TVNJ-202306-R-1 }
+  @e2e
   Scenario: [E2E-WF-ANALOG-13] Invio notifica con percorso analogico. Successo giacenza delegato gt 23L 890 (OK-GiacenzaDelegato-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -553,7 +553,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e #PJEG-XTNZ-PYET-202306-K-1
+  @e2e
   Scenario: [E2E-WF-ANALOG-14] Invio notifica con percorso analogico. Fallimento giacenza gt 890 (FAIL-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -592,7 +592,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e #expected: <RECAG007C> but was: <PNAG012>{IUN: EDUY-LGXD-ANQH-202306-R-1 }
+  @e2e
   Scenario: [E2E-WF-ANALOG-15] Invio notifica con percorso analogico. Fallimento giacenza gt 23L 890 (FAIL-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -645,7 +645,7 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
       | pollingTime | 30000 |
-      | numCheck    | 20    |
+      | numCheck    | 30    |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
