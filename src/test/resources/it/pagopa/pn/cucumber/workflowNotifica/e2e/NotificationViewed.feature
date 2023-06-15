@@ -94,8 +94,8 @@ Feature: Notifica visualizzata
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
-      | pollingTime | 180000 |
-      | numCheck    | 1     |
+      | pollingTime | 30000 |
+      | numCheck    | 7     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
@@ -153,7 +153,41 @@ Feature: Notifica visualizzata
       | details_sentAttemptMade | 0 |
 
   @e2e
-  Scenario: [E2E-WF-INHIBITION-6] Invio notifica con percorso analogico. Notifica visualizzata tra un tentativo e l'altro
+  # Da testare
+  Scenario: [E2E-WF-INHIBITION-6] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
+  La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_FAILURE_WORKFLOW. Questa lettura non deve generare
+  un evento di timeline REFINEMENT.
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+    And destinatario
+      | denomination | Dino Sauro |
+      | taxId        | DSRDNI00A01A225I  |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_RS |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+      | pollingTime | 30000 |
+      | numCheck    | 7     |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "ANALOG_FAILURE_WORKFLOW" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    Then la notifica può essere correttamente recuperata da "Dino Sauro"
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | SPECIAL |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e
+  Scenario: [E2E-WF-INHIBITION-7] Invio notifica con percorso analogico. Notifica visualizzata tra un tentativo e l'altro
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |

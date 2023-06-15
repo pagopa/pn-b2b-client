@@ -1155,6 +1155,7 @@ public class AvanzamentoNotificheB2bSteps {
         Integer defaultNumCheck = timelineElementWait.getNumCheck();
         Integer waitingTime = (pollingTime != null ? pollingTime : defaultPollingTime) * (numCheck != null ? numCheck : defaultNumCheck);
 
+        logger.info("CURRENT_DATE: " + now().toString());
         await()
             .atMost(waitingTime, MILLISECONDS)
             .with()
@@ -1163,6 +1164,7 @@ public class AvanzamentoNotificheB2bSteps {
             .ignoreExceptions()
             .untilAsserted(() -> {
                 logger.info("#############################∞#################################");
+                logger.info("CURRENT_DATE: " + now().toString());
                 TimelineElement timelineElement = getAndStoreTimeline(timelineEventCategory, dataFromTest);
                 List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
 

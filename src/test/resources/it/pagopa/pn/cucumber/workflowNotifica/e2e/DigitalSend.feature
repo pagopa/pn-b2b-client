@@ -2,7 +2,9 @@ Feature: Digital send e2e
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_1] Invio ad indirizzo di piattaforma successo al primo tentativo
-    Given viene generata una nuova notifica
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario
@@ -59,7 +61,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
 
   @e2e
-  # DA TESTARE
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -209,23 +210,24 @@ Feature: Digital send e2e
     And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
   @e2e
-  # DA TESTARE
   Scenario: [B2B_DIGITAL_SEND_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e al secondo tentativo
-    Given viene generata una nuova notifica
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Galileo Galilei |
       | taxId | GLLGLL64B15G702I |
-      | digitalDomicile_address | NULL |
-    #And viene effettuato il pre-caricamento di un documento
+      | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    #Then viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE" precaricato
-    And viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
@@ -268,7 +270,7 @@ Feature: Digital send e2e
     # secondo invio
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
@@ -276,14 +278,14 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_responseStatus | OK |
       | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKO.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
     And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
@@ -308,21 +310,18 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
-      | isFirstSendRetry | true |
       | details_isAvailable | true |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 1 |
-      | isFirstSendRetry | true |
       | details_isAvailable | false |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
-      | isFirstSendRetry | true |
       | details_isAvailable | false |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
@@ -330,25 +329,28 @@ Feature: Digital send e2e
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
+      | isFirstSendRetry | true |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | false |
+      | isFirstSendRetry | true |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | false |
+      | isFirstSendRetry | true |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
+      | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
@@ -356,7 +358,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_6] Invio ad indirizzo speciale successo al primo tentativo

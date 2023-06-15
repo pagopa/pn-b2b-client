@@ -1,7 +1,9 @@
 Feature: Invio messaggi cortesia e2e
     @e2e
     Scenario: [E2E-SEND_COURTESY_MESSAGE_1] invio messaggio di cortesia - invio per email
-        Given viene generata una nuova notifica
+        Given si predispone addressbook per l'utente "Galileo Galilei"
+        And viene inserito un recapito legale "example@pecSuccess.it"
+        And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
         And destinatario
             | denomination | Galileo Galilei |
