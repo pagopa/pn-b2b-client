@@ -82,6 +82,34 @@ Feature: Notifica visualizzata
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
+
+  @e2e
+  Scenario: [E2E-WF-INHIBITION-2] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+      | pollingTime | 4000 |
+      | numCheck    | 8    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_retryNumber | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_digitalAddressSource | SPECIAL |
+    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
+    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
+    And viene verificato che il numero di elementi di timeline "SCHEDULE_REFINEMENT" della notifica sia di 0
+
   @e2e
   Scenario: [E2E-WF-INHIBITION-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
     La notifica viene letta subito dopo la generazione dell'evento di timeline SCHEDULE_REFINEMENT. Questa lettura non deve generare
