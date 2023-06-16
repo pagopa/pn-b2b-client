@@ -137,7 +137,7 @@ public enum TimelineEventId {
                     .withCategory(this.getValue())
                     .withIun(eventId.getIun())
                     .withRecIndex(eventId.getRecIndex())
-                    //.withProgressIndex(eventId.getProgressIndex())
+                    .withProgressIndex(eventId.getProgressIndex())
                     .build();
         }
     },
@@ -152,7 +152,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
-/*
+
     PREPARE_ANALOG_DOMICILE("PREPARE_ANALOG_DOMICILE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -176,6 +176,18 @@ public enum TimelineEventId {
                     .build();
         }
     },
+
+    NOTIFICATION_VIEWED("NOTIFICATION_VIEWED") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
+/*
 
     DIGITAL_DELIVERY_CREATION_REQUEST("DIGITAL_DELIVERY_CREATION_REQUEST") {
         @Override
@@ -210,17 +222,6 @@ public enum TimelineEventId {
         }
     },
 
-    NOTIFICATION_VIEWED("NOTIFICATION_VIEWED") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
     COMPLETELY_UNREACHABLE("COMPLETELY_UNREACHABLE") {
         @Override
         public String buildEventId(EventId eventId) {
@@ -244,6 +245,7 @@ public enum TimelineEventId {
                     .build();
         }
     },
+    */
 
     SCHEDULE_ANALOG_WORKFLOW("SCHEDULE_ANALOG_WORKFLOW") {
         @Override
@@ -256,7 +258,6 @@ public enum TimelineEventId {
                     .build();
         }
     },
-    */
 
     REQUEST_REFUSED("REQUEST_REFUSED") {
         @Override

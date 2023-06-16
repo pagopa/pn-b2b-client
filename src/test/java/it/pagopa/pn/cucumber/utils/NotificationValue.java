@@ -54,6 +54,9 @@ public enum NotificationValue {
 
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),
+    POLLING_TIME("pollingTime", null, false),
+    NUM_CHECK("numCheck", null, false),
+    LOAD_TIMELINE("loadTimeline", "false", false),
     IS_FIRST_SEND_RETRY("isFirstSendRetry", "false", false),
     LEGAL_FACT_IDS("legalFactsIds", null, false),
     DETAILS("details", null, false),
@@ -68,7 +71,11 @@ public enum NotificationValue {
     DETAILS_SENDING_RECEIPT("details_sendingReceipts", null, false),
     DETAILS_IS_AVAILABLE("details_isAvailable", null, false),
     DETAILS_DELIVERY_DETAIL_CODE("details_deliveryDetailCode", null, false),
-    DETAILS_DELIVERY_FAILURE_CAUSE("details_DeliveryFailureCause", null, false);
+    DETAILS_DELIVERY_FAILURE_CAUSE("details_deliveryFailureCause", null, false),
+    DETAILS_ATTACHMENTS("details_attachments", null, false),
+    DETAILS_PHYSICALADDRESS("details_physicalAddress", null, false),
+    DETAILS_ANALOG_COST("details_analogCost", null, false),
+    DETAILS_DELEGATE_INFO("details_delegateInfo", null, false);
 
 
     private static final String NULL_VALUE = "NULL";

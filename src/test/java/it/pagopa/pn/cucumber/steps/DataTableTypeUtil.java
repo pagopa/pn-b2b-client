@@ -122,6 +122,10 @@ public class DataTableTypeUtil {
         String isAvailable = getValue(data, DETAILS_IS_AVAILABLE.key);
         String isFirstRetry = getValue(data, IS_FIRST_SEND_RETRY.key);
         String progressIndex = getValue(data, PROGRESS_INDEX.key);
+        String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
+        String pollingTime = getValue(data, POLLING_TIME.key);
+        String numCheck = getValue(data, NUM_CHECK.key);
+        String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -144,16 +148,22 @@ public class DataTableTypeUtil {
                         .isAvailable(isAvailable != null ? Boolean.valueOf(getValue(data, DETAILS_IS_AVAILABLE.key)) : null)
                         .deliveryDetailCode(getValue(data, DETAILS_DELIVERY_DETAIL_CODE.key))
                         .deliveryFailureCause(getValue(data, DETAILS_DELIVERY_FAILURE_CAUSE.key))
+                        .attachments(getListValue(AttachmentDetails.class, data, DETAILS_ATTACHMENTS.key))
+                        .physicalAddress(getObjValue(PhysicalAddress.class, data, DETAILS_PHYSICALADDRESS.key))
+                        .analogCost(analogCost != null ? Integer.parseInt(analogCost) : null)
+                        .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                 );
 
-        dataTest.setTimelineElement(timelineElement);
-        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(getValue(data, IS_FIRST_SEND_RETRY.key)) : null);
-        dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        // IMPORTANT: no empty data check; enrich with new checks if it is needed
+        if (timelineElement.getDetails() != null || timelineElement.getLegalFactsIds() != null) {
+            dataTest.setTimelineElement(timelineElement);
         }
+        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(isFirstRetry) : null);
+        dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
+        dataTest.setPollingTime(pollingTime != null ? Integer.parseInt(pollingTime) : null);
+        dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
+        dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
+
         return dataTest;
     }
 
