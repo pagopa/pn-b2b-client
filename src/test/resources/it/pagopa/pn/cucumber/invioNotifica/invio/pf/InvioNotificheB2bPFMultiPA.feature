@@ -73,3 +73,44 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
     And destinatario Mario Gherkin
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "400"
+
+
+  Scenario: [B2B-MULTI-PA-SEND_8] Invion notifica multidestinatario max recipient_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | taxId        | CSRGGL44L13H501E |
+    And destinatario
+      | taxId        | LNALNI80A01H501T |
+    And destinatario
+      | taxId        | GRBGPP87L04L741X |
+    And destinatario
+      | taxId        | LVLDAA85T50G702B |
+    And destinatario
+      | taxId        | BRGLRZ80D58H501Q |
+    And destinatario
+      | taxId        | CLMCST42R12D969Z |
+    And destinatario
+      | taxId        | DRCGNN12A46A326K |
+    And destinatario
+      | taxId        | FRMTTR76M06B715E |
+    And destinatario
+      | taxId        | FLPCPT69A65Z336P |
+    And destinatario
+      | taxId        | PLOMRC01P30L736Y |
+    And destinatario
+      | taxId        | MNDLCU98T68C933T |
+    And destinatario
+      | taxId        | MNZLSN99E05F205J |
+    And destinatario
+      | taxId        | RMSLSO31M04Z404R |
+    And destinatario
+      | taxId        | MNTMRA03M71C615V |
+    And destinatario
+      | taxId        | LTTSRT16T12H501Y |
+    And destinatario
+      | taxId        | DSRDNI00A01A225I |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio ha prodotto un errore con status code "400"
+
