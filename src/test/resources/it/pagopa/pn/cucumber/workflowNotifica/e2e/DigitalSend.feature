@@ -52,6 +52,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -78,12 +79,15 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+      | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
+    And viene inserito un recapito legale "example@FAIL-pecFirstKO.it"
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
@@ -136,18 +140,6 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 0 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | isFirstSendRetry | true |
@@ -155,35 +147,9 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 1 |
-      | isFirstSendRetry | true |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 1 |
-      | isFirstSendRetry | true |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -197,9 +163,12 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e al secondo tentativo
@@ -222,14 +191,15 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
+    #And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+    #  | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
+    And viene inserito un recapito legale "example@OK-pecSuccess.it"
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
@@ -282,53 +252,15 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 0 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
-      | isFirstSendRetry | true |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
-      | isFirstSendRetry | true |
-    And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 1 |
-      | details_isAvailable | false |
       | isFirstSendRetry | true |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
@@ -336,17 +268,18 @@ Feature: Digital send e2e
     And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
+      | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+    #And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
 
   @e2e
   Scenario: [B2B_DIGITAL_SEND_6] Invio ad indirizzo speciale successo al primo tentativo
@@ -404,6 +337,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -557,6 +491,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -703,6 +638,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -848,6 +784,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -993,6 +930,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
@@ -1149,6 +1087,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"

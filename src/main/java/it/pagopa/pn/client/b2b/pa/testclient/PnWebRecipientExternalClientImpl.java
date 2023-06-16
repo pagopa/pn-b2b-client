@@ -30,6 +30,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
+    private final String dinoBearerToken;
 
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
@@ -44,6 +45,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
+            @Value("${pn.bearer-token.user5}") String dinoBearerToken,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
@@ -54,6 +56,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
+        this.dinoBearerToken = dinoBearerToken;
 
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
@@ -89,6 +92,11 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             case USER_3:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
+                beenSet = true;
+                break;
+            case USER_5:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
                 break;
             case PG_1:

@@ -31,11 +31,13 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Base64;
 import java.util.HashMap;
@@ -93,32 +95,36 @@ public class SharedSteps {
     @Value("${pn.configuration.wait.millis:10000}")
     private Integer wait;
 
-    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6}")
-    private Integer schedulingDaysSuccessDigitalRefinement;
+    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
+    private Duration schedulingDaysSuccessDigitalRefinement;
 
-    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6}")
-    private Integer schedulingDaysFailureDigitalRefinement;
+    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
+    private Duration schedulingDaysFailureDigitalRefinement;
 
-    @Value("${pn.configuration.scheduling.days.success.analog.refinement:2}")
-    private Integer schedulingDaysSuccessAnalogRefinement;
+    @Value("${pn.configuration.scheduling.days.success.analog.refinement:2m}")
+    private Duration schedulingDaysSuccessAnalogRefinement;
 
-    @Value("${pn.configuration.second.notification.workflow.waiting.time:6}")
-    private Integer secondNotificationWorkflowWaitingTime;
+    @Value("${pn.configuration.scheduling.days.failure.analog.refinement:2m}")
+    private Duration schedulingDaysFailureAnalogRefinement;
 
-    @Value("${pn.configuration.non.visibility.time:10}")
-    private Integer timeToAddInNonVisibilityTimeCase;
+    @Value("${pn.configuration.second.notification.workflow.waiting.time:6m}")
+    private Duration secondNotificationWorkflowWaitingTime;
 
-    @Value("${pn.configuration.waiting.for.read.courtesy.message:5}")
-    private Integer waitingForReadCourtesyMessage;
+    @Value("${pn.configuration.non.visibility.time:10m}")
+    private Duration timeToAddInNonVisibilityTimeCase;
+
+    @Value("${pn.configuration.waiting.for.read.courtesy.message:5m}")
+    private Duration waitingForReadCourtesyMessage;
 
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
-    private final Integer schedulingDaysSuccessDigitalRefinementDefault = 6;
-    private final Integer schedulingDaysFailureDigitalRefinementDefault = 6;
-    private final Integer schedulingDaysSuccessAnalogRefinementDefault = 2;
-    private final Integer timeToAddInNonVisibilityTimeCaseDefault = 10;
-    private final Integer secondNotificationWorkflowWaitingTimeDefault = 6;
-    private final Integer waitingForReadCourtesyMessageDefault = 5;
+    private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
+    private final Duration schedulingDaysFailureDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
+    private final Duration schedulingDaysSuccessAnalogRefinementDefault = DurationStyle.detectAndParse("2m");
+    private final Duration schedulingDaysFailureAnalogRefinementDefault = DurationStyle.detectAndParse("4m");
+    private final Duration timeToAddInNonVisibilityTimeCaseDefault = DurationStyle.detectAndParse("10m");
+    private final Duration secondNotificationWorkflowWaitingTimeDefault = DurationStyle.detectAndParse("6m");
+    private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
 
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
@@ -760,6 +766,10 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
                 break;
+            case "dino sauro":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -827,32 +837,37 @@ public class SharedSteps {
         return wait;
     }
 
-    public Integer getSchedulingDaysSuccessDigitalRefinement() {
+    public Duration getSchedulingDaysSuccessDigitalRefinement() {
         if (schedulingDaysSuccessDigitalRefinement == null) return schedulingDaysSuccessDigitalRefinementDefault;
         return schedulingDaysSuccessDigitalRefinement;
     }
 
-    public Integer getSchedulingDaysFailureDigitalRefinement() {
+    public Duration getSchedulingDaysFailureDigitalRefinement() {
         if (schedulingDaysFailureDigitalRefinement == null) return schedulingDaysFailureDigitalRefinementDefault;
         return schedulingDaysFailureDigitalRefinement;
     }
 
-    public Integer getSchedulingDaysSuccessAnalogRefinement() {
+    public Duration getSchedulingDaysSuccessAnalogRefinement() {
         if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysSuccessAnalogRefinementDefault;
         return schedulingDaysSuccessAnalogRefinement;
     }
 
-    public Integer getTimeToAddInNonVisibilityTimeCase() {
+    public Duration getSchedulingDaysFailureAnalogRefinement() {
+        if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysFailureAnalogRefinementDefault;
+        return schedulingDaysFailureAnalogRefinement;
+    }
+
+    public Duration getTimeToAddInNonVisibilityTimeCase() {
         if (schedulingDaysSuccessDigitalRefinement == null) return timeToAddInNonVisibilityTimeCaseDefault;
         return timeToAddInNonVisibilityTimeCase;
     }
 
-    public Integer getSecondNotificationWorkflowWaitingTime() {
+    public Duration getSecondNotificationWorkflowWaitingTime() {
         if (secondNotificationWorkflowWaitingTime == null) return secondNotificationWorkflowWaitingTimeDefault;
         return secondNotificationWorkflowWaitingTime;
     }
 
-    public Integer getWaitingForReadCourtesyMessage() {
+    public Duration getWaitingForReadCourtesyMessage() {
         if (waitingForReadCourtesyMessage == null) return waitingForReadCourtesyMessageDefault;
         return waitingForReadCourtesyMessage;
     }
@@ -1033,6 +1048,8 @@ public class SharedSteps {
                 return TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case "NOTIFICATION_VIEWED":
                 return TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
+            case "COMPLETELY_UNREACHABLE":
+                return TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
         }
         return null;
     }

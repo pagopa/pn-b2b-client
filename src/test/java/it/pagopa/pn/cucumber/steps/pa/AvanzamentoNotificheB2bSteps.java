@@ -7,12 +7,10 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.*;
-import it.pagopa.pn.cucumber.utils.EventId;
 import it.pagopa.pn.cucumber.utils.TimelineElementWait;
-import it.pagopa.pn.cucumber.utils.TimelineEventId;
-import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -20,8 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import java.lang.invoke.MethodHandles;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -40,6 +37,7 @@ public class AvanzamentoNotificheB2bSteps {
     private final SharedSteps sharedSteps;
     private final IPnAppIOB2bClient appIOB2bClient;
     private final IPnWebRecipientClient webRecipientClient;
+    private final PnExternalServiceClientImpl externalClient;
     private final IPnWebUserAttributesClient webUserAttributesClient;
     private final IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient;
     private final IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient;
@@ -55,6 +53,7 @@ public class AvanzamentoNotificheB2bSteps {
         this.webUserAttributesClient = webUserAttributesClient;
         this.ioUserAttributerExternaClient = ioUserAttributerExternaClient;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
+        this.externalClient = sharedSteps.getPnExternalServiceClient();
     }
 
 
@@ -1162,8 +1161,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
-    // @Then("viene letta la timeline fino all'elemento {string}")
-
     @Then("viene verificato che l'elemento di timeline {string} esista")
     public void vieneVerificatoElementoTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
         boolean mustLoadTimeline = dataFromTest != null ? dataFromTest.getLoadTimeline() : false;
@@ -1205,12 +1202,14 @@ public class AvanzamentoNotificheB2bSteps {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.DIGITAL_FAILURE_WORKFLOW.getValue(), dataFromTest);
         }  else if (timelineCategory.equals(TimelineElementCategory.ANALOG_SUCCESS_WORKFLOW.getValue())) {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.SEND_ANALOG_FEEDBACK.getValue(), dataFromTest);
+        } else if (timelineCategory.equals(TimelineElementCategory.ANALOG_FAILURE_WORKFLOW.getValue())) {
+            timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategory.SEND_ANALOG_FEEDBACK.getValue(), dataFromTest);
         }
 
         Assertions.assertNotNull(timelineElementForDateCalculation);
 
         OffsetDateTime notificationDate = null;
-        Integer schedulingDaysRefinement = null;
+        Duration schedulingDaysRefinement = null;
         if (timelineCategory.equals(TimelineElementCategory.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
             notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
             schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
@@ -1220,14 +1219,17 @@ public class AvanzamentoNotificheB2bSteps {
         } else if (timelineCategory.equals(TimelineElementCategory.ANALOG_SUCCESS_WORKFLOW.getValue())) {
             notificationDate = timelineElementForDateCalculation.getTimestamp();
             schedulingDaysRefinement = sharedSteps.getSchedulingDaysSuccessAnalogRefinement();
+        } else if (timelineCategory.equals(TimelineElementCategory.ANALOG_FAILURE_WORKFLOW.getValue())) {
+            notificationDate = timelineElementForDateCalculation.getDetails().getNotificationDate();
+            schedulingDaysRefinement = sharedSteps.getSchedulingDaysFailureAnalogRefinement();
         }
 
-        OffsetDateTime schedulingDate = notificationDate.plusMinutes(schedulingDaysRefinement);
+        OffsetDateTime schedulingDate = notificationDate.plus(schedulingDaysRefinement);
         Integer hour = schedulingDate.getHour();
         Integer minutes = schedulingDate.getMinute();
         if ((hour == 21 && minutes > 0) || hour > 21) {
-            Integer timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
-            schedulingDate = schedulingDate.plusMinutes(timeToAddInNonVisibilityTimeCase);
+            Duration timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
+            schedulingDate = schedulingDate.plus(timeToAddInNonVisibilityTimeCase);
         }
         Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
@@ -1254,8 +1256,8 @@ public class AvanzamentoNotificheB2bSteps {
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             TimelineElement timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
             OffsetDateTime firstSend = timelineElement.getTimestamp();
-            Integer secondNotificationWorkflowWaitingTime = sharedSteps.getSecondNotificationWorkflowWaitingTime();
-            OffsetDateTime nextSend = firstSend.plusMinutes(secondNotificationWorkflowWaitingTime);
+            Duration secondNotificationWorkflowWaitingTime = sharedSteps.getSecondNotificationWorkflowWaitingTime();
+            OffsetDateTime nextSend = firstSend.plus(secondNotificationWorkflowWaitingTime);
             OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
             Long remainingTime = ChronoUnit.MILLIS.between(currentDate, nextSend);
             if (remainingTime > 0) {
@@ -1264,6 +1266,28 @@ public class AvanzamentoNotificheB2bSteps {
             // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
         }
+    }
+
+    @And("viene verificato che il destinatario {string} di tipo {string} sia nella tabella pn-paper-notification-failed")
+    public void vieneVerificatoDestinatarioInPnPaperNotificationFailed(String taxId, String recipientTye) {
+        // get internal id from data-vault
+        String internalId = externalClient.getInternalIdFromTaxId(recipientTye, taxId);
+        // get notifications not delivered from delivery-push
+        List<ResponsePaperNotificationFailedDto> notificationFailedList = this.pnPrivateDeliveryPushExternalClient.getPaperNotificationFailed(internalId, true);
+        String iun = sharedSteps.getSentNotification().getIun();
+        ResponsePaperNotificationFailedDto notificationFailed = notificationFailedList.stream().filter(elem -> elem.getIun().equals(iun)).findFirst().orElse(null);
+        Assertions.assertNotNull(notificationFailed);
+    }
+
+    @And("viene verificato che il destinatario {string} di tipo {string} non sia nella tabella pn-paper-notification-failed")
+    public void vieneVerificatoDestinatarioNonInPnPaperNotificationFailed(String taxId, String recipientTye) {
+        // get internal id from data-vault
+        String internalId = externalClient.getInternalIdFromTaxId(recipientTye, taxId);
+        // get notifications not delivered from delivery-push
+        List<ResponsePaperNotificationFailedDto> notificationFailedList = this.pnPrivateDeliveryPushExternalClient.getPaperNotificationFailed(internalId, true);
+        String iun = sharedSteps.getSentNotification().getIun();
+        ResponsePaperNotificationFailedDto notificationFailed = notificationFailedList.stream().filter(elem -> elem.getIun().equals(iun)).findFirst().orElse(null);
+        Assertions.assertNull(notificationFailed);
     }
 
     @Then("viene verificato che il numero di elementi di timeline {string} della notifica sia di {long}")
@@ -1394,11 +1418,11 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElement timelineElementCategory = getAndStoreTimeline(timelineEventCategory, dataFromTest);
         TimelineElement timelineElementSendCourtesyMessage = getAndStoreTimeline("SEND_COURTESY_MESSAGE", dataFromTest);
 
-        Integer waitingForReadCourtesyMessage = sharedSteps.getWaitingForReadCourtesyMessage();
+        Duration waitingForReadCourtesyMessage = sharedSteps.getWaitingForReadCourtesyMessage();
 
         OffsetDateTime timestampEventCategory = timelineElementCategory.getTimestamp();
         OffsetDateTime timestampEventSendCourtesyMessage = timelineElementSendCourtesyMessage.getTimestamp();
-        OffsetDateTime timestampEventSendCourtesyMessageWithWaitingTime = timestampEventSendCourtesyMessage.plusMinutes(waitingForReadCourtesyMessage);
+        OffsetDateTime timestampEventSendCourtesyMessageWithWaitingTime = timestampEventSendCourtesyMessage.plus(waitingForReadCourtesyMessage);
 
         Boolean test = timestampEventCategory.isEqual(timestampEventSendCourtesyMessageWithWaitingTime) || timestampEventCategory.isAfter(timestampEventSendCourtesyMessageWithWaitingTime);
 
