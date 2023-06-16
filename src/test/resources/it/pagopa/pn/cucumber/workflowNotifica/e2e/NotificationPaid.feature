@@ -15,7 +15,8 @@ Feature: Notifica pagata
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+    Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And l'avviso pagopa viene pagato correttamente
@@ -49,7 +50,8 @@ Feature: Notifica pagata
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "DIGITAL_FAILURE_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And l'avviso pagopa viene pagato correttamente

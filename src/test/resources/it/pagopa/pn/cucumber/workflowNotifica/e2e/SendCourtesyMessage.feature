@@ -11,9 +11,8 @@ Feature: Invio messaggi cortesia e2e
             | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
@@ -28,9 +27,8 @@ Feature: Invio messaggi cortesia e2e
             | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
             | details_recIndex | 0 |
@@ -45,9 +43,8 @@ Feature: Invio messaggi cortesia e2e
             | digitalDomicile | NULL |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
-        And viene letta la timeline fino all'elemento "SEND_COURTESY_MESSAGE"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_digitalAddress | {"address": "...", "type": "APPIO"} |
             | details_recIndex | 0 |

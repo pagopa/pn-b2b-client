@@ -8,15 +8,13 @@ Feature: Notifica visualizzata
       | denomination | Ettore Fieramosca |
       | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
-      | NULL | NULL |
+    Then viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
+      | loadTimeline | true |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
@@ -34,15 +32,13 @@ Feature: Notifica visualizzata
       | denomination | Ettore Fieramosca |
       | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
-      | NULL | NULL |
+    Then viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
+      | loadTimeline | true |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
@@ -59,15 +55,13 @@ Feature: Notifica visualizzata
       | denomination | Ettore Fieramosca |
       | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
-      | NULL | NULL |
+    Then viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
+      | loadTimeline | true |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente recuperata da "Ettore Fieramosca"
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
@@ -82,7 +76,6 @@ Feature: Notifica visualizzata
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-
   @e2e
   Scenario: [E2E-WF-INHIBITION-2] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
     Given viene generata una nuova notifica
@@ -92,7 +85,8 @@ Feature: Notifica visualizzata
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | pollingTime | 4000 |
       | numCheck    | 8    |
       | details | NOT_NULL |
@@ -100,11 +94,9 @@ Feature: Notifica visualizzata
       | details_retryNumber | 0 |
       | details_sentAttemptMade | 0 |
       | details_digitalAddressSource | SPECIAL |
-    Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+    And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
@@ -121,7 +113,8 @@ Feature: Notifica visualizzata
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+    Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | loadTimeline | true |
       | pollingTime | 30000 |
       | numCheck    | 7     |
       | details | NOT_NULL |
@@ -152,7 +145,8 @@ Feature: Notifica visualizzata
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "DIGITAL_FAILURE_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
@@ -193,7 +187,8 @@ Feature: Notifica visualizzata
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SCHEDULE_REFINEMENT"
+    Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | loadTimeline | true |
       | pollingTime | 30000 |
       | numCheck    | 7     |
       | details | NOT_NULL |
@@ -226,12 +221,14 @@ Feature: Notifica visualizzata
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_ANALOG_DOMICILE"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
     Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    Then viene letta la timeline fino all'elemento "SEND_ANALOG_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |

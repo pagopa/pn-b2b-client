@@ -56,6 +56,7 @@ public enum NotificationValue {
     PROGRESS_INDEX("progressIndex", "-1", false),
     POLLING_TIME("pollingTime", null, false),
     NUM_CHECK("numCheck", null, false),
+    LOAD_TIMELINE("loadTimeline", "false", false),
     IS_FIRST_SEND_RETRY("isFirstSendRetry", "false", false),
     LEGAL_FACT_IDS("legalFactsIds", null, false),
     DETAILS("details", null, false),

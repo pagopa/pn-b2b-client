@@ -8,9 +8,8 @@ Feature: Validazione notifica e2e
             | taxId | CLMCST42R12D969Z |
         When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "ALLEGATO"
-        And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_NOTFOUND"}] |
 
@@ -23,9 +22,8 @@ Feature: Validazione notifica e2e
             | taxId | CLMCST42R12D969Z |
         When la notifica viene inviata tramite api b2b con sha256 differente dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "SHA_256"
-        And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_SHA_ERROR"}] |
 
@@ -38,9 +36,8 @@ Feature: Validazione notifica e2e
             | taxId | CLMCST42R12D969Z |
         When la notifica viene inviata tramite api b2b con estensione errata dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "EXTENSION"
-        And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_PDF_INVALID_ERROR"}] |
 
@@ -52,9 +49,8 @@ Feature: Validazione notifica e2e
             | taxId        | LNALNI80A01H501T |
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "TAX_ID"
-        And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
@@ -68,9 +64,8 @@ Feature: Validazione notifica e2e
             | physicalAddress_zip          | 00000 |
         When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
         Then si verifica che la notifica non viene accettata causa "ADDRESS"
-        And viene letta la timeline fino all'elemento "REQUEST_REFUSED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "NOT_VALID_ADDRESS"}] |
 
@@ -83,9 +78,8 @@ Feature: Validazione notifica e2e
             | denomination | Cristoforo Colombo |
             | taxId | CLMCST42R12D969Z |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-        Then viene letta la timeline fino all'elemento "REQUEST_ACCEPTED"
-            | NULL | NULL |
         And viene verificato che l'elemento di timeline "REQUEST_ACCEPTED" esista
+            | loadTimeline | true |
             | legalFactsIds | [{"category": "SENDER_ACK"}] |
 
     @e2e
@@ -97,9 +91,8 @@ Feature: Validazione notifica e2e
             | denomination | Cristoforo Colombo |
             | taxId | CLMCST42R12D969Z |
         When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-        Then viene letta la timeline fino all'elemento "AAR_GENERATION"
-            | NULL | NULL |
-        And viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+        Then viene verificato che l'elemento di timeline "AAR_GENERATION" esista
+            | loadTimeline | true |
             | details | NOT_NULL |
             | details_recIndex | 0 |
             | details_generatedAarUrl | NOT_NULL |

@@ -13,10 +13,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -34,12 +36,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -59,10 +57,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-PersonaAbilitata_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-PERSONAABILITATA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -80,19 +80,14 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG002C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-PERSONAABILITATA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-
 
   @e2e
   Scenario: [E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.
@@ -106,10 +101,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Retry_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -133,12 +130,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -157,9 +150,12 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -177,11 +173,6 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 133 |
 
   @e2e
   Scenario: [E2E-WF-ANALOG-5] Invio notifica con percorso analogico. Successo invio RS (OK_RS) in cui la notifica viene visualizzata prima
@@ -196,14 +187,12 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
-    And viene letta la timeline fino all'elemento "NOTIFICATION_VIEWED"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
-    Then viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 0
+    And viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 0
 
   @e2e
   Scenario: [E2E-WF-ANALOG-6] Invio notifica con percorso analogico. Successo al secondo tentativo invio RS (OK-Retry_RS).
@@ -216,9 +205,12 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-Retry_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
     And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -236,11 +228,6 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 133 |
     And viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" sia di 2
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -259,10 +246,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -280,12 +269,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG005C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -305,10 +290,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -331,12 +318,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG005C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -356,10 +339,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Giacenza-gt10-23L_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -382,12 +367,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG005C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -407,10 +388,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_ANALOG_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | PNAG012 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -423,11 +406,6 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG011B |
       | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments | [{"documentType": "23L"}] |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | PNAG012 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -447,8 +425,11 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SCHEDULE_ANALOG_WORKFLOW"
-      | NULL | NULL |
+    Then viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
@@ -468,10 +449,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -489,12 +472,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-LTE10_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -514,10 +493,12 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10-23L_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -540,12 +521,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZADELEGATO-GT10-23L_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -565,7 +542,8 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Giacenza-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -604,7 +582,8 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Giacenza-gt10-23L_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -643,12 +622,14 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "ANALOG_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
       | pollingTime | 30000 |
       | numCheck    | 30    |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-COMPIUTA-GIACENZA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -678,12 +659,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG008C |
-    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-COMPIUTA-GIACENZA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    Then viene letta la timeline fino all'elemento "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"

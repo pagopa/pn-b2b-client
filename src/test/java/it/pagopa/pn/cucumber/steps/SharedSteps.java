@@ -1040,7 +1040,7 @@ public class SharedSteps {
             // proceed with default flux
             iun = notificationResponseComplete.getIun();
         }
-        if (dataFromTest != null) {
+        if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
             if (timelineEventCategory.equals(TimelineElementCategory.SEND_ANALOG_PROGRESS.getValue())) {

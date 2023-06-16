@@ -125,6 +125,7 @@ public class DataTableTypeUtil {
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
         String pollingTime = getValue(data, POLLING_TIME.key);
         String numCheck = getValue(data, NUM_CHECK.key);
+        String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
             return null;
@@ -153,11 +154,15 @@ public class DataTableTypeUtil {
                         .delegateInfo(getObjValue(DelegateInfo.class, data, DETAILS_DELEGATE_INFO.key))
                 );
 
-        dataTest.setTimelineElement(timelineElement);
-        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(getValue(data, IS_FIRST_SEND_RETRY.key)) : null);
+        // IMPORTANT: no empty data check; enrich with new checks if it is needed
+        if (timelineElement.getDetails() != null || timelineElement.getLegalFactsIds() != null) {
+            dataTest.setTimelineElement(timelineElement);
+        }
+        dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(isFirstRetry) : null);
         dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
         dataTest.setPollingTime(pollingTime != null ? Integer.parseInt(pollingTime) : null);
         dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
+        dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
     }

@@ -12,8 +12,11 @@ Feature: Digital send e2e
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
@@ -31,11 +34,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -71,21 +69,17 @@ Feature: Digital send e2e
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
       | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
@@ -96,8 +90,11 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -115,11 +112,6 @@ Feature: Digital send e2e
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
       | isFirstSendRetry | true |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     # secondo invio
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -221,8 +213,12 @@ Feature: Digital send e2e
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
@@ -234,22 +230,17 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 0 |
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -282,11 +273,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | PLATFORM |
       | details_sentAttemptMade | 1 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -372,8 +358,11 @@ Feature: Digital send e2e
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
@@ -391,11 +380,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -521,8 +505,11 @@ Feature: Digital send e2e
       | taxId | RMSLSO31M04Z404R |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    Then viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
@@ -540,11 +527,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -591,8 +573,12 @@ Feature: Digital send e2e
       | taxId | SHRSWP58T71D544X |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
@@ -604,22 +590,17 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -637,11 +618,6 @@ Feature: Digital send e2e
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
       | isFirstSendRetry | true |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     # secondo invio
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -743,8 +719,12 @@ Feature: Digital send e2e
       | taxId | PGVCKH47H05A521N |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
@@ -756,22 +736,17 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@OK-pecFirstFailSecondSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -804,11 +779,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -894,8 +864,12 @@ Feature: Digital send e2e
       | taxId | PTRVTL34D21F890A |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
@@ -907,22 +881,17 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
+      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
@@ -955,11 +924,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
-    And viene verificato che l'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "example@OK-pecSuccess.it", "type": "PEC"} |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1047,8 +1011,12 @@ Feature: Digital send e2e
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene letta la timeline fino all'elemento "SEND_DIGITAL_FEEDBACK"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
+      | details_responseStatus | KO |
+      | details_sendingReceipts | [{"id": null, "system": null}] |
+      | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
@@ -1060,21 +1028,15 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_responseStatus | KO |
-      | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "example@FAIL-pecFirstKOSecondKO.it", "type": "PEC"} |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | GENERAL |
-      | details_sentAttemptMade | 0 |
     # si ritenta l'invio
     And si attende che si ritenti l'invio dopo l'evento "SEND_DIGITAL_DOMICILE"
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 0 |
-    And viene letta la timeline fino all'elemento "DIGITAL_FAILURE_WORKFLOW"
+    And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
+      | loadTimeline | true |
+      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
@@ -1108,10 +1070,6 @@ Feature: Digital send e2e
       | details_recIndex | 0 |
       | details_digitalAddressSource | GENERAL |
       | details_sentAttemptMade | 1 |
-    And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
-      | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1169,9 +1127,12 @@ Feature: Digital send e2e
       | details_sentAttemptMade | 1 |
       | details_isAvailable | true |
       | isFirstSendRetry | true |
-    And viene letta la timeline fino all'elemento "SEND_SIMPLE_REGISTERED_LETTER"
+    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
+      | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost | 133 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1184,11 +1145,6 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 133 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |

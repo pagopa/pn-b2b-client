@@ -8,6 +8,7 @@ public class DataTest {
     Integer progressIndex;
     Integer pollingTime;
     Integer numCheck;
+    boolean loadTimeline;
 
     public boolean getIsFirstSendRetry() {
         return isFirstSendRetry;
@@ -47,5 +48,13 @@ public class DataTest {
 
     public void setNumCheck(Integer numCheck) {
         this.numCheck = numCheck;
+    }
+
+    public boolean getLoadTimeline() {
+        return loadTimeline;
+    }
+
+    public void setLoadTimeline(boolean loadTimeline) {
+        this.loadTimeline = loadTimeline;
     }
 }
