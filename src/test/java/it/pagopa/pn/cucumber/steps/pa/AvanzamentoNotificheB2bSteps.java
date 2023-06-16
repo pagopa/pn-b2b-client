@@ -1148,14 +1148,13 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene letta la timeline fino all'elemento {string}")
     public void vieneLettaLaTimeline(String timelineEventCategory, @Transpose DataTest dataFromTest) {
         // calc how much time wait
-        Integer pollingTime = dataFromTest.getPollingTime();
-        Integer numCheck = dataFromTest.getNumCheck();
+        Integer pollingTime = dataFromTest != null ? dataFromTest.getPollingTime() : null;
+        Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         Integer defaultPollingTime = timelineElementWait.getWaiting();
         Integer defaultNumCheck = timelineElementWait.getNumCheck();
         Integer waitingTime = (pollingTime != null ? pollingTime : defaultPollingTime) * (numCheck != null ? numCheck : defaultNumCheck);
 
-        logger.info("CURRENT_DATE: " + now().toString());
         await()
             .atMost(waitingTime, MILLISECONDS)
             .with()
@@ -1163,8 +1162,6 @@ public class AvanzamentoNotificheB2bSteps {
             .pollDelay(0, MILLISECONDS)
             .ignoreExceptions()
             .untilAsserted(() -> {
-                logger.info("#############################∞#################################");
-                logger.info("CURRENT_DATE: " + now().toString());
                 TimelineElement timelineElement = getAndStoreTimeline(timelineEventCategory, dataFromTest);
                 List<TimelineElement> timelineElementList = sharedSteps.getSentNotification().getTimeline();
 
@@ -1192,8 +1189,8 @@ public class AvanzamentoNotificheB2bSteps {
     @And("viene verificato che l'elemento di timeline {string} non esista")
     public void vieneVerificatoCheElementoTimelineNonEsista(String timelineEventCategory, @Transpose DataTest dataFromTest) {
         // calc how much time wait
-        Integer pollingTime = dataFromTest.getPollingTime();
-        Integer numCheck = dataFromTest.getNumCheck();
+        Integer pollingTime = dataFromTest != null ? dataFromTest.getPollingTime() : null;
+        Integer numCheck = dataFromTest != null ? dataFromTest.getNumCheck() : null;
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         Integer defaultPollingTime = timelineElementWait.getWaiting();
         Integer defaultNumCheck = timelineElementWait.getNumCheck();
