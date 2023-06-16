@@ -255,22 +255,23 @@ public class RicezioneNotificheWebDelegheSteps {
         if (resp!= null && !resp.isEmpty()){
             for (HashMap<String, String> entry: resp) {
                 if ("ACTIVE".equals(entry.get("status"))){
-                    gruppoAttivo = entry.get("name");
+                    gruppoAttivo = entry.get("id");
                     break;
                 }
             }
         }
         
          //TODO Gruppi Disponibili della PG Admin
-        List<String> xPagopaPnCxGroups = new ArrayList<>();
+        List<String> xPagopaPnCxGroups = null;
 
         //TODO Recuperare la Lista dei gruppi della delega;
         List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
 
           List<String> listGruppi  = new ArrayList<>();
             if (gruppiDelega!= null ){
+                xPagopaPnCxGroups = new ArrayList<>();
                 for (GroupDto gruppo : gruppiDelega) {
-                    //xPagopaPnCxGroups.add(gruppo.getName());
+                    xPagopaPnCxGroups.add(gruppo.getName());
                 }
             }
 
@@ -281,8 +282,12 @@ public class RicezioneNotificheWebDelegheSteps {
         switch (webRecipientClient.getBearerTokenSetted()) {
             case PG_1:
                 xPagopaPnCxId = sharedSteps.getIdOrganizationGherkinSrl();
+                //webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
+                break;
             case PG_2:
                 xPagopaPnCxId = sharedSteps.getIdOrganizationCucumberSpa();
+              //  webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
+                break;
         }
 
         List<String> gruppi = new ArrayList<>();
@@ -295,20 +300,20 @@ public class RicezioneNotificheWebDelegheSteps {
 
         String finalXPagopaPnCxId = xPagopaPnCxId;
         Assertions.assertDoesNotThrow(() -> {
-        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  xPagopaPnCxGroups,  xPagopaPnCxRole,  updateRequestDto);
+        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  null,  xPagopaPnCxRole,  updateRequestDto);
         });
 
         String delegatorTaxId = getTaxIdByUser(recipient);
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegator() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+            if (mandate.getMandateId().equalsIgnoreCase(mandateToSearch.getMandateId())) {
                 mandateDto = mandate;
                 break;
             }
         }
         String gruppoAssegnato = "";
-        if (mandateDto.getGroups()!= null && mandateDto.getGroups().size()>0) {
+        if (mandateDto!=null && mandateDto.getGroups()!= null && mandateDto.getGroups().size()>0) {
             gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
