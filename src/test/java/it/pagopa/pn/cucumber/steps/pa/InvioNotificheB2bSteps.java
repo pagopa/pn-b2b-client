@@ -358,7 +358,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
-        Thread.sleep(2 * 60 * 1000);
+        Thread.sleep(3 * 60 * 1000);
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
         OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime().truncatedTo(ChronoUnit.MINUTES);

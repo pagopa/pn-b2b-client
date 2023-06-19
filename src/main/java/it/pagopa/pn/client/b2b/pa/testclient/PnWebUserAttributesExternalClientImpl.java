@@ -46,6 +46,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
     private final String galileoBearerToken;
+    private final String dinoBearerToken;
 
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
@@ -61,6 +62,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
             @Value("${pn.bearer-token.user4}") String galileoBearerToken,
+            @Value("${pn.bearer-token.user5}") String dinoBearerToken,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.user-agent}") String userAgent
@@ -72,6 +74,7 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
         this.galileoBearerToken = galileoBearerToken;
+        this.dinoBearerToken = dinoBearerToken;
 
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
@@ -145,6 +148,16 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, galileoBearerToken, userAgent));
 
                 this.bearerTokenSetted = BearerTokenType.USER_4;
+                beenSet = true;
+                break;
+            case USER_5:
+                this.ConsentsApi.setApiClient(newConsentsApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+
+                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, dinoBearerToken, userAgent));
+
+                this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
                 break;
             case PG_1:

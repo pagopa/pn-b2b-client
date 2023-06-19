@@ -40,6 +40,7 @@ public class PnExternalServiceClientImpl {
     private final String gruopInfoBasePath;
     private String bearerTokenInterop;
     private final String extChannelsBasePath;
+    private final String dataVaultBasePath;
 
     private final String interopBaseUrl;
 
@@ -67,12 +68,14 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.base-url}") String basePathWebApi,
-            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath
+            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
+            @Value("${pn.dataVault.base-url}") String dataVaultBasePath
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.safeStorageBasePath = safeStorageBasePath;
         this.extChannelsBasePath = extChannelsBasePath;
+        this.dataVaultBasePath = dataVaultBasePath;
         this.gruopInfoBasePath = gruopInfoBasePath;
         this.basePathWebApi = basePathWebApi;
         this.apiKeyMvp1 = apiKeyMvp1;
@@ -137,6 +140,10 @@ public class PnExternalServiceClientImpl {
 
     public String getVerificationCode(String digitalAddress) {
         return getVerificationCodeWithHttpInfo(digitalAddress).getBody();
+    }
+
+    public String getInternalIdFromTaxId(String recipientType, String taxId) {
+        return getInternalIdFromTaxIdWithHttpInfo(recipientType, taxId).getBody();
     }
 
     private ResponseEntity<List<HashMap<String, String>>> pgGroupInfoWithHttpInfo(String bearerToken) throws RestClientException {
@@ -214,6 +221,29 @@ public class PnExternalServiceClientImpl {
         ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
         };
         return invokeAPI(extChannelsBasePath, "/external-channels/verification-code/{digitalAddress}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+    }
+
+    private ResponseEntity<String> getInternalIdFromTaxIdWithHttpInfo(String recipientType, String taxId) {
+        String postBody = taxId;
+
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("recipientType", recipientType);
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        queryParams.add("metadataOnly", "true");
+
+        final HttpHeaders headerParams = new HttpHeaders();
+
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json", "text/plain"
+        };
+        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
+        final MediaType localVarContentType = MediaType.TEXT_PLAIN;
+
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
+        };
+
+        return invokeAPI(dataVaultBasePath, "/datavault-private/v1/recipients/external/{recipientType}", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
     public static class SafeStorageResponse{

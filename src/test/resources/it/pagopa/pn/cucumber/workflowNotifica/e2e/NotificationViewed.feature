@@ -77,6 +77,31 @@ Feature: Notifica visualizzata
       | details_recIndex | 0 |
 
   @e2e
+  Scenario: [E2E-NOTIFICATION-VIEWED-5] A valle della visualizzazione della notifica, il destinatario non deve essere nella tabella pn-paper-notification-failed
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario
+      | denomination | Dino Sauro |
+      | taxId        | DSRDNI00A01A225I  |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 20     |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che il destinatario "DSRDNI00A01A225I" di tipo "PF" sia nella tabella pn-paper-notification-failed
+    And la notifica può essere correttamente recuperata da "Dino Sauro"
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
+    And viene verificato che il destinatario "DSRDNI00A01A225I" di tipo "PF" non sia nella tabella pn-paper-notification-failed
+
+  @e2e
   Scenario: [E2E-WF-INHIBITION-2] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -175,7 +200,6 @@ Feature: Notifica visualizzata
       | details_sentAttemptMade | 0 |
 
   @e2e
-  # Da testare
   Scenario: [E2E-WF-INHIBITION-6] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_FAILURE_WORKFLOW. Questa lettura non deve generare
   un evento di timeline REFINEMENT.
@@ -185,12 +209,12 @@ Feature: Notifica visualizzata
       | denomination | Dino Sauro |
       | taxId        | DSRDNI00A01A225I  |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_RS |
+      | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 7     |
+      | pollingTime | 40000 |
+      | numCheck    | 16     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "ANALOG_FAILURE_WORKFLOW" esista
@@ -200,8 +224,7 @@ Feature: Notifica visualizzata
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_digitalAddressSource | SPECIAL |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade | 1 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |

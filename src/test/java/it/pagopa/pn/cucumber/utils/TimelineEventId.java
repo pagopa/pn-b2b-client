@@ -187,6 +187,17 @@ public enum TimelineEventId {
                     .build();
         }
     },
+
+    COMPLETELY_UNREACHABLE("COMPLETELY_UNREACHABLE") {
+        @Override
+        public String buildEventId(EventId eventId) {
+            return new TimelineEventIdBuilder()
+                    .withCategory(this.getValue())
+                    .withIun(eventId.getIun())
+                    .withRecIndex(eventId.getRecIndex())
+                    .build();
+        }
+    },
 /*
 
     DIGITAL_DELIVERY_CREATION_REQUEST("DIGITAL_DELIVERY_CREATION_REQUEST") {
@@ -212,17 +223,6 @@ public enum TimelineEventId {
     },
 
     NOTIFICATION_VIEWED_CREATION_REQUEST("NOTIFICATION_VIEWED_CREATION_REQUEST") {
-        @Override
-        public String buildEventId(EventId eventId) {
-            return new TimelineEventIdBuilder()
-                    .withCategory(this.getValue())
-                    .withIun(eventId.getIun())
-                    .withRecIndex(eventId.getRecIndex())
-                    .build();
-        }
-    },
-
-    COMPLETELY_UNREACHABLE("COMPLETELY_UNREACHABLE") {
         @Override
         public String buildEventId(EventId eventId) {
             return new TimelineEventIdBuilder()
