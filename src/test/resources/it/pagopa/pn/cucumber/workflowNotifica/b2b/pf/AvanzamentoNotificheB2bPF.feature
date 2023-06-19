@@ -194,7 +194,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario
-      | taxId | RMSLSO31M04Z404R |
+      | taxId | GLLGLL64B15G702I |
       | digitalDomicile_address | DSRDNI00A01A225I@pnpagopa.postecert.local |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -235,3 +235,18 @@ Feature: avanzamento notifiche b2b persona fisica
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+
+    @dev @ignore
+    Scenario: [B2B_TIMELINE_24] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
+      Given viene generata una nuova notifica
+        | subject | invio notifica con cucumber |
+        | senderDenomination | Comune di milano |
+      And destinatario Mario Gherkin e:
+        | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+      When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
+      Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+      And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+      And "Mario Gherkin" legge la notifica ricevuta
+      Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+      And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"

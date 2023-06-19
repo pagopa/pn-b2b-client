@@ -94,7 +94,7 @@ public class SharedSteps {
     private String gherkinSpaTaxID = "15376371009";
     private String cucumberSrlTaxID = "12345678903";
     private String cucumberSocietyTaxID = "MSSLGU51P10A087J";
-    private String cucumberAnalogicTaxID = "PPPPLT80A01H501V";
+    private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
     private String gherkinSrltaxId = "CCRMCT06A03A433H";
     private String cucumberSpataxId = "20517490320";
 
