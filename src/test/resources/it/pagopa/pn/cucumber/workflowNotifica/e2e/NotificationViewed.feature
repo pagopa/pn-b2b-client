@@ -84,11 +84,11 @@ Feature: Notifica visualizzata
       | denomination | Dino Sauro |
       | taxId        | DSRDNI00A01A225I  |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@fail_RS |
+      | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
       | loadTimeline | true |
-      | pollingTime | 30000 |
+      | pollingTime | 40000 |
       | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -209,11 +209,11 @@ Feature: Notifica visualizzata
       | denomination | Dino Sauro |
       | taxId        | DSRDNI00A01A225I  |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@fail_RS |
+      | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | loadTimeline | true |
-      | pollingTime | 30000 |
+      | pollingTime | 40000 |
       | numCheck    | 16     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -224,7 +224,7 @@ Feature: Notifica visualizzata
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
+      | details_sentAttemptMade | 1 |
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |
