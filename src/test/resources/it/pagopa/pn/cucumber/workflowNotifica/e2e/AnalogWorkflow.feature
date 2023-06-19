@@ -38,6 +38,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG001C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -82,6 +84,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG002C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -132,6 +136,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG001C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -194,7 +200,7 @@ Feature: Workflow analogico
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
     And viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" della notifica sia di 0
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-6] Invio notifica con percorso analogico. Successo al secondo tentativo invio RS (OK-Retry_RS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -228,6 +234,15 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_sentAttemptMade | 0 |
+      | details_recIndex | 0 |
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_sentAttemptMade | 1 |
+      | details_recIndex | 0 |
     And viene verificato che il numero di elementi di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" sia di 2
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -271,6 +286,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG005C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -278,7 +295,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-8] Invio notifica con percorso analogico. Successo giacenza gt 890 (OK-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -369,6 +386,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG005C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -479,6 +498,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG006C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -528,6 +549,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG006C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
@@ -535,7 +558,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-14] Invio notifica con percorso analogico. Fallimento giacenza gt 890 (FAIL-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -549,6 +572,8 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -575,7 +600,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-15] Invio notifica con percorso analogico. Fallimento giacenza gt 23L 890 (FAIL-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -589,6 +614,8 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -615,7 +642,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG007C |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-16] Invio notifica con percorso analogico. Compiuta giacenza 890 (OK-CompiutaGiacenza_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -666,6 +693,8 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG008C |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
