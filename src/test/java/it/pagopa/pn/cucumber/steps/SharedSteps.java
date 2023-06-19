@@ -162,7 +162,7 @@ public class SharedSteps {
                         .taxId(marioCucumberTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario Mario Cucumber e:")
@@ -182,7 +182,7 @@ public class SharedSteps {
                         .taxId(marioGherkinTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario Mario Gherkin e:")
@@ -202,7 +202,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario GherkinSrl")
@@ -214,7 +214,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario GherkinSrl e:")
@@ -235,7 +235,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
     
 
@@ -257,7 +257,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario Cucumber srl e:")
@@ -278,7 +278,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("testpagopa3@pnpagopa.postecert.local")));
+                                .address("notifichedigitali-uat@pec.pagopa.it")));
     }
 
     @And("destinatario Cucumber Society e:")
