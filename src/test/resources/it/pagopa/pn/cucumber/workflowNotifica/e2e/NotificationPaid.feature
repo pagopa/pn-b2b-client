@@ -85,3 +85,4 @@ Feature: Notifica pagata
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
+

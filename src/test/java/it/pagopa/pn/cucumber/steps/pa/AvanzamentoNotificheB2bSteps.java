@@ -182,6 +182,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_DOMICILE, 4, waiting * 3);
                 break;
             case "SEND_ANALOG_PROGRESS":
+//                timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_PROGRESS, 90, 4000);
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.SEND_ANALOG_PROGRESS, 4, waiting * 3);
                 break;
             case "SEND_ANALOG_FEEDBACK":
@@ -309,13 +310,16 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SEND_ANALOG_PROGRESS":
                 if (detailsFromTest != null) {
-                    if(Objects.nonNull(elementFromTest.getLegalFactsIds()))
+                    if(Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                    for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                        Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                        for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                            Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                        }
                     }
-                    Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode())) {
+                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    }
                     if (Objects.nonNull(detailsFromTest.getAttachments())) {
                         Assertions.assertNotNull(detailsFromNotification.getAttachments());
                         Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
@@ -765,6 +769,21 @@ public class AvanzamentoNotificheB2bSteps {
         sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
         try {
             Assertions.assertNotNull(sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED)).findAny().orElse(null));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("si verifica che la notifica non abbia lo stato {string}")
+    public void checksNotificationNotHaveStatus(String status) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 10);
+        } catch (InterruptedException interruptedException) {
+            logger.error("InterruptedException error");
+        }
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        try {
+            Assertions.assertNull(sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(NotificationStatus.valueOf(status))).findAny().orElse(null));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
