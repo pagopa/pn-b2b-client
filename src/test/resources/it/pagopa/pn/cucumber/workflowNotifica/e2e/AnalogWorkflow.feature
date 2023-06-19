@@ -425,8 +425,10 @@ Feature: Workflow analogico
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
-      | loadTimeline | true |
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" esista
+      | loadTimeline | true  |
+      | poolingTime  | 360000 |
+      | numCheck     | 5     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -434,6 +436,9 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SCHEDULE_ANALOG_WORKFLOW" esista
+      | NULL | NULL |
     And controlla che il timestamp di "SEND_ANALOG_DOMICILE" sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
       | NULL | NULL |
 
