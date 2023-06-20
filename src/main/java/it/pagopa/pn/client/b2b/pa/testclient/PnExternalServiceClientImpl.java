@@ -1,11 +1,13 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -17,13 +19,19 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.time.OffsetDateTime;
+import java.util.*;
 
 
 @Component
@@ -50,6 +58,10 @@ public class PnExternalServiceClientImpl {
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
 
+    private final String openSearchBaseUrl;
+    private final String openSearchUsername;
+    private final String openSearchPassword;
+
     private final String basePathWebApi;
     public PnExternalServiceClientImpl(
             ApplicationContext ctx,
@@ -65,7 +77,10 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.interop.enable}") String enableInterop,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-            @Value("${pn.webapi.external.base-url}") String basePathWebApi
+            @Value("${pn.webapi.external.base-url}") String basePathWebApi,
+            @Value("${pn.OpenSearch.base-url}") String openSearchBaseUrl,
+            @Value("${pn.OpenSearch.username}") String openSearchUsername,
+            @Value("${pn.OpenSearch.password}") String openSearchPassword
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
@@ -81,6 +96,11 @@ public class PnExternalServiceClientImpl {
         this.clientAssertion = clientAssertion;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+
+        this.openSearchBaseUrl = openSearchBaseUrl;
+        this.openSearchUsername = openSearchUsername;
+        this.openSearchPassword = openSearchPassword;
+
         if ("true".equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = getBearerToken();
         }
@@ -107,6 +127,66 @@ public class PnExternalServiceClientImpl {
         return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
 
     }
+
+    private void restTemplateAvoidSSlCertificate() throws NoSuchAlgorithmException, KeyManagementException {
+        TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+
+            public void checkClientTrusted(X509Certificate[] certs, String authType) {
+            }
+
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }};
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier((hostname, session) -> true);
+
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+
+        this.restTemplate.setRequestFactory(requestFactory);
+    }
+
+    public openSearchResponse openSearchGetAudit(String audRetentionType,String auditLogType, int numberOfResult){
+        return openSearchGetAuditWithHttpInfo(audRetentionType, auditLogType, numberOfResult).getBody();
+    }
+    private ResponseEntity<openSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType,String auditLogType, int numberOfResult) throws RestClientException {
+
+        try {
+            restTemplateAvoidSSlCertificate();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
+        }
+
+        String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\""+auditLogType+"\"}}}},\"size\":"+numberOfResult+",\"sort\":[{\"@timestamp\": \"desc\"}]}";
+
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        //queryParams.add("format", "json");
+
+        final HttpHeaders headerParams = new HttpHeaders();
+
+        String usernamePassword = openSearchUsername+":"+openSearchPassword;
+        headerParams.add("Authorization","Basic "+Base64.getEncoder().encodeToString(usernamePassword.getBytes()));
+
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json"
+        };
+        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
+        final MediaType localVarContentType = MediaType.APPLICATION_JSON;
+
+        ParameterizedTypeReference<openSearchResponse> returnType = new ParameterizedTypeReference<>() {};
+        return invokeAPI(openSearchBaseUrl, "/pn-logs"+audRetentionType+"/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+    }
+
 
     public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType, String bearerToken) throws RestClientException {
         switch (apiKeyType) {
@@ -436,6 +516,440 @@ public class PnExternalServiceClientImpl {
         });
         return queryBuilder.toString();
 
+    }
+
+
+    //OPEN SEARCH RESPONSE
+    public static class openSearchResponse {
+       Integer took;
+       Boolean timed_out;
+       Shards _shards;
+
+       OuterHits hits;
+
+        public Integer getTook() {
+            return took;
+        }
+
+        public void setTook(Integer took) {
+            this.took = took;
+        }
+
+        public Boolean getTimed_out() {
+            return timed_out;
+        }
+
+        public void setTimed_out(Boolean timed_out) {
+            this.timed_out = timed_out;
+        }
+
+        public Shards get_shards() {
+            return _shards;
+        }
+
+        public void set_shards(Shards _shards) {
+            this._shards = _shards;
+        }
+
+        public OuterHits getHits() {
+            return hits;
+        }
+
+        public void setHits(OuterHits hits) {
+            this.hits = hits;
+        }
+
+        @Override
+        public String toString() {
+            return "openSearchResponse{" +
+                    "took=" + took +
+                    ", timed_out=" + timed_out +
+                    ", _shards=" + _shards +
+                    ", hits=" + hits +
+                    '}';
+        }
+    }
+
+    public static class Shards{
+        public Shards() {}
+        private Integer total;
+        private Integer successful;
+        private Integer skipped;
+
+        private Integer failed;
+
+        public Integer getTotal() {
+            return total;
+        }
+
+        public void setTotal(Integer total) {
+            this.total = total;
+        }
+
+        public Integer getSuccessful() {
+            return successful;
+        }
+
+        public void setSuccessful(Integer successful) {
+            this.successful = successful;
+        }
+
+        public Integer getSkipped() {
+            return skipped;
+        }
+
+        public void setSkipped(Integer skipped) {
+            this.skipped = skipped;
+        }
+
+        public Integer getFailed() {
+            return failed;
+        }
+
+        public void setFailed(Integer failed) {
+            this.failed = failed;
+        }
+
+        @Override
+        public String toString() {
+            return "Shards{" +
+                    "total=" + total +
+                    ", successful=" + successful +
+                    ", skipped=" + skipped +
+                    ", failed=" + failed +
+                    '}';
+        }
+    }
+
+    public static class OuterHits{
+        public OuterHits() {
+        }
+
+        private Double max_score;
+        private Total total;
+        private LinkedList<InnerHits> hits;
+
+        public Double getMax_score() {
+            return max_score;
+        }
+
+        public void setMax_score(Double max_score) {
+            this.max_score = max_score;
+        }
+
+        public Total getTotal() {
+            return total;
+        }
+
+        public void setTotal(Total total) {
+            this.total = total;
+        }
+
+        public LinkedList<InnerHits> getHits() {
+            return hits;
+        }
+
+        public void setHits(LinkedList<InnerHits> hits) {
+            this.hits = hits;
+        }
+
+        @Override
+        public String toString() {
+            return "OuterHits{" +
+                    "max_score=" + max_score +
+                    ", total=" + total +
+                    ", hits=" + hits +
+                    '}';
+        }
+    }
+
+    public static class InnerHits{
+        public InnerHits() {
+        }
+
+        private String _index;
+        private String _type;
+        private String _id;
+        private Double _score;
+        private Source _source;
+
+        public String get_index() {
+            return _index;
+        }
+
+        public void set_index(String _index) {
+            this._index = _index;
+        }
+
+        public String get_type() {
+            return _type;
+        }
+
+        public void set_type(String _type) {
+            this._type = _type;
+        }
+
+        public String get_id() {
+            return _id;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
+        }
+
+        public Double get_score() {
+            return _score;
+        }
+
+        public void set_score(Double _score) {
+            this._score = _score;
+        }
+
+        public Source get_source() {
+            return _source;
+        }
+
+        public void set_source(Source _source) {
+            this._source = _source;
+        }
+
+        public class Source{
+            @Override
+            public String toString() {
+                return "Source{" +
+                        "msg='" + msg + '\'' +
+                        ", trace_id='" + trace_id + '\'' +
+                        ", level=" + level +
+                        ", logGroup='" + logGroup + '\'' +
+                        ", aud_type='" + aud_type + '\'' +
+                        ", pid=" + pid +
+                        ", message='" + message + '\'' +
+                        ", aud_orig='" + aud_orig + '\'' +
+                        ", tags=" + Arrays.toString(tags) +
+                        ", kinesisSeqNumber='" + kinesisSeqNumber + '\'' +
+                        ", hostname='" + hostname + '\'' +
+                        ", timestamp='" + timestamp + '\'' +
+                        ", level_value=" + level_value +
+                        ", v=" + v +
+                        ", name='" + name + '\'' +
+                        ", logStream='" + logStream + '\'' +
+                        ", logger_name='" + logger_name + '\'' +
+                        ", time='" + time + '\'' +
+                        '}';
+            }
+
+            public Source() {
+            }
+
+            private String msg;
+            private String trace_id;
+            private String level;
+            private String logGroup;
+            private String aud_type;
+            private Integer pid;
+            private String message;
+            private String aud_orig;
+            private String[] tags;
+            private String kinesisSeqNumber;
+
+            private String hostname;
+            @JsonProperty("@timestamp")
+            private OffsetDateTime timestamp;
+
+            private Long level_value;
+            private Long v;
+
+            private String name;
+            private String logStream;
+            private String logger_name;
+            private OffsetDateTime time;
+
+            public String getMsg() {
+                return msg;
+            }
+
+            public void setMsg(String msg) {
+                this.msg = msg;
+            }
+
+            public String getTrace_id() {
+                return trace_id;
+            }
+
+            public void setTrace_id(String trace_id) {
+                this.trace_id = trace_id;
+            }
+
+            public String getLevel() {
+                return level;
+            }
+
+            public void setLevel(String level) {
+                this.level = level;
+            }
+
+            public String getLogGroup() {
+                return logGroup;
+            }
+
+            public void setLogGroup(String logGroup) {
+                this.logGroup = logGroup;
+            }
+
+            public String getAud_type() {
+                return aud_type;
+            }
+
+            public void setAud_type(String aud_type) {
+                this.aud_type = aud_type;
+            }
+
+            public Integer getPid() {
+                return pid;
+            }
+
+            public void setPid(Integer pid) {
+                this.pid = pid;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+
+            public void setMessage(String message) {
+                this.message = message;
+            }
+
+            public String getAud_orig() {
+                return aud_orig;
+            }
+
+            public void setAud_orig(String aud_orig) {
+                this.aud_orig = aud_orig;
+            }
+
+            public String[] getTags() {
+                return tags;
+            }
+
+            public void setTags(String[] tags) {
+                this.tags = tags;
+            }
+
+            public String getKinesisSeqNumber() {
+                return kinesisSeqNumber;
+            }
+
+            public void setKinesisSeqNumber(String kinesisSeqNumber) {
+                this.kinesisSeqNumber = kinesisSeqNumber;
+            }
+
+            public String getHostname() {
+                return hostname;
+            }
+
+            public void setHostname(String hostname) {
+                this.hostname = hostname;
+            }
+
+            public OffsetDateTime getTimestamp() {
+                return timestamp;
+            }
+
+            public void setTimestamp(OffsetDateTime timestamp) {
+                this.timestamp = timestamp;
+            }
+
+            public Long getLevel_value() {
+                return level_value;
+            }
+
+            public void setLevel_value(Long level_value) {
+                this.level_value = level_value;
+            }
+
+            public Long getV() {
+                return v;
+            }
+
+            public void setV(Long v) {
+                this.v = v;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getLogStream() {
+                return logStream;
+            }
+
+            public void setLogStream(String logStream) {
+                this.logStream = logStream;
+            }
+
+            public String getLogger_name() {
+                return logger_name;
+            }
+
+            public void setLogger_name(String logger_name) {
+                this.logger_name = logger_name;
+            }
+
+            public OffsetDateTime getTime() {
+                return time;
+            }
+
+            public void setTime(OffsetDateTime time) {
+                this.time = time;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "InnerHits{" +
+                    "_index='" + _index + '\'' +
+                    ", _type='" + _type + '\'' +
+                    ", _id='" + _id + '\'' +
+                    ", _score=" + _score +
+                    ", _source=" + _source +
+                    '}';
+        }
+    }
+
+    public static class Total{
+        public Total() {
+        }
+        private Integer value;
+        private String relation;
+
+        public Integer getValue() {
+            return value;
+        }
+
+        public void setValue(Integer value) {
+            this.value = value;
+        }
+
+        public String getRelation() {
+            return relation;
+        }
+
+        public void setRelation(String relation) {
+            this.relation = relation;
+        }
+
+        @Override
+        public String toString() {
+            return "Total{" +
+                    "value=" + value +
+                    ", relation='" + relation + '\'' +
+                    '}';
+        }
     }
 
 }

@@ -1,0 +1,49 @@
+package it.pagopa.pn.cucumber.steps.pa;
+
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+
+public class OpenSearchSteps {
+
+    private final PnExternalServiceClientImpl pnExternalServiceClient;
+    private final SharedSteps sharedSteps;
+
+    @Autowired
+    public OpenSearchSteps(PnExternalServiceClientImpl pnExternalServiceClient, SharedSteps sharedSteps) {
+        this.sharedSteps = sharedSteps;
+        this.pnExternalServiceClient = pnExternalServiceClient;
+    }
+
+    @Given("viene effettuato una prova di chiamata ad openSearch")
+    public void vieneEffettuatoUnaProvaDiChiamata() {
+        PnExternalServiceClientImpl.openSearchResponse stringResponseEntity = pnExternalServiceClient.openSearchGetAudit("10y","AUD_NT_PRELOAD",10);
+        System.out.println(stringResponseEntity);
+        System.out.println("NUM. DI RISULTATI: "+stringResponseEntity.getHits().getHits().size());
+    }
+
+
+    @Then("viene verificato che esiste un audit log {string} in {string} non più vecchio di {int} giorni")
+    public void vieneVerificatoCheEsisteUnAuditLogInNonPiùVecchioDiGiorni(String auditLogType, String auditLogRetention, Integer maxAge) {
+        PnExternalServiceClientImpl.openSearchResponse openSearchResponse = pnExternalServiceClient.openSearchGetAudit(auditLogRetention,auditLogType,10);
+        Assertions.assertFalse(openSearchResponse.getHits().getHits().isEmpty());
+        OffsetDateTime ageTimeStamp = openSearchResponse.getHits().getHits().get(0).get_source().getTimestamp();
+        System.out.println("AGE: "+ageTimeStamp);
+        Assertions.assertTrue(ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()) <= maxAge);
+        System.out.println("DIFF: "+ ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()));
+
+    }
+
+    @And("viene verificato che non esiste un audit log {string} in {string}")
+    public void vieneVerificatoCheNonEsisteUnAuditLogIn(String auditLogType, String auditLogRetention) {
+        PnExternalServiceClientImpl.openSearchResponse openSearchResponse = pnExternalServiceClient.openSearchGetAudit(auditLogRetention,auditLogType,10);
+        Assertions.assertTrue(openSearchResponse.getHits().getHits().isEmpty());
+    }
+}
