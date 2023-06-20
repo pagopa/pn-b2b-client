@@ -92,11 +92,16 @@ public class PnPaB2bUtils {
         return response;
     }
 
-    public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequest request) throws IOException {
+    public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequest request, boolean noUpload) throws IOException {
 
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
-            newdocs.add(this.preloadDocument(doc));
+            if(noUpload){
+                newdocs.add(this.preloadDocumentWithoutUpload(doc));
+            }else{
+                newdocs.add(this.preloadDocument(doc));
+            }
+
         }
         request.setDocuments(newdocs);
 
@@ -104,13 +109,11 @@ public class PnPaB2bUtils {
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
         }
 
         log.info("New Notification Request {}", request);
-        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+        if ((request.getDocuments()!= null && request.getDocuments().size()>0) && !noUpload){
             NotificationDocument notificationDocument = request.getDocuments().get(0);
             notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
         }
@@ -132,8 +135,6 @@ public class PnPaB2bUtils {
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
         }
 
@@ -314,6 +315,28 @@ public class PnPaB2bUtils {
                 resourceName, sha256, secret, url));
 
         loadToPresigned( url, secret, sha256, resourceName );
+
+        document.getRef().setKey( key );
+        document.getRef().setVersionToken("v1");
+        document.digests( new NotificationAttachmentDigests().sha256( sha256 ));
+
+        return document;
+    }
+
+
+    public NotificationDocument preloadDocumentWithoutUpload( NotificationDocument document) throws IOException {
+
+        String resourceName = document.getRef().getKey();
+        String sha256 = computeSha256( resourceName );
+
+        PreLoadResponse preloadResp = getPreLoadResponse(sha256);
+        String key = preloadResp.getKey();
+        String secret = preloadResp.getSecret();
+        String url = preloadResp.getUrl();
+
+        log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                resourceName, sha256, secret, url));
+
 
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");
