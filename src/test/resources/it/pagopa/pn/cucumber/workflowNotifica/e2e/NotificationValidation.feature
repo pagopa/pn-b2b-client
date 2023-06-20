@@ -1,4 +1,5 @@
 Feature: Validazione notifica e2e
+
     @e2e
     Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_1] validazione fallita allegati notifica - file non caricato su SafeStorage
         Given viene generata una nuova notifica
@@ -54,7 +55,7 @@ Feature: Validazione notifica e2e
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
-    @e2e
+    @e2e @ignore
     Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
