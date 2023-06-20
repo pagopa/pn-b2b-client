@@ -151,7 +151,7 @@ Feature: Ricezione notifiche destinate al delegante
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-  Scenario: [WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibil
+  Scenario: [WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibile
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |

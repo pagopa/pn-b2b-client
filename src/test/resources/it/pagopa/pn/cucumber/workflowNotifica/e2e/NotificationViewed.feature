@@ -81,8 +81,8 @@ Feature: Notifica visualizzata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
-      | denomination | Dino Sauro |
-      | taxId        | DSRDNI00A01A225I  |
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -206,8 +206,8 @@ Feature: Notifica visualizzata
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
     And destinatario
-      | denomination | Dino Sauro |
-      | taxId        | DSRDNI00A01A225I  |
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
