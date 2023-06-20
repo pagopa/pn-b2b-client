@@ -440,7 +440,6 @@ Feature: Workflow analogico
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-      | digitalDomicile | NULL |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK-GiacenzaDelegato-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

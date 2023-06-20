@@ -301,6 +301,10 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(detailsFromNotification.getDeliveryFailureCause(), detailsFromTest.getDeliveryFailureCause());
                     if(Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    if(Objects.nonNull(detailsFromTest.getPhysicalAddress()))
+                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if(Objects.nonNull(detailsFromTest.getResponseStatus()))
+                        Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                 }
                 break;
             case "SEND_ANALOG_PROGRESS":
@@ -351,6 +355,13 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(delegateInfoFromNotification.getTaxId(), delegateInfoFromTest.getTaxId());
                     Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
                     Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
+                }
+            case "COMPLETELY_UNREACHABLE":
+                if(Objects.nonNull(elementFromTest.getLegalFactsIds()))
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
         }
     }

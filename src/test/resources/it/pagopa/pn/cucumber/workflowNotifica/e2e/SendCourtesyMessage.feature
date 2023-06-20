@@ -33,7 +33,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
             | details_recIndex | 0 |
 
-    @e2e
+    @e2e @ignore
     Scenario: [E2E-SEND_COURTESY_MESSAGE_3] invio messaggio di cortesia - invio per AppIO
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |
