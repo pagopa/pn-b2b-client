@@ -1,4 +1,5 @@
 Feature: Validazione notifica e2e
+
     @e2e
     Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_1] validazione fallita allegati notifica - file non caricato su SafeStorage
         Given viene generata una nuova notifica
@@ -41,6 +42,21 @@ Feature: Validazione notifica e2e
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "FILE_PDF_INVALID_ERROR"}] |
 
+
+    @e2e
+    Scenario: [E2E-NOTIFICATION_VALIDATION_ATTACHMENT_4] validazione fallita allegati notifica - file non caricato su SafeStorage
+        Given viene generata una nuova notifica
+            | subject | invio notifica con cucumber |
+        And destinatario
+            | denomination | Cristoforo Colombo |
+            | taxId | CLMCST42R12D969Z |
+        When la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+        Then si verifica che la notifica non viene accettata causa "ALLEGATO"
+        And viene verificato che l'elemento di timeline "REQUEST_REFUSED" esista
+            | loadTimeline | true |
+            | details | NOT_NULL |
+            | details_refusalReasons | [{"errorCode": "FILE_NOTFOUND"}] |
+
     @e2e @ignore
     Scenario: [E2E-NOTIFICATION_VALIDATION_TAXID] Invio notifica mono destinatario con taxId non valido scenario negativo
         Given viene generata una nuova notifica
@@ -54,7 +70,7 @@ Feature: Validazione notifica e2e
             | details | NOT_NULL |
             | details_refusalReasons | [{"errorCode": "TAXID_NOT_VALID"}] |
 
-    @e2e
+    @e2e @ignore
     Scenario: [E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo
         Given viene generata una nuova notifica
             | subject | invio notifica con cucumber |

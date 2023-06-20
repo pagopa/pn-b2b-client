@@ -450,7 +450,14 @@ public class SharedSteps {
     public void laNotificaVieneInviataSenzaPreloadAllegato(String paType) {
         selectPA(paType);
         setSenderTaxIdFromProperties();
-        sendNotificationWithErrorNotFindAllegato();
+        sendNotificationWithErrorNotFindAllegato(false);
+    }
+
+    @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato dal {string} e si attende che lo stato diventi REFUSED")
+    public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoDalESiAttendeCheLoStatoDiventiREFUSED(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithErrorNotFindAllegato(true);
     }
 
     @When("la notifica viene inviata tramite api b2b con sha256 differente dal {string} e si attende che lo stato diventi REFUSED")
@@ -489,7 +496,7 @@ public class SharedSteps {
     public void laNotificaVieneInviatatramiteApiB2bSenzaPreloadAllegato(String pa) {
         selectPA(pa);
         setSenderTaxIdFromProperties();
-        sendNotificationWithErrorNotFindAllegato();
+        sendNotificationWithErrorNotFindAllegato(false);
     }
 
     private void sendNotification() {
@@ -526,12 +533,12 @@ public class SharedSteps {
         }
     }
 
-    private void sendNotificationWithErrorNotFindAllegato() {
+    private void sendNotificationWithErrorNotFindAllegato(boolean noUpload) {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest);
+                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegato(notificationRequest,noUpload);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
@@ -1077,5 +1084,6 @@ public class SharedSteps {
         }
         return timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
     }
+
 
 }

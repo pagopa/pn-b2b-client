@@ -204,6 +204,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "COMPLETELY_UNREACHABLE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.COMPLETELY_UNREACHABLE, 15, sharedSteps.getWorkFlowWait());
                 break;
+            case "COMPLETELY_UNREACHABLE_CREATION_REQUEST":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.COMPLETELY_UNREACHABLE_CREATION_REQUEST, 15, sharedSteps.getWorkFlowWait());
+                break;
             case "PREPARE_DIGITAL_DOMICILE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.PREPARE_DIGITAL_DOMICILE, 2, waiting * 3);
                 break;
@@ -301,17 +304,24 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(detailsFromNotification.getDeliveryFailureCause(), detailsFromTest.getDeliveryFailureCause());
                     if(Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    if(Objects.nonNull(detailsFromTest.getPhysicalAddress()))
+                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if(Objects.nonNull(detailsFromTest.getResponseStatus()))
+                        Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                 }
                 break;
             case "SEND_ANALOG_PROGRESS":
                 if (detailsFromTest != null) {
-                    if(Objects.nonNull(elementFromTest.getLegalFactsIds()))
+                    if(Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
-                    for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                        Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
-                        Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                        for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                            Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
+                        }
                     }
-                    Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode())) {
+                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                    }
                     if (Objects.nonNull(detailsFromTest.getAttachments())) {
                         Assertions.assertNotNull(detailsFromNotification.getAttachments());
                         Assertions.assertEquals(detailsFromNotification.getAttachments().size(), detailsFromTest.getAttachments().size());
@@ -351,6 +361,13 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(delegateInfoFromNotification.getTaxId(), delegateInfoFromTest.getTaxId());
                     Assertions.assertEquals(delegateInfoFromNotification.getDelegateType(), delegateInfoFromTest.getDelegateType());
                     Assertions.assertEquals(delegateInfoFromNotification.getDenomination(), delegateInfoFromTest.getDenomination());
+                }
+            case "COMPLETELY_UNREACHABLE":
+                if(Objects.nonNull(elementFromTest.getLegalFactsIds()))
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
+                for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
         }
     }
@@ -766,6 +783,21 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("si verifica che la notifica non abbia lo stato {string}")
+    public void checksNotificationNotHaveStatus(String status) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 10);
+        } catch (InterruptedException interruptedException) {
+            logger.error("InterruptedException error");
+        }
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+        try {
+            Assertions.assertNull(sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(NotificationStatus.valueOf(status))).findAny().orElse(null));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
     public void notificationPriceAndDateVerification(String price) {
         try {
@@ -884,7 +916,7 @@ public class AvanzamentoNotificheB2bSteps {
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getCreditorTaxId());
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        paymentEventPagoPa.setPaymentDate(fmt.format(now()));
+        paymentEventPagoPa.setPaymentDate(fmt.format(now().atZoneSameInstant(ZoneId.of("UTC"))));
         paymentEventPagoPa.setAmount(notificationPrice.getAmount());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();

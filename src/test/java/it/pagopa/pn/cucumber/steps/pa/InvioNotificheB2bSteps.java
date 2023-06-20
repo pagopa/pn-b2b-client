@@ -358,16 +358,20 @@ public class InvioNotificheB2bSteps {
     }
 
     private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
-        Thread.sleep(3 * 60 * 1000);
+        Thread.sleep(2 * 60 * 1000);
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
-        OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime().truncatedTo(ChronoUnit.MINUTES);
+        OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime();
         OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
         logger.info("now: " + timelineEventDate);
         logger.info("retentionUntil: " + retentionUntil);
-        long between = ChronoUnit.DAYS.between(timelineEventDate, retentionUntil);
+        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
+        Integer timelineEventDateMinutes = timelineEventDate.getMinute();
+        Integer retentionUntilMinutes = retentionUntil.getMinute();
+        long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
         logger.info("Difference: " + between);
-        return retentionTime == between;
+        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 2;
     }
 
     @And("l'importo della notifica è {int}")
