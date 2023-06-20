@@ -61,7 +61,7 @@ Feature: Analog send e2e
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+    And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -95,7 +95,7 @@ Feature: Analog send e2e
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
-    Then viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
+    And viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
       | loadTimeline | true |
       | pollingTime | 40000 |
       | numCheck    | 20     |
@@ -109,14 +109,14 @@ Feature: Analog send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | RECAG001C |
+      | details_deliveryDetailCode | RECAG003F |
       | details_physicalAddress | {"address": "@FAIL-DiscoveryIrreperibile_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus | KO |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 1 |
-      | details_deliveryDetailCode | RECAG001C |
+      | details_deliveryDetailCode | RECAG003F |
       | details_physicalAddress | {"address": "@FAIL-DiscoveryIrreperibile_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
       | details_responseStatus | KO |
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"

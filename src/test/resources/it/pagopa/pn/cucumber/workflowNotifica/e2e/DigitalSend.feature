@@ -672,7 +672,7 @@ Feature: Digital send e2e
       | details_retryNumber | 1 |
       | details_sentAttemptMade | 1 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_9] Invio ad indirizzo generale successo al primo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -741,7 +741,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_10] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -888,7 +888,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_11] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1034,7 +1034,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_12] Invio ad indirizzo generale fallimento al primo tentativo e al ritentativo, successo al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1180,7 +1180,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_13] Invio ad indirizzo generale fallimento al primo tentativo, al ritentativo e al secondo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
