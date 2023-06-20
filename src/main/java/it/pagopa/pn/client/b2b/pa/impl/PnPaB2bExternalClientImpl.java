@@ -54,6 +54,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     private final String enableInterop;
 
+    private final String interopClientId;
+
     public PnPaB2bExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
@@ -64,6 +66,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
             @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${interop.clientId}") String interopClientId,
             @Value("${pn.interop.enable}") String enableInterop
 
             //PnInteropTokenOauth2Client pnInteropTokenOauth2Client
@@ -79,6 +82,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.interopBaseUrl = interopBaseUrl;
         this.tokenOauth2Path = tokenOauth2Path;
         this.clientAssertion = clientAssertion;
+        this.interopClientId = interopClientId;
         if ("true".equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = getBearerToken();
         }
@@ -196,14 +200,16 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
 
-    public String getBearerToken() {
+    public  String  getBearerToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("client_assertion", clientAssertion);
+        map.add("client_id", interopClientId);
         map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
         map.add("grant_type", "client_credentials");
+
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 

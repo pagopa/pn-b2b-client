@@ -46,6 +46,9 @@ public class PnExternalServiceClientImpl {
 
     private final String clientAssertion;
 
+    private final String interopClientId;
+
+
     private final String enableInterop;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
@@ -62,6 +65,7 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
             @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${interop.clientId}") String interopClientId,
             @Value("${pn.interop.enable}") String enableInterop,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
@@ -79,6 +83,7 @@ public class PnExternalServiceClientImpl {
         this.interopBaseUrl = interopBaseUrl;
         this.tokenOauth2Path = tokenOauth2Path;
         this.clientAssertion = clientAssertion;
+        this.interopClientId = interopClientId;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         if ("true".equalsIgnoreCase(enableInterop)) {
@@ -97,6 +102,7 @@ public class PnExternalServiceClientImpl {
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("client_assertion", clientAssertion);
+        map.add("client_id", interopClientId);
         map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
         map.add("grant_type", "client_credentials");
 
@@ -157,6 +163,7 @@ public class PnExternalServiceClientImpl {
         };
         return invokeAPI(basePathWebApi, "/ext-registry/pg/v1/groups", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
+    ///ext-registry-private/pg/v1/groups-all
 
 
     private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey, String bearerToken) throws RestClientException {

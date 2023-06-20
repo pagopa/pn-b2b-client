@@ -28,6 +28,10 @@ public class PnInteropTokenOauth2Client {
 
     private final String clientAssertion;
 
+    private final String interopClientId;
+
+
+
     /*@Value("${pn.interop.base-url}")
     private String interopBaseUrl;
     @Value("${pn.interop.token-oauth2.path}")
@@ -40,13 +44,15 @@ public class PnInteropTokenOauth2Client {
             RestTemplate restTemplate,
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
-            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion
+            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${interop.clientId}") String interopClientId
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.interopBaseUrl = interopBaseUrl;
         this.tokenOauth2Path = tokenOauth2Path;
         this.clientAssertion = clientAssertion;
+        this.interopClientId = interopClientId;
     }
 
     public String getBearerToken() {
@@ -55,6 +61,7 @@ public class PnInteropTokenOauth2Client {
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("client_assertion", clientAssertion);
+        map.add("client_id", interopClientId);
         map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
         map.add("grant_type", "client_credentials");
 
