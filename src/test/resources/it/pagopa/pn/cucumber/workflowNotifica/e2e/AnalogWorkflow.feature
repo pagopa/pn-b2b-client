@@ -121,7 +121,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG004 |
-      | details_DeliveryFailureCause | F01 F02 F03 F04 |
+      | details_deliveryFailureCause | F01 F02 F03 F04 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -701,8 +701,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e @ignore
-  Scenario: [E2E-WF-ANALOG-17] Invio notifica con percorso analogico.
+  @e2e
+  Scenario: [E2E-WF-ANALOG-17] Invio notifica con percorso analogico. Successo giacenza ar (OK-Giacenza_AR).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -952,7 +952,7 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | loadTimeline | true |
-      | pollingTime | 40000 |
+      | pollingTime | 30000 |
       | numCheck    | 30    |
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1009,7 +1009,7 @@ Feature: Workflow analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
       | loadTimeline | true |
-      | pollingTime | 40000 |
+      | pollingTime | 30000 |
       | numCheck    | 30    |
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1037,6 +1037,353 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECRN004C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-24] Invio notifica con percorso analogico. Fallimento compiuta giacenza (FAIL-CompiutaGiacenza_AR).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-CompiutaGiacenza_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@FAIL-COMPIUTAGIACENZA_AR", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN011 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN005B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN005C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e
+  Scenario: [E2E-WF-ANALOG-25] Invio notifica con percorso analogico. Successo seconda raccomandata (OK-Retry_AR).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@OK-Retry_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_AR", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN006 |
+      | details_deliveryFailureCause | F01 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "AR"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-26] Invio notifica con percorso analogico. Successo non rendicontabile (OK-NonRendicontabile_AR).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@OK-NonRendicontabile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-NONRENDICONTABILE_AR", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN013 |
+      | details_deliveryFailureCause | F01 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "AR"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-27] Invio notifica con percorso analogico. Successo causa forza maggiore (OK-CausaForzaMaggiore_AR).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@OK-CausaForzaMaggiore_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@OK-CAUSAFORZAMAGGIORE_AR", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN015 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "AR"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECRN001C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-28] Invio notifica con percorso analogico. Fallimento 890 (Via@FAIL_890).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890 |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@FAIL_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG003B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG003C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-29] Invio notifica con percorso analogico. Fallimento irreperibile 890 (Via@FAIL-Irreperibile_890).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | REGISTERED_LETTER_890 |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 30    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_physicalAddress | {"address": "VIA@FAIL-IRREPERIBILE_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG003E |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "Plico"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG003F |
+      | details_deliveryFailureCause | M03 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG001B |
+      | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
+      | details_attachments | [{"documentType": "23L"}] |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | RECAG001C |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
