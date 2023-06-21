@@ -1709,7 +1709,7 @@ Feature: Workflow analogico
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-      | physicalCommunication | REGISTERED_LETTER_890           |
+      | physicalCommunication | REGISTERED_LETTER_890 |
     And destinatario
       | denomination | Leonardo da Vinci|
       | taxId | DVNLRD52D15M059P |
@@ -1748,9 +1748,9 @@ Feature: Workflow analogico
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-      | physicalCommunication | REGISTERED_LETTER_890           |
+      | physicalCommunication | REGISTERED_LETTER_890 |
     And destinatario
-      | denomination | Leonardo da Vinci|
+      | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL_RIR |
