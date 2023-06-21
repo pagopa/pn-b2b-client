@@ -300,14 +300,16 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
-                    if(Objects.nonNull(detailsFromTest.getDeliveryFailureCause()))
-                        Assertions.assertEquals(detailsFromNotification.getDeliveryFailureCause(), detailsFromTest.getDeliveryFailureCause());
                     if(Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
                     if(Objects.nonNull(detailsFromTest.getPhysicalAddress()))
                         Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                     if(Objects.nonNull(detailsFromTest.getResponseStatus()))
                         Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                    if(Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
+                        List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
+                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+                    }
                 }
                 break;
             case "SEND_ANALOG_PROGRESS":

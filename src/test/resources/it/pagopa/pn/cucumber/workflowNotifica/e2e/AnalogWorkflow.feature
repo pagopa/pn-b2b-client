@@ -1318,6 +1318,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG003C |
+      | details_deliveryFailureCause | M02 M05 M06 M07 M08 M09 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1792,7 +1793,7 @@ Feature: Workflow analogico
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-      | physicalCommunication | REGISTERED_LETTER_89 |
+      | physicalCommunication | REGISTERED_LETTER_890 |
     And destinatario
       | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
