@@ -199,7 +199,7 @@ Feature: Notifica visualizzata
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e @ignore
+  @e2e
   Scenario: [E2E-WF-INHIBITION-6] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_FAILURE_WORKFLOW. Questa lettura non deve generare
   un evento di timeline REFINEMENT.
@@ -220,7 +220,7 @@ Feature: Notifica visualizzata
     And viene verificato che l'elemento di timeline "ANALOG_FAILURE_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    Then la notifica può essere correttamente recuperata da "Dino Sauro"
+    Then la notifica può essere correttamente recuperata da "Leonardo da Vinci"
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |

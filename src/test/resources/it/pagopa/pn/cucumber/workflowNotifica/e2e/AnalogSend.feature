@@ -98,7 +98,7 @@ Feature: Analog send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e @ignore
+  @e2e
   Scenario: [B2B_ANALOG_SEND_3] Invio ad indirizzo fisico fallimento al primo tentativo e al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -121,6 +121,7 @@ Feature: Analog send e2e
     And viene verificato che l'elemento di timeline "ANALOG_FAILURE_WORKFLOW" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
