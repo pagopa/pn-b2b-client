@@ -311,6 +311,7 @@ public class AvanzamentoNotificheB2bSteps {
                 }
                 break;
             case "SEND_ANALOG_PROGRESS":
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
                 if (detailsFromTest != null) {
                     if(Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
