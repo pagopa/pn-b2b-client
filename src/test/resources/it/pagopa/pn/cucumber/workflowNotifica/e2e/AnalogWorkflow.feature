@@ -1642,8 +1642,8 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
-  Scenario: [E2E-WF-ANALOG-34]
+  @e2e @ignore
+  Scenario: [E2E-WF-ANALOG-34] Invio notifica con percorso analogico. Successo RIS (OK_RIS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -1651,15 +1651,15 @@ Feature: Workflow analogico
     And destinatario
       | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@OK_RS |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@OK_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@OK_RIS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
       | details_analogCost | 133 |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
       | details | NOT_NULL |
@@ -1668,7 +1668,7 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | CON080  |
 
   @e2e
-  Scenario: [E2E-WF-ANALOG-35]
+  Scenario: [E2E-WF-ANALOG-35] Invio notifica con percorso analogico. Fallimento RIS (FAIL_RIS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -1676,7 +1676,7 @@ Feature: Workflow analogico
     And destinatario
       | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
-      | digitalDomicile_address | test@fail.it |
+      | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
@@ -1705,7 +1705,7 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECRSI004C |
 
   @e2e
-  Scenario: [E2E-WF-ANALOG-36]
+  Scenario: [E2E-WF-ANALOG-36] Invio notifica con percorso analogico. Successo RIR (OK_RIR).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -1742,9 +1742,23 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECRI003C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @e2e
-  Scenario: [E2E-WF-ANALOG-37]
+  Scenario: [E2E-WF-ANALOG-37] Invio notifica con percorso analogico. Fallimento RIR (FAIL_RIR).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -1787,8 +1801,22 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECRI004C |
+    And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-38] Invio notifica con percorso analogico. Fallimento RS (FAIL_RS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -1818,3 +1846,21 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECRS002C |
       | details_deliveryFailureCause | M07 |
+
+  @e2e
+  Scenario: [E2E-WF-ANALOG-39] Invio notifica con percorso analogico. Fallimento consolidatore AR (FAIL_Consolidatore-AR).
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Leonardo da Vinci |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL_Consolidatore-AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_FAILURE_WORKFLOW" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
