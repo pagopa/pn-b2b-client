@@ -81,7 +81,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     Then vengono letti gli eventi dello stream del "Comune_2" fino allo stato "DELIVERED"
 
   @cleanC2 @dev @ignore
-  Scenario: [B2B-STREAM_TIMELINE_PG_8] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo
+  Scenario: [B2B-STREAM_TIMELINE_PG_8] Invio notifica digitale ed attesa elemento di timeline PREPARE_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

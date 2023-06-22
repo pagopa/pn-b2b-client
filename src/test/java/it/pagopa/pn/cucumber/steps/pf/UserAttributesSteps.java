@@ -17,10 +17,11 @@ public class UserAttributesSteps {
     private Consent consent;
     private HttpStatusCodeException consentError;
 
+
+
     @Autowired
     public UserAttributesSteps(IPnWebUserAttributesClient webUserAttributesClient) {
         this.webUserAttributesClient = webUserAttributesClient;
-
     }
 
     @Given("Viene richiesto l'ultimo consenso di tipo {string}")
@@ -55,4 +56,9 @@ public class UserAttributesSteps {
         Assertions.assertTrue(consent.getAccepted());
     }
 
+ 
+
+    @Given("viene testato l'otp")
+    public void vieneTestatoLOtp() {
+    }
 }

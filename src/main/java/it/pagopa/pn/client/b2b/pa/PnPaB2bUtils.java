@@ -92,7 +92,72 @@ public class PnPaB2bUtils {
         return response;
     }
 
-    public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequest request) throws IOException {
+    public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequest request, boolean noUpload) throws IOException {
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            if(noUpload){
+                newdocs.add(this.preloadDocumentWithoutUpload(doc));
+            }else{
+                newdocs.add(this.preloadDocument(doc));
+            }
+
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if ((request.getDocuments()!= null && request.getDocuments().size()>0) && !noUpload){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationNotEqualSha( NewNotificationRequest request) throws IOException {
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            // the document uploaded to safe storage is sample.pdf
+            // I compute a different sha256 and I replace the old one
+            String sha256 = computeSha256( "classpath:/multa.pdf" );
+            notificationDocument.getDigests().setSha256(sha256);
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationWrongExtension( NewNotificationRequest request) throws IOException {
+
+        if (request.getDocuments()!= null && request.getDocuments().size()>0){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("classpath:/sample.txt");
+        }
 
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
@@ -110,16 +175,10 @@ public class PnPaB2bUtils {
         }
 
         log.info("New Notification Request {}", request);
-        if (request.getDocuments()!= null && request.getDocuments().size()>0){
-            NotificationDocument notificationDocument = request.getDocuments().get(0);
-            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
-        }
-
         NewNotificationResponse response = client.sendNewNotification( request );
         log.info("New Notification Request response {}", response);
         return response;
     }
-
 
     public FullSentNotification waitForRequestAcceptation( NewNotificationResponse response) {
 
@@ -256,6 +315,28 @@ public class PnPaB2bUtils {
                 resourceName, sha256, secret, url));
 
         loadToPresigned( url, secret, sha256, resourceName );
+
+        document.getRef().setKey( key );
+        document.getRef().setVersionToken("v1");
+        document.digests( new NotificationAttachmentDigests().sha256( sha256 ));
+
+        return document;
+    }
+
+
+    public NotificationDocument preloadDocumentWithoutUpload( NotificationDocument document) throws IOException {
+
+        String resourceName = document.getRef().getKey();
+        String sha256 = computeSha256( resourceName );
+
+        PreLoadResponse preloadResp = getPreLoadResponse(sha256);
+        String key = preloadResp.getKey();
+        String secret = preloadResp.getSecret();
+        String url = preloadResp.getUrl();
+
+        log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                resourceName, sha256, secret, url));
+
 
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");

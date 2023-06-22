@@ -6,6 +6,7 @@ import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.testclient.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -14,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 @SpringBootTest(classes = {
         ApiKeysConfiguration.class,
         BearerTokenConfiguration.class,
+        TimingConfiguration.class,
         RestTemplateConfiguration.class,
         PnPaB2bUtils.class,
         PnPaB2bExternalClientImpl.class,
@@ -27,7 +29,8 @@ import org.springframework.test.context.TestPropertySource;
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClientImpl.class,
         PnWebPaClientImpl.class,
-        PnInteropTokenOauth2Client.class
+        PnInteropTokenOauth2Client.class,
+        PnPrivateDeliveryPushExternalClientImpl.class
 })
 @TestPropertySource(properties = {"spring.profiles.active=test"})
 public class CucumberSpringIntegration {
