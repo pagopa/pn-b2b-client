@@ -41,7 +41,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
       | details_isAvailable | false |
 
-  @e2e
+  @e2e @OnlyEnvTest
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-3] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma,
   NON ha valorizzato l’indirizzo Speciale MA ha valorizzato l’indirizzo GENERALE
     Given viene generata una nuova notifica
