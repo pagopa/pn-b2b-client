@@ -210,7 +210,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | senderDenomination | Comune di palermo |
     And destinatario
       | denomination | Test 890 ok |
-      | taxId | PRTCAE90A01D086M |
+      | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
