@@ -29,17 +29,29 @@ public class OpenSearchSteps {
         System.out.println("NUM. DI RISULTATI: "+stringResponseEntity.getHits().getHits().size());
     }
 
+    @Then("viene verificato che esiste un audit log {string} in {string}")
+    public void vieneVerificatoCheEsisteUnAuditLogIn(String auditLogType, String auditLogRetention) {
+        checkAudit(auditLogType,auditLogRetention,-1);
+    }
 
     @Then("viene verificato che esiste un audit log {string} in {string} non più vecchio di {int} giorni")
     public void vieneVerificatoCheEsisteUnAuditLogInNonPiùVecchioDiGiorni(String auditLogType, String auditLogRetention, Integer maxAge) {
+        checkAudit(auditLogType,auditLogRetention,maxAge);
+    }
+
+    private void checkAudit(String auditLogType, String auditLogRetention, Integer maxAge){
         PnExternalServiceClientImpl.openSearchResponse openSearchResponse = pnExternalServiceClient.openSearchGetAudit(auditLogRetention,auditLogType,10);
         Assertions.assertFalse(openSearchResponse.getHits().getHits().isEmpty());
-        OffsetDateTime ageTimeStamp = openSearchResponse.getHits().getHits().get(0).get_source().getTimestamp();
-        System.out.println("AGE: "+ageTimeStamp);
-        Assertions.assertTrue(ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()) <= maxAge);
-        System.out.println("DIFF: "+ ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()));
-
+        PnExternalServiceClientImpl.InnerHits innerHits = openSearchResponse.getHits().getHits().get(0);
+        Assertions.assertTrue(innerHits.get_source().getAud_type().equalsIgnoreCase(auditLogType));
+        if(maxAge != -1){
+            OffsetDateTime ageTimeStamp = innerHits.get_source().getTimestamp();
+            System.out.println("AGE: "+ageTimeStamp);
+            Assertions.assertTrue(ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()) <= maxAge);
+            System.out.println("DIFF: "+ ChronoUnit.DAYS.between(ageTimeStamp,OffsetDateTime.now()));
+        }
     }
+
 
     @And("viene verificato che non esiste un audit log {string} in {string}")
     public void vieneVerificatoCheNonEsisteUnAuditLogIn(String auditLogType, String auditLogRetention) {
