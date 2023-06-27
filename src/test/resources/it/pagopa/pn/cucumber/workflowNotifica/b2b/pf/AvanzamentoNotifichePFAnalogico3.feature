@@ -247,11 +247,22 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_0"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002E" e verifica tipo DOC "Indagine" tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F" e deliveryFailureCause "M01" tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN002F" e deliveryFailureCause "M03" tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
+  #"1. Creare una notifica che preveda il percorso analogico con indirizzo Via@FAIL-DiscoveryIrreperibile_AR
+  #2. SEND_ANALOG_PROGRESS con deliveryDetailCode CON080
+  #3. SEND_ANALOG_PROGRESS con deliveryDetailCode RECRN002E e docType Plico Indagine
+  #4. SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN002F M01
+  #5. SEND_ANALOG_PROGRESS con deliveryDetailCode CON080
+  #6. SEND_ANALOG_PROGRESS con deliveryDetailCode RECRN002E e docType Plico
+  #7. SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN002F M03
+  #8. ANALOG_FAILURE_WORKFLOW"
 
 
   #OK-Giacenza-gt10_AR
