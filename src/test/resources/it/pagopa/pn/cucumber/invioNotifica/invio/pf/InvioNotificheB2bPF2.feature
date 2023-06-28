@@ -133,6 +133,7 @@ Feature: invio notifiche b2b
     Then si verifica che la notifica non viene accettata causa "TAX_ID"
 
 
+
   Scenario: [B2B-PA-SEND_36] Invio notifica mono destinatario con max numero allegati scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -141,3 +142,28 @@ Feature: invio notifiche b2b
     And aggiungo 16 numero allegati
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
+
+  @dev
+  Scenario: [B2B-PA-SEND_37] Invio notifica  mono destinatario con allegato Injection scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b injection preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then si verifica che la notifica non viene accettata causa "FILE_PDF_INVALID_ERROR"
+
+  @dev
+  Scenario: [B2B-PA-SEND_38] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b oversize preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    #Then si verifica che la notifica non viene accettata causa {string}
+
+  @dev
+  Scenario: [B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b over 15 preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then si verifica che la notifica non viene accettata causa "INVALID_PARAMETER_MAX_ATTACHMENT"
+

@@ -155,6 +155,14 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return legalFactsApi.retrieveLegalFact(iun, legalFactType, legalFactId);
     }
 
+    public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun,  String legalFactId) {
+        return legalFactsApi.downloadLegalFactById(iun,  legalFactId);
+    }
+
+    public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
+        return legalFactsApi.downloadLegalFactById(iun, legalFactId);
+    }
+
     @Override
     public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
         return this.notificationPriceApi.retrieveNotificationPrice(paTaxId,noticeCode);

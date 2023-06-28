@@ -385,6 +385,10 @@
 
 </details>
 
+- [B2B-PA-SEND_36] Invio notifica  mono destinatario con allegato Injection scenario negativo
+- [B2B-PA-SEND_37] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+- [B2B-PA-SEND_38] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -1201,6 +1205,7 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG_CF.feature)
 
 </details>
+
 
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento per persona giuridica
 
@@ -2553,6 +2558,23 @@
 
 </details>
 
+- [WEB-PG-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
+- [WEB-PG-MANDATE_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
+- [WEB-PG-MANDATE_3] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo
+- [WEB-PG-MANDATE_4] Invio notifica digitale mono destinatario e recupero allegato F24_FLAT_scenario positivo
+- [WEB-PG-MANDATE_5] Invio notifica digitale mono destinatario e recupero allegato F24_STANDARD_scenario positivo
+- [WEB-PG-MANDATE_6] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
+- [WEB-PG-MANDATE_7] Invio notifica digitale altro destinatario e recupero allegato pagopa_scenario negativo
+- [WEB-PG-MANDATE_8] Delega a se stesso _scenario negativo
+- [WEB-PG-MANDATE_9] delega duplicata_scenario negativo
+- [WEB-PG-MANDATE_10] Invio notifica digitale altro destinatario e recupero_scenario positivo
+- [WEB-PG-MANDATE_11] Invio notifica digitale altro destinatario e recupero_scenario positivo
+- [WEB-PG-MANDATE_12] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
+- [WEB-PG-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
+- [WEB-PG-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
+- [WEB-PG-MANDATE_14] Invio notifica digitale con delega senza gruppo e assegnazione di un gruppo alla delega da parte del PG amministratore  positivo PN-5962
+
+
 #### Persona fisica e giuridica
 
 ##### Ricezione notifiche destinate al delegante
@@ -3844,6 +3866,7 @@
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_TIMELINE_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo</summary>
 
+
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona fisica e physicalAddress `Via@ok_RS`
@@ -4311,6 +4334,37 @@
 
 </details>
 
+- [B2B_TIMELINE_ANALOG_33] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECAG011A positivo PN-5783
+- [B2B_TIMELINE_ANALOG_34] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECAG005C positivo PN-6093
+- [B2B_TIMELINE_ANALOG_35] Attesa elemento di timeline SEND_ANALOG_DOMICILE_scenario positivo PN-5283 Presente
+- [B2B_TIMELINE_ANALOG_36] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_37] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_38] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_39] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_40] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_41] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_42] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_43] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_44] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_45] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN015 AR momentaneamente non rendicontabile positivo PN-6079
+- [B2B_TIMELINE_ANALOG_46] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN013 AR momentaneamente non rendicontabile positivo PN-6079
+- [B2B_TIMELINE_ANALOG_47] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN015 890 momentaneamente non rendicontabile positivo PN-6079
+- [B2B_TIMELINE_ANALOG_48] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode RECRN013 890 momentaneamente non rendicontabile positivo PN-6079
+- [B2B_TIMELINE_ANALOG_49] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza_AR- PN-5927
+- [B2B_TIMELINE_ANALOG_50] Invio Notifica Mono destinatario workflow cartaceo - Caso OK-Giacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_51] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_52] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
+- [B2B_TIMELINE_ANALOG_53] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_AR_scenario positivo
+- [B2B_TIMELINE_ANALOG_54] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_55] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_56] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_57] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-CompiutaGiacenza_AR PN-5927
+- [B2B_TIMELINE_ANALOG_58] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_890_scenario positivo
+- [B2B_TIMELINE_ANALOG_59] Invio Notifica Mono destinatario workflow cartaceo - Caso FAIL-Giacenza-gt10-23L_890 PN-5927
+- [B2B_TIMELINE_ANALOG_60] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESSdeliveryDetailCode "RECRI001" scenario positivo PN-6634
+- [B2B_TIMELINE_ANALOG_61] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESS_deliveryDetailCode "RECRI002" scenario positivo PN-6634
+
+
 ##### Costo notifica con workflow analogico per persona fisica 890
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -4425,6 +4479,11 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
 </details>
+
+- [B2B_COSTO_ANALOG_PF_890_1_AAR] Invio notifica verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_890_3_AAR] Invio notifica con allegato verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_890_5_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_890_7_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
 
 ##### Costo notifica con workflow analogico per persona fisica
 
@@ -5139,6 +5198,59 @@ Dati destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
+
+- [B2B_COSTO_ANALOG_PF_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_1_AAR] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_3_AAR] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_7_AAR] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+
+##### Costo notifica con workflow analogico per persona fisica RIS
+
+- [B2B_COSTO_ANALOG_PF_RS_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RS_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RS_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RS_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PF_RS_1_AAR] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_7_AAR] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RS_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PF_RIS_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+
 
 #### Persona giuridica
 
@@ -6044,6 +6156,7 @@ Dati destinatario
 
 ##### Costo notifica con workflow analogico per persona giuridica 890
 
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_890_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
 
@@ -6908,6 +7021,75 @@ Dati destinatario
 
 </details>
 
+- [B2B_COSTO_ANALOG_PG_890_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_890_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_890_1_AAR] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_3_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_5_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_890_7_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+
+##### Costo notifica con workflow analogico per persona giuridica
+
+- [B2B_COSTO_ANALOG_PG_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_1_AAR] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_3_AAR] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_7_AAR] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+
+##### Costo notifica con workflow analogico per persona giuridica RS
+
+- [B2B_COSTO_ANALOG_PG_RS_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RS_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RS_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RS_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RS_1_AAR] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_2_AAR] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_7_AAR] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RS_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_PG_RIS_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+
+
 #### Persona fisica e giuridica
 
 ##### Avanzamento notifiche b2b multi destinatario con persona fisica e giuridica
@@ -6982,6 +7164,10 @@ Dati destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMulti.feature)
 
 </details>
+
+[B2B_TIMELINE_MULTI_PF_PF_06] Invio notifica multidestinatario con pagamento destinatario 0 e 1 scenario  positivo
+[B2B_TIMELINE_MULTI_PF_PF_07] Invio notifica multidestinatario con pagamento destinatario 0 e non del destinatario 1 scenario  positivo
+[B2B_TIMELINE_MULTI_PF_PF_08] Invio notifica multidestinatario con pagamento destinatario 1 e non del destinatario 0 scenario  positivo
 
 ##### Avanzamento b2b notifica multi destinatario analogico
 
@@ -8425,6 +8611,74 @@ Dati Destinatario
 
 </details>
 
+- [B2B_COSTO_ANALOG_890_MULTI_1] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica con allegato e verifica costo con FCU + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_7] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_8] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_1_AAR] Invio notifica e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_3_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_5_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_890_MULTI_7_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+
+##### Costo notifica con workflow analogico per multi destinatario
+
+- [B2B_COSTO_ANALOG_MULTI_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_MULTI_1_AAR] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_3_AAR] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_7_AAR] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_MULTI_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo
+
+##### Costo notifica con workflow analogico per multi destinatario RS
+
+- [B2B_COSTO_ANALOG_RS_MULTI_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_1_AAR] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_5_AAR] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_7_AAR] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_11_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RS_MULTI_13_AAR] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+- [B2B_COSTO_ANALOG_RIS_MULTI_15_AAR] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo
+
+
 ### Download
 
 #### Persona fisica
@@ -8672,7 +8926,14 @@ Dati Destinatario
 
 </details>
 
+
+[B2B_PA_LEGALFACT_5] Invio notifica e download atto opponibile SENDER_ACK_scenario senza legalFactType positivo
+[B2B_PA_LEGALFACT_6] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario senza legalFactType positivo
+[B2B_PA_LEGALFACT_7] Invio notifica e download atto opponibile PEC_RECEIPT_scenario senza legalFactType positivo
+[B2B_PA_LEGALFACT_8] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario senza legalFactType positivo
+
 ##### Download legalFact analogico
+
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_ANALOGICO_LEGALFACT_1] Invio notifica con @fail_RS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo</summary>
@@ -8896,6 +9157,20 @@ Dati Destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFactAnalogico.feature)
 
 </details>
+
+- [B2B_PA_ANALOGICO_LEGALFACT_1] Invio notifica con @fail_RS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_2] Invio notifica con @ok_RS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_3] Invio notifica con @fail_AR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+  [B2B_PA_ANALOGICO_LEGALFACT_4] Invio notifica con @ok_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_5] Invio notifica con @fail_RIS e download atto opponibile collegato a DIGITAL_FAILURE_WORKFLOW positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_6] Invio notifica con @ok_RIR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_7] Invio notifica con @fail_RIR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_8] Invio notifica con @fail_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_9_TEST] Invio notifica con @FAIL-Discovery_AR e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_10_TEST] Invio notifica con @FAIL-Discovery_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
+- [B2B_PA_ANALOGICO_LEGALFACT_11_TEST] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR negativo
+- [B2B_PA_ANALOGICO_LEGALFACT_12_TEST] Invio notifica presenza allegato in corrispondenza dello stato "Aggiornamento sull'invio cartaceo" e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo PN-6090
+
 
 ##### Download legalFact multi destinatario
 

@@ -45,3 +45,46 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
+
+  @dev
+  Scenario: [B2B_TIMELINE_MULTI_PF_PF_06] Invio notifica multidestinatario con pagamento destinatario 0 e 1 scenario  positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente dall'utente 0
+    And si attende il corretto pagamento della notifica dell'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
+    And l'avviso pagopa viene pagato correttamente dall'utente 1
+    And si attende il corretto pagamento della notifica dell'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 1
+    #pagamento doppio
+
+  Scenario: [B2B_TIMELINE_MULTI_PF_PF_07] Invio notifica multidestinatario con pagamento destinatario 0 e non del destinatario 1 scenario  positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente dall'utente 0
+    And si attende il corretto pagamento della notifica dell'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
+    And non vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 1
+
+  Scenario: [B2B_TIMELINE_MULTI_PF_PF_08] Invio notifica multidestinatario con pagamento destinatario 1 e non del destinatario 0 scenario  positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente dall'utente 1
+    And si attende il corretto pagamento della notifica dell'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 1
+    And non vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0

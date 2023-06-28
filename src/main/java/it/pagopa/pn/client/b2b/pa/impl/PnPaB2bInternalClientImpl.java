@@ -95,6 +95,13 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy(response, LegalFactDownloadMetadataResponse.class);
     }
 
+    public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun,  String legalFactId) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactDownloadMetadataResponse response =
+                legalFactsApi.getLegalFactById(iun, legalFactId);
+        return deepCopy(response, LegalFactDownloadMetadataResponse.class);
+    }
+
+
     @Override
     public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponse
@@ -150,14 +157,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
 
-        response = newNotificationApi.sendNewNotification(
-                operatorId,
-                CxTypeAuthFleet.PA,
-                paId,
-                "B2B",
-                request,
-                groups
-            );
+        response = newNotificationApi.sendNewNotification(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups,null);
 
         return deepCopy( response, NewNotificationResponse.class );
     }

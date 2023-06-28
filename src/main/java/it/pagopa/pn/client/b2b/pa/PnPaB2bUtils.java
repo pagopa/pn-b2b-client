@@ -180,6 +180,85 @@ public class PnPaB2bUtils {
         return response;
     }
 
+
+    public NewNotificationResponse uploadNotificationOverSizeAllegato( NewNotificationRequest request) throws IOException {
+
+        NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        newdocs.add(this.preloadDocument(notificationDocument));
+
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationInjectionAllegato( NewNotificationRequest request) throws IOException {
+
+        NotificationDocument notificationDocument = newDocument("classpath:/sample_injection.xml.pdf");
+
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        newdocs.add(this.preloadDocument(notificationDocument));
+
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public NewNotificationResponse uploadNotificationOver15Allegato( NewNotificationRequest request) throws IOException {
+
+        NotificationDocument notificationDocument = newDocument("classpath:/sample.pdf");
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (int i = 0; i < 20; i++){
+            notificationDocument =  newDocument("classpath:/sample.pdf");
+            newdocs.add(this.preloadDocument(notificationDocument));
+        }
+
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipient recipient : request.getRecipients()) {
+            NotificationPaymentInfo paymentInfo = recipient.getPayment();
+            if(paymentInfo != null){
+                paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+
     public FullSentNotification waitForRequestAcceptation( NewNotificationResponse response) {
 
         log.info("Request status for " + response.getNotificationRequestId() );
@@ -325,8 +404,8 @@ public class PnPaB2bUtils {
 
 
     public NotificationDocument preloadDocumentWithoutUpload( NotificationDocument document) throws IOException {
-
         String resourceName = document.getRef().getKey();
+        resourceName= "classpath:/sample_injection.xml";
         String sha256 = computeSha256( resourceName );
 
         PreLoadResponse preloadResp = getPreLoadResponse(sha256);
@@ -336,8 +415,7 @@ public class PnPaB2bUtils {
 
         log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
                 resourceName, sha256, secret, url));
-
-
+        loadToPresigned( url, secret, sha256, resourceName );
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");
         document.digests( new NotificationAttachmentDigests().sha256( sha256 ));

@@ -163,3 +163,47 @@ Feature: Download legalFact
     And "Mario Gherkin" legge la notifica ricevuta
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene verificato che la chiave dell'attestazione opponibile "RECIPIENT_ACCESS" è "PN_LEGAL_FACTS"
+
+
+  Scenario: [B2B_PA_LEGALFACT_5] Invio notifica e download atto opponibile SENDER_ACK_scenario senza legalFactType positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then la PA richiede il download dell'attestazione opponibile "SENDER_ACK" senza legalFactType
+
+
+
+  Scenario: [B2B_PA_LEGALFACT_6] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario senza legalFactType positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    Then la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY" senza legalFactType
+
+
+  Scenario: [B2B_PA_LEGALFACT_7] Invio notifica e download atto opponibile PEC_RECEIPT_scenario senza legalFactType positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then la PA richiede il download dell'attestazione opponibile "PEC_RECEIPT" senza legalFactType
+
+
+  Scenario: [B2B_PA_LEGALFACT_8] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario senza legalFactType positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And "Mario Gherkin" legge la notifica ricevuta
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS" senza legalFactType
+
+
