@@ -43,6 +43,9 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     private final String clientAssertion;
 
+    private final String interopClientId;
+
+
     private final String enableInterop;
 
     public PnWebhookB2bExternalClientImpl(
@@ -55,6 +58,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
             @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
+            @Value("${interop.clientId}") String interopClientId,
+
             @Value("${pn.interop.enable}") String enableInterop
     ) {
         this.ctx = ctx;
@@ -67,6 +72,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.interopBaseUrl = interopBaseUrl;
         this.tokenOauth2Path = tokenOauth2Path;
         this.clientAssertion = clientAssertion;
+        this.interopClientId = interopClientId;
+
         if ("true".equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = getBearerToken();
         }
@@ -93,6 +100,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
         MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
         map.add("client_assertion", clientAssertion);
+        map.add("client_id", interopClientId);
         map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
         map.add("grant_type", "client_credentials");
 

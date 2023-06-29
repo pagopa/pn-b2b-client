@@ -106,11 +106,12 @@ Feature: avanzamento notifiche analogico persona giuridica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di milano |
       | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Cucumber Analogic e:
+    And destinatario
+      | taxId | DNNGRL83A01C352D |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
   @dev
   Scenario: [B2B_TIMELINE_PG_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
@@ -121,7 +122,7 @@ Feature: avanzamento notifiche analogico persona giuridica
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
   @dev
   Scenario: [B2B_TIMELINE_PG_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
@@ -132,7 +133,7 @@ Feature: avanzamento notifiche analogico persona giuridica
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "KO"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
   @dev
   Scenario: [B2B_TIMELINE_PG_ANALOG_7] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo

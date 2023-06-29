@@ -165,7 +165,7 @@ Feature: avanzamento notifiche webhook b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"

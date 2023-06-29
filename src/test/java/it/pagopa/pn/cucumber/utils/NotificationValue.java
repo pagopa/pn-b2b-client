@@ -32,7 +32,7 @@ public enum NotificationValue {
     INTERNAL_ID("internalId","",false),
     DIGITAL_DOMICILE("digitalDomicile","",false),
     DIGITAL_DOMICILE_TYPE("digitalDomicile_type","PEC",false),
-    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","testpagopa3@pnpagopa.postecert.local",false),
+    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","notifichedigitali-uat@pec.pagopa.it",false),
     PHYSICAL_ADDRES("physicalAddress","",false),
     PHYSICAL_ADDRESS_ADDRESS("physicalAddress_address","Via senza nome",false),
     PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Milano",false),
@@ -85,6 +85,8 @@ public enum NotificationValue {
     private final String defaultValue;
     private final boolean addCurrentTime;
     private static final ObjectMapper mapper = new ObjectMapper();
+
+
 
     NotificationValue(String key, String defaultValue, boolean addCurrentTime){
         this.key = key;
