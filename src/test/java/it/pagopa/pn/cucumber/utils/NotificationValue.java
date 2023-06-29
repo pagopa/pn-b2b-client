@@ -86,6 +86,8 @@ public enum NotificationValue {
     private final boolean addCurrentTime;
     private static final ObjectMapper mapper = new ObjectMapper();
 
+
+
     NotificationValue(String key, String defaultValue, boolean addCurrentTime){
         this.key = key;
         this.defaultValue = defaultValue;
