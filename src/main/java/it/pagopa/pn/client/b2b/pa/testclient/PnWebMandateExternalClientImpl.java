@@ -22,6 +22,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
 
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
+    private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
@@ -38,6 +39,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             @Value("${pn.webapi.external.base-url}") String basePath,
             @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
+            @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.external.bearer-token-pg1.id}") String idOrganizationGherkinSrl,
@@ -48,6 +50,7 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
+        this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.idOrganizationGherkinSrl = idOrganizationGherkinSrl;
@@ -77,6 +80,11 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
             case USER_2:
                 this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
+                beenSet = true;
+                break;
+            case USER_3:
+                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
                 break;
             case PG_1:

@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 
+import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.utils.DataTest;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -22,14 +24,13 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.time.OffsetDateTime.now;
 
 
 public class InvioNotificheB2bSteps {
@@ -200,6 +201,21 @@ public class InvioNotificheB2bSteps {
         Assertions.assertTrue(checkRetetion(key, retentionTimeLoad));
     }
 
+    @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
+    public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
+        TimelineElement timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        switch (documentType) {
+            case "ATTACHMENTS":
+                for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
+                    String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
+                    Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
 
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
@@ -339,6 +355,23 @@ public class InvioNotificheB2bSteps {
         long between = ChronoUnit.DAYS.between(now, retentionUntil);
         logger.info("Difference: " + between);
         return retentionTime == between;
+    }
+
+    private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
+        Thread.sleep(2 * 60 * 1000);
+        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
+        System.out.println(safeStorageResponse);
+        OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime();
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
+        logger.info("now: " + timelineEventDate);
+        logger.info("retentionUntil: " + retentionUntil);
+        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
+        Integer timelineEventDateMinutes = timelineEventDate.getMinute();
+        Integer retentionUntilMinutes = retentionUntil.getMinute();
+        long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
+        logger.info("Difference: " + between);
+        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 2;
     }
 
     @And("l'importo della notifica è {int}")

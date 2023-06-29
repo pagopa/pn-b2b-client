@@ -131,3 +131,13 @@ Feature: invio notifiche b2b
       | taxId        | LNALNI80A01H501T |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata causa "TAX_ID"
+
+
+  Scenario: [B2B-PA-SEND_36] Invio notifica mono destinatario con max numero allegati scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Cucumber
+    And aggiungo 16 numero allegati
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"

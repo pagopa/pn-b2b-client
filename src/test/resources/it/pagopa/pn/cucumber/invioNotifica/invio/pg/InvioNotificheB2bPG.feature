@@ -11,7 +11,7 @@ Feature: invio notifiche b2b per la persona giuridica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @testLite
-  Scenario: [B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
+  Scenario: [B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
