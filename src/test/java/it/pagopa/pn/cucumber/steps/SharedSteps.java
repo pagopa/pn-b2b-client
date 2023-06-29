@@ -150,7 +150,7 @@ public class SharedSteps {
     @Value("${pn.external.bearer-token-pg2.id}")
     private String idOrganizationCucumberSpa;
 
-    @Value("${pn.external.digitalDomicile.address:testpagopa3@pnpagopa.postecert.local}")
+    @Value("${pn.external.utilized.pec:testpagopa3@pnpagopa.postecert.local}")
     private String digitalAddress;
 
     private String defaultDigitalAddress = "testpagopa3@pnpagopa.postecert.local";
@@ -948,7 +948,7 @@ public class SharedSteps {
     }
 
     public String getDigitalAddressValue() {
-        if (digitalAddress == null) return defaultDigitalAddress;
+        if (digitalAddress == null || digitalAddress.equalsIgnoreCase("${pn.external.digitalDomicile.address}")) return defaultDigitalAddress;
         return digitalAddress;
     }
 
