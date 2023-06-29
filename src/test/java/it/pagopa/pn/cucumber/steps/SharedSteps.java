@@ -147,6 +147,10 @@ public class SharedSteps {
     private String idOrganizationGherkinSrl;
     @Value("${pn.external.bearer-token-pg2.id}")
     private String idOrganizationCucumberSpa;
+
+    @Value("${pn..external.digitalDomicile.address}")
+    private String digitalAddress;
+
     private String enableInterop;
 
     private final PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
@@ -200,7 +204,7 @@ public class SharedSteps {
                         .taxId(marioCucumberTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario Mario Cucumber e:")
@@ -220,7 +224,7 @@ public class SharedSteps {
                         .taxId(marioGherkinTaxID)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario Mario Gherkin e:")
@@ -240,7 +244,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario GherkinSrl")
@@ -252,7 +256,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario GherkinSrl e:")
@@ -273,7 +277,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
     
 
@@ -295,7 +299,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario Cucumber srl e:")
@@ -316,7 +320,7 @@ public class SharedSteps {
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
-                                .address("notifichedigitali-uat@pec.pagopa.it")));
+                                .address(digitalAddress)));
     }
 
     @And("destinatario Cucumber Society e:")

@@ -165,7 +165,7 @@ Feature: avanzamento notifiche webhook b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"
@@ -180,9 +180,9 @@ Feature: avanzamento notifiche webhook b2b
     And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@fail.it |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
-    And si crea il nuovo stream per il "Comune_Multi"
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "NOT_HANDLED"
+    And si crea il nuovo stream per il "Comune_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOT_HANDLED"
 
   @clean @dev
   Scenario: [B2B-STREAM_TIMELINE_19] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo
