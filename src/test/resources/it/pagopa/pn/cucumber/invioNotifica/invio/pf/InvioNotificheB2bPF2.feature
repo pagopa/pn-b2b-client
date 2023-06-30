@@ -133,7 +133,6 @@ Feature: invio notifiche b2b
     Then si verifica che la notifica non viene accettata causa "TAX_ID"
 
 
-
   Scenario: [B2B-PA-SEND_36] Invio notifica mono destinatario con max numero allegati scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -166,4 +165,16 @@ Feature: invio notifiche b2b
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b over 15 preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata causa "INVALID_PARAMETER_MAX_ATTACHMENT"
+
+
+  @SmokeTest @testLite
+  Scenario: [B2B-PA-SEND_40] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
