@@ -160,3 +160,18 @@ Feature: Ricezione notifiche destinate al delegante
       | taxId | DSRDNI00A01A225I |
       | digitalDomicile | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+
+
+  Scenario: [WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero_scenario positivo
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And download attestazione opponibile AAR
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
