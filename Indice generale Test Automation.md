@@ -2333,6 +2333,11 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
+
+- [WEB-PF-MULTI-MANDATE_14] Invio notifica digitale altro destinatario e recupero_scenario positivo
+- [WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibile
+- [WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
@@ -2573,6 +2578,10 @@
 - [WEB-PG-MANDATE_13] Invio notifica digitale delega e verifica elemento timeline_scenario positivo
 - [WEB-PG-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo
 - [WEB-PG-MANDATE_14] Invio notifica digitale con delega senza gruppo e assegnazione di un gruppo alla delega da parte del PG amministratore  positivo PN-5962
+- [WEB-PF-PG-MANDATE_15] Invio notifica digitale con delega ad un PG amministratore e recupero della stessa positivo
+- [WEB-PF-PG-MANDATE_16] Invio notifica digitale con delega senza gruppo e assegnazione di un gruppo alla delega da parte del PG amministratore e recupero della stessa positivo
+- [WEB-PF-PG-MANDATE_17] Invio notifica digitale con delega senza gruppo ad un PG amministratore e altro destinatario e recupero_scenario positivo
+- [WEB-PF-PG-MANDATE_18] Invio notifica digitale con delega senza gruppo ad un PG amministratore e altro destinatario e assegnazione di un gruppo con recupero_scenario positivo
 
 
 #### Persona fisica e giuridica

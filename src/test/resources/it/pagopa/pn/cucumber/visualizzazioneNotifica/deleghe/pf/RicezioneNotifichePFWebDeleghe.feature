@@ -162,7 +162,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
 
 
-  Scenario: [WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero_scenario positivo
+  Scenario: [WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
