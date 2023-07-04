@@ -1,6 +1,6 @@
 Feature: Scelta canale di invio (Digitale o analogico)
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-1] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -18,7 +18,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
       | details_isAvailable | true |
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-2] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma MA ha valorizzato l’indirizzo Speciale
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -41,7 +41,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_sentAttemptMade | 0 |
       | details_isAvailable | false |
 
-  @e2e @OnlyEnvTest
+  @e2e @OnlyEnvTest @platformDependent
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-3] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma,
   NON ha valorizzato l’indirizzo Speciale MA ha valorizzato l’indirizzo GENERALE
     Given viene generata una nuova notifica

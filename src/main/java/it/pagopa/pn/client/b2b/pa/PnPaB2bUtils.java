@@ -405,7 +405,7 @@ public class PnPaB2bUtils {
 
     public NotificationDocument preloadDocumentWithoutUpload( NotificationDocument document) throws IOException {
         String resourceName = document.getRef().getKey();
-        resourceName= "classpath:/sample_injection.xml";
+        resourceName= "classpath:/test.xml";
         String sha256 = computeSha256( resourceName );
 
         PreLoadResponse preloadResp = getPreLoadResponse(sha256);
@@ -415,7 +415,6 @@ public class PnPaB2bUtils {
 
         log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
                 resourceName, sha256, secret, url));
-        loadToPresigned( url, secret, sha256, resourceName );
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");
         document.digests( new NotificationAttachmentDigests().sha256( sha256 ));

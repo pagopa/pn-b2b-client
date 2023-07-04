@@ -1,6 +1,6 @@
 Feature: Digital send e2e
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [B2B_DIGITAL_SEND_1] Invio ad indirizzo di piattaforma successo al primo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -60,7 +60,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -180,7 +180,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [B2B_DIGITAL_SEND_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -291,7 +291,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [B2B_DIGITAL_SEND_4] Invio ad indirizzo di piattaforma fallimento al primo tentativo e al ritentativo, successo al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@FAIL-pecFirstKOSecondKO.it"
@@ -402,7 +402,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @platformDependent
   Scenario: [B2B_DIGITAL_SEND_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, al ritentativo e al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@FAIL-pecFirstKOSecondKO.it"

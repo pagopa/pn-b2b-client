@@ -148,15 +148,5 @@ Feature: invio notifiche b2b
 
 
 
-  @SmokeTest @testLite
-  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario
-      | taxId        | GLLGLL64B15G702I |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-    Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
     

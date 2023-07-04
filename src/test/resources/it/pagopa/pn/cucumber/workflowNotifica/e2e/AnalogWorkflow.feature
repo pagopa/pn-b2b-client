@@ -1668,7 +1668,7 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | CON080  |
 
   @e2e
-  Scenario: [E2E-WF-ANALOG-35] Invio notifica con percorso analogico. Fallimento RIS (FAIL_RIS).
+  Scenario: [E2E-WF-ANALOG-35] Invio notifica con percorso digitale. Fallimento RIS (FAIL_RIS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -1676,7 +1676,7 @@ Feature: Workflow analogico
     And destinatario
       | denomination | Leonardo da Vinci |
       | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
+      | digitalDomicile | email@fail.it |
       | physicalAddress_address | Via@FAIL_RIS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
