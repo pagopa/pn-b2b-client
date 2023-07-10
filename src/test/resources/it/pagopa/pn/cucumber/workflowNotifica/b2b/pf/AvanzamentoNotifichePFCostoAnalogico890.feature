@@ -21,7 +21,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       |CAP      | COSTO |
       | 00010   |  842  |
       | 12071   |  859  |
-      | 60010   |  909  |
+      | 62010   |  909  |
 
     #00010 stiamo andando sul default
 
@@ -44,7 +44,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     Examples:
       |CAP      | COSTO |
       | 12071   |  0  |
-      | 60010   |  0  |
+      | 62010   |  0  |
       | 00010   |  0  |
 
 
@@ -65,7 +65,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     Examples:
       |CAP      | COSTO |
       | 64010   |  887  |
-      | 39050   |  890  |
+      | 33028   |  890  |
 
 
   @dev @costoCart @costoCartAAR
@@ -86,4 +86,4 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     Examples:
       |CAP      | COSTO |
       | 64010   |  0    |
-      | 39050   |  0    |
+      | 33028   |  0    |
