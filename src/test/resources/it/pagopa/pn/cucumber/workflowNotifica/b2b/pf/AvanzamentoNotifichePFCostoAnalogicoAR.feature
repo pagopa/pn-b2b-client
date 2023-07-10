@@ -15,13 +15,14 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_address | Via@ok_AR |
       |  physicalAddress_zip    |    <CAP>   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
       |CAP      | COSTO |
+      | 18025   |  508  |
       | 00118   |  426  |
       | 01100   |  451  |
-      | 18025   |  508  |
+
 
 
   @dev @costoCart @costoCartAAR
@@ -37,7 +38,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       |  physicalAddress_zip    |    <CAP>   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       |CAP      | COSTO |
@@ -58,7 +59,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_address | Via@ok_AR |
       |  physicalAddress_zip    |    <CAP>   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
       |CAP      | COSTO |
@@ -80,7 +81,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       |  physicalAddress_zip    |    <CAP>   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       |CAP      | COSTO |
@@ -105,7 +106,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "565" della notifica
 
 
@@ -127,7 +128,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
 
 
@@ -146,7 +147,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "511" della notifica
 
   @dev @ignore
@@ -165,7 +166,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_address      | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
 
   @dev @costoCart
@@ -184,5 +185,5 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "700" della notifica
