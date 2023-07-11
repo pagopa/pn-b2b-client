@@ -3,7 +3,7 @@ Feature: costo notifica con workflow analogico per persona fisica
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_AR_1] Invio notifica verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -25,7 +25,7 @@ Feature: costo notifica con workflow analogico per persona fisica
 
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_AR_2] Invio notifica verifica costo con FSU + @OK_AR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -47,7 +47,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | 18025   |  0  |
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_AR_3] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -68,7 +68,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | 70121   |  351  |
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_AR_4] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -91,7 +91,7 @@ Feature: costo notifica con workflow analogico per persona fisica
 
 
 
-  @dev @costoCart
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_AR_5] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -111,7 +111,7 @@ Feature: costo notifica con workflow analogico per persona fisica
 
 
 
-  @dev @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_AR_6] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -132,7 +132,7 @@ Feature: costo notifica con workflow analogico per persona fisica
     And viene verificato il costo = "0" della notifica
 
 
-  @dev @costoCart
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_AR_7] Invio notifica e verifica costo ZONA_1 + @OK_RIR + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -150,7 +150,7 @@ Feature: costo notifica con workflow analogico per persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "856" della notifica
 
-  @dev @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_AR_8] Invio notifica e verifica costo ZONA_1 + @OK_RIR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

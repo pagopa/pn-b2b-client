@@ -3,7 +3,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_1] Invio notifica verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -23,10 +23,8 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 12071   |  859  |
       | 62010   |  909  |
 
-    #00010 stiamo andando sul default
 
-
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -48,7 +46,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 00010   |  0  |
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -68,7 +66,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 33028   |  890  |
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

@@ -3,7 +3,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_1_AAR] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -23,7 +23,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 12071 | 380   |
 
 
-  @dev @costoCart @ignore
+  @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -43,7 +43,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 00118 | 0     |
       | 12071 | 0     |
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -60,7 +60,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "691" della notifica
 
-  @dev @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -80,7 +80,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
 
 
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -99,7 +99,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 60011 | 327   |
       | 60122 | 281   |
 
-  @dev @ignore
+  @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -119,7 +119,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 60011 | 0     |
       | 60122 | 0     |
 
-  @dev @costoCart @costoCartAAR
+  @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_11_AAR] Invio notifica e verifica costo ZONA_2 + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -136,7 +136,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "798" della notifica
 
-  @dev @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_12] Invio notifica e verifica costo ZONA_2 + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
