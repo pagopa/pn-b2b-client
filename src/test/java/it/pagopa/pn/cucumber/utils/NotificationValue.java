@@ -98,6 +98,15 @@ public enum NotificationValue {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
         String threadNumber = (Thread.currentThread().getId()+"");
+
+        /*
+         String numberOfThread = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
+        String timeNano = System.nanoTime()+"";
+        String finalNumber = "" + String.format("30" + numberOfThread + "%13s", timeNano.substring(0, timeNano.length()-2));
+        logger.error("GENERATED NUMBER: "+finalNumber);
+        return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + finalNumber ) : notificationValue.defaultValue));
+         */
+
         String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
         return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
     }

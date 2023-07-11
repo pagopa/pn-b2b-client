@@ -3,7 +3,7 @@ Feature: avanzamento notifiche webhook b2b multi
   Background:
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_1] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -15,7 +15,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "GET_ADDRESS"
 
-  @cleanC3 @dev
+  @cleanC3 @dev @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_2] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -29,7 +29,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_CALL"
 
-  @cleanC3 @dev
+  @cleanC3 @dev @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_3] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -43,7 +43,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_RESPONSE"
 
-  @cleanC3 @dev
+  @cleanC3 @dev @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_4] Invio notifica digitale ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -58,7 +58,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_5] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -70,7 +70,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_PROGRESS"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
     | subject | invio notifica con cucumber |
@@ -82,7 +82,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_1] Invio notifica digitale multi PG ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -95,7 +95,7 @@ Feature: avanzamento notifiche webhook b2b multi
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "GET_ADDRESS"
 
 
-  @cleanC3 @dev
+  @cleanC3 @dev @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_2] Invio notifica digitale multi PG ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -109,7 +109,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_CALL"
 
-  @cleanC3 @dev
+  @cleanC3 @dev @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_3] Invio notifica digitale multi PG ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -123,7 +123,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PUBLIC_REGISTRY_RESPONSE"
 
-  @cleanC3 @dev @ignore @tbc
+  @cleanC3 @dev @ignore @tbc @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_4] Invio notifica digitale multi PG ed attesa elemento di timeline DIGITAL_FAILURE_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -137,7 +137,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_5] Invio notifica digitale multi PG ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -149,7 +149,7 @@ Feature: avanzamento notifiche webhook b2b multi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_PROGRESS"
 
-  @cleanC3
+  @cleanC3 @webhook2
   Scenario: [B2B-STREAM-TIMELINE_MULTI_PG_6] Invio notifica digitale multi PG ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
