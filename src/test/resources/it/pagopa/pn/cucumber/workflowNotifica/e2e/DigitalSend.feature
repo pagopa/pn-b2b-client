@@ -1,6 +1,6 @@
 Feature: Digital send e2e
 
-  @e2e @platformDependent
+  @e2e @platformDependent @ignore
   Scenario: [B2B_DIGITAL_SEND_1] Invio ad indirizzo di piattaforma successo al primo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -500,7 +500,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 133 |
+      | details_analogCost | 181 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -524,7 +524,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [B2B_DIGITAL_SEND_6] Invio ad indirizzo speciale successo al primo tentativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

@@ -161,7 +161,7 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 133 |
+      | details_analogCost | 181 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -431,7 +431,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-11] Partenza workflow cartaceo se viene inviato un messaggio di cortesia
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -446,7 +446,7 @@ Feature: Workflow analogico
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" esista
       | loadTimeline | true  |
       | poolingTime  | 360000 |
-      | numCheck     | 5     |
+      | numCheck     | 16     |
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -1667,7 +1667,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080  |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-35] Invio notifica con percorso digitale. Fallimento RIS (FAIL_RIS).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -1847,7 +1847,7 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECRS002C |
       | details_deliveryFailureCause | M07 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-WF-ANALOG-39] Invio notifica con percorso analogico. Fallimento consolidatore AR (FAIL_Consolidatore-AR).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

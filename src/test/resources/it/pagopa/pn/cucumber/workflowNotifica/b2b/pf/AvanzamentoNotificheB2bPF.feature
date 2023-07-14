@@ -250,3 +250,18 @@ Feature: avanzamento notifiche b2b persona fisica
       And "Mario Gherkin" legge la notifica ricevuta
       Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
       And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
+
+
+
+  Scenario: [B2B_TIMELINE_DIGITAL_UAT_10000] Invio notifica ed attesa elemento di  positivo
+    Given viene generata una nuova notifica
+      | subject | notifica digitale con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Test digitale ok |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | pectest@pec.pagopa.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+
+

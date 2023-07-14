@@ -21,6 +21,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 01100 | 323   |
       | 00118 | 298   |
       | 12071 | 380   |
+      | 61010 | 380   |
 
 
   @dev @costoAnalogico
@@ -42,6 +43,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 01100 | 0     |
       | 00118 | 0     |
       | 12071 | 0     |
+      | 61010 | 0     |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo

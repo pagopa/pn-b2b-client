@@ -22,6 +22,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | 18025   |  508  |
       | 00118   |  426  |
       | 01100   |  451  |
+      | 90016   |  509  |
 
 
 
@@ -42,9 +43,10 @@ Feature: costo notifica con workflow analogico per persona fisica
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       |CAP      | COSTO |
-      | 00118   |  0  |
-      | 01100   |  0  |
-      | 18025   |  0  |
+      | 00118   |  0    |
+      | 01100   |  0    |
+      | 18025   |  0    |
+      | 90016   |  0    |
 
 
   @dev @costoAnalogico @costoCartAAR

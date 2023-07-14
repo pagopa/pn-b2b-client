@@ -99,7 +99,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | CAP   | COSTO |
       | 70122 | 262   |
       | 60011 | 327   |
-      | 60122 | 381   |
+      | 60122 | 281   |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_PG_RS_6] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo

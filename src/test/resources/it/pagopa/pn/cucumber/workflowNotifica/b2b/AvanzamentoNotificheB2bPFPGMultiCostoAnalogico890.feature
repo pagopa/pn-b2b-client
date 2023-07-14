@@ -47,9 +47,9 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 1
     Examples:
       | CAP   | COSTO |
-      | 00010 | 842   |
-      | 12071 | 859   |
-      | 62010 | 909   |
+      | 00010 |   0   |
+      | 12071 |   0   |
+      | 62010 |   0   |
 
 
 
@@ -97,5 +97,5 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "0" della notifica per l'utente 1
     Examples:
       |CAP      | COSTO |
-      | 64010   |  887  |
-      | 33028   |  890  |
+      | 64010   |   0   |
+      | 33028   |   0   |

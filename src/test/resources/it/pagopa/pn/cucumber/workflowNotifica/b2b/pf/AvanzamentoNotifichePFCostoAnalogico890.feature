@@ -22,7 +22,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 00010   |  842  |
       | 12071   |  859  |
       | 62010   |  909  |
-
+      | 06024   |  1026 |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo
@@ -44,7 +44,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 12071   |  0  |
       | 62010   |  0  |
       | 00010   |  0  |
-
+      | 06024   |  0  |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo

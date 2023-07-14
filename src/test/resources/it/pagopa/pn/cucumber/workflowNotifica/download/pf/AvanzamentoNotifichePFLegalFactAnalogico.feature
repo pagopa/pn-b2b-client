@@ -131,7 +131,7 @@ Feature: Download legalFact analogico
       | denomination | Test AR Fail 2 |
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via NationalRegistries @FAIL-Irreperibile_AR 5 |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR|
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     Then la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"

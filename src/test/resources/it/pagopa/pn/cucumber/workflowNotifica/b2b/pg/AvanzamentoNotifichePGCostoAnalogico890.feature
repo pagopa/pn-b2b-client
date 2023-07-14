@@ -20,6 +20,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | 00010   |  842  |
       | 12071   |  859  |
       | 62010   |  909  |
+      | 06024   |  1026  |
 
 
   @dev @costoAnalogico
@@ -43,6 +44,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
       | 00010 | 0     |
       | 12071 | 0     |
       | 62010 | 0     |
+      | 06024 | 0     |
 
 
 
