@@ -33,6 +33,8 @@ import java.security.cert.X509Certificate;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static it.pagopa.pn.client.b2b.pa.testclient.InteropTokenSingleton.ENEBLED_INTEROP;
+
 
 @Component
 public class PnExternalServiceClientImpl {
@@ -241,7 +243,7 @@ public class PnExternalServiceClientImpl {
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-api-key", apiKey);
 
-        if ("true".equalsIgnoreCase(enableInterop)) {
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             headerParams.add("Authorization","Bearer "+ interopTokenSingleton.getTokenInterop());
         }
 

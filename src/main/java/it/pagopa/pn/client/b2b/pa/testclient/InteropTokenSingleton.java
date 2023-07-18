@@ -19,6 +19,7 @@ import java.util.List;
 @Component
 public class InteropTokenSingleton {
 
+    public final static String ENEBLED_INTEROP = "true";
     private String tokenInterop;
     private OffsetDateTime tokenCreationDate;
 

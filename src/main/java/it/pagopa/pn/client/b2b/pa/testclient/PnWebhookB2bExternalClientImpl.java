@@ -21,6 +21,8 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.UUID;
 
+import static it.pagopa.pn.client.b2b.pa.testclient.InteropTokenSingleton.ENEBLED_INTEROP;
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
@@ -65,7 +67,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
         this.enableInterop = enableInterop;
 
-        if ("true".equalsIgnoreCase(enableInterop)) {
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.interopTokenSingleton = interopTokenSingleton;
@@ -78,17 +80,19 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
 
     private void refreshTokenInteropClient(){
-        this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
 
-        this.eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-        this.streamsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.streamsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+        }
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
         newApiClient.addDefaultHeader("x-api-key", apikey );
-        if ("true".equalsIgnoreCase(enableInterop)) {
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         }
         return newApiClient;

@@ -25,10 +25,13 @@ import org.springframework.web.client.RestTemplate;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static it.pagopa.pn.client.b2b.pa.testclient.InteropTokenSingleton.ENEBLED_INTEROP;
+
 @Component()
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @ConditionalOnProperty( name = IPnPaB2bClient.IMPLEMENTATION_TYPE_PROPERTY, havingValue = "external", matchIfMissing = true)
 public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
+
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
@@ -67,7 +70,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.enableInterop = enableInterop;
-        if ("true".equalsIgnoreCase(enableInterop)) {
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
@@ -81,20 +84,22 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     private void refreshTokenInteropClient(){
-        this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
+            this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
 
-        this.newNotificationApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-        this.senderReadB2BApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-        this.legalFactsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-        this.notificationPriceApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-        this.paymentEventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.newNotificationApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.senderReadB2BApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.legalFactsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.notificationPriceApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.paymentEventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+        }
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop ) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
         newApiClient.addDefaultHeader("x-api-key", apikey );
-        if ("true".equalsIgnoreCase(enableInterop)) {
+        if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         }
         return newApiClient;
