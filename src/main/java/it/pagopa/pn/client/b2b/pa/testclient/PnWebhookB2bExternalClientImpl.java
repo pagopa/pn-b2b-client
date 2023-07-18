@@ -37,20 +37,15 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final String devBasePath;
     private String bearerTokenInterop;
 
-    private final String interopBaseUrl;
-
-    private final String tokenOauth2Path;
-
-    private final String clientAssertion;
-
-    private final String interopClientId;
-
 
     private final String enableInterop;
+
+    private final InteropTokenSingleton interopTokenSingleton;
 
     public PnWebhookB2bExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
+            InteropTokenSingleton interopTokenSingleton,
             @Value("${pn.external.base-url}") String devBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
@@ -69,21 +64,25 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.apiKeyGa = apiKeyGa;
 
         this.enableInterop = enableInterop;
-        this.interopBaseUrl = interopBaseUrl;
-        this.tokenOauth2Path = tokenOauth2Path;
-        this.clientAssertion = clientAssertion;
-        this.interopClientId = interopClientId;
 
         if ("true".equalsIgnoreCase(enableInterop)) {
-            //TODO: CAMBIARE CON SINGLETON
-            //this.bearerTokenInterop = getBearerToken();
+            this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
+        this.interopTokenSingleton = interopTokenSingleton;
+
         this.devBasePath = devBasePath;
 
         this.eventsApi = new EventsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.streamsApi = new StreamsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
     }
 
+
+    private void refreshTokenInteropClient(){
+        this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
+
+        this.eventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+        this.streamsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+    }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
         ApiClient newApiClient = new ApiClient( restTemplate );
@@ -95,52 +94,40 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return newApiClient;
     }
 
-    /* TODO: REMOVE
-    public String getBearerToken() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        map.add("client_assertion", clientAssertion);
-        map.add("client_id", interopClientId);
-        map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
-        map.add("grant_type", "client_credentials");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-
-        ResponseEntity<PnPaB2bExternalClientImpl.InteropResponse> response = this.restTemplate.postForEntity( interopBaseUrl + tokenOauth2Path, request , PnPaB2bExternalClientImpl.InteropResponse.class );
-
-        return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
-
-    }
-     */
 
     public StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest){
+        refreshTokenInteropClient();
         return this.streamsApi.createEventStream(streamCreationRequest);
     }
 
     public void deleteEventStream(UUID streamId){
+        refreshTokenInteropClient();
         this.streamsApi.removeEventStream(streamId);
     }
 
     public StreamMetadataResponse getEventStream(UUID streamId){
+        refreshTokenInteropClient();
         return this.streamsApi.retrieveEventStream(streamId);
     }
 
     public List<StreamListElement> listEventStreams(){
+        refreshTokenInteropClient();
         return this.streamsApi.listEventStreams();
     }
 
     public StreamMetadataResponse updateEventStream(UUID streamId, StreamCreationRequest streamCreationRequest){
+        refreshTokenInteropClient();
         return this.streamsApi.updateEventStream(streamId,streamCreationRequest);
     }
 
     public List<ProgressResponseElement> consumeEventStream(UUID streamId, String lastEventId){
+        refreshTokenInteropClient();
         return this.eventsApi.consumeEventStream(streamId,lastEventId);
     }
 
     @Override
     public ResponseEntity<List<ProgressResponseElement>> consumeEventStreamHttp(UUID streamId, String lastEventId) {
+        refreshTokenInteropClient();
         return this.eventsApi.consumeEventStreamWithHttpInfo(streamId,lastEventId);
     }
 

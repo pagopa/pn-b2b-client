@@ -46,17 +46,8 @@ public class PnExternalServiceClientImpl {
 
     private final String safeStorageBasePath;
     private final String gruopInfoBasePath;
-    private String bearerTokenInterop;
     private final String extChannelsBasePath;
     private final String dataVaultBasePath;
-
-    private final String interopBaseUrl;
-
-    private final String tokenOauth2Path;
-
-    private final String clientAssertion;
-
-    private final String interopClientId;
 
 
     private final String enableInterop;
@@ -68,18 +59,18 @@ public class PnExternalServiceClientImpl {
     private final String openSearchPassword;
 
     private final String basePathWebApi;
+
+    private final InteropTokenSingleton interopTokenSingleton;
+
     public PnExternalServiceClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
+            InteropTokenSingleton interopTokenSingleton,
             @Value("${pn.safeStorage.base-url}") String safeStorageBasePath,
             @Value("${pn.external.base-url}") String gruopInfoBasePath,
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.interop.base-url}") String interopBaseUrl,
-            @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
-            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
-            @Value("${interop.clientId}") String interopClientId,
             @Value("${pn.interop.enable}") String enableInterop,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
@@ -100,11 +91,11 @@ public class PnExternalServiceClientImpl {
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+
         this.enableInterop = enableInterop;
-        this.interopBaseUrl = interopBaseUrl;
-        this.tokenOauth2Path = tokenOauth2Path;
-        this.clientAssertion = clientAssertion;
-        this.interopClientId = interopClientId;
+
+        this.interopTokenSingleton = interopTokenSingleton;
+
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
 
@@ -112,10 +103,6 @@ public class PnExternalServiceClientImpl {
         this.openSearchUsername = openSearchUsername;
         this.openSearchPassword = openSearchPassword;
 
-        if ("true".equalsIgnoreCase(enableInterop)) {
-            //TODO: CAMBIARE CON SINGLETON
-            //this.bearerTokenInterop = getBearerToken();
-        }
     }
 
 
@@ -123,26 +110,6 @@ public class PnExternalServiceClientImpl {
         return safeStorageInfoWithHttpInfo(fileKey).getBody();
     }
 
-    /* TODO: REMOVE
-    public String getBearerToken() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
-        map.add("client_assertion", clientAssertion);
-        map.add("client_id", interopClientId);
-        map.add("client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer");
-        map.add("grant_type", "client_credentials");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
-
-        ResponseEntity<PnPaB2bExternalClientImpl.InteropResponse> response = this.restTemplate.postForEntity( interopBaseUrl + tokenOauth2Path, request , PnPaB2bExternalClientImpl.InteropResponse.class );
-
-        return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
-
-    }
-
-     */
 
     private void restTemplateAvoidSSlCertificate() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -204,14 +171,14 @@ public class PnExternalServiceClientImpl {
     }
 
 
-    public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType, String bearerToken) throws RestClientException {
+    public List<HashMap<String, String>> paGroupInfo(SettableApiKey.ApiKeyType apiKeyType) throws RestClientException {
         switch (apiKeyType) {
             case MVP_1:
-                return paGroupInfoWithHttpInfo(apiKeyMvp1, bearerToken).getBody();
+                return paGroupInfoWithHttpInfo(apiKeyMvp1).getBody();
             case MVP_2:
-                return paGroupInfoWithHttpInfo(apiKeyMvp2, bearerToken).getBody();
+                return paGroupInfoWithHttpInfo(apiKeyMvp2).getBody();
             case GA:
-                return paGroupInfoWithHttpInfo(apiKeyGa, bearerToken).getBody();
+                return paGroupInfoWithHttpInfo(apiKeyGa).getBody();
             default:
                 throw new IllegalArgumentException();
         }
@@ -262,7 +229,7 @@ public class PnExternalServiceClientImpl {
     ///ext-registry-private/pg/v1/groups-all
 
 
-    private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey, String bearerToken) throws RestClientException {
+    private ResponseEntity<List<HashMap<String, String>>> paGroupInfoWithHttpInfo(String apiKey) throws RestClientException {
         Object postBody = null;
 
 
@@ -273,11 +240,10 @@ public class PnExternalServiceClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-api-key", apiKey);
+
         if ("true".equalsIgnoreCase(enableInterop)) {
-            headerParams.add("Authorization","Bearer "+bearerToken);
+            headerParams.add("Authorization","Bearer "+ interopTokenSingleton.getTokenInterop());
         }
-
-
 
 
         final String[] localVarAccepts = {

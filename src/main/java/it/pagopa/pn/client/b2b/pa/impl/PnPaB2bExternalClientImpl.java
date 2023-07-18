@@ -59,8 +59,6 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
             @Value("${pn.interop.enable}") String enableInterop
-
-            //PnInteropTokenOauth2Client pnInteropTokenOauth2Client
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;

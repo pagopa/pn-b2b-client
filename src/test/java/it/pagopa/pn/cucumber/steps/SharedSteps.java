@@ -155,18 +155,13 @@ public class SharedSteps {
 
     private String defaultDigitalAddress = "testpagopa3@pnpagopa.postecert.local";
 
-    private String enableInterop;
 
-    private final PnInteropTokenOauth2Client pnInteropTokenOauth2Client;
-    private  String bearerTokenInterop = null;
 
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
-                       @Value("${pn.interop.enable}") String enableInterop,
-                       PnInteropTokenOauth2Client pnInteropTokenOauth2Client) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -174,12 +169,6 @@ public class SharedSteps {
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
-        this.enableInterop = enableInterop;
-        this.pnInteropTokenOauth2Client = pnInteropTokenOauth2Client;
-
-        if ("true".equalsIgnoreCase(enableInterop)) {
-            this.bearerTokenInterop = pnInteropTokenOauth2Client.getBearerToken();
-        }
     }
 
     @BeforeAll
@@ -802,7 +791,7 @@ public class SharedSteps {
 
     private void setGrup(SettableApiKey.ApiKeyType apiKeyType) {
         if (groupToSet && this.notificationRequest.getGroup() == null) {
-            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType, bearerTokenInterop);
+            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType);
             if (hashMapsList == null || hashMapsList.size() == 0) return;
             String id = null;
             for (HashMap<String, String> elem : hashMapsList) {
@@ -996,13 +985,13 @@ public class SharedSteps {
         List<HashMap<String, String>> hashMapsList = null;
         switch (settedPa) {
             case "Comune_1":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1, bearerTokenInterop);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_1);
                 break;
             case "Comune_2":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2, bearerTokenInterop);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.MVP_2);
                 break;
             case "Comune_Multi":
-                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA, bearerTokenInterop);
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
                 break;
             default:
                 throw new IllegalArgumentException();
