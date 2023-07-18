@@ -113,7 +113,8 @@ public class PnExternalServiceClientImpl {
         this.openSearchPassword = openSearchPassword;
 
         if ("true".equalsIgnoreCase(enableInterop)) {
-            this.bearerTokenInterop = getBearerToken();
+            //TODO: CAMBIARE CON SINGLETON
+            //this.bearerTokenInterop = getBearerToken();
         }
     }
 
@@ -122,6 +123,7 @@ public class PnExternalServiceClientImpl {
         return safeStorageInfoWithHttpInfo(fileKey).getBody();
     }
 
+    /* TODO: REMOVE
     public String getBearerToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -139,6 +141,8 @@ public class PnExternalServiceClientImpl {
         return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
 
     }
+
+     */
 
     private void restTemplateAvoidSSlCertificate() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {

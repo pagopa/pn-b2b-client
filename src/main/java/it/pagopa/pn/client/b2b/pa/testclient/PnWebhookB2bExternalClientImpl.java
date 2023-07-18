@@ -75,7 +75,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.interopClientId = interopClientId;
 
         if ("true".equalsIgnoreCase(enableInterop)) {
-            this.bearerTokenInterop = getBearerToken();
+            //TODO: CAMBIARE CON SINGLETON
+            //this.bearerTokenInterop = getBearerToken();
         }
         this.devBasePath = devBasePath;
 
@@ -94,6 +95,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return newApiClient;
     }
 
+    /* TODO: REMOVE
     public String getBearerToken() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
@@ -111,6 +113,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return (response.getStatusCode().is2xxSuccessful() ? response.getBody().getAccessToken() : null);
 
     }
+     */
 
     public StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest){
         return this.streamsApi.createEventStream(streamCreationRequest);
