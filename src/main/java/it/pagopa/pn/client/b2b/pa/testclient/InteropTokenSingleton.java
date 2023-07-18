@@ -20,7 +20,7 @@ import java.util.List;
 public class InteropTokenSingleton {
 
     public final static String ENEBLED_INTEROP = "true";
-    private String tokenInterop;
+    private static String tokenInterop;
     private OffsetDateTime tokenCreationDate;
 
     private final ApplicationContext ctx;
