@@ -48,7 +48,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final String enableInterop;
 
 
-    private InteropTokenSingleton interopTokenSingleton;
+    private final InteropTokenSingleton interopTokenSingleton;
 
     public PnPaB2bExternalClientImpl(
             ApplicationContext ctx,
@@ -78,6 +78,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
 
+        this.interopTokenSingleton = interopTokenSingleton;
 
     }
 
