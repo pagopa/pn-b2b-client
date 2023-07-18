@@ -29,7 +29,6 @@ import org.springframework.test.context.TestPropertySource;
         PnDowntimeLogsExternalClientImpl.class,
         PnIoUserAttributerExternaClientImpl.class,
         PnWebPaClientImpl.class,
-        PnInteropTokenOauth2Client.class,
         PnPrivateDeliveryPushExternalClientImpl.class,
         InteropTokenSingleton.class,
 })

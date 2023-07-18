@@ -80,7 +80,7 @@ public class InteropTokenSingleton {
         private Integer status;
         private String title;
         private String type;
-        private List<PnInteropTokenOauth2Client.Error> errors;
+        private List<Error> errors;
 
         @JsonProperty("access_token")
         private String accessToken;
@@ -101,7 +101,7 @@ public class InteropTokenSingleton {
             return type;
         }
 
-        public List<PnInteropTokenOauth2Client.Error> getErrors() {
+        public List<Error> getErrors() {
             return errors;
         }
 
