@@ -51,6 +51,7 @@ public class InteropTokenSingleton {
             return tokenInterop;
         }else{
             this.tokenInterop = getBearerToken();
+            this.tokenCreationDate = OffsetDateTime.now();
             return tokenInterop;
         }
     }
