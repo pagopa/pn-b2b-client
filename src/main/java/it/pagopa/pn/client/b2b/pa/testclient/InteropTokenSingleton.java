@@ -22,10 +22,8 @@ public class InteropTokenSingleton {
     public final static String ENEBLED_INTEROP = "true";
     private static String tokenInterop;
     private OffsetDateTime tokenCreationDate;
-
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
-
     private final String clientAssertion;
     private final String interopClientId;
     private final String tokenOauth2Path;
