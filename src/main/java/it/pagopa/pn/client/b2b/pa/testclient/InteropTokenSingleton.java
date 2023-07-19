@@ -46,7 +46,7 @@ public class InteropTokenSingleton {
     }
 
     public String getTokenInterop(){
-        if(tokenInterop != null && (Duration.between(tokenCreationDate, OffsetDateTime.now()).getSeconds() < (60*8)) ){
+        if(tokenInterop != null && (Duration.between(tokenCreationDate, OffsetDateTime.now()).getSeconds() < (60*9)) ){
             return tokenInterop;
         }else{
             this.tokenInterop = getBearerToken();
