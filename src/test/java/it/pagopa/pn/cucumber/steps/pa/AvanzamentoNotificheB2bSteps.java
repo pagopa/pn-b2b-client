@@ -1520,7 +1520,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         for (int i = 0; i < 5; i++) {
             try {
-                Thread.sleep(60000);
+                Thread.sleep(6000);
             } catch (InterruptedException exc) {
                 throw new RuntimeException(exc);
             }
