@@ -1,6 +1,6 @@
 Feature: avanzamento b2b notifica multi destinatario persona giuridica
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -19,7 +19,7 @@ Feature: avanzamento b2b notifica multi destinatario persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_PG_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -38,7 +38,7 @@ Feature: avanzamento b2b notifica multi destinatario persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_PG_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -57,7 +57,7 @@ Feature: avanzamento b2b notifica multi destinatario persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_PG_7] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

@@ -1,6 +1,6 @@
 Feature: avanzamento notifiche b2b persona fisica
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -9,7 +9,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_2] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -18,7 +18,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -27,7 +27,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -36,7 +36,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_5] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -45,7 +45,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -54,7 +54,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
 
-  @ignore @tbc
+  @ignore @tbc @workflowDigitale
   Scenario: [B2B_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -65,7 +65,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And "Mario Cucumber" legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline DELIVERING-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -76,7 +76,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-  @SmokeTest @testLite
+  @SmokeTest @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -87,7 +87,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_10] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -99,7 +99,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And "Mario Gherkin" legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
 
-  @testLite
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_11] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -131,7 +131,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev @testLite
+  @dev @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_14] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -140,7 +140,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK"
 
-  @dev @testLite
+  @dev @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_15] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -149,7 +149,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
 
-  @dev @testLite
+  @dev @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -159,7 +159,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
 
-  @dev @testLite
+  @dev @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -169,6 +169,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_18] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campo deliveryDetailCode positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -183,12 +184,14 @@ Feature: avanzamento notifiche b2b persona fisica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber e:
+    And destinatario
+      | taxId | DVNLRD52D15M059P |
       | digitalDomicile_address | test@gmail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
     And viene verificato che nell'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO" sia presente i campi deliveryDetailCode e deliveryFailureCause
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_20] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -252,7 +255,7 @@ Feature: avanzamento notifiche b2b persona fisica
       And viene effettuato un controllo sulla durata della retention di "ATTO OPPONIBILE"
 
 
-
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_DIGITAL_UAT_10000] Invio notifica ed attesa elemento di  positivo
     Given viene generata una nuova notifica
       | subject | notifica digitale con cucumber |

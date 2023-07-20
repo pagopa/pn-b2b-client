@@ -1,5 +1,6 @@
 Feature: avanzamento b2b persona giuridica
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -16,6 +17,7 @@ Feature: avanzamento b2b persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_3] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -40,6 +42,7 @@ Feature: avanzamento b2b persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERING"
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_6] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -150,6 +153,7 @@ Feature: avanzamento b2b persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "GET_ADDRESS"
 
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_PG-CF_3] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
