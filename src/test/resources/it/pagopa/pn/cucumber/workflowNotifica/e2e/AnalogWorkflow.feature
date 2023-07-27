@@ -425,11 +425,13 @@ Feature: Workflow analogico
       | details_deliveryDetailCode | RECAG011B |
       | legalFactsIds | [{"category": "ANALOG_DELIVERY"}] |
       | details_attachments | [{"documentType": "23L"}] |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG006C" e verifica data delay più 0
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
+
 
   @e2e @ignore
   Scenario: [E2E-WF-ANALOG-11] Partenza workflow cartaceo se viene inviato un messaggio di cortesia

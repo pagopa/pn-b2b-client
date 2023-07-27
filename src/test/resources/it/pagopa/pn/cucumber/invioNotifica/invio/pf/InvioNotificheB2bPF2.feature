@@ -150,7 +150,7 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b injection preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then si verifica che la notifica non viene accettata causa "FILE_PDF_INVALID_ERROR"
 
-  @dev @ignore
+  @dev
   Scenario: [B2B-PA-SEND_38] Invio notifica  mono destinatario con allegato OverSize scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -159,7 +159,7 @@ Feature: invio notifiche b2b
     #Then si verifica che la notifica non viene accettata causa {string}
 
   @dev
-  Scenario: [B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+  Scenario: [B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato Max Num Allegati scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario Mario Cucumber

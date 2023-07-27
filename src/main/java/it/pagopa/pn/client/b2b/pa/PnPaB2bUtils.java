@@ -64,7 +64,12 @@ public class PnPaB2bUtils {
 
     private static final RestTemplate newRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+        requestFactory.setConnectTimeout(800_000);
+       requestFactory.setReadTimeout(800_000);
+        requestFactory.setConnectionRequestTimeout(800_000);
+        requestFactory.setBufferRequestBody(false);
+        restTemplate.setRequestFactory(requestFactory);
         return restTemplate;
     }
 
@@ -141,7 +146,7 @@ public class PnPaB2bUtils {
         log.info("New Notification Request {}", request);
         if (request.getDocuments()!= null && request.getDocuments().size()>0){
             NotificationDocument notificationDocument = request.getDocuments().get(0);
-            // the document uploaded to safe storage is sample.pdf
+            // the document uploaded to safe storage is multa.pdf
             // I compute a different sha256 and I replace the old one
             String sha256 = computeSha256( "classpath:/multa.pdf" );
             notificationDocument.getDigests().setSha256(sha256);
@@ -383,17 +388,20 @@ public class PnPaB2bUtils {
     public NotificationDocument preloadDocument( NotificationDocument document) throws IOException {
 
         String resourceName = document.getRef().getKey();
+        log.info("Inizio computeSha256....................................");
         String sha256 = computeSha256( resourceName );
+        log.info("Fine computeSha256....................................");
 
         PreLoadResponse preloadResp = getPreLoadResponse(sha256);
         String key = preloadResp.getKey();
         String secret = preloadResp.getSecret();
         String url = preloadResp.getUrl();
 
-        log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
-                resourceName, sha256, secret, url));
-
+        //log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+               // resourceName, sha256, secret, url));
+        log.info("Inizio Preasigned....................................");
         loadToPresigned( url, secret, sha256, resourceName );
+        log.info("Fine Preasigned......................................");
 
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");
@@ -458,7 +466,9 @@ public class PnPaB2bUtils {
         headers.add("x-amz-meta-secret", secret);
 
         HttpEntity<Resource> req = new HttpEntity<>( ctx.getResource( resource), headers);
+        log.info("Inizio Caricamento File.............................."+url);
         restTemplate.exchange( URI.create(url), HttpMethod.PUT, req, Object.class);
+        log.info("Fine Caricamento File..............................");
     }
 
 
