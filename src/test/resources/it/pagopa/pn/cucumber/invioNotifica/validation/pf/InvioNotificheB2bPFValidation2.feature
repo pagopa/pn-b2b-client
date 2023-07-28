@@ -269,3 +269,25 @@ Feature: Validazione campi invio notifiche b2b
       | physicalAddress_zip          | 33344 |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario: [B2B-PA-SEND_VALID_24] invio notifiche digitali mono destinatario con provincia non presente scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_province | NULL |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario: [B2B-PA-SEND_VALID_25] invio notifiche digitali mono destinatario con provincia non presente e stato estero scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | FRANCIA |
+      | physicalAddress_province | NULL    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
