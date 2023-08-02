@@ -1,5 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.api.DocumentsWebApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.api.HealthCheckApi;
@@ -16,6 +19,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,15 +33,30 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
     private final LegalFactsApi legalFactsApi;
     private final NotificationCancellationApi notificationCancellationApi;
     private final String basePath;
+    private final String deliveryBasePath;
+    private final String paId;
+    private final String operatorId;
+
+    private final ObjectMapper objMapper = JsonMapper.builder()
+            .addModule(new JavaTimeModule())
+            .build();
+    private final List<String> groups;
+
 
     public PnInternalAnnullamentoDeliveryPushExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath
+            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath ,
+            @Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
+            @Value("${pn.internal.pa-id}") String paId
     ) {
+        this.paId = paId;
+        this.operatorId = "TestMv";
+        this.groups = Collections.emptyList();
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = deliveryPushBasePath;
+        this.deliveryBasePath = deliveryBasePath;
         this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath));
         this.documentsWebApi = new DocumentsWebApi(newApiClient( restTemplate, basePath));
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath));
@@ -60,15 +79,11 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
      * <p><b>404</b> - Not found
      * <p><b>409</b> - Conflict - La notifica risulta essere già annullata
      * <p><b>500</b> - Internal Server Error
-     * @param xPagopaPnUid User Identifier (required)
-     * @param xPagopaPnCxType Customer/Receiver Type (required)
-     * @param xPagopaPnCxId Customer/Receiver Identifier (required)
      * @param iun Identificativo Univoco Notifica (required)
-     * @param xPagopaPnCxGroups Customer Groups (optional)
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public void notificationCancellation(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, List<String> xPagopaPnCxGroups) throws RestClientException {
-        notificationCancellationApi.notificationCancellation(xPagopaPnUid,  xPagopaPnCxType,  xPagopaPnCxId,  iun,  xPagopaPnCxGroups);
+    public void notificationCancellation(String iun) throws RestClientException {
+        notificationCancellationApi.notificationCancellation(operatorId,  CxTypeAuthFleet.PA,  paId,  iun,  groups);
     }
 
     //Recupero degli atti opponibili a terzi generati per una notifica
@@ -80,18 +95,14 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
      * <p><b>400</b> - Invalid input
      * <p><b>404</b> - Not found
      * <p><b>500</b> - Internal Server Error
-     * @param xPagopaPnUid User Identifier (required)
-     * @param xPagopaPnCxType Customer/Receiver Type (required)
-     * @param xPagopaPnCxId Customer/Receiver Identifier (required)
      * @param iun Identificativo Univoco Notifica (required)
      * @param legalFactId Identificativo dell&#39;atto opponibile a terzi (required)
-     * @param xPagopaPnCxGroups Customer Groups (optional)
      * @param mandateId identificativo della delega (optional)
      * @return LegalFactDownloadMetadataResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public LegalFactDownloadMetadataResponse getLegalFactById(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, String legalFactId, List<String> xPagopaPnCxGroups, UUID mandateId) throws RestClientException {
-        return legalFactsApi.getLegalFactById( xPagopaPnUid,  xPagopaPnCxType,  xPagopaPnCxId,  iun,  legalFactId,  xPagopaPnCxGroups,  mandateId);
+    public LegalFactDownloadMetadataResponse getLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return legalFactsApi.getLegalFactById( operatorId,  CxTypeAuthFleet.PA,  paId,  iun,  legalFactId,  groups,  mandateId);
     }
 
     /**
@@ -101,19 +112,15 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
      * <p><b>400</b> - Invalid input
      * <p><b>404</b> - Not found
      * <p><b>500</b> - Internal Server Error
-     * @param xPagopaPnUid User Identifier (required)
-     * @param xPagopaPnCxType Customer/Receiver Type (required)
-     * @param xPagopaPnCxId Customer/Receiver Identifier (required)
      * @param iun Identificativo Univoco Notifica (required)
      * @param legalFactType Categoria dell&#39;atto opponibile a terzi (required)
      * @param legalFactId Identificativo dell&#39;atto opponibile a terzi (required)
-     * @param xPagopaPnCxGroups Customer Groups (optional)
      * @param mandateId identificativo della delega (optional)
      * @return LegalFactDownloadMetadataResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public LegalFactDownloadMetadataResponse getLegalFact(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, LegalFactCategory legalFactType, String legalFactId, List<String> xPagopaPnCxGroups, UUID mandateId) throws RestClientException {
-        return legalFactsApi.getLegalFact(xPagopaPnUid, xPagopaPnCxType, xPagopaPnCxId, iun, legalFactType, legalFactId, xPagopaPnCxGroups, mandateId);
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId,  UUID mandateId) throws RestClientException {
+        return legalFactsApi.getLegalFact(operatorId,  CxTypeAuthFleet.PA,  paId, iun, legalFactType, legalFactId, groups, mandateId);
     }
 
     /**
@@ -123,17 +130,13 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
      * <p><b>400</b> - Invalid input
      * <p><b>404</b> - Not found
      * <p><b>500</b> - Internal Server Error
-     * @param xPagopaPnUid User Identifier (required)
-     * @param xPagopaPnCxType Customer/Receiver Type (required)
-     * @param xPagopaPnCxId Customer/Receiver Identifier (required)
      * @param iun Identificativo Univoco Notifica (required)
-     * @param xPagopaPnCxGroups Customer Groups (optional)
      * @param mandateId identificativo della delega (optional)
      * @return List&lt;LegalFactListElement&gt;
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public List<LegalFactListElement> getNotificationLegalFacts(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, List<String> xPagopaPnCxGroups, UUID mandateId) throws RestClientException {
-        return legalFactsApi.getNotificationLegalFacts(xPagopaPnUid, xPagopaPnCxType, xPagopaPnCxId, iun, xPagopaPnCxGroups, mandateId);
+    public List<LegalFactListElement> getNotificationLegalFacts(String iun,  UUID mandateId) throws RestClientException {
+        return legalFactsApi.getNotificationLegalFacts(operatorId,  CxTypeAuthFleet.PA,  paId, iun, groups, mandateId);
     }
 
     /**
@@ -143,18 +146,14 @@ public class PnInternalAnnullamentoDeliveryPushExternalClientImpl implements IPn
      * <p><b>400</b> - Invalid input
      * <p><b>404</b> - Not found
      * <p><b>500</b> - Internal Server Error
-     * @param xPagopaPnUid User Identifier (required)
-     * @param xPagopaPnCxType Customer/Receiver Type (required)
-     * @param xPagopaPnCxId Customer/Receiver Identifier (required)
      * @param iun Identificativo Univoco Notifica (required)
      * @param documentType Categoria documento (required)
      * @param documentId Identificativo del documento (required)
-     * @param xPagopaPnCxGroups Customer Groups (optional)
      * @param mandateId identificativo della delega (optional)
      * @return DocumentDownloadMetadataResponse
      * @throws RestClientException if an error occurs while attempting to invoke the API
      */
-    public DocumentDownloadMetadataResponse getDocumentsWeb(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId, String iun, DocumentCategory documentType, String documentId, List<String> xPagopaPnCxGroups, UUID mandateId) throws RestClientException {
-        return documentsWebApi.getDocumentsWeb(xPagopaPnUid, xPagopaPnCxType, xPagopaPnCxId, iun, documentType, documentId, xPagopaPnCxGroups, mandateId);
+    public DocumentDownloadMetadataResponse getDocumentsWeb( String iun, DocumentCategory documentType, String documentId, UUID mandateId) throws RestClientException {
+        return documentsWebApi.getDocumentsWeb(operatorId,  CxTypeAuthFleet.PA,  paId, iun, documentType, documentId, groups, mandateId);
     }
 }
