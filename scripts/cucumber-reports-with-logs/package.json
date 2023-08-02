@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "cucumber-html-reporter": "7.1.0",
-    "fast-xml-parser": "^4.2.4",
+    "fast-xml-parser": "^4.2.5",
     "@aws-sdk/client-api-gateway": "^3.321.1",
     "@aws-sdk/credential-provider-ini": "^3.321.1",
     "@aws-sdk/client-cloudwatch-logs": "^3.321.1"
