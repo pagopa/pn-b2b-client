@@ -901,6 +901,42 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
 </details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_PG_29] Invio notifica  mono destinatario con Piva errata</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con recipientType PG e taxId `CCRMCT06A03A433H`
+2. La notifica viene inviata dal `Comune_Multi`
+3. l'invio della notifica ha sollevato un errore "400"
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_PG_30] Invio notifica  mono destinatario con Piva errata</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con recipientType PG e taxId `1266681029H`
+2. La notifica viene inviata dal `Comune_Multi`
+3. l'invio della notifica ha sollevato un errore "400"
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_PG_31] Invio notifica  mono destinatario con Piva corretta</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario Gherkin spa
+2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
+
+</details>
 
 ##### Invio notifiche b2b per la persona giuridica con codice fiscale (società semplice)
 
@@ -1861,6 +1897,125 @@
 :warning: _Ignored_
 
 1. Con destinatario `Mario Gherkin` avente physicalAddress_zip non corretto
+2. La notifica viene inviata dal `Comune_Multi`
+3. L'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_24] invio notifiche digitali mono destinatario con provincia non presente e Stato Italia scenario negativo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province a NULL
+2. La notifica viene inviata dal `Comune_Multi`
+3. L'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_25] invio notifiche digitali mono destinatario con provincia non presente e Stato Estero scenario positivo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province non presente
+2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+3. Si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_26] invio notifiche digitali mono destinatario con provincia non presente e Stato Estero scenario positivo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province con MI
+2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+3. Si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_27] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province con MI
+2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+3. Si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_28] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province non correto
+2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+3. Si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_29] invio notifiche digitali mono destinatario con provincia errata e Stato estero scenario positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province non correto
+2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+3. Si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_30] invio notifiche digitali mono destinatario con provincia non presente e Stato non presente scenario negativo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State non presente e physicalAddress_province non presente
+2. La notifica viene inviata dal `Comune_Multi`
+3. L'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_31] invio notifiche digitali mono destinatario con provincia non presente e Stato Italia scenario negativo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province non presente
+2. La notifica viene inviata dal `Comune_Multi`
+3. L'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VALID_32] invio notifiche digitali mono destinatario con provincia  presente e Stato non presente scenario negativo</summary>
+
+**Descrizione**
+
+1. Con destinatario avente physicalAddress_State non presente e physicalAddress_province con MI
 2. La notifica viene inviata dal `Comune_Multi`
 3. L'operazione ha prodotto un errore con status code `400`
 
