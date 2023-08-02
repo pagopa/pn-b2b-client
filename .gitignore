@@ -41,3 +41,5 @@ build/
 .vscode/
 /config/api-keys-dev2.properties
 /config/bearer-token-dev2.properties
+
+token.json
