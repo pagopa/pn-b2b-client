@@ -271,23 +271,101 @@ Feature: Validazione campi invio notifiche b2b
     Then l'operazione ha prodotto un errore con status code "400"
 
 
-  Scenario: [B2B-PA-SEND_VALID_24] invio notifiche digitali mono destinatario con provincia non presente scenario negativo
+  Scenario: [B2B-PA-SEND_VALID_24] invio notifiche digitali mono destinatario con provincia non presente e Stato Italia scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
+      | physicalAddress_State    | ITALIA    |
       | physicalAddress_province | NULL |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
+  Scenario: [B2B-PA-SEND_VALID_25] invio notifiche digitali mono destinatario con provincia non presente e Stato Estero scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | FRANCIA    |
+      | physicalAddress_province | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  Scenario: [B2B-PA-SEND_VALID_25] invio notifiche digitali mono destinatario con provincia non presente e stato estero scenario positivo
+  Scenario: [B2B-PA-SEND_VALID_26] invio notifiche digitali mono destinatario con provincia presente e Stato italia scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | ITALIA |
+      | physicalAddress_province | MI      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  Scenario: [B2B-PA-SEND_VALID_27] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
       | physicalAddress_State    | FRANCIA |
-      | physicalAddress_province | NULL    |
+      | physicalAddress_province | MI      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  Scenario: [B2B-PA-SEND_VALID_28] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | FRANCIA |
+      | physicalAddress_province | MILANO  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  Scenario: [B2B-PA-SEND_VALID_29] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | ITALIA |
+      | physicalAddress_province | MILNO  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+  Scenario: [B2B-PA-SEND_VALID_30] invio notifiche digitali mono destinatario con provincia non presente e Stato non presente scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | NULL |
+      | physicalAddress_province | NULL |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario: [B2B-PA-SEND_VALID_31] invio notifiche digitali mono destinatario con provincia non presente e Stato Italia scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | ITALIA    |
+      | physicalAddress_province | 0_CHAR |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario: [B2B-PA-SEND_VALID_32] invio notifiche digitali mono destinatario con provincia  presente e Stato non presente scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State    | NULL |
+      | physicalAddress_province | MI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
