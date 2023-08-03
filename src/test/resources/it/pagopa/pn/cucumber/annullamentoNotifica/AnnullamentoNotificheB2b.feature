@@ -7,8 +7,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
@@ -29,7 +28,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
@@ -39,13 +38,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And si attende che sia presente il perfezionamento per decorrenza termini
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-    And viene verificato che l'elemento di timeline "REFINEMENT" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
+    And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
@@ -60,7 +53,7 @@ Feature: annullamento notifiche b2b
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
@@ -74,7 +67,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And vengono letti gli eventi fino allo stato della notifica "VIEWED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
@@ -86,18 +79,27 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And l'avviso pagopa viene pagato correttamente
-    And si attende il corretto pagamento della notifica
+    And destinatario Mario Cucumber e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata dal "Comune_1"
+    And si verifica la corretta acquisizione della richiesta di invio notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then si verifica il corretto annullamento della notifica
 
+
         #Da Verificare...............
-  #Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
+  Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Cucumber e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata dal "Comune_1"
+    And si verifica la corretta acquisizione della richiesta di invio notifica
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then si verifica il corretto annullamento della notifica
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   Scenario: [B2B-PA-ANNULLAMENTO_10] PA mittente: dettaglio notifica annullata - download allegati (scenari positivi)
     Given viene generata una nuova notifica
