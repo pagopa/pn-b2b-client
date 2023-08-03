@@ -26,6 +26,8 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | 01100 | 323   |
       | 00118 | 298   |
       | 12071 | 380   |
+      | 61010 | 380   |
+
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_RS_MULTI_2] Invio notifica verifica costo con FSU + @OK_RS + FLAT_RATE positivo
@@ -49,6 +51,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | 01100 | 0     |
       | 00118 | 0     |
       | 12071 | 0     |
+      | 61010 | 0     |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_RIS_MULTI_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo

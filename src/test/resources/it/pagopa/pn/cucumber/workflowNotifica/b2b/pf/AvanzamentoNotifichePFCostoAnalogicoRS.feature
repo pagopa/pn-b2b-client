@@ -3,8 +3,8 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @dev @costoAnalogico @costoCartAAR
-  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_1_AAR] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
+  @dev @costoAnalogico
+  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_1] Invio notifica verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -45,8 +45,9 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 12071 | 0     |
       | 61010 | 0     |
 
-  @dev @costoAnalogico @costoCartAAR
-  Scenario: [B2B_COSTO_ANALOG_PF_RIS_3_AAR] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+
+  @dev @costoAnalogico
+  Scenario: [B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -61,6 +62,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "691" della notifica
+
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
@@ -82,8 +84,8 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
 
 
 
-  @dev @costoAnalogico @costoCartAAR
-  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_9_AAR] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
+  @dev @costoAnalogico
+  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_5] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -101,8 +103,9 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 60011 | 327   |
       | 60122 | 281   |
 
+
   @dev @costoAnalogico
-  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
+  Scenario Outline: [B2B_COSTO_ANALOG_PF_RS_6] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -121,8 +124,9 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | 60011 | 0     |
       | 60122 | 0     |
 
-  @dev @costoAnalogico @costoCartAAR
-  Scenario: [B2B_COSTO_ANALOG_PF_RIS_11_AAR] Invio notifica e verifica costo ZONA_2 + @OK_RIS + DELIVERY_MODE positivo
+
+  @dev @costoAnalogico
+  Scenario: [B2B_COSTO_ANALOG_PF_RIS_7] Invio notifica e verifica costo ZONA_2 + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -138,8 +142,9 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "798" della notifica
 
+
   @dev @costoAnalogico
-  Scenario: [B2B_COSTO_ANALOG_PF_RIS_12] Invio notifica e verifica costo ZONA_2 + @OK_RIS + FLAT_RATE positivo
+  Scenario: [B2B_COSTO_ANALOG_PF_RIS_8] Invio notifica e verifica costo ZONA_2 + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |

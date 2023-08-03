@@ -20,6 +20,7 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | 18025   |  508  |
       | 00118   |  426  |
       | 01100   |  451  |
+      | 90016   |  509  |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_PG_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
@@ -42,7 +43,7 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | 18025 | 0     |
       | 00118 | 0     |
       | 01100 | 0     |
-
+      | 90016 | 0     |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
