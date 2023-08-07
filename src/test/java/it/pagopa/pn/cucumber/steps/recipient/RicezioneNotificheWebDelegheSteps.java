@@ -223,6 +223,14 @@ public class RicezioneNotificheWebDelegheSteps {
         });
     }
 
+    @And("la notifica non può essere correttamente letta da {string} con delega")
+    public void notificationCanNotBeCorrectlyReadFromWithMandate(String recipient) {
+        sharedSteps.selectUser(recipient);
+        FullReceivedNotification response = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+        Assertions.assertNull(response);
+
+    }
+
     @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo")
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient){
         sharedSteps.selectUser(recipient);
@@ -427,6 +435,13 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
+    @And("la notifica non può essere correttamente letta da {string}")
+    public void notificationCanNotBeCorrectlyReadFrom(String recipient) {
+        sharedSteps.selectUser(recipient);
+        FullReceivedNotification response = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        Assertions.assertNull(response);
+        webRecipientClient.setBearerToken(baseUser);
+    }
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
         try {

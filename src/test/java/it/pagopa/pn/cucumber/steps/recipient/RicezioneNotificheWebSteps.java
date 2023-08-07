@@ -67,6 +67,14 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
+    @Then("la notifica non può essere correttamente recuperata da {string}")
+    public void notificationCanNotBeCorrectlyReadby(String recipient) {
+        sharedSteps.selectUser(recipient);
+        FullReceivedNotification fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        Assertions.assertNull(fullNotification);
+
+    }
+
     @Then("il documento notificato può essere correttamente recuperato da {string}")
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);

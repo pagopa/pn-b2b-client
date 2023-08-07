@@ -9,8 +9,12 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.testclient.IPnInternalAnnullamentoDeliveryPushExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.model.DocumentCategory;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.internalAnnullamentoDeliveryPush.model.DocumentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -21,13 +25,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.time.OffsetDateTime.now;
@@ -41,7 +48,7 @@ public class InvioNotificheB2bSteps {
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
-
+    private final IPnInternalAnnullamentoDeliveryPushExternalClientImpl b2bAnnullamentoClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -52,6 +59,10 @@ public class InvioNotificheB2bSteps {
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
+
+    private DocumentDownloadMetadataResponse downloadDocumentResponse;
+
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -61,6 +72,8 @@ public class InvioNotificheB2bSteps {
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
+        this.b2bAnnullamentoClient = sharedSteps.getB2bAnnullamentoClient();
+
     }
 
 
@@ -409,6 +422,31 @@ public class InvioNotificheB2bSteps {
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
+
+
+    //Annullamento Notifica
+    @And("la notifica può essere annullata dal sistema tramite codice IUN")
+    public void notificationCanBeCanceledWithIUN() {
+        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        try {
+
+            Assertions.assertDoesNotThrow(() ->
+                    b2bAnnullamentoClient.notificationCancellation(sharedSteps.getSentNotification().getIun())
+            );
+
+           // Assertions.assertNotNull(notificationByIun.get());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("si verifica il corretto annullamento della notifica")
+    public void correctCanceledNotification() {
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyCanceledNotification(sharedSteps.getSentNotification()));
+    }
+
+
+
 
 
 }
