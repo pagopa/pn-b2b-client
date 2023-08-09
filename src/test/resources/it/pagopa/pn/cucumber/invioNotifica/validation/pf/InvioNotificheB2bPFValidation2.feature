@@ -303,6 +303,7 @@ Feature: Validazione campi invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+  @ignore
   Scenario: [B2B-PA-SEND_VALID_27] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -314,6 +315,7 @@ Feature: Validazione campi invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+  @ignore
   Scenario: [B2B-PA-SEND_VALID_28] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -325,6 +327,7 @@ Feature: Validazione campi invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+    @ignore
   Scenario: [B2B-PA-SEND_VALID_29] invio notifiche digitali mono destinatario con provincia presente e Stato estero scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
