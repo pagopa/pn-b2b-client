@@ -118,21 +118,13 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata dal "Comune_1"
     And si verifica la corretta acquisizione della richiesta di invio notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
+    #Rispondere in maniera sincrona al chiamante (204 richiesta accettata)
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    #And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    #Inserisce in timeline il nuovo elemento NOTIFICATION_CANCELLATION_REQUEST
+    # (che non porta lo stato della notifica in CANCELLED) indica l'inizio delle operazione di annullamento della notifica.
+    # Da questo momento in poi verranno bloccate tutte le operazioni, dunque il workflow per la notifica in questione.
 
-  @B2Btest
-  Scenario:  [B2B-PA-ANNULLAMENTO_9_1] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Cucumber e:
-      | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata dal "Comune_1"
-    And si verifica la corretta acquisizione della richiesta di invio notifica
-    When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
   @B2Btest
   Scenario: [B2B-PA-ANNULLAMENTO_10] PA mittente: dettaglio notifica annullata - download allegati (scenari positivi)
@@ -340,6 +332,36 @@ Feature: annullamento notifiche b2b
     And si verifica la corretta acquisizione della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    #When viene richiesto il download del documento "NOTIFICA"
+    #Then l'operazione ha prodotto un errore con status code "400"
+    When "Mario Cucumber" tenta il recupero dell'allegato "NOTIFICA"
+    Then il download ha prodotto un errore con status code "404"
+
+  Scenario: [B2B-PF-ANNULLAMENTO_16_1] Destinatario: dettaglio notifica annullata - download allegati (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | document           | SI                          |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    #When viene richiesto il download del documento "NOTIFICA"
+    #Then l'operazione ha prodotto un errore con status code "400"
+    When "Mario Cucumber" tenta il recupero dell'allegato "NOTIFICA"
+    Then il download ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_16_2] Destinatario: dettaglio notifica annullata - download allegati (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | document           | SI                          |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #When viene richiesto il download del documento "NOTIFICA"
     #Then l'operazione ha prodotto un errore con status code "400"
@@ -359,6 +381,41 @@ Feature: annullamento notifiche b2b
     And si verifica la corretta acquisizione della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    #When viene richiesto il download del documento "PAGOPA"
+    #Then l'operazione ha prodotto un errore con status code "400"
+    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    Then il download ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_17_1] Destinatario: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    #When viene richiesto il download del documento "PAGOPA"
+    #Then l'operazione ha prodotto un errore con status code "400"
+    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    Then il download ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_17_2] Destinatario: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #When viene richiesto il download del documento "PAGOPA"
     #Then l'operazione ha prodotto un errore con status code "400"
@@ -375,6 +432,31 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And download attestazione opponibile AAR
+    Then l'operazione ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_18_1] Destinatario: dettaglio notifica annullata - download AAR (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And download attestazione opponibile AAR
+    Then l'operazione ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_18_2] Destinatario: dettaglio notifica annullata - download AAR (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     And download attestazione opponibile AAR
     Then l'operazione ha prodotto un errore con status code "404"
@@ -389,12 +471,38 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
+    Then l'operazione ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_19_1] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_1] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_2] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
+    Then l'operazione ha prodotto un errore con status code "404"
+
+  @B2Btest
+  Scenario: [B2B-PF-ANNULLAMENTO_19_3] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -408,7 +516,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_2] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_4] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -422,7 +530,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_3] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_5] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -436,7 +544,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_4] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_6] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -450,7 +558,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_5] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_7] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -464,7 +572,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_6] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_8] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -478,7 +586,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione ha prodotto un errore con status code "404"
 
   @B2Btest
-  Scenario: [B2B-PF-ANNULLAMENTO_19_7] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+  Scenario: [B2B-PF-ANNULLAMENTO_19_9] Destinatario: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -505,7 +613,33 @@ Feature: annullamento notifiche b2b
     And si verifica la corretta acquisizione della richiesta di invio notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
+  @B2Btest
+  Scenario:  [B2B-PF-ANNULLAMENTO_20_1] Destinatario: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Cucumber e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata dal "Comune_1"
+    And si verifica la corretta acquisizione della richiesta di invio notifica
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+
+  @B2Btest
+  Scenario:  [B2B-PF-ANNULLAMENTO_20_2] Destinatario: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Cucumber e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata dal "Comune_1"
+    And si verifica la corretta acquisizione della richiesta di invio notifica
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+
 
   @B2Btest
   Scenario:  [B2B-PF-ANNULLAMENTO_21] Destinatario: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
@@ -530,8 +664,11 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata dal "Comune_1"
     And si verifica la corretta acquisizione della richiesta di invio notifica
     #TODO manca la funzione.......................
-    When la notifica con pagamento può essere annullata dal sistema tramite codice IUV
-    Then si verifica la coretta cancellazione da tabella pn-NotificationsCost
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    #When la notifica con pagamento può essere annullata dal sistema tramite codice IUV
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    #Then si verifica la coretta cancellazione da tabella pn-NotificationsCost
 
   @B2Btest #Da Verificare...............
   Scenario:  [B2B-PA-ANNULLAMENTO_23] PA mittente: notifica con pagamento in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
@@ -545,8 +682,8 @@ Feature: annullamento notifiche b2b
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And la notifica con pagamento può essere annullata dal sistema tramite codice IUV
-    And si verifica la coretta cancellazione da tabella pn-NotificationsCost
+    #And la notifica con pagamento può essere annullata dal sistema tramite codice IUV
+    #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
     And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
     When la notifica viene inviata dal "Comune_1"
     Then si verifica la corretta acquisizione della notifica
@@ -570,13 +707,43 @@ Feature: annullamento notifiche b2b
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then la notifica non può essere correttamente recuperata da "Mario Cucumber"
+    And  la notifica non può essere correttamente recuperata da "Mario Gherkin" con delega
+
+  @B2Btest                     #Da Verificare...............
+  Scenario:  [B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then la notifica non può essere correttamente recuperata da "Mario Cucumber"
     And  la notifica non può essere correttamente recuperata da "Mario Gherkin" con delega
 
   @B2Btest
-  Scenario:  [B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+  Scenario:  [B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then la notifica può essere correttamente letta da "Mario Gherkin"
+    And si tenta la lettura della notifica da parte del delegato "Mario Gherkin" che produce un errore con status code "404"
+
+  @B2Btest
+  Scenario:  [B2B-PF-ANNULLAMENTO_26_3] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
@@ -609,6 +776,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    #Da verificare la corretta consegna del messaggio di cortesia
 
   @B2Btest
   Scenario:  [B2B-PA-ANNULLAMENTO_27_1] PA mittente: annullamento notifica inibizione invio sms di cortesia
@@ -622,8 +790,8 @@ Feature: annullamento notifiche b2b
     And si verifica la corretta acquisizione della notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
+   # Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
@@ -649,6 +817,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    #Da verificare la corretta consegna del messaggio di cortesia
 
   @B2Btest
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
@@ -664,8 +833,8 @@ Feature: annullamento notifiche b2b
     And si verifica la corretta acquisizione della notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
+    #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
