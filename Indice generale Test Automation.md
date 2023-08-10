@@ -373,10 +373,82 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 
 </details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_36] Invio notifica mono destinatario con max numero allegati scenario negativo</summary>
 
-- [B2B-PA-SEND_36] Invio notifica  mono destinatario con allegato Injection scenario negativo
-- [B2B-PA-SEND_37] Invio notifica  mono destinatario con allegato OverSize scenario negativo
-- [B2B-PA-SEND_38] Invio notifica  mono destinatario con allegato OverSize scenario negativo
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. aggiungo `16` numero allegati
+3. Viene inviata tramite dal `Comune_Multi`
+4. L'operazione va in errore con codice `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_37] Invio notifica  mono destinatario con allegato Injection scenario negativo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b injection preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `FILE_PDF_INVALID_ERROR`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_38] Invio notifica  mono destinatario con allegato OverSize scenario negativo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b oversize preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato Max Num Allegati scenario negativo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b over 15 preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `INVALID_PARAMETER_MAX_ATTACHMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato Max Num Allegati scenario negativo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b over 15 preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `INVALID_PARAMETER_MAX_ATTACHMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_40] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b senza preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+
 
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
@@ -463,6 +535,20 @@
 :warning: _Ignored_
 
 1. Viene creata una nuova notifica multi destinatario con due destinatari uguali
+2. Viene inviata dal `Comune_Multi`
+3. L'operazione va in errore con stato `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPFMultiPA.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica multi destinatario con 15 destinatari
 2. Viene inviata dal `Comune_Multi`
 3. L'operazione va in errore con stato `400`
 
@@ -896,7 +982,7 @@
 
 1. Viene generata una nuova notifica con recipientType PG e taxId `CCRMCT06A03A433H`
 2. La notifica viene inviata dal `Comune_Multi`
-3. l'invio della notifica ha sollevato un errore "400"
+3. l'invio della notifica ha sollevato un errore `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
@@ -908,7 +994,7 @@
 
 1. Viene generata una nuova notifica con recipientType PG e taxId `1266681029H`
 2. La notifica viene inviata dal `Comune_Multi`
-3. l'invio della notifica ha sollevato un errore "400"
+3. l'invio della notifica ha sollevato un errore `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
 
@@ -919,7 +1005,7 @@
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario Gherkin spa
-2. la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
 3. si verifica la corretta acquisizione della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPG2.feature)
@@ -1331,7 +1417,7 @@
 **Descrizione**
 
 1. Viene creata una nuova notifica multi destinatario con destinatario Gherkin spa(P.Iva) e Cucumber srl(P.Iva) con senderDenomination `Comune di milano`
-2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+2. La notifica viene inviata dal `Comune_1`
 3. L'invio ha prodotto un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pg/InvioNotificheB2bPGMultiPA.feature)
@@ -1593,7 +1679,7 @@
 
 **Descrizione**
 
-1. Con destinatario avente oggetto con caretteri speciali
+1. Con destinatario avente subject con caretteri speciali
 2. La notifica viene inviata tramite api b2b dal `Comune_1`
 3. Si attende che lo stato diventi `ACCEPTED`
 4. Si verifica la corretta acquisizione della notifica
@@ -1898,7 +1984,7 @@
 **Descrizione**
 
 1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province non presente
-2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 3. Si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -1911,7 +1997,7 @@
 **Descrizione**
 
 1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province con MI
-2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 3. Si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -1926,7 +2012,7 @@
 :warning: _Ignored_
 
 1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province con MI
-2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 3. Si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -1941,7 +2027,7 @@
 :warning: _Ignored_
 
 1. Con destinatario avente physicalAddress_State con FRANCIA e physicalAddress_province non correto
-2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 3. Si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -1956,7 +2042,7 @@
 :warning: _Ignored_
 
 1. Con destinatario avente physicalAddress_State con ITALIA e physicalAddress_province non correto
-2. La notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
 3. Si verifica la corretta acquisizione della notifica
 4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -2465,22 +2551,44 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
 </details>
-
-- [WEB-PF-MULTI-MANDATE_14] Invio notifica digitale altro destinatario e recupero_scenario positivo
-- [WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibile
-- [WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[WEB-PF-MULTI-MANDATE_1] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
+  <summary>[WEB-PF-MULTI-MANDATE_14] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
 
 **Descrizione**
 
 1. `Mario Gherkin` viene delegato da `Mario Cucumber`
 2. `Mario Gherkin` accetta la delega `Mario Cucumber`
-3. Viene generata una nuova notifica con destinatari `Mario Cucumber`e `Mario Gherkin`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber` e `Mario Gherkin`
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 5. La notifica può essere correttamente letta da `Mario Cucumber`
-6. La notifica può essere correttamente letta da `Mario Gherkin`
+6. La notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MULTI-MANDATE_15] Invio notifica digitale a destinatario non reperibile</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario non reperebile
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MULTI-MANDATE_16] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` viene delegato da `Mario Cucumber`
+2. `Mario Gherkin` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber` e `Mario Gherkin`
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. Download attestazione opponibile AAR
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+7. La PA richiede il download dell'attestazione opponibile `SENDER_ACK`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pf/RicezioneNotifichePFWebDeleghe.feature)
 
