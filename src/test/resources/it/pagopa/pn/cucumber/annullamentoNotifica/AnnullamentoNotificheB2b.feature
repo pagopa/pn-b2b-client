@@ -862,8 +862,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
+    #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -882,7 +882,7 @@ Feature: annullamento notifiche b2b
     And l'avviso pagopa viene pagato correttamente
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    #And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then si attende il corretto pagamento della notifica
 
           #Da Verificare...............

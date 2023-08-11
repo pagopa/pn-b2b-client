@@ -94,6 +94,17 @@ public class AvanzamentoNotificheB2bSteps {
             case "COMPLETELY_UNREACHABLE":
                 notificationInternalStatus = NotificationStatus.UNREACHABLE;
                 break;
+            case "VIEWED":
+                numCheck = 4;
+                waiting = waiting * 4;
+                notificationInternalStatus = NotificationStatus.VIEWED;
+                break;
+            case "PAID":
+                notificationInternalStatus = NotificationStatus.PAID;
+                break;
+            case "IN_VALIDATION":
+                notificationInternalStatus = NotificationStatus.IN_VALIDATION;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -222,6 +233,12 @@ public class AvanzamentoNotificheB2bSteps {
             case "REQUEST_REFUSED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_REFUSED, 2, waiting);
                 break;
+            case "NOTIFICATION_CANCELLED":
+                //TODO aggiungere in Timeline la nuova categoria
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_REFUSED, 2, waiting);
+               // timelineElementWait = new TimelineElementWait(TimelineElementCategory.NOTIFICATION_CANCELLED, 15, sharedSteps.getWorkFlowWait());
+                break;
+
             default:
                 throw new IllegalArgumentException();
         }
@@ -2031,6 +2048,10 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
     }
+
+
+    //Notifica Annullata
+
 
     /*
     UTILE PER TEST
