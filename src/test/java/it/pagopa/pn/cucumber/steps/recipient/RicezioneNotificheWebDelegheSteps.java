@@ -180,7 +180,9 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+
+        //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
@@ -198,9 +200,9 @@ public class RicezioneNotificheWebDelegheSteps {
         if (!setBearerToken(delegate)) {
             throw new IllegalArgumentException();
         }
-        String delegatorTaxId = getTaxIdByUser(delegator);
-
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        String delegatorTaxId = getTaxIdByUser(delegator);;
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+       // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: "+mandateList);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
@@ -222,10 +224,10 @@ public class RicezioneNotificheWebDelegheSteps {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
     }
-
-    @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo")
-    public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient){
-        sharedSteps.selectUser(recipient);
+    
+    @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo per il delegato {string}")
+    public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato){
+        sharedSteps.selectUser(delegato);
       //  Assertions.assertDoesNotThrow(() -> {
            // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
 
@@ -304,7 +306,8 @@ public class RicezioneNotificheWebDelegheSteps {
         });
 
         String delegatorTaxId = getTaxIdByUser(recipient);
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+       // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (mandate.getMandateId().equalsIgnoreCase(mandateToSearch.getMandateId())) {
@@ -383,7 +386,9 @@ public class RicezioneNotificheWebDelegheSteps {
             throw new IllegalArgumentException();
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
-        List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+      //  List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
