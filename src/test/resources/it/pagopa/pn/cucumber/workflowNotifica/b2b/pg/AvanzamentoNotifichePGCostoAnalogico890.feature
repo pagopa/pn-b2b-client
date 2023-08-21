@@ -16,11 +16,8 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 00010   |  842  |
-      | 12071   |  859  |
-      | 62010   |  909  |
-      | 06024   |  1026  |
+      | CAP   | COSTO |
+      | 05010 | 1105  |
 
 
   @dev @costoAnalogico
@@ -41,11 +38,7 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 00010 | 0     |
-      | 12071 | 0     |
-      | 62010 | 0     |
-      | 06024 | 0     |
-
+      | 05010 | 0     |
 
 
   @dev @costoAnalogico
@@ -64,9 +57,12 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 64010   |  887  |
-      | 33028   |  890  |
+      | CAP   | COSTO |
+      | 70010 | 861   |
+      | 00010 | 906   |
+      | 60010 | 979   |
+      | 64010 | 954   |
+      | 06031 | 957   |
 
 
   @dev @costoAnalogico
@@ -87,5 +83,8 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
+      | 70010 | 0     |
+      | 00010 | 0     |
+      | 60010 | 0     |
       | 64010 | 0     |
-      | 33028 | 0     |
+      | 06031 | 0     |

@@ -18,10 +18,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 01100 | 323   |
-      | 00118 | 298   |
-      | 12071 | 380   |
-      | 61010 | 380   |
+      | 60040 | 404   |
 
 
   @dev @costoAnalogico
@@ -40,14 +37,10 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 01100 | 0     |
-      | 00118 | 0     |
-      | 12071 | 0     |
-      | 61010 | 0     |
-
+      | 60040 | 0     |
 
   @dev @costoAnalogico
-  Scenario: [B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo
+  Scenario: [B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -61,11 +54,11 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | physicalAddress_zip          | ZONE_1       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo = "691" della notifica
+    And viene verificato il costo = "742" della notifica
 
 
   @dev @costoAnalogico
-  Scenario: [B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo
+  Scenario: [B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con ZONE_1 + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -99,9 +92,10 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 70122 | 262   |
-      | 60011 | 327   |
-      | 60122 | 281   |
+      | 00119 | 315   |
+      | 60122 | 296   |
+      | 60012 | 346   |
+      | 70122 | 275   |
 
 
   @dev @costoAnalogico
@@ -120,9 +114,10 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 70122 | 0     |
-      | 60011 | 0     |
+      | 00119 | 0     |
       | 60122 | 0     |
+      | 60012 | 0     |
+      | 70122 | 0     |
 
 
   @dev @costoAnalogico
@@ -135,7 +130,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 60012          |
+      | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -153,7 +148,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
       | digitalDomicile_address      | test@fail.it   |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 60012          |
+      | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

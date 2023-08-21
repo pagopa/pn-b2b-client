@@ -18,12 +18,8 @@ Feature: costo notifica con workflow analogico per persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 18025   |  508  |
-      | 00118   |  426  |
-      | 01100   |  451  |
-      | 90016   |  509  |
-
+      | CAP   | COSTO |
+      | 80060 | 544   |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -42,11 +38,8 @@ Feature: costo notifica con workflow analogico per persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 00118   |  0    |
-      | 01100   |  0    |
-      | 18025   |  0    |
-      | 90016   |  0    |
+      | CAP   | COSTO |
+      | 80060 | 0     |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -64,10 +57,15 @@ Feature: costo notifica con workflow analogico per persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 60121   |  381  |
-      | 62010   |  421  |
-      | 70121   |  351  |
+      | CAP   | COSTO |
+      | 00118 | 454   |
+      | 00012 | 543   |
+      | 60010 | 448   |
+      | 60121 | 405   |
+      | 70121 | 372   |
+      | 80010 | 464   |
+      | 80121 | 393   |
+      | 81100 | 414   |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -78,23 +76,27 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
+      | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-      |  physicalAddress_zip    |    <CAP>   |
+      | physicalAddress_zip     | <CAP>     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 60121   |  0    |
-      | 62010   |  0    |
-      | 70121   |  0    |
-
+      | CAP   | COSTO |
+      | 00118 | 454   |
+      | 00012 | 543   |
+      | 60010 | 448   |
+      | 60121 | 405   |
+      | 70121 | 372   |
+      | 80010 | 464   |
+      | 80121 | 393   |
+      | 81100 | 414   |
 
 
   @dev @costoAnalogico
-  Scenario: [B2B_COSTO_ANALOG_PF_AR_5] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo
+  Scenario: [B2B_COSTO_ANALOG_PF_AR_5] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -104,17 +106,17 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 88010          |
+      | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    Then viene verificato il costo = "963" della notifica
+    Then viene verificato il costo = "1037" della notifica
 
 
 
   @dev @costoAnalogico
-  Scenario: [B2B_COSTO_ANALOG_PF_AR_6] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo
+  Scenario: [B2B_COSTO_ANALOG_PF_AR_6] Invio notifica con allegato e verifica costo con ZONA_2 + @OK_RIR + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -125,7 +127,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL           |
       | physicalAddress_State        | BRASILE        |
       | physicalAddress_municipality | Florianopolis  |
-      | physicalAddress_zip          | 88010          |
+      | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIR     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -145,12 +147,12 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
-      | physicalAddress_zip          | 75007      |
+      | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    Then viene verificato il costo = "856" della notifica
+    Then viene verificato il costo = "921" della notifica
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_AR_8] Invio notifica e verifica costo ZONA_1 + @OK_RIR + FLAT_RATE positivo
@@ -163,7 +165,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | digitalDomicile              | NULL       |
       | physicalAddress_State        | FRANCIA    |
       | physicalAddress_municipality | Parigi     |
-      | physicalAddress_zip          | 75007      |
+      | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
