@@ -61,6 +61,7 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 60010 | 979   |
       | 64010 | 954   |
       | 06031 | 957   |
+      | 10012 | 925   |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -85,3 +86,4 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | 60010 | 0     |
       | 64010 | 0     |
       | 06031 | 0     |
+      | 10012 | 0     |

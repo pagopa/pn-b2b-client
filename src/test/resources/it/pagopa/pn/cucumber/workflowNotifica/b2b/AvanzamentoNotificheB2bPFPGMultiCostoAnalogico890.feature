@@ -73,7 +73,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
       | 60010 | 979   |
       | 64010 | 954   |
       | 06031 | 957   |
-
+      | 10012 | 925   |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
@@ -100,3 +100,4 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
       | 60010 | 0     |
       | 64010 | 0     |
       | 06031 | 0     |
+      | 10012 | 0     |

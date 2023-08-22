@@ -50,9 +50,9 @@ Feature: costo notifica con workflow analogico per persona fisica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
+      | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-      |  physicalAddress_zip    |    <CAP>   |
+      | physicalAddress_zip     | <CAP>     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
@@ -66,6 +66,7 @@ Feature: costo notifica con workflow analogico per persona fisica
       | 80010 | 464   |
       | 80121 | 393   |
       | 81100 | 414   |
+      | 04100 | 481   |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -85,14 +86,15 @@ Feature: costo notifica con workflow analogico per persona fisica
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO |
-      | 00118 | 454   |
-      | 00012 | 543   |
-      | 60010 | 448   |
-      | 60121 | 405   |
-      | 70121 | 372   |
-      | 80010 | 464   |
-      | 80121 | 393   |
-      | 81100 | 414   |
+      | 00118 | 0     |
+      | 00012 | 0     |
+      | 60010 | 0     |
+      | 60121 | 0     |
+      | 70121 | 0     |
+      | 80010 | 0     |
+      | 80121 | 0     |
+      | 81100 | 0     |
+      | 04100 | 0     |
 
 
   @dev @costoAnalogico
@@ -173,3 +175,41 @@ Feature: costo notifica con workflow analogico per persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "0" della notifica
 
+
+  @dev @costoAnalogico
+  Scenario: [B2B_COSTO_ANALOG_PF_AR_9] Invio notifica e verifica costo ZONA_3 + @OK_RIR + DELIVERY_MODE positivo
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | feePolicy             | DELIVERY_MODE                   |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | AUSTRALIA  |
+      | physicalAddress_municipality | Hobart     |
+      | physicalAddress_zip          | ZONA_3     |
+      | physicalAddress_province     | Tasmania   |
+      | physicalAddress_address      | Via@ok_RIR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    Then viene verificato il costo = "1095" della notifica
+
+
+  @dev @costoAnalogico
+  Scenario: [B2B_COSTO_ANALOG_PF_AR_10] Invio notifica e verifica costo ZONA_3 + @OK_RIR + FLAT_RATE positivo
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | feePolicy             | FLAT_RATE                       |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL       |
+      | physicalAddress_State        | AUSTRALIA  |
+      | physicalAddress_municipality | Hobart     |
+      | physicalAddress_zip          | ZONA_3     |
+      | physicalAddress_province     | Tasmania   |
+      | physicalAddress_address      | Via@ok_RIR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "0" della notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo = "0" della notifica
