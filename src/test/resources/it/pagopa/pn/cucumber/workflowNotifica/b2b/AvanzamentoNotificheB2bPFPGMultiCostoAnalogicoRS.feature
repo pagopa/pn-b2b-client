@@ -185,7 +185,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     And viene verificato il costo = "0" della notifica per l'utente 1
 
 
-  @dev @costoAnalogico @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_RIS_MULTI_9] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -206,7 +206,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     And viene verificato il costo = "915" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
 
-  @dev @costoAnalogico @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_RIS_MULTI_10] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |

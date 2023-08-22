@@ -160,7 +160,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "0" della notifica
 
-  @dev @costoAnalogico @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_9] Invio notifica e verifica costo ZONA_3 + @OK_RIS + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -178,7 +178,7 @@ Feature: costo notifica con workflow analogico per persona fisica RIS
     And viene verificato il costo = "915" della notifica
 
 
-  @dev @costoAnalogico @ignore
+  @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PF_RIS_10] Invio notifica e verifica costo ZONA_3 + @OK_RIS + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
