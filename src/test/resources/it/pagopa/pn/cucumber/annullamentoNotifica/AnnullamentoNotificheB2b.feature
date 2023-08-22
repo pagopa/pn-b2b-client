@@ -10,7 +10,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then si verifica il corretto annullamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @B2Btest
@@ -22,7 +22,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERING"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then si verifica il corretto annullamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @B2Btest
@@ -34,7 +34,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then si verifica il corretto annullamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @B2Btest
@@ -46,7 +46,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
     When la notifica può essere annullata dal sistema tramite codice IUN
-    Then si verifica il corretto annullamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @B2Btest
@@ -72,7 +72,7 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+      | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
@@ -81,7 +81,7 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
-  @B2Btest
+  @B2Btest #Modificare il Test in Validation la notifica non può essere annullata bisogna vericare un errore.....
   Scenario: [B2B-PA-ANNULLAMENTO_7] PA mittente: annullamento notifica in fase di validazione [TA]
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
