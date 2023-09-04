@@ -150,11 +150,9 @@ public class SharedSteps {
     @Value("${pn.external.bearer-token-pg2.id}")
     private String idOrganizationCucumberSpa;
 
-    @Value("${pn.external.utilized.pec:testpagopa3@pnpagopa.postecert.local}")
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     private String digitalAddress;
 
-    private String defaultDigitalAddress = "testpagopa3@pnpagopa.postecert.local";
     private String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
 
 
