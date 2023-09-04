@@ -41,7 +41,7 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
-  @testLite
+  @testLite  @appIo
   Scenario: [B2B_PA_LEGALFACT_IO_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -51,7 +51,7 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "SENDER_ACK"
 
-  @testLite
+  @testLite  @appIo
   Scenario: [B2B_PA_LEGALFACT_IO_2] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -61,7 +61,7 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "DIGITAL_DELIVERY"
 
-  @testLite
+  @testLite  @appIo
   Scenario: [B2B_PA_LEGALFACT_IO_3] Invio notifica e download atto opponibile PEC_RECEIPT_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -71,7 +71,7 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then viene richiesto tramite appIO il download dell'attestazione opponibile "PEC_RECEIPT"
 
-  @testLite
+  @testLite  @appIo
   Scenario: [B2B_PA_LEGALFACT_IO_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
