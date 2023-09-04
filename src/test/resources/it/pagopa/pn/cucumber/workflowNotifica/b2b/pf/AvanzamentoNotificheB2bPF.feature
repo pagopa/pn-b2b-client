@@ -82,8 +82,8 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
-      | payment_pagoPaForm | NULL |
+      | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
+      | payment_pagoPaForm      | NULL              |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
@@ -93,7 +93,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+      | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
@@ -105,7 +105,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+      | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And "Mario Gherkin" legge la notifica ricevuta
@@ -198,7 +198,7 @@ Feature: avanzamento notifiche b2b persona fisica
       | senderDenomination | Comune di milano |
     And destinatario
       | taxId | GLLGLL64B15G702I |
-      | digitalDomicile_address | DSRDNI00A01A225I@pnpagopa.postecert.local |
+      | digitalDomicile_address | DSRDNI00A01A225I@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And viene verificato che nell'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e' presente il campo Digital Address di piattaforma
@@ -245,7 +245,7 @@ Feature: avanzamento notifiche b2b persona fisica
         | subject | invio notifica con cucumber |
         | senderDenomination | Comune di milano |
       And destinatario Mario Gherkin e:
-        | digitalDomicile_address | CLMCST42R12D969Z@pnpagopa.postecert.local |
+        | digitalDomicile_address | CLMCST42R12D969Z@pec.pagopa.it |
       When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
 
       Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"

@@ -532,7 +532,7 @@ Feature: Digital send e2e
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
@@ -540,11 +540,11 @@ Feature: Digital send e2e
       | loadTimeline | true |
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
@@ -552,7 +552,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_responseStatus | OK |
       | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |

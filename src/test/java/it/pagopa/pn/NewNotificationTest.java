@@ -75,7 +75,7 @@ public class NewNotificationTest {
                 .taxId( taxId )
                 .digitalDomicile( new NotificationDigitalAddress()
                         .type(NotificationDigitalAddress.TypeEnum.PEC)
-                        .address( "FRMTTR76M06B715E@pnpagopa.postecert.local")
+                        .address( "FRMTTR76M06B715E@pec.pagopa.it")
                 )
                 .physicalAddress( new NotificationPhysicalAddress()
                         .address("Via senza nome")
