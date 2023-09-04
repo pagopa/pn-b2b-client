@@ -1629,7 +1629,7 @@ public class AvanzamentoNotificheB2bSteps {
             logger.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
             Assertions.assertNotNull(timelineElement.getDetails().getDigitalAddress());
-            Assertions.assertFalse("DSRDNI00A01A225I@pnpagopa.postecert.local".equalsIgnoreCase(timelineElement.getDetails().getDigitalAddress().getAddress()));
+            Assertions.assertFalse("DSRDNI00A01A225I@pec.pagopa.it".equalsIgnoreCase(timelineElement.getDetails().getDigitalAddress().getAddress()));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
