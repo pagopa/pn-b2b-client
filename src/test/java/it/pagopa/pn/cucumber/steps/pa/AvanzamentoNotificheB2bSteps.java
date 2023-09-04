@@ -81,7 +81,7 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
-                numCheck = 4;
+                numCheck = 16;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
@@ -89,6 +89,8 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.CANCELLED;
                 break;
             case "EFFECTIVE_DATE":
+                numCheck = 16;
+                waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.EFFECTIVE_DATE;
                 break;
             case "COMPLETELY_UNREACHABLE":
@@ -221,6 +223,9 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "REQUEST_REFUSED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategory.REQUEST_REFUSED, 2, waiting);
+                break;
+            case "DIGITAL_DELIVERY_CREATION_REQUEST":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategory.DIGITAL_DELIVERY_CREATION_REQUEST, 5, waiting * 3);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -2057,4 +2062,191 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
      */
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate più {int}{string} per il destinatario {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory,  int delay, String tipoIncremento, int destinatario) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElement timelineElement = null;
+        OffsetDateTime digitalDeliveryCreationRequestDate = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+
+
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getDetails().getRecIndex().equals(destinatario)) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+
+            //RECUPERO Data DeliveryCreationRequest
+            for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+                if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario)) {
+                    digitalDeliveryCreationRequestDate = element.getTimestamp();
+                    break;
+                }
+            }
+
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getSchedulingDate());
+
+            Assertions.assertNotNull(tipoIncremento);
+            if ("d".equalsIgnoreCase(tipoIncremento)){
+                DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt).equals(digitalDeliveryCreationRequestDate.plusDays(delay).format(fmt)));
+            } else if ("m".equalsIgnoreCase(tipoIncremento)) {
+                DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+                Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt1).equals(digitalDeliveryCreationRequestDate.plusMinutes(delay).format(fmt1)));
+            }
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("esiste l'elemento di timeline della notifica {string} per l'utente {int}")
+    public void verifyEventUpToTheTimelineElementOfNotificationPerUtente(String timelineEventCategory, Integer destinatario) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(destinatario)) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("verifica generazione Atto opponibile senza la messa a disposizione in {string}")
+    public void paVerifyGenerazioneLegalFact(String legalFactCategory){
+        TimelineElementCategory timelineElementInternalCategory =  null;
+
+        if (legalFactCategory.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST"))
+            timelineElementInternalCategory = TimelineElementCategory.DIGITAL_DELIVERY_CREATION_REQUEST;
+
+        TimelineElement timelineElement = null;
+        Assertions.assertNotNull(timelineElementInternalCategory);
+        for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementInternalCategory)) {
+                timelineElement = element;
+                break;
+            }
+        }
+        try {
+            System.out.println("ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement.getLegalFactsIds());
+            Assertions.assertTrue(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
+            Assertions.assertNotNull(timelineElement.getDetails().getLegalFactId());
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
+    public void readingEventUpToTheStatusOfNotification(String status, int destinatario, String evento) {
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
+
+        NotificationStatus notificationInternalStatus;
+        switch (status) {
+            case "ACCEPTED":
+                numCheck = 2;
+                notificationInternalStatus = NotificationStatus.ACCEPTED;
+                break;
+            case "DELIVERING":
+                numCheck = 2;
+                waiting = waiting * 4;
+                notificationInternalStatus = NotificationStatus.DELIVERING;
+                break;
+            case "DELIVERED":
+                numCheck = 16;
+                waiting = waiting * 4;
+                notificationInternalStatus = NotificationStatus.DELIVERED;
+                break;
+            case "CANCELLED":
+                notificationInternalStatus = NotificationStatus.CANCELLED;
+                break;
+            case "EFFECTIVE_DATE":
+                notificationInternalStatus = NotificationStatus.EFFECTIVE_DATE;
+                break;
+            case "COMPLETELY_UNREACHABLE":
+                notificationInternalStatus = NotificationStatus.UNREACHABLE;
+                break;
+            case "VIEWED":
+                numCheck = 4;
+                waiting = waiting * 4;
+                notificationInternalStatus = NotificationStatus.VIEWED;
+                break;
+            case "PAID":
+                notificationInternalStatus = NotificationStatus.PAID;
+                break;
+            case "IN_VALIDATION":
+                notificationInternalStatus = NotificationStatus.IN_VALIDATION;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        NotificationStatusHistoryElement notificationStatusHistoryElement = null;
+
+        for (int i = 0; i < numCheck; i++) {
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
+
+            notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+
+            if (notificationStatusHistoryElement != null) {
+                break;
+            }
+            try {
+                Thread.sleep(waiting);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        try {
+            Assertions.assertNotNull(notificationStatusHistoryElement);
+            List<String> timelineElements = notificationStatusHistoryElement.getRelatedTimelineElements();
+            boolean esiste = false;
+            for (String tmpTimeline: timelineElements) {
+                if (tmpTimeline.contains(evento) && tmpTimeline.contains("RECINDEX_"+destinatario)){
+                    esiste = true;
+                    break;
+                };
+            }
+            Assertions.assertTrue(esiste);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+
+    }
 }
