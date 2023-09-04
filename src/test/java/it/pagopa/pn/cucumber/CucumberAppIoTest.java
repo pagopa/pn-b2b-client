@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @SelectClasspathResource("it/pagopa/pn/cucumber")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
-        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report-AppIO.json," +
+        @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
                 "html:target/cucumber-lite-report-AppIO.html," +
                 "json:target/cucumber-lite-report-AppIO.json"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
