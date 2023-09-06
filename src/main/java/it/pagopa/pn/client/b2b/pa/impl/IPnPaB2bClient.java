@@ -13,7 +13,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationResponse sendNewNotification(NewNotificationRequest newNotificationRequest);
 
-    FullSentNotification getSentNotification(String iun);
+    FullSentNotificationV20 getSentNotification(String iun);
 
     NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId);
 

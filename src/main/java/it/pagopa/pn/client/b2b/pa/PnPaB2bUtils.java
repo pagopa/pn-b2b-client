@@ -264,7 +264,7 @@ public class PnPaB2bUtils {
     }
 
 
-    public FullSentNotification waitForRequestAcceptation( NewNotificationResponse response) {
+    public FullSentNotificationV20 waitForRequestAcceptation( NewNotificationResponse response) {
 
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
@@ -323,7 +323,7 @@ public class PnPaB2bUtils {
         return error == null? null : error;
     }
 
-    public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {
+    public void verifyNotification(FullSentNotificationV20 fsn) throws IOException, IllegalStateException {
 
         for (NotificationDocument doc: fsn.getDocuments()) {
 
@@ -524,7 +524,7 @@ public class PnPaB2bUtils {
         return Base64Utils.encodeToString( hash );
     }
 
-    public FullSentNotification getNotificationByIun(String iun) {
+    public FullSentNotificationV20 getNotificationByIun(String iun) {
         return client.getSentNotification( iun );
     }
 
