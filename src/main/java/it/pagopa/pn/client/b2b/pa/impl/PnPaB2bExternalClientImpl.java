@@ -30,6 +30,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final PaymentEventsApi paymentEventsApi;
     private final LegalFactsApi legalFactsApi;
     private final NotificationPriceApi notificationPriceApi;
+    private final NotificationCancellationApi  notificationCancellationApi;
     private final String basePath;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
@@ -68,6 +69,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.notificationCancellationApi = new NotificationCancellationApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
 
         this.interopTokenSingleton = interopTokenSingleton;
 
@@ -82,6 +84,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             this.legalFactsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.notificationPriceApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.paymentEventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.notificationCancellationApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
         }
     }
 
@@ -181,9 +184,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotification getSentNotification(String iun) {
+    public FullSentNotificationV20 getSentNotification(String iun) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotification( iun );
+        return senderReadB2BApi.retrieveSentNotificationV20( iun );
     }
 
     @Override
@@ -208,6 +211,13 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException {
         refreshTokenInteropClient();
         this.paymentEventsApi.paymentEventsRequestF24WithHttpInfo(paymentEventsRequestF24);
+    }
+
+    @Override
+    public RequestStatus notificationCancellation(String iun) throws RestClientException {
+        refreshTokenInteropClient();
+        RequestStatus status = this.notificationCancellationApi.notificationCancellation(iun);
+        return status;
     }
 
 

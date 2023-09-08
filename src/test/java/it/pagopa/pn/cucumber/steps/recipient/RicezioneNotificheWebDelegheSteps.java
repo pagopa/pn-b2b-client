@@ -4,8 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
@@ -451,7 +451,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -470,7 +470,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);

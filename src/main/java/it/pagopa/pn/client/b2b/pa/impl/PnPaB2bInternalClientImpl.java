@@ -27,6 +27,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     private final NotificationPriceApi notificationPriceApi;
     private final PaymentEventsApi paymentEventsApi;
 
+    private final NotificationCancellationApi  notificationCancellationApi;
+
     private final String paId;
     private final String operatorId;
 
@@ -50,6 +52,9 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient(restTemplate, deliveryPushBasePath));
+        this.notificationCancellationApi = new NotificationCancellationApi(newApiClient(restTemplate, deliveryPushBasePath));
+
+
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -121,6 +126,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public RequestStatus notificationCancellation(String iun) throws RestClientException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         throw new UnsupportedOperationException();
     }
@@ -163,11 +173,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotification getSentNotification(String iun) {
+    public FullSentNotificationV20 getSentNotification(String iun) {
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotification resp;
-        resp = senderReadB2BApi.getSentNotification( operatorId, CxTypeAuthFleet.PA, paId, iun, groups );
-        return deepCopy( resp, FullSentNotification.class );
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV20 resp;
+        resp = senderReadB2BApi.getSentNotificationV20( operatorId, CxTypeAuthFleet.PA, paId, iun, groups );
+        return deepCopy( resp, FullSentNotificationV20.class );
     }
 
     @Override
@@ -209,4 +219,5 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
             throw new RuntimeException( exc );
         }
     }
+
 }

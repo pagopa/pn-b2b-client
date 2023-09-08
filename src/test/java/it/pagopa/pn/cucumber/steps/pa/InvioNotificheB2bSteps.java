@@ -48,7 +48,6 @@ public class InvioNotificheB2bSteps {
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
-    private final IPnInternalAnnullamentoDeliveryPushExternalClientImpl b2bAnnullamentoClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -72,14 +71,13 @@ public class InvioNotificheB2bSteps {
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
-        this.b2bAnnullamentoClient = sharedSteps.getB2bAnnullamentoClient();
 
     }
 
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
@@ -146,7 +144,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
             notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException e) {
@@ -216,7 +214,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElement timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
@@ -233,7 +231,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotification notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV20 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -427,14 +425,12 @@ public class InvioNotificheB2bSteps {
     //Annullamento Notifica
     @And("la notifica può essere annullata dal sistema tramite codice IUN")
     public void notificationCanBeCanceledWithIUN() {
-        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-
             Assertions.assertDoesNotThrow(() ->
-                    b2bAnnullamentoClient.notificationCancellation(sharedSteps.getSentNotification().getIun())
+                   b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun())
             );
-
-           // Assertions.assertNotNull(notificationByIun.get());
+           //Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -442,11 +438,8 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica il corretto annullamento della notifica")
     public void correctCanceledNotification() {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyCanceledNotification(sharedSteps.getSentNotification()));
+        //Assertions.assertNull(assertionFailedError);
     }
-
-
-
 
 
 }

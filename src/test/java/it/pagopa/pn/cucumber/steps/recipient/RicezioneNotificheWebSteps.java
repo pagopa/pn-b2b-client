@@ -336,12 +336,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement timelineElement =
+         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement =
                  sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(timelineElement.getLegalFactsIds().size(), newTimelineElement.getLegalFactsIds().size());
