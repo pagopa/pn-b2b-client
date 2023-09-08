@@ -373,7 +373,7 @@ Feature: Validazione campi invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-
+@7621
   Scenario Outline: [B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario corretto e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -391,7 +391,7 @@ Feature: Validazione campi invio notifiche b2b
       | SALVATOR DALI                 |
       | Ilaria-D'Amico/.              |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario errato e recupero tramite codice IUN (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -405,7 +405,7 @@ Feature: Validazione campi invio notifiche b2b
       | Nicolò Rossi Raffaella Carrà Salvator Dalì Bruno Nicolè dudù |
       | Nicola_Rossi;:,?!"                                           |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -427,7 +427,7 @@ Feature: Validazione campi invio notifiche b2b
       | VIA ADIGE  VIA TORINO           | PARIGI             | PARIGI              | FRANCIA              | ZONA 1     | Paris         |
       | via adige 01234 via adige 56789 | Milano 01234 56789 | Milano  01234 56789 | FRANCIA  01234 56789 | 20121      | MI01234 56789 |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_address errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -441,7 +441,7 @@ Feature: Validazione campi invio notifiche b2b
       | via dà via è via ì via ò |
       | via dell`adige_?^,@&     |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress_address_details errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -455,7 +455,7 @@ Feature: Validazione campi invio notifiche b2b
       | via dà via è via ì via ò |
       | via dell`adige_?^,@&     |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_38] Invio notifica digitale mono destinatario con physicalAddress_municipality errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -469,7 +469,7 @@ Feature: Validazione campi invio notifiche b2b
       | san donà Erbè Forlì Nardò Brùsaporto |
       | san_dona`?^,"                        |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_39] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -483,7 +483,7 @@ Feature: Validazione campi invio notifiche b2b
       | san donà Erbè Forlì Nardò Brùsaporto |
       | san_dona`?^,"                        |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_40] Invio notifica digitale mono destinatario con physicalAddress_State errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -497,7 +497,7 @@ Feature: Validazione campi invio notifiche b2b
       | Città d'Avòrio Rénmín Mùrìtaniya |
       | Citta_d`Avorio?^,"               |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_41] Invio notifica digitale mono destinatario con physicalAddress_zip errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -511,7 +511,7 @@ Feature: Validazione campi invio notifiche b2b
       | dà via è via ì via ò |
       | dell`adige_?^,       |
 
-
+  @7621
   Scenario Outline: [B2B-PA-SEND_VALID_42] Invio notifica digitale mono destinatario con physicalAddress_province errato (p.fisica)_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -525,7 +525,7 @@ Feature: Validazione campi invio notifiche b2b
       | Città d'Avòrio Rénmín Mùrìtaniya |
       | Citta_d`Avorio?^,"               |
 
-
+  @7632
   Scenario Outline: [B2B-PA-SEND_VALID_43] invio notifiche digitali mono destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -544,7 +544,7 @@ Feature: Validazione campi invio notifiche b2b
       | Milano       | 20121    | MI       |
       | Milano       | 20162    | MI       |
 
-
+  @7632
   Scenario Outline: [B2B-PA-SEND_VALID_44] invio notifiche digitali mono destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
