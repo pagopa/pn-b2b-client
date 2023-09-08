@@ -42,7 +42,7 @@ public enum NotificationValue {
     PHYSICAL_ADDRESS_DETAILS("physicalAddress_addressDetails","scala b",false),
     PHYSICAL_ADDRESS_PROVINCE("physicalAddress_province","CS",false),
     PHYSICAL_ADDRESS_STATE("physicalAddress_State","ITALIA",false),
-    PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","20019",false),
+    PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","87100",false),
     RECIPIENT_TYPE("recipientType","PF",false),
     PAYMENT("payment","",false),
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
