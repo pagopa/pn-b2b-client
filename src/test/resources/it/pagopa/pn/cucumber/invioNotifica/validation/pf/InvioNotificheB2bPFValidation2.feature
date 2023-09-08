@@ -372,3 +372,193 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario corretto e recupero tramite codice IUN (p.fisica)_scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | <denomination>   |
+      | taxId        | FRMTTR76M06B715E |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | denomination                  |
+      | Cristoforo Colombo            |
+      | Cristoforo Colombo 0123456789 |
+      | SALVATOR DALI                 |
+      | Ilaria-D'Amico/.              |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario errato e recupero tramite codice IUN (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano               |
+    And destinatario
+      | denomination  | <denomination>   |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | denomination                                                 |
+      | Nicolò Rossi Raffaella Carrà Salvator Dalì Bruno Nicolè dudù |
+      | Nicola_Rossi;:,?!"                                           |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address             | <indirizzo> |
+      | physicalAddress_address_details     | <indirizzo> |
+      | physicalAddress_municipality        | <comune>    |
+      | physicalAddress_municipalityDetails | <localita>  |
+      | physicalAddress_State               | <state>     |
+      | physicalAddress_zip                 | <zip_code>  |
+      | physicalAddress_province            | <province>  |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | indirizzo                       | comune             | localita            | state                | zip_code   | province      |
+      | via dell'adige- via torino/.    | Milano '-/.        | Milano '-/.         | Italia'-/.           | 20019 '-/. | mi'-/.        |
+      | VIA ADIGE  VIA TORINO           | PARIGI             | PARIGI              | FRANCIA              | ZONA 1     | Paris         |
+      | via adige 01234 via adige 56789 | Milano 01234 56789 | Milano  01234 56789 | FRANCIA  01234 56789 | 20121      | MI01234 56789 |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_address errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | indirizzo                |
+      | via dà via è via ì via ò |
+      | via dell`adige_?^,@&     |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress_address_details errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address_details | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | indirizzo                |
+      | via dà via è via ì via ò |
+      | via dell`adige_?^,@&     |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_38] Invio notifica digitale mono destinatario con physicalAddress_municipality errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipality | <comune> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | comune                               |
+      | san donà Erbè Forlì Nardò Brùsaporto |
+      | san_dona`?^,"                        |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_39] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipalityDetails | <localita> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | localita                             |
+      | san donà Erbè Forlì Nardò Brùsaporto |
+      | san_dona`?^,"                        |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_40] Invio notifica digitale mono destinatario con physicalAddress_State errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State | <state> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | state                            |
+      | Città d'Avòrio Rénmín Mùrìtaniya |
+      | Citta_d`Avorio?^,"               |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_41] Invio notifica digitale mono destinatario con physicalAddress_zip errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_zip | <zip_code> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | zip_code             |
+      | dà via è via ì via ò |
+      | dell`adige_?^,       |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_42] Invio notifica digitale mono destinatario con physicalAddress_province errato (p.fisica)_scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_province | <province> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | province                         |
+      | Città d'Avòrio Rénmín Mùrìtaniya |
+      | Citta_d`Avorio?^,"               |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_43] invio notifiche digitali mono destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile                     | NULL           |
+      | physicalAddress_municipalityDetails | <municipality> |
+      | physicalAddress_zip                 | <zip_code>     |
+      | physicalAddress_province            | <province>     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | municipality | zip_code | province |
+      | Milano       | 20019    | MI       |
+      | Milano       | 20121    | MI       |
+      | Milano       | 20162    | MI       |
+
+
+  Scenario Outline: [B2B-PA-SEND_VALID_44] invio notifiche digitali mono destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile                     | NULL           |
+      | physicalAddress_municipalityDetails | <municipality> |
+      | physicalAddress_zip                 | <zip_code>     |
+      | physicalAddress_province            | <province>     |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | municipality | zip_code | province |
+      | Palermo      | 20019    | MI       |
+      | Milano       | 90121    | PA       |
+      | Milano       | 90121    | MI       |
+      | Milano       | 90121    | RM       |
