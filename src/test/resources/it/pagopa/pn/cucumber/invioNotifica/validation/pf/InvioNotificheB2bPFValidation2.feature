@@ -422,10 +422,10 @@ Feature: Validazione campi invio notifiche b2b
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
     Examples:
-      | indirizzo                       | comune             | localita            | state                | zip_code   | province      |
-      | via dell'adige- via torino/.    | Milano '-/.        | Milano '-/.         | Italia'-/.           | 20019 '-/. | mi'-/.        |
-      | VIA ADIGE  VIA TORINO           | PARIGI             | PARIGI              | FRANCIA              | ZONA 1     | Paris         |
-      | via adige 01234 via adige 56789 | Milano 01234 56789 | Milano  01234 56789 | FRANCIA  01234 56789 | 20121      | MI01234 56789 |
+      | indirizzo                       | comune             | localita            | state           | zip_code   | province      |
+      | via dell'adige- via torino/.    | Milano '-/.        | Milano '-/.         | Italia'-/.      | 20019 '-/. | mi'-/.        |
+      | VIA ADIGE  VIA TORINO           | PARIGI             | PARIGI              | FRANCIA         | ZONA 1     | Paris         |
+      | via adige 01234 via adige 56789 | Milano 01234 56789 | Milano  01234 56789 | ITALIA  01234 56789 | 20121      | MI01234 56789 |
 
 
   Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_address errato (p.fisica)_scenario negativo
