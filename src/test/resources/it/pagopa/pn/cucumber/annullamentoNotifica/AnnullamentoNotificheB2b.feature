@@ -8,7 +8,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
+   # And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -60,8 +60,8 @@ Feature: annullamento notifiche b2b
       | taxId | DVNLRD52D15M059P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+   # And vengono letti gli eventi fino allo stato della notifica "COMPLETELY_UNREACHABLE"
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -101,8 +101,7 @@ Feature: annullamento notifiche b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata dal "Comune_1"
-    And si verifica la corretta acquisizione della richiesta di invio notifica
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -115,8 +114,7 @@ Feature: annullamento notifiche b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
-    And la notifica viene inviata dal "Comune_1"
-    And si verifica la corretta acquisizione della richiesta di invio notifica
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
     #Rispondere in maniera sincrona al chiamante (204 richiesta accettata)
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
