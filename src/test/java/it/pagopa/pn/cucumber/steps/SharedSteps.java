@@ -52,7 +52,6 @@ public class SharedSteps {
 
     private final DataTableTypeUtil dataTableTypeUtil;
     private final IPnPaB2bClient b2bClient;
-    private final IPnInternalAnnullamentoDeliveryPushExternalClientImpl b2bAnnullamentoClient;
     private final IPnWebPaClient webClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebRecipientClient webRecipientClient;
@@ -166,7 +165,7 @@ public class SharedSteps {
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient, IPnInternalAnnullamentoDeliveryPushExternalClientImpl b2bAnnullamentoClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -174,7 +173,7 @@ public class SharedSteps {
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
-        this.b2bAnnullamentoClient = b2bAnnullamentoClient;
+
     }
 
     @BeforeAll
@@ -892,9 +891,6 @@ public class SharedSteps {
         return b2bClient;
     }
 
-    public IPnInternalAnnullamentoDeliveryPushExternalClientImpl getB2bAnnullamentoClient() {
-        return b2bAnnullamentoClient;
-    }
 
     public IPnWebPaClient getWebPaClient() {
         return webClient;
