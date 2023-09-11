@@ -132,10 +132,9 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-
-        TimelineElement timelineElement = new TimelineElement()
+        TimelineElementV20 timelineElement = new TimelineElementV20()
                 .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetails()
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
                         .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
