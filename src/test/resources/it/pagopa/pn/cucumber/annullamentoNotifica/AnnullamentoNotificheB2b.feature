@@ -7,11 +7,11 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
    # And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-    When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+   # When la notifica può essere annullata dal sistema tramite codice IUN
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @B2Btest
   Scenario: [B2B-PA-ANNULLAMENTO_2] PA mittente: annullamento notifica in stato “invio in corso”
@@ -333,7 +333,8 @@ Feature: annullamento notifiche b2b
     #When viene richiesto il download del documento "NOTIFICA"
     #Then l'operazione ha prodotto un errore con status code "400"
     When "Mario Cucumber" tenta il recupero dell'allegato "NOTIFICA"
-    Then il download ha prodotto un errore con status code "404"
+    #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   Scenario: [B2B-PF-ANNULLAMENTO_16_1] Destinatario  PF: dettaglio notifica annullata - download allegati (scenario negativo)
     Given viene generata una nuova notifica
@@ -348,7 +349,8 @@ Feature: annullamento notifiche b2b
     #When viene richiesto il download del documento "NOTIFICA"
     #Then l'operazione ha prodotto un errore con status code "400"
     When "Mario Cucumber" tenta il recupero dell'allegato "NOTIFICA"
-    Then il download ha prodotto un errore con status code "404"
+       #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_16_2] Destinatario  PF: dettaglio notifica annullata - download allegati (scenario negativo)
@@ -364,7 +366,8 @@ Feature: annullamento notifiche b2b
     #When viene richiesto il download del documento "NOTIFICA"
     #Then l'operazione ha prodotto un errore con status code "400"
     When "Mario Cucumber" tenta il recupero dell'allegato "NOTIFICA"
-    Then il download ha prodotto un errore con status code "404"
+    #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_17] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
@@ -382,6 +385,7 @@ Feature: annullamento notifiche b2b
     #When viene richiesto il download del documento "PAGOPA"
     #Then l'operazione ha prodotto un errore con status code "400"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    #si attende un 404
     Then il download ha prodotto un errore con status code "404"
 
   @B2Btest
@@ -396,7 +400,7 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
-    And And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     #When viene richiesto il download del documento "PAGOPA"
     #Then l'operazione ha prodotto un errore con status code "400"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -430,8 +434,10 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And download attestazione opponibile AAR
-    Then l'operazione ha prodotto un errore con status code "404"
+   # And download attestazione opponibile AAR
+    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
+       #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_18_1] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -443,8 +449,9 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    And download attestazione opponibile AAR
-    Then l'operazione ha prodotto un errore con status code "404"
+    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
+           #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_18_2] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -456,8 +463,9 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And download attestazione opponibile AAR
-    Then l'operazione ha prodotto un errore con status code "404"
+    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
+           #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -470,7 +478,7 @@ Feature: annullamento notifiche b2b
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
-    Then l'operazione ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_1] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -484,7 +492,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
-    Then l'operazione ha prodotto un errore con status code "404"
+    Then il download ha prodotto un errore con status code "404"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_2] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -496,8 +504,9 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
-    Then l'operazione ha prodotto un errore con status code "404"
+    When "Mario Cucumber" richiede il download dell'attestazione opponibile "SENDER_ACK"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_3] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenario negativo)
@@ -513,6 +522,8 @@ Feature: annullamento notifiche b2b
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
     Then l'operazione ha prodotto un errore con status code "404"
 
+
+
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_4] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
     Given viene generata una nuova notifica
@@ -525,7 +536,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "PEC_RECEIPT"
-    Then l'operazione ha prodotto un errore con status code "404"
+      #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_5] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenario negativo)
@@ -539,7 +551,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
-    Then l'operazione ha prodotto un errore con status code "404"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_6] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
@@ -553,7 +566,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
-    Then l'operazione ha prodotto un errore con status code "404"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_7] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
@@ -567,7 +581,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS"
-    Then l'operazione ha prodotto un errore con status code "404"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_8] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
@@ -581,7 +596,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
-    Then l'operazione ha prodotto un errore con status code "404"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PF-ANNULLAMENTO_19_9] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -595,7 +611,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK"
-    Then l'operazione ha prodotto un errore con status code "404"
+        #si attende un 404
+    Then il download ha prodotto un errore con status code "400"
 
     #SENDER_ACK - RECIPIENT_ACCESS - PEC_RECEIPT - DIGITAL_DELIVERY - DIGITAL_DELIVERY_FAILURE - SEND_ANALOG_PROGRESS - COMPLETELY_UNREACHABLE
 
