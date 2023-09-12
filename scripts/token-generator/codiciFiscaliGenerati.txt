@@ -1,0 +1,7 @@
+{
+  "entries" : [
+ {"taxId":"01199250158", "tokenType":"PA", "paName": "milano"},    
+ {"taxId":"GLLGLL64B15G702I", "tokenType":"PF"},    
+ {"taxId":"70472431207", "tokenType":"PG"}
+ ]
+} 

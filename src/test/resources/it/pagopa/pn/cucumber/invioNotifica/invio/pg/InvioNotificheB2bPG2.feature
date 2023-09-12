@@ -122,3 +122,31 @@ Feature: invio notifiche b2b per la persona giuridica
     And destinatario Gherkin spa
     When la notifica viene inviata dal "Comune_1"
     Then viene verificato lo stato di accettazione con idempotenceToken e paProtocolNumber
+
+  Scenario: [B2B-PA-SEND_PG_29] Invio notifica  mono destinatario con Piva errata
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | CCRMCT06A03A433H    |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio della notifica ha sollevato un errore "400"
+
+  Scenario: [B2B-PA-SEND_PG_30] Invio notifica  mono destinatario con Piva errata
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | recipientType    | PG                  |
+      | taxId            | 1266681029H    |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio della notifica ha sollevato un errore "400"
+
+  Scenario: [B2B-PA-SEND_PG_31] Invio notifica  mono destinatario con Piva corretta
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Gherkin spa
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica

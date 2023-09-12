@@ -164,7 +164,7 @@ Feature: Ricezione notifiche destinate al delegante
     And destinatario GherkinSrl
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
    # Then la notifica può essere correttamente modificata da "GherkinSrl" con delega
-    Then come amministratore "CucumberSpa" associa alla delega il primo gruppo disponibile attivo
+    Then come amministratore "GherkinSrl" associa alla delega il primo gruppo disponibile attivo per il delegato "CucumberSpa"
 
   Scenario: [WEB-PF-PG-MANDATE_15] Invio notifica digitale con delega ad un PG amministratore e recupero della stessa positivo
     Given "CucumberSpa" viene delegato da "Mario Cucumber"
@@ -186,7 +186,7 @@ Feature: Ricezione notifiche destinate al delegante
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
-    And come amministratore "CucumberSpa" associa alla delega il primo gruppo disponibile attivo
+    And come amministratore "Mario Cucumber" associa alla delega il primo gruppo disponibile attivo per il delegato "CucumberSpa"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
 
   Scenario: [WEB-PF-PG-MANDATE_17] Invio notifica digitale con delega senza gruppo ad un PG amministratore e altro destinatario e recupero_scenario positivo
@@ -212,5 +212,5 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Cucumber"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
-    And come amministratore "CucumberSpa" associa alla delega il primo gruppo disponibile attivo
+    And come amministratore "Mario Cucumber" associa alla delega il primo gruppo disponibile attivo per il delegato "CucumberSpa"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega

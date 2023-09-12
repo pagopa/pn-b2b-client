@@ -18,11 +18,8 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 00010   |  842  |
-      | 12071   |  859  |
-      | 62010   |  909  |
-      | 06024   |  1026 |
+      | CAP   | COSTO |
+      | 05010 | 1105  |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo
@@ -40,14 +37,11 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 12071   |  0  |
-      | 62010   |  0  |
-      | 00010   |  0  |
-      | 06024   |  0  |
+      | CAP   | COSTO |
+      | 05010 | 0     |
 
   @dev @costoAnalogico @costoCartAAR
-  Scenario Outline: [B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
+  Scenario Outline: [B2B_COSTO_ANALOG_PF_890_3] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -61,13 +55,17 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 64010   |  887  |
-      | 33028   |  890  |
+      | CAP   | COSTO |
+      | 70010 | 861   |
+      | 00010 | 906   |
+      | 60010 | 979   |
+      | 64010 | 954   |
+      | 06031 | 957   |
+      | 10012 | 925   |
 
 
   @dev @costoAnalogico @costoCartAAR
-  Scenario Outline: [B2B_COSTO_ANALOG_PF_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
+  Scenario Outline: [B2B_COSTO_ANALOG_PF_890_4] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -82,6 +80,10 @@ Feature: costo notifica con workflow analogico per persona fisica 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 64010   |  0    |
-      | 33028   |  0    |
+      | CAP   | COSTO |
+      | 70010 | 0     |
+      | 00010 | 0     |
+      | 60010 | 0     |
+      | 64010 | 0     |
+      | 06031 | 0     |
+      | 10012 | 0     |

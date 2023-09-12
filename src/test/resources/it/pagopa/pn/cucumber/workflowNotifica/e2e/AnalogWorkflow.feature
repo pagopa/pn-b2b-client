@@ -432,6 +432,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG006C |
 
+
   @e2e @ignore
   Scenario: [E2E-WF-ANALOG-11] Partenza workflow cartaceo se viene inviato un messaggio di cortesia
     Given viene generata una nuova notifica
