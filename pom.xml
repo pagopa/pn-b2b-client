@@ -24,6 +24,7 @@
         <java.version>11</java.version>
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
+        <open.api.version>v2.0.1</open.api.version>
     </properties>
 
     <dependencies>
@@ -176,7 +177,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/develop/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -205,7 +206,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/main/docs/openapi/api-external-b2b-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-b2b-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -234,7 +235,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/develop/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -263,7 +264,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/main/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version}/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -292,7 +293,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/develop/docs/openapi/pn-mandate-external-web.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version}/docs/openapi/pn-mandate-external-web.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -321,7 +322,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/develop/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -350,7 +351,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/develop/docs/openapi/pn-user-consents-api-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version}/docs/openapi/pn-user-consents-api-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -379,7 +380,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/develop/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-web-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -408,7 +409,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/develop/docs/openapi/pn-address-book-api-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version}/docs/openapi/pn-address-book-api-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -437,7 +438,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/develop/docs/openapi/pn-address-book-b2b-external-io.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version}/docs/openapi/pn-address-book-b2b-external-io.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -466,7 +467,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-apikey-manager/develop/docs/openapi/pn-apikey-manager-external-web.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-apikey-manager/${open.api.version}/docs/openapi/pn-apikey-manager-external-web.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -495,7 +496,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-downtime-logs/develop/docs/openapi/api-external-v1.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-downtime-logs/${open.api.version}/docs/openapi/api-external-v1.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -524,7 +525,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/main/docs/openapi/api-private.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version}/docs/openapi/api-private.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
