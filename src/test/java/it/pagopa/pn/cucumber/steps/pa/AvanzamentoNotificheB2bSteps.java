@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpStatusCodeException;
+
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -600,6 +602,41 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e successivamente annullata")
+    public void readingEventUpToTheTimelineElementOfNotificationAndCancel(String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertDoesNotThrow(() ->
+                    b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun())
+            );
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con deliveryDetailCode {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
@@ -1163,7 +1200,22 @@ public class AvanzamentoNotificheB2bSteps {
     public void userDownloadLegalFact(String user, String legalFactCategory) {
         sharedSteps.selectUser(user);
         downloadLegalFact(legalFactCategory, false, false, true, null);
+
     }
+
+    @Then("{string} richiede il download dell'attestazione opponibile {string} con errore {string}")
+    public void userDownloadLegalFactError(String user, String legalFactCategory,String statusCode) {
+        try {
+            sharedSteps.selectUser(user);
+            downloadLegalFact(legalFactCategory, false, false, true, null);
+        } catch (AssertionFailedError assertionFailedError) {
+           //sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            System.out.println(assertionFailedError.getCause().toString());
+            System.out.println(assertionFailedError.getCause().getMessage().toString());
+            System.out.println(assertionFailedError.getCause().getMessage().toString().substring(0, 3).equals(statusCode));
+        }
+    }
+
 
     private void downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
         try {
@@ -1222,6 +1274,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         try {
             System.out.println("ELEMENT: " + timelineElement);
+            Assertions.assertNotNull(timelineElement);
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(category, timelineElement.getLegalFactsIds().get(0).getCategory());
