@@ -1,5 +1,8 @@
 Feature: annullamento notifiche b2b
 
+  Background:
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "Mario Cucumber"
 
   #ANNULLAMENTO LATO DESTINATARIO PG----------------------------------->>
 
