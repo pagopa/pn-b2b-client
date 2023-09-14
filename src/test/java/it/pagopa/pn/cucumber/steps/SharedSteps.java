@@ -35,6 +35,7 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
@@ -588,9 +589,17 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
             Assertions.assertNotNull(notificationResponseComplete);
-            Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(notificationResponseComplete.getIun())
-                );
+
+            Assertions.assertDoesNotThrow(() -> {
+                RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                        b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
+
+                Assertions.assertNotNull(resp);
+                Assertions.assertNotNull(resp.getDetails());
+                Assertions.assertTrue(resp.getDetails().size()>0);
+                Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+            });
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
