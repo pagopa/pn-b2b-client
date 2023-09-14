@@ -577,7 +577,7 @@ Feature: annullamento notifiche b2b
         #si attende un 404
    # Then il download ha prodotto un errore con status code "400"
 
-  @B2Btest
+  @B2Btest @workflowAnalogico
   Scenario: [B2B-PF-ANNULLAMENTO_19_7] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

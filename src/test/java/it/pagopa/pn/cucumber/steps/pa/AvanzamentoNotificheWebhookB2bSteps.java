@@ -439,11 +439,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.PUBLIC_REGISTRY_RESPONSE;
                 break;
             case "NOTIFICATION_CANCELLATION_REQUEST":
-                numCheck = 4;
-                waiting = waiting * 3;
+                numCheck = 16;
                 timelineElementCategory = TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST;
+                break;
+            case "NOTIFICATION_CANCELLED":
+                numCheck = 16;
+                timelineElementCategory = TimelineElementCategoryV20.NOTIFICATION_CANCELLED;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_CANCELLED;
                 break;
             default:
                 throw new IllegalArgumentException();
