@@ -421,10 +421,26 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeCanceledWithIUN() {
         AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                   b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun())
-            );
-           //Assertions.assertNotNull(notificationByIun.get());
+            RequestStatus resp =  b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    //Annullamento Notifica
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
+    public void notificationNotCanBeCanceledWithIUN() {
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        try {
+            RequestStatus resp =  b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_ALREADY_CANCELLED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }

@@ -726,8 +726,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
    # And la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then la notifica non può essere correttamente recuperata da "Mario Cucumber"
-    And  la notifica non può essere correttamente recuperata da "Mario Gherkin" con delega
+    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    And  la notifica può essere correttamente recuperata da "Mario Gherkin" con delega
 
   @B2Btest                     #Da Verificare...............
   Scenario:  [B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
@@ -742,8 +742,8 @@ Feature: annullamento notifiche b2b
    # And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    Then la notifica non può essere correttamente recuperata da "Mario Cucumber"
-    And  la notifica non può essere correttamente recuperata da "Mario Gherkin" con delega
+    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
+    And  la notifica può essere correttamente recuperata da "Mario Gherkin" con delega
 
   @B2Btest
   Scenario:  [B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
@@ -927,6 +927,5 @@ Feature: annullamento notifiche b2b
    # And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
    # When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    When la notifica può essere annullata dal sistema tramite codice IUN
-    Then l'operazione ha prodotto un errore con status code "400"
+    When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then la notifica non può essere annullata dal sistema tramite codice IUN più volte
