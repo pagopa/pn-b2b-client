@@ -2063,8 +2063,8 @@ public class AvanzamentoNotificheB2bSteps {
 
      */
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate più {int}{string} per il destinatario {int}")
-    public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory,  int delay, String tipoIncremento, int destinatario) {
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate più {int}{string} per il destinatario {int} rispetto ell'evento in timeline {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory,  int delay, String tipoIncremento, int destinatario, String evento) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         TimelineElement timelineElement = null;
         OffsetDateTime digitalDeliveryCreationRequestDate = null;
@@ -2096,9 +2096,14 @@ public class AvanzamentoNotificheB2bSteps {
 
             //RECUPERO Data DeliveryCreationRequest
             for (TimelineElement element : sharedSteps.getSentNotification().getTimeline()) {
-                if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario)) {
+                if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
                     break;
+                } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
+                    if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
+                        digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
+                        break;
+                    }
                 }
             }
 
