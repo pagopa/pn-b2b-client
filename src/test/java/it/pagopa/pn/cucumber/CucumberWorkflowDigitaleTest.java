@@ -11,7 +11,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-report.json," +
                 "html:target/cucumber-workflowDigitale-report.html," +
-                "json:target/cucumber-workflowDigitale-report.html"),
+                "json:target/cucumber-workflowDigitale-report.json"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
