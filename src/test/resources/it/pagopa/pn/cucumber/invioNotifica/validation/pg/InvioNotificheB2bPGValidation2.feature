@@ -176,7 +176,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
        #1) 15 max Length
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_1] Invio notifica digitale con multi destinatario corretto e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_1] Invio notifica digitale con multi destinatario corretto e recupero tramite codice IUN scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -198,7 +198,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Ilaria-D'Amico/.@_            | l'azienda-@_ /C.R.L |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_2] Invio notifica digitale con multi destinatario corretto e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_2] Invio notifica digitale con multi destinatario errati scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -216,7 +216,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_3] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_3] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -233,7 +233,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | via adige 01234 via adige 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_4] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_4] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -249,7 +249,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | MILANO 01234 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_5] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_5] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -265,7 +265,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | MILANO 01234 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_6] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_6] Invio notifica digitale mono destinatario con physicalAddress_state corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -281,7 +281,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | ITALIA 01234 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_7] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_7] Invio notifica digitale mono destinatario con physicalAddress_zip corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -301,7 +301,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_8] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_8] Invio notifica digitale mono destinatario con physicalAddress_province corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -318,7 +318,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_9] Invio notifica digitale multi destinatario con physicalAddress_address errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_9] Invio notifica digitale multi destinatario con physicalAddress_address errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -333,7 +333,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | via dell`adige :"()=?*+;,!^& |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_10] Invio notifica digitale multi destinatario con physicalAddress_addressDetails errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_10] Invio notifica digitale multi destinatario con physicalAddress_addressDetails errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -348,7 +348,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | via dell adige :"()=?*+;,!^& |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_11] Invio notifica digitale multi destinatario con physicalAddress_municipality errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_11] Invio notifica digitale multi destinatario con physicalAddress_municipality errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -363,7 +363,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | san dona :"()=?*+;,!^&               |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -378,7 +378,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | san dona :"()=?*+;,!^&                            |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -393,7 +393,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Citta d`Avorio :"()=?*+;,!^&     |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -408,7 +408,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | via dell`adige :"()=?*+;,!^& |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -428,12 +428,10 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL           |
       | physicalAddress_municipality | <municipality> |
       | physicalAddress_zip          | <zip_code>     |
       | physicalAddress_province     | <province>     |
     And destinatario Gherkin spa e:
-      | digitalDomicile              | NULL           |
       | physicalAddress_municipality | <municipality> |
       | physicalAddress_zip          | <zip_code>     |
       | physicalAddress_province     | <province>     |
@@ -453,12 +451,10 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin
     And destinatario Gherkin spa e:
-      | digitalDomicile              | NULL           |
       | physicalAddress_municipality | <municipality> |
       | physicalAddress_zip          | <zip_code>     |
       | physicalAddress_province     | <province>     |
-    When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Examples:
       | municipality | zip_code | province |
       | Palermo      | 20019    | MI       |

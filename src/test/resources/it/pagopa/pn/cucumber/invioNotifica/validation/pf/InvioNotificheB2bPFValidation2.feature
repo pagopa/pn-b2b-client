@@ -375,7 +375,7 @@ Feature: Validazione campi invio notifiche b2b
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario corretto e recupero tramite codice IUN (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario con denomination corretta e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -392,7 +392,7 @@ Feature: Validazione campi invio notifiche b2b
       | Ilaria-D'Amico/.@_            |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario errato e recupero tramite codice IUN (p.fisica)_scenario negativo
+  Scenario Outline: [B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario con denomination errata scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano               |
@@ -408,7 +408,7 @@ Feature: Validazione campi invio notifiche b2b
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails  corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -424,7 +424,7 @@ Feature: Validazione campi invio notifiche b2b
       | via adige 01234 via adige 56789 |
 
 @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -441,7 +441,7 @@ Feature: Validazione campi invio notifiche b2b
       | MILANO 01234 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -456,7 +456,7 @@ Feature: Validazione campi invio notifiche b2b
       | MILANO 01234 56789 |
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_38] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_38] Invio notifica digitale mono destinatario con physicalAddress_State corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -491,7 +491,7 @@ Feature: Validazione campi invio notifiche b2b
 
 
   @7621
-  Scenario Outline: [B2B-PA-SEND_VALID_40] Invio notifica digitale mono destinatario con physicalAddress corretto (p.fisica)_scenario positivo
+  Scenario Outline: [B2B-PA-SEND_VALID_40] Invio notifica digitale mono destinatario con physicalAddress_province corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
