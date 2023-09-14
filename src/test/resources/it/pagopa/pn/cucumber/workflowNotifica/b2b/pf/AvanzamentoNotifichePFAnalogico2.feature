@@ -113,10 +113,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | senderDenomination | Comune di palermo |
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via NationalRegistries @FAIL-Irreperibile_AR 5 |
+      | denomination            | Test AR Fail 2                              |
+      | taxId                   | DVNLRD52D15M059P                            |
+      | digitalDomicile         | NULL                                        |
+      | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
@@ -126,10 +126,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Test 890 Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via NationalRegistries @FAIL-Irreperibile_890 5 |
+      | denomination            | Test 890 Fail 2                              |
+      | taxId                   | DVNLRD52D15M059P                             |
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
