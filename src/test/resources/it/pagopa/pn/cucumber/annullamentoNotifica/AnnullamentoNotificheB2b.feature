@@ -505,7 +505,9 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Mario Gherkin
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -524,7 +526,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con errore "404"
 
-  @B2Btest
+  @B2Btest  @workflowAnalogico
   Scenario: [B2B-PF-ANNULLAMENTO_19_8] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
