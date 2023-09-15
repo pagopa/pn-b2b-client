@@ -94,8 +94,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then l'operazione ha prodotto un errore con status code "400"
-
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_8] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -107,7 +106,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_9] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -119,7 +118,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then il download ha prodotto un errore con status code "400"
 
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_10] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -192,19 +191,19 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY" con errore "404"
 
-
-  @B2Btest
+    #Test non fattibile per PG hanno sempre una pec
+  @B2Btest @ignore
   Scenario: [B2B-PG-ANNULLAMENTO_16] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario GherkinSrl
+    And destinatario GherkinSrl e:
+      | digitalDomicile_address | test@fail.it |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY_FAILURE" con errore "404"
-
 
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_17] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
@@ -218,7 +217,6 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con errore "404"
 
-
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_18] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
     Given viene generata una nuova notifica
@@ -230,7 +228,6 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE" con errore "404"
-
 
   @B2Btest
   Scenario: [B2B-PG-ANNULLAMENTO_19] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
