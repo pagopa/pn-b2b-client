@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -59,6 +60,35 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     StreamCreationRequest.EventTypeEnum.STATUS : StreamCreationRequest.EventTypeEnum.TIMELINE);
             streamCreationRequestList.add(streamRequest);
             streamRequest.setFilterValues(new LinkedList<>());
+        }
+    }
+
+    @Given("si predispo(ngono)(ne) {int} nuov(i)(o) stream V2 denominat(i)(o) {string} con eventType {string}")
+    public void setUpStreamsWithEventTypeV2(int number, String title, String eventType) {
+        this.streamCreationRequestList = new LinkedList<>();
+        this.requestNumber = number;
+        for(int i = 0; i<number; i++){
+            StreamCreationRequest streamRequest = new StreamCreationRequest();
+            streamRequest.setTitle(title);
+            //STATUS, TIMELINE
+
+            if(eventType.equalsIgnoreCase("STATUS")){
+                streamRequest.setEventType(StreamCreationRequest.EventTypeEnum.STATUS);
+
+                List<String> filteredValues = Arrays.stream(NotificationStatus.values())
+                        .map(Enum::toString)
+                        .collect(Collectors.toList());
+                streamRequest.setFilterValues(filteredValues);
+            }else{
+                streamRequest.setEventType(StreamCreationRequest.EventTypeEnum.TIMELINE);
+
+                List<String> filteredValues = Arrays.stream(TimelineElementCategoryV20.values())
+                        .map(Enum::toString)
+                        .collect(Collectors.toList());
+                streamRequest.setFilterValues(filteredValues);
+            }
+
+            streamCreationRequestList.add(streamRequest);
         }
     }
 
@@ -513,6 +543,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
         int retryAfter = Integer.parseInt(listResponseEntity.getHeaders().get("retry-after").get(0));
         List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
+        System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.toString());
         if(deepCount >= 200){
             throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                     +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount);
@@ -540,7 +571,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             return progressResponseElement;
         }else if(retryAfter == 0){
             try{
-                Thread.sleep(200);
+                Thread.sleep(500);
                 return searchInWebhook(timeLineOrStatus,lastProgress.getEventId(),(deepCount+1));
             }catch (IllegalStateException illegalStateException){
                 if(deepCount == 199 || deepCount == 198 || deepCount == 197){
