@@ -9,7 +9,9 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.Not
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.OperationApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -21,7 +23,11 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
 
+
+
     private final String basePath;
+
+//    private final String apiKey;
 
     private final HealthCheckApi healthCheckApi;
 
@@ -46,33 +52,32 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     public PnServiceDeskClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath ,
-            @Value("${pn.internal.delivery-base-url}") String deliveryBasePath,
+            @Value("${pn.internal.servicedesk.base-url.pagopa}") String deliveryBasePath ,
+ //           @Value("${pn.external.api-keys.service-desk}") String apiKeyBase ,
             @Value("${pn.internal.pa-id}") String paId
     ) {
 
         this.paId = paId;
-        this.operatorId = "TestMv";
+        this.operatorId = "AutomationMv";
         this.ctx = ctx;
         this.restTemplate = restTemplate;
-        this.basePath = deliveryPushBasePath;
+        this.basePath = deliveryBasePath;
+ //       this.apiKey=apiKeyBase;
+ //       this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath,apiKey));
+ //       this.notification = new NotificationApi(newApiClient( restTemplate, basePath,apiKey));
+ //       this.operation = new OperationApi(newApiClient( restTemplate, basePath,apiKey));
         this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath));
         this.notification = new NotificationApi(newApiClient( restTemplate, basePath));
         this.operation = new OperationApi(newApiClient( restTemplate, basePath));
- /*       this.req= new NotificationRequest();
-        this.creaOp = new CreateOperationRequest();
-        this.address = new AnalogAddress();
-        this.videoreq= new VideoUploadRequest();
-        this.searchreq = new SearchNotificationRequest();
 
-  */
 
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
+ //   private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
+ private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
-        // newApiClient.addDefaultHeader("x-api-key", apiKey );
+  //      newApiClient.addDefaultHeader("x-api-key", apiKey );
         return newApiClient;
     }
 

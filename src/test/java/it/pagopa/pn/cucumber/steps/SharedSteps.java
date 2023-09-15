@@ -57,6 +57,8 @@ public class SharedSteps {
     private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl pnExternalServiceClient;
     private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private final PnServiceDeskClientImpl serviceDeskClient;
+
 
     private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
@@ -129,11 +131,15 @@ public class SharedSteps {
 
 
     private String gherkinSpaTaxID = "12666810299";
-    private String cucumberSrlTaxID = "SCTPTR04A01C352E";
-    private String cucumberSocietyTaxID = "DNNGRL83A01C352D";
+    //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
+    private String cucumberSrlTaxID = "20517490320";
+
+    private String cucumberSocietyTaxID = "20517490320" ;// "DNNGRL83A01C352D";
     private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
-    private String gherkinSrltaxId = "CCRMCT06A03A433H";
-    private String cucumberSpataxId = "20517490320";
+    // private String gherkinSrltaxId = "CCRMCT06A03A433H";
+
+    private String gherkinSrltaxId = "12666810299";
+    private String cucumberSpataxId = "20517490320"; //
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
@@ -161,7 +167,7 @@ public class SharedSteps {
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient, PnServiceDeskClientImpl serviceDeskClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -169,6 +175,7 @@ public class SharedSteps {
         this.webRecipientClient = webRecipientClient;
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
+        this.serviceDeskClient=serviceDeskClient;
     }
 
     @BeforeAll
@@ -890,6 +897,10 @@ public class SharedSteps {
         return webRecipientClient;
     }
 
+    public PnServiceDeskClientImpl getServiceDeskClient(){
+        return serviceDeskClient;
+    }
+
     public String getMarioCucumberTaxID() {
         return marioCucumberTaxID;
     }
@@ -1186,6 +1197,4 @@ public class SharedSteps {
         }
         return timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
     }
-
-
 }
