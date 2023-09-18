@@ -75,7 +75,7 @@ Feature: Validazione campi invio notifiche b2b
       | via ì          |
       | via ò          |
 
-  @testLite
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_10_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -374,7 +374,7 @@ Feature: Validazione campi invio notifiche b2b
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  @7621
+  @7621 @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario con denomination corretta e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -407,7 +407,7 @@ Feature: Validazione campi invio notifiche b2b
       | Nicola Rossi :"()=?*+;,!^&                                   |
 
 
-  @7621
+  @7621 @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails  corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -423,7 +423,7 @@ Feature: Validazione campi invio notifiche b2b
       | VIA ADIGE VIA TORINO            |
       | via adige 01234 via adige 56789 |
 
-@7621
+@7621 @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -440,7 +440,7 @@ Feature: Validazione campi invio notifiche b2b
       | MILANO             |
       | MILANO 01234 56789 |
 
-  @7621
+  @7621 @testLite
   Scenario Outline: [B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
