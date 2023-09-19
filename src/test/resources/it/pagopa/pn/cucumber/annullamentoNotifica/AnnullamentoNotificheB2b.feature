@@ -834,3 +834,15 @@ Feature: annullamento notifiche b2b
     And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
 
+  @Annullamento @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
+    Given vengono cancellati tutti gli stream presenti del "Comune_1"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream V2 denominato "stream-test" con eventType "STATUS"
+    And si crea il nuovo stream per il "Comune_1"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
