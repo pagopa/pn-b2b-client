@@ -255,7 +255,7 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @clean @webhook1
+  @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -267,4 +267,3 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
 
-    
