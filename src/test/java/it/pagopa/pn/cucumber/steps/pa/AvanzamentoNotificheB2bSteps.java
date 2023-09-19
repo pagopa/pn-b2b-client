@@ -300,7 +300,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
                 break;
             case "COMPLETELY_UNREACHABLE":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE, 15, sharedSteps.getWorkFlowWait());
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE, 20, sharedSteps.getWorkFlowWait());
                 break;
             case "COMPLETELY_UNREACHABLE_CREATION_REQUEST":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE_CREATION_REQUEST, 15, sharedSteps.getWorkFlowWait());
@@ -2336,7 +2336,21 @@ public class AvanzamentoNotificheB2bSteps {
 
     //Notifica Annullata
 
+    //Annullamento Notifica
+    @And("la notifica può essere annullata dal sistema tramite codice IUN")
+    public void notificationCanBeCanceledWithIUN() {
 
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    this.b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun()));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+    }
     /*
     UTILE PER TEST
 

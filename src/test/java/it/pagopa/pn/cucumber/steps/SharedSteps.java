@@ -450,7 +450,7 @@ public class SharedSteps {
         selectPA(paType);
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(getSentNotification().getIun()));
+                    this.b2bClient.notificationCancellation(getSentNotification().getIun()));
 
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());

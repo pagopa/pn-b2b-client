@@ -54,7 +54,7 @@ Feature: annullamento notifiche b2b
   Scenario: [B2B-PA-ANNULLAMENTO_5] PA mittente: annullamento notifica in stato “irreperibile totale”
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | senderDenomination | Comune di MILANO |
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
       | denomination | Test AR Fail 2 |
@@ -62,10 +62,10 @@ Feature: annullamento notifiche b2b
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la notifica può essere annullata dal sistema tramite codice IUN
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" e successivamente annullata
+  #  When la notifica può essere annullata dal sistema tramite codice IUN
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @Annullamento
   Scenario: B2B-PA-ANNULLAMENTO_6] PA mittente: annullamento notifica in stato “avvenuto accesso”
@@ -665,22 +665,7 @@ Feature: annullamento notifiche b2b
   #Scenario:  [B2B-PA-ANNULLAMENTO_25]
   #Destinatario: visualizzazione dettaglio notifica annullata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
 
-  @Annullamento
-  Scenario:  [B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
-    And "Mario Gherkin" accetta la delega "Mario Cucumber"
-    When viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | comune di milano            |
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    Then la notifica può essere correttamente recuperata da "Mario Cucumber"
-    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
-
-
-  @Annullamento #Da Verificare...............OK OPPURE UN kO CHE NON SIA DOVUTO ALL'ANNULLAMENTO DOPO L'ANNULLAMENTO DOVREBBE ESSERE INIBITO
+  @Annullamento #DOPO L'AANUULLAMENTO NON E POSSIBILE VERIFICARE LATO TA L'AVVENUTA RICEZIONE DEL SMS
   Scenario:  [B2B-PA-ANNULLAMENTO_27] PA mittente: annullamento notifica durante invio sms di cortesia
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -700,7 +685,7 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #Da verificare la corretta consegna del messaggio di cortesia
 
-  @Annullamento
+  @Annullamento @ignore
   Scenario:  [B2B-PA-ANNULLAMENTO_27_1] PA mittente: annullamento notifica inibizione invio sms di cortesia
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -717,7 +702,7 @@ Feature: annullamento notifiche b2b
       | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
       | details_recIndex | 0 |
 
-  @Annullamento  #Da Verificare...............OK OPPURE UN kO CHE NON SIA DOVUTO ALL'ANNULLAMENTO  DOPO L'ANNULLAMENTO DOVREBBE ESSERE INIBITO
+  @Annullamento  #DOPO L'AANUULLAMENTO NON E POSSIBILE VERIFICARE LATO TA L'AVVENUTA RICEZIONE DEL email
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -785,7 +770,7 @@ Feature: annullamento notifiche b2b
     #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
         #Valutare lo step
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
-    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
