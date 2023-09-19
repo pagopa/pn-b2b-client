@@ -445,6 +445,22 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
+    public void notificationCanBeCanceledWithIUNByComune(String paType) {
+        selectPA(paType);
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    b2bClient.notificationCancellation(getSentNotification().getIun()));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
     public void laNotificaVieneInviataOkAndCancelled(String paType) {
         selectPA(paType);
