@@ -138,6 +138,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
         this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
         this.paymentEventsApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
+        this.notificationCancellationApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {

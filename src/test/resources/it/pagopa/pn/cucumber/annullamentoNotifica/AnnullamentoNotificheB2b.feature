@@ -63,7 +63,6 @@ Feature: annullamento notifiche b2b
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" e successivamente annullata
-  #  When la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
@@ -261,7 +260,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS"
 
-  @Annullamento @workflowAnalogico @ignore
+  @Annullamento @workflowAnalogico
   Scenario: [B2B-PA-ANNULLAMENTO_13_6] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenari positivi)
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
