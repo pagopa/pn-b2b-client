@@ -92,6 +92,20 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
 
+    @Then("il documento notificato non può essere correttamente recuperato da {string}")
+    public void theDocumentCanNotBeProperlyRetrievedBy(String recipient) {
+        try {
+            sharedSteps.selectUser(recipient);
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
+                    sharedSteps.getSentNotification().getIun(),
+                    Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
+                    null
+            );
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
@@ -111,6 +125,20 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} tenta il recupero dell'allegato {string}")
     public void attachmentRetrievedError(String recipient, String attachmentName) {
+        this.notificationError = null;
+        sharedSteps.selectUser(recipient);
+        try {
+            webRecipientClient.getReceivedNotificationAttachment(
+                    sharedSteps.getSentNotification().getIun(),
+                    attachmentName,
+                    null);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @And("{string} tenta il recupero dell'attestazione {string}")
+    public void attachmentAttestazioneRetrievedError(String recipient, String attachmentName) {
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
