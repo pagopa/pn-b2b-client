@@ -418,12 +418,10 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
-  #When download attestazione opponibile AAR da parte "Mario Cucumber"
-  #  When l'allegato "AAR" può essere correttamente recuperato da "Mario Cucumber"
+ # When download attestazione opponibile AAR da parte "Mario Cucumber"
+  #When l'allegato "AAR" può essere correttamente recuperato da "Mario Cucumber"
        #si attende un 404
     Then il download ha prodotto un errore con status code "400"
-
-    #Then download attestazione opponibile AAR
 
 
   @Annullamento
@@ -835,6 +833,19 @@ Feature: annullamento notifiche b2b
     And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
 
+
+  @Annullamento @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream V2 denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
+
   @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
     Given vengono cancellati tutti gli stream presenti del "Comune_1"
@@ -847,3 +858,5 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
+
+
