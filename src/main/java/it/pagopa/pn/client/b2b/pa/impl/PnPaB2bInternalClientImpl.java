@@ -8,6 +8,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api.LegalFactsApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.api.NotificationCancellationApi;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -23,11 +25,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
-    private final LegalFactsApi legalFactsApi;
     private final NotificationPriceApi notificationPriceApi;
-    private final PaymentEventsApi paymentEventsApi;
 
-    private final NotificationCancellationApi  notificationCancellationApi;
 
     private final String paId;
     private final String operatorId;
@@ -49,12 +48,14 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, deliveryBasePath) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
-        this.legalFactsApi = new LegalFactsApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
-        this.paymentEventsApi = new PaymentEventsApi(newApiClient(restTemplate, deliveryPushBasePath));
-        this.notificationCancellationApi = new NotificationCancellationApi(newApiClient(restTemplate, deliveryPushBasePath));
+    }
 
-
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient
+    newApiClient(RestTemplate restTemplate, String basePath, Boolean isDeliveryPushApi ) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient(restTemplate);
+        newApiClient.setBasePath( basePath );
+        return newApiClient;
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -91,19 +92,14 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( response, NotificationAttachmentDownloadMetadataResponse.class );
     }
 
+    @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactDownloadMetadataResponse response =
-                legalFactsApi.getLegalFact(
-                         iun
-                        , deepCopy(legalFactType, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactCategory.class)
-                        , legalFactId);
-        return deepCopy(response, LegalFactDownloadMetadataResponse.class);
+        return null;
     }
 
-    public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun,  String legalFactId) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.LegalFactDownloadMetadataResponse response =
-                legalFactsApi.getLegalFactById(iun, legalFactId);
-        return deepCopy(response, LegalFactDownloadMetadataResponse.class);
+    @Override
+    public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId) {
+        return null;
     }
 
 
