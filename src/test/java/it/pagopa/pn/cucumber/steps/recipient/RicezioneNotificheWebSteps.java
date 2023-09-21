@@ -158,6 +158,44 @@ public class RicezioneNotificheWebSteps {
     }
 
 
+    @And("download attestazione opponibile AAR da parte {string}")
+    public void downloadLegalFactIdAARByRecipient(String recipient) {
+        sharedSteps.selectUser(recipient);
+        this.notificationError = null;
+        try {
+            Thread.sleep(sharedSteps.getWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.AAR_GENERATION;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement = null;
+
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementInternalCategory)) {
+                timelineElement = element;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(timelineElement);
+        String keySearch = null;
+        if (timelineElement.getDetails().getGeneratedAarUrl() != null && !timelineElement.getDetails().getGeneratedAarUrl().isEmpty()) {
+
+            if (timelineElement.getDetails().getGeneratedAarUrl().contains("PN_AAR")) {
+                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf("PN_AAR"));
+            }
+
+            String finalKeySearch = "safestorage://"+keySearch;
+            try {
+                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.DocumentCategory.AAR,finalKeySearch,null);
+            } catch (HttpStatusCodeException e) {
+                this.notificationError = e;
+            }
+        }
+    }
+
+
     @And("{string} tenta il recupero della notifica")
     public void notificationCanBeCorrectlyReadBy(String recipient) {
         sharedSteps.selectUser(recipient);

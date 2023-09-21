@@ -90,8 +90,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then il download ha prodotto un errore con status code "400"
+    When download attestazione opponibile AAR da parte "GherkinSrl"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PG-ANNULLAMENTO_8] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -102,8 +102,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then il download ha prodotto un errore con status code "400"
+    When download attestazione opponibile AAR da parte "GherkinSrl"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PG-ANNULLAMENTO_9] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -114,8 +114,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    When "GherkinSrl" tenta il recupero dell'allegato "AAR"
-    Then il download ha prodotto un errore con status code "400"
+    When download attestazione opponibile AAR da parte "GherkinSrl"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PG-ANNULLAMENTO_10] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)

@@ -56,6 +56,7 @@ public class AvanzamentoNotificheB2bSteps {
         this.ioUserAttributerExternaClient = ioUserAttributerExternaClient;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
         this.externalClient = sharedSteps.getPnExternalServiceClient();
+
     }
 
 
@@ -2263,6 +2264,8 @@ public class AvanzamentoNotificheB2bSteps {
             }
         }
     }
+
+    
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifyPhysicalAddress(String timelineEventCategory, String attempt) {

@@ -417,12 +417,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
-  When download attestazione opponibile AAR da parte "Mario Cucumber"
-  When l'allegato "AAR" può essere correttamente recuperato da "Mario Cucumber"
-       #si attende un 404
-    Then il download ha prodotto un errore con status code "400"
-
+    When download attestazione opponibile AAR da parte "Mario Cucumber"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PF-ANNULLAMENTO_18_1] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -433,9 +429,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
-           #si attende un 404
-    Then il download ha prodotto un errore con status code "400"
+    When download attestazione opponibile AAR da parte "Mario Cucumber"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PF-ANNULLAMENTO_18_2] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)
@@ -446,9 +441,8 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
-           #si attende un 404
-    Then il download ha prodotto un errore con status code "400"
+    When download attestazione opponibile AAR da parte "Mario Cucumber"
+    Then il download ha prodotto un errore con status code "404"
 
   @Annullamento
   Scenario: [B2B-PF-ANNULLAMENTO_19] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
@@ -836,7 +830,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
-    Given viene generata una nuova notifica
+    Given vengono cancellati tutti gli stream presenti del "Comune_1"
+    And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
