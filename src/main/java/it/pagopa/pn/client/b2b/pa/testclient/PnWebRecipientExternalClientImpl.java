@@ -2,6 +2,7 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
@@ -24,6 +25,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
     private final LegalFactsApi legalFactsApi;
+    private final DocumentsWebApi documentsWebApi;
 
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_2;
 
@@ -65,6 +67,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.userAgent = userAgent;
         this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
         this.legalFactsApi = new LegalFactsApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+        this.documentsWebApi = new DocumentsWebApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -147,5 +151,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.legalFactsApi.getLegalFact(iun,legalFactType,legalFactId);
     }
 
+    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
+        return this.documentsWebApi.getDocumentsWeb(iun,documentType,documentId,mandateId);
+    }
 
 }
