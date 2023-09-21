@@ -313,7 +313,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @Annullamento #AL MOMENTO TESTATO MANUALEMNTE
+  @Annullamento
   Scenario Outline: [B2B-PA-ANNULLAMENTO_15] AuditLog: verifica presenza evento post annullamento notifica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -323,7 +323,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    Then viene verificato che esiste un audit log "<audit-log>" in "5y"
+    Then viene verificato che esiste un audit log "<audit-log>" in "10y"
     Examples:
       | audit-log              |
       | AUD_NT_CANCELLED       |
@@ -418,8 +418,8 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "AAR"
- # When download attestazione opponibile AAR da parte "Mario Cucumber"
-  #When l'allegato "AAR" può essere correttamente recuperato da "Mario Cucumber"
+  When download attestazione opponibile AAR da parte "Mario Cucumber"
+  When l'allegato "AAR" può essere correttamente recuperato da "Mario Cucumber"
        #si attende un 404
     Then il download ha prodotto un errore con status code "400"
 

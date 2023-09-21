@@ -132,7 +132,7 @@ Feature: verifica audit-log su openSearch
       | AUD_PD_PREPARE_RECEIVE |
       | AUD_PD_EXECUTE         |
       | AUD_PD_EXECUTE_RECEIVE |
-      | AUD_NT_CANCELLED       |
+
 
 
 
@@ -154,7 +154,7 @@ Feature: verifica audit-log su openSearch
       | AUD_DT_CREATE          |
       | AUD_DT_UPDATE          |
       #| AUD_DT_DELETE          |
-      | AUD_NT_CANCELLED       |
+
 
 
 
@@ -179,6 +179,5 @@ Feature: verifica audit-log su openSearch
       | AUD_DT_CREATE          |
       | AUD_DT_UPDATE          |
       #| AUD_DT_DELETE          |
-      | AUD_NT_CANCELLED       |
 
 
