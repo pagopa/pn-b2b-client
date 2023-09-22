@@ -416,22 +416,9 @@ public class InvioNotificheB2bSteps {
     }
 
 
-    //Annullamento Notifica
-    @And("la notifica può essere annullata dal sistema tramite codice IUN")
-    public void notificationCanBeCanceledWithIUN() {
 
-        Assertions.assertDoesNotThrow(() -> {
-            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
-                    b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun()));
 
-            Assertions.assertNotNull(resp);
-            Assertions.assertNotNull(resp.getDetails());
-            Assertions.assertTrue(resp.getDetails().size()>0);
-            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
 
-        });
-
-    }
 
     //Annullamento Notifica
     @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
