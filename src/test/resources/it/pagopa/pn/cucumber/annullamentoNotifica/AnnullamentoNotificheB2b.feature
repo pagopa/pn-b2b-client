@@ -103,11 +103,10 @@ Feature: annullamento notifiche b2b
       | taxId | LVLDAA85T50G702B |
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
-    And la notifica può essere annullata dal sistema tramite codice IUN
+    And viene verificato il costo = "100" della notifica
+    When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-
 
   @Annullamento
   Scenario: [B2B-PA-ANNULLAMENTO_8_1] PA mittente: annullamento notifica con pagamento
@@ -127,6 +126,22 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
 
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_8_2] PA mittente: annullamento notifica con dati pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    And viene verificato il costo = "100" della notifica con un errore "404"
+
+    
   @Annullamento @ignore
   Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
     Given viene generata una nuova notifica

@@ -43,6 +43,7 @@ public class AvanzamentoNotificheB2bSteps {
     private final IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient;
     private final IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private HttpStatusCodeException notificationError;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient,
@@ -1484,6 +1485,23 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
         priceVerification(price, null, 0);
+    }
+
+    @And("viene verificato il costo = {string} della notifica con un errore {string}")
+    public void attachmentRetrievedError(String price, String errorCode) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 2);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+        try {
+            priceVerification(price, null, 0);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0, 3).equals(errorCode)));
     }
 
     @Then("viene verificato il costo = {string} della notifica per l'utente {int}")
