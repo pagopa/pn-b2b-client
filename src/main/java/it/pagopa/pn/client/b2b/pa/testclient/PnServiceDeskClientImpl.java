@@ -27,7 +27,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
 
     private final String basePath;
 
-//    private final String apiKey;
+    private final String apiKey;
 
     private final HealthCheckApi healthCheckApi;
 
@@ -52,8 +52,8 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     public PnServiceDeskClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.internal.servicedesk.base-url.pagopa}") String deliveryBasePath ,
- //           @Value("${pn.external.api-keys.service-desk}") String apiKeyBase ,
+            @Value("${pn.externalChannels.base-url.pagopa}") String deliveryBasePath ,
+            @Value("${pn.external.api-keys.service-desk}") String apiKeyBase ,
             @Value("${pn.internal.pa-id}") String paId
     ) {
 
@@ -62,22 +62,22 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = deliveryBasePath;
- //       this.apiKey=apiKeyBase;
- //       this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath,apiKey));
- //       this.notification = new NotificationApi(newApiClient( restTemplate, basePath,apiKey));
- //       this.operation = new OperationApi(newApiClient( restTemplate, basePath,apiKey));
-        this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath));
-        this.notification = new NotificationApi(newApiClient( restTemplate, basePath));
-        this.operation = new OperationApi(newApiClient( restTemplate, basePath));
+        this.apiKey=apiKeyBase;
+        this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath,apiKey));
+        this.notification = new NotificationApi(newApiClient( restTemplate, basePath,apiKey));
+        this.operation = new OperationApi(newApiClient( restTemplate, basePath,apiKey));
+ //       this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath));
+ //       this.notification = new NotificationApi(newApiClient( restTemplate, basePath));
+ //       this.operation = new OperationApi(newApiClient( restTemplate, basePath));
 
 
     }
 
- //   private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
- private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
+ //private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
-  //      newApiClient.addDefaultHeader("x-api-key", apiKey );
+        newApiClient.addDefaultHeader("x-api-key", apiKey );
         return newApiClient;
     }
 
@@ -146,5 +146,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     return operation.searchOperationsFromTaxId(operatorId, searchNotificationRequest);
 
 }
+
+
 
 }

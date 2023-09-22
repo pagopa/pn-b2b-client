@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps.serviceDesk;
 
 
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
+import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -32,7 +34,11 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,6 +51,8 @@ public class ApiServiceDeskSteps {
     private final PnPaB2bUtils b2bUtils;
 
     private final IPnPaB2bClient b2bClient;
+
+    private final PnExternalServiceClientImpl safeStorageClient;
 
     private final IPServiceDeskClientImpl ipServiceDeskClient;
 
@@ -84,8 +92,13 @@ public class ApiServiceDeskSteps {
 
     private final Integer workFlowWaitDefault = 31000;
 
+    private final Integer delay=420000;
+
     @Value("${pn.configuration.workflow.wait.millis:31000}")
     private Integer workFlowWait;
+
+    @Value("${pn.retention.videotime.preload}")
+    private Integer retentionTimePreLoad;
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -100,10 +113,11 @@ public class ApiServiceDeskSteps {
 
 
     @Autowired
-    public ApiServiceDeskSteps(SharedSteps sharedSteps, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx) {
+    public ApiServiceDeskSteps(SharedSteps sharedSteps, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
+        this.safeStorageClient=safeStorageClient;
         this.ipServiceDeskClient= sharedSteps.getServiceDeskClient();
         this.notificationRequest=new NotificationRequest();
         this.notificationsUnreachableResponse=notificationsUnreachableResponse;
@@ -457,6 +471,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
+
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con sha256 vuoto")
     public void createPreUploadVideoRequestSha256Null() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
@@ -582,6 +597,36 @@ public class ApiServiceDeskSteps {
         }
     }
 
+    @When("viene invocato il servizio SEARCH con delay")
+    public void searchResponseWithDelay() {
+        try {
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            logger.error("Thread.sleep error retry");
+            throw new RuntimeException(e);
+        }
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                searchResponse = ipServiceDeskClient.searchOperationsFromTaxId(searchNotificationRequest);
+                //List<OperationResponse> op = searchResponse.getOperations();
+
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchResponse);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Ricerca effettuata " + (searchResponse == null ? "NULL" : searchResponse.getOperations().toString()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
     @Then("Il servizio SEARCH risponde con esito positivo")
     public void verifySearchResponse(){
         List<OperationResponse> lista=searchResponse.getOperations();
@@ -591,7 +636,9 @@ public class ApiServiceDeskSteps {
         for(OperationResponse element :lista){
             logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
             Assertions.assertNotNull(element.getOperationId());
-            Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+            logger.info("CF attuale" +  element.getTaxId());
+            logger.info("CF da cercare" +  searchNotificationRequest.getTaxId());
+            Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
             Assertions.assertNotNull(element.getIuns());
             Assertions.assertNotNull(element.getUncompletedIuns());
             Assertions.assertNotNull(element.getNotificationStatus());
@@ -606,6 +653,49 @@ public class ApiServiceDeskSteps {
     @Then("Il servizio SEARCH risponde con esito positivo e lo stato della consegna è {string}")
     public void verifySearchResponseWithStatus(String status){
         boolean findOperationId=false;
+            String operationIdToSearch=operationsResponse.getOperationId();
+            logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
+            List<OperationResponse> lista=searchResponse.getOperations();
+            Assertions.assertNotNull(lista);
+            logger.info("SEARCH " +  searchResponse.getOperations().toString());
+            //Analisi output
+            for(OperationResponse element:lista){
+                logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
+                String actualOperationId=element.getOperationId();
+                Assertions.assertNotNull(actualOperationId);
+                if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
+                    findOperationId=true;
+                }
+                // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+                //Viene verificato che l'operation id generato fa parte della lista
+
+                Assertions.assertNotNull(element.getIuns());
+
+                Assertions.assertNotNull(element.getUncompletedIuns());
+                Assertions.assertNotNull(element.getNotificationStatus());
+                //controllo sullo status
+                if(operationIdToSearch.compareTo(actualOperationId)==0){
+                    logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
+                    Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+                }
+                Assertions.assertNotNull(element.getOperationCreateTimestamp());
+                Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+        }
+
+        //Se non viene trovato l'id operation lancio eccezione
+        try{
+        Assertions.assertTrue(findOperationId);
+        } catch (AssertionFailedError assertionFailedError) {
+        String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
+        throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+    }
+
+    }
+
+    @Then("Il servizio SEARCH risponde con esito positivo per lo {string} e lo stato della consegna è {string}")
+    public void verifySearchResponseWithStatusAndIun(String iun, String status){
+        boolean findOperationId=false;
+        boolean findIun=false;
         String operationIdToSearch=operationsResponse.getOperationId();
         logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
         List<OperationResponse> lista=searchResponse.getOperations();
@@ -619,27 +709,44 @@ public class ApiServiceDeskSteps {
             if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
                 findOperationId=true;
             }
-           // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+            // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
             //Viene verificato che l'operation id generato fa parte della lista
-            Assertions.assertNotNull(element.getIuns());
 
+            Assertions.assertNotNull(element.getIuns());
+            List<SDNotificationSummary> listaiuns=element.getIuns();
+            if(findOperationId){
+            for(SDNotificationSummary acutalIun :listaiuns){
+            //Verifica se lo iun è presente nella lista
+                logger.info("IUN ATTUALE " +  acutalIun.getIun());
+                if(acutalIun.getIun().compareTo(iun)==0 && findIun==false){
+                findIun=true;
+            }
+            }
             Assertions.assertNotNull(element.getUncompletedIuns());
             Assertions.assertNotNull(element.getNotificationStatus());
-            //il controllo dello stato non viene fatto su singolo operation id ma su tutte le pratiche
-            logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
-            Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+            //controllo sullo status
+            if(operationIdToSearch.compareTo(actualOperationId)==0){
+                logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
+                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+            }
             Assertions.assertNotNull(element.getOperationCreateTimestamp());
             Assertions.assertNotNull(element.getOperationUpdateTimestamp());
-
+        }
         }
         //Se non viene trovato l'id operation lancio eccezione
         try{
-        Assertions.assertTrue(findOperationId);
+            Assertions.assertTrue(findOperationId);
         } catch (AssertionFailedError assertionFailedError) {
-        String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
-        throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-    }
-
+            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+        //Se non viene trovato lo IUN lancio operazione
+        try{
+            Assertions.assertTrue(findIun);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "{Lo iun non è associato al CF" +searchNotificationRequest.getTaxId()+"}";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
     }
 
     @Then("Il servizio SEARCH risponde con lista vuota")
@@ -661,6 +768,66 @@ public class ApiServiceDeskSteps {
         loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
         notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
         notificationDocument.getRef().setVersionToken("v1");
+        notificationDocument.digests( new NotificationAttachmentDigests().sha256( videoUploadRequest.getSha256() ));
+    }
+
+
+    @Then("il video viene caricato su SafeStorage con url scaduta")
+    public void loadFileSafeStorageUrlExpired() {
+        try {
+            try {
+                logger.info("PROVAA");
+                Thread.sleep(3720000);//aspetta 62 minuti
+                // notificationDocument = newDocument("classpath:/video.mp4");
+                String resourceName = notificationDocument.getRef().getKey();
+                logger.info("Resouce name"+resourceName);
+                AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
+                loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
+                notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
+                notificationDocument.getRef().setVersionToken("v1");
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @Then("il video viene caricato su SafeStorage con errore")
+    public void loadFileSafeStorageWithError() {
+            try {
+                logger.info("PROVAA");
+                // notificationDocument = newDocument("classpath:/video.mp4");
+                String resourceName = notificationDocument.getRef().getKey();
+                logger.info("Resouce name"+resourceName);
+                AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
+                loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
+                notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
+                notificationDocument.getRef().setVersionToken("v1");
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @Then("viene effettuato un controllo sulla durata della retention")
+    public void retentionCheckPreload() {
+        String key = notificationDocument.getRef().getKey();
+        logger.info("Resouce name"+key);
+        try {
+            Thread.sleep(900000);
+        } catch (InterruptedException e) {
+            logger.error("Thread.sleep error retry");
+            throw new RuntimeException(e);
+        }
+        logger.info("Fine delay");
+        Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
 
 
@@ -722,6 +889,19 @@ public class ApiServiceDeskSteps {
 
     private String computeSha256( Resource res ) throws IOException {
         return b2bUtils.computeSha256(res.getInputStream());
+    }
+
+    private boolean checkRetetion(String fileKey, Integer retentionTime) {
+        PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfoPnServiceDesk(fileKey);
+        logger.info("safestorage response: " + safeStorageResponse);
+        LocalDateTime localDateTimeNow = LocalDate.now().atStartOfDay();
+        OffsetDateTime now = OffsetDateTime.of(localDateTimeNow, ZoneOffset.of("Z"));
+        OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
+        logger.info("now: " + now);
+        logger.info("retentionUntil: " + retentionUntil);
+        long between = ChronoUnit.DAYS.between(now, retentionUntil);
+        logger.info("Difference: " + between);
+        return retentionTime == between;
     }
 
 }
