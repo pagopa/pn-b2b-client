@@ -1,7 +1,7 @@
 Feature: annullamento notifiche b2b
 
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -15,7 +15,7 @@ Feature: annullamento notifiche b2b
     Then la notifica può essere correttamente recuperata da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -30,7 +30,7 @@ Feature: annullamento notifiche b2b
     Then la notifica può essere correttamente recuperata da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -44,7 +44,7 @@ Feature: annullamento notifiche b2b
     Then la notifica può essere correttamente recuperata da "Mario Cucumber"
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_3] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -60,7 +60,7 @@ Feature: annullamento notifiche b2b
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario: [B2B-PA-ANNULLAMENTO_32] Invio notifica digitale mono destinatario e recupero documento notificato_scenario negativo
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -74,7 +74,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then il documento notificato non può essere correttamente recuperato da "Mario Gherkin" con delega restituendo un errore "404"
 
-  @Annullamento
+  @Annullamento @deleghe1
   Scenario: [B2B-PA-ANNULLAMENTO_33] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario negativo
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
