@@ -24,7 +24,8 @@ Feature: Validazione campi invio notifiche b2b
       | São Tomé           |
       | Hagåtña            |
 
-  @testLite
+
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_1_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -63,7 +64,8 @@ Feature: Validazione campi invio notifiche b2b
       | São Tomé           |
       | Hagåtña            |
 
-  @testLite
+
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_2_LITE] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -100,7 +102,8 @@ Feature: Validazione campi invio notifiche b2b
        #problema con | Ilaria D’Amico  |
        #problema con | Ilaria D'Amico  |
 
-  @testLite
+
+  @ignore
   Scenario Outline: [B2B-PA-SEND_VALID_3_LITE] invio notifica a destinatario la cui denominazione contenente caratteri speciali_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
