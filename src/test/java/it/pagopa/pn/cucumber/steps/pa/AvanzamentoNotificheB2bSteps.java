@@ -300,6 +300,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "PREPARE_ANALOG_DOMICILE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
                 break;
+            case "PREPARE_ANALOG_DOMICILE_FAILURE":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
+                break;
             case "COMPLETELY_UNREACHABLE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE, 20, sharedSteps.getWorkFlowWait());
                 break;
@@ -2354,6 +2357,73 @@ public class AvanzamentoNotificheB2bSteps {
 
         });
     }
+
+
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string}")
+    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConfailureCause(String timelineEventCategory, String failureCause) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
+            Assertions.assertEquals(timelineElement.getDetails().getFailureCause(), failureCause);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string}  per l'utente {int}")
+    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConfailureCausePerUtente(String timelineEventCategory, String failureCause, Integer destinatario) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(destinatario)) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
+            Assertions.assertEquals(timelineElement.getDetails().getFailureCause(), failureCause);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     /*
     UTILE PER TEST
 
@@ -2379,7 +2449,6 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
      */
-
 
 
 
