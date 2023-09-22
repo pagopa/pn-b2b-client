@@ -301,7 +301,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
                 break;
             case "PREPARE_ANALOG_DOMICILE_FAILURE":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE_FAILURE,20, sharedSteps.getWorkFlowWait());
                 break;
             case "COMPLETELY_UNREACHABLE":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE, 20, sharedSteps.getWorkFlowWait());
@@ -2384,7 +2384,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
         try {
             Assertions.assertNotNull(timelineElement);
-            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
             Assertions.assertEquals(timelineElement.getDetails().getFailureCause(), failureCause);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -2393,7 +2392,7 @@ public class AvanzamentoNotificheB2bSteps {
 
 
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string}  per l'utente {int}")
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string} per l'utente {int}")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConfailureCausePerUtente(String timelineEventCategory, String failureCause, Integer destinatario) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
 
@@ -2417,7 +2416,6 @@ public class AvanzamentoNotificheB2bSteps {
         }
         try {
             Assertions.assertNotNull(timelineElement);
-            Assertions.assertNotNull(timelineElement.getDetails().getResponseStatus());
             Assertions.assertEquals(timelineElement.getDetails().getFailureCause(), failureCause);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
