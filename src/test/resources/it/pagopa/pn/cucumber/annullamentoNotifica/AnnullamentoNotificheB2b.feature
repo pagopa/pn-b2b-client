@@ -141,7 +141,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     And viene verificato il costo = "100" della notifica con un errore "404"
 
-    
+
   @Annullamento @ignore
   Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
     Given viene generata una nuova notifica
@@ -654,16 +654,29 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
+      | feePolicy | DELIVERY_MODE |
     And destinatario Gherkin spa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    #And la notifica con pagamento può essere annullata dal sistema tramite codice IUV
     #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
-    When la notifica viene inviata dal "Comune_1"
-    Then si verifica la corretta acquisizione della notifica
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
+
+  @Annullamento @ignore #Conflitto 409 Conflict
+  Scenario:  [B2B-PA-ANNULLAMENTO_23_1] PA mittente: notifica con pagamento non in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Gherkin spa e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
 
                     #Da Verificare...............Solo Manuale
   #Scenario:  [B2B-PA-ANNULLAMENTO_24]
@@ -869,4 +882,16 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
 
+
+  @Annullamento
+  Scenario:  [B2B-PA-ANNULLAMENTO_26] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And viene verificato che nell'elemento di timeline della notifica "NOTIFICATION_CANCELLED" sia presente il campo notRefinedRecipientIndex
 
