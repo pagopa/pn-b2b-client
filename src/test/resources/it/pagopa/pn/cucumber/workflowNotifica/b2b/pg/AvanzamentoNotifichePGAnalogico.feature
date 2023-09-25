@@ -285,7 +285,7 @@ Feature: avanzamento notifiche analogico persona giuridica
 
 
   @ignore
-  Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00
+  Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -300,7 +300,7 @@ Feature: avanzamento notifiche analogico persona giuridica
 
 
   @ignore
-  Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01
+  Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -315,7 +315,7 @@ Feature: avanzamento notifiche analogico persona giuridica
 
 
 @ignore
-  Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02
+  Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
