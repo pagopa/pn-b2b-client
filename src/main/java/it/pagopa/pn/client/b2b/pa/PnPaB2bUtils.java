@@ -105,8 +105,8 @@ public class PnPaB2bUtils {
                 newdocs.add(this.preloadDocumentWithoutUpload(doc));
             }else{
                 newdocs.add(this.preloadDocument(doc));
-            }
 
+            }
         }
         request.setDocuments(newdocs);
 
@@ -186,6 +186,8 @@ public class PnPaB2bUtils {
     }
 
 
+
+
     public NewNotificationResponse uploadNotificationOverSizeAllegato( NewNotificationRequest request) throws IOException {
 
         NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
@@ -210,6 +212,7 @@ public class PnPaB2bUtils {
         log.info("New Notification Request response {}", response);
         return response;
     }
+
 
     public NewNotificationResponse uploadNotificationInjectionAllegato( NewNotificationRequest request) throws IOException {
 
@@ -323,7 +326,9 @@ public class PnPaB2bUtils {
         return error == null? null : error;
     }
 
+
     public void verifyNotification(FullSentNotificationV20 fsn) throws IOException, IllegalStateException {
+
 
         for (NotificationDocument doc: fsn.getDocuments()) {
 
@@ -554,9 +559,6 @@ public class PnPaB2bUtils {
         return workFlowAcceptedWait;
     }
 
-
-
-
     public void verifyCanceledNotification(FullSentNotificationV20 fsn) throws IOException, IllegalStateException {
 
         for (NotificationDocument doc: fsn.getDocuments()) {
@@ -610,5 +612,6 @@ public class PnPaB2bUtils {
             throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
         }
     }
+
 
 }

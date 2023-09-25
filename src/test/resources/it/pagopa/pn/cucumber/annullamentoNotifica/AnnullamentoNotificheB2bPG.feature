@@ -164,6 +164,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "SENDER_ACK" con errore "404"
 
+    #serve un wait più lungo
   @Annullamento
   Scenario: [B2B-PG-ANNULLAMENTO_14] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
     Given viene generata una nuova notifica

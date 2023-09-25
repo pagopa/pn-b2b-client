@@ -4,7 +4,6 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
@@ -16,7 +15,9 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
+
 import org.opentest4j.AssertionFailedError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.ByteArrayInputStream;
+
 import java.io.IOException;
+
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -365,6 +368,7 @@ public class RicezioneNotificheWebDelegheSteps {
             }
 
     }
+
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {

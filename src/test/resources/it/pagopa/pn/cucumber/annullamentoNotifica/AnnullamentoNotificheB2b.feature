@@ -50,6 +50,7 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
+    #serve un wait più lungo
   @Annullamento
   Scenario: [B2B-PA-ANNULLAMENTO_5] PA mittente: annullamento notifica in stato “irreperibile totale”
     Given viene generata una nuova notifica
@@ -103,11 +104,10 @@ Feature: annullamento notifiche b2b
       | taxId | LVLDAA85T50G702B |
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
-    And la notifica può essere annullata dal sistema tramite codice IUN
+    And viene verificato il costo = "100" della notifica
+    When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-
 
   @Annullamento
   Scenario: [B2B-PA-ANNULLAMENTO_8_1] PA mittente: annullamento notifica con pagamento
@@ -126,6 +126,22 @@ Feature: annullamento notifiche b2b
     And si attende il corretto pagamento della notifica
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_8_2] PA mittente: annullamento notifica con dati pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    And viene verificato il costo = "100" della notifica con un errore "404"
+
 
   @Annullamento @ignore
   Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
@@ -260,6 +276,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS"
 
+    #serve un wait più lungo
   @Annullamento @workflowAnalogico
   Scenario: [B2B-PA-ANNULLAMENTO_13_6] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenari positivi)
     Given viene generata una nuova notifica
@@ -490,6 +507,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile "SENDER_ACK" con errore "404"
 
+    #serve un wait più lungo
   @Annullamento
   Scenario: [B2B-PF-ANNULLAMENTO_19_4] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
     Given viene generata una nuova notifica
@@ -639,16 +657,29 @@ Feature: annullamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | comune di milano |
+      | feePolicy | DELIVERY_MODE |
     And destinatario Gherkin spa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    #And la notifica con pagamento può essere annullata dal sistema tramite codice IUV
     #And si verifica la coretta cancellazione da tabella pn-NotificationsCost
-    And viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
-    When la notifica viene inviata dal "Comune_1"
-    Then si verifica la corretta acquisizione della notifica
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
+
+  @Annullamento @ignore #Conflitto 409 Conflict
+  Scenario:  [B2B-PA-ANNULLAMENTO_23_1] PA mittente: notifica con pagamento non in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Gherkin spa e:
+      | payment_creditorTaxId | 77777777777 |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
 
                     #Da Verificare...............Solo Manuale
   #Scenario:  [B2B-PA-ANNULLAMENTO_24]
@@ -678,7 +709,10 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #Da verificare la corretta consegna del messaggio di cortesia
 
-  @Annullamento @ignore
+  #Configurare il timing riducendo il tempo di wait nel seguente modo:
+  # pn.configuration.workflow.wait.accepted.millis.pagopa=21000
+  # pn.configuration.workflow.wait.millis.pagopa=11000
+  @Annullamento
   Scenario:  [B2B-PA-ANNULLAMENTO_27_1] PA mittente: annullamento notifica inibizione invio sms di cortesia
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -687,13 +721,8 @@ Feature: annullamento notifiche b2b
       | taxId | RMSLSO31M04Z404R |
       | digitalDomicile | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-   # Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "+393214210000", "type": "SMS"} |
-      | details_recIndex | 0 |
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
   @Annullamento  #DOPO L'AANUULLAMENTO NON E POSSIBILE VERIFICARE LATO TA L'AVVENUTA RICEZIONE DEL email
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
@@ -706,9 +735,6 @@ Feature: annullamento notifiche b2b
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-   # And si verifica la corretta acquisizione della notifica
-        #Valutare lo step
-    #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline | true |
       | details | NOT_NULL |
@@ -719,7 +745,10 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     #Da verificare la corretta consegna del messaggio di cortesia
 
-  @Annullamento @ignore
+  #Configurare il timing riducendo il tempo di wait nel seguente modo:
+  # pn.configuration.workflow.wait.accepted.millis.pagopa=21000
+  # pn.configuration.workflow.wait.millis.pagopa=11000
+  @Annullamento
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -731,14 +760,7 @@ Feature: annullamento notifiche b2b
       | digitalDomicile | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    #Valutare lo step
-    #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_COURTESY_MESSAGE"
-    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
-      | details_recIndex | 0 |
+    Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
   @Annullamento   #Da Verificare...............OK OPPURE UN kO CHE NON SIA DOVUTO ALL'ANNULLAMENTO  DOPO L'ANNULLAMENTO DOVREBBE ESSERE INIBITO
   Scenario:  [B2B-PA-ANNULLAMENTO_29] #PA mittente: annullamento notifica durante invio pec
@@ -763,7 +785,7 @@ Feature: annullamento notifiche b2b
     #Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
         #Valutare lo step
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_DIGITAL_PROGRESS"
-    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_PROGRESS" non esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
@@ -806,7 +828,7 @@ Feature: annullamento notifiche b2b
 
 
 
-  @Annullamento @ignore
+  @Annullamento
   Scenario: [B2B-PF-MULTI-ANNULLAMENTO_1] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -842,6 +864,19 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
 
   @Annullamento @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24_1] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
+    Given vengono cancellati tutti gli stream presenti del "Comune_1"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream V2 denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
+
+  @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
     Given vengono cancellati tutti gli stream presenti del "Comune_1"
     And viene generata una nuova notifica
@@ -855,3 +890,83 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
 
 
+  @Annullamento
+  Scenario:  [B2B-PA-ANNULLAMENTO_32] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    And viene verificato che nell'elemento di timeline della notifica "NOTIFICATION_CANCELLED" sia presente il campo notRefinedRecipientIndex
+
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_33] PA mittente: Annullamento notifica e inibizione invio SEND_SIMPLE_REGISTERED_LETTER
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_34] PA mittente: Annullamento notifica e inibizione invio PREPARE_SIMPLE_REGISTERED_LETTER
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
+  #Configurare il timing riducendo il tempo di wait nel seguente modo:
+  # pn.configuration.workflow.wait.accepted.millis.pagopa=21000
+  # pn.configuration.workflow.wait.millis.pagopa=11000
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_35] PA mittente: annullamento notifica e inibizione invio SEND_DIGITAL_PROGRESS
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene controllato che l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" non esiste
+
+
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_36] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non esiste
+
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_37] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_890 |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene controllato che l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non esiste
