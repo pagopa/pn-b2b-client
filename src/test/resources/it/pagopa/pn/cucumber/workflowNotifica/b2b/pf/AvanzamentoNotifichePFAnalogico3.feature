@@ -438,7 +438,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | physicalAddress_zip                 | 40121                        |
       | physicalAddress_municipality        | BOLOGNA                      |
       | physicalAddress_province            | BO                           |
-      | physicalAddress_State               | NULL                         |
       | physicalAddress_addressDetails      | NULL                         |
       | physicalAddress_municipalityDetails | NULL                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

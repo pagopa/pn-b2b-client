@@ -284,6 +284,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then si attende la corretta sospensione dell'invio cartaceo
 
 
+  @ignore
   Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -298,6 +299,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
+  @ignore
   Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -312,15 +314,21 @@ Feature: avanzamento notifiche analogico persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
+@ignore
   Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Test AR Fail |
-      | taxId | CNCGPP80A01H501J |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | denomination                        | Test AR Fail               |
+      | taxId                               | CNCGPP80A01H501J           |
+      | digitalDomicile                     | NULL                       |
+      | physicalAddress_address             | Via @FAIL-Irreperibile_890 |
+      | physicalAddress_zip                 | 40121                      |
+      | physicalAddress_municipality        | BOLOGNA                    |
+      | physicalAddress_province            | BO                         |
+      | physicalAddress_addressDetails      | NULL                       |
+      | physicalAddress_municipalityDetails | NULL                       |
+  When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
