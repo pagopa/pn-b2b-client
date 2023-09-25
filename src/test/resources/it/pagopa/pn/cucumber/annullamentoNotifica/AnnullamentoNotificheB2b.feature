@@ -895,3 +895,20 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And viene verificato che nell'elemento di timeline della notifica "NOTIFICATION_CANCELLED" sia presente il campo notRefinedRecipientIndex
 
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_27] PA mittente: Annullamento notifica e inibizione invio SEND_SIMPLE_REGISTERED_LETTER
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@ok_RS |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+   # And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
+   # When la notifica può essere annullata dal sistema tramite codice IUN
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" non esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+
