@@ -283,6 +283,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And l'avviso pagopa viene pagato correttamente
     Then si attende la corretta sospensione dell'invio cartaceo
 
+
   Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -296,6 +297,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D00"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
+
   Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -308,6 +310,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+
 
   Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02
     Given viene generata una nuova notifica

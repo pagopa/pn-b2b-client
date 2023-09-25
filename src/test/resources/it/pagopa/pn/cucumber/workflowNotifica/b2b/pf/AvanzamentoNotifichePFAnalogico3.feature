@@ -398,7 +398,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
 
 
-  Scenario: [B2B_TIMELINE_ANALOG_62] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00
+  Scenario: [B2B_TIMELINE_ANALOG_62] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -412,7 +412,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
-  Scenario: [B2B_TIMELINE_ANALOG_63] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01
+  Scenario: [B2B_TIMELINE_ANALOG_63] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -426,15 +426,21 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
-  Scenario: [B2B_TIMELINE_ANALOG_64] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02
+  Scenario: [B2B_TIMELINE_ANALOG_64] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Test AR Fail |
-      | taxId | CNCGPP80A01H501J |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
+      | denomination                        | Test AR Fail                 |
+      | taxId                               | CNCGPP80A01H501J             |
+      | digitalDomicile                     | NULL                         |
+      | physicalAddress_address             | via @FAIL-Irreperibile_AR 16 |
+      | physicalAddress_zip                 | 40121                        |
+      | physicalAddress_municipality        | BOLOGNA                      |
+      | physicalAddress_province            | BO                           |
+      | physicalAddress_State               | NULL                         |
+      | physicalAddress_addressDetails      | NULL                         |
+      | physicalAddress_municipalityDetails | NULL                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
