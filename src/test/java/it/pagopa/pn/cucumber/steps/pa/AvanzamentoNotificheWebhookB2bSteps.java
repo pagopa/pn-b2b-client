@@ -524,6 +524,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         try{
             Assertions.assertNotNull(progressResponseElement);
             logger.info("EventProgress: " + progressResponseElement);
+
         }catch(AssertionFailedError assertionFailedError){
             String message = assertionFailedError.getMessage()+
                     "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
@@ -547,6 +548,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         ResponseEntity<List<ProgressResponseElement>> listResponseEntity = webhookB2bClient.consumeEventStreamHttp(this.eventStreamList.get(0).getStreamId(), lastEventId);
         int retryAfter = Integer.parseInt(listResponseEntity.getHeaders().get("retry-after").get(0));
         List<ProgressResponseElement> progressResponseElements = listResponseEntity.getBody();
+
+        sharedSteps.setProgressResponseElements(progressResponseElements);
+
         System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.toString());
         if(deepCount >= 200){
             throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
@@ -711,6 +715,31 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             logger.info("EVENT: "+'\n'+element.getTimelineEventCategory()+" "+element.getTimestamp());
         }
 
+    }
+
+    @Then("viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati")
+    public void vieneVerificatoCheIlProgressResponseElementIdDelWebhookSiaIncrementaleESenzaDuplicati() {
+
+        List<ProgressResponseElement> progressResponseElements = sharedSteps.getProgressResponseElements();
+        Assertions.assertNotNull(progressResponseElements);
+        boolean counterIncrement = true ;
+        int lastEventID = SharedSteps.lastEventID;
+        System.out.println("ELEMENTI NEL WEBHOOK LAST EVENT ID1: "+lastEventID);
+        for(ProgressResponseElement elem: progressResponseElements){
+            if (lastEventID==0){
+                lastEventID = Integer.parseInt(elem.getEventId());
+                continue;
+            }
+            if (Integer.parseInt(elem.getEventId())<=lastEventID){
+                counterIncrement = false;
+                break;
+            }else {
+                lastEventID = Integer.parseInt(elem.getEventId());
+            }
+        }//for
+        Assertions.assertTrue(counterIncrement);
+        SharedSteps.lastEventID=lastEventID;
+        System.out.println("ELEMENTI NEL WEBHOOK LAST EVENT ID2: "+lastEventID);
     }
 }
 

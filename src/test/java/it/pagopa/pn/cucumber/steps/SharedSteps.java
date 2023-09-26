@@ -138,6 +138,9 @@ public class SharedSteps {
     private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
 
 
+    private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> progressResponseElements = null;
+    public static Integer lastEventID = 0;
+
     private String gherkinSpaTaxID = "12666810299";
   //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
     private String cucumberSrlTaxID = "20517490320";
@@ -457,7 +460,8 @@ public class SharedSteps {
     @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIUNByComune(String paType) {
         selectPA(paType);
-        Assertions.assertDoesNotThrow(() -> {
+
+        try {
             RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
                     this.b2bClient.notificationCancellation(getSentNotification().getIun()));
 
@@ -465,8 +469,11 @@ public class SharedSteps {
             Assertions.assertNotNull(resp.getDetails());
             Assertions.assertTrue(resp.getDetails().size()>0);
             Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
-
-        });
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
 
     }
 
@@ -1295,6 +1302,15 @@ public class SharedSteps {
         }
         return timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
     }
+
+    public List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> getProgressResponseElements() {
+        return progressResponseElements;
+    }
+
+    public void setProgressResponseElements(List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> progressResponseElements) {
+        this.progressResponseElements = progressResponseElements;
+    }
+
 
 
 }
