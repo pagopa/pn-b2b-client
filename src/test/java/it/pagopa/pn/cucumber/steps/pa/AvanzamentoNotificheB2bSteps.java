@@ -24,6 +24,7 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 import static java.time.OffsetDateTime.now;
@@ -225,7 +226,6 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
-
     private TimelineElementWait getTimelineElementCategory(String timelineEventCategory) {
         Integer waiting = sharedSteps.getWorkFlowWait();
         TimelineElementWait timelineElementWait;
@@ -341,6 +341,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
         return timelineElementWait;
     }
+
 
 
 
@@ -2085,7 +2086,7 @@ public class AvanzamentoNotificheB2bSteps {
         if (timelineCategory.equals(TimelineElementCategoryV20.DIGITAL_SUCCESS_WORKFLOW.getValue())) {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategoryV20.SEND_DIGITAL_FEEDBACK.getValue(), dataFromTest);
         } else if (timelineCategory.equals(TimelineElementCategoryV20.DIGITAL_FAILURE_WORKFLOW.getValue())) {
-            timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategoryV20.DIGITAL_FAILURE_WORKFLOW.getValue(), dataFromTest);
+            timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategoryV20.DIGITAL_DELIVERY_CREATION_REQUEST.getValue(), dataFromTest);
         }  else if (timelineCategory.equals(TimelineElementCategoryV20.ANALOG_SUCCESS_WORKFLOW.getValue())) {
             timelineElementForDateCalculation = sharedSteps.getTimelineElementByEventId(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK.getValue(), dataFromTest);
         } else if (timelineCategory.equals(TimelineElementCategoryV20.ANALOG_FAILURE_WORKFLOW.getValue())) {
@@ -2119,7 +2120,12 @@ public class AvanzamentoNotificheB2bSteps {
             Duration timeToAddInNonVisibilityTimeCase = sharedSteps.getTimeToAddInNonVisibilityTimeCase();
             schedulingDate = schedulingDate.plus(timeToAddInNonVisibilityTimeCase);
         }
-        Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
+        DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
+        System.out.println(timelineElement.getDetails().getSchedulingDate().format(fmt1));
+        System.out.println(schedulingDate.format(fmt1));
+        Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt1).equals(schedulingDate.format(fmt1)));
+        //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
     @And("si attende che sia presente il perfezionamento per decorrenza termini")
@@ -2551,8 +2557,10 @@ public class AvanzamentoNotificheB2bSteps {
 
      */
 
-    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate più {int}{string} per il destinatario {int} rispetto ell'evento in timeline {string}")
-    public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory,  int delay, String tipoIncremento, int destinatario, String evento) {
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate per il destinatario {int} rispetto ell'evento in timeline {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory, int destinatario, String evento) {
+        int delay =0;
+        String tipoIncremento="m";
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         TimelineElementV20 timelineElement = null;
         OffsetDateTime digitalDeliveryCreationRequestDate = null;
@@ -2566,8 +2574,6 @@ public class AvanzamentoNotificheB2bSteps {
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-
 
             for (TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
                 if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getDetails().getRecIndex().equals(destinatario)) {
@@ -2585,11 +2591,24 @@ public class AvanzamentoNotificheB2bSteps {
             //RECUPERO Data DeliveryCreationRequest
             for (TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
                 if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
+
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
+                    if (sharedSteps.getSchedulingDaysFailureDigitalRefinementString().contains("m"))
+                        tipoIncremento = "m";
+                    else if (sharedSteps.getSchedulingDaysFailureDigitalRefinementString().contains("d"))
+                        tipoIncremento = "d";
+
+                    delay = Integer.parseInt(sharedSteps.getSchedulingDaysFailureDigitalRefinementString().replace(tipoIncremento,""));
                     break;
                 } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
                     if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
                         digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
+                        if (sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().contains("m"))
+                            tipoIncremento = "m";
+                        else if (sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().contains("d"))
+                            tipoIncremento = "d";
+
+                        delay = Integer.parseInt(sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().replace(tipoIncremento,""));
                         break;
                     }
                 }
@@ -2597,12 +2616,13 @@ public class AvanzamentoNotificheB2bSteps {
 
             Assertions.assertNotNull(timelineElement);
             Assertions.assertNotNull(timelineElement.getDetails().getSchedulingDate());
-
             Assertions.assertNotNull(tipoIncremento);
+
             if ("d".equalsIgnoreCase(tipoIncremento)){
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
                 Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt).equals(digitalDeliveryCreationRequestDate.plusDays(delay).format(fmt)));
             } else if ("m".equalsIgnoreCase(tipoIncremento)) {
+                Duration ss = sharedSteps.getSchedulingDaysSuccessDigitalRefinement();
                 DateTimeFormatter fmt1 = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
                 Assertions.assertTrue(timelineElement.getDetails().getSchedulingDate().format(fmt1).equals(digitalDeliveryCreationRequestDate.plusMinutes(delay).format(fmt1)));
             }

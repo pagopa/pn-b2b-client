@@ -98,6 +98,13 @@ public class SharedSteps {
     private Integer wait;
 
     @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
+    private String schedulingDaysSuccessDigitalRefinementString;
+
+    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
+    private String schedulingDaysFailureDigitalRefinementString;
+
+
+    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
     private Duration schedulingDaysSuccessDigitalRefinement;
 
     @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
@@ -120,6 +127,8 @@ public class SharedSteps {
 
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
+    private final String schedulingDaysSuccessDigitalRefinementDefaultString = "6m";
+    private final String schedulingDaysFailureDigitalRefinementDefaultString = "6m";
     private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
     private final Duration schedulingDaysFailureDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
     private final Duration schedulingDaysSuccessAnalogRefinementDefault = DurationStyle.detectAndParse("2m");
@@ -1033,10 +1042,21 @@ public class SharedSteps {
         return schedulingDaysFailureDigitalRefinement;
     }
 
+    public String getSchedulingDaysFailureDigitalRefinementString() {
+        if (schedulingDaysFailureDigitalRefinementString == null) return schedulingDaysFailureDigitalRefinementDefaultString;
+        return schedulingDaysFailureDigitalRefinementString;
+    }
+    public String getSchedulingDaysSuccessDigitalRefinementString() {
+        if (schedulingDaysSuccessDigitalRefinementString == null) return schedulingDaysSuccessDigitalRefinementDefaultString;
+        return schedulingDaysSuccessDigitalRefinementString;
+    }
+
+
     public Duration getSchedulingDaysSuccessAnalogRefinement() {
         if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysSuccessAnalogRefinementDefault;
         return schedulingDaysSuccessAnalogRefinement;
     }
+
 
     public Duration getSchedulingDaysFailureAnalogRefinement() {
         if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysFailureAnalogRefinementDefault;
@@ -1244,6 +1264,10 @@ public class SharedSteps {
                 return TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
             case "COMPLETELY_UNREACHABLE":
                 return TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
+            case "DIGITAL_DELIVERY_CREATION_REQUEST":
+                return TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+
+
         }
         return null;
     }

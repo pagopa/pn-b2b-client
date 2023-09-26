@@ -169,21 +169,23 @@ Feature: Workflow analogico
       | details_recIndex        | 0                                                                                                                                                                                              |
       | details_physicalAddress | {"address": "VIA@OK_RS", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
       | details_analogCost      | 196                                                                                                                                                                                            |
-
+    And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
-
       | details                 | NOT_NULL                           |
       | details_recIndex        | 0                                  |
       | details_sentAttemptMade | 0                                  |
       | legalFactsIds           | [{"category": "DIGITAL_DELIVERY"}] |
- #   And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
- #     | details | NOT_NULL |
- #     | details_recIndex             | 0                                  |
- #     | details_digitalAddressSource | SPECIAL                            |
- #     | details_sentAttemptMade | 0                                  |
+   # And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate più 3"m" per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
+      | details | NOT_NULL |
+     | details_recIndex             | 0                                  |
+     | details_digitalAddressSource | SPECIAL                            |
+     | details_sentAttemptMade | 0                                  |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details                 | NOT_NULL                                                                                                                                                                                       |
       | details_recIndex        | 0                                                                                                                                                                                              |
