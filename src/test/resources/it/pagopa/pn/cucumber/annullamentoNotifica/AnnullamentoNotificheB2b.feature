@@ -912,6 +912,56 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
 
+  @Annullamento @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24_3] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
+    Given vengono cancellati tutti gli stream presenti del "Comune_1"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream V2 denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+    When viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile_address | test@fail.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
+    Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+
+  @Annullamento @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24_4] Invio notifica digitale ed attesa di un eventi di Timeline stream v1  con controllo EventId incrementale e senza duplicati scenario positivo
+    Given vengono cancellati tutti gli stream presenti del "Comune_1"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
+    And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+    When viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile_address | test@fail.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+
 
   @Annullamento
   Scenario:  [B2B-PA-ANNULLAMENTO_32] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
@@ -995,12 +1045,31 @@ Feature: annullamento notifiche b2b
     Then viene controllato che l'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" non esiste
 
   @Annullamento
-  Scenario: [B2B-PA-ANNULLAMENTO_38] PA mittente: Annullamento notifica in stato “depositata”
+  Scenario: [B2B-PA-ANNULLAMENTO_38] PA mittente: Annullamento notifica in stato “depositata” da parte di una PA diversa da quella che ha inviato la notifica scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    When la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
-    Then l'operazione ha sollevato un errore con status code "404"
+    When la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
+    Then l'operazione di annullamento ha prodotto un errore con status code "404"
+
+    @ignore
+  Scenario: [B2B-PA-ANNULLAMENTO_39] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And viene settato il gruppo della notifica con quello dell'apikey
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo differente del invio notifica
+    And viene impostata l'apikey appena generata
+    Then la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_1"
+    And l'operazione di annullamento ha prodotto un errore con status code "404"
   

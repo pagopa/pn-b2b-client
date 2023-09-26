@@ -98,13 +98,6 @@ public class SharedSteps {
     private Integer wait;
 
     @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
-    private String schedulingDaysSuccessDigitalRefinementString;
-
-    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
-    private String schedulingDaysFailureDigitalRefinementString;
-
-
-    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
     private Duration schedulingDaysSuccessDigitalRefinement;
 
     @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
@@ -125,8 +118,15 @@ public class SharedSteps {
     @Value("${pn.configuration.waiting.for.read.courtesy.message:5m}")
     private Duration waitingForReadCourtesyMessage;
 
+    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
+    private String schedulingDaysSuccessDigitalRefinementString;
+
+    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
+    private String schedulingDaysFailureDigitalRefinementString;
+
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
+
     private final String schedulingDaysSuccessDigitalRefinementDefaultString = "6m";
     private final String schedulingDaysFailureDigitalRefinementDefaultString = "6m";
     private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
@@ -290,7 +290,7 @@ public class SharedSteps {
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())));
     }
-    
+
 
     @And("destinatario Gherkin spa e:")
     public void destinatarioGherkinSpaParam(@Transpose NotificationRecipient recipient) {
@@ -460,8 +460,7 @@ public class SharedSteps {
     @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIUNByComune(String paType) {
         selectPA(paType);
-
-        try {
+        Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
                     this.b2bClient.notificationCancellation(getSentNotification().getIun()));
 
@@ -469,12 +468,27 @@ public class SharedSteps {
             Assertions.assertNotNull(resp.getDetails());
             Assertions.assertTrue(resp.getDetails().size()>0);
             Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+
+    }
+
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN dal comune {string}")
+    public void notificationCaNotBeCanceledWithIUNByComune(String paType) {
+        selectPA(paType);
+        try {
+            this.b2bClient.notificationCancellation(getSentNotification().getIun());
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
             }
         }
+    }
 
+    @Then("l'operazione di annullamento ha prodotto un errore con status code {string}")
+    public void operationProducedErrorWithStatusCode(String statusCode) {
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
@@ -1049,21 +1063,10 @@ public class SharedSteps {
         return schedulingDaysFailureDigitalRefinement;
     }
 
-    public String getSchedulingDaysFailureDigitalRefinementString() {
-        if (schedulingDaysFailureDigitalRefinementString == null) return schedulingDaysFailureDigitalRefinementDefaultString;
-        return schedulingDaysFailureDigitalRefinementString;
-    }
-    public String getSchedulingDaysSuccessDigitalRefinementString() {
-        if (schedulingDaysSuccessDigitalRefinementString == null) return schedulingDaysSuccessDigitalRefinementDefaultString;
-        return schedulingDaysSuccessDigitalRefinementString;
-    }
-
-
     public Duration getSchedulingDaysSuccessAnalogRefinement() {
         if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysSuccessAnalogRefinementDefault;
         return schedulingDaysSuccessAnalogRefinement;
     }
-
 
     public Duration getSchedulingDaysFailureAnalogRefinement() {
         if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysFailureAnalogRefinementDefault;
@@ -1274,7 +1277,6 @@ public class SharedSteps {
             case "DIGITAL_DELIVERY_CREATION_REQUEST":
                 return TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
 
-
         }
         return null;
     }
@@ -1309,6 +1311,15 @@ public class SharedSteps {
 
     public void setProgressResponseElements(List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> progressResponseElements) {
         this.progressResponseElements = progressResponseElements;
+    }
+
+    public String getSchedulingDaysFailureDigitalRefinementString() {
+        if (schedulingDaysFailureDigitalRefinementString == null) return schedulingDaysFailureDigitalRefinementDefaultString;
+        return schedulingDaysFailureDigitalRefinementString;
+    }
+    public String getSchedulingDaysSuccessDigitalRefinementString() {
+        if (schedulingDaysSuccessDigitalRefinementString == null) return schedulingDaysSuccessDigitalRefinementDefaultString;
+        return schedulingDaysSuccessDigitalRefinementString;
     }
 
 
