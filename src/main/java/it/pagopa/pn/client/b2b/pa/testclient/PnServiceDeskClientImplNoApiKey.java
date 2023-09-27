@@ -1,59 +1,39 @@
 package it.pagopa.pn.client.b2b.pa.testclient;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.HealthCheckApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.NotificationApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.api.OperationApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 
 @Component
-public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
+public class PnServiceDeskClientImplNoApiKey implements IPServiceDeskClientImplNoApiKey{
 
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
 
 
-
     private final String basePath;
-
-    private final String apiKey;
 
     private final HealthCheckApi healthCheckApi;
 
     private final NotificationApi notification;
 
     private final OperationApi operation;
-/*
-    private final NotificationRequest req;
-    private final CreateOperationRequest creaOp;
-
-    private final VideoUploadRequest videoreq;
-
-    private final SearchNotificationRequest searchreq;
-
-    private final AnalogAddress address;
-
- */
 
     private final String paId;
     private final String operatorId;
 
-    public PnServiceDeskClientImpl(
+    public PnServiceDeskClientImplNoApiKey(
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.externalChannels.base-url.pagopa}") String deliveryBasePath ,
-            @Value("${pn.external.api-keys.service-desk}") String apiKeyBase ,
             @Value("${pn.internal.pa-id}") String paId
     ) {
 
@@ -62,19 +42,16 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = deliveryBasePath;
-        this.apiKey=apiKeyBase;
-        this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath,apiKey));
-        this.notification = new NotificationApi(newApiClient( restTemplate, basePath,apiKey));
-        this.operation = new OperationApi(newApiClient( restTemplate, basePath,apiKey));
+        this.healthCheckApi = new HealthCheckApi(newApiClient( restTemplate, basePath));
+        this.notification = new NotificationApi(newApiClient( restTemplate, basePath));
+        this.operation = new OperationApi(newApiClient( restTemplate, basePath));
 
 
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String apiKey) {
- //private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
+ private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("x-api-key", apiKey );
         return newApiClient;
     }
 

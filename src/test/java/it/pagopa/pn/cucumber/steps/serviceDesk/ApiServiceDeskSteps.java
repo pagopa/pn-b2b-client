@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.serviceDesk;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplNoApiKey;
+import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplWrongApiKey;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -119,6 +121,7 @@ public class ApiServiceDeskSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.safeStorageClient=safeStorageClient;
         this.ipServiceDeskClient= sharedSteps.getServiceDeskClient();
+
         this.notificationRequest=new NotificationRequest();
         this.notificationsUnreachableResponse=notificationsUnreachableResponse;
         this.analogAddress=new AnalogAddress();

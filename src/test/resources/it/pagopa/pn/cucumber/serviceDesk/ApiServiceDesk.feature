@@ -36,7 +36,6 @@ Feature: Api Service Desk
       | CF   |
       | TMTSFS80A01H703K |
 
-    @ignore
   Scenario Outline: [API-SERVICE_DESK_UNREACHABLE_8] Invocazione del servizio UNREACHABLE per CF con sole notifiche presenti in stato IRR TOT con ultima tentativo di consegna >120g
     Given viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il "<CF>"
     When viene invocato il servizio UNREACHABLE
@@ -51,7 +50,7 @@ Feature: Api Service Desk
     When viene invocato il servizio UNREACHABLE con errore
     Then il servizio risponde con errore "500"
 
-  Scenario Outline: : [API-SERVICE_DESK_UNREACHABLE_10] Invocazione del servizio UNREACHABLE per CF non formalmente corretto
+  Scenario Outline: [API-SERVICE_DESK_UNREACHABLE_10] Invocazione del servizio UNREACHABLE per CF non formalmente corretto
     Given viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il "<CF>"
     When viene invocato il servizio UNREACHABLE con errore
     Then il servizio risponde con errore "400"
@@ -236,7 +235,7 @@ Feature: Api Service Desk
 
     Examples:
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-      | XXXCCC87B12H702E| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80100|NAPOLI|XXX |NA|ITALIA |
+      | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80100|NAPOLI|XXX |NA|ITALIA |
 
   Scenario Outline: [API-SERVICE_PREUPLOAD_VIDEO_30] Invocazione del servizio UPLOAD VIDEO con esito positivo
     Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
@@ -329,6 +328,24 @@ Feature: Api Service Desk
       | FRMTTR76M06B715E |
 
 
+  Scenario Outline: [E2E_40] Inserimento di una nuova richista di reinvio pratiche con stato operation id OK con notifiche in irr tot con ultimo tentativo >120 gg
+    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>"
+    When viene invocato il servizio CREATE_OPERATION
+    Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
+    Given viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    When viene invocato il servizio UPLOAD VIDEO
+    Then la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    Then il video viene caricato su SafeStorage
+    Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF>"
+    When viene invocato il servizio SEARCH con delay
+    Then Il servizio SEARCH risponde con esito positivo e lo stato della consegna è "OK"
+
+    Examples:
+      | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+      | TMTMRC66A01H703L| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
+
+
   Scenario Outline: [API-SERVICE_SEARCH_41] Invocazione del servizio SEARCH con CF con sole notifiche reinviate per irreperibilità totale- notifica multidestinatario
     Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
     Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF1>"
@@ -372,7 +389,7 @@ Feature: Api Service Desk
 
     Examples:
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-      | MNTMRA03M71C615V| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80100|NAPOLI|XXX |NA|ITALIA |
+      | FRMTTR76M06B715E| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
 
     #stato operation VALIDATION= Operazione in fase di validazione di indirizzo e allegati
   @ignore
@@ -393,7 +410,6 @@ Feature: Api Service Desk
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
       | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|SOCCAVO |NA|ITALIA |
 
-
         #stato operation OK= Notifica recapitata
   Scenario Outline: [E2E_46] Inserimento di una nuova richista di reinvio pratiche con stato operation id OK
     Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
@@ -410,7 +426,7 @@ Feature: Api Service Desk
 
     Examples:
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-      | MNTMRA03M71C615V| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
+      | FRMTTR76M06B715E| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
 
   Scenario Outline: [E2E_47] Invocazione del servizio CREATE_OPERATION con nuovo tantativo consegna non recapitata(KO)
     Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
@@ -449,7 +465,7 @@ Feature: Api Service Desk
 
     Examples:
       | CF1             | CF2               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-      | TMTMRZ69A10H501C| TMTLCU69R68L483M| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
+      | TMTCRL80A01F205A| CLMCST42R12D969Z| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
 
 
       #stato operation KO= Notifica in errore di spedizione o in errore di validazione
@@ -482,22 +498,7 @@ Feature: Api Service Desk
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CAP2|CITY |CITY2|PR|COUNTRY|
       | TMTVCN80A01H501P| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80100|80121 |NAPOLI|SOCCAVO |NA|ITALIA |
 
-
-  Scenario Outline: [API-SERVICE_PREUPLOAD_VIDEO_XX1] Invocazione del servizio UPLOAD VIDEO con ContentType vuoto
-    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
-    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>"
-    When viene invocato il servizio CREATE_OPERATION
-    Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
-    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con ContentType vuoto
-    Given viene invocato il servizio UPLOAD VIDEO con errore
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-      | FRMTTR76M06B715E| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80100|NAPOLI|XXX |NA|ITALIA |
-
-
-  Scenario Outline: [API-SERVICE_PREUPLOAD_VIDEO_XX2] Inserimento di una nuova richista di reinvio pratiche con stato caricamento video su SafeStorage e verifica retention
+  Scenario Outline: [API-SERVICE_PREUPLOAD_VIDEO_51] Inserimento di una nuova richista di reinvio pratiche con stato caricamento video su SafeStorage e verifica retention
     Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
     Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>"
     When viene invocato il servizio CREATE_OPERATION
@@ -511,5 +512,60 @@ Feature: Api Service Desk
     Examples:
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
       | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|SOCCAVO |NA|ITALIA |
+
+
+  Scenario Outline: [API-SERVICE_PREUPLOAD_VIDEO_54] Invocazione del servizio UPLOAD VIDEO con ContentType vuoto
+    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>"
+    When viene invocato il servizio CREATE_OPERATION
+    Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
+    And viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con ContentType vuoto
+    Given viene invocato il servizio UPLOAD VIDEO con errore
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+      | FRMTTR76M06B715E| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80100|NAPOLI|XXX |NA|ITALIA |
+
+
+
+  Scenario Outline: [API-AUTH_55] Connessione al client senza API KEY
+    Given viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il "<CF>" senza API Key
+    When viene invocato il servizio UNREACHABLE con errore senza API Key
+    Then il servizio risponde con errore "401" senza API Key
+    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>" senza API Key
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>" senza API Key
+    When viene invocato il servizio CREATE_OPERATION senza API Key con errore
+    Then il servizio risponde con errore "401" senza API Key
+    Given viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO senza API Key
+    When viene invocato il servizio UPLOAD VIDEO senza API Key con "<CF>" con errore
+    Then il servizio risponde con errore "401" senza API Key
+    Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF>" senza API Key
+    Then viene invocato il servizio SEARCH senza API Key con errore
+    Then il servizio risponde con errore "401" senza API Key
+
+    Examples:
+      | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+      | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|SOCCAVO |NA|ITALIA |
+
+  Scenario Outline: [API-AUTH_56] Connessione al client con api key errata
+    Given viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il "<CF>" con API Key errata
+    When viene invocato il servizio UNREACHABLE con errore con API Key errata
+    Then il servizio risponde con errore "401" con API Key errata
+    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>" con API Key errata
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF>" con API Key errata
+    When viene invocato il servizio CREATE_OPERATION con API Key errata con errore
+    Then il servizio risponde con errore "401" con API Key errata
+    Given viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con API Key errata
+    When viene invocato il servizio UPLOAD VIDEO con API Key errata con "<CF>" con errore
+    Then il servizio risponde con errore "401" con API Key errata
+    Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF>" con API Key errata
+    Then viene invocato il servizio SEARCH con API Key errata Key con errore
+    Then il servizio risponde con errore "401" con API Key errata
+
+    Examples:
+      | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+      | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|SOCCAVO |NA|ITALIA |
+
 
 

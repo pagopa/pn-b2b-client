@@ -59,10 +59,13 @@ public class SharedSteps {
     private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnServiceDeskClientImpl serviceDeskClient;
 
+    private final PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey;
+
+    private final PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey;
 
     private NewNotificationResponse newNotificationResponse;
     private NewNotificationRequest notificationRequest;
-    private FullSentNotification notificationResponseComplete;
+    private FullSentNotificationV20 notificationResponseComplete;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime notificationCreationDate;
     public static final String DEFAULT_PA = "Comune_1";
@@ -167,7 +170,7 @@ public class SharedSteps {
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient, PnServiceDeskClientImpl serviceDeskClient) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient, PnServiceDeskClientImpl serviceDeskClient, PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey, PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -176,6 +179,8 @@ public class SharedSteps {
         this.pnExternalServiceClient = pnExternalServiceClient;
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.serviceDeskClient=serviceDeskClient;
+        this.serviceDeskClientImplNoApiKey=serviceDeskClientImplNoApiKey;
+        this.serviceDeskClientImplWrongApiKey=serviceDeskClientImplWrongApiKey;
     }
 
     @BeforeAll
@@ -812,7 +817,7 @@ public class SharedSteps {
         }
     }
 
-    public FullSentNotification getSentNotification() {
+    public FullSentNotificationV20 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -826,7 +831,7 @@ public class SharedSteps {
         this.notificationRequest = notificationRequest;
     }
 
-    public void setSentNotification(FullSentNotification notificationResponseComplete) {
+    public void setSentNotification(FullSentNotificationV20 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -899,6 +904,15 @@ public class SharedSteps {
 
     public PnServiceDeskClientImpl getServiceDeskClient(){
         return serviceDeskClient;
+    }
+
+
+    public PnServiceDeskClientImplNoApiKey getServiceDeskClientNoApiKey(){
+        return serviceDeskClientImplNoApiKey;
+    }
+
+    public PnServiceDeskClientImplWrongApiKey getServiceDeskClientWrongApiKey(){
+        return serviceDeskClientImplWrongApiKey;
     }
 
     public String getMarioCucumberTaxID() {
@@ -1109,8 +1123,8 @@ public class SharedSteps {
     }
 
     public String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
-        TimelineElement timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetails timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV20 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV20 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -1174,10 +1188,10 @@ public class SharedSteps {
         return null;
     }
 
-    public TimelineElement getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElement> timelineElementList = notificationResponseComplete.getTimeline();
+    public TimelineElementV20 getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV20> timelineElementList = notificationResponseComplete.getTimeline();
         String iun;
-        if (timelineEventCategory.equals(TimelineElementCategory.REQUEST_REFUSED.getValue())) {
+        if (timelineEventCategory.equals(TimelineElementCategoryV20.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
             byte[] decodedBytes = Base64.getDecoder().decode(requestId);
             iun = new String(decodedBytes);
@@ -1188,9 +1202,9 @@ public class SharedSteps {
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
-            if (timelineEventCategory.equals(TimelineElementCategory.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategory.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElement timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetails timelineElementDetails = timelineElementFromTest.getDetails();
+            if (timelineEventCategory.equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV20.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
+                TimelineElementV20 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV20 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId) && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).findAny().orElse(null);
             }
             return timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
