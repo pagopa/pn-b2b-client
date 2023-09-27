@@ -1075,8 +1075,18 @@ Feature: annullamento notifiche b2b
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @testLite
-  Scenario: [API-KEY_171] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
+  @Annullamento
+  Scenario: [B2B-PA-ANNULLAMENTO_40] Invio notifica con api b2b e tentativo recupero del documento di una notifica annullata tramite AppIO_scenario negativo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    And il documento notificato può essere recuperata tramite AppIO da "Mario Gherkin"
+    Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
+
+  @Annullamento @ignore
+  Scenario: [B2B-PA-ANNULLAMENTO_41] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
