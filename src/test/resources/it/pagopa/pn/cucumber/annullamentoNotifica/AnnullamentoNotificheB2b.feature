@@ -1054,8 +1054,29 @@ Feature: annullamento notifiche b2b
     When la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     Then l'operazione di annullamento ha prodotto un errore con status code "404"
 
-    @ignore
-  Scenario: [B2B-PA-ANNULLAMENTO_39] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
+  @Annullamento  @ignore
+  Scenario: [B2B-PA-ANNULLAMENTO_39] generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo
+    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And viene settato il gruppo della notifica con quello dell'apikey
+    And viene settato il taxId della notifica con quello dell'apikey
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+    And Viene creata una nuova apiKey per il comune "Comune_1" con gruppo differente del invio notifica
+    And viene impostata l'apikey appena generata
+    When la notifica non può essere annullata dal sistema tramite codice IUN
+    Then l'operazione di annullamento ha prodotto un errore con status code "404"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+  @testLite
+  Scenario: [API-KEY_171] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -1070,6 +1091,8 @@ Feature: annullamento notifiche b2b
     And l'apiKey viene cancellata
     When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo differente del invio notifica
     And viene impostata l'apikey appena generata
-    Then la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_1"
-    And l'operazione di annullamento ha prodotto un errore con status code "404"
+    Then si tenta il recupero dal sistema tramite codice IUN
+    And il recupero della notifica ha sollevato un errore "404"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
   

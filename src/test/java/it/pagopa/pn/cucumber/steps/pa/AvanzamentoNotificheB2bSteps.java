@@ -2466,6 +2466,17 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN")
+    public void notificationCaNotBeCanceledWithIUN() {
+        try {
+            sharedSteps.getB2bClient().notificationCancellation(sharedSteps.getSentNotification().getIun());
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+
+    }
+
+
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string}")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConfailureCause(String timelineEventCategory, String failureCause) {
