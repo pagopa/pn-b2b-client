@@ -9,8 +9,6 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-   # And vengono letti gli eventi fino allo stato della notifica "ACCEPTED"
-   # When la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
@@ -143,7 +141,7 @@ Feature: annullamento notifiche b2b
     And viene verificato il costo = "100" della notifica con un errore "404"
 
 
-  @Annullamento @ignore
+  @Annullamento @ignore #Test Verificabile Manualmente
   Scenario:  [B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -638,7 +636,7 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
 
-  @Annullamento             #Da Verificare...............
+  @Annullamento             #Da Verificare Manualmente
   Scenario:  [B2B-PA-ANNULLAMENTO_22] Annullamento notifica con pagamento: verifica cancellazione IUV da tabella pn-NotificationsCost
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -652,7 +650,7 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     #Then si verifica la coretta cancellazione da tabella pn-NotificationsCost
 
-  @Annullamento #Da Verificare...............
+  @Annullamento  #Da Verificare Manualmente
   Scenario:  [B2B-PA-ANNULLAMENTO_23] PA mittente: notifica con pagamento in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -804,7 +802,6 @@ Feature: annullamento notifiche b2b
     And l'avviso pagopa viene pagato correttamente
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    #And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then si attende il corretto pagamento della notifica
 
           #Da Verificare...............
@@ -826,8 +823,6 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     Then la notifica non può essere annullata dal sistema tramite codice IUN più volte
 
-
-
   @Annullamento
   Scenario: [B2B-PF-MULTI-ANNULLAMENTO_1] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
     Given viene generata una nuova notifica
@@ -848,7 +843,6 @@ Feature: annullamento notifiche b2b
     Then il download ha prodotto un errore con status code "404"
     And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
-
 
   @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST stream v2_scenario positivo
@@ -888,7 +882,6 @@ Feature: annullamento notifiche b2b
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "CANCELLED"
-
 
   @Annullamento @webhook1
   Scenario: [B2B-STREAM_TIMELINE_24_2] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
@@ -962,7 +955,6 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
 
-
   @Annullamento
   Scenario:  [B2B-PA-ANNULLAMENTO_32] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
     Given viene generata una nuova notifica
@@ -1018,7 +1010,6 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" non esiste
 
-
   @Annullamento
   Scenario: [B2B-PA-ANNULLAMENTO_36] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
@@ -1055,7 +1046,7 @@ Feature: annullamento notifiche b2b
     Then l'operazione di annullamento ha prodotto un errore con status code "404"
 
   @Annullamento  @ignore
-  Scenario: [B2B-PA-ANNULLAMENTO_39] generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo
+  Scenario: [B2B-PA-ANNULLAMENTO_39] Generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     And viene generata una nuova notifica
@@ -1085,24 +1076,3 @@ Feature: annullamento notifiche b2b
     And il documento notificato può essere recuperata tramite AppIO da "Mario Gherkin"
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 
-  @Annullamento @ignore
-  Scenario: [B2B-PA-ANNULLAMENTO_41] generazione con gruppo e invio notifica con gruppo e lettura notifica con gruppo diverso ApiKey_scenario netagivo
-    Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
-    And viene impostata l'apikey appena generata
-    And viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And viene settato il gruppo della notifica con quello dell'apikey
-    And viene settato il taxId della notifica con quello dell'apikey
-    And destinatario Mario Cucumber
-    And la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
-    And si verifica la corretta acquisizione della notifica
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
-    When Viene creata una nuova apiKey per il comune "Comune_1" con gruppo differente del invio notifica
-    And viene impostata l'apikey appena generata
-    Then si tenta il recupero dal sistema tramite codice IUN
-    And il recupero della notifica ha sollevato un errore "404"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
-  
