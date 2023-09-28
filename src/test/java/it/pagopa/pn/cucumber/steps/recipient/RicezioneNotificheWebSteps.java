@@ -393,6 +393,15 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @When("viene richiesto l'inserimento del email di cortesia {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
+        try {
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
     @Then("l'inserimento ha prodotto un errore con status code {string}")
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
