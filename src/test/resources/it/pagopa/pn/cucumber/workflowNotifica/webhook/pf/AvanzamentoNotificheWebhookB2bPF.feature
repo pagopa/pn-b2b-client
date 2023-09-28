@@ -241,3 +241,8 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_1" e si attende che lo stato diventi REFUSED
     And si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then vengono letti gli eventi dello stream del "Comune_1" con la verifica di Allegato non trovato
+
+
+
+
+

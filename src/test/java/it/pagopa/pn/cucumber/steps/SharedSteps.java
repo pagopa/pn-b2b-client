@@ -35,6 +35,7 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
@@ -122,8 +123,17 @@ public class SharedSteps {
     @Value("${pn.configuration.waiting.for.read.courtesy.message:5m}")
     private Duration waitingForReadCourtesyMessage;
 
+    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
+    private String schedulingDaysSuccessDigitalRefinementString;
+
+    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
+    private String schedulingDaysFailureDigitalRefinementString;
+
     private final Integer workFlowWaitDefault = 31000;
     private final Integer waitDefault = 10000;
+
+    private final String schedulingDaysSuccessDigitalRefinementDefaultString = "6m";
+    private final String schedulingDaysFailureDigitalRefinementDefaultString = "6m";
     private final Duration schedulingDaysSuccessDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
     private final Duration schedulingDaysFailureDigitalRefinementDefault = DurationStyle.detectAndParse("6m");
     private final Duration schedulingDaysSuccessAnalogRefinementDefault = DurationStyle.detectAndParse("2m");
@@ -133,13 +143,18 @@ public class SharedSteps {
     private final Duration waitingForReadCourtesyMessageDefault = DurationStyle.detectAndParse("5m");
 
 
+    private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> progressResponseElements = null;
+    public static Integer lastEventID = 0;
+
     private String gherkinSpaTaxID = "12666810299";
-    //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
+  //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
+
     private String cucumberSrlTaxID = "20517490320";
 
     private String cucumberSocietyTaxID = "20517490320" ;// "DNNGRL83A01C352D";
     private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
-    // private String gherkinSrltaxId = "CCRMCT06A03A433H";
+   // private String gherkinSrltaxId = "CCRMCT06A03A433H";
+
 
     private String gherkinSrltaxId = "12666810299";
     private String cucumberSpataxId = "20517490320"; //
@@ -181,6 +196,7 @@ public class SharedSteps {
         this.serviceDeskClient=serviceDeskClient;
         this.serviceDeskClientImplNoApiKey=serviceDeskClientImplNoApiKey;
         this.serviceDeskClientImplWrongApiKey=serviceDeskClientImplWrongApiKey;
+
     }
 
     @BeforeAll
@@ -284,7 +300,7 @@ public class SharedSteps {
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())));
     }
-    
+
 
     @And("destinatario Gherkin spa e:")
     public void destinatarioGherkinSpaParam(@Transpose NotificationRecipient recipient) {
@@ -451,6 +467,47 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
+    public void notificationCanBeCanceledWithIUNByComune(String paType) {
+        selectPA(paType);
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    this.b2bClient.notificationCancellation(getSentNotification().getIun()));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+
+    }
+
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN dal comune {string}")
+    public void notificationCaNotBeCanceledWithIUNByComune(String paType) {
+        selectPA(paType);
+        try {
+            this.b2bClient.notificationCancellation(getSentNotification().getIun());
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @Then("l'operazione di annullamento ha prodotto un errore con status code {string}")
+    public void operationProducedErrorWithStatusCode(String statusCode) {
+        Assertions.assertTrue((this.notificationError != null) &&
+                (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata")
+    public void laNotificaVieneInviataOkAndCancelled(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationAndCancell();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataRefused(String paType) {
         selectPA(paType);
@@ -537,6 +594,14 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+
+                try {
+                    Thread.sleep(getWorkFlowWait());
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
 
@@ -547,6 +612,50 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
             Assertions.assertNotNull(notificationResponseComplete);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationAndCancell() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+
+                try {
+                    Thread.sleep(getWorkFlowWait());
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(notificationResponseComplete);
+
+            Assertions.assertDoesNotThrow(() -> {
+                RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                        b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
+
+                Assertions.assertNotNull(resp);
+                Assertions.assertNotNull(resp.getDetails());
+                Assertions.assertTrue(resp.getDetails().size()>0);
+                Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+            });
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -890,6 +999,7 @@ public class SharedSteps {
         return b2bClient;
     }
 
+
     public IPnWebPaClient getWebPaClient() {
         return webClient;
     }
@@ -1092,6 +1202,9 @@ public class SharedSteps {
             case "FILE_PDF_INVALID_ERROR":
                 Assertions.assertTrue("FILE_PDF_INVALID_ERROR".equalsIgnoreCase(errorCode));
                 break;
+            case "NOT_VALID_ADDRESS":
+                Assertions.assertTrue("NOT_VALID_ADDRESS".equalsIgnoreCase(errorCode));
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -1184,6 +1297,9 @@ public class SharedSteps {
                 return TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
             case "COMPLETELY_UNREACHABLE":
                 return TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
+            case "DIGITAL_DELIVERY_CREATION_REQUEST":
+                return TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+
         }
         return null;
     }
@@ -1211,4 +1327,23 @@ public class SharedSteps {
         }
         return timelineElementList.stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
     }
+
+
+    public List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> getProgressResponseElements() {
+        return progressResponseElements;
+    }
+
+    public void setProgressResponseElements(List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model.ProgressResponseElement> progressResponseElements) {
+        this.progressResponseElements = progressResponseElements;
+    }
+
+    public String getSchedulingDaysFailureDigitalRefinementString() {
+        if (schedulingDaysFailureDigitalRefinementString == null) return schedulingDaysFailureDigitalRefinementDefaultString;
+        return schedulingDaysFailureDigitalRefinementString;
+    }
+    public String getSchedulingDaysSuccessDigitalRefinementString() {
+        if (schedulingDaysSuccessDigitalRefinementString == null) return schedulingDaysSuccessDigitalRefinementDefaultString;
+        return schedulingDaysSuccessDigitalRefinementString;
+    }
+
 }

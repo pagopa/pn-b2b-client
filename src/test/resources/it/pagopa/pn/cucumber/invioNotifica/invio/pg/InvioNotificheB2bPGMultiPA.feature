@@ -40,6 +40,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
+        #Test ignorato perchè non esiste più il discorso MVP dei Comuni
+  @ignore
   Scenario: [B2B-PG-MULTI-PA_05] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -80,6 +82,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
+    #Test ignorato perchè non esiste più il discorso MVP dei Comuni
+  @ignore
   Scenario: [B2B-PG-MULTI-PA_09] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |

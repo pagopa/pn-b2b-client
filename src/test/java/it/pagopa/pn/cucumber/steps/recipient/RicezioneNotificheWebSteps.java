@@ -67,6 +67,14 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
+    @Then("la notifica non può essere correttamente recuperata da {string}")
+    public void notificationCanNotBeCorrectlyReadby(String recipient) {
+        sharedSteps.selectUser(recipient);
+        FullReceivedNotification fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        Assertions.assertNull(fullNotification);
+
+    }
+
     @Then("il documento notificato può essere correttamente recuperato da {string}")
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
@@ -82,6 +90,20 @@ public class RicezioneNotificheWebSteps {
             Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
         });
         Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+    }
+
+    @Then("il documento notificato non può essere correttamente recuperato da {string}")
+    public void theDocumentCanNotBeProperlyRetrievedBy(String recipient) {
+        try {
+            sharedSteps.selectUser(recipient);
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
+                    sharedSteps.getSentNotification().getIun(),
+                    Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
+                    null
+            );
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
     }
 
 
@@ -115,10 +137,62 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @And("{string} tenta il recupero dell'attestazione {string}")
+    public void attachmentAttestazioneRetrievedError(String recipient, String attachmentName) {
+        this.notificationError = null;
+        sharedSteps.selectUser(recipient);
+        try {
+            webRecipientClient.getReceivedNotificationAttachment(
+                    sharedSteps.getSentNotification().getIun(),
+                    attachmentName,
+                    null);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
     @Then("(il download)(il recupero) ha prodotto un errore con status code {string}")
     public void operationProducedErrorWithStatusCode(String statusCode) {
         Assertions.assertTrue((this.notificationError != null) &&
                 (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+
+    @And("download attestazione opponibile AAR da parte {string}")
+    public void downloadLegalFactIdAARByRecipient(String recipient) {
+        sharedSteps.selectUser(recipient);
+        this.notificationError = null;
+        try {
+            Thread.sleep(sharedSteps.getWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.AAR_GENERATION;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement = null;
+
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
+            if (element.getCategory().equals(timelineElementInternalCategory)) {
+                timelineElement = element;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(timelineElement);
+        String keySearch = null;
+        if (timelineElement.getDetails().getGeneratedAarUrl() != null && !timelineElement.getDetails().getGeneratedAarUrl().isEmpty()) {
+
+            if (timelineElement.getDetails().getGeneratedAarUrl().contains("PN_AAR")) {
+                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf("PN_AAR"));
+            }
+
+            String finalKeySearch = "safestorage://"+keySearch;
+            try {
+                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.DocumentCategory.AAR,finalKeySearch,null);
+            } catch (HttpStatusCodeException e) {
+                this.notificationError = e;
+            }
+        }
     }
 
 
@@ -319,6 +393,15 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @When("viene richiesto l'inserimento del email di cortesia {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
+        try {
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
     @Then("l'inserimento ha prodotto un errore con status code {string}")
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
@@ -328,12 +411,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement timelineElement =
+         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement =
                  sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(timelineElement.getLegalFactsIds().size(), newTimelineElement.getLegalFactsIds().size());

@@ -13,7 +13,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationResponse sendNewNotification(NewNotificationRequest newNotificationRequest);
 
-    FullSentNotification getSentNotification(String iun);
+    FullSentNotificationV20 getSentNotification(String iun);
 
     NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId);
 
@@ -32,5 +32,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
     void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException;
 
     void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException;
+
+    public RequestStatus notificationCancellation(String iun) throws RestClientException;
+
 
 }

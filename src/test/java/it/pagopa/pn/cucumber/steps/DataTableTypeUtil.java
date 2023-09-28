@@ -57,7 +57,7 @@ public class DataTableTypeUtil {
         NotificationRecipient notificationRecipient =  (new NotificationRecipient()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
-                .internalId(getValue(data,INTERNAL_ID.key))
+                //.internalId(getValue(data,INTERNAL_ID.key))
                 .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
                 .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
                         null : NotificationDigitalAddress.TypeEnum.PEC ))
@@ -84,14 +84,13 @@ public class DataTableTypeUtil {
 
                         .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
                                 null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-
-//                        .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-//                                (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-//                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-//
-//                        .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-//                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-//                                        utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
+      //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
+      //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
+      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
+      //
+      //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+      //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
+      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 )
         );
         /* TEST
@@ -132,10 +131,9 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-
-        TimelineElement timelineElement = new TimelineElement()
+        TimelineElementV20 timelineElement = new TimelineElementV20()
                 .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetails()
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
                         .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
