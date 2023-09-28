@@ -906,7 +906,7 @@ public class AvanzamentoNotificheB2bSteps {
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
             for (TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
-                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getElementId().contains(attempt) && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
+                if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getElementId().contains(attempt) && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode) && element.getDetails().getAttachments().get(0).getDocumentType().equals(tipoDoc)) {
                     timelineElement = element;
                     break;
                 }
