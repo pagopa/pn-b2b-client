@@ -1273,8 +1273,8 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.selectUser(user);
             downloadLegalFact(legalFactCategory, false, false, true, null);
         } catch (AssertionFailedError assertionFailedError) {
-            System.out.println(assertionFailedError.getCause().toString());
-            System.out.println(assertionFailedError.getCause().getMessage().toString());
+           // System.out.println(assertionFailedError.getCause().toString());
+           // System.out.println(assertionFailedError.getCause().getMessage().toString());
             Assertions.assertTrue(assertionFailedError.getCause().getMessage().toString().substring(0, 3).equals(statusCode));
         }
     }
