@@ -10,7 +10,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV21;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
@@ -372,11 +372,12 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
+        //TODO Modificare attachmentIdx al momento e 0...............
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
-                UUID.fromString(mandateToSearch.getMandateId()));
+                UUID.fromString(mandateToSearch.getMandateId()),0);
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
@@ -435,7 +436,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            FullReceivedNotification receivedNotification =
+            FullReceivedNotificationV21 receivedNotification =
                     webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;

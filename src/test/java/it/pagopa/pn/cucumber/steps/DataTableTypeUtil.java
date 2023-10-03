@@ -19,8 +19,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequest convertNotificationRequest(Map<String, String> data){
-        NewNotificationRequest notificationRequest = (new NewNotificationRequest()
+    public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequestV21 notificationRequest = (new NewNotificationRequestV21()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -40,8 +40,8 @@ public class DataTableTypeUtil {
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
         );
         try {
@@ -53,8 +53,8 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized NotificationRecipient convertNotificationRecipient(Map<String, String> data){
-        NotificationRecipient notificationRecipient =  (new NotificationRecipient()
+    public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data){
+        NotificationRecipientV21 notificationRecipient =  (new NotificationRecipientV21()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
@@ -75,15 +75,36 @@ public class DataTableTypeUtil {
                 )
                 .recipientType((getValue(data,RECIPIENT_TYPE.key) == null? null :
                         (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
-                                NotificationRecipient.RecipientTypeEnum.PF :
-                                NotificationRecipient.RecipientTypeEnum.PG)))
-                .payment(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentInfo()
-                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+                                NotificationRecipientV21.RecipientTypeEnum.PF :
+                                NotificationRecipientV21.RecipientTypeEnum.PG)))
+                .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
+                        .pagoPa(new PagoPaPayment()
+                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+
+                        )
+                        .f24(new F24Payment()
+                                .applyCost(true)
+                                .metadataAttachment(
+                                new NotificationMetadataAttachment()
+                                        .contentType("pdf")
+                                        //TODO Completare
+
+                        ))
+                )
+
+
+
+
+
+
+                       // .getPagoPa().setCreditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                        //TODO MOdificare......
+                       // .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
                         //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
 
-                        .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                                null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
+                       // .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
+                              //  null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
       //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
       //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
       //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
@@ -91,7 +112,7 @@ public class DataTableTypeUtil {
       //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
       //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
       //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
-                )
+                //)
         );
         /* TEST
         if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){

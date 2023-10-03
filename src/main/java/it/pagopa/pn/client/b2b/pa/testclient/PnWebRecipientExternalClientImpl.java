@@ -136,12 +136,13 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
 
 
-    public FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotification(iun, mandateId);
+    public FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return recipientReadApi.getReceivedNotificationV21(iun, mandateId);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId);
+
+    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId,Integer attachmentIdx) throws RestClientException {
+        return recipientReadApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId,  attachmentIdx);
     }
 
 

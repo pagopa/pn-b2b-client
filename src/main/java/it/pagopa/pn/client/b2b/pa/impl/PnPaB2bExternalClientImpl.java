@@ -146,9 +146,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname, Integer attachmentIdx) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname);
+        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname,attachmentIdx);
     }
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
@@ -179,27 +179,27 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.presignedUploadRequest( preLoadRequest );
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequest newNotificationRequest) {
+    public NewNotificationResponse sendNewNotification(NewNotificationRequestV21 newNotificationRequest) {
         refreshTokenInteropClient();
-        return newNotificationApi.sendNewNotification( newNotificationRequest );
+        return newNotificationApi.sendNewNotificationV21( newNotificationRequest );
     }
 
     @Override
-    public FullSentNotificationV20 getSentNotification(String iun) {
+    public FullSentNotificationV21 getSentNotification(String iun) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationV20( iun );
+        return senderReadB2BApi.retrieveSentNotificationV21( iun );
     }
 
     @Override
-    public NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV21 getNotificationRequestStatus(String notificationRequestId) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatus( notificationRequestId, null, null );
+        return senderReadB2BApi.retrieveNotificationRequestStatusV21( notificationRequestId, null, null );
     }
 
     @Override
-    public NewNotificationRequestStatusResponse getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+    public NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatus(notificationRequestId,paProtocolNumber,idempotenceToken);
+        return senderReadB2BApi.retrieveNotificationRequestStatusV21(notificationRequestId,paProtocolNumber,idempotenceToken);
     }
 
     @Override

@@ -70,7 +70,7 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        FullReceivedNotification fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        FullReceivedNotificationV21 fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         Assertions.assertNull(fullNotification);
 
     }
@@ -109,11 +109,12 @@ public class RicezioneNotificheWebSteps {
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
+        //TODO Modificare
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
-                null);
+                null,0);
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
@@ -125,13 +126,14 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} tenta il recupero dell'allegato {string}")
     public void attachmentRetrievedError(String recipient, String attachmentName) {
+        //TODO Modificare
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null);
+                    null,0);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -139,13 +141,14 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} tenta il recupero dell'attestazione {string}")
     public void attachmentAttestazioneRetrievedError(String recipient, String attachmentName) {
+        //TODO Modificare
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
             webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null);
+                    null,0);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
