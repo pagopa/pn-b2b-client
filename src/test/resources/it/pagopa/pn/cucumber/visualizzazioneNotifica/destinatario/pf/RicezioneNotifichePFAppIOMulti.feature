@@ -1,5 +1,6 @@
 Feature: recupero notifiche tramite api AppIO b2b
 
+  @appIo
   Scenario: [B2B-PA-APP-IO_6] Invio notifica con api b2b e recupero tramite AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -9,6 +10,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere recuperata tramite AppIO
 
+  @appIo
   Scenario: [B2B-PA-APP-IO_7] Invio notifica con api b2b paProtocolNumber e idemPotenceToken e recupero tramite AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -22,6 +24,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere recuperata tramite AppIO
 
+  @appIo
   Scenario: [B2B-PA-APP-IO_8] Invio notifica con api b2b uguale creditorTaxId e diverso codice avviso recupero tramite AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -54,7 +57,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Gherkin" recupera il documento notificato tramite AppIO
 
-
+  @appIo
   Scenario: [B2B-PA-APP-IO_11] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -64,6 +67,7 @@ Feature: recupero notifiche tramite api AppIO b2b
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Cucumber" recupera la notifica tramite AppIO
 
+  @appIo
   Scenario: [B2B-PA-APP-IO_12] Invio notifica con api b2b e tentativo lettura da altro utente (non delegato)_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

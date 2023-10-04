@@ -100,9 +100,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | via@OK-NonRendicontabile_AR |
-      | taxId | LVLDAA85T50G702B |
-      | digitalDomicile | NULL |
+      | denomination            | via@OK-NonRendicontabile_AR |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-NonRendicontabile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_0.IDX_1"
@@ -222,9 +222,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | FAIL-Giacenza-lte10_890 |
-      | taxId | LVLDAA85T50G702B |
-      | digitalDomicile | NULL |
+      | denomination            | FAIL-Giacenza-lte10_890     |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     #Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012
@@ -371,7 +371,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "PNAG012"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico" tentativo "ATTEMPT_0.IDX_3"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "23L" tentativo "ATTEMPT_0.IDX_3"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "23L" tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007C" e verifica data delay più 0
   #"sequence": "@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.60s-RECAG012.5s-RECAG011B[DOC:ARCAD].5s-RECAG007A.5s-RECAG007B[DOC:23L;DOC:Plico].5s-RECAG007C"
 
@@ -396,3 +396,52 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | physicalAddress_address | Via@fail_RIR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI002"
+
+
+  Scenario: [B2B_TIMELINE_ANALOG_62] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination            | Test AR Fail 2              |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D00"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+
+
+  Scenario: [B2B_TIMELINE_ANALOG_63] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | NNVFNC80A01H501G |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+
+
+  Scenario: [B2B_TIMELINE_ANALOG_64] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario
+      | denomination                        | Test AR Fail                 |
+      | taxId                               | CNCGPP80A01H501J             |
+      | digitalDomicile                     | NULL                         |
+      | physicalAddress_address             | via @FAIL-Irreperibile_AR 16 |
+      | physicalAddress_zip                 | 40121                        |
+      | physicalAddress_municipality        | BOLOGNA                      |
+      | physicalAddress_province            | BO                           |
+      | physicalAddress_addressDetails      | NULL                         |
+      | physicalAddress_municipalityDetails | NULL                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
+
+

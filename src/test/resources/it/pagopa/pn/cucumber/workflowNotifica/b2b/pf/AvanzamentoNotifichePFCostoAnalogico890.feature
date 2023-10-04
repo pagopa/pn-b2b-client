@@ -11,18 +11,17 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      |  physicalAddress_zip    |    <CAP>   |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 00010   |  842  |
-      | 12071   |  859  |
-      | 62010   |  909  |
-      | 06024   |  1026 |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 05010 | 1105  | COLLELUNGO   | TR       |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_2] Invio notifica verifica costo con FSU + @OK_890 + FLAT_RATE positivo
@@ -32,19 +31,18 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      |  physicalAddress_zip    |    <CAP>   |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 12071   |  0  |
-      | 62010   |  0  |
-      | 00010   |  0  |
-      | 06024   |  0  |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 05010 | 0     | COLLELUNGO   | TR        |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario Outline: [B2B_COSTO_ANALOG_PF_890_3] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo
@@ -54,16 +52,22 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      |  physicalAddress_zip    |    <CAP>   |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     Then viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 64010   |  887  |
-      | 33028   |  890  |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 70010 | 861   | VALENZANO    | BA       |
+      | 00010 | 906   | CASAPE       | RM       |
+      | 60010 | 979   | CASINE       | AN       |
+      | 64010 | 954   | ANCARANO     | TE       |
+      | 06031 | 957   | BEVAGNA      | PG       |
+      | 10012 | 925   | BOLLENGO     | TO       |
 
 
   @dev @costoAnalogico @costoCartAAR
@@ -74,14 +78,20 @@ Feature: costo notifica con workflow analogico per persona fisica 890
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      |  physicalAddress_zip    |    <CAP>   |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      |CAP      | COSTO |
-      | 64010   |  0    |
-      | 33028   |  0    |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 70010 | 0     | VALENZANO    | BA       |
+      | 00010 | 0     | CASAPE       | RM       |
+      | 60010 | 0     | CASINE       | AN       |
+      | 64010 | 0     | ANCARANO     | TE       |
+      | 06031 | 0     | BEVAGNA      | PG       |
+      | 10012 | 0     | BOLLENGO     | TO       |

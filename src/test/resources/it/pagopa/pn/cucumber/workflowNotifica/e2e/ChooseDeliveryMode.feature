@@ -25,7 +25,7 @@ Feature: Scelta canale di invio (Digitale o analogico)
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then  viene verificato che l'elemento di timeline "GET_ADDRESS" esista
       | loadTimeline | true |

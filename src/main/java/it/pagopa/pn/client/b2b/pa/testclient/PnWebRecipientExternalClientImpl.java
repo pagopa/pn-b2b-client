@@ -2,6 +2,7 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ApiClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.DocumentsWebApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
@@ -24,6 +25,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
     private final LegalFactsApi legalFactsApi;
+    private final DocumentsWebApi documentsWebApi;
 
     private BearerTokenType bearerTokenSetted = BearerTokenType.USER_2;
 
@@ -65,6 +67,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.userAgent = userAgent;
         this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
         this.legalFactsApi = new LegalFactsApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+        this.documentsWebApi = new DocumentsWebApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -81,31 +85,43 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         switch (bearerToken){
             case USER_1:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
                 break;
             case USER_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
                 break;
             case USER_3:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
                 break;
             case USER_5:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_5;
                 beenSet = true;
                 break;
             case PG_1:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
                 break;
             case PG_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;
@@ -147,5 +163,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.legalFactsApi.getLegalFact(iun,legalFactType,legalFactId);
     }
 
+    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
+        return this.documentsWebApi.getDocumentsWeb(iun,documentType,documentId,mandateId);
+    }
 
 }

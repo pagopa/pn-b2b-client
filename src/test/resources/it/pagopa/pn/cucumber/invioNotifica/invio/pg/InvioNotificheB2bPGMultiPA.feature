@@ -23,10 +23,10 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario Gherkin spa e:
-      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
       | payment | NULL |
     And destinatario Mario Cucumber e:
-      | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
+      | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
       | payment | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
@@ -40,6 +40,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
+        #Test ignorato perchè non esiste più il discorso MVP dei Comuni
+  @ignore
   Scenario: [B2B-PG-MULTI-PA_05] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -55,7 +57,7 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
       | senderDenomination | Comune di palermo |
     And destinatario Gherkin spa
     And destinatario "Mario Cucumber" con uguale codice avviso del destinario numero 1
-      | digitalDomicile_address | FRMTTR76M06B715E@pnpagopa.postecert.local |
+      | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio ha prodotto un errore con status code "500"
 
@@ -64,8 +66,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario Gherkin spa e:
-      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
-      | payment | NULL |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
+      | payment                 | NULL                      |
     And destinatario Cucumber srl e:
       |     payment   |     NULL     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -80,6 +82,8 @@ Feature: invio notifiche b2b con altre PA, multi-destinatario e senza pagamento 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
+    #Test ignorato perchè non esiste più il discorso MVP dei Comuni
+  @ignore
   Scenario: [B2B-PG-MULTI-PA_09] Invio notifica multi destinatario PA non abilitata_scenario negativa
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |

@@ -496,23 +496,28 @@ Feature: Digital send e2e
       | details_isAvailable | true |
       | isFirstSendRetry | true |
     And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER" esista
-      | loadTimeline | true |
+
+      | loadTimeline            | true                                                                                                                                                                                            |
+      | details                 | NOT_NULL                                                                                                                                                                                        |
+      | details_recIndex        | 0                                                                                                                                                                                               |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_analogCost      | 196                                                                                                                                                                                             |
+    And viene verificato che l'elemento di timeline "DIGITAL_DELIVERY_CREATION_REQUEST" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_analogCost | 181 |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_digitalAddressSource | PLATFORM |
-      | details_sentAttemptMade | 1 |
+And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
+  | details | NOT_NULL |
+  | details_recIndex | 0 |
+  | details_digitalAddressSource | PLATFORM |
+  | details_sentAttemptMade | 1 |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | details                 | NOT_NULL                                                                                                                                                                                       |
+      | details_recIndex        | 0                                                                                                                                                                                              |
+      | details_physicalAddress | {"address": "VIA@OK_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+
     And si attende che sia presente il perfezionamento per decorrenza termini
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -532,7 +537,7 @@ Feature: Digital send e2e
     And destinatario
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
-      | digitalDomicile_address | testpagopa1@pnpagopa.postecert.local |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
@@ -540,11 +545,11 @@ Feature: Digital send e2e
       | loadTimeline | true |
       | legalFactsIds | [{"category": "DIGITAL_DELIVERY"}] |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_DOMICILE" esista
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |
@@ -552,7 +557,7 @@ Feature: Digital send e2e
       | details | NOT_NULL |
       | details_responseStatus | OK |
       | details_sendingReceipts | [{"id": null, "system": null}] |
-      | details_digitalAddress | {"address": "testpagopa1@pnpagopa.postecert.local", "type": "PEC"} |
+      | details_digitalAddress | {"address": "testpagopa1@pec.pagopa.it", "type": "PEC"} |
       | details_recIndex | 0 |
       | details_digitalAddressSource | SPECIAL |
       | details_sentAttemptMade | 0 |

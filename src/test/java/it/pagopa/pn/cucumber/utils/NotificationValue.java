@@ -35,12 +35,11 @@ public enum NotificationValue {
     DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","notifichedigitali-uat@pec.pagopa.it",false),
     PHYSICAL_ADDRES("physicalAddress","",false),
     PHYSICAL_ADDRESS_ADDRESS("physicalAddress_address","Via senza nome",false),
-    PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Milano",false),
-    PHYSICAL_ADDRESS_MUNICIPALITYDETAILS("physicalAddress_municipalityDetails","Milano",false),
+    PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Cosenza",false),
+    PHYSICAL_ADDRESS_MUNICIPALITYDETAILS("physicalAddress_municipalityDetails","Cosenza",false),
     PHYSICAL_ADDRESS_AT("at","Presso",false),
-
     PHYSICAL_ADDRESS_DETAILS("physicalAddress_addressDetails","scala b",false),
-    PHYSICAL_ADDRESS_PROVINCE("physicalAddress_province","MI",false),
+    PHYSICAL_ADDRESS_PROVINCE("physicalAddress_province","CS",false),
     PHYSICAL_ADDRESS_STATE("physicalAddress_State","ITALIA",false),
     PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","87100",false),
     RECIPIENT_TYPE("recipientType","PF",false),
@@ -48,9 +47,9 @@ public enum NotificationValue {
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
     PAYMENT_NOTICE_CODE("payment_noticeCode","",true),
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
-    PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/sample.pdf",false),
-    PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/sample.pdf",false),
-    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/sample.pdf",false),
+    PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
+    PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
 
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),

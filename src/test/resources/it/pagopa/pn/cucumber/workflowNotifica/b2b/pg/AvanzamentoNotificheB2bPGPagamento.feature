@@ -106,9 +106,9 @@ Feature: avanzamento b2b persona giuridica pagamento
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | recipientType    | PG                  |
-      | taxId            | LELPTR04A01C352E         |
-      | denomination     | Le Epistolae srl |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+      | taxId            | 27957814470         |
+      | denomination     | Convivio SPA |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
   @ignore
@@ -156,11 +156,11 @@ Feature: avanzamento b2b persona giuridica pagamento
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | recipientType    | PG                  |
-      | taxId            | 70412331207         |
+      | taxId            | 27957814470         |
+      | denomination     | Convivio SPA |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | payment_creditorTaxId | 77777777777 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica

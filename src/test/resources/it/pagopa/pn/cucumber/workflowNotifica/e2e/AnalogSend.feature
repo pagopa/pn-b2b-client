@@ -15,20 +15,20 @@ Feature: Analog send e2e
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 30    |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_physicalAddress | {"address": "VIA@OK-COMPIUTAGIACENZA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
+      | loadTimeline            | true                                                                                                                                                                                                             |
+      | pollingTime             | 30000                                                                                                                                                                                                            |
+      | numCheck                | 30                                                                                                                                                                                                               |
+      | details                 | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex        | 0                                                                                                                                                                                                                |
+      | details_sentAttemptMade | 0                                                                                                                                                                                                                |
+      | details_physicalAddress | {"address": "VIA@OK-COMPIUTAGIACENZA_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | PNAG012 |
-      | details_physicalAddress | {"address": "VIA@OK-COMPIUTAGIACENZA_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_responseStatus | OK |
+      | details                    | NOT_NULL                                                                                                                                                                                                         |
+      | details_recIndex           | 0                                                                                                                                                                                                                |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                |
+      | details_deliveryDetailCode | PNAG012                                                                                                                                                                                                          |
+      | details_physicalAddress    | {"address": "VIA@OK-COMPIUTAGIACENZA_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus     | OK                                                                                                                                                                                                               |
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -62,24 +62,26 @@ Feature: Analog send e2e
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milan", "province": "MI", "zip": "20121", "foreignState": "Italy"} |
+
+      | loadTimeline            | true                                                                                                                                                                      |
+      | details                 | NOT_NULL                                                                                                                                                                  |
+      | details_recIndex        | 0                                                                                                                                                                         |
+      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | RECRN002F |
-      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERY_AR", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_responseStatus | KO |
+      | details                    | NOT_NULL                                                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                                                         |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                         |
+      | details_deliveryDetailCode | RECRN002F                                                                                                                                                                                                 |
+      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERY_AR", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus     | KO                                                                                                                                                                                                        |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 1 |
-      | details_deliveryDetailCode | RECRN001C |
-      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milan", "province": "MI", "zip": "20121", "foreignState": "Italy"} |
-      | details_responseStatus | OK |
+      | details                    | NOT_NULL                                                                                                                                                                  |
+      | details_recIndex           | 0                                                                                                                                                                         |
+      | details_sentAttemptMade    | 1                                                                                                                                                                         |
+      | details_deliveryDetailCode | RECRN001C                                                                                                                                                                 |
+      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_responseStatus     | OK                                                                                                                                                                        |
+
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -123,19 +125,21 @@ Feature: Analog send e2e
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | RECAG003F |
-      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "MILANO", "municipalityDetails": "MILANO", "at": "Presso", "addressDetails": "SCALA B", "province": "MI", "zip": "87100", "foreignState": "ITALIA"} |
-      | details_responseStatus | KO |
+
+      | details                    | NOT_NULL                                                                                                                                                                                                                |
+      | details_recIndex           | 0                                                                                                                                                                                                                       |
+      | details_sentAttemptMade    | 0                                                                                                                                                                                                                       |
+      | details_deliveryDetailCode | RECAG003F                                                                                                                                                                                                               |
+      | details_physicalAddress    | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus     | KO                                                                                                                                                                                                                      |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 1 |
-      | details_deliveryDetailCode | RECAG003F |
-      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milan", "province": "MI", "zip": "20121", "foreignState": "Italy"} |
-      | details_responseStatus | KO |
+      | details                    | NOT_NULL                                                                                                                                                                                     |
+      | details_recIndex           | 0                                                                                                                                                                                            |
+      | details_sentAttemptMade    | 1                                                                                                                                                                                            |
+      | details_deliveryDetailCode | RECAG003F                                                                                                                                                                                    |
+      | details_physicalAddress    | {"address": "via@sequence.5s-CON080.5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_responseStatus     | KO                                                                                                                                                                                           |
+
     And viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_FAILURE_WORKFLOW"
       | details | NOT_NULL |
       | details_recIndex | 0 |

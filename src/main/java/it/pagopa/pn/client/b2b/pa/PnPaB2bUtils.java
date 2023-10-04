@@ -105,8 +105,8 @@ public class PnPaB2bUtils {
                 newdocs.add(this.preloadDocumentWithoutUpload(doc));
             }else{
                 newdocs.add(this.preloadDocument(doc));
-            }
 
+            }
         }
         request.setDocuments(newdocs);
 
@@ -186,6 +186,8 @@ public class PnPaB2bUtils {
     }
 
 
+
+
     public NewNotificationResponse uploadNotificationOverSizeAllegato( NewNotificationRequest request) throws IOException {
 
         NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
@@ -210,6 +212,7 @@ public class PnPaB2bUtils {
         log.info("New Notification Request response {}", response);
         return response;
     }
+
 
     public NewNotificationResponse uploadNotificationInjectionAllegato( NewNotificationRequest request) throws IOException {
 
@@ -264,7 +267,7 @@ public class PnPaB2bUtils {
     }
 
 
-    public FullSentNotification waitForRequestAcceptation( NewNotificationResponse response) {
+    public FullSentNotificationV20 waitForRequestAcceptation( NewNotificationResponse response) {
 
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponse status = null;
@@ -323,7 +326,9 @@ public class PnPaB2bUtils {
         return error == null? null : error;
     }
 
-    public void verifyNotification(FullSentNotification fsn) throws IOException, IllegalStateException {
+
+    public void verifyNotification(FullSentNotificationV20 fsn) throws IOException, IllegalStateException {
+
 
         for (NotificationDocument doc: fsn.getDocuments()) {
 
@@ -524,7 +529,7 @@ public class PnPaB2bUtils {
         return Base64Utils.encodeToString( hash );
     }
 
-    public FullSentNotification getNotificationByIun(String iun) {
+    public FullSentNotificationV20 getNotificationByIun(String iun) {
         return client.getSentNotification( iun );
     }
 
@@ -553,5 +558,60 @@ public class PnPaB2bUtils {
         if(workFlowAcceptedWait == null)return 91000;
         return workFlowAcceptedWait;
     }
+
+    public void verifyCanceledNotification(FullSentNotificationV20 fsn) throws IOException, IllegalStateException {
+
+        for (NotificationDocument doc: fsn.getDocuments()) {
+
+            NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), Integer.parseInt(doc.getDocIdx()));
+            byte[] content = downloadFile(resp.getUrl());
+            String sha256 = computeSha256(new ByteArrayInputStream(content));
+
+            if( ! sha256.equals(resp.getSha256()) ) {
+                throw new IllegalStateException("SHA256 differs " + doc.getDocIdx() );
+            }
+        }
+
+        int i = 0;
+        for (NotificationRecipient recipient : fsn.getRecipients()) {
+
+            if(fsn.getRecipients().get(i).getPayment() != null &&
+                    fsn.getRecipients().get(i).getPayment().getPagoPaForm() != null){
+                NotificationAttachmentDownloadMetadataResponse resp;
+
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
+                checkAttachment( resp );
+            }
+            i++;
+
+        }
+
+        for ( LegalFactsId legalFactsId: fsn.getTimeline().get(0).getLegalFactsIds()) {
+
+            LegalFactDownloadMetadataResponse resp;
+
+            resp = client.getLegalFact(
+                    fsn.getIun(),
+                    LegalFactCategory.SENDER_ACK,
+                    URLEncoder.encode(legalFactsId.getKey(), StandardCharsets.UTF_8.toString())
+            );
+
+            byte[] content = downloadFile(resp.getUrl());
+            String  pdfPrefix = new String( Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
+            if( ! pdfPrefix.contains("PDF") ) {
+                throw new IllegalStateException("LegalFact is not a PDF " + legalFactsId );
+            }
+        }
+
+        //TODO Verificare................................
+        if(
+                fsn.getNotificationStatus() == null
+                        ||
+                        !fsn.getNotificationStatus().equals( NotificationStatus.CANCELLED )
+        ) {
+            throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
+        }
+    }
+
 
 }

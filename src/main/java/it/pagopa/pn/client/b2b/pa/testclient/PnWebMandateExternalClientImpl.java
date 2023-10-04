@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -130,6 +132,21 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     public List<MandateDto> listMandatesByDelegate1(String status) throws RestClientException {
         return mandateServiceApi.listMandatesByDelegate1(status);
     }
+
+    public List<MandateDto> searchMandatesByDelegate(String taxId,List<String> groups) throws RestClientException {
+
+        SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
+        searchMandateRequestDto.setTaxId(taxId);
+        searchMandateRequestDto.setGroups(groups);
+
+        List<MandateDto> result = null;
+        SearchMandateResponseDto res = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        if (res!= null){
+            result = res.getResultsPage();
+        }
+        return result;
+    }
+
 
 
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {

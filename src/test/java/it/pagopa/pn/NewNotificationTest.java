@@ -49,7 +49,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotification newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV20 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
@@ -75,7 +75,7 @@ public class NewNotificationTest {
                 .taxId( taxId )
                 .digitalDomicile( new NotificationDigitalAddress()
                         .type(NotificationDigitalAddress.TypeEnum.PEC)
-                        .address( "FRMTTR76M06B715E@pnpagopa.postecert.local")
+                        .address( "FRMTTR76M06B715E@pec.pagopa.it")
                 )
                 .physicalAddress( new NotificationPhysicalAddress()
                         .address("Via senza nome")

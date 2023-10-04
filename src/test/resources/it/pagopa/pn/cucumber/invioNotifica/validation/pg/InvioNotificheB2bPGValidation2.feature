@@ -174,3 +174,301 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | zip_code |
       | 7500777500779987 |
        #1) 15 max Length
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_1] Invio notifica digitale con multi destinatario corretto e recupero tramite codice IUN scenario positivo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination  | <denominationPF> |
+      | recipientType | PF               |
+      | taxId         | FRMTTR76M06B715E |
+    And destinatario
+      | denomination  | <denominationPG> |
+      | recipientType | PG               |
+      | taxId         | 15376371009      |
+
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | denominationPF                | denominationPG      |
+      | Cristoforo Colombo            | srl azienda         |
+      | Cristoforo Colombo 0123456789 | 0123456789 spa      |
+      | SALVATOR DALI                 | SRL AZIENDA         |
+      | Ilaria-D'Amico/.@_            | l'azienda-@_ /C.R.L |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_2] Invio notifica digitale con multi destinatario errati scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario
+      | denomination  | <denomination> |
+      | recipientType | PG             |
+      | taxId         | 15376371009    |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | denomination                  |
+      | àzìèndà òù                    |
+      | srlNicola&Rossi :"()=?*+;,!^& |
+
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_3] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_address        | <indirizzo> |
+      | physicalAddress_addressDetails | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | indirizzo                       |
+      | via dell'adige- via torino/.@_  |
+      | VIA ADIGE  VIA TORINO           |
+      | via adige 01234 via adige 56789 |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_4] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipality | <comune> |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | comune             |
+      | Milano '-/.@_      |
+      | PARIGI             |
+      | MILANO 01234 56789 |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_5] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipalityDetails | <localita> |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | localita           |
+      | Milano '-/.@_      |
+      | PARIGI             |
+      | MILANO 01234 56789 |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_6] Invio notifica digitale mono destinatario con physicalAddress_state corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_State | <state> |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | state              |
+      | Italia '-/.@_      |
+      | FRANCIA            |
+      | ITALIA 01234 56789 |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_7] Invio notifica digitale mono destinatario con physicalAddress_zip corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipality | <comune>   |
+      | physicalAddress_zip          | <zip_code> |
+      | physicalAddress_province     | <province> |
+      | physicalAddress_State        | <state>    |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | zip_code   | comune | province | state   |
+      | 1212_      | Paris  | Paris    | FRANCIA |
+      | ZONA 1     | Paris  | Paris    | FRANCIA |
+      | 0123456789 | Paris  | Paris    | FRANCIA |
+
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_8] Invio notifica digitale mono destinatario con physicalAddress_province corretto scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_province     | <province> |
+    When la notifica viene inviata dal "Comune_1"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+    Examples:
+      | province       |
+      | mi '-/.@_      |
+      | MI             |
+      | MI 01234 56789 |
+
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_9] Invio notifica digitale multi destinatario con physicalAddress_address errato scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_address | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | indirizzo                    |
+      | via dà via è via ì via ò     |
+      | via dell`adige :"()=?*+;,!^& |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_10] Invio notifica digitale multi destinatario con physicalAddress_addressDetails errato scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_addressDetails | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | indirizzo                    |
+      | via dà via è via ì via ò     |
+      | via dell adige :"()=?*+;,!^& |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_11] Invio notifica digitale multi destinatario con physicalAddress_municipality errato scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipality | <comune> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | comune                               |
+      | san donà Erbè Forlì Nardò Brùsaporto |
+      | san dona :"()=?*+;,!^&               |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipalityDetails | <localita> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | localita                             |
+      | san donà Erbè Forlì Nardò Brùsaporto |
+      | san dona :"()=?*+;,!^&                            |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_State | <state> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | state                            |
+      | Città d'Avòrio Rénmín Mùrìtaniya |
+      | Citta d`Avorio :"()=?*+;,!^&     |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_zip | <zip_code> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | zip_code                     |
+      | via dà via è via ì via ò     |
+      | via dell`adige :"()=?*+;,!^& |
+
+  @7621
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And destinatario Gherkin spa e:
+      | physicalAddress_province | <province> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | province                         |
+      | Città d'Avòrio Rénmín Mùrìtaniya |
+      | Citta d`Avorio :"()=?*+;,!^&     |
+
+  @7632
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_16] invio notifiche digitali multi destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
+
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_zip          | <zip_code>     |
+      | physicalAddress_province     | <province>     |
+    And destinatario Gherkin spa e:
+
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_zip          | <zip_code>     |
+      | physicalAddress_province     | <province>     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Examples:
+      | municipality     | zip_code | province |
+      | SETTIMO MILANESE | 20019    | MI       |
+      | Milano           | 20121    | MI       |
+      | VILLAPIANA LIDO  | 87076    | CS       |
+
+  @7632
+  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_17] invio notifiche digitali multi destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin
+    And destinatario Gherkin spa e:
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_zip          | <zip_code>     |
+      | physicalAddress_province     | <province>     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+    Examples:
+      | municipality | zip_code | province |
+      | Palermo      | 20019    | MI       |
+      | Milano       | 90121    | PA       |
+      | MILANO       | 90121    | MI       |
+      | Milano       | 90121    | RM       |
