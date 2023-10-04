@@ -2085,6 +2085,162 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
 </details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_33] Invio notifica digitale con mono destinatario con denomination corretta e recupero tramite codice IUN (p.fisica)_scenario positivo </summary>
+    
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatario con denomination corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario con denomination errata scenario negativo </summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatario con denomination non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_35] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails  corretto (p.fisica)_scenario positivo </summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_address e physicalAddress_addressDetails corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_36] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_municipality corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_37] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_municipalityDetails corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_38] Invio notifica digitale mono destinatario con physicalAddress_State corretto (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_State corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_39] Invio notifica digitale mono destinatario con physicalAddress_zip corretto (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_zip corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_40] Invio notifica digitale mono destinatario con physicalAddress_province corretto (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_province corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary></summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_address non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary></summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_address non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary></summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_address non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary></summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con physicalAddress_address non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
 
 #### Persona giuridica
 
