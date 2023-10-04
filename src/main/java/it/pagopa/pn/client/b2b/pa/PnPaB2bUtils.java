@@ -563,6 +563,12 @@ public class PnPaB2bUtils {
                 .contentType("application/pdf")
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
+    public NotificationMetadataAttachment newMetadataAttachment(String resourcePath ) {
+        return new NotificationMetadataAttachment()
+                .contentType("application/pdf")
+                .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
 
 
     private Integer getWorkFlowWait() {

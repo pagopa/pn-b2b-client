@@ -50,6 +50,8 @@ public enum NotificationValue {
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+    PAYMENT_APPLY_COST("apply_cost","NO",false),
+    TITLE_PAYMENT("title_payment","F24",false),
 
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),

@@ -54,6 +54,9 @@ public class DataTableTypeUtil {
 
     @DataTableType
     public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data){
+
+
+
         NotificationRecipientV21 notificationRecipient =  (new NotificationRecipientV21()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
@@ -77,41 +80,39 @@ public class DataTableTypeUtil {
                         (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
                                 NotificationRecipientV21.RecipientTypeEnum.PF :
                                 NotificationRecipientV21.RecipientTypeEnum.PG)))
+
+                //TODO Pagamenti...
                 .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
-                        .pagoPa(new PagoPaPayment()
+
+                        .pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
+                                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("SI")?
+                                new PagoPaPayment()
                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))):null))
 
-                        )
-                        .f24(new F24Payment()
-                                .applyCost(true)
-                                .metadataAttachment(
-                                new NotificationMetadataAttachment()
-                                        .contentType("pdf")
-                                        //TODO Completare
+                        .f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
+                                        new F24Payment()
+                                                .title(getValue(data,TITLE_PAYMENT.key))
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))):null))
 
-                        ))
                 )
 
 
 
 
-
-
-                       // .getPagoPa().setCreditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                        //TODO MOdificare......
-                       // .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
                         //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
-
-                       // .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                              //  null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-      //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-      //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-      //
-      //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-      //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
+                        //.pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
+                        //        null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
+                        //.f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
+                       // (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
+                        //                utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
+                       // .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+                       //          (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
+                       //                utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
                 //)
         );
         /* TEST
