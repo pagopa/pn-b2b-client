@@ -129,11 +129,17 @@ public class SharedSteps {
 
 
     private String gherkinSpaTaxID = "12666810299";
-    private String cucumberSrlTaxID = "SCTPTR04A01C352E";
-    private String cucumberSocietyTaxID = "DNNGRL83A01C352D";
+    //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
+
+    private String cucumberSrlTaxID = "20517490320";
+
+    private String cucumberSocietyTaxID = "20517490320" ;// "DNNGRL83A01C352D";
     private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
-    private String gherkinSrltaxId = "CCRMCT06A03A433H";
-    private String cucumberSpataxId = "20517490320";
+    // private String gherkinSrltaxId = "CCRMCT06A03A433H";
+
+
+    private String gherkinSrltaxId = "12666810299";
+    private String cucumberSpataxId = "20517490320"; //
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
