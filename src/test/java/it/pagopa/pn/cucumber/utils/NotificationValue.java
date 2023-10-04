@@ -44,12 +44,16 @@ public enum NotificationValue {
     PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","87100",false),
     RECIPIENT_TYPE("recipientType","PF",false),
     PAYMENT("payment","",false),
+    PAYMENT_MULTY("payment_multy","",false),
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
     PAYMENT_NOTICE_CODE("payment_noticeCode","",true),
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
+    PAYMENT_PAGOPA_FORM_1("payment_pagoPaForm_1","classpath:/AvvisoPagoPA.pdf",false),
+
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+    PAYMENT_F24_STANDARD_1("payment_f24standard_1","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
     PAYMENT_APPLY_COST("apply_cost","NO",false),
     TITLE_PAYMENT("title_payment","F24",false),
 

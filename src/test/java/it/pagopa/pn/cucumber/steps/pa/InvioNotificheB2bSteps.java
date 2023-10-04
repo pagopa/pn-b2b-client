@@ -184,6 +184,9 @@ public class InvioNotificheB2bSteps {
             case "PAGOPA":
                 key = this.notificationPaymentAttachmentPreload.getRef().getKey();
                 break;
+            case "F24_STANDARD":
+                key = this.notificationPaymentAttachmentPreload.getRef().getKey();
+                break;
             default:
                 throw new IllegalArgumentException();
         }

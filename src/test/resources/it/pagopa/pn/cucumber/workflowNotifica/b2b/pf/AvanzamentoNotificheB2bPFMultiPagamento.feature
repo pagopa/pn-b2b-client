@@ -2,7 +2,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
  #24 PA - inserimento notifica mono destinatario con un solo avviso pagoPA [TA]
-  Scenario: [B2B-PA-PAY_MULTI_24] Invio notifica e verifica amount
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -15,8 +16,24 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
+   #25 PA - inserimento notifica mono destinatario con un solo F24 [TA]
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "100" della notifica
+
  #25 PA - inserimento notifica mono destinatario con un solo F24 [TA]
-  Scenario: [B2B-PA-PAY_MULTI_25] Invio e visualizzazione notifica e verifica amount e effectiveDate
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_25] PA - inserimento notifica mono destinatario con un solo F24
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -25,15 +42,46 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then il modello f24 viene pagato correttamente
     And si attende il corretto pagamento della notifica
 
  #26 PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24 [TA]
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_26] PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_pagoPaForm_1 | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "100" della notifica
+
 
  #27  PA - inserimento notifica mono destinatario con più F24 e nessun avviso pagoPA [TA]
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_27] PA - inserimento notifica mono destinatario con più F24 e nessun avviso pagoPA
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | NULL |
+      | payment_pagoPaForm_1 | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | payment_f24standard_1 | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "100" della notifica
 
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_28] Invio notifica e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -47,12 +95,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
-
+#TODO CHIEDERE INFO.............
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
 
 
 
-
+#TODO CHIEDERE INFO.............
   #30 PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
 
 
@@ -60,7 +108,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #31 PA - inserimento notifica multi destinatario con un solo avviso pagoPA [TA]
-  Scenario: [B2B-PA-PAY_MULTI_31] Invio notifica e verifica amount
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_31] PA - inserimento notifica multi destinatario con un solo avviso pagoPA
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -76,46 +125,79 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-
-
 
 
   #32 PA - inserimento notifica multi destinatario con un solo F24 [TA]
-  Scenario: [B2B-PA-PAY_MULTI_32] Invio notifica e verifica amount
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_32] PA - inserimento notifica multi destinatario con un solo F24
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
     And destinatario
       | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
+      | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24standard | SI |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm | SI |
+      | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24standard | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-
-
 
 
 
   #33 PA - inserimento notifica multi destinatario con più avvisi pagoPA [TA]
-
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_33] PA - inserimento notifica multi destinatario con più avvisi pagoPA
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_pagoPaForm_1 | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm | SI |
+      | payment_pagoPaForm_1 | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "100" della notifica
 
 
 
 
   #34 PA - inserimento notifica multi destinatario con più F24 [TA]
-
-
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_32] PA - inserimento notifica multi destinatario con un solo F24
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | payment_f24standard_1 | SI |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | payment_f24standard_1 | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato il costo = "100" della notifica
 
 
 
   #35 PA - download modello F24
-  Scenario: [B2B-PA-PAY_MULTI_35] download documento F24_STANDARD_scenario positivo
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_35] PA - download modello F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -131,7 +213,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #36 PA - download allegato pagoPA
-  Scenario: [B2B-PA-PAY_MULTI_36] download documento PAGOPA_scenario positivo
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_36] PA - download allegato pagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -146,21 +229,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then il download si conclude correttamente
 
 
-
-
-
+   #TODO CHIEDERE INFO.............
   #37 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
 
 
 
 
-
+ #TODO CHIEDERE INFO.............
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
 
 
 
 
-
+ #TODO CHIEDERE INFO.............
   #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
 
 
@@ -170,41 +251,55 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #40 Destinatario - pagamento notifica mono destinatario con un solo avviso pagoPA: verifica stato “In elaborazione”
 
 
-
-
-
+  #TODO TEST MANUALE.........INFO
   #41 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata - verifica della presenza stato “Pagato”
 
-
+  #TODO TEST MANUALE.........INFO ...VERIFICARE...
   #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
 
 
-
-
-
+  #TODO TEST MANUALE.........INFO
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
 
-
-
-
+  #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
 
 
   #45 Destinatario - download modello F24
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_45] Destinatario PF: download allegato pagoPA
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When "Mario Cucumber" tenta il recupero dell'allegato "F24_STANDARD"
+    Then il download si conclude correttamente
+
 
   #46 Destinatario - download allegato pagoPA
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_46] Destinatario PF: download allegato pagoPA
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    Then il download si conclude correttamente
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
 
   #48 Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
 
-
-
-
-
   #49 Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: pagamento di un avviso
-
 
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
 
@@ -297,36 +392,66 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
-
-
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | NULL   |
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
 
 
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | NULL   |
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
 
 
 
   #71 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa [TA]
-
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
+    Given viene effettuato il pre-caricamento di un allegato
+    Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
 
 
 
 
   #72 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24
+    Given viene effettuato il pre-caricamento di un allegato
+    Then viene effettuato un controllo sulla durata della retention di "F24_STANDARD" precaricato
 
 
 
-
-
+#TODO Chiedere Info....
   #73 PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
 
 
 
-
+#TODO Chiedere Info....
   #74 Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
 
 
-
+#SOLO TM
   #75 PA -  Visualizzazione Box Allegati Modelli F24
 
 
