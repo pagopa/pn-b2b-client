@@ -45,6 +45,7 @@ public enum NotificationValue {
     RECIPIENT_TYPE("recipientType","PF",false),
     PAYMENT("payment","",false),
     PAYMENT_MULTY("payment_multy","",false),
+    PAYMENT_MULTY_NUMBER("payment_multy_number","0",false),
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
     PAYMENT_NOTICE_CODE("payment_noticeCode","",true),
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
