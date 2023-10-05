@@ -1066,7 +1066,7 @@ Feature: annullamento notifiche b2b
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @Annullamento
+  @Annullamento @appIo
   Scenario: [B2B-PA-ANNULLAMENTO_40] Invio notifica con api b2b e tentativo recupero del documento di una notifica annullata tramite AppIO_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
