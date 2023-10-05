@@ -83,12 +83,13 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentInfo = recipient.getPayments();
-            if(paymentInfo != null){
-                for (NotificationPaymentItem tmp: paymentInfo) {
-
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
                 }
-                //    paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+               // paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
 //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
@@ -114,13 +115,23 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+        //for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
             }
              **/
-        }
+        //}
 
         log.info("New Notification Request {}", request);
         if ((request.getDocuments()!= null && request.getDocuments().size()>0) && !noUpload){
@@ -142,13 +153,23 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+       // for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
             }
              **/
-        }
+        //}
 
         log.info("New Notification Request {}", request);
         if (request.getDocuments()!= null && request.getDocuments().size()>0){
@@ -178,6 +199,16 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+       // for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
@@ -186,7 +217,7 @@ public class PnPaB2bUtils {
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
              **/
-        }
+       // }
 
         log.info("New Notification Request {}", request);
         NewNotificationResponse response = client.sendNewNotification( request );
@@ -207,6 +238,16 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+       // for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
@@ -215,7 +256,7 @@ public class PnPaB2bUtils {
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
              **/
-        }
+       // }
 
         log.info("New Notification Request {}", request);
 
@@ -233,8 +274,18 @@ public class PnPaB2bUtils {
         newdocs.add(this.preloadDocument(notificationDocument));
 
         request.setDocuments(newdocs);
-
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+
+    //    for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
@@ -243,7 +294,7 @@ public class PnPaB2bUtils {
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
              **/
-        }
+       // }
 
         log.info("New Notification Request {}", request);
 
@@ -264,6 +315,16 @@ public class PnPaB2bUtils {
         request.setDocuments(newdocs);
 
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                }
+            }
+        }
+
+      //  for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
@@ -272,7 +333,7 @@ public class PnPaB2bUtils {
 //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
              **/
-        }
+       // }
 
         log.info("New Notification Request {}", request);
 
@@ -473,6 +534,37 @@ public class PnPaB2bUtils {
         }
 
     }
+
+
+    public NotificationMetadataAttachment preloadMetadataAttachment( NotificationMetadataAttachment attachment) throws IOException {
+        if( attachment != null ) {
+            String resourceName = attachment.getRef().getKey();
+
+            String sha256 = computeSha256( resourceName );
+
+            PreLoadResponse preloadResp = getPreLoadResponse( sha256 );
+            String key = preloadResp.getKey();
+            String secret = preloadResp.getSecret();
+            String url = preloadResp.getUrl();
+
+            log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                    resourceName, sha256, secret, url));
+
+            loadToPresigned( url, secret, sha256, resourceName );
+
+            attachment.getRef().setKey( key );
+            attachment.getRef().setVersionToken("v1");
+            attachment.digests( new NotificationAttachmentDigests().sha256( sha256 ));
+
+            return attachment;
+        }
+        else {
+            return null;
+        }
+
+    }
+
+
 
 
     private void loadToPresigned( String url, String secret, String sha256, String resource ) {
