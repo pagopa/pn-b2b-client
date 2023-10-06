@@ -1147,11 +1147,20 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene effettuato il pre-caricamento di un allegato
-    Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
+    Then viene effettuato un controllo sulla durata della retention del PAGOPA di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
 
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
+  Scenario: [B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (7gg precaricato) - PagoPa
+    Given viene effettuato il pre-caricamento di un allegato
+    Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
+
+
+
+
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_71_2] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -1167,8 +1176,16 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #72 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24
+    Given viene effettuato il pre-caricamento dei metadati f24
+    Then viene effettuato un controllo sulla durata della retention del F24 di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+
+
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_72_1] Verifica retention allegati di pagamento (7gg precaricato) - F24
     Given viene effettuato il pre-caricamento di un allegato
     Then viene effettuato un controllo sulla durata della retention di "F24_STANDARD" precaricato
+
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
@@ -1219,6 +1236,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
-#TODO SOLO TM..
+#TODO SOLO TM....
   #75 PA -  Visualizzazione Box Allegati Modelli F24
 

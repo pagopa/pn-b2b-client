@@ -177,7 +177,7 @@ public class InvioNotificheB2bSteps {
 
     @Given("viene effettuato il pre-caricamento dei metadati f24")
     public void preLoadingOfMetaDatiAttachmentF24() {
-        NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
+        NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.json");
         AtomicReference<NotificationMetadataAttachment> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationMetadataAttachment)));
         try {
@@ -188,6 +188,7 @@ public class InvioNotificheB2bSteps {
         }
         this.notificationMetadataAttachment = notificationDocumentAtomic.get();
     }
+
 
     @Then("viene effettuato un controllo sulla durata della retention di {string} precaricato")
     public void retentionCheckPreload(String documentType) {
@@ -207,6 +208,7 @@ public class InvioNotificheB2bSteps {
         }
         Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
+
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {
@@ -241,6 +243,37 @@ public class InvioNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
     }
+
+    @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
+    public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
+        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        switch (documentType) {
+            case "ATTACHMENTS":
+                for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
+                    String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getF24().getMetadataAttachment().getRef().getKey();
+                    Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
+    @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
+    public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
+        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        switch (documentType) {
+            case "ATTACHMENTS":
+                for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
+                    String key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(i).getPagoPa().getAttachment().getRef().getKey();
+                    Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
+                }
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
 
 
     @Given("viene letta la notifica {string} dal {string}")
