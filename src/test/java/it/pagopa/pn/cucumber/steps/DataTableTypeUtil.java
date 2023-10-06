@@ -90,14 +90,14 @@ public class DataTableTypeUtil {
                                 new PagoPaPayment()
                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI")?true:false)
                                 .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))):null))
 
                         .f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
                                 (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
                                         new F24Payment()
                                                 .title(getValue(data,TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")?true:false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))):null))
 
                 )
@@ -109,14 +109,14 @@ public class DataTableTypeUtil {
                                         new PagoPaPayment()
                                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI")?true:false)
                                                 .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM_1.key))):null))
 
                         .f24(getValue(data, PAYMENT_F24_STANDARD_1.key) == null ? null :
                                 (getValue(data, PAYMENT_F24_STANDARD_1.key).equalsIgnoreCase("SI")?
                                         new F24Payment()
                                                 .title(getValue(data,TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI")?true:false)
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")?true:false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_1.key))):null))
 
                 )
@@ -144,14 +144,14 @@ public class DataTableTypeUtil {
                                 new PagoPaPayment()
                                         .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                         .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI") ? true : false)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
                                         .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))) : null));
 
                 addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
                         (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
                                 new F24Payment()
                                         .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST.key).equalsIgnoreCase("SI") ? true : false)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                         .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
                 listPayment.add(addPaymentsItem);
             }

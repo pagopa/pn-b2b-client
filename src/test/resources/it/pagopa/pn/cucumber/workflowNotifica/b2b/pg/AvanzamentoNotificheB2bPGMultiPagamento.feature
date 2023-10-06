@@ -3,18 +3,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
  #24 PA - inserimento notifica mono destinatario con un solo avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -25,12 +26,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -41,13 +43,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -58,21 +60,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -86,12 +88,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -102,12 +105,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -120,8 +124,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
@@ -136,8 +141,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
@@ -154,44 +160,30 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | payment_f24standard | 4 |
+
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_26_3] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_pagoPaForm_1 | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
-
 
 
  #27  PA - inserimento notifica mono destinatario con più F24 e nessun avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_27] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_27] PA - inserimento notifica mono destinatario con più F24 e nessun avviso pagoPA
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_pagoPaForm_1 | NULL |
       | payment_f24flatRate | NULL |
@@ -202,53 +194,32 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
-  @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_28] Invio notifica e verifica amount
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
+#TODO CHIEDERE INFO.............
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_29] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
 
 
+
+#TODO CHIEDERE INFO.............
   #30 PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_30] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
+
+
+
 
 
   #31 PA - inserimento notifica multi destinatario con un solo avviso pagoPA [TA]
@@ -259,15 +230,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -283,19 +256,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -309,19 +284,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -334,19 +311,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | SI |
+      | apply_cost | SI |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -360,8 +339,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
@@ -386,13 +366,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
       | payment_f24standard_1 | SI |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl:
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -410,7 +391,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI   |
@@ -427,7 +408,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI   |
@@ -437,75 +418,29 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then il download si conclude correttamente
 
 
-   #TODO CHIEDERE INFO.............Vecchio Requisito
+   #TODO CHIEDERE INFO.............
   #37 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: ad ogni avviso pagoPA corrisponde un F24 [TA]
 
 
 
 
+ #TODO CHIEDERE INFO.............
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
-    And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
+
 
 
 
  #TODO CHIEDERE INFO.............
   #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_F24 | SI |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_F24 | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
-    And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
 
 
-#TODO VECCHIO REQUISITO
+
+
+
   #40 Destinatario - pagamento notifica mono destinatario con un solo avviso pagoPA: verifica stato “In elaborazione”
 
 
- #TODO VECCHIO REQUISITO
+  #TODO TEST MANUALE.........INFO
   #41 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata - verifica della presenza stato “Pagato”
 
 
@@ -517,12 +452,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NO |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -537,13 +473,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NO |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     #TODO parametrizzare lo step per avviso di pagamento.......
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -551,25 +488,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
-  Scenario: [B2B-PA-PAY_MULTI_43] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
-      | apply_cost_pagopa | NO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #TODO parametrizzare lo step per avviso di pagamento.......
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
-
-
   @pagamentiMultipli
     #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
   Scenario: [B2B-PA-PAY_MULTI_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
@@ -578,13 +496,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     #TODO parametrizzare lo step per avviso di pagamento.......
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -597,12 +515,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When "Mario Cucumber" tenta il recupero dell'allegato "F24"
+    When "Mario Cucumber" tenta il recupero dell'allegato "F24_STANDARD"
     Then il download si conclude correttamente
 
 
@@ -612,7 +530,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
@@ -630,79 +548,26 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_47_1] Destinatario 1 - pagamento notifica multi destinatario con più avvisi pagoPA e con pagamento di un solo avviso
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_pagoPaForm_1 | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | SI |
-      | payment_pagoPaForm_1 | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 0
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_47_2] Destinatario 1 - pagamento notifica multi destinatario con più avvisi PagoPa e modello F24 e con pagamento di un solo avviso
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_pagoPaForm_1 | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | SI |
-      | payment_pagoPaForm_1 | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 0
-
 
   #48 Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
@@ -712,19 +577,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -742,21 +609,23 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_pagoPaForm_1 | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -772,21 +641,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | NO |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -803,12 +672,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -822,12 +692,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -840,12 +711,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NO |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -859,13 +731,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -880,13 +752,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
@@ -900,19 +772,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -928,19 +802,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -956,19 +832,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -983,25 +861,26 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_pagopa | SI |
+      | apply_cost | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
-
 #SOLO TM
   #60 PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
@@ -1011,38 +890,37 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
+      | apply_cost | NO |
     And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | DivinaCommedia Srl  |
+      | recipientType   | PG             |
+      | taxId | 70412331207 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
+      | apply_cost | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
-
-
-
-#TODO SOLO TM
+#SOLO TM
   #61 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
 
 
-#TODO SOLO TM
+
   #62 Documento PagoPa: Inserimento dati pagamento e relativa verifica dei dati nel documento generato di avviso PagoPA (es. amount, description, expirationDate, status, ecc.) [TA]
 
 
 
 
-#TODO SOLO TM
+#SOLO TM
   #63 Documento F24: Inserimento dati pagamento e costruzione del documento F24 e relativa verifica dei dati nel documento generato F24 [TA]
 
 
@@ -1054,49 +932,26 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-#TODO NO TEST...
-  #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO TEST...
+
+  #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO
 
 
-#TODO NO TEST....
-  #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
+
+  #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO
 
 
 
 
 
   #67 Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_60] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | apply_cost_f24 | NO |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
-    And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
-    #TODO Controllare che non ci sono eventi in timeline di pagamenti f24.......Chiedere...
 
 
 
-#TODO da Verificare........
+
+
   #68 Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA]:
+
+
 
  # 'PAYMENT_UNAVAILABLE', // Technical Error
  # 'PAYMENT_UNKNOWN', // Payment data error
@@ -1109,6 +964,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
+
+
+
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
@@ -1117,7 +975,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
@@ -1134,7 +992,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
-    And destinatario Mario Cucumber e:
+    And destinatario Cucumber srl
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
@@ -1150,18 +1008,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene effettuato un controllo sulla durata della retention di "PAGOPA" precaricato
 
 
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
 
   #72 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
@@ -1170,55 +1016,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene effettuato il pre-caricamento di un allegato
     Then viene effettuato un controllo sulla durata della retention di "F24_STANDARD" precaricato
 
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And viene effettuato un controllo sulla durata della retention di "F24_STANDARD"
 
 
-
-#TODO Chiedere Info.....Modificare il test
+#TODO Chiedere Info....
   #73 PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-  @dev
-  Scenario: [B2B-PA-PAY_MULTI_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
-    When viene richiesto il download del documento "F24_STANDARD"
-    Then il download si conclude correttamente
 
 
 
-#TODO Chiedere Info....Modificare il test
+#TODO Chiedere Info....
   #74 Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-  Scenario: [B2B-PA-PAY_MULTI_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
-    And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
-#TODO SOLO TM..
+
+#SOLO TM
   #75 PA -  Visualizzazione Box Allegati Modelli F24
 

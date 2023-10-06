@@ -405,7 +405,6 @@ public class PnPaB2bUtils {
 
     public void verifyNotification(FullSentNotificationV21 fsn) throws IOException, IllegalStateException {
 
-//TODO Modificare.............
         for (NotificationDocument doc: fsn.getDocuments()) {
 
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), Integer.parseInt(doc.getDocIdx()));
@@ -419,16 +418,25 @@ public class PnPaB2bUtils {
 
         int i = 0;
         for (NotificationRecipientV21 recipient : fsn.getRecipients()) {
-            /**
-            if(fsn.getRecipients().get(i).getPayment() != null &&
-                    fsn.getRecipients().get(i).getPayment().getPagoPaForm() != null){
+
+            if(fsn.getRecipients().get(i).getPayments() != null &&
+                    fsn.getRecipients().get(i).getPayments().get(0).getPagoPa() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
-                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA",0);
+
                 checkAttachment( resp );
             }
+            if(fsn.getRecipients().get(i).getPayments() != null &&
+                    fsn.getRecipients().get(i).getPayments().get(0).getF24() != null){
+                NotificationAttachmentDownloadMetadataResponse resp;
+
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "F24" ,0);
+
+                checkAttachment( resp );
+            }
+
             i++;
-             **/
 
         }
 
@@ -457,6 +465,46 @@ public class PnPaB2bUtils {
             throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
         }
     }
+
+
+    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV21 fsn, String attachname) throws IOException, IllegalStateException {
+
+        for (NotificationDocument doc: fsn.getDocuments()) {
+
+            NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), Integer.parseInt(doc.getDocIdx()));
+            byte[] content = downloadFile(resp.getUrl());
+            String sha256 = computeSha256(new ByteArrayInputStream(content));
+
+            if( ! sha256.equals(resp.getSha256()) ) {
+                throw new IllegalStateException("SHA256 differs " + doc.getDocIdx() );
+            }
+        }
+
+        int i = 0;
+        for (NotificationRecipientV21 recipient : fsn.getRecipients()) {
+
+            if(fsn.getRecipients().get(i).getPayments() != null &&
+                    fsn.getRecipients().get(i).getPayments().get(0).getPagoPa() != null){
+                NotificationAttachmentDownloadMetadataResponse resp;
+
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA",0);
+
+                checkAttachment( resp );
+            }
+            if(fsn.getRecipients().get(i).getPayments() != null &&
+                    fsn.getRecipients().get(i).getPayments().get(0).getF24() != null){
+                NotificationAttachmentDownloadMetadataResponse resp;
+
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "F24" ,0);
+
+                checkAttachment( resp );
+            }
+
+            i++;
+
+        }
+    }
+
 
     private void checkAttachment(NotificationAttachmentDownloadMetadataResponse resp) throws IOException {
         byte[] content = downloadFile(resp.getUrl());
