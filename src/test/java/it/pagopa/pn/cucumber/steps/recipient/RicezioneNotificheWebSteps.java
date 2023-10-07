@@ -126,7 +126,6 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} tenta il recupero dell'allegato {string}")
     public void attachmentRetrievedError(String recipient, String attachmentName) {
-        //TODO Modificare
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
@@ -141,7 +140,6 @@ public class RicezioneNotificheWebSteps {
 
     @And("{string} tenta il recupero dell'attestazione {string}")
     public void attachmentAttestazioneRetrievedError(String recipient, String attachmentName) {
-        //TODO Modificare
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {

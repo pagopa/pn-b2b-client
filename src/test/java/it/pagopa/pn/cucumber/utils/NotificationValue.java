@@ -52,6 +52,9 @@ public enum NotificationValue {
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
     PAYMENT_PAGOPA_FORM_1("payment_pagoPaForm_1","classpath:/AvvisoPagoPA.pdf",false),
 
+    PAYMENT_F24("payment_f24","classpath:/Metadati_F24.json",false),
+    PAYMENT_F24_1("payment_f24_1","classpath:/Metadati_F24.json",false),
+
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
     PAYMENT_F24_STANDARD_1("payment_f24standard_1","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),

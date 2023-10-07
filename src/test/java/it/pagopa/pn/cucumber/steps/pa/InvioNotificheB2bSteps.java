@@ -201,6 +201,9 @@ public class InvioNotificheB2bSteps {
                 key = this.notificationPaymentAttachmentPreload.getRef().getKey();
                 break;
             case "F24_STANDARD":
+                key = this.notificationPaymentAttachmentPreload.getRef().getKey();
+                break;
+            case "F24":
                 key = this.notificationMetadataAttachment.getRef().getKey();
                 break;
             default:
@@ -220,7 +223,7 @@ public class InvioNotificheB2bSteps {
             case "PAGOPA":
                 key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
                 break;
-            case "F24_STANDARD":
+            case "F24":
                 key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
                 break;
             default:
@@ -312,9 +315,11 @@ public class InvioNotificheB2bSteps {
                 downloadType = "F24_FLAT";
                 break;
             case "F24_STANDARD":
+                downloadType = "F24_STANDARD";
+                break;
+            case "F24":
                 downloadType = "F24";
                 break;
-
             default:
                 throw new IllegalArgumentException();
         }

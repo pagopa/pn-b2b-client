@@ -81,8 +81,8 @@ public class DataTableTypeUtil {
                                 NotificationRecipientV21.RecipientTypeEnum.PF :
                                 NotificationRecipientV21.RecipientTypeEnum.PG)))
 
-
-                //TODO Gestione Allegati di Pagamento........
+                //GESTIONE ISTANZE DI PAGAMENTI
+                //1 PAGAMENTO
                 .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
 
                         .pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
@@ -93,15 +93,15 @@ public class DataTableTypeUtil {
                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI")?true:false)
                                 .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))):null))
 
-                        .f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
+                        .f24(getValue(data, PAYMENT_F24.key) == null ? null :
+                                (getValue(data, PAYMENT_F24.key).equalsIgnoreCase("SI")?
                                         new F24Payment()
                                                 .title(getValue(data,TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")?true:false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))):null))
+                                                .applyCost(getValue(data, PAYMENT_F24.key).equalsIgnoreCase("SI")?true:false)
+                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24.key))):null))
 
                 )
-
+                //2 PAGAMENTO
                 .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
 
                         .pagoPa(getValue(data, PAYMENT_PAGOPA_FORM_1.key) == null ? null :
@@ -134,6 +134,7 @@ public class DataTableTypeUtil {
                 //)
         );
 
+        //N PAGAMENTI
         //TODO Parametrizzare.......
         if (getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()) {
             listPayment = new ArrayList<NotificationPaymentItem>();
@@ -147,12 +148,12 @@ public class DataTableTypeUtil {
                                         .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
                                         .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))) : null));
 
-                addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                        (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
+                addPaymentsItem.f24(getValue(data, PAYMENT_F24.key) == null ? null :
+                        (getValue(data, PAYMENT_F24.key).equalsIgnoreCase("SI") ?
                                 new F24Payment()
                                         .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
+                                        .applyCost(getValue(data, PAYMENT_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24.key))) : null));
                 listPayment.add(addPaymentsItem);
             }
 

@@ -14,6 +14,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | payment_f24 | NULL |
       | apply_cost_pagopa | NO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
@@ -30,6 +31,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | payment_f24 | NULL |
       | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
@@ -416,7 +418,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI   |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
-    When viene richiesto il download del documento "F24_STANDARD"
+    When viene richiesto il download del documento "F24"
     Then il download si conclude correttamente
 
 
@@ -1035,12 +1037,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #TODO SOLO TM
   #61 Destinatario - visualizzazione box di pagamento su notifica mono destinatario pagata (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
 
-
 #TODO SOLO TM
   #62 Documento PagoPa: Inserimento dati pagamento e relativa verifica dei dati nel documento generato di avviso PagoPA (es. amount, description, expirationDate, status, ecc.) [TA]
-
-
-
 
 #TODO SOLO TM
   #63 Documento F24: Inserimento dati pagamento e costruzione del documento F24 e relativa verifica dei dati nel documento generato F24 [TA]
@@ -1056,7 +1054,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 #TODO NO TEST...
   #65 Timeline: Verifica F24 (scenario negativo: deve essere riscontrata assenza di eventi di pagamento in timeline).. NO TEST...
-
 
 #TODO NO TEST....
   #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
@@ -1176,15 +1173,24 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #72 Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24
-    Given viene effettuato il pre-caricamento dei metadati f24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | NULL   |
+      | payment_f24standard | NULL |
+      | payment_f24 | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
     Then viene effettuato un controllo sulla durata della retention del F24 di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
 
 
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_72_1] Verifica retention allegati di pagamento (7gg precaricato) - F24
-    Given viene effettuato il pre-caricamento di un allegato
-    Then viene effettuato un controllo sulla durata della retention di "F24_STANDARD" precaricato
+    Given  viene effettuato il pre-caricamento dei metadati f24
+    Then viene effettuato un controllo sulla durata della retention di "F24" precaricato
 
 
   @pagamentiMultipli
@@ -1198,7 +1204,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
-    And viene effettuato un controllo sulla durata della retention di "F24_STANDARD"
+    And viene effettuato un controllo sulla durata della retention di "F24"
 
 
 
@@ -1215,8 +1221,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
-    When viene richiesto il download del documento "F24_STANDARD"
+    #Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
+    When viene richiesto il download del documento "F24"
     Then il download si conclude correttamente
 
 
@@ -1233,9 +1239,30 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
-    And l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
+   # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
+    #viene fatta la stessa verifica sullo Sha256
+    Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
 #TODO SOLO TM....
   #75 PA -  Visualizzazione Box Allegati Modelli F24
 
+
+  Scenario: [B2B-PA-SEND_21] Invio notifica digitale mono destinatario senza pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Cucumber e:
+      | payment | NULL |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then si verifica la corretta acquisizione della richiesta di invio notifica
+
+  Scenario: [B2B-PA-SEND_22] Invio notifica digitale mono destinatario senza pagamento
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | amount | 2550 |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    And l'importo della notifica è 2550

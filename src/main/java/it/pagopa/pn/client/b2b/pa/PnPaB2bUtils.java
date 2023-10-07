@@ -75,13 +75,14 @@ public class PnPaB2bUtils {
 
 
     public NewNotificationResponse uploadNotification( NewNotificationRequestV21 request) throws IOException {
-//TODO Modificare.............
+        //PRELOAD DOCUMENTI NOTIFICA
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
             newdocs.add(this.preloadDocument(doc));
         }
         request.setDocuments(newdocs);
 
+        //PRELOAD DOCUMENTI DI PAGAMENTO
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
