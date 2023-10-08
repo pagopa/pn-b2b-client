@@ -1,22 +1,1736 @@
 # Questo elenco riporta i Test Automatici che sono attualmente implementati
 ## Table of Contents
 
-1. [Invio Notifica](#invio-notifica)
+1. [Annullamento_Notifica](#annullamento-notifica)
+2. [Invio Notifica](#invio-notifica)
    1. [Invio](#invio)
    2. [Download](#download)
    3. [Validation](#validation)
-2. [Visualizzazione notifica](#visualizzazione-notifica)
+3. [Service_Desk](#service-desk)
+4. [Visualizzazione notifica](#visualizzazione-notifica)
    1. [Deleghe](#deleghe)
    2. [Destinatario persona fisica](#destinatario-persona-fisica)
-3. [Workflow notifica](#workflow-notifica)
+5. [Workflow notifica](#workflow-notifica)
    1. [B2B](#b2b)
    2. [Download](#notifica)
    3. [Webhook](#webhook)
-4. [Allegati](#allegati)
-5. [Api Key Manager](#api-key-manager)
-6. [Downtime logs](#downtime-logs)
-7. [User Attributes](#user-attributes)
-8. [Test di integrazione della pubblica amministrazione](#test-di-integrazione-della-pubblica-amministrazione)
+6. [Allegati](#allegati)
+7. [Api Key Manager](#api-key-manager)
+8. [Downtime logs](#downtime-logs)
+9. [User Attributes](#user-attributes)
+10. [Test di integrazione della pubblica amministrazione](#test-di-integrazione-della-pubblica-amministrazione)
+
+## Annullamento_Notifica
+
+### Annullamento Notifiche B2b
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_1] PA mittente: Annullamento notifica in stato “depositata”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. Si recupera la notifica tramite IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_2] PA mittente: annullamento notifica in stato “invio in corso”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERING`
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_3] PA mittente: annullamento notifica in stato “consegnata”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_4] PA mittente: annullamento notifica in stato “perfezionata per decorrenza termini”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `EFFECTIVE_DATE`
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_5] PA mittente: annullamento notifica in stato “irreperibile totale”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_6] PA mittente: annullamento notifica in stato “avvenuto accesso”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. `Mario Gherkin` legge la notifica ricevuta
+5. vengono letti gli eventi fino allo stato della notifica `VIEWED`
+6. la notifica può essere annullata dal sistema tramite codice IUN
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+8. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_7] PA mittente: annullamento notifica in fase di validazione [TA]</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `IN_VALIDATION`
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_8] PA mittente: annullamento notifica con dati pagamento</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_8_1] PA mittente: annullamento notifica con pagamento</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente
+4. si attende il corretto pagamento della notifica
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_8_2] PA mittente: annullamento notifica con dati pagamento</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. viene verificato il costo = `100` della notifica con un errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_9] PA mittente: notifica con pagamento in stato “Annullata” - presenza box di pagamento</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_10] PA mittente: dettaglio notifica annullata - download allegati (scenari positivi)</summary>
+
+**Descrizione**
+
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. viene richiesto il download del documento `NOTIFICA`
+7. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_11] PA mittente: dettaglio notifica annullata - download bollettini di pagamento (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+7. viene richiesto il download del documento `PAGOPA`
+8. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_12] PA mittente: dettaglio notifica annullata - download AAR (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. download attestazione opponibile AAR
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. download attestazione opponibile AAR
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+8. la PA richiede il download dell'attestazione opponibile `SENDER_ACK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_1] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. `Mario Gherkin` legge la notifica ricevuta
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED` e successivamente annullata
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+7. la PA richiede il download dell'attestazione opponibile `RECIPIENT_ACCESS`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_2] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la PA richiede il download dell'attestazione opponibile `PEC_RECEIPT`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_3] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_4] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_5] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenari positivi)</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la PA richiede il download dell'attestazione opponibile `SEND_ANALOG_PROGRESS`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_6] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la PA richiede il download dell'attestazione opponibile `COMPLETELY_UNREACHABLE`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_13_7] PA mittente: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica "`REQUEST_ACCEPTED`"
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+7. la PA richiede il download dell'attestazione opponibile `SENDER_ACK`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_14] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. vengono letti gli eventi fino all'elemento di timeline della notifica "`NOTIFICATION_CANCELLED`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_14_1] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLATION_REQUEST
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_15] AuditLog: verifica presenza evento post annullamento notifica</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+6. viene verificato che esiste un audit log "`AUD_NT_CANCELLED`" in "`10y`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_16] Destinatario PF: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_16_1] Destinatario  PF: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+4. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_16_2] Destinatario  PF: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+6. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_17] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_17_1] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+4. "`Mario Cucumber`" tenta il recupero dell'allegato "`PAGOPA`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_17_2] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+4. "`Mario Cucumber`" tenta il recupero dell'allegato "`PAGOPA`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_18] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_18_1] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+4. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+5. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_18_2] Destinatario PF: dettaglio notifica annullata - download AAR (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` 
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION` e successivamente annullata
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+6. il download ha prodotto un errore con status code "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica "`NOTIFICATION_CANCELLATION_REQUEST`"
+5. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`SENDER_ACK`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_1] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica "`NOTIFICATION_CANCELLED`"
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`SENDER_ACK`" con errore "`404`"
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_2] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`SENDER_ACK`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_3] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`SENDER_ACK`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_4] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`PEC_RECEIPT`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_5] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`DIGITAL_DELIVERY`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_6] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`DIGITAL_DELIVERY_FAILURE`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_7] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_8] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_19_9] Destinatario PF: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. "`Mario Gherkin`" richiede il download dell'attestazione opponibile "`SENDER_ACK`" con errore "`404`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_20] Destinatario PF: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_20_1] Destinatario PF: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+ </summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_20_2] Destinatario PF: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `CANCELLED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_21] Destinatario PF: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_22] Annullamento notifica con pagamento: verifica cancellazione IUV da tabella pn-NotificationsCost
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_23] PA mittente: notifica con pagamento in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Gherkin spa
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+6. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_23_1] PA mittente: notifica con pagamento non in stato “Annullata” - inserimento nuova notifica con stesso IUV [TA]
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Gherkin spa
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene generata una nuova notifica con uguale codice fiscale del creditore e uguale codice avviso
+4. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_27] PA mittente: annullamento notifica durante invio sms di cortesia
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Louis Armstrong
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. i verifica la corretta acquisizione della notifica
+4. viene verificato che l'elemento di timeline  `SEND_COURTESY_MESSAGE` esista
+5. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_27_1] PA mittente: annullamento notifica inibizione invio sms di cortesia
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Louis Armstrong
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST` 
+4. viene verificato che l'elemento di timeline  `SEND_COURTESY_MESSAGE` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Galileo Galilei
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. i verifica la corretta acquisizione della notifica
+4. viene verificato che l'elemento di timeline  `SEND_COURTESY_MESSAGE` esista
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Galileo Galilei
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che l'elemento di timeline  `SEND_COURTESY_MESSAGE` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_29] #PA mittente: annullamento notifica durante invio pec</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS` e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`  con responseStatus "`OK`"
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_29_1] #PA mittente: annullamento notifica inibizione invio pec</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`  e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che l'elemento di timeline `NOTIFICATION_CANCELLATION_REQUEST` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_30] PA mittente: annullamento notifica durante pagamento da parte del destinatario</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. si attende il corretto pagamento della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_31] PA mittente: Annullamento notifica in stato “CANCELLED”</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. la notifica non può essere annullata dal sistema tramite codice IUN più volte
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-MULTI-ANNULLAMENTO_1] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Cucumber e Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `Mario Cucumber` tenta il recupero dell'allegato `PAGOPA`
+6. il download ha prodotto un errore con status code`404`
+7. `Mario Gherkin` tenta il recupero dell'allegato `PAGOPA`
+8. il download ha prodotto un errore con status code`404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST stream v2_scenario positivo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `NOTIFICATION_CANCELLATION_REQUEST`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24_1]Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLED stream v2_scenario positivo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `NOTIFICATION_CANCELLED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `CANCELLED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24_2] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `NOTIFICATION_CANCELLED`
+7. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+8. viene generata una nuova notifica  con destinatario Cucumber Analogic
+9. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+10. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `DIGITAL_FAILURE_WORKFLOW`
+11. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24_3] Invio notifica digitale ed attesa di un eventi di Timeline stream v2  con controllo EventId incrementale e senza duplicati scenario positivo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `NOTIFICATION_CANCELLED`
+7. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+8. viene generata una nuova notifica  con destinatario Cucumber Analogic
+9. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+10. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `DIGITAL_FAILURE_WORKFLOW`
+11. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+12. viene generata una nuova notifica  con destinatario Mario Gherkin
+13. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+14. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `SEND_DIGITAL_DOMICILE`
+15. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24_4] Invio notifica digitale ed attesa di un eventi di Timeline stream v1  con controllo EventId incrementale e senza duplicati scenario positivo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. si predispone 1 nuovo stream V2 denominato `stream-test` con eventType `TIMELINE`
+3. si crea il nuovo stream per il `Comune_1`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+5. la notifica può essere annullata dal sistema tramite codice IUN
+6. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `SEND_DIGITAL_DOMICILE`
+7. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+8. viene generata una nuova notifica  con destinatario Cucumber Analogic
+9. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+10. vengono letti gli eventi dello stream del `Comune_1` fino all'elemento di timeline `DIGITAL_FAILURE_WORKFLOW`
+11. viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_32] PA mittente: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica "`CANCELLED`"
+5. vengono letti gli eventi fino all'elemento di timeline della notifica`NOTIFICATION_CANCELLED`
+6. viene verificato che nell'elemento di timeline della notifica`NOTIFICATION_CANCELLED` sia presente il campo notRefinedRecipientIndex
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_33] PA mittente: Annullamento notifica e inibizione invio SEND_SIMPLE_REGISTERED_LETTER
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che nell'elemento di timeline della notifica`SEND_SIMPLE_REGISTERED_LETTER` non esista
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_34] PA mittente: Annullamento notifica e inibizione invio PREPARE_SIMPLE_REGISTERED_LETTER
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che nell'elemento di timeline della notifica`PREPARE_SIMPLE_REGISTERED_LETTER` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_35] PA mittente: annullamento notifica e inibizione invio SEND_DIGITAL_PROGRESS</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che nell'elemento di timeline della notifica`SEND_DIGITAL_PROGRESS` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_36] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che nell'elemento di timeline della notifica`ANALOG_SUCCESS_WORKFLOW` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_37] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. viene verificato che nell'elemento di timeline della notifica`ANALOG_SUCCESS_WORKFLOW` non esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_38] PA mittente: Annullamento notifica in stato “depositata” da parte di una PA diversa da quella che ha inviato la notifica scenario negativo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica non può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. l'operazione di annullamento ha prodotto un errore con status code `404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_39] Generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario  Mario Cucumber
+2. viene settato il gruppo della notifica con quello dell'apikey
+3. viene settato il taxId della notifica con quello dell'apikey
+4. la notifica viene inviata tramite api b2b e si attende che lo stato diventi ACCEPTED
+5. si verifica la corretta acquisizione della notifica
+6. viene modificato lo stato dell'apiKey in `BLOCK`
+7. l'apiKey viene cancellata
+8. Viene creata una nuova apiKey per il comune `Comune_1` con gruppo differente del invio notifica
+9. iene impostata l'apikey appena generata
+10. la notifica non può essere annullata dal sistema tramite codice IUN
+11. l'operazione di annullamento ha prodotto un errore con status code `404`
+12. viene modificato lo stato dell'apiKey in `BLOCK`
+13. l'apiKey viene cancellata
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_40] Invio notifica con api b2b e tentativo recupero del documento di una notifica annullata tramite AppIO_scenario negativo
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. il documento notificato può essere recuperata tramite AppIO da `Mario Gherkin`
+4. il tentativo di recupero con appIO ha prodotto un errore con status code `404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
+
+</details>
+
+### Annullamento Notifiche B2b Deleghe
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. la notifica può essere correttamente recuperata da `Mario Cucumber`
+8. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+8. la notifica può essere correttamente recuperata da `Mario Cucumber`
+9. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. la notifica può essere correttamente recuperata da `Mario Cucumber`
+8. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_26_3] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+8. la notifica può essere correttamente recuperata da `Mario Cucumber`
+9. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_32] Invio notifica digitale mono destinatario e recupero documento notificato_scenario negativo
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+8. il documento notificato non può essere correttamente recuperato da `Mario Gherkin` con delega restituendo un errore `404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_33] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario negativo
+</summary>
+
+**Descrizione**
+
+1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
+2. Mario Gherkin viene delegato da Mario Cucumber
+3. Mario Gherkin accetta la delega Mario Cucumber
+4. Viene creata una nuova notifica con destinatario Mario Cucumber
+5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. il documento notificato non può essere correttamente recuperato da `Mario Gherkin` con delega restituendo un errore `404`
+
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
+
+</details>
+
+
+### Annullamento Notifiche B2b PG
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_1] Destinatario PG: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. il documento notificato non può essere correttamente recuperato da `GherkinSrl`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PG-ANNULLAMENTO_2] Destinatario  PG: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+4. il documento notificato non può essere correttamente recuperato da `GherkinSrl`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_3] Destinatario  PG: dettaglio notifica annullata - download allegati (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+4. il documento notificato non può essere correttamente recuperato da `GherkinSrl`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_4] Destinatario  PG: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_5] Destinatario  PG: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+4. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_6] Destinatario  PG: dettaglio notifica annullata - download bollettini di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
+3. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+4. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+5. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_7] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. download attestazione opponibile AAR da parte `GherkinSrl`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_8] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+5. download attestazione opponibile AAR da parte `GherkinSrl`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_9] Destinatario  PG: dettaglio notifica annullata - download AAR (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `AAR_GENERATION`  e successivamente annullata
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+5. download attestazione opponibile AAR da parte `GherkinSrl`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_10] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `GherkinSrl` richiede il download dell'attestazione opponibile `SENDER_ACK` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_11] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `SENDER_ACK` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_12] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+5. `GherkinSrl` richiede il download dell'attestazione opponibile `SENDER_ACK` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_13] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi RECIPIENT_ACCESS (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `SENDER_ACK` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_14] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi PEC_RECEIPT (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `PEC_RECEIPT` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_15] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_16] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi DIGITAL_DELIVERY_FAILURE (scenario negativo)
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY_FAILURE` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_17] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SEND_ANALOG_PROGRESS (scenario negativo)
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `SEND_ANALOG_PROGRESS` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_18] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi COMPLETELY_UNREACHABLE (scenario negativo)
+</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `COMPLETELY_UNREACHABLE` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_19] Destinatario  PG: dettaglio notifica annullata - download atti opponibili a terzi SENDER_ACK (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`  e successivamente annullata
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. `GherkinSrl` richiede il download dell'attestazione opponibile `SENDER_ACK` con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_20] Destinatario  PG: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_21] Destinatario  PG: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_22] Destinatario  PG: notifica con pagamento in stato “Annullata” - box di pagamento (scenario negativo)
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PG-ANNULLAMENTO_23] Destinatario  PG: dettaglio notifica annullata - verifica presenza elemento di timeline NOTIFICATION_CANCELLED
+</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario GherkinSrl
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`  e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED` 
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bPG.feature)
+
+</details>
+
 
 
 ## Invio Notifica
@@ -2281,14 +3995,26 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-   <summary></summary>
+   <summary>[B2B-PA-SEND_VALID_48] invio notifiche digitali mono destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo</summary>
 
 **Descrizione**
 
 1. viene generata una nuova notifica
-2. destinatario Mario Gherkin con physicalAddress_address non valido
-3. la notifica viene inviata dal `Comune_1`
-4. l'operazione ha prodotto un errore con status code `400`
+2. destinatario Mario Gherkin con tripletta municipality, cap e province valido
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_49] invio notifiche digitali mono destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. destinatario Mario Gherkin con tripletta municipality, cap e province non valido
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
 
@@ -2561,6 +4287,940 @@
 3. L'operazione va in errore con stato `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pg/InvioNotificheB2bPGValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_1] Invio notifica digitale con multi destinatario corretto e recupero tramite codice IUN scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con denomination corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_2] Invio notifica digitale con multi destinatario errati scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con denomination non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_3] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_address e physicalAddress_addressDetails corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_4] Invio notifica digitale mono destinatario con physicalAddress_municipality corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_municipality corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_5] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_municipalityDetails corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_6] Invio notifica digitale mono destinatario con physicalAddress_state corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_State corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_7] Invio notifica digitale mono destinatario con physicalAddress_zip corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_zip corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_8] Invio notifica digitale mono destinatario con physicalAddress_province corretto scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_province corretto
+3. la notifica viene inviata dal `Comune_1`
+4. si verifica la corretta acquisizione della richiesta di invio notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_9] Invio notifica digitale multi destinatario con physicalAddress_address errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_address non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_10] Invio notifica digitale multi destinatario con physicalAddress_addressDetails errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_addressDetails non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_11] Invio notifica digitale multi destinatario con physicalAddress_municipality errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_municipality non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_municipalityDetails non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_State non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_zip non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con physicalAddress_province non valido
+3. la notifica viene inviata dal `Comune_1`
+4. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_16] invio notifiche digitali multi destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
+</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con tripletta municipality, cap e province valido
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+   <summary>[B2B-PA-SEND_VALID_PF_PG_17] invio notifiche digitali multi destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica
+2. a destinatari con tripletta municipality, cap e province non valido
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/validation/pf/InvioNotificheB2bPFValidation2.feature)
+
+</details>
+
+
+## Service Desk
+
+### Api Service Desk
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_4] Invocazione del servizio UNREACHABLE per CF senza notifiche in stato IRR TOT</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `CPNTMS85T15H703W`
+2. viene invocato il servizio UNREACHABLE
+3. la risposta del servizio UNREACHABLE è `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_5] Invocazione del servizio UNREACHABLE per CF con sole notifiche in stato IRR TOT</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `MNTMRA03M71C615V`
+2. viene invocato il servizio UNREACHABLE
+3. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_6] Invocazione del servizio UNREACHABLE per CF più notifiche non consegnate sia per IRR TOT che per altre motivazioni
+</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `FRMTTR76M06B715E`
+2. viene invocato il servizio UNREACHABLE
+3. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_7] Invocazione del servizio UNREACHABLE per CF con una sola notifica in stato IRR TOT</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `FRMTTR76M06B715E`
+2. viene invocato il servizio UNREACHABLE
+3. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_8] Invocazione del servizio UNREACHABLE per CF con sole notifiche presenti in stato IRR TOT con ultima tentativo di consegna >120g</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `TMTMRC66A01H703L`
+2. viene invocato il servizio UNREACHABLE
+3. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_9] Invocazione del servizio UNREACHABLE per CF vuoto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE con cf vuoto
+2. viene invocato il servizio UNREACHABLE con errore
+3. il servizio risponde con errore `500`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_UNREACHABLE_10] Invocazione del servizio UNREACHABLE per CF non formalmente corretto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per un il CF `CPNTMS85T15H703WCPNTMS85T15H703W`
+2. viene invocato il servizio UNREACHABLE con errore
+3. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_14] Invocazione del servizio CREATE_OPERATION per CF vuoto</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con cf vuoto
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_15] Invocazione del servizio CREATE_OPERATION per CF che non ha notifiche da consegnare per irr tot
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `CPNTMS85T15H703W`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_16] Invocazione del servizio CREATE_OPERATION per CF errato</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `CPNTMS85T15H703WCPNTMS85T15H703W`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_17]</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo con campo indirizzo vuoto
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_18] Invocazione del servizio CREATE_OPERATION con indirizzo errato</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il CF `TMTSFS80A01H703K`
+10. viene invocato il servizio SEARCH con delay
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `KO`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_19] Invocazione del servizio CREATE_OPERATION con ticket id vuoto</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con CF `TMTSFS80A01H703K` `ticketid_vuoto` e operation ticket id `1233443322`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_20] Invocazione del servizio CREATE_OPERATION con ticket id non formalmente corretto
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con CF `TMTSFS80A01H703K` `ticketid_errato` e operation ticket id `1233443322`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_21] Invocazione del servizio CREATE_OPERATION con operation ticket id non formalmente corretto
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con CF `TMTSFS80A01H703K` e ticket id `1233443322` e `ticketoperationid_errato`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_22] Invocazione del servizio CREATE_OPERATION con coppia ticket id ed operation ticket id già usati in precedenza
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION per con CF `TMTSFS80A01H703K` e ticket id `AUTYV7JIYJ40WXC` e e operation ticket id `AUT6DBGNT0`
+3. viene invocato il servizio CREATE_OPERATION con errore
+4. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_DESK_CREATE_OPERATION_23] Invocazione del servizio CREATE_OPERATION inserimento richiesta corretta con creazione operation id
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_24] Invocazione del servizio UPLOAD VIDEO con operation id non esistente</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+2. viene invocato il servizio UPLOAD VIDEO con `abcedred` con errore
+3. il servizio risponde con errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_25] Invocazione del servizio UPLOAD VIDEO con operation id vuoto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+2. viene invocato il servizio UPLOAD VIDEO con operationid vuoto
+3. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_26] Invocazione del servizio UPLOAD VIDEO con sha256 vuoto</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con sha256 vuoto
+6. viene invocato il servizio UPLOAD VIDEO con errore
+7. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_27] Invocazione del servizio UPLOAD VIDEO con preloadidx vuoto</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx vuoto
+6. viene invocato il servizio UPLOAD VIDEO con errore
+7. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_28] Invocazione del servizio UPLOAD VIDEO con sha256 errato</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con sha256 vuoto
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage con errore
+9. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_29] Invocazione del servizio UPLOAD VIDEO con preloadidx errato</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx vuoto
+6. viene invocato il servizio UPLOAD VIDEO con errore
+7. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_30] Invocazione del servizio UPLOAD VIDEO con esito positivo</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. ila risposta del servizio UPLOAD VIDEO risponde con esito positivo
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_32] Invocazione del servizio UPLOAD VIDEO con formato non consentito</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `XXXCCC87B12H702E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. il video viene caricato su SafeStorage
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_33] Invocazione del servizio UPLOAD VIDEO con url scaduta</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `MNTMRA03M71C615V`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage con url scaduta
+9. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_34] Invocazione del servizio SEARCH con CF vuoto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `CF_vuoto`
+2. viene invocato il servizio SEARCH con errore
+3. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_35] Invocazione del servizio SEARCH con CF non formalmente corretto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `CF_errato`
+2. viene invocato il servizio SEARCH con errore
+3. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_36] Invocazione del servizio SEARCH con CF corretto</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+2. viene invocato il servizio SEARCH
+3. Il servizio SEARCH risponde con esito positivo
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_37] Invocazione del servizio SEARCH con CF senza notifiche in stato IRR TOT</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `CPNTMS85T15H703W`
+2. viene invocato il servizio SEARCH
+3. Il servizio SEARCH risponde con lista vuota
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_38] Invocazione del servizio SEARCH con CF con una sola notifica reinviata per irreperibilità totale</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTSFS80A01H703K`
+2. viene invocato il servizio SEARCH
+3. Il servizio SEARCH risponde con esito positivo
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_39] Invocazione del servizio SEARCH con CF con sole notifiche reinviate per irreperibilità con ultimo tentativo di consegna >120g
+</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+2. viene invocato il servizio SEARCH
+3. Il servizio SEARCH risponde con esito positivo
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_40] Inserimento di una nuova richista di reinvio pratiche con stato operation id OK con notifiche in irr tot con ultimo tentativo >120 gg
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTMRC66A01H703L`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTMRC66A01H703L`
+10. viene invocato il servizio SEARCH con delay
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_41] Invocazione del servizio SEARCH con CF con sole notifiche reinviate per irreperibilità totale- notifica multidestinatario
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTYRU80A07H703E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTMRC66A01H703L`
+10. viene invocato il servizio SEARCH con delay
+11. Il servizio SEARCH risponde con esito positivo per lo `QAQN-LJXG-YTNA-202309-Q-1` e lo stato della consegna è `OK`
+12. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTRCC80A01A509O`
+13. viene invocato il servizio CREATE_OPERATION
+14. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+15. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+16. viene invocato il servizio UPLOAD VIDEO
+17. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+18. il video viene caricato su SafeStorage
+19. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTRCC80A01A509O`
+20. viene invocato il servizio SEARCH con delay
+21. Il servizio SEARCH risponde con esito positivo per lo `QAQN-LJXG-YTNA-202309-Q-1` e lo stato della consegna è `OK`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_42] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+9. viene invocato il servizio SEARCH
+10. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `CREATING`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_43] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTSFS80A01H703K`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `CREATING`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_46] Inserimento di una nuova richista di reinvio pratiche con stato operation id OK</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_47] Invocazione del servizio CREATE_OPERATION con nuovo tantativo consegna non recapitata(KO)</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTSFS80A01H703K`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `KO`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_48] Inserimento di una nuova richista di reinvio pratiche con stato operation id OK per uno dei multidestinatari
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTCRL80A01F205A`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTCRL80A01F205A`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
+12. viene creata una nuova richiesta per invocare il servizio SEARCH per il `CLMCST42R12D969Z`
+13. viene invocato il servizio SEARCH
+14. Il servizio SEARCH risponde con lista vuota
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_50] CF per il quale una consegna per irreperibilità totale è andata  KO e si reinserisce nuova richiesta</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTVCN80A01H501P`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTVCN80A01H501P`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `KO`
+12. viene comunicato il nuovo indirizzo
+13. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTVCN80A01H501P`
+14. viene invocato il servizio CREATE_OPERATION
+15. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+16. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+17. viene invocato il servizio UPLOAD VIDEO
+18. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+19. il video viene caricato su SafeStorage
+20. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTVCN80A01H501P`
+21. viene invocato il servizio SEARCH con delay
+22. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_51] Inserimento di una nuova richista di reinvio pratiche con stato caricamento video su SafeStorage e verifica retention
+</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene effettuato un controllo sulla durata della retention
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_PREUPLOAD_VIDEO_54] Invocazione del servizio UPLOAD VIDEO con ContentType vuoto</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con ContentType vuoto
+6. viene invocato il servizio UPLOAD VIDEO con errore
+7. il servizio risponde con errore `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-AUTH_55] Connessione al client senza API KEY</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il `TMTSFS80A01H703K` senza API Key
+2. viene invocato il servizio UNREACHABLE con errore senza API Key
+3. il servizio risponde con errore `401` senza API Key
+4. viene comunicato il nuovo indirizzo
+5. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K` senza API Key
+6. viene invocato il servizio CREATE_OPERATION senza API Key con errore
+7. il servizio risponde con errore `401` senza API Key
+8. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO senza API Key
+9. viene invocato il servizio UPLOAD VIDEO senza API Key con `TMTSFS80A01H703K` con errore
+10. il servizio risponde con errore `401` senza API Key
+11. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTSFS80A01H703K` senza API Key
+12. viene invocato il servizio SEARCH senza API Key con errore
+13. il servizio risponde con errore `401` senza API Key
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary></summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il `TMTSFS80A01H703K` con API Key errata
+2.viene invocato il servizio UNREACHABLE con errore con API Key errata
+3. il servizio risponde con errore `401` con API Key errata
+4. viene comunicato il nuovo indirizzo
+5. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K` con API Key errata
+6. viene invocato il servizio CREATE_OPERATION con API Key errata con errore
+7. il servizio risponde con errore `401` con API Key errata
+8. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con API Key errata
+9. viene invocato il servizio UPLOAD VIDEO con API Key errata con `TMTSFS80A01H703K` con errore
+10. il servizio risponde con errore `401` con API Key errata
+11. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTSFS80A01H703K` con API Key errata
+12. viene invocato il servizio SEARCH senza API Key con errore
+13. il servizio risponde con errore `401` con API Key errata
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
 
