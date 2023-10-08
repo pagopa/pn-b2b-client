@@ -9062,6 +9062,75 @@ Dati destinatario
 
 </details>
 
+##### Avanzamento b2b persona giuridica digitale National Registry
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario con tax id `10959831008`
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE`  sia presente il campo Digital Address da National Registry
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGDigitaleNR.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7915_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario con tax id `05370920653`
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE`  sia presente il campo Digital Address da National Registry
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGDigitaleNR.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC KO - INAD OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario con tax id `00883601007`
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE`  sia presente il campo Digital Address da National Registry
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK` con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGDigitaleNR.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario con tax id `05722930657` e physicalAddress_address `Via@FAIL-Irreperibile_890`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGDigitaleNR.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario con tax id `00749900049` e physicalAddress_address `Via@FAIL-Irreperibile_890`
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGDigitaleNR.feature)
+
+</details>
+
 ##### Avanzamento b2b notifica multi destinatario persona giuridica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
