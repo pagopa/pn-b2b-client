@@ -4823,6 +4823,8 @@
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
 3. viene invocato il servizio CREATE_OPERATION
@@ -4855,6 +4857,8 @@
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `XXXCCC87B12H702E`
 3. viene invocato il servizio CREATE_OPERATION
@@ -4870,6 +4874,8 @@
   <summary>[API-SERVICE_PREUPLOAD_VIDEO_33] Invocazione del servizio UPLOAD VIDEO con url scaduta</summary>
 
 **Descrizione**
+
+:warning: _Ignored_
 
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `MNTMRA03M71C615V`
@@ -5033,6 +5039,8 @@
   <summary>[API-SERVICE_SEARCH_43] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
 
 **Descrizione**
+
+:warning: _Ignored_
 
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTSFS80A01H703K`
@@ -7871,7 +7879,7 @@
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS` con deliveryDetailCode `RECAG007C`  e verifica data delay più `0`
 
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -7884,7 +7892,7 @@
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS` con deliveryDetailCode `RECRI001`
 
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -7897,6 +7905,99 @@
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_PROGRESS` con deliveryDetailCode `RECRI002`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_62] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: DVNLRD52D15M059P
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D00`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_63] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: NNVFNC80A01H501G
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D01`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_64] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: CNCGPP80A01H501J
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D02`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_65] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario Mario Gherkin con
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@OK-WO-011B
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_66] Attesa elemento di timeline REFINEMENT con physicalAddress OK-NO012-lte10</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario Mario Gherkin con
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: via@OK-NO012-lte10
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_ANALOG_67] Attesa elemento di timeline REFINEMENT con physicalAddress OK-NO012-gt10</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario Mario Gherkin con
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: via@OK-NO012-gt10
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFAnalogico3.feature)
 
 </details>
 
@@ -9641,6 +9742,54 @@ Dati destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
 
 </details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - PG</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: 00749900049
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D00`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido - PG</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: NNVFNC80A01H501G
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D01`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - PG</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con
+   - **taxId**: NNVFNC80A01H501G
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_AR 16
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D02`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGAnalogico.feature)
+
+</details>
 
 ##### Costo notifica con workflow analogico per persona giuridica 890
 
@@ -10611,6 +10760,69 @@ Dati destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_MULTI_ANALOG_10] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - caso Multi
+</summary>
+
+**Descrizione**
+
+1. Viene generata notifica
+2. Destinatario con
+   - **taxId**: DVNLRD52D15M059P
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_890
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D00` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW` per l'utente 0
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_MULTI_ANALOG_11] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido - caso Multi
+</summary>
+
+**Descrizione**
+
+1. Viene generata notifica
+2. Destinatario con
+   - **taxId**: NNVFNC80A01H501G
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FAIL-Irreperibile_890
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D01` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW` per l'utente 0
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_MULTI_ANALOG_12] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - caso Multi
+</summary>
+
+**Descrizione**
+
+1. Viene generata notifica
+2. Destinatario con
+   - **taxId**: CNCGPP80A01H501J
+   - **digitalDomicile**: NULL
+   - **physicalAddress_address**: Via@FFAIL-Irreperibile_AR 16
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `PREPARE_ANALOG_DOMICILE_FAILURE` con failureCause `D02` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_FAILURE_WORKFLOW` per l'utente 0
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiAnalogico.feature)
 
@@ -13189,6 +13401,82 @@ Dati Destinatario
 
 1. Si predispone addressbook per l'utente `Mario Cucumber`
 2. Viene richiesto l'inserimento del numero di telefono `+0013894516888`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_4] inserimento pec non da errore</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento della pec corretta
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_5] inserimento pec errato 250 caratteri</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento della pec con più di 250 caratteri
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_6] inserimento pec errato con caratteri speciali</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento della pec con caratteri non ammessi
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_7] inserimento email di cortesia non da errore</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia corretta
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_8] inserimento email di cortesia errato 250 caratteri</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia con più di 250 caratteri
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_9] inserimento email di cortesia errato con caratteri speciali</summary>
+
+**Descrizione**
+
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia con caratteri non ammessi
 3. L'inserimento ha prodotto un errore con status code `400`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
