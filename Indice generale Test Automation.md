@@ -9832,6 +9832,8 @@ Dati destinatario
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. Viene creata una nuova notifica mono destinatario con
    - **taxId**: NNVFNC80A01H501G
    - **digitalDomicile**: NULL
@@ -9847,6 +9849,8 @@ Dati destinatario
   <summary>[B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - PG</summary>
 
 **Descrizione**
+
+:warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con
    - **taxId**: NNVFNC80A01H501G
