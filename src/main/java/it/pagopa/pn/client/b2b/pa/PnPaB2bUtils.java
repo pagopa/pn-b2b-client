@@ -87,8 +87,12 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if (paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if (paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
                // paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
 //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
@@ -109,8 +113,8 @@ public class PnPaB2bUtils {
             if(noUpload){
                 newdocs.add(this.preloadDocumentWithoutUpload(doc));
             }else{
-                newdocs.add(this.preloadDocument(doc));
 
+                newdocs.add(this.preloadDocument(doc));
             }
         }
         request.setDocuments(newdocs);
@@ -591,7 +595,7 @@ public class PnPaB2bUtils {
 
             String sha256 = computeSha256( resourceName );
 
-            PreLoadResponse preloadResp = getPreLoadResponse( sha256 );
+            PreLoadResponse preloadResp = getPreLoadMetaDatiResponse( sha256 );
             String key = preloadResp.getKey();
             String secret = preloadResp.getSecret();
             String url = preloadResp.getUrl();
@@ -599,7 +603,7 @@ public class PnPaB2bUtils {
             log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
                     resourceName, sha256, secret, url));
 
-            loadToPresigned( url, secret, sha256, resourceName );
+            loadToPresignedMetadati( url, secret, sha256, resourceName );
 
             attachment.getRef().setKey( key );
             attachment.getRef().setVersionToken("v1");
@@ -626,12 +630,32 @@ public class PnPaB2bUtils {
         restTemplate.exchange( URI.create(url), HttpMethod.PUT, req, Object.class);
     }
 
+    private void loadToPresignedMetadati( String url, String secret, String sha256, String resource ) {
+        MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+        headers.add("Content-type", "application/json");
+        headers.add("x-amz-checksum-sha256", sha256);
+        headers.add("x-amz-meta-secret", secret);
+
+        HttpEntity<Resource> req = new HttpEntity<>( ctx.getResource( resource), headers);
+        restTemplate.exchange( URI.create(url), HttpMethod.PUT, req, Object.class);
+    }
+
 
     private PreLoadResponse getPreLoadResponse(String sha256) {
         PreLoadRequest preLoadRequest = new PreLoadRequest()
                 .preloadIdx("0")
                 .sha256( sha256 )
                 .contentType("application/pdf");
+        return client.presignedUploadRequest(
+                Collections.singletonList( preLoadRequest)
+        ).get(0);
+    }
+
+    private PreLoadResponse getPreLoadMetaDatiResponse(String sha256) {
+        PreLoadRequest preLoadRequest = new PreLoadRequest()
+                .preloadIdx("0")
+                .sha256( sha256 )
+                .contentType("application/json");
         return client.presignedUploadRequest(
                 Collections.singletonList( preLoadRequest)
         ).get(0);
@@ -706,7 +730,7 @@ public class PnPaB2bUtils {
     }
     public NotificationMetadataAttachment newMetadataAttachment(String resourcePath ) {
         return new NotificationMetadataAttachment()
-                .contentType("application/pdf")
+                .contentType("application/json")
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
 

@@ -158,6 +158,11 @@ public class RicezioneNotificheWebSteps {
                 (this.notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
+    @Then("(il download)(il recupero) non ha prodotto errori")
+    public void operationProducedErrorWithStatusCode() {
+        Assertions.assertTrue((this.notificationError == null) );
+    }
+
 
     @And("download attestazione opponibile AAR da parte {string}")
     public void downloadLegalFactIdAARByRecipient(String recipient) {
