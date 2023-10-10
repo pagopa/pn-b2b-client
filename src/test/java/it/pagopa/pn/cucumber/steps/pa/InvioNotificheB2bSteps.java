@@ -223,7 +223,7 @@ public class InvioNotificheB2bSteps {
             case "PAGOPA":
                 key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
                 break;
-            case "F24":
+            case "F24_STANDARD":
                 key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
                 break;
             default:

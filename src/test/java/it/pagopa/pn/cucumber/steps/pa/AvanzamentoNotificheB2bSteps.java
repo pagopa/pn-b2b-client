@@ -2097,6 +2097,65 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
+    @Then("verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario {int}")
+    public void verificaPresenzaPagamentiSoloPagopa(Integer utente) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(utente)) {
+                Assertions.assertNull(timelineElement.getDetails().getIdF24());
+            }else {
+                timelineElement = null;
+            }
+        }
+        Assertions.assertNotNull(timelineElement);
+
+    }
+
+    @Then("verifica non presenza in Timeline di pagamenti con avvisi F24 del destinatario {int}")
+    public void verificaNonPresenzaPagamentiF24(Integer utente) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(utente)) {
+                Assertions.assertNull(timelineElement.getDetails().getIdF24());
+            }else {
+                timelineElement = null;
+            }
+        }
+        Assertions.assertNull(timelineElement);
+
+    }
+
+
+
+
     @Then("si attende il non corretto pagamento della notifica dell'utente {int}")
     public void siAttendeIlNonCorrettoPagamentoDellaNotifica(Integer utente) {
         TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
