@@ -1344,4 +1344,15 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
 
 
 
-
+  @AOO_UO
+  Scenario: [B2B_DIGITAL_SEND_15] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+    And viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+    And destinatario
+      | denomination | Galileo Galilei |
+      | taxId | GLLGLL64B15G702I |
+      | digitalDomicile | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then viene verificata che sia presente la pec di piattaforma di "Mario Cucumber" dal comune "comune_2"

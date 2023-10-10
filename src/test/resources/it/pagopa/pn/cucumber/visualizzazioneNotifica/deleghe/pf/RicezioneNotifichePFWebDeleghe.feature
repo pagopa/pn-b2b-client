@@ -175,3 +175,42 @@ Feature: Ricezione notifiche destinate al delegante
     And download attestazione opponibile AAR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
+
+    @AOO_UO
+    Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Gherkin" dal comune "Comune_1"
+
+  @AOO_UO
+  Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega dal comune "comune_1"
+
+  @AOO_UO
+  Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega dal comune "comune_1"
