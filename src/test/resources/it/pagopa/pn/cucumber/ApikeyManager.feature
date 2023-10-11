@@ -338,11 +338,11 @@ Feature: apiKey manager
   Scenario: [API-KEY_25] generazione senza gruppo e mancata presenza nel ente figlio
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
-    And l'apiKey non è presente dal comune "Comune_2"
+    And l'apiKey non è presente dal comune "Comune_Son"
 
   @AOO_UO
   Scenario: [API-KEY_26] generazione senza gruppo e mancata presenza nel ente figlio
-    Given Viene creata una nuova apiKey per il comune "Comune_2" senza gruppo
+    Given Viene creata una nuova apiKey per il comune "Comune_Son" senza gruppo
     And viene impostata l'apikey appena generata
     And l'apiKey non è presente dal comune "Comune_1"
 

@@ -178,7 +178,7 @@ Feature: Ricezione notifiche destinate al delegante
 
     @AOO_UO
     Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -189,7 +189,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO
   Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -203,7 +203,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO
   Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -217,10 +217,11 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO
   Scenario: [WEB-PF-MANDATE_20] Invio notifica da parte di ente figlio digitale altro destinatario e fallimento invio
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Gherkin"

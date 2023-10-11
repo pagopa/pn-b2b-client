@@ -275,7 +275,7 @@ public class ApikeyManagerSteps {
 
     @And("l'apiKey non è presente dal comune {string}")
     public void lApiKeyNonÈPresenteDalComune(String settedPa) {
-        sharedSteps.selectPA(settedPa);
+        apiKeyManagerClient.setApiKey(settedPa);
         Assertions.assertDoesNotThrow(() ->apiKeys = this.apiKeyManagerClient.getApiKeys(null, null, null, true));
         Assertions.assertNull(
                 apiKeys.getItems().stream()

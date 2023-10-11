@@ -62,7 +62,7 @@ Feature: Invio messaggi cortesia e2e
         | NULL | NULL |
 
 
-    @AOO_UO
+    @AOO_UO1
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5] invio messaggio di cortesia - invio per email a ente padre
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -81,7 +81,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
 
-    @AOO_UO
+    @AOO_UO1
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5_PG] invio messaggio di cortesia - invio per email a ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -92,7 +92,7 @@ Feature: Invio messaggi cortesia e2e
             | denomination    | Lucio Anneo Seneca |
             | taxId           | 20517490320        |
             | digitalDomicile | NULL               |
-        When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+        When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
             | loadTimeline | true |
@@ -100,7 +100,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
 
-    @AOO_UO
+    @AOO_UO1
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6] invio messaggio di cortesia - invio per email a ente padre
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -111,7 +111,7 @@ Feature: Invio messaggi cortesia e2e
             | denomination | Galileo Galilei |
             | taxId | 20517490320 |
             | digitalDomicile | NULL |
-        When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+        When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
             | loadTimeline | true |
@@ -119,7 +119,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex | 0 |
 
-    @AOO_UO
+    @AOO_UO1
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6_PG] invio messaggio di cortesia - invio per email a ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
@@ -130,7 +130,7 @@ Feature: Invio messaggi cortesia e2e
             | denomination    | Lucio Anneo Seneca |
             | taxId           | 20517490320        |
             | digitalDomicile | NULL               |
-        When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+        When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
         Then si verifica la corretta acquisizione della notifica
         And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
             | loadTimeline | true |
