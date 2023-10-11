@@ -84,62 +84,10 @@ public class DataTableTypeUtil {
                                 NotificationRecipientV21.RecipientTypeEnum.PG)))
 
                 //GESTIONE ISTANZE DI PAGAMENTI
-                /**
-                //1 PAGAMENTO
-                .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
 
-                        .pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
-                                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("SI")?
-                                new PagoPaPayment()
-                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI")?true:false)
-                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))):null))
-
-                        .f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                                (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-                                        new F24Payment()
-                                                .title(getValue(data,TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?true:false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))):null))
-
-                )
-
-                //2 PAGAMENTO
-                .addPaymentsItem(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentItem()
-
-                        .pagoPa(getValue(data, PAYMENT_PAGOPA_FORM_1.key) == null ? null :
-                                (getValue(data, PAYMENT_PAGOPA_FORM_1.key).equalsIgnoreCase("SI")?
-                                        new PagoPaPayment()
-                                                .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                                .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI")?true:false)
-                                                .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM_1.key))):null))
-
-                        .f24(getValue(data, PAYMENT_F24_STANDARD_1.key) == null ? null :
-                                (getValue(data, PAYMENT_F24_STANDARD_1.key).equalsIgnoreCase("SI")?
-                                        new F24Payment()
-                                                .title(getValue(data,TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")?true:false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_1.key))):null))
-
-                )
-**/
-
-                        //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
-                        //.pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                        //        null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-                        //.f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-                       // (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-                        //                utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-                       // .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                       //          (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-                       //                utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
-                //)
         );
 
         //N PAGAMENTI
-        //TODO Parametrizzare.......
         if (getValue(data,PAYMENT.key)!= null && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty() && !"SI".equalsIgnoreCase(getValue(data, PAYMENT_PAGOPA_NOTICE_DUPLICATE.key))){
             {
                 listPayment = new ArrayList<NotificationPaymentItem>();
@@ -170,43 +118,8 @@ public class DataTableTypeUtil {
                 }
                 notificationRecipient.setPayments(listPayment);
             }
-
-
         }
-        if (getValue(data,PAYMENT.key)!= null && "SI".equalsIgnoreCase(getValue(data, PAYMENT_PAGOPA_NOTICE_DUPLICATE.key))){
-            {
-                listPayment = new ArrayList<NotificationPaymentItem>();
-                String noticeCode = getValue(data, PAYMENT_NOTICE_CODE.key);
-                for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                    try {
-                        Thread.sleep(1000);
-                    }
-                    catch (InterruptedException exc) {
-                        throw new RuntimeException(exc);
-                    }
-                    NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
-                    addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
-                            (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("SI") ?
-                                    new PagoPaPayment()
-                                            .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                            .noticeCode(noticeCode)
-                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
-                                            .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))) : null));
 
-                    addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-                            (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
-                                    new F24Payment()
-                                            .title(getValue(data, TITLE_PAYMENT.key))
-                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                            .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
-
-                    listPayment.add(addPaymentsItem);
-                }
-                notificationRecipient.setPayments(listPayment);
-            }
-
-
-        }
 
 
         /* TEST
