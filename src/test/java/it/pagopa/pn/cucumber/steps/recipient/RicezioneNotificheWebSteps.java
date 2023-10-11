@@ -20,6 +20,7 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -43,10 +44,17 @@ public class RicezioneNotificheWebSteps {
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
-
     private final IPnWebPaClient webPaClient;
     private HttpStatusCodeException notificationError;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    @Value("${pn.external.senderId}")
+    private String senderId;
+    @Value("${pn.external.senderId-2}")
+    private String senderId2;
+    @Value("${pn.external.senderId-GA}")
+    private String senderIdGA;
+    @Value("${pn.external.senderId-SON}")
+    private String senderIdSON;
 
     @Autowired
     public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient) {
@@ -400,6 +408,87 @@ public class RicezioneNotificheWebSteps {
     public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
         try {
             this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @And("viene inserito un recapito legale {string} per comune {string}")
+    public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
+
+        String senderIdPa="default";
+
+        switch (pa){
+            case "comune_1":
+                senderIdPa=senderId;
+                break;
+            case "comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+        }
+
+        // inserimento
+        this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec)));
+        // validazione
+        String verificationCode = this.externalClient.getVerificationCode(pec);
+        this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode(verificationCode)));
+    }
+
+    @And("viene richiesto l'inserimento del email di cortesia {string} per comune {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
+
+        String senderIdPa="default";
+
+        switch (pa){
+            case "comune_1":
+                senderIdPa=senderId;
+                break;
+            case "comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+        }
+
+        try {
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @When("viene richiesto l'inserimento del numero di telefono {string} per comune {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
+
+        String senderIdPa="default";
+
+        switch (pa){
+            case "comune_1":
+                senderIdPa=senderId;
+                break;
+            case "comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+        }
+
+        try {
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.SMS, (new AddressVerification().value(phone).verificationCode("00000")));
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }

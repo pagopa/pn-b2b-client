@@ -89,6 +89,8 @@ public class SharedSteps {
 
     @Value("${pn.external.api-key-GA-taxID}")
     private String senderTaxIdGa;
+    @Value("${pn.external.api-key-SON-taxID}")
+    private String senderTaxIdSON;
 
     @Value("${pn.bearer-token.user1.taxID}")
     private String marioCucumberTaxID;
@@ -894,7 +896,7 @@ public class SharedSteps {
                 setGrup(SettableApiKey.ApiKeyType.GA);
                 break;
             case "Comune_Son":
-                this.notificationRequest.setSenderTaxId(this.senderTaxId);
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdSON);
                 setGrup(SettableApiKey.ApiKeyType.SON);
                 break;
         }

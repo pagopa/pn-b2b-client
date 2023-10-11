@@ -224,7 +224,7 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "GherkinSrl"
 
   @AOO_UO
@@ -263,4 +263,5 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "GherkinSrl"
