@@ -334,7 +334,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
- @AOO_UO
+  @AOO_UO
   Scenario: [API-KEY_25] generazione senza gruppo e mancata presenza nel ente figlio
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
