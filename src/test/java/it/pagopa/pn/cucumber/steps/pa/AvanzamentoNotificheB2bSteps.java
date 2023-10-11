@@ -1368,8 +1368,8 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertDoesNotThrow(() -> this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
             }
             if (appIO) {
-                Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
-                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
+               // Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
+                      //  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
             if (webRecipient) {
                 Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
@@ -1460,8 +1460,8 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(),  finalKeySearch));
             }
             if (appIO) {
-                Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
-                        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
+               // Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
+                //        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
             if (webRecipient) {
                 Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),

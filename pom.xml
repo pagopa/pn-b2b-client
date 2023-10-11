@@ -25,8 +25,8 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>v2.1.0-RC.5</open.api.version.delivery>
-        <open.api.version.delivery.push>v2.1.0-RC.5</open.api.version.delivery.push>
+        <open.api.version.delivery>${open.api.version}</open.api.version.delivery>
+        <open.api.version.delivery.push>${open.api.version}</open.api.version.delivery.push>
         <open.api.version.user.attributes>${open.api.version}</open.api.version.user.attributes>
         <open.api.version.mandate>${open.api.version}</open.api.version.mandate>
         <open.api.version.apikey.manager>${open.api.version}</open.api.version.apikey.manager>
@@ -184,7 +184,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/multipagamenti/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -213,7 +213,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/feature/multipagamenti/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version}/docs/openapi/api-internal-pn-delivery-push.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -242,7 +242,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/multipagamenti/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -271,7 +271,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/multipagamenti/docs/openapi/api-external-web-recipient.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-web-recipient.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -300,7 +300,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/feature/multipagamenti/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version}/docs/openapi/api-external-b2b-webhook.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -358,7 +358,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/multipagamenti/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-b2b-appio.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -416,7 +416,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/multipagamenti/docs/openapi/api-external-web-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version}/docs/openapi/api-external-web-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -561,7 +561,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/feature/multipagamenti/docs/openapi/api-private.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version}/docs/openapi/api-private.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
