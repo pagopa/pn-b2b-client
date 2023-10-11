@@ -216,7 +216,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
 
 
-  @AOO_UO
+  @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_19] Invio notifica digitale altro destinatario e recupero_scenario positivo da parte di ente radice
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -227,7 +227,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "GherkinSrl"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_20] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -241,7 +241,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     And l'allegato "PAGOPA" può essere correttamente recuperato da "GherkinSrl"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_21] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -255,7 +255,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     And l'allegato "F24" può essere correttamente recuperato da "GherkinSrl"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_22] Invio notifica digitale altro destinatario per ente figlio e fallimento invio
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"

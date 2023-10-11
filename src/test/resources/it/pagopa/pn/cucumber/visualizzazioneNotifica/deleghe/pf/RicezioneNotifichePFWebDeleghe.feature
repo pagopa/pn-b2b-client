@@ -176,7 +176,7 @@ Feature: Ricezione notifiche destinate al delegante
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
 
-    @AOO_UO
+  @AOO_UO @AOO_UO1
     Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
@@ -187,7 +187,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
@@ -201,7 +201,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
@@ -215,7 +215,7 @@ Feature: Ricezione notifiche destinate al delegante
     When la notifica viene inviata tramite api b2b dal "comune_1" e si attende che lo stato diventi ACCEPTED
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
 
-  @AOO_UO
+  @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_20] Invio notifica da parte di ente figlio digitale altro destinatario e fallimento invio
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"

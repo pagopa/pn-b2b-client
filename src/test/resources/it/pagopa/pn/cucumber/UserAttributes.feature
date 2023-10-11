@@ -98,21 +98,25 @@ Feature: Attributi utente
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£@gmail.com                   |
 
 
+  @AOO_UO
   Scenario: [USER-ATTR_10] inserimento email di cortesia e controllo presenza per ente figlio
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento del email di cortesia "example@FAIL-pecFirstKOSecondKO.it" per comune "comune_Son"
     And  l'inserimento ha prodotto un errore con status code "400"
 
+  @AOO_UO
   Scenario: [USER-ATTR_11] inserimento numero telefono e controllo presenza per ente figlio
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento del numero di telefono "" per comune "comune_Son"
     And  l'inserimento ha prodotto un errore con status code "400"
 
+  @AOO_UO
   Scenario: [USER-ATTR_12_PG] inserimento email di cortesia a PG e controllo presenza per ente figlio
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     When viene richiesto l'inserimento del email di cortesia "example@FAIL-pecFirstKOSecondKO.it" per comune "comune_Son"
     And  l'inserimento ha prodotto un errore con status code "400"
 
+  @AOO_UO
   Scenario: [USER-ATTR_13_PG] inserimento numero telefono a PG e controllo presenza per ente figlio
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     When viene richiesto l'inserimento del numero di telefono "" per comune "comune_Son"
