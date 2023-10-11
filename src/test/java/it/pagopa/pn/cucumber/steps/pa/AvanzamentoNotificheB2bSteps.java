@@ -1734,6 +1734,27 @@ public class AvanzamentoNotificheB2bSteps {
         b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
     }
 
+    @And("gli avvisi PagoPa vengono pagati correttamente dal destinatario {int}")
+    public void laNotificaVienePagataConAvvisoNumMultiPagoPa(Integer destinatario) {
+
+        List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
+        PaymentEventsRequestPagoPa eventsRequestPagoPa = new PaymentEventsRequestPagoPa();
+        for (NotificationPaymentItem notificationPaymentItem: sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments()) {
+            NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
+            PaymentEventPagoPa paymentEventPagoPa = new PaymentEventPagoPa();
+            paymentEventPagoPa.setNoticeCode(notificationPaymentItem.getPagoPa().getNoticeCode());
+            paymentEventPagoPa.setCreditorTaxId(notificationPaymentItem.getPagoPa().getCreditorTaxId());
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setAmount(notificationPrice.getAmount());
+            paymentEventPagoPaList.add(paymentEventPagoPa);
+        }
+
+        eventsRequestPagoPa.setEvents(paymentEventPagoPaList);
+
+        b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
+    }
+
     @And("viene rifiutato il pagamento dell'avviso pagopa  dall'utente {int}")
     public void laNotificaVieneRifiutatoIlPagamentoMulti(Integer utente) {
         NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),

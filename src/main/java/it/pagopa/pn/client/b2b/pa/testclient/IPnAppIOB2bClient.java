@@ -10,4 +10,6 @@ public interface IPnAppIOB2bClient {
 
     ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid) throws RestClientException;
 
+    public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, String xPagopaCxTaxid, Integer attachmentIdx) throws RestClientException ;
+
 }
