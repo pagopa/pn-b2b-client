@@ -140,7 +140,7 @@ public class DataTableTypeUtil {
 
         //N PAGAMENTI
         //TODO Parametrizzare.......
-        if (getValue(data,PAYMENT.key)!= null && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
+        if (getValue(data,PAYMENT.key)!= null && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty() && !"SI".equalsIgnoreCase(getValue(data, PAYMENT_PAGOPA_NOTICE_DUPLICATE.key))){
             {
                 listPayment = new ArrayList<NotificationPaymentItem>();
                 for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
@@ -165,7 +165,7 @@ public class DataTableTypeUtil {
                                             .title(getValue(data, TITLE_PAYMENT.key))
                                             .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                             .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
- 
+
                     listPayment.add(addPaymentsItem);
                 }
                 notificationRecipient.setPayments(listPayment);
@@ -173,6 +173,42 @@ public class DataTableTypeUtil {
 
 
         }
+        if (getValue(data,PAYMENT.key)!= null && "SI".equalsIgnoreCase(getValue(data, PAYMENT_PAGOPA_NOTICE_DUPLICATE.key))){
+            {
+                listPayment = new ArrayList<NotificationPaymentItem>();
+                String noticeCode = getValue(data, PAYMENT_NOTICE_CODE.key);
+                for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException exc) {
+                        throw new RuntimeException(exc);
+                    }
+                    NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
+                    addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
+                            (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("SI") ?
+                                    new PagoPaPayment()
+                                            .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                            .noticeCode(noticeCode)
+                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                            .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))) : null));
+
+                    addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+                            (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
+                                    new F24Payment()
+                                            .title(getValue(data, TITLE_PAYMENT.key))
+                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                            .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
+
+                    listPayment.add(addPaymentsItem);
+                }
+                notificationRecipient.setPayments(listPayment);
+            }
+
+
+        }
+
+
         /* TEST
         if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
             notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
