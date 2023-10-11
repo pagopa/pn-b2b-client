@@ -361,6 +361,9 @@ public class RicezioneNotificheWebSteps {
             case "Galileo Galilei":
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 break;
+            case "Lucio Annea Seneca":
+                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
