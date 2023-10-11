@@ -272,4 +272,13 @@ public class ApikeyManagerSteps {
             this.sharedSteps.setNotificationError(e);
         }
     }
+
+    @And("l'apiKey non è presente dal comune {string}")
+    public void lApiKeyNonÈPresenteDalComune(String settedPa) {
+        sharedSteps.selectPA(settedPa);
+        Assertions.assertDoesNotThrow(() ->apiKeys = this.apiKeyManagerClient.getApiKeys(null, null, null, true));
+        Assertions.assertNull(
+                apiKeys.getItems().stream()
+                        .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
+    }
 }

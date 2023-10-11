@@ -893,6 +893,10 @@ public class SharedSteps {
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdGa);
                 setGrup(SettableApiKey.ApiKeyType.GA);
                 break;
+            case "Comune_Son":
+                this.notificationRequest.setSenderTaxId(this.senderTaxId);
+                setGrup(SettableApiKey.ApiKeyType.SON);
+                break;
         }
 
     }
@@ -954,6 +958,9 @@ public class SharedSteps {
                 break;
             case "Comune_Multi":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
+                break;
+            case "Comune_Son":
+                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
                 break;
             default:
                 throw new IllegalArgumentException();
