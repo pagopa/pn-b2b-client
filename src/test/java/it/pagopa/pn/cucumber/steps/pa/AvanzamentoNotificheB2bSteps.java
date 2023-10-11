@@ -1713,7 +1713,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @And("l'avviso pagopa {int} viene pagato correttamente dall'utente {int}")
-    public void laNotificaVienePagataConAvvisoNumMulti(Integer utente, Integer idAvviso) {
+    public void laNotificaVienePagataConAvvisoNumMulti( Integer idAvviso, Integer utente) {
         NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getCreditorTaxId(),
                 sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getNoticeCode());
 

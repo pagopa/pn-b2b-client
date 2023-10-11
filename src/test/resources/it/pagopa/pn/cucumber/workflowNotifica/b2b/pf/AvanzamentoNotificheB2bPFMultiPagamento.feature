@@ -1262,7 +1262,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Ada Lovelace  |
@@ -1270,7 +1270,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost_pagopa | NO |
       | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
