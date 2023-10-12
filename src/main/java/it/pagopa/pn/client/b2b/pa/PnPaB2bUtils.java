@@ -348,7 +348,7 @@ public class PnPaB2bUtils {
                     fsn.getRecipients().get(i).getPayment().getPagoPaForm() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
-                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA");
+                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "PAGOPA",);
                 checkAttachment( resp );
             }
             i++;

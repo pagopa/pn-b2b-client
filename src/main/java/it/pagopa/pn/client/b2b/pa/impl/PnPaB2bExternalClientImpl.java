@@ -146,9 +146,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
     }
 
-    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
+    public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname,Integer attachmentIdx) {
         refreshTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname);
+        return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname, attachmentIdx);
     }
 
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {

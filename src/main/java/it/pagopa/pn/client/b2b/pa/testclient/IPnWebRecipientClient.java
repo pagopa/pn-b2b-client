@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface IPnWebRecipientClient extends SettableBearerToken {
 
-    FullReceivedNotification getReceivedNotification(String iun, String mandateId) throws RestClientException;
+    FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException;
 
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
 
