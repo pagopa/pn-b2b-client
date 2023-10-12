@@ -75,6 +75,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -84,6 +85,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -143,6 +145,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -161,6 +164,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -237,6 +241,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
@@ -259,6 +264,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -318,6 +324,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -394,6 +401,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And destinatario
@@ -402,7 +410,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
@@ -422,6 +430,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And destinatario
@@ -482,12 +491,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    And destinatario Mario Cucumber e:
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -592,6 +604,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_F24 | SI |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
@@ -599,6 +612,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_F24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
@@ -668,6 +682,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
@@ -690,6 +705,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -711,6 +727,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -812,6 +829,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
@@ -821,6 +839,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
@@ -908,6 +927,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
@@ -917,6 +937,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -982,6 +1003,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1003,6 +1025,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1025,6 +1048,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | apply_cost_f24 | SI |
@@ -1110,6 +1134,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
@@ -1117,6 +1142,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -1138,6 +1164,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
@@ -1145,6 +1172,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -1174,6 +1202,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -1276,6 +1305,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1340,6 +1370,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -1437,6 +1468,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1462,6 +1494,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1481,6 +1514,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1502,6 +1536,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1544,6 +1579,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1580,6 +1616,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1627,12 +1664,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_GHERKIN |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1655,6 +1694,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
