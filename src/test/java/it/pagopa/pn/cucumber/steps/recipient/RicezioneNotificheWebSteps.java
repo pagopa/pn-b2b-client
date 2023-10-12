@@ -121,7 +121,8 @@ public class RicezioneNotificheWebSteps {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
-                null);
+                null,
+                0);
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
@@ -139,7 +140,8 @@ public class RicezioneNotificheWebSteps {
             webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null);
+                    null,
+                    0);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -153,7 +155,8 @@ public class RicezioneNotificheWebSteps {
             webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null);
+                    null,
+                    0);
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }

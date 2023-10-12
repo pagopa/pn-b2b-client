@@ -24,6 +24,7 @@ public enum NotificationValue {
     DOCUMENT("document","classpath:/sample.pdf",false),
     TAXONOMY_CODE("taxonomyCode","010202N",false),
     AMOUNT("amount",null,false),
+    PA_FEE("paFee",null,false),
     PAYMENT_EXPIRATION_DATE("paymentExpirationDate", null,false),
 
     /*RECIPIENT*/
@@ -44,12 +45,24 @@ public enum NotificationValue {
     PHYSICAL_ADDRESS_ZIP("physicalAddress_zip","87100",false),
     RECIPIENT_TYPE("recipientType","PF",false),
     PAYMENT("payment","",false),
+    PAYMENT_MULTY("payment_multy","",false),
+    PAYMENT_MULTY_NUMBER("payment_multy_number","0",false),
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
     PAYMENT_NOTICE_CODE("payment_noticeCode","",true),
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
+    PAYMENT_PAGOPA_FORM_1("payment_pagoPaForm_1","classpath:/AvvisoPagoPA.pdf",false),
+    PAYMENT_PAGOPA_NOTICE_DUPLICATE("notice_duplicate",null,false),
+
+    PAYMENT_F24("payment_f24","classpath:/Metadati_F24.json",false),
+    PAYMENT_F24_1("payment_f24_1","classpath:/Metadati_F24.json",false),
+
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
-    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+    PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
+    PAYMENT_F24_STANDARD_1("payment_f24standard_1","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+    PAYMENT_APPLY_COST_PAGOPA("apply_cost_pagopa","NO",false),
+    PAYMENT_APPLY_COST_F24("apply_cost_f24","NO",false),
+    TITLE_PAYMENT("title_payment","F24",false),
 
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),

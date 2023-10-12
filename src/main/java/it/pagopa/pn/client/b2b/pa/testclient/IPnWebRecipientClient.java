@@ -10,7 +10,7 @@ public interface IPnWebRecipientClient extends SettableBearerToken {
 
     FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException;
 
-    NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
+    NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId,Integer attachmentIdx) throws RestClientException;
 
     NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, UUID mandateId) throws RestClientException;
 

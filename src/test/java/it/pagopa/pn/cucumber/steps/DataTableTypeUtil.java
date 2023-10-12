@@ -7,8 +7,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
@@ -19,8 +18,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequest convertNotificationRequest(Map<String, String> data){
-        NewNotificationRequest notificationRequest = (new NewNotificationRequest()
+    public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequestV21 notificationRequest = (new NewNotificationRequestV21()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -40,9 +39,12 @@ public class DataTableTypeUtil {
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
+
+                .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
+
         );
         try {
             Thread.sleep(2);
@@ -53,15 +55,18 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
-    public synchronized NotificationRecipient convertNotificationRecipient(Map<String, String> data){
-        NotificationRecipient notificationRecipient =  (new NotificationRecipient()
+    public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data) {
+
+        List<NotificationPaymentItem> listPayment = null;
+
+        NotificationRecipientV21 notificationRecipient =  (new NotificationRecipientV21()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
                 .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
-                        null : NotificationDigitalAddress.TypeEnum.PEC ))
-                .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
+                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                                null : NotificationDigitalAddress.TypeEnum.PEC ))
+                        .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
                 )
                 .physicalAddress(getValue(data,PHYSICAL_ADDRES.key) == null? null: new NotificationPhysicalAddress()
                         .address(getValue(data,PHYSICAL_ADDRESS_ADDRESS.key))
@@ -75,24 +80,48 @@ public class DataTableTypeUtil {
                 )
                 .recipientType((getValue(data,RECIPIENT_TYPE.key) == null? null :
                         (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
-                                NotificationRecipient.RecipientTypeEnum.PF :
-                                NotificationRecipient.RecipientTypeEnum.PG)))
-                .payment(getValue(data,PAYMENT.key)== null? null : new NotificationPaymentInfo()
-                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                        //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
+                                NotificationRecipientV21.RecipientTypeEnum.PF :
+                                NotificationRecipientV21.RecipientTypeEnum.PG)))
 
-                        .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
-                                null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
-      //                  .f24flatRate(getValue(data, PAYMENT_F24_FLAT.key) == null ? null :
-      //                  (getValue(data, PAYMENT_F24_FLAT.key).equalsIgnoreCase("SI")?
-      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_FLAT.key)):null))
-      //
-      //                    .f24standard(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
-      //                           (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI")?
-      //                                  utils.newAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key)):null))
-                )
+                //GESTIONE ISTANZE DI PAGAMENTI
+
         );
+
+        //N PAGAMENTI
+        if (getValue(data,PAYMENT.key)!= null && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty() && !"SI".equalsIgnoreCase(getValue(data, PAYMENT_PAGOPA_NOTICE_DUPLICATE.key))){
+            {
+                listPayment = new ArrayList<NotificationPaymentItem>();
+                for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
+                    try {
+                        Thread.sleep(1000);
+                    }
+                    catch (InterruptedException exc) {
+                        throw new RuntimeException(exc);
+                    }
+                    NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
+                    addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
+                            (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("SI") ?
+                                    new PagoPaPayment()
+                                            .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                            .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                            .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key))) : null));
+
+                    addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD.key) == null ? null :
+                            (getValue(data, PAYMENT_F24_STANDARD.key).equalsIgnoreCase("SI") ?
+                                    new F24Payment()
+                                            .title(getValue(data, TITLE_PAYMENT.key))
+                                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                            .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))) : null));
+
+                    listPayment.add(addPaymentsItem);
+                }
+                notificationRecipient.setPayments(listPayment);
+            }
+        }
+
+
+
         /* TEST
         if(getValue(data,DIGITAL_DOMICILE.key) != null && !getValue(data,DIGITAL_DOMICILE.key).equalsIgnoreCase(EXCLUDE_VALUE)){
             notificationRecipient = notificationRecipient.digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
@@ -136,7 +165,7 @@ public class DataTableTypeUtil {
                 .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV20.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)

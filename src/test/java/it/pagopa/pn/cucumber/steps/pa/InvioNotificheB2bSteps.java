@@ -71,7 +71,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
@@ -138,7 +138,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
         try {
             notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException e) {
@@ -198,7 +198,10 @@ public class InvioNotificheB2bSteps {
                 key = sharedSteps.getSentNotification().getDocuments().get(0).getRef().getKey();
                 break;
             case "PAGOPA":
-                key = sharedSteps.getSentNotification().getRecipients().get(0).getPayment().getPagoPaForm().getRef().getKey();
+                key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
+                break;
+            case "F24_STANDARD":
+                key = sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -225,7 +228,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV20 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV21 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -264,7 +267,7 @@ public class InvioNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
         this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType);
+                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
         byte[] bytes = Assertions.assertDoesNotThrow(() ->
                 b2bUtils.downloadFile(this.downloadResponse.getUrl()));
         this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
@@ -297,7 +300,7 @@ public class InvioNotificheB2bSteps {
         }
         try {
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100, downloadType);
+                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100, downloadType,0);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -409,7 +412,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        NewNotificationRequestStatusResponse newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+        NewNotificationRequestStatusResponseV21 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());

@@ -14,7 +14,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 @SpringBootTest( classes = {
         PnPaB2bExternalClientImpl.class,
@@ -34,14 +36,14 @@ public class NewNotificationTest {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        NewNotificationRequest request = new NewNotificationRequest()
+        NewNotificationRequestV21 request = new NewNotificationRequestV21()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Milano")
                 .senderTaxId("01199250158")
                 .notificationFeePolicy( NotificationFeePolicy.FLAT_RATE )
-                .physicalCommunicationType( NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( "Fiera", "FRMTTR76M06B715E","classpath:/sample.pdf"))
@@ -49,7 +51,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV20 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV21 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
@@ -67,10 +69,11 @@ public class NewNotificationTest {
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
-    private NotificationRecipient newRecipient(String prefix, String taxId, String resourcePath ) {
+    private NotificationRecipientV21 newRecipient(String prefix, String taxId, String resourcePath ) {
         long epochMillis = System.currentTimeMillis();
+        List<NotificationPaymentItem> notificationPaymentItemList= new ArrayList<NotificationPaymentItem>();
 
-        NotificationRecipient recipient = new NotificationRecipient()
+        NotificationRecipientV21 recipient = new NotificationRecipientV21()
                 .denomination( prefix + " denomination")
                 .taxId( taxId )
                 .digitalDomicile( new NotificationDigitalAddress()
@@ -84,15 +87,18 @@ public class NewNotificationTest {
                         .foreignState("ITALIA")
                         .zip("40100")
                 )
-                .recipientType( NotificationRecipient.RecipientTypeEnum.PF )
-                .payment( new NotificationPaymentInfo()
-                                .creditorTaxId("77777777777")
-                                .noticeCode( String.format("30201%13d", epochMillis ) )
-                                .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
-                                .pagoPaForm( newAttachment( resourcePath ))
+                .recipientType( NotificationRecipientV21.RecipientTypeEnum.PF);
+
+        // .recipientType( NotificationRecipientV21.RecipientTypeEnum.PF )
+        //TODO Modificare.....
+        //  .payment( new NotificationPaymentInfo()
+        //                 .creditorTaxId("77777777777")
+        //                   .noticeCode( String.format("30201%13d", epochMillis ) )
+        //                   .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
+        //                    .pagoPaForm( newAttachment( resourcePath ))
 //                                .f24flatRate( newAttachment( resourcePath ) )
 //                                .f24standard( newAttachment( resourcePath ) )
-                );
+        //  );
 
         try {
             Thread.sleep(10);
