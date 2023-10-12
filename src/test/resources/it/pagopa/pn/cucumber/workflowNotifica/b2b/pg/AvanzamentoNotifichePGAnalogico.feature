@@ -284,14 +284,14 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then si attende la corretta sospensione dell'invio cartaceo
 
 
-  @ignore
   Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
       | denomination            | Test AR Fail 2              |
-      | taxId                   | DVNLRD52D15M059P            |
+      | recipientType           | PG                          |
+      | taxId                   | 00749900049                 |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -305,9 +305,10 @@ Feature: avanzamento notifiche analogico persona giuridica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | NNVFNC80A01H501G |
-      | digitalDomicile | NULL |
+      | denomination            | Test AR Fail 2               |
+      | recipientType           | PG                           |
+      | taxId                   | NNVFNC80A01H501G             |
+      | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D01"
@@ -321,6 +322,7 @@ Feature: avanzamento notifiche analogico persona giuridica
       | senderDenomination | Comune di palermo |
     And destinatario
       | denomination                        | Test AR Fail               |
+      | recipientType                       | PG                         |
       | taxId                               | CNCGPP80A01H501J           |
       | digitalDomicile                     | NULL                       |
       | physicalAddress_address             | Via @FAIL-Irreperibile_890 |

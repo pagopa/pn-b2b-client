@@ -712,7 +712,7 @@ public class ApiServiceDeskSteps {
             if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
                 findOperationId=true;
             }
-            // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+             Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
             //Viene verificato che l'operation id generato fa parte della lista
 
             Assertions.assertNotNull(element.getIuns());
@@ -750,6 +750,40 @@ public class ApiServiceDeskSteps {
             String message = assertionFailedError.getMessage() + "{Lo iun non è associato al CF" +searchNotificationRequest.getTaxId()+"}";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
+    }
+
+    @Then("Il servizio SEARCH risponde con esito positivo con uncompleted iun lo stato della consegna è {string}")
+    public void verifySearchResponseWithStatusAndUncompletedIun(String status){
+        boolean findOperationId=false;
+        boolean findIun=false;
+        String operationIdToSearch=operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
+        List<OperationResponse> lista=searchResponse.getOperations();
+        Assertions.assertNotNull(lista);
+        logger.info("SEARCH " +  searchResponse.getOperations().toString());
+        //Analisi output
+        for(OperationResponse element:lista){
+            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
+            String actualOperationId=element.getOperationId();
+            Assertions.assertNotNull(actualOperationId);
+            if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
+                findOperationId=true;
+            }
+             Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
+            //Viene verificato che l'operation id generato fa parte della lista
+
+            Assertions.assertNotNull(element.getUncompletedIuns());
+            List<SDNotificationSummary> listaiuns=element.getUncompletedIuns();
+                Assertions.assertNotNull(element.getIuns());
+                Assertions.assertNotNull(element.getNotificationStatus());
+                //controllo sullo status
+                if(operationIdToSearch.compareTo(actualOperationId)==0){
+                    logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
+                    Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+                }
+                Assertions.assertNotNull(element.getOperationCreateTimestamp());
+                Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+            }
     }
 
     @Then("Il servizio SEARCH risponde con lista vuota")
