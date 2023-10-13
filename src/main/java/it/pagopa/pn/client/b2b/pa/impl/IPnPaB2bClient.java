@@ -2,6 +2,7 @@ package it.pagopa.pn.client.b2b.pa.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableApiKey;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import org.springframework.web.client.RestClientException;
 import java.util.List;
 
@@ -28,6 +29,9 @@ public interface IPnPaB2bClient extends SettableApiKey {
     LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId) ;
 
     NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException;
+
+    NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee) throws RestClientException ;
+
 
     void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException;
 

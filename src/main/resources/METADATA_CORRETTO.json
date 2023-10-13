@@ -28,64 +28,64 @@
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
-					"debit": "7309",
-					"credit": "0"
+					"debit": 7309,
+					"credit": 0
 				}
 			],
 			"office": "FRH",
@@ -102,8 +102,8 @@
 						"startDate": "403120",
 						"endDate": "084198"
 					},
-					"debit": "840",
-					"credit": "0"
+					"debit": 840,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
@@ -114,8 +114,8 @@
 						"startDate": "403120",
 						"endDate": "084198"
 					},
-					"debit": "840",
-					"credit": "0"
+					"debit": 840,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
@@ -126,8 +126,8 @@
 						"startDate": "403120",
 						"endDate": "084198"
 					},
-					"debit": "840",
-					"credit": "0"
+					"debit": 840,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
@@ -138,8 +138,8 @@
 						"startDate": "403120",
 						"endDate": "084198"
 					},
-					"debit": "840",
-					"credit": "0"
+					"debit": 840,
+					"credit": 0
 				},
 				{
 					"applyCost": false,
@@ -150,8 +150,8 @@
 						"startDate": "403120",
 						"endDate": "084198"
 					},
-					"debit": "840",
-					"credit": "0"
+					"debit": 840,
+					"credit": 0
 				}
 			]
 		},
@@ -163,8 +163,8 @@
 					"taxType": "ZEMO",
 					"installment": "A",
 					"year": "2306",
-					"debit": "901492",
-					"credit": "0"
+					"debit": 901492,
+					"credit": 0
 				}
 			]
 		},
@@ -182,8 +182,8 @@
 					"taxType": "0943",
 					"installment": "43CV",
 					"year": "2432",
-					"debit": "6002916",
-					"credit": "0"
+					"debit": 6002916,
+					"credit": 0
 				}
 			],
 			"deduction": "97091877"
@@ -197,8 +197,8 @@
 					"control": "54",
 					"refNumber": "792244",
 					"reason": "B",
-					"debit": "600",
-					"credit": "0"
+					"debit": 600,
+					"credit": 0
 				}
 			],
 			"socSecRecords": [
@@ -211,8 +211,8 @@
 						"startDate": "150401",
 						"endDate": "671726"
 					},
-					"debit": "360",
-					"credit": "0"
+					"debit": 360,
+					"credit": 0
 				}
 			]
 		}
