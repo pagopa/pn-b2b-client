@@ -30,6 +30,26 @@ Feature: Download legalFact
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then la PA richiede il download dell'attestazione opponibile "PEC_RECEIPT"
 
+    #TODO Test PN-8185 necessita pec reale per la corretta esecuzione..pectest@pec.pagopa.it
+  Scenario: [B2B_PA_LEGALFACT_3_1] Invio notifica e download atto opponibile PEC_RECEIPT e verifica estensione ricevuta pec formato eml scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then la PA richiede il download dell'attestazione opponibile PEC_RECEIPT
+
+ #TODO Test PN-8185  necessita pec reale per la corretta esecuzione..pectest@pec.pagopa.it
+  Scenario: [B2B_WEB-RECIPIENT_LEGALFACT_3_1] Invio notifica e download atto opponibile PEC_RECEIPT e verifica estensione ricevuta pec formato eml scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then "Mario Gherkin" richiede il download dell'attestazione opponibile PEC_RECEIPT
+
   @testLite
   Scenario: [B2B_PA_LEGALFACT_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo
     Given viene generata una nuova notifica
