@@ -1009,11 +1009,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
-      | apply_cost_f24 | NO |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 
 #SOLO TM
   #54 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
@@ -1031,11 +1031,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
-      | apply_cost_f24 | NO |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 #SOLO TM
@@ -1056,13 +1055,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
-      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
-    Then l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
-    And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
+
 
 #SOLO TM
   #56 PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
@@ -1091,7 +1088,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
-    Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
+    And l'avviso pagopa 0 viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 1
 
@@ -1143,6 +1140,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1151,11 +1149,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
-    And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 #SOLO TM
   #59 PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
@@ -1173,6 +1170,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1181,11 +1179,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
-    And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
   #60 PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
@@ -1203,6 +1199,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1211,11 +1208,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And l'avviso pagopa viene pagato correttamente dall'utente 1
     And si attende il corretto pagamento della notifica dell'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 1
+
 
 
 
@@ -1533,11 +1530,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_F24 | SI |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
-    And viene effettuato un controllo sulla durata della retention di "PAGOPA"
+    And viene effettuato un controllo sulla durata della retention di "F24"
 
 
 
@@ -1555,11 +1552,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
+      | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_F24 | SI |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -1579,7 +1576,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_F24 | SI |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
