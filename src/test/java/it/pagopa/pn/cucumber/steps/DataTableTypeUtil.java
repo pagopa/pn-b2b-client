@@ -185,7 +185,7 @@ public class DataTableTypeUtil {
                 .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedError.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV20.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)
