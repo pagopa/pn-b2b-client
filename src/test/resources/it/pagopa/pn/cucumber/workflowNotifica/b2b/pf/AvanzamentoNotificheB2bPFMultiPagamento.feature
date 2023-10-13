@@ -1112,6 +1112,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1119,6 +1120,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
@@ -1317,6 +1319,38 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And l'avviso pagopa viene pagato correttamente dall'utente 1
+    And si attende il corretto pagamento della notifica dell'utente 0
+    And si attende il corretto pagamento della notifica dell'utente 1
+    And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
+    And verifica non presenza in Timeline di pagamenti con avvisi F24 del destinatario 0
+    #TODO Controllare che non ci sono eventi in timeline di pagamenti f24.......Chiedere...
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_67_1] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 2 |
+    And destinatario
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 2 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
+    And gli avvisi PagoPa vengono pagati correttamente dal destinatario 1
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
@@ -1722,10 +1756,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | NULL   |
+      | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
+      | payment_f24standard | NUL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1744,7 +1777,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
+      | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
       | apply_cost_f24 | SI |
