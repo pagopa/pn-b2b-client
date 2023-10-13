@@ -178,18 +178,18 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO1
     Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin"
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -203,7 +203,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -217,11 +217,16 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_20] Invio notifica da parte di ente figlio digitale altro destinatario e fallimento invio
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSrl
-    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "Mario Gherkin"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Gherkin" dal comune "Comune_1"
+
+  @AOO_UO @AOO_UO1
+  Scenario: [WEB-PF-MANDATE_21] Invio notifica digitale altro destinatario e recupero_scenario positivo
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_Son"
+    And l'operazione ha generato un errore con status code "422"

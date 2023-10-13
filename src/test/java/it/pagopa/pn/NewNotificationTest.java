@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
@@ -69,9 +68,14 @@ public class NewNotificationTest {
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
+    private NotificationMetadataAttachment newMetadataAttachment(String resourcePath ) {
+        return new NotificationMetadataAttachment()
+                .contentType("application/json")
+                .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
     private NotificationRecipientV21 newRecipient(String prefix, String taxId, String resourcePath ) {
         long epochMillis = System.currentTimeMillis();
-        List<NotificationPaymentItem> notificationPaymentItemList= new ArrayList<NotificationPaymentItem>();
 
         NotificationRecipientV21 recipient = new NotificationRecipientV21()
                 .denomination( prefix + " denomination")
@@ -87,17 +91,32 @@ public class NewNotificationTest {
                         .foreignState("ITALIA")
                         .zip("40100")
                 )
-                .recipientType( NotificationRecipientV21.RecipientTypeEnum.PF);
+                .recipientType(NotificationRecipientV21.RecipientTypeEnum.PF)
+                .addPaymentsItem(new NotificationPaymentItem()
+                        .pagoPa(new PagoPaPayment()
+                                .applyCost(true)
+                                .noticeCode(String.format("30201%13d", epochMillis ))
+                                .attachment(newAttachment( resourcePath ))
 
-        // .recipientType( NotificationRecipientV21.RecipientTypeEnum.PF )
+                        )
+                        .f24(new F24Payment()
+                                .applyCost(true)
+                                .metadataAttachment(newMetadataAttachment( resourcePath ))
+                        )
+                );
+
+
+
+
+
         //TODO Modificare.....
-        //  .payment( new NotificationPaymentInfo()
+        //  .payments( new NotificationPaymentInfo()
         //                 .creditorTaxId("77777777777")
         //                   .noticeCode( String.format("30201%13d", epochMillis ) )
         //                   .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
         //                    .pagoPaForm( newAttachment( resourcePath ))
-//                                .f24flatRate( newAttachment( resourcePath ) )
-//                                .f24standard( newAttachment( resourcePath ) )
+        //                        .f24flatRate( newAttachment( resourcePath ) )
+        //                        .f24standard( newAttachment( resourcePath ) )
         //  );
 
         try {

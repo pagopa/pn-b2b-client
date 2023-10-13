@@ -218,7 +218,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_19] Invio notifica digitale altro destinatario e recupero_scenario positivo da parte di ente radice
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_1"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -229,7 +229,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_20] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_1"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -243,7 +243,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_21] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_1"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -257,7 +257,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_22] Invio notifica digitale altro destinatario per ente figlio e fallimento invio
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_1"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |

@@ -21,6 +21,7 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -52,7 +53,14 @@ public class RicezioneNotificheWebDelegheSteps {
 
     private final String gherkinSrltaxId;
     private final String cucumberSpataxId;
-
+    @Value("${pn.external.senderId}")
+    private String senderId;
+    @Value("${pn.external.senderId-2}")
+    private String senderId2;
+    @Value("${pn.external.senderId-GA}")
+    private String senderIdGA;
+    @Value("${pn.external.senderId-SON}")
+    private String senderIdSON;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -177,6 +185,57 @@ public class RicezioneNotificheWebDelegheSteps {
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
+    }
+
+
+    @And("{string} viene delegato da {string} per comune {string}")
+    public void delegateUser(String delegate, String delegator,String comune) {
+        if (!setBearerToken(delegator)) {
+            throw new IllegalArgumentException();
+        }
+        OrganizationIdDto organizationIdDto=new OrganizationIdDto();
+
+        switch (comune){
+            case "Comune_1":
+                organizationIdDto=organizationIdDto
+                        .name("Comune di Milano")
+                        .uniqueIdentifier(senderId);
+                break;
+            case "Comune_2":
+                organizationIdDto=organizationIdDto
+                        .name("Comune di Verona")
+                        .uniqueIdentifier(senderId2);
+                break;
+            case "Comune_Multi":
+                organizationIdDto=organizationIdDto
+                        .name("Comune di Palermo")
+                        .uniqueIdentifier(senderIdGA);
+                break;
+            case "Comune_Son":
+                organizationIdDto=organizationIdDto
+                        .name("Comune di Sappada")
+                        .uniqueIdentifier(senderIdSON);
+                break;
+            default:
+                throw new IllegalStateException();
+        }
+
+        System.out.println("visibilityID CURRENT: " + organizationIdDto);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = (new MandateDto()
+                .delegator(getUserDtoByuser(delegator))
+                .delegate(getUserDtoByuser(delegate))
+                .verificationCode(verificationCode)
+                .datefrom(sdf.format(new Date()))
+                .visibilityIds(Arrays.asList(organizationIdDto))
+                .status(MandateDto.StatusEnum.PENDING)
+                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
+        );
+
+        System.out.println("MANDATE: " + mandate);
+            webMandateClient.createMandate(mandate);
+
     }
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
@@ -454,6 +513,16 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("la notifica può essere correttamente letta da {string}")
     public void notificationCanBeCorrectlyReadFrom(String recipient) {
+        sharedSteps.selectUser(recipient);
+        Assertions.assertDoesNotThrow(() -> {
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        });
+        webRecipientClient.setBearerToken(baseUser);
+    }
+
+    @And("la notifica può essere correttamente letta da {string} dal comune {string}")
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient,String pa) {
+        sharedSteps.selectPA(pa);
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);

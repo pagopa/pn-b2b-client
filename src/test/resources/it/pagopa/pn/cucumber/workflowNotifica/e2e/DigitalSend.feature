@@ -1347,7 +1347,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_15] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per comune "comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -1376,7 +1376,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_15_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per comune "comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -1406,7 +1406,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_16] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per comune "comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -1435,7 +1435,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_16_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per comune "comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario

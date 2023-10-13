@@ -416,22 +416,22 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    @And("viene inserito un recapito legale {string} per comune {string}")
+    @And("viene inserito un recapito legale {string} per il comune {string}")
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
 
         String senderIdPa="default";
 
         switch (pa){
-            case "comune_1":
+            case "Comune_1":
                 senderIdPa=senderId;
                 break;
-            case "comune_2":
+            case "Comune_2":
                 senderIdPa=senderId2;
                 break;
-            case "comune_Multi":
+            case "Comune_Multi":
                 senderIdPa=senderIdGA;
                 break;
-            case "comune_Son":
+            case "Comune_Son":
                 senderIdPa=senderIdSON;
                 break;
         }
@@ -443,22 +443,49 @@ public class RicezioneNotificheWebSteps {
         this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode(verificationCode)));
     }
 
-    @And("viene richiesto l'inserimento del email di cortesia {string} per comune {string}")
+    @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
+    public void perLUtenteVieneSettatoLaPecPerIlComune(String pec,String pa) {
+
+        String senderIdPa="default";
+
+        switch (pa){
+            case "Comune_1":
+                senderIdPa=senderId;
+                break;
+            case "Comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "Comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "Comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+        }
+
+        try {
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode("00000")));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
 
         String senderIdPa="default";
 
         switch (pa){
-            case "comune_1":
+            case "Comune_1":
                 senderIdPa=senderId;
                 break;
-            case "comune_2":
+            case "Comune_2":
                 senderIdPa=senderId2;
                 break;
-            case "comune_Multi":
+            case "Comune_Multi":
                 senderIdPa=senderIdGA;
                 break;
-            case "comune_Son":
+            case "Comune_Son":
                 senderIdPa=senderIdSON;
                 break;
         }
@@ -470,22 +497,22 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    @When("viene richiesto l'inserimento del numero di telefono {string} per comune {string}")
+    @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
 
         String senderIdPa="default";
 
         switch (pa){
-            case "comune_1":
+            case "Comune_1":
                 senderIdPa=senderId;
                 break;
-            case "comune_2":
+            case "Comune_2":
                 senderIdPa=senderId2;
                 break;
-            case "comune_Multi":
+            case "Comune_Multi":
                 senderIdPa=senderIdGA;
                 break;
-            case "comune_Son":
+            case "Comune_Son":
                 senderIdPa=senderIdSON;
                 break;
         }
