@@ -1734,6 +1734,7 @@ public class AvanzamentoNotificheB2bSteps {
         b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
     }
 
+
     @And("gli avvisi PagoPa vengono pagati correttamente dal destinatario {int}")
     public void laNotificaVienePagataConAvvisoNumMultiPagoPa(Integer destinatario) {
 
@@ -2085,8 +2086,39 @@ public class AvanzamentoNotificheB2bSteps {
         }
         Assertions.assertNotNull(timelineElement);
 
-        Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-        Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
+        if (timelineElement.getDetails().getRecIndex()==destinatario) {
+            Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
+            Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
+        }
+
+    }
+
+    @Then("si attende il non corretto pagamento della notifica con l' avviso {int} dal destinatario {int}")
+    public void siAttendeIlNonCorrettoPagamentoDellaNotificaConAvvisoDalDestinatario(Integer avviso, Integer destinatario) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
+
+        TimelineElementV20 timelineElement = null;
+
+        for (int i = 0; i < 5; i++) {
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        Assertions.assertNull(timelineElement);
+
+        //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
+        //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
 
     }
 

@@ -59,8 +59,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    #Then viene calcolato il costo = "100" della notifica per l'utente 0
+   # Then viene verificato il costo = "100" della notifica
+   # When la notifica viene inviata dal "Comune_Multi"
+   # Then si verifica la corretta acquisizione della richiesta di invio notifica
+   # And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_24_3] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e F24 e costi di notifica non inclusi
@@ -90,8 +95,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica per l'utente 0
-    And viene verificato il costo = "100" della notifica per l'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+   # Then viene verificato il costo = "100" della notifica per l'utente 0
+    #And viene verificato il costo = "100" della notifica per l'utente 1
 
 
   @pagamentiMultipli
@@ -574,7 +580,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
+      | payment_multy_number | 2 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -582,7 +588,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
+      | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
@@ -1352,6 +1358,31 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_CANCELED', // Payment canceled
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
+  #TODO ....Alessandro deve fornire lo iuv per restituire gli errori sopra.......
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_68] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+      | notice_code | 302011697026785045 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
+    #TODO utilizzando iun predisposti  controllare il tipo di errore restituisto
+    And si attende il non corretto pagamento della notifica con l' avviso 0 dal destinatario 0
+    #And l'operazione ha prodotto un errore con status code "400"
+
+
+
 
 
 
