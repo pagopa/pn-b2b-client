@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -204,6 +205,10 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 idempotenceToken
         );
         return deepCopy( resp, NewNotificationRequestStatusResponseV21.class );
+    }
+
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee) throws RestClientException {
+        throw new UnsupportedOperationException();
     }
 
     private <T> T deepCopy( Object obj, Class<T> toClass) {
