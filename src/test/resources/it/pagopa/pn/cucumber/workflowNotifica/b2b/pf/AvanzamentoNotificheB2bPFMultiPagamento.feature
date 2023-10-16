@@ -1598,7 +1598,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_F24 | SI |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"

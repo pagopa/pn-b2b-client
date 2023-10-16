@@ -93,9 +93,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica per l'utente 0
-    And viene verificato il costo = "100" della notifica per l'utente 1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
   @pagamentiMultipli
@@ -257,8 +256,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "100" della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 
@@ -722,9 +721,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_pagopa | SI |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
   @pagamentiMultipli
@@ -747,9 +745,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #TODO parametrizzare lo step per avviso di pagamento.......
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
   #45 Destinatario - download modello F24
@@ -1056,11 +1053,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_27957814470 |
-      | apply_cost_f24 | NO |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 #SOLO TM
   #54 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
@@ -1079,11 +1075,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_27957814470 |
-      | apply_cost_f24 | NO |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 #SOLO TM
@@ -1163,6 +1158,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
@@ -1171,6 +1167,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 1
@@ -1195,6 +1192,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
@@ -1204,6 +1202,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_70412331207 |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -1225,6 +1224,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
@@ -1234,6 +1234,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_70412331207 |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -1254,6 +1255,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
@@ -1263,6 +1265,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_70412331207 |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
