@@ -177,9 +177,9 @@ public class InvioNotificheB2bSteps {
 
     @Given("viene effettuato il pre-caricamento dei metadati f24")
     public void preLoadingOfMetaDatiAttachmentF24() {
-        NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.json");
+        NotificationMetadataAttachment notificationPaymentAttachment = b2bUtils.newMetadataAttachment("classpath:/METADATA_CORRETTO.json");
         AtomicReference<NotificationMetadataAttachment> notificationDocumentAtomic = new AtomicReference<>();
-        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationMetadataAttachment)));
+        Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadMetadataAttachment(notificationPaymentAttachment)));
         try {
             Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
@@ -325,9 +325,22 @@ public class InvioNotificheB2bSteps {
         }
         this.downloadResponse = b2bClient
                 .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
-        byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                b2bUtils.downloadFile(this.downloadResponse.getUrl()));
-        this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+
+        if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+            try {
+                Thread.sleep(downloadResponse.getRetryAfter()*3);
+                this.downloadResponse = b2bClient
+                        .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        if(!"F24".equalsIgnoreCase(downloadType)) {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+        }
     }
 
     @When("viene richiesto il download del documento {string} per il destinatario {int}")

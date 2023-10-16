@@ -1573,7 +1573,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #73 PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-  @dev
+    #Verifica dello sha256 non possibile perché il file viene. generato on demand
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1596,6 +1597,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #74 Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
+    #Verifica dello sha256 non possibile perché il file viene. generato on demand
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

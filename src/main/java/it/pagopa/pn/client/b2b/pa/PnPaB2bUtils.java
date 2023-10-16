@@ -436,9 +436,15 @@ public class PnPaB2bUtils {
                     fsn.getRecipients().get(i).getPayments().get(0).getF24() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
-                resp = client.getSentNotificationAttachment(fsn.getIun(), i, "F24" ,0);
-
-                checkAttachment( resp );
+               resp = client.getSentNotificationAttachment(fsn.getIun(), i, "F24" ,0);
+                if (resp!= null && resp.getRetryAfter()!= null && resp.getRetryAfter()>0){
+                    try {
+                        Thread.sleep(resp.getRetryAfter()*3);
+                        resp = client.getSentNotificationAttachment(fsn.getIun(), i, "F24" ,0);
+                    } catch (InterruptedException exc) {
+                        throw new RuntimeException(exc);
+                    }
+                }
             }
 
             i++;

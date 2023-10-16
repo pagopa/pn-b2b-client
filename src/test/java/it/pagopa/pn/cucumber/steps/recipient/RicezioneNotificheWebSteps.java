@@ -115,13 +115,30 @@ public class RicezioneNotificheWebSteps {
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
                 null,0);
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
-        Assertions.assertDoesNotThrow(() -> {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(downloadResponse.getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-        });
-        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+
+        if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+            try {
+                Thread.sleep(downloadResponse.getRetryAfter()*3);
+                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                        sharedSteps.getSentNotification().getIun(),
+                        attachmentName,
+                        null,0);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+
+        if (!"F24".equalsIgnoreCase(attachmentName)){
+            AtomicReference<String> Sha256 = new AtomicReference<>("");
+            NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
+            Assertions.assertDoesNotThrow(() -> {
+                byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                        b2bUtils.downloadFile(finalDownloadResponse.getUrl()));
+                Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+            });
+            Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+        }
+
     }
 
     @And("{string} tenta il recupero dell'allegato {string}")
@@ -129,10 +146,23 @@ public class RicezioneNotificheWebSteps {
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
-            webRecipientClient.getReceivedNotificationAttachment(
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null,0);
+                    null, 0);
+
+
+            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+                try {
+                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                            sharedSteps.getSentNotification().getIun(),
+                            attachmentName,
+                            null,0);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
@@ -143,10 +173,22 @@ public class RicezioneNotificheWebSteps {
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
         try {
-            webRecipientClient.getReceivedNotificationAttachment(
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                     sharedSteps.getSentNotification().getIun(),
                     attachmentName,
-                    null,0);
+                    null, 0);
+
+            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+                try {
+                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
+                            sharedSteps.getSentNotification().getIun(),
+                            attachmentName,
+                            null,0);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }

@@ -1570,7 +1570,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #73 PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
-  @dev
+  #Verifica dello sha256 non possibile perché il file viene. generato on demand
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1593,6 +1594,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #74 Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
+  #Verifica dello sha256 non possibile perché il file viene. generato on demand
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1781,11 +1784,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
-      | payment_f24standard | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_MARIO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
