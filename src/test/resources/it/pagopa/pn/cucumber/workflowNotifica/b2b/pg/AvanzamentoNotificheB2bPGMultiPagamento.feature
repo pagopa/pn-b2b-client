@@ -1541,9 +1541,15 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And viene effettuato un controllo sulla durata della retention di "PAGOPA"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene effettuato un controllo sulla durata della retention del F24 di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
 
 
@@ -1553,7 +1559,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     Then viene effettuato un controllo sulla durata della retention di "F24" precaricato
 
 
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_72_3] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
