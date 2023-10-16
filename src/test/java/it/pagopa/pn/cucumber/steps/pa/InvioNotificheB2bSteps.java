@@ -151,12 +151,14 @@ public class InvioNotificheB2bSteps {
         NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
+        /*
         try {
             Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+         */
         this.notificationDocumentPreload = notificationDocumentAtomic.get();
     }
 
@@ -165,12 +167,14 @@ public class InvioNotificheB2bSteps {
         NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
+        /*
         try {
             Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+         */
         this.notificationPaymentAttachmentPreload = notificationDocumentAtomic.get();
     }
 
