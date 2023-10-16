@@ -220,7 +220,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 throw new IllegalStateException();
         }
 
-        System.out.println("visibilityID CURRENT: " + organizationIdDto);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()

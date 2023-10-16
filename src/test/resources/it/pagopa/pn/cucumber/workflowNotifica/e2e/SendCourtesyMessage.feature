@@ -65,7 +65,7 @@ Feature: Invio messaggi cortesia e2e
     @AOO_UO @AOO_UO4
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5_PG] invio messaggio di cortesia - invio per email a ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-        And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+        And viene inserito un recapito legale "example@pecSuccess.it"
         And viene richiesto l'inserimento del email di cortesia "provaemail@test.it" per il comune "Comune_1"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -86,7 +86,7 @@ Feature: Invio messaggi cortesia e2e
     @AOO_UO @AOO_UO4
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5] invio messaggio di cortesia - invio per email a ente padre
         Given si predispone addressbook per l'utente "Galileo Galilei"
-        And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+        And viene inserito un recapito legale "example@pecSuccess.it"
         And viene richiesto l'inserimento del email di cortesia "provaemail@test.it" per il comune "Comune_1"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -105,7 +105,7 @@ Feature: Invio messaggi cortesia e2e
     @AOO_UO @AOO_UO4
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6_PG] invio messaggio di cortesia - invio per email a ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-        And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+        And viene inserito un recapito legale "example@pecSuccess.it"
         And viene richiesto l'inserimento del email di cortesia "provaemail@test.it" per il comune "Comune_1"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -125,7 +125,7 @@ Feature: Invio messaggi cortesia e2e
     @AOO_UO @AOO_UO4
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6] invio messaggio di cortesia - invio per email a ente padre
         Given si predispone addressbook per l'utente "Galileo Galilei"
-        And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it"
+        And viene inserito un recapito legale "example@pecSuccess.it"
         And viene richiesto l'inserimento del email di cortesia "provaemail@test.it" per il comune "Comune_1"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |

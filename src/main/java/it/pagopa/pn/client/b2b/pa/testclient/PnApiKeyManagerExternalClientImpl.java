@@ -21,6 +21,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private final ApiKeysApi apiKeysApi;
     private final String basePath;
     private final String bearerToken;
+    private final String bearerTokenSON;
     private final String userAgent;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
@@ -35,14 +36,16 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.external.api-key-Son}") String apiKeySon,
+            @Value("${pn.external.api-key-SON}") String apiKeySon,
             @Value("${pn.external.bearer-token-pa-1}") String bearerToken,
+            @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.bearerToken = bearerToken;
+        this.bearerTokenSON = bearerTokenSON;
         this.userAgent = userAgent;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
@@ -86,7 +89,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
         switch(apiKey){
             case MVP_1:
                 if(this.apiKeySetted != ApiKeyType.MVP_1){
-                    setApiKey(apiKeyMvp1);
+                    setApiKey(bearerToken);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
@@ -107,7 +110,7 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
                 break;
             case SON:
                 if(this.apiKeySetted != ApiKeyType.SON) {
-                    setApiKey(apiKeySon);
+                    setApiKey(bearerTokenSON);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
                 beenSet = true;
