@@ -757,7 +757,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -766,8 +766,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When "Cucumber srl" tenta il recupero dell'allegato "F24"
-    Then il download non ha prodotto errori
+    When si verifica la corretta acquisizione della notifica
+    Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa"
 
 
   #46 Destinatario - download allegato pagoPA
@@ -778,16 +778,15 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Mario Cucumber e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
-    Then il download non ha prodotto errori
-    #Then il download si conclude correttamente
+    When si verifica la corretta acquisizione della notifica
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa"
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA

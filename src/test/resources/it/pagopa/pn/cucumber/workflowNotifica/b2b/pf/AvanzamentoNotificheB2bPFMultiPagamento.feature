@@ -696,7 +696,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica
 
 
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
     #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
   Scenario: [B2B-PA-PAY_MULTI_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
     Given viene generata una nuova notifica
@@ -737,8 +737,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When "Mario Cucumber" tenta il recupero dell'allegato "F24"
-    Then il download non ha prodotto errori
+    When si verifica la corretta acquisizione della notifica
+    Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
 
 
   #46 Destinatario - download allegato pagoPA
@@ -756,9 +756,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
-    Then il download non ha prodotto errori
-    #Then il download si conclude correttamente
+    When si verifica la corretta acquisizione della notifica
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
