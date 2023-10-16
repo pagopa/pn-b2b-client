@@ -209,10 +209,10 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI   |
-    When la notifica viene inviata tramite api b2b dal "comune_1" e si attende che lo stato diventi ACCEPTED
+      | payment_pagoPaForm  | NULL |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
 
   @AOO_UO @AOO_UO1
@@ -224,7 +224,7 @@ Feature: Ricezione notifiche destinate al delegante
       | senderDenomination | Comune di palermo          |
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "Mario Gherkin" dal comune "Comune_1"
+    Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_1"
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_21] Invio notifica digitale altro destinatario e recupero_scenario positivo

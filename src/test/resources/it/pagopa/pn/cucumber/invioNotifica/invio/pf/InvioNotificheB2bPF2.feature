@@ -181,8 +181,8 @@ Feature: invio notifiche b2b
   @AOO_UO
   Scenario: [B2B-PA-SEND_41] Invio notifica digitale_scenario da PA figlio e non riesce a recuperare la notifica PA padre
     Given viene generata una nuova notifica
-      | subject | invio notifica multi cucumber |
-      | senderDenomination | Comune di verona |
+      | subject            | invio notifica multi cucumber |
+      | senderDenomination | Comune di Sappada             |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_1"

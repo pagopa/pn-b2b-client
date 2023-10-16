@@ -497,6 +497,38 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @And("viene inserita l'email di cortesia {string} per il comune {string}")
+    public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
+
+        String senderIdPa="default";
+
+        switch (pa){
+            case "Comune_1":
+                senderIdPa=senderId;
+                break;
+            case "Comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "Comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "Comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+        }
+
+        try {
+
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email)));
+            // validazione
+            String verificationCode = this.externalClient.getVerificationCode(email);
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode(verificationCode)));
+            System.out.println("LISTA EMAIL: "+ this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient());
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
 

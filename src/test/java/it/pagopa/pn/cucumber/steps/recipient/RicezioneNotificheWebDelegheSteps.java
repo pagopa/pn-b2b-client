@@ -519,7 +519,7 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    @And("la notifica può essere correttamente letta da {string} dal comune {string}")
+    @And("la notifica può essere correttamente letta da {string} per comune {string}")
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient,String pa) {
         sharedSteps.selectPA(pa);
         sharedSteps.selectUser(recipient);
