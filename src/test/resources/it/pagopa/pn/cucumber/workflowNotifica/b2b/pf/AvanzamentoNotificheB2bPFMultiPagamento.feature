@@ -1417,6 +1417,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
+  #TODO Modificare lo scenario..................
+  #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
@@ -1437,8 +1439,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
+    And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    And il download non ha prodotto errori
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
-
+    And "Mario Cucumber" tenta il recupero dell'allegato "F24"
+    And il download non ha prodotto errori
 
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
@@ -1460,6 +1465,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
+    And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    And il download non ha prodotto errori
 
 
 

@@ -1441,8 +1441,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+    And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
+    And il download non ha prodotto errori
     And l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
-
+    And "GherkinSrl" tenta il recupero dell'allegato "F24"
+    And il download non ha prodotto errori
 
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
@@ -1464,6 +1467,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+    And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
+    And il download non ha prodotto errori
 
 
 
