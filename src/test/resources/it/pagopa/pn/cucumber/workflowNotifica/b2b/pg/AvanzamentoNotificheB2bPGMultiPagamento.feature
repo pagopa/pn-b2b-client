@@ -1420,7 +1420,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
-  @pagamentiMultipli
+  @pagamentiMultipli @deleghe1
   Scenario: [B2B-PA-PAY_MULTI_PG_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -1448,7 +1448,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
-  @pagamentiMultipli
+  @pagamentiMultipli @deleghe1
   Scenario: [B2B-PA-PAY_MULTI_PG_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
