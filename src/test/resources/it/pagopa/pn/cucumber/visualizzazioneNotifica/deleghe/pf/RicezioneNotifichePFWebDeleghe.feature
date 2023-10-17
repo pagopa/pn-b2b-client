@@ -222,7 +222,7 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario GherkinSrl
+    And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_1"
 

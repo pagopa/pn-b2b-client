@@ -523,7 +523,6 @@ public class RicezioneNotificheWebSteps {
             // validazione
             String verificationCode = this.externalClient.getVerificationCode(email);
             this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode(verificationCode)));
-            System.out.println("LISTA EMAIL: "+ this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient());
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }

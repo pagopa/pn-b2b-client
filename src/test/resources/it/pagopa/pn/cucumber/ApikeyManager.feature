@@ -335,7 +335,7 @@ Feature: apiKey manager
     And l'apiKey viene cancellata
 
   @AOO_UO
-  Scenario: [API-KEY_25] generazione senza gruppo e mancata presenza nel ente figlio
+  Scenario: [API-KEY_25] generazione senza gruppo e mancata presenza nel ente padre
     Given Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
     Then Si cambia al comune "Comune_Son"
