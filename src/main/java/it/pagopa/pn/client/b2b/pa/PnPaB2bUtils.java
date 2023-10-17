@@ -103,6 +103,13 @@ public class PnPaB2bUtils {
         log.info("New Notification Request {}", request);
         NewNotificationResponse response = client.sendNewNotification( request );
         log.info("New Notification Request response {}", response);
+        if (response != null)
+        {
+            try {
+                log.info("New Notification\n IUN {}", new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
+            } catch (Exception e) {
+            }
+        }
         return response;
     }
 
