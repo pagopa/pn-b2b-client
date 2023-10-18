@@ -40,7 +40,7 @@ public class NewNotificationTest {
 
         // README!!!!!!!!!!!!!!!!!!!! PER TE SVILUPPATORE !!!!!!!!!!!!!!!!
         // modificare a FLAT_RATE o DELIVERY_MODE a piacere
-        NotificationFeePolicy policy = NotificationFeePolicy.FLAT_RATE;
+        NotificationFeePolicy policy = NotificationFeePolicy.DELIVERY_MODE;
         // modificare se si vuole inviare un f24. invia i metadati in base al delivery_mode
         boolean enableF24Attachment = true;
         // modifica pure i parametri a piacimento
@@ -60,9 +60,9 @@ public class NewNotificationTest {
                 .addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
                          enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
                         RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
-                .addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
-                        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
+                //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
+                //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 ;
 
         Assertions.assertDoesNotThrow(() -> {
