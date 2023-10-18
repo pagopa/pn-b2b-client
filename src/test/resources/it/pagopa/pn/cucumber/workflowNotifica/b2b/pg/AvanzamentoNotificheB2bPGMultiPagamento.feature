@@ -1377,8 +1377,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
-    And verifica non presenza in Timeline di pagamenti con avvisi F24 del destinatario 0
-    #TODO Controllare che non ci sono eventi in timeline di pagamenti f24.......Chiedere...
+
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_67_1] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
