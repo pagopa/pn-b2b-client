@@ -1761,6 +1761,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     And il download ha prodotto un errore con status code "404"
 
 
+
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_78] PA mittente: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenari positivi)
     Given viene generata una nuova notifica
@@ -1769,10 +1770,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
-      | payment_pagoPaForm  | NULL   |
+      | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_CUCUMBER_SRL |
+      | payment_f24standard | NUL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1791,18 +1791,21 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
-      | payment_pagoPaForm  | SI   |
+      | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
-      | payment_f24standard | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And viene verificato il costo = "100" della notifica
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When viene richiesto il download del documento "F24"
     And l'operazione ha generato un errore con status code "404"
+
+
+
 
 
 

@@ -327,25 +327,38 @@ public class InvioNotificheB2bSteps {
             default:
                 throw new IllegalArgumentException();
         }
-        this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+        try{
+            this.downloadResponse = b2bClient
+                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
 
-        if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
-            try {
-                Thread.sleep(downloadResponse.getRetryAfter()*3);
-                this.downloadResponse = b2bClient
-                        .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+                try {
+                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    this.downloadResponse = b2bClient
+                            .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
 
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
             }
+
+            if(!"F24".equalsIgnoreCase(downloadType)) {
+                byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                        b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+                this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+            }else if("F24".equalsIgnoreCase(downloadType)) {
+                byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                        b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            }
+
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
         }
-        if(!"F24".equalsIgnoreCase(downloadType)) {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
-            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
-        }
+
+
+
     }
+
 
     @When("viene richiesto il download del documento {string} per il destinatario {int}")
     public void documentDownloadPerDestinatario(String type, int destinatario) {
@@ -369,15 +382,32 @@ public class InvioNotificheB2bSteps {
             case "F24_STANDARD":
                 downloadType = "F24";
                 break;
+            case "F24":
+                downloadType = "F24";
+                break;
 
             default:
                 throw new IllegalArgumentException();
         }
-        this.downloadResponse = b2bClient
-                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), destinatario, downloadType,0);
-        byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                b2bUtils.downloadFile(this.downloadResponse.getUrl()));
-        this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+
+        if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+            try {
+                Thread.sleep(downloadResponse.getRetryAfter()*3);
+                this.downloadResponse = b2bClient
+                        .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), destinatario, downloadType,0);
+
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        if(!"F24".equalsIgnoreCase(downloadType)) {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+        }else if("F24".equalsIgnoreCase(downloadType)) {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+        }
     }
 
     @When("viene richiesto il download del documento {string} inesistente")
@@ -402,12 +432,27 @@ public class InvioNotificheB2bSteps {
             case "F24_STANDARD":
                 downloadType = "F24";
                 break;
+            case "F24":
+                downloadType = "F24";
+                break;
             default:
                 throw new IllegalArgumentException();
         }
         try {
             this.downloadResponse = b2bClient
                     .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 100, downloadType,0);
+
+            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+                try {
+                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    this.downloadResponse = b2bClient
+                            .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
+
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -437,12 +482,28 @@ public class InvioNotificheB2bSteps {
             case "F24_STANDARD":
                 downloadType = "F24";
                 break;
+            case "F24":
+                downloadType = "F24";
+                break;
             default:
                 throw new IllegalArgumentException();
         }
         try {
             this.downloadResponse = b2bClient
                     .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), destinatario, downloadType,0);
+
+
+            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+                try {
+                    Thread.sleep(downloadResponse.getRetryAfter()*3);
+                    this.downloadResponse = b2bClient
+                            .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+            }
+
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }

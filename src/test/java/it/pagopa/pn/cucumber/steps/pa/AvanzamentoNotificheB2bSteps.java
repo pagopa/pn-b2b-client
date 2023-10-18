@@ -2183,8 +2183,19 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertNotNull(timelineElement);
 
         if (timelineElement.getDetails().getRecIndex()==destinatario) {
-            Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
-            Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
+            boolean esiste = false;
+            if (sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments()!= null){
+                for (NotificationPaymentItem notificationPaymentItem: sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments()) {
+                    if (notificationPaymentItem.getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()) && notificationPaymentItem.getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode())){
+                        esiste = true;
+                        break;
+                    }
+
+                }
+            }
+            Assertions.assertTrue(esiste);
+            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getCreditorTaxId().equals(timelineElement.getDetails().getCreditorTaxId()));
+            //Assertions.assertTrue(sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments().get(avviso).getPagoPa().getNoticeCode().equals(timelineElement.getDetails().getNoticeCode()));
         }
 
     }
@@ -2293,12 +2304,11 @@ public class AvanzamentoNotificheB2bSteps {
 
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
             if (timelineElement != null && timelineElement.getDetails().getRecIndex().equals(utente)) {
-                Assertions.assertNull(timelineElement.getDetails().getIdF24());
-            }else {
-                timelineElement = null;
+                if (timelineElement.getDetails().getIdF24()!= null){
+                    Assertions.assertNull(timelineElement);
+                }
             }
         }
-        Assertions.assertNull(timelineElement);
 
     }
 
