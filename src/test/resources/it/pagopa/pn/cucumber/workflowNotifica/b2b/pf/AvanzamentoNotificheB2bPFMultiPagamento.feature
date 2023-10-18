@@ -1852,7 +1852,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When viene richiesto il download del documento "F24"
-    And l'operazione ha generato un errore con status code "404"
+    Then l'operazione ha generato un errore con status code "404"
 
 
 
