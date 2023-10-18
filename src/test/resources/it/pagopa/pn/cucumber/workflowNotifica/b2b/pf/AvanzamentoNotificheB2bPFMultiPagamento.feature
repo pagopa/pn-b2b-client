@@ -527,9 +527,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And si verifica la corretta acquisizione della notifica
-    When viene richiesto il download del documento "F24"
-    Then il download si conclude correttamente
+    When si verifica la corretta acquisizione della notifica
+    Then viene richiesto il download del documento "F24"
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_35_1] PA - download modello F24
@@ -559,12 +558,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And si verifica la corretta acquisizione della notifica
-    #When viene richiesto il download del documento "F24"
-    When viene richiesto il download del documento "F24" per il destinatario 0
-    And il download si conclude correttamente
+    When si verifica la corretta acquisizione della notifica
+    Then viene richiesto il download del documento "F24" per il destinatario 0
     And viene richiesto il download del documento "F24" per il destinatario 1
-    And il download si conclude correttamente
 
 
   #36 PA - download allegato pagoPA
@@ -685,6 +681,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #TODO TEST MANUALE.........INFO
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -701,7 +698,30 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
+    And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
+    And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_43_1] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di più avvisi
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NO |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 2 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
+    And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
+    And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
+    And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
 
   #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
@@ -1831,8 +1851,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    When viene richiesto il download del documento "F24" inesistente
-    And il download ha prodotto un errore con status code "404"
+    When viene richiesto il download del documento "F24"
+    And l'operazione ha generato un errore con status code "404"
 
 
 
@@ -1881,38 +1901,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
-
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_80_1] PA - Invio RS DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE (scenario positivo)
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy          | DELIVERY_MODE       |
-      | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | NO |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-    And viene verificato che l'elemento di timeline "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" esista
-      | loadTimeline | true |
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_sentAttemptMade | 0 |
-      | details_deliveryDetailCode | CON080  |
 
 
   @pagamentiMultipli @cartaceoF24
@@ -1978,7 +1966,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
 
   @pagamentiMultipli @cartaceoF24
@@ -2000,7 +1988,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
 
   @pagamentiMultipli @cartaceoF24
@@ -2022,7 +2010,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
 
 
@@ -2039,35 +2027,35 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_81_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
-      | paFee | 0 |
+      | paFee | 100 |
     And destinatario
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok-Retry_RS |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
 
 
@@ -2154,7 +2142,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2176,7 +2164,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2193,35 +2181,35 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_83_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_83_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
-      | paFee | 0 |
+      | paFee | 100 |
     And destinatario
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2307,7 +2295,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
@@ -2329,7 +2317,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
@@ -2346,34 +2334,34 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_85_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_85_333] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
-      | paFee | 0 |
+      | paFee | 100 |
     And destinatario
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"

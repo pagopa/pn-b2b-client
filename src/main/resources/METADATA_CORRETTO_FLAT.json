@@ -24,7 +24,7 @@
 		"treasury": {
 			"records": [
 				{
-					"applyCost": true,
+					"applyCost": false,
 					"taxType": "B9AD",
 					"installment": "88MP",
 					"year": "2617",
