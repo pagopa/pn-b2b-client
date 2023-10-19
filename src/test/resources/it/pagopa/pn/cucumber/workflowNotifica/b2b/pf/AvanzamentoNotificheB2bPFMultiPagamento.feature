@@ -2029,7 +2029,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2051,7 +2051,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2183,7 +2183,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2205,7 +2205,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2336,7 +2336,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2358,7 +2358,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2382,7 +2382,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2405,7 +2405,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2480,3 +2480,82 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+
+  Scenario: [B2B-PA-PAY_MULTI_91] PA - Invio DELIVERY_MODE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      |payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  Scenario: [B2B-PA-PAY_MULTI_92] PA - Invio DELIVERY_MODE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      |payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      |payment_pagoPaForm | NULL |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  Scenario: [B2B-PA-PAY_MULTI_94] PA - Invio FLAT_RATE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | FLAT_RATE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      |payment_pagoPaForm | NULL |
+      | title_payment | F24_FLAT_LVLDAA85T50G702B |
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
