@@ -485,6 +485,60 @@ public class PnPaB2bUtils {
     }
 
 
+    public void verifyNotificationV1(FullSentNotification fsn) throws IOException, IllegalStateException {
+
+        for (NotificationDocument doc: fsn.getDocuments()) {
+
+            NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationDocument(fsn.getIun(), Integer.parseInt(doc.getDocIdx()));
+            byte[] content = downloadFile(resp.getUrl());
+            String sha256 = computeSha256(new ByteArrayInputStream(content));
+
+            if( ! sha256.equals(resp.getSha256()) ) {
+                throw new IllegalStateException("SHA256 differs " + doc.getDocIdx() );
+            }
+        }
+
+        int i = 0;
+        for (NotificationRecipient recipient : fsn.getRecipients()) {
+
+            if(fsn.getRecipients().get(i).getPayment() != null &&
+                    fsn.getRecipients().get(i).getPayment().getPagoPaForm() != null){
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse resp;
+
+                resp = client.getSentNotificationAttachmentV1(fsn.getIun(), i, "PAGOPA");
+                checkAttachmentV1( resp );
+            }
+            i++;
+
+        }
+
+        for ( LegalFactsId legalFactsId: fsn.getTimeline().get(0).getLegalFactsIds()) {
+
+            LegalFactDownloadMetadataResponse resp;
+
+            resp = client.getLegalFact(
+                    fsn.getIun(),
+                    LegalFactCategory.SENDER_ACK,
+                    URLEncoder.encode(legalFactsId.getKey(), StandardCharsets.UTF_8.toString())
+            );
+
+            byte[] content = downloadFile(resp.getUrl());
+            String  pdfPrefix = new String( Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
+            if( ! pdfPrefix.contains("PDF") ) {
+                throw new IllegalStateException("LegalFact is not a PDF " + legalFactsId );
+            }
+        }
+
+        if(
+                fsn.getNotificationStatus() == null
+                        ||
+                        fsn.getNotificationStatus().equals( NotificationStatus.REFUSED )
+        ) {
+            throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
+        }
+    }
+
+
     public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV21 fsn, String attachname) throws IOException, IllegalStateException {
 
         for (NotificationDocument doc: fsn.getDocuments()) {
@@ -525,6 +579,14 @@ public class PnPaB2bUtils {
 
 
     private void checkAttachment(NotificationAttachmentDownloadMetadataResponse resp) throws IOException {
+        byte[] content = downloadFile(resp.getUrl());
+        String sha256 = computeSha256(new ByteArrayInputStream(content));
+        if( ! sha256.equals(resp.getSha256()) ) {
+            throw new IllegalStateException("SHA256 differs " + resp.getFilename() );
+        }
+    }
+
+    private void checkAttachmentV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse resp) throws IOException {
         byte[] content = downloadFile(resp.getUrl());
         String sha256 = computeSha256(new ByteArrayInputStream(content));
         if( ! sha256.equals(resp.getSha256()) ) {
@@ -727,6 +789,9 @@ public class PnPaB2bUtils {
         return client.getSentNotification( iun );
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getNotificationByIunV1(String iun) {
+        return client.getSentNotificationV1( iun );
+    }
 
 
     public NotificationDocument newDocument(String resourcePath ) {

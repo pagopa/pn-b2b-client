@@ -9,7 +9,20 @@ Feature: invio notifiche b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
-    
+
+  @B2Btest @SmokeTest @testLite
+  Scenario: [B2B-PA-SEND_1_V1] Invio notifica digitale mono destinatario V2.1 e recupero tramite codice IUN V.1.1 (p.fisica)_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+
+
+
   @B2Btest @testLite
   Scenario: [B2B-PA-SEND_2] Invio notifiche digitali mono destinatario (p.fisica)_scenario positivo
     Given viene generata una nuova notifica

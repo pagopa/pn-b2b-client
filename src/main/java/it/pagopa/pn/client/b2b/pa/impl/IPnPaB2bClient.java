@@ -16,6 +16,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     FullSentNotificationV21 getSentNotification(String iun);
 
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun);
+
     NewNotificationRequestStatusResponseV21 getNotificationRequestStatus(String notificationRequestId);
 
     NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
@@ -37,6 +39,10 @@ public interface IPnPaB2bClient extends SettableApiKey {
     void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException;
 
     public RequestStatus notificationCancellation(String iun) throws RestClientException;
+
+
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV1(String iun, Integer recipientIdx, String attachmentName) ;
+
 
 
 }
