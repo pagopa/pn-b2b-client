@@ -789,6 +789,10 @@ public class PnPaB2bUtils {
         return client.getSentNotification( iun );
     }
 
+    public FullSentNotificationV20 getNotificationByIunV20(String iun) {
+        return client.getSentNotificationV20( iun );
+    }
+
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getNotificationByIunV1(String iun) {
         return client.getSentNotificationV1( iun );
     }

@@ -96,6 +96,19 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20")
+    public void notificationCanBeRetrievedWithIUNV20() {
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(b2bUtils.getNotificationByIunV20(sharedSteps.getSentNotification().getIun()))
+            );
+            Assertions.assertNotNull(notificationByIun.get());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
