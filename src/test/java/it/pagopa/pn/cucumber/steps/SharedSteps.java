@@ -257,6 +257,7 @@ public class SharedSteps {
                         .taxId(marioGherkinTaxID));
     }
 
+
     @And("destinatario Gherkin spa")
     public void destinatarioGherkinSpa() {
         this.notificationRequest.addRecipientsItem(
@@ -289,6 +290,16 @@ public class SharedSteps {
                         .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
                         .taxId(gherkinSrltaxId));
     }
+
+    @And("destinatario CucumberSpa e:")
+    public void destinatarioPg2param(@Transpose NotificationRecipientV21 recipient) {
+        this.notificationRequest.addRecipientsItem(
+                recipient
+                        .denomination("CucumberSpa")
+                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .taxId(cucumberSpataxId));
+    }
+
 
     @And("destinatario CucumberSpa")
     public void destinatarioPg2() {
