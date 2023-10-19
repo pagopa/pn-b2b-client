@@ -820,17 +820,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
-    Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
+    Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa"
 
 
   #46 Destinatario - download allegato pagoPA
@@ -841,7 +841,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
@@ -849,7 +849,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
-    Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Cucumber"
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa"
 
 
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
@@ -1662,8 +1662,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_f24 | SI |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
+      | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
@@ -1695,8 +1695,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_f24 | SI |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
+      | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -1716,8 +1716,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_f24 | SI |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
+      | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -1740,8 +1740,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
-      | apply_cost_f24 | SI |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
+      | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -1783,7 +1783,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -1820,7 +1820,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1843,7 +1843,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    And destinatario GherkinSrl e:
+    And destinatario Gherkin spa e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
@@ -1852,9 +1852,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    When "CucumberSrl" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
-    And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
+    And "GherkinSpa" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
 
   @pagamentiMultipli
@@ -1868,22 +1868,22 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_MARIO |
+      | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    And destinatario GherkinSrl e:
+    And destinatario Gherkin spa e:
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_GHERKIN |
+      | title_payment | F24_STANDARD_GHERKING_SPA |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    When "Mario Cucumber" tenta il recupero dell'allegato "F24"
+    When "CucumberSrl" tenta il recupero dell'allegato "F24"
     Then il download ha prodotto un errore con status code "404"
-    And "Mario Gherkin" tenta il recupero dell'allegato "F24"
+    And "GherkinSpa" tenta il recupero dell'allegato "F24"
     And il download ha prodotto un errore con status code "404"
 
 
@@ -1983,7 +1983,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
-      |payment_pagoPaForm | NULL |
       | title_payment | F24_FLAT_27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
@@ -2005,7 +2004,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
-      |payment_pagoPaForm | NULL |
       | title_payment | F24_FLAT_27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
@@ -2016,4 +2014,3 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-    
