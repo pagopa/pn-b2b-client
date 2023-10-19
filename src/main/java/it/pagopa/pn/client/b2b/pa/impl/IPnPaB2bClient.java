@@ -14,6 +14,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationResponse sendNewNotification(NewNotificationRequestV21 newNotificationRequest);
 
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest);
+
     FullSentNotificationV21 getSentNotification(String iun);
 
     FullSentNotificationV20 getSentNotificationV20(String iun);
@@ -25,6 +27,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
     NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) ;
+
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) ;
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname,Integer attachmentIdx) ;
 

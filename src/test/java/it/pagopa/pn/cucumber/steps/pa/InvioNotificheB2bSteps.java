@@ -555,6 +555,11 @@ public class InvioNotificheB2bSteps {
         Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotification(sharedSteps.getSentNotification()));
     }
 
+    @Then("si verifica la corretta acquisizione della notifica V1")
+    public void correctAcquisitionNotificationV1() {
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotificationV1(sharedSteps.getSentNotificationV1()));
+    }
+
     @Then("si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento {string}")
     public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachname) {
         Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(),attachname));

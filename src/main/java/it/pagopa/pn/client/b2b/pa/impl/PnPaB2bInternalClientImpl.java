@@ -79,6 +79,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( response, NotificationAttachmentDownloadMetadataResponse.class );
     }
 
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) {
+        return null;
+    }
+
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname,  Integer attachmentIdx) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationAttachmentDownloadMetadataResponse response =
                 senderReadB2BApi.getSentNotificationAttachment(
@@ -173,6 +178,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         response = newNotificationApi.sendNewNotificationV21(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups,null);
 
         return deepCopy( response, NewNotificationResponse.class );
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

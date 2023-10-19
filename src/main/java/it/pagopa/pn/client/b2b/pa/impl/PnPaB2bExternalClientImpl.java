@@ -28,6 +28,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final NewNotificationApi newNotificationApi;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.NewNotificationApi newNotificationApiV1;
     private final SenderReadB2BApi senderReadB2BApi;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi senderReadB2BApiV1;
     private final LegalFactsApi legalFactsApi;
@@ -68,7 +69,10 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
+
+
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.newNotificationApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.senderReadB2BApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
@@ -86,6 +90,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
 
             this.newNotificationApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.newNotificationApiV1.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.senderReadB2BApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.senderReadB2BApiV1.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.legalFactsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
@@ -164,6 +169,13 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
     }
 
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveSentNotificationDocument(iun, docidx);
+    }
+
+
+
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname, Integer attachmentIdx) {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationAttachment(iun, recipientIdx, attachname,attachmentIdx);
@@ -211,11 +223,23 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.sendNewNotificationV21( newNotificationRequest );
     }
 
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
+        refreshTokenInteropClient();
+        return newNotificationApiV1.sendNewNotification( newNotificationRequest );
+    }
+
+
+
+
+
     @Override
     public FullSentNotificationV21 getSentNotification(String iun) {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationV21( iun );
     }
+
+
 
     @Override
     public FullSentNotificationV20 getSentNotificationV20(String iun) {
