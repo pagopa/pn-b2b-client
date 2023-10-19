@@ -390,6 +390,8 @@ public class InvioNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
 
+        this.downloadResponse = b2bClient
+                .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), destinatario, downloadType,0);
         if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
             try {
                 Thread.sleep(downloadResponse.getRetryAfter()*3);

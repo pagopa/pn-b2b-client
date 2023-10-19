@@ -36,9 +36,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
+      | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "200" della notifica
+    Then viene verificato il costo = "100" della notifica
         #Comune Palermo QZEH-UTHW-WVTK-202310-T-1 --PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (paFee=100 costo 200)
 
   @pagamentiMultipli
@@ -384,8 +384,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato il costo = "200" della notifica per l'utente 0
-    And viene verificato il costo = "200" della notifica per l'utente 1
+    Then viene verificato il costo = "100" della notifica per l'utente 0
+    And viene verificato il costo = "100" della notifica per l'utente 1
 
 
   #32 PA - inserimento notifica multi destinatario con un solo F24 [TA]
@@ -443,7 +443,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
    # Then viene verificato il costo = "200" della notifica per l'utente 0
-    Then viene verificato il costo = "200" della notifica per l'utente 1
+    Then viene verificato il costo = "100" della notifica per l'utente 1
 
 
   #33 PA - inserimento notifica multi destinatario con più avvisi pagoPA [TA]
