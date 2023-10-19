@@ -2366,7 +2366,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @e2e  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_86] PA - Invio FLAT_RATE costi inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2388,8 +2388,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @e2e  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_87] PA - Invio FLAT_RATE costi non inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2411,8 +2412,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @e2e  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_88] PA - Invio DELIVERY_MODE costi inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2434,8 +2436,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @e2e  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_89] PA - Invio DELIVERY_MODE costi non inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2457,9 +2460,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
-  @dev @workflowAnalogico
+  @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_90] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -2480,8 +2484,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-
+    #--------------------------DIGITALE---------------------------------
+  @pagamentiMultipli @digitaleF24
   Scenario: [B2B-PA-PAY_MULTI_91] PA - Invio DELIVERY_MODE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2501,6 +2507,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
+  @pagamentiMultipli @digitaleF24
   Scenario: [B2B-PA-PAY_MULTI_92] PA - Invio DELIVERY_MODE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2520,6 +2527,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
+  @pagamentiMultipli @digitaleF24
   Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2540,6 +2548,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
+  @pagamentiMultipli @digitaleF24
   Scenario: [B2B-PA-PAY_MULTI_94] PA - Invio FLAT_RATE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
