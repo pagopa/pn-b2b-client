@@ -184,6 +184,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public FullSentNotificationV20 getSentNotificationV20(String iun) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun) {
         throw new UnsupportedOperationException();
     }
