@@ -74,10 +74,20 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUN() {
         AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
-            );
-            Assertions.assertNotNull(notificationByIun.get());
+            if (sharedSteps.getSentNotification()!= null) {
+
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
+                );
+                Assertions.assertNotNull(notificationByIun.get());
+            } else if (sharedSteps.getSentNotificationV1()!= null) {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotificationV1().getIun()))
+                );
+                Assertions.assertNotNull(notificationByIun.get());
+            }else {
+                Assertions.assertNotNull(notificationByIun.get());
+            }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
