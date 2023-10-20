@@ -1055,6 +1055,10 @@ public class SharedSteps {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
+    public void setSentNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseComplete) {
+        this.notificationResponseCompleteV1 = notificationResponseComplete;
+    }
+
     public void selectPA(String apiKey) {
         switch (apiKey) {
             case "Comune_1":
