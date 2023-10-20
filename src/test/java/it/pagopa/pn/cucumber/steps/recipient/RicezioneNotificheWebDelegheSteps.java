@@ -233,8 +233,14 @@ public class RicezioneNotificheWebDelegheSteps {
         );
 
         System.out.println("MANDATE: " + mandate);
+
+        try{
+
             webMandateClient.createMandate(mandate);
 
+} catch (HttpStatusCodeException e) {
+        this.sharedSteps.setNotificationError(e);
+    }
     }
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
