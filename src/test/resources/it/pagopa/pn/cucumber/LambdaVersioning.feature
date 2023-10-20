@@ -1,4 +1,4 @@
-Feature: verifica compatibilità verioni
+Feature: verifica compatibilità tra verioni
 
   @version
   Scenario: [B2B-PA-SEND_1_V1] Invio notifica digitale mono destinatario V2.1 e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo
