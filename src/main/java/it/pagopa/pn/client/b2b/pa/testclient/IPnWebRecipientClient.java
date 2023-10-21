@@ -11,7 +11,7 @@ public interface IPnWebRecipientClient extends SettableBearerToken {
 
     FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException;
 
-    NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
+    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
 
     FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException;
 

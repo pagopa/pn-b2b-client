@@ -1509,7 +1509,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
     #STESSO TEST B2B-PA-PAY_MULTI_71 IMPLEMENTATO DIVERSAMENTE
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_71_2] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

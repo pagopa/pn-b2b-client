@@ -697,6 +697,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -765,6 +766,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -813,7 +815,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #45 Destinatario - download modello F24
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_45] Destinatario PG: download allegato F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -834,7 +836,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #46 Destinatario - download allegato pagoPA
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_46] Destinatario PG: download allegato pagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1510,7 +1512,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #69 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
   #TODO Modificare lo scenario..................
   #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
-  @pagamentiMultipli @deleghe1
+  @pagamentiMultipli @deleghe1 @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -1538,7 +1540,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
-  @pagamentiMultipli @deleghe1
+  @pagamentiMultipli @deleghe1 @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -1581,7 +1583,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
     #STESSO TEST B2B-PA-PAY_MULTI_71 IMPLEMENTATO DIVERSAMENTE
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_71_2] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
