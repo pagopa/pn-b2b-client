@@ -98,3 +98,13 @@ Feature: verifica compatibilità tra verioni
     And destinatario Mario Cucumber V1
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_10] Invio notifica V1.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2.1 positivo
+    Given viene generata una nuova notifica V1
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Cucumber V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
