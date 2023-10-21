@@ -410,7 +410,7 @@ public class PnPaB2bUtils {
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification waitForRequestAcceptationV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
 
         log.info("Request status for " + response.getNotificationRequestId() );
-        NewNotificationRequestStatusResponseV21 status = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
         for( int i = 0; i < 5; i++ ) {
 
@@ -420,7 +420,7 @@ public class PnPaB2bUtils {
                 throw new RuntimeException( exc );
             }
 
-            status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
+            status = client.getNotificationRequestStatusV1( response.getNotificationRequestId() );
 
             log.info("New Notification Request status {}", status.getNotificationRequestStatus());
             if ( "ACCEPTED".equals( status.getNotificationRequestStatus() )) {

@@ -714,6 +714,35 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
+    public void readingEventUpToTheTimelineElementOfNotificationV1(String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
+
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV1().getIun()));
+
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotificationV1().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotificationV1().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 
     @Then("viene controllato che l'elemento di timeline della notifica {string} non esiste")
     public void readingNotEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
@@ -743,6 +772,8 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+
 
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e successivamente annullata")

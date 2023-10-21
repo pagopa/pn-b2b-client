@@ -221,6 +221,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV21 resp;
         resp = senderReadB2BApi.getNotificationRequestStatusV21(

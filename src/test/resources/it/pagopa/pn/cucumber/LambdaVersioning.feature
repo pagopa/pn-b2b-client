@@ -52,7 +52,7 @@ Feature: verifica compatibilità tra verioni
     And destinatario Mario Cucumber V1
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then si verifica la corretta acquisizione della notifica V1
-    And "Mario Gherkin" legge la notifica ricevuta
+    And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 
   @version
@@ -75,3 +75,26 @@ Feature: verifica compatibilità tra verioni
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED" V1
+
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_8] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario da V1.1 a V2.1 positivo
+    Given viene generata una nuova notifica V1
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Gherkin V1 e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" V1
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_9] Invio notifica ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario da V1.1 a V2.1 positivo
+    Given viene generata una nuova notifica V1
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Cucumber V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1

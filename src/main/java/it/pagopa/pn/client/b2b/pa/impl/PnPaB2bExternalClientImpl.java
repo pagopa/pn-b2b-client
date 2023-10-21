@@ -261,6 +261,14 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveNotificationRequestStatus( notificationRequestId, null, null );
+    }
+
+
+
+    @Override
     public NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveNotificationRequestStatusV21(notificationRequestId,paProtocolNumber,idempotenceToken);

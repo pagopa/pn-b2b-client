@@ -24,6 +24,8 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NewNotificationRequestStatusResponseV21 getNotificationRequestStatus(String notificationRequestId);
 
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId);
+
     NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) ;

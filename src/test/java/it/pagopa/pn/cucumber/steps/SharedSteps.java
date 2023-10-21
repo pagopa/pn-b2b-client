@@ -268,6 +268,14 @@ public class SharedSteps {
                                 .address(getDigitalAddressValue())));
     }
 
+    @And("destinatario Mario Gherkin V1 e:")
+    public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient recipient) {
+        this.notificationRequestV1.addRecipientsItem(
+                recipient
+                        .denomination("Mario Gherkin")
+                        .taxId(marioGherkinTaxID));
+    }
+
     @And("destinatario Mario Gherkin e:")
     public void destinatarioMarioGherkinParam(@Transpose NotificationRecipientV21 recipient) {
         this.notificationRequest.addRecipientsItem(
