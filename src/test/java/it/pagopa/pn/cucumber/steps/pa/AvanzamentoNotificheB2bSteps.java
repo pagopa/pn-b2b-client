@@ -2474,8 +2474,8 @@ public class AvanzamentoNotificheB2bSteps {
 
 
         if (sharedSteps.getSentNotificationV1()!= null){
-            TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
 
+            TimelineElementWait timelineElementWait = getTimelineElementCategory("PAYMENT");
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
 
             for (int i = 0; i < 5; i++) {
