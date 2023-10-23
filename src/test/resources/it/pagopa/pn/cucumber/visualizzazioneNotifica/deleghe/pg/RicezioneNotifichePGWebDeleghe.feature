@@ -228,3 +228,60 @@ Feature: Ricezione notifiche destinate al delegante
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
     And come amministratore "Mario Cucumber" associa alla delega il primo gruppo disponibile attivo per il delegato "CucumberSpa"
     And la notifica può essere correttamente letta da "CucumberSpa" con delega
+
+
+  @AOO_UO
+  Scenario: [WEB-PG-MANDATE_19] Invio notifica digitale altro destinatario e recupero_scenario positivo da parte di ente radice
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di Aglientu         |
+    And destinatario GherkinSrl
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega
+
+  @AOO_UO
+  Scenario: [WEB-PG-MANDATE_20] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Ufficio per la transizione al Digitale         |
+    And destinatario GherkinSrl e:
+      | payment_pagoPaForm  | SI   |
+      | payment_f24flatRate | SI   |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    And l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+
+  @AOO_UO
+  Scenario: [WEB-PG-MANDATE_21] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Ufficio per la transizione al Digitale          |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario GherkinSrl e:
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24flatRate  | NULL                 |
+      | payment_f24standard  | SI                   |
+      | title_payment        | F24_STANDARD_GHERKIN |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    And l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
+
+  @AOO_UO
+  Scenario: [WEB-PG-MANDATE_22] Invio notifica digitale altro destinatario per ente figlio e fallimento invio
+    Given "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Ufficio per la transizione al Digitale         |
+    And destinatario GherkinSrl
+    When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega

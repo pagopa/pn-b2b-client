@@ -93,6 +93,11 @@ public class SharedSteps {
 
     @Value("${pn.external.api-key-GA-taxID}")
     private String senderTaxIdGa;
+    @Value("${pn.external.api-key-SON-taxID}")
+    private String senderTaxIdSON;
+
+    @Value("${pn.external.api-key-ROOT-taxID}")
+    private String senderTaxIdROOT;
 
     @Value("${pn.bearer-token.user1.taxID}")
     private String marioCucumberTaxID;
@@ -976,6 +981,14 @@ public class SharedSteps {
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdGa);
                 setGrup(SettableApiKey.ApiKeyType.GA);
                 break;
+            case "Comune_Son":
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdSON);
+                setGrup(SettableApiKey.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdROOT);
+                setGrup(SettableApiKey.ApiKeyType.ROOT);
+                break;
         }
 
     }
@@ -1006,6 +1019,10 @@ public class SharedSteps {
                 return this.senderTaxIdTwo;
             case "Comune_Multi":
                 return this.senderTaxIdGa;
+            case "Comune_Son":
+                return this.senderTaxIdSON;
+            case "Comune_Root":
+                return this.senderTaxIdROOT;
             default:
                 throw new IllegalArgumentException();
         }
@@ -1026,6 +1043,7 @@ public class SharedSteps {
             this.notificationRequest.setGroup(id);
         }
     }
+
 
     private void setGrupV1(SettableApiKey.ApiKeyType apiKeyType) {
         if (groupToSet && this.notificationRequestV1.getGroup() == null) {
@@ -1081,6 +1099,12 @@ public class SharedSteps {
                 break;
             case "Comune_Multi":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
+                break;
+            case "Comune_Son":
+                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -1254,6 +1278,12 @@ public class SharedSteps {
                 break;
             case "Comune_Multi":
                 hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
+                break;
+            case "Comune_Son":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.ROOT);
                 break;
             default:
                 throw new IllegalArgumentException();

@@ -149,6 +149,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApi.getReceivedNotificationV21(iun, mandateId);
     }
 
+
     @Override
     public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
         return recipientReadApiV1.getReceivedNotificationAttachment(iun, attachmentName, mandateId);
@@ -158,7 +159,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApiV1.getReceivedNotification(iun, mandateId);
     }
 
-    
+
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId,Integer attachmentIdx) throws RestClientException {
         return recipientReadApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId,  attachmentIdx);
     }

@@ -1139,7 +1139,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(timelineElement.getDetails().getAttachments().size()>0);
             Assertions.assertNotNull(timelineElement.getDetails().getAttachments().get(0).getDocumentType());
 
-           // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
+            // Assertions.assertTrue(timelineElement.getDetails().getNotificationDate().format(fmt).equals(OffsetDateTime.now().plusDays(delay).format(fmt)));
 
             Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getDocumentType().equals(tipoDoc));
         } catch (AssertionFailedError assertionFailedError) {
@@ -1852,6 +1852,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(),  finalKeySearch));
             }
             if (appIO) {
+
                // Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
                 //        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
@@ -2704,6 +2705,7 @@ public class AvanzamentoNotificheB2bSteps {
             }
         }
         Assertions.assertNotNull(timelineElement);
+
 
         if (timelineElement.getDetails().getRecIndex()==destinatario) {
             boolean esiste = false;

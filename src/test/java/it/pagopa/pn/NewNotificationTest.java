@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,6 +37,7 @@ public class NewNotificationTest {
     public void insertNewNotification() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
 
         // README!!!!!!!!!!!!!!!!!!!! PER TE SVILUPPATORE !!!!!!!!!!!!!!!!
         // modificare a FLAT_RATE o DELIVERY_MODE a piacere
@@ -115,11 +116,13 @@ public class NewNotificationTest {
     }
 
 
+
     private NotificationMetadataAttachment newMatadataAttachment(String resourcePath ) {
         return new NotificationMetadataAttachment()
                 .contentType("application/json")
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
+
 
     private enum RECIPIENT_TYPE_DIGITAL{
         NO_DIGITAL, DIGITAL_OK, DIGITAL_KO
@@ -131,6 +134,7 @@ public class NewNotificationTest {
     }
 
     private NotificationRecipientV21 newRecipient(boolean withapplycost, String prefix, String taxId, String resourcePath, String resourcePathf24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog ) {
+
         long epochMillis = System.currentTimeMillis();
 
         NotificationRecipientV21 recipient = new NotificationRecipientV21()
@@ -192,6 +196,20 @@ public class NewNotificationTest {
                                         .title("f24 qualcosa 2")
                                         .metadataAttachment( newMatadataAttachment( "classpath:/f24_flat.json" )))
                 ));
+
+
+
+
+
+        //TODO Modificare.....
+        //  .payments( new NotificationPaymentInfo()
+        //                 .creditorTaxId("77777777777")
+        //                   .noticeCode( String.format("30201%13d", epochMillis ) )
+        //                   .noticeCodeAlternative( String.format("30201%13d", epochMillis+1 ) )
+        //                    .pagoPaForm( newAttachment( resourcePath ))
+        //                        .f24flatRate( newAttachment( resourcePath ) )
+        //                        .f24standard( newAttachment( resourcePath ) )
+        //  );
 
         try {
             Thread.sleep(10);

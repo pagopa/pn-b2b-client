@@ -6,7 +6,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.m
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import org.springframework.web.client.RestClientException;
 
-public interface IPnApiKeyManagerClient {
+public interface IPnApiKeyManagerClient extends SettableApiKey {
 
     void changeStatusApiKey(String id, RequestApiKeyStatus requestApiKeyStatus) throws RestClientException;
 

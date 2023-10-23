@@ -41,6 +41,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
+    private final String apiKeySon;
+    private final String apiKeyRoot;
     private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
 
     private String bearerTokenInterop;
@@ -58,6 +60,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
+            @Value("${pn.external.api-key-SON}") String apiKeySon,
+            @Value("${pn.external.api-key-ROOT}") String apiKeyRoot,
             @Value("${pn.interop.enable}") String enableInterop
     ) {
         this.ctx = ctx;
@@ -66,6 +70,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
+        this.apiKeySon = apiKeySon;
+        this.apiKeyRoot = apiKeyRoot;
         this.enableInterop = enableInterop;
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
@@ -149,6 +155,20 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
                 }
                 beenSet = true;
                 break;
+            case SON:
+                if(this.apiKeySetted != ApiKeyType.SON) {
+                    setApiKey(apiKeySon);
+                    this.apiKeySetted = ApiKeyType.SON;
+                }
+                beenSet = true;
+                break;
+            case ROOT:
+                if(this.apiKeySetted != ApiKeyType.ROOT) {
+                    setApiKey(apiKeyRoot);
+                    this.apiKeySetted = ApiKeyType.ROOT;
+                }
+                beenSet = true;
+                break;
         }
         return beenSet;
     }
@@ -171,6 +191,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
     }
+
 
     public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) {
         refreshTokenInteropClient();
@@ -216,6 +237,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
 
+
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {
         refreshTokenInteropClient();
         return newNotificationApi.presignedUploadRequest( preLoadRequest );
@@ -238,6 +260,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public FullSentNotificationV21 getSentNotification(String iun) {
+
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationV21( iun );
     }

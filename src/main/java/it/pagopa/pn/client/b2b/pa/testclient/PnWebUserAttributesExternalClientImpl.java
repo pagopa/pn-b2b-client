@@ -163,12 +163,16 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
             case PG_1:
                 this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
+
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
                 break;
             case PG_2:
                 this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
+
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
                 break;

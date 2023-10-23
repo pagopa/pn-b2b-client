@@ -69,15 +69,16 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationAttachmentDownloadMetadataResponse response =
                 senderReadB2BApi.getSentNotificationDocument(
-                    operatorId
-                    , CxTypeAuthFleet.PA
-                    , paId
-                    , iun
-                    , docidx
-                    , groups);
+                        operatorId
+                        , CxTypeAuthFleet.PA
+                        , paId
+                        , iun
+                        , docidx
+                        , groups);
 
         return deepCopy( response, NotificationAttachmentDownloadMetadataResponse.class );
     }
+
 
     @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) {
@@ -165,10 +166,10 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
         List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.PreLoadResponse> responses;
         responses =newNotificationApi.presignedUploadRequest(
-                 operatorId,
-                 CxTypeAuthFleet.PA,
-                 paId,
-                 Arrays.asList( requests ));
+                operatorId,
+                CxTypeAuthFleet.PA,
+                paId,
+                Arrays.asList( requests ));
 
         PreLoadResponse[] result = deepCopy( responses, PreLoadResponse[].class );
         return Arrays.asList( result );

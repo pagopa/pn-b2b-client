@@ -66,7 +66,7 @@ public class PnPaB2bUtils {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(800_000);
-       requestFactory.setReadTimeout(800_000);
+        requestFactory.setReadTimeout(800_000);
         requestFactory.setConnectionRequestTimeout(800_000);
         requestFactory.setBufferRequestBody(false);
         restTemplate.setRequestFactory(requestFactory);
@@ -114,6 +114,7 @@ public class PnPaB2bUtils {
         }
         return response;
     }
+
 
     public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse uploadNotificationV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest request) throws IOException {
 
@@ -170,6 +171,15 @@ public class PnPaB2bUtils {
              **/
         //}
 
+        //for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         }
+         **/
+        //}
+
         log.info("New Notification Request {}", request);
         if ((request.getDocuments()!= null && request.getDocuments().size()>0) && !noUpload){
             NotificationDocument notificationDocument = request.getDocuments().get(0);
@@ -206,6 +216,15 @@ public class PnPaB2bUtils {
                 paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
             }
              **/
+        //}
+
+        // for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         }
+         **/
         //}
 
         log.info("New Notification Request {}", request);
@@ -256,6 +275,17 @@ public class PnPaB2bUtils {
              **/
        // }
 
+        // for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+         //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+         }
+         **/
+        // }
+
         log.info("New Notification Request {}", request);
         NewNotificationResponse response = client.sendNewNotification( request );
         log.info("New Notification Request response {}", response);
@@ -295,6 +325,17 @@ public class PnPaB2bUtils {
              **/
        // }
 
+        // for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+         //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+         }
+         **/
+        // }
+
         log.info("New Notification Request {}", request);
 
         NewNotificationResponse response = client.sendNewNotification( request );
@@ -332,6 +373,18 @@ public class PnPaB2bUtils {
             }
              **/
        // }
+
+
+        //    for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+         //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+         }
+         **/
+        // }
 
         log.info("New Notification Request {}", request);
 
@@ -371,6 +424,17 @@ public class PnPaB2bUtils {
             }
              **/
        // }
+
+        //  for (NotificationRecipientV21 recipient : request.getRecipients()) {
+        /**
+         NotificationPaymentInfo paymentInfo = recipient.getPayment();
+         if(paymentInfo != null){
+         paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
+         //                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
+         //                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
+         }
+         **/
+        // }
 
         log.info("New Notification Request {}", request);
 
@@ -518,7 +582,7 @@ public class PnPaB2bUtils {
                     fsn.getIun(),
                     LegalFactCategory.SENDER_ACK,
                     URLEncoder.encode(legalFactsId.getKey(), StandardCharsets.UTF_8.toString())
-                );
+            );
 
             byte[] content = downloadFile(resp.getUrl());
             String  pdfPrefix = new String( Arrays.copyOfRange(content, 0, 10), StandardCharsets.UTF_8);
@@ -529,8 +593,8 @@ public class PnPaB2bUtils {
 
         if(
                 fsn.getNotificationStatus() == null
-             ||
-                fsn.getNotificationStatus().equals( NotificationStatus.REFUSED )
+                        ||
+                        fsn.getNotificationStatus().equals( NotificationStatus.REFUSED )
         ) {
             throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
         }
@@ -657,7 +721,7 @@ public class PnPaB2bUtils {
         String url = preloadResp.getUrl();
 
         log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
-               resourceName, sha256, secret, url));
+                resourceName, sha256, secret, url));
         loadToPresigned( url, secret, sha256, resourceName );
 
         document.getRef().setKey( key );
