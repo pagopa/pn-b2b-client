@@ -198,7 +198,7 @@ Feature: Ricezione notifiche destinate al delegante
       | senderDenomination | Comune di palermo          |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "Mario Gherkin"
+    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @AOO_UO
   Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
@@ -243,7 +243,7 @@ Feature: Ricezione notifiche destinate al delegante
       | senderDenomination | Comune di Aglientu                |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_Root"
+    Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
   @AOO_UO
   Scenario: [WEB-PF-MANDATE_21] Invio notifica digitale altro destinatario e recupero_scenario positivo

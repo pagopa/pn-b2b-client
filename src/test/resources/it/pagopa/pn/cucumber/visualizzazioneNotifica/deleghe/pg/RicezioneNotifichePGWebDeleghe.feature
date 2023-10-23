@@ -239,7 +239,7 @@ Feature: Ricezione notifiche destinate al delegante
       | senderDenomination | Comune di Aglientu         |
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "GherkinSrl"
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
   @AOO_UO
   Scenario: [WEB-PG-MANDATE_20] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
@@ -284,4 +284,4 @@ Feature: Ricezione notifiche destinate al delegante
       | senderDenomination | Ufficio per la transizione al Digitale         |
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "GherkinSrl"
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega
