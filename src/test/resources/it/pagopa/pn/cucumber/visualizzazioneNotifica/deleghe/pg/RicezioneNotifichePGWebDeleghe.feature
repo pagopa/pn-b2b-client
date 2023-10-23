@@ -253,7 +253,7 @@ Feature: Ricezione notifiche destinate al delegante
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    And l'allegato "PAGOPA" può essere correttamente recuperato da "GherkinSrl"
+    And l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_21] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice
@@ -262,12 +262,18 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Ufficio per la transizione al Digitale          |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI   |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24flatRate  | NULL                 |
+      | payment_f24standard  | SI                   |
+      | title_payment        | F24_STANDARD_GHERKIN |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    And l'allegato "F24" può essere correttamente recuperato da "GherkinSrl"
+    And l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @AOO_UO @AOO_UO2
   Scenario: [WEB-PG-MANDATE_22] Invio notifica digitale altro destinatario per ente figlio e fallimento invio

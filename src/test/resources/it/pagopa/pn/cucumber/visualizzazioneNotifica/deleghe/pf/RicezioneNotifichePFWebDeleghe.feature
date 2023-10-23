@@ -196,7 +196,7 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
-    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin"
 
@@ -207,12 +207,12 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
-    And destinatario Mario Gherkin e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin"
+    And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
@@ -220,13 +220,19 @@ Feature: Ricezione notifiche destinate al delegante
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di Aglientu                |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm  | NULL |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | senderDenomination | Comune di Aglientu         |
+      | feePolicy          | DELIVERY_MODE              |
+      | paFee              | 0                          |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NULL               |
+      | payment_f24flatRate  | NULL               |
+      | payment_f24standard  | SI                 |
+      | title_payment        | F24_STANDARD_MARIO |
+      | apply_cost_pagopa    | NO                 |
+      | apply_cost_f24       | SI                 |
+      | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
+    And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_20] Invio notifica da parte di ente figlio digitale altro destinatario e fallimento invio
@@ -235,7 +241,7 @@ Feature: Ricezione notifiche destinate al delegante
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu                |
-    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_Root"
 
