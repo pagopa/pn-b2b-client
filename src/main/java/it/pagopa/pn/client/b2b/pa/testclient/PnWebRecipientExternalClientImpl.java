@@ -6,6 +6,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.ap
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.LegalFactsApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api.RecipientReadApi;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -24,6 +25,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
+    private final it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi recipientReadApiV1;
     private final LegalFactsApi legalFactsApi;
     private final DocumentsWebApi documentsWebApi;
 
@@ -66,6 +68,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.recipientReadApi = new RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
+        this.recipientReadApiV1 = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
         this.legalFactsApi = new LegalFactsApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
         this.documentsWebApi = new DocumentsWebApi( newApiClient(restTemplate, basePath, marioGherkinBearerToken,userAgent) );
 
@@ -85,6 +88,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         switch (bearerToken){
             case USER_1:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
@@ -92,6 +96,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case USER_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
@@ -99,6 +104,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case USER_3:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
@@ -106,6 +112,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case USER_5:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, dinoBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_5;
@@ -113,6 +120,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case PG_1:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
@@ -120,6 +128,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 break;
             case PG_2:
                 this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
@@ -138,6 +147,16 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     public FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException {
         return recipientReadApi.getReceivedNotificationV21(iun, mandateId);
+    }
+
+
+    @Override
+    public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
+        return recipientReadApiV1.getReceivedNotificationAttachment(iun, attachmentName, mandateId);
+    }
+
+    public FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException {
+        return recipientReadApiV1.getReceivedNotification(iun, mandateId);
     }
 
 

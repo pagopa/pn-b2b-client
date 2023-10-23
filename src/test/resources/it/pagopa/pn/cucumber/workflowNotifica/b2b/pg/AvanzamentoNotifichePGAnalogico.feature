@@ -3,7 +3,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     #OK_RS
     #OK-Retry_RS
     #fail_RS
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -14,7 +14,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -25,7 +25,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -38,7 +38,7 @@ Feature: avanzamento notifiche analogico persona giuridica
 
     #OK_RIS
     #fail_RIS
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_RIS_1] Invio notifica digitale ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -49,7 +49,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev @ignore
+  @dev @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_RIS_2] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -63,7 +63,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     #OK_AR
     #OK_890
     #OK_RIR
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -75,7 +75,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -86,7 +86,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_3] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -100,7 +100,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     #fail_AR
     #fail_890
     #fail_RIR
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -113,7 +113,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_5] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -124,7 +124,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_6] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -135,7 +135,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_7] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_AR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -146,7 +146,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_8] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -157,7 +157,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_9] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -170,7 +170,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_DOMICILE" sia valorizzato con "AR_REGISTERED_LETTER"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_10] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_DOMICILE e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -182,7 +182,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_DOMICILE" sia valorizzato con "REGISTERED_LETTER_890"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_11] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -195,7 +195,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "PREPARE_ANALOG_DOMICILE" sia valorizzato con "AR_REGISTERED_LETTER"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_12] Invio notifica digitale ed attesa elemento di timeline PREPARE_ANALOG_DOMICILE e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -207,7 +207,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
     And viene verificato il campo serviceLevel dell' evento di timeline "PREPARE_ANALOG_DOMICILE" sia valorizzato con "REGISTERED_LETTER_890"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_13] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -220,7 +220,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     And viene verificato il campo serviceLevel dell' evento di timeline "SEND_ANALOG_FEEDBACK" sia valorizzato con "AR_REGISTERED_LETTER"
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_14] Invio notifica digitale ed attesa elemento di timeline SEND_ANALOG_FEEDBACK e controllo campo serviceLevel positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -235,7 +235,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     #fail_AR
     #fail_890
     #fail_RIR
-  @dev @ignore
+  @dev @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_15] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -248,7 +248,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
-  @dev @ignore
+  @dev @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_16] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -259,7 +259,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
-  @dev @ignore
+  @dev @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_17] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -271,7 +271,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @dev
+  @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_18] Invio notifica ed attesa sospensione invio cartaceo per avvenuto pagamento positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -284,6 +284,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then si attende la corretta sospensione dell'invio cartaceo
 
 
+  @irreperibile_7623_Test  @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -299,7 +300,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
-  @ignore
+  @irreperibile_7623_Test @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -307,7 +308,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And destinatario
       | denomination            | Test AR Fail 2               |
       | recipientType           | PG                           |
-      | taxId                   | NNVFNC80A01H501G             |
+      | taxId                   | 00749900049                  |
       | digitalDomicile         | NULL                         |
       | physicalAddress_address | via @FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -315,7 +316,10 @@ Feature: avanzamento notifiche analogico persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
-@ignore
+
+
+
+  @irreperibile_7623_Test @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -323,7 +327,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And destinatario
       | denomination                        | Test AR Fail               |
       | recipientType                       | PG                         |
-      | taxId                               | CNCGPP80A01H501J           |
+      | taxId                               | 00749900049                |
       | digitalDomicile                     | NULL                       |
       | physicalAddress_address             | Via @FAIL-Irreperibile_890 |
       | physicalAddress_zip                 | 40121                      |
@@ -331,6 +335,6 @@ Feature: avanzamento notifiche analogico persona giuridica
       | physicalAddress_province            | BO                         |
       | physicalAddress_addressDetails      | NULL                       |
       | physicalAddress_municipalityDetails | NULL                       |
-  When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"

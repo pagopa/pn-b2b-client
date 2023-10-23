@@ -1,0 +1,270 @@
+{
+	"f24Elid": {
+		"taxPayer": {
+			"taxCode": "RSSMLB80A01A200D",
+			"person": {
+				"personalData": {
+					"surname": "ROSSI",
+					"name": "MARIO ALBERTO",
+					"birthDate": "01-01-1980",
+					"sex": "M",
+					"birthPlace": "MILANO",
+					"birthProvince": "MI"
+				},
+				"taxAddress": {
+					"municipality": "ROMA",
+					"province": "RM",
+					"address": "VIA GIORGIONE N. 110"
+				}
+			},
+			"relativePersonTaxCode": "RSSMLB80A01A200D",
+			"id": "Q7"
+		},
+		"treasury": {
+			"office": "7UV",
+			"document": "92151311914",
+			"records": [
+				{
+					"applyCost": false,
+					"type": "A",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1990",
+					"debit": "6291"
+				},
+				{
+					"applyCost": false,
+					"type": "B",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1991",
+					"debit": "72"
+				},
+				{
+					"applyCost": false,
+					"type": "C",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1992",
+					"debit": "281"
+				},
+				{
+					"applyCost": false,
+					"type": "D",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1993",
+					"debit": "129"
+				},
+				{
+					"applyCost": false,
+					"type": "E",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1994",
+					"debit": "10323"
+				},
+				{
+					"applyCost": false,
+					"type": "F",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1995",
+					"debit": "90"
+				},
+				{
+					"applyCost": false,
+					"type": "G",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1996",
+					"debit": "5023"
+				},
+				{
+					"applyCost": false,
+					"type": "H",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1997",
+					"debit": "234"
+				},
+				{
+					"applyCost": false,
+					"type": "I",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1998",
+					"debit": "21"
+				},
+				{
+					"applyCost": false,
+					"type": "J",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "1999",
+					"debit": "342"
+				},
+				{
+					"applyCost": false,
+					"type": "K",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2000",
+					"debit": "123"
+				},
+				{
+					"applyCost": false,
+					"type": "L",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2001",
+					"debit": "321"
+				},
+				{
+					"applyCost": false,
+					"type": "M",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2002",
+					"debit": "38"
+				},
+				{
+					"applyCost": false,
+					"type": "N",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2003",
+					"debit": "4"
+				},
+				{
+					"applyCost": false,
+					"type": "O",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2004",
+					"debit": "19"
+				},
+				{
+					"applyCost": false,
+					"type": "P",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2005",
+					"debit": "91"
+				},
+				{
+					"applyCost": false,
+					"type": "Q",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2006",
+					"debit": "62"
+				},
+				{
+					"applyCost": false,
+					"type": "R",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2007",
+					"debit": "412"
+				},
+				{
+					"applyCost": false,
+					"type": "S",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2008",
+					"debit": "111"
+				},
+				{
+					"applyCost": false,
+					"type": "T",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2009",
+					"debit": "12"
+				},
+				{
+					"applyCost": false,
+					"type": "U",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2010",
+					"debit": "80"
+				},
+				{
+					"applyCost": false,
+					"type": "V",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2011",
+					"debit": "53"
+				},
+				{
+					"applyCost": false,
+					"type": "W",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2012",
+					"debit": "823"
+				},
+				{
+					"applyCost": false,
+					"type": "X",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2013",
+					"debit": "47"
+				},
+				{
+					"applyCost": false,
+					"type": "Y",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2014",
+					"debit": "11"
+				},
+				{
+					"applyCost": false,
+					"type": "Z",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2015",
+					"debit": "0"
+				},
+				{
+					"applyCost": false,
+					"type": "M",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2016",
+					"debit": "127"
+				},
+				{
+					"applyCost": false,
+					"type": "N",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2017",
+					"debit": "75"
+				},
+				{
+					"applyCost": false,
+					"type": "O",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2018",
+					"debit": "2581"
+				},
+				{
+					"applyCost": false,
+					"type": "W",
+					"id": "BEK6WGR2OB4WD2IYT",
+					"taxType": "3WWK",
+					"year": "2019",
+					"debit": "900"
+				}
+			]
+		}
+	}
+}

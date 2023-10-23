@@ -57,9 +57,10 @@ public enum NotificationValue {
     PAYMENT_F24("payment_f24","classpath:/Metadati_F24.json",false),
     PAYMENT_F24_1("payment_f24_1","classpath:/Metadati_F24.json",false),
 
-    PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+
+    PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
-    PAYMENT_F24_STANDARD_1("payment_f24standard_1","classpath:/Modello F24 Semplificato nuovo_F24 semplificato_mod.pdf",false),
+
     PAYMENT_APPLY_COST_PAGOPA("apply_cost_pagopa","NO",false),
     PAYMENT_APPLY_COST_F24("apply_cost_f24","NO",false),
     TITLE_PAYMENT("title_payment","F24",false),

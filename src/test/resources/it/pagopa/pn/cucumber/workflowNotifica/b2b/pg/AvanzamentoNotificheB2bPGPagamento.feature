@@ -6,7 +6,11 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Cucumber srl
+    And destinatario Cucumber srl e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And "Cucumber srl" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
@@ -16,7 +20,11 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Cucumber srl
+    And destinatario Cucumber srl e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -39,6 +47,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
@@ -52,7 +61,8 @@ Feature: avanzamento b2b persona giuridica pagamento
     And destinatario Cucumber srl e:
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then il modello f24 viene pagato correttamente
 
@@ -61,7 +71,11 @@ Feature: avanzamento b2b persona giuridica pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Cucumber srl
+    And destinatario Cucumber srl e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -78,6 +92,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
@@ -94,6 +109,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
@@ -108,6 +124,10 @@ Feature: avanzamento b2b persona giuridica pagamento
       | recipientType    | PG                  |
       | taxId            | 27957814470         |
       | denomination     | Convivio SPA |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
@@ -124,6 +144,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
@@ -142,6 +163,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
@@ -161,6 +183,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica

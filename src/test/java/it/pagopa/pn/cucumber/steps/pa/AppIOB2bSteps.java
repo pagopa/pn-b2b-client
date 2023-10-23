@@ -77,6 +77,44 @@ public class AppIOB2bSteps {
         }
     }
 
+    @Then("il documento di pagamento {string} può essere recuperata tramite AppIO")
+    public void notifiedDocumentPaymentCanBeRetrievedAppIO(String typeDocument) {
+        List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
+        it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
+                iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(),typeDocument, sharedSteps.getSentNotification().getRecipients().get(0).getTaxId(), Integer.parseInt(documents.get(0).getDocIdx()));
+        try {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+
+            Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
+        }catch (AssertionFailedError assertionFailedError){
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("il documento di pagamento {string} può essere recuperata tramite AppIO da {string}")
+    public void paymentDocumentCanBeRetrievedAppIO(String typeDocument, String recipient) {
+
+        try {
+            List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
+            it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
+                    iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(),typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
+
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+
+            Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notficationServerError = e;
+            }
+        }
+    }
+
+
+
     @Then("il documento notificato può essere recuperata tramite AppIO da {string}")
     public void notifiedDocumentCanBeRetrievedAppIO(String recipient) {
 
