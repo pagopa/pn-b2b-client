@@ -213,6 +213,9 @@ public class ApikeyManagerSteps {
             case "Comune_Son":
                 apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.SON);
                 break;
+            case "Comune_Root":
+                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
+                break;
         }
 
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
@@ -294,6 +297,9 @@ public class ApikeyManagerSteps {
                 break;
             case "Comune_Son":
                 apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
                 break;
         }
 

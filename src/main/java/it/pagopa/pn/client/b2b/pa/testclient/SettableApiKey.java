@@ -2,7 +2,7 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 public interface SettableApiKey {
 
-    enum ApiKeyType { MVP_1, MVP_2, GA, SON }
+    enum ApiKeyType { MVP_1, MVP_2, GA, SON,ROOT }
 
     boolean setApiKeys(ApiKeyType apiKey);
 

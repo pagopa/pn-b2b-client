@@ -96,6 +96,9 @@ public class SharedSteps {
     @Value("${pn.external.api-key-SON-taxID}")
     private String senderTaxIdSON;
 
+    @Value("${pn.external.api-key-ROOT-taxID}")
+    private String senderTaxIdROOT;
+
     @Value("${pn.bearer-token.user1.taxID}")
     private String marioCucumberTaxID;
 
@@ -978,6 +981,10 @@ public class SharedSteps {
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdSON);
                 setGrup(SettableApiKey.ApiKeyType.SON);
                 break;
+            case "Comune_Root":
+                this.notificationRequest.setSenderTaxId(this.senderTaxIdROOT);
+                setGrup(SettableApiKey.ApiKeyType.ROOT);
+                break;
         }
 
     }
@@ -1010,6 +1017,8 @@ public class SharedSteps {
                 return this.senderTaxIdGa;
             case "Comune_Son":
                 return this.senderTaxIdSON;
+            case "Comune_Root":
+                return this.senderTaxIdROOT;
             default:
                 throw new IllegalArgumentException();
         }
@@ -1089,6 +1098,9 @@ public class SharedSteps {
                 break;
             case "Comune_Son":
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
                 break;
             default:
                 throw new IllegalArgumentException();
@@ -1265,6 +1277,9 @@ public class SharedSteps {
                 break;
             case "Comune_Son":
                 hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                hashMapsList = this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.ROOT);
                 break;
             default:
                 throw new IllegalArgumentException();

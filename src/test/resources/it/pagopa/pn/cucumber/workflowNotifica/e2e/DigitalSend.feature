@@ -1347,7 +1347,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_15] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Sappada           |
@@ -1377,7 +1377,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_15_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Sappada           |
@@ -1408,14 +1408,14 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_16] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Galileo Galilei"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
@@ -1437,7 +1437,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
   @AOO_UO @AOO_UO3
   Scenario: [B2B_DIGITAL_SEND_16_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_1"
+    And viene inserito un recapito legale "example@OK-pecFirstFailSecondSuccess.it" per il comune "Comune_Root"
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
     And destinatario
@@ -1445,7 +1445,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
       | recipientType   | PG                 |
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista

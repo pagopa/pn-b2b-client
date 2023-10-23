@@ -185,7 +185,7 @@ Feature: invio notifiche b2b
       | senderDenomination | Comune di Sappada             |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_1"
+    Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Root"
     And l'operazione ha generato un errore con status code "404"
 
   @AOO_UO
@@ -194,6 +194,6 @@ Feature: invio notifiche b2b
       | subject            | invio notifica multi cucumber |
       | senderDenomination | Comune di milano              |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     Then si tenta il recupero dal sistema tramite codice IUN dalla PA "Comune_Son"
     And l'operazione ha generato un errore con status code "404"

@@ -191,7 +191,7 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO1
     Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_Root"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
@@ -202,42 +202,42 @@ Feature: Ricezione notifiche destinate al delegante
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_Root"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo          |
+      | senderDenomination | Comune di Aglientu         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin"
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_19] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_Root"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo          |
+      | senderDenomination | Comune di Aglientu                |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm  | NULL |
       | payment_f24flatRate | SI   |
       | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin"
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_20] Invio notifica da parte di ente figlio digitale altro destinatario e fallimento invio
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_1"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber" per comune "Comune_Root"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo          |
+      | senderDenomination | Comune di Aglientu                |
     And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "Mario Gherkin" per comune "Comune_Root"
 
   @AOO_UO @AOO_UO1
   Scenario: [WEB-PF-MANDATE_21] Invio notifica digitale altro destinatario e recupero_scenario positivo

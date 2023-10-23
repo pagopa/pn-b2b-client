@@ -61,6 +61,8 @@ public class RicezioneNotificheWebDelegheSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+    @Value("${pn.external.senderId-ROOT}")
+    private String senderIdROOT;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -213,8 +215,13 @@ public class RicezioneNotificheWebDelegheSteps {
                 break;
             case "Comune_Son":
                 organizationIdDto=organizationIdDto
-                        .name("Comune di Sappada")
+                        .name("Ufficio per la transizione al Digitale")
                         .uniqueIdentifier(senderIdSON);
+                break;
+            case "Comune_Root":
+                organizationIdDto=organizationIdDto
+                        .name("Comune di Aglientu")
+                        .uniqueIdentifier(senderIdROOT);
                 break;
             default:
                 throw new IllegalStateException();

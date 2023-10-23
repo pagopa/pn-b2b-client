@@ -55,6 +55,8 @@ public class RicezioneNotificheWebSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+    @Value("${pn.external.senderId-ROOT}")
+    private String senderIdROOT;
 
     @Autowired
     public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient) {
@@ -485,6 +487,9 @@ public class RicezioneNotificheWebSteps {
             case "Comune_Son":
                 senderIdPa=senderIdSON;
                 break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
+                break;
         }
 
         // inserimento
@@ -511,6 +516,9 @@ public class RicezioneNotificheWebSteps {
                 break;
             case "Comune_Son":
                 senderIdPa=senderIdSON;
+                break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
                 break;
         }
 
@@ -539,6 +547,9 @@ public class RicezioneNotificheWebSteps {
             case "Comune_Son":
                 senderIdPa=senderIdSON;
                 break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
+                break;
         }
 
         try {
@@ -565,6 +576,9 @@ public class RicezioneNotificheWebSteps {
                 break;
             case "Comune_Son":
                 senderIdPa=senderIdSON;
+                break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
                 break;
         }
 
@@ -596,6 +610,9 @@ public class RicezioneNotificheWebSteps {
                 break;
             case "Comune_Son":
                 senderIdPa=senderIdSON;
+                break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
                 break;
         }
 

@@ -22,11 +22,13 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private final String basePath;
     private final String bearerToken;
     private final String bearerTokenSON;
+    private final String bearerTokenROOT;
     private final String userAgent;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySon;
+    private final String apiKeyRoot;
     private SettableApiKey.ApiKeyType apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
 
     public PnApiKeyManagerExternalClientImpl(
@@ -37,8 +39,10 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
             @Value("${pn.external.api-key-SON}") String apiKeySon,
+            @Value("${pn.external.api-key-ROOT}") String apiKeyRoot,
             @Value("${pn.external.bearer-token-pa-1}") String bearerToken,
             @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
+            @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
@@ -46,11 +50,13 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
         this.basePath = basePath;
         this.bearerToken = bearerToken;
         this.bearerTokenSON = bearerTokenSON;
+        this.bearerTokenROOT = bearerTokenROOT;
         this.userAgent = userAgent;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.apiKeySon = apiKeySon;
+        this.apiKeyRoot = apiKeyRoot;
         this.apiKeysApi = new ApiKeysApi( newApiClient( restTemplate, basePath, bearerToken,userAgent) );
     }
 
@@ -112,6 +118,13 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
                 if(this.apiKeySetted != ApiKeyType.SON) {
                     setApiKey(bearerTokenSON);
                     this.apiKeySetted = ApiKeyType.SON;
+                }
+                beenSet = true;
+                break;
+            case ROOT:
+                if(this.apiKeySetted != ApiKeyType.ROOT) {
+                    setApiKey(bearerTokenROOT);
+                    this.apiKeySetted = ApiKeyType.ROOT;
                 }
                 beenSet = true;
                 break;

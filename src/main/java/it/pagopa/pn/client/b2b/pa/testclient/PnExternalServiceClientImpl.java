@@ -46,6 +46,7 @@ public class PnExternalServiceClientImpl {
     private final String apiKeyMvp2;
     private final String apiKeyGa;
     private final String apiKeySON;
+    private final String apiKeyROOT;
 
     private final String safeStorageBasePath;
     private final String gruopInfoBasePath;
@@ -75,6 +76,7 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
             @Value("${pn.external.api-key-SON}") String apiKeySON,
+            @Value("${pn.external.api-key-ROOT}") String apiKeyROOT,
             @Value("${pn.interop.enable}") String enableInterop,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
@@ -96,6 +98,7 @@ public class PnExternalServiceClientImpl {
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
         this.apiKeySON = apiKeySON;
+        this.apiKeyROOT = apiKeyROOT;
 
         this.enableInterop = enableInterop;
 
@@ -190,6 +193,8 @@ public class PnExternalServiceClientImpl {
                 return paGroupInfoWithHttpInfo(apiKeyGa).getBody();
             case SON:
                 return paGroupInfoWithHttpInfo(apiKeySON).getBody();
+            case ROOT:
+                return paGroupInfoWithHttpInfo(apiKeyROOT).getBody();
             default:
                 throw new IllegalArgumentException();
         }
