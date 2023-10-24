@@ -1,0 +1,37 @@
+{
+  "f24Standard": {
+    "taxPayer": {
+      "taxCode": "RSSMRA80A01F205X",
+      "isNotTaxYear": true,
+      "person": {
+        "personalData": {
+          "surname": "ROSSI",
+          "name": "MARIO",
+          "birthDate": "01-01-1980",
+          "sex": "M",
+          "birthPlace": "MILANO",
+          "birthProvince": "MI"
+        },
+        "taxAddress": {
+          "municipality": "MILANO",
+          "province": "MI",
+          "address": "VIA LARGA 21"
+        }
+      },
+      "id": "9W"
+    },
+    "region": {
+      "records": [
+        {
+          "applyCost": false,
+          "region": "60",
+          "taxType": "ZEMO",
+          "installment": "A",
+          "year": "2306",
+          "debit": "901492",
+          "credit": "0"
+        }
+      ]
+    }
+  }
+}

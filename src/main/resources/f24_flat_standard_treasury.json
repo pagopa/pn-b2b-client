@@ -1,0 +1,44 @@
+{
+  "f24Standard": {
+    "taxPayer": {
+      "taxCode": "RSSMRA80A01F205X",
+      "isNotTaxYear": true,
+      "person": {
+        "personalData": {
+          "surname": "ROSSI",
+          "name": "MARIO",
+          "birthDate": "01-01-1980",
+          "sex": "M",
+          "birthPlace": "MILANO",
+          "birthProvince": "MI"
+        },
+        "taxAddress": {
+          "municipality": "MILANO",
+          "province": "MI",
+          "address": "VIA LARGA 21"
+        }
+      },
+      "id": "9W"
+    },
+    "treasury": {
+      "records": [
+        {
+          "applyCost": false,
+          "taxType": "B9AD",
+          "installment": "88MP",
+          "year": "2617",
+          "debit": "7309",
+          "credit": "0"
+        },
+        {
+          "applyCost": false,
+          "taxType": "B9AD",
+          "installment": "88MP",
+          "year": "2617",
+          "debit": "7309",
+          "credit": "0"
+        }
+      ]
+    }
+  }
+}
