@@ -55,6 +55,7 @@ public class RicezioneNotificheWebSteps {
     private String senderIdGA;
     @Value("${pn.external.senderId-SON}")
     private String senderIdSON;
+
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
@@ -154,7 +155,6 @@ public class RicezioneNotificheWebSteps {
                         b2bUtils.downloadFile(finalDownloadResponse.getUrl()));
             });
         }
-
     }
 
     @And("{string} tenta il recupero dell'allegato {string}")
@@ -425,7 +425,9 @@ public class RicezioneNotificheWebSteps {
             case "Galileo Galilei":
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 break;
+
             case "Lucio Anneo Seneca":
+
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 break;
             default:
@@ -475,6 +477,7 @@ public class RicezioneNotificheWebSteps {
         String senderIdPa="default";
 
         switch (pa){
+
             case "Comune_1":
                 senderIdPa=senderId;
                 break;
@@ -594,6 +597,7 @@ public class RicezioneNotificheWebSteps {
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
+
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
 
         String senderIdPa="default";

@@ -55,6 +55,9 @@ public class SharedSteps {
     private final DataTableTypeUtil dataTableTypeUtil;
     private final IPnPaB2bClient b2bClient;
     private final IPnWebPaClient webClient;
+    private final PnGPDClientImpl pnGPDClientImpl;
+    private final PnPaymentInfoClientImpl pnPaymentInfoClient;
+
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl pnExternalServiceClient;
@@ -67,10 +70,16 @@ public class SharedSteps {
 
     private NewNotificationResponse newNotificationResponse;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
+
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private NewNotificationRequestV21 notificationRequest;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
+
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
     private FullSentNotificationV21 notificationResponseComplete;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
+
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime notificationCreationDate;
     public static final String DEFAULT_PA = "Comune_1";
@@ -156,13 +165,13 @@ public class SharedSteps {
     public static Integer lastEventID = 0;
 
     private String gherkinSpaTaxID = "12666810299";
-  //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
+    //  private String cucumberSrlTaxID = "SCTPTR04A01C352E";
 
     private String cucumberSrlTaxID = "20517490320";
 
     private String cucumberSocietyTaxID = "20517490320" ;// "DNNGRL83A01C352D";
     private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
-   // private String gherkinSrltaxId = "CCRMCT06A03A433H";
+    // private String gherkinSrltaxId = "CCRMCT06A03A433H";
 
 
     private String gherkinSrltaxId = "12666810299";
@@ -194,7 +203,9 @@ public class SharedSteps {
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient, PnServiceDeskClientImpl serviceDeskClient, PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey, PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey) {
+                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
+                       PnServiceDeskClientImpl serviceDeskClient, PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey,
+                       PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey,PnGPDClientImpl pnGPDClientImpl, PnPaymentInfoClientImpl pnPaymentInfoClient) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -205,7 +216,8 @@ public class SharedSteps {
         this.serviceDeskClient=serviceDeskClient;
         this.serviceDeskClientImplNoApiKey=serviceDeskClientImplNoApiKey;
         this.serviceDeskClientImplWrongApiKey=serviceDeskClientImplWrongApiKey;
-
+        this.pnGPDClientImpl=pnGPDClientImpl;
+        this.pnPaymentInfoClient=pnPaymentInfoClient;
     }
 
     @BeforeAll
@@ -222,6 +234,11 @@ public class SharedSteps {
     @Given("viene generata una nuova notifica V1")
     public void vieneGenerataUnaNotificaV1(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1) {
         this.notificationRequestV1 = notificationRequestV1;
+    }
+
+    @Given("viene generata una nuova notifica V2")
+    public void vieneGenerataUnaNotificaV2(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2) {
+        this.notificationRequestV2 = notificationRequestV2;
     }
 
 
@@ -254,6 +271,18 @@ public class SharedSteps {
                         .taxId(marioCucumberTaxID)
                         .digitalDomicile(new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress()
                                 .type(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress.TypeEnum.PEC)
+                                .address(getDigitalAddressValue())));
+    }
+
+
+    @And("destinatario Mario Cucumber V2")
+    public void destinatarioMarioCucumberV2() {
+        this.notificationRequestV2.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipientV2(new HashMap<>())
+                        .denomination("Mario Cucumber")
+                        .taxId(marioCucumberTaxID)
+                        .digitalDomicile(new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress()
+                                .type(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())));
     }
 
@@ -479,7 +508,9 @@ public class SharedSteps {
     @And("viene configurato noticeCodeAlternative diversi a noticeCode")
     public void vieneConfiguratoNoticeCodeAlternativeDiversiNoticeCode() {
         //TODO Controllare...........
-       // this.notificationRequest.getRecipients().get(0).getPayments().get(0).getPagoPa().setNoticeCodeAlternative(getValue(new HashMap<>(), PAYMENT_NOTICE_CODE_OPTIONAL.key));
+
+        // this.notificationRequest.getRecipients().get(0).getPayments().get(0).getPagoPa().setNoticeCodeAlternative(getValue(new HashMap<>(), PAYMENT_NOTICE_CODE_OPTIONAL.key));
+
     }
 
     @And("viene generata una nuova notifica con uguale paProtocolNumber e idempotenceToken {string}")
@@ -524,6 +555,14 @@ public class SharedSteps {
         sendNotificationV1();
     }
 
+
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED V2")
+    public void laNotificaVieneInviataOkV2(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromPropertiesV2();
+        sendNotificationV2();
+    }
+
     @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIUNByComune(String paType) {
         selectPA(paType);
@@ -539,6 +578,8 @@ public class SharedSteps {
         });
 
     }
+
+
 
     @And("la notifica non può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCaNotBeCanceledWithIUNByComune(String paType) {
@@ -704,6 +745,38 @@ public class SharedSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponseV1 == null ? "NULL" : newNotificationResponseV1.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationV2() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponseV2 = b2bUtils.uploadNotificationV2(notificationRequestV2);
+
+                try {
+                    Thread.sleep(getWorkFlowWait());
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseCompleteV2 = b2bUtils.waitForRequestAcceptationV2(newNotificationResponseV2);
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(notificationResponseCompleteV2);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV2 == null ? "NULL" : newNotificationResponseV2.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -1011,6 +1084,24 @@ public class SharedSteps {
 
     }
 
+    public void setSenderTaxIdFromPropertiesV2() {
+        switch (settedPa) {
+            case "Comune_1":
+                this.notificationRequestV2.setSenderTaxId(this.senderTaxId);
+                setGrupV1(SettableApiKey.ApiKeyType.MVP_1);
+                break;
+            case "Comune_2":
+                this.notificationRequestV2.setSenderTaxId(this.senderTaxIdTwo);
+                setGrupV1(SettableApiKey.ApiKeyType.MVP_2);
+                break;
+            case "Comune_Multi":
+                this.notificationRequestV2.setSenderTaxId(this.senderTaxIdGa);
+                setGrupV1(SettableApiKey.ApiKeyType.GA);
+                break;
+        }
+
+    }
+
     public String getSenderTaxIdFromProperties(String settedPa) {
         switch (settedPa) {
             case "Comune_1":
@@ -1067,6 +1158,10 @@ public class SharedSteps {
 
     public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1() {
         return notificationResponseCompleteV1;
+    }
+
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 getSentNotificationV2() {
+        return notificationResponseCompleteV2;
     }
 
 
@@ -1153,6 +1248,13 @@ public class SharedSteps {
 
     public IPnWebPaClient getWebPaClient() {
         return webClient;
+    }
+    public PnGPDClientImpl getPnGPDClientImpl() {
+        return pnGPDClientImpl;
+    }
+
+    public PnPaymentInfoClientImpl getPnPaymentInfoClientImpl() {
+        return pnPaymentInfoClient;
     }
 
     public PnPaB2bUtils getB2bUtils() {

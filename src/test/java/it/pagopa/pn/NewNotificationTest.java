@@ -45,7 +45,6 @@ public class NewNotificationTest {
         // modificare se si vuole inviare un f24. invia i metadati in base al delivery_mode
         boolean enableF24Attachment = true;
         // modifica pure i parametri a piacimento
-
         NewNotificationRequestV21 request = new NewNotificationRequestV21()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)

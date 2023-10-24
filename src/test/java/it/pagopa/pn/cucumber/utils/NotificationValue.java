@@ -61,6 +61,21 @@ public enum NotificationValue {
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
 
+    PAYMENT_F24_STANDARD_INPS("payment_f24standard_inps","classpath:/f24_delivery_standard_inps.json",false),
+    PAYMENT_F24_STANDARD_LOCAL("payment_f24standard_local","classpath:/f24_delivery_standard_local.json",false),
+    PAYMENT_F24_STANDARD_REGION("payment_f24standard_region","classpath:/f24_delivery_standard_region.json",false),
+    PAYMENT_F24_STANDARD_TREASURY("payment_f24standard_treasury","classpath:/f24_delivery_standard_treasury.json",false),
+    PAYMENT_F24_STANDARD_SOCIAL("payment_f24standard_social","classpath:/f24_delivery_standard_social.json",false),
+    PAYMENT_F24_SIMPLIFIED("payment_f24_simplified","classpath:/f24_delivery_simplified.json",false),
+
+    PAYMENT_F24_STANDARD_INPS_FLAT("payment_f24standard_inps_flat","classpath:/f24_flat_standard_inps.json",false),
+    PAYMENT_F24_STANDARD_LOCAL_FLAT("payment_f24standard_local_flat","classpath:/f24_flat_standard_local.json",false),
+    PAYMENT_F24_STANDARD_REGION_FLAT("payment_f24standard_region_flat","classpath:/f24_flat_standard_region.json",false),
+    PAYMENT_F24_STANDARD_TREASURY_FLAT("payment_f24standard_treasury_flat","classpath:/f24_flat_standard_treasury.json",false),
+    PAYMENT_F24_STANDARD_SOCIAL_FLAT("payment_f24standard_social_flat","classpath:/f24_flat_standard_social.json",false),
+    PAYMENT_F24_SIMPLIFIED_FLAT("payment_f24_simplified_flat","classpath:/f24_flat_simplified.json",false),
+
+
     PAYMENT_APPLY_COST_PAGOPA("apply_cost_pagopa","NO",false),
     PAYMENT_APPLY_COST_F24("apply_cost_f24","NO",false),
     TITLE_PAYMENT("title_payment","F24",false),
@@ -88,8 +103,8 @@ public enum NotificationValue {
     DETAILS_ATTACHMENTS("details_attachments", null, false),
     DETAILS_PHYSICALADDRESS("details_physicalAddress", null, false),
     DETAILS_ANALOG_COST("details_analogCost", null, false),
-    DETAILS_DELEGATE_INFO("details_delegateInfo", null, false);
-
+    DETAILS_DELEGATE_INFO("details_delegateInfo", null, false),
+    PAGOPAINTMODE("pagoPaIntMode","NONE",false);
 
     private static final String NULL_VALUE = "NULL";
     public static final String EXCLUDE_VALUE = "NO";

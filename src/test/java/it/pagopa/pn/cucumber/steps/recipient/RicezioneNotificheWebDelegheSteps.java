@@ -471,7 +471,6 @@ public class RicezioneNotificheWebDelegheSteps {
             });
             Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
         }
-
     }
 
     @And("{string} revoca la delega a {string}")

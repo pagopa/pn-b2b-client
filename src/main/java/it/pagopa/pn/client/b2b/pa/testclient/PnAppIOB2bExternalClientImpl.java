@@ -59,6 +59,8 @@ public class PnAppIOB2bExternalClientImpl implements IPnAppIOB2bClient{
 
 
 
+
+
     public ThirdPartyMessage getReceivedNotification(String iun, String xPagopaCxTaxid) throws RestClientException {
         return this.appIoPnNotificationApi.getReceivedNotification(iun, xPagopaCxTaxid,null,null,null,null,null,null,null,null,null);
     }
