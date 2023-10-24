@@ -87,6 +87,11 @@ public class DataTableTypeUtil {
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocumentV1(getDefaultValue(DOCUMENT.key)))
+                .pagoPaIntMode(
+                        (getValue(data,PAGOPAINTMODE.key) == null ? null :
+                                (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
+                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PagoPaIntModeEnum.SYNC :
+                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PagoPaIntModeEnum.NONE )))
         );
         try {
             Thread.sleep(2);
@@ -121,6 +126,11 @@ public class DataTableTypeUtil {
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocumentV2(getDefaultValue(DOCUMENT.key)))
+                .pagoPaIntMode(
+                        (getValue(data,PAGOPAINTMODE.key) == null ? null :
+                                (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.SYNC :
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.NONE )))
         );
         try {
             Thread.sleep(2);
