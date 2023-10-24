@@ -2541,7 +2541,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 #--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_95] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2578,7 +2578,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2615,7 +2615,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2652,7 +2652,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2689,7 +2689,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_96_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2726,7 +2726,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_96_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2764,7 +2764,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2801,7 +2801,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_97_1] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2838,7 +2838,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_97_2] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2875,7 +2875,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2912,7 +2912,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_98_1] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2949,7 +2949,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_98_2] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2986,7 +2986,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_99] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3023,7 +3023,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_99_1] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3060,7 +3060,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_99_2] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3097,7 +3097,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_100] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3134,7 +3134,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_100_1] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3171,7 +3171,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_100_2] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
