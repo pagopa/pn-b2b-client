@@ -2,7 +2,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
  #24 PA - inserimento notifica mono destinatario con un solo avviso pagoPA [TA]
-  @pagamentiMultipli @testLite
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
