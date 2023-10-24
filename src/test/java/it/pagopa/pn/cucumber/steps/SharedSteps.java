@@ -1088,15 +1088,15 @@ public class SharedSteps {
         switch (settedPa) {
             case "Comune_1":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxId);
-                setGrupV1(SettableApiKey.ApiKeyType.MVP_1);
+                setGrupV2(SettableApiKey.ApiKeyType.MVP_1);
                 break;
             case "Comune_2":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxIdTwo);
-                setGrupV1(SettableApiKey.ApiKeyType.MVP_2);
+                setGrupV2(SettableApiKey.ApiKeyType.MVP_2);
                 break;
             case "Comune_Multi":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxIdGa);
-                setGrupV1(SettableApiKey.ApiKeyType.GA);
+                setGrupV2(SettableApiKey.ApiKeyType.GA);
                 break;
         }
 
@@ -1152,6 +1152,23 @@ public class SharedSteps {
         }
     }
 
+    private void setGrupV2(SettableApiKey.ApiKeyType apiKeyType) {
+        if (groupToSet && this.notificationRequestV2.getGroup() == null) {
+            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType);
+            if (hashMapsList == null || hashMapsList.size() == 0) return;
+            String id = null;
+            for (HashMap<String, String> elem : hashMapsList) {
+                if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
+                    id = elem.get("id");
+                    break;
+                }
+            }
+            if (id == null) return;
+            this.notificationRequestV2.setGroup(id);
+        }
+    }
+
+
     public FullSentNotificationV21 getSentNotification() {
         return notificationResponseComplete;
     }
@@ -1182,6 +1199,10 @@ public class SharedSteps {
 
     public void setSentNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseComplete) {
         this.notificationResponseCompleteV1 = notificationResponseComplete;
+    }
+
+    public void setSentNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseComplete) {
+        this.notificationResponseCompleteV2 = notificationResponseComplete;
     }
 
     public void selectPA(String apiKey) {
