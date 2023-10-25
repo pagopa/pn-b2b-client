@@ -47,7 +47,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
-  @dev   @workflowDigitale
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_MULTI_PF_PF_06] Invio notifica multidestinatario con pagamento destinatario 0 e 1 scenario  positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

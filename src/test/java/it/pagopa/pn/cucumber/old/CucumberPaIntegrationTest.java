@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber;
+package it.pagopa.pn.cucumber.old;
 
 
 import org.junit.platform.suite.api.*;
@@ -14,6 +14,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber"),
         @ConfigurationParameter(key = PARALLEL_EXECUTION_ENABLED_PROPERTY_NAME, value = "false"),
 })
-@IncludeTags({"TC-INVIO-01"})
-public class Cucumber_Tc_Invio_01 {
+@IncludeTags({"integrationTest"})
+public class CucumberPaIntegrationTest {
 }

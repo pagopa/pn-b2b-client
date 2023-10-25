@@ -76,7 +76,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
 
-  @SmokeTest @testLite @workflowDigitale
+  @SmokeTest @testLite @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -87,7 +87,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-  @testLite @workflowDigitale
+  @testLite @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_10] Invio notifica digitale ed attesa stato DELIVERED-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -99,7 +99,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And "Mario Gherkin" legge la notifica ricevuta
     Then si verifica che la notifica abbia lo stato VIEWED
 
-  @testLite @workflowDigitale
+  @testLite @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_11] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -131,7 +131,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @dev @testLite @workflowDigitale
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_14] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -140,7 +140,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK"
 
-  @dev @testLite @workflowDigitale
+  @testLite @workflowDigitale
   Scenario: [B2B_TIMELINE_15] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_PROGRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -149,7 +149,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
 
-  @dev @testLite @workflowDigitale
+  @testLite @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -159,7 +159,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
 
-  @dev @testLite @workflowDigitale
+  @testLite @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -191,7 +191,7 @@ Feature: avanzamento notifiche b2b persona fisica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO"
     And viene verificato che nell'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "KO" sia presente i campi deliveryDetailCode e deliveryFailureCause
 
-  @workflowDigitale
+  @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_20] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -263,7 +263,6 @@ Feature: avanzamento notifiche b2b persona fisica
     And destinatario
       | denomination | Test digitale ok |
       | taxId | CLMCST42R12D969Z |
-      | digitalDomicile_address | pectest@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 

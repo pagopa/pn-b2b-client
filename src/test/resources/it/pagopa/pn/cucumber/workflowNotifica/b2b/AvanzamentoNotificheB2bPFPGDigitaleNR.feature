@@ -17,7 +17,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
   #Risultato:  La notifica viene inviata correttamente al domicilio digitale corrispondente al destinatario inserito (test@pec.it), recuperato tramite INAD.
  #OK---------->
-  @dev @workflowDigitale @servizioReale
+  @uat @workflowDigitale @realNR
   Scenario: [B2B_TIMELINE_7597_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -32,7 +32,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
-  @dev @workflowDigitale @mock
+  @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -55,7 +55,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
   #Mock PPPPLT80A01H501V
 
   #OK------------>
-  @dev @workflowDigitale @mock
+  @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -71,7 +71,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
   #OK------->atocaloreirpino@pec.it
   #92051670641 Servizio Reale
-  @dev @workflowDigitale @servizioReale
+  @uat @workflowDigitale @realNR
   Scenario: [B2B_TIMELINE_7597_2_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -87,7 +87,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
-  @dev @workflowDigitale @mock
+  @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_2_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -103,7 +103,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>
-  @dev @workflowDigitale @mock
+  @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_2_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde KO e viene fatta chiamata a INIPEC
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -135,7 +135,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK---------->aslnapoli1centro@pec.aslna1centro.it
-  @dev @workflowDigitale @servizioReale
+  @uat @workflowDigitale @realNR
   Scenario: [B2B_TIMELINE_7597_2_5] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK e non viene fatta chiamata a INIPEC
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -156,7 +156,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
   #La notifica prosegue per via digitale, in quanto viene trovato l’indirizzo da National Registry
 
   #OK------------>
-  @dev @workflowDigitale  @mock
+  @workflowDigitale  @mockNR
   Scenario: [B2B_TIMELINE_7597_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -180,7 +180,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
  # La notifica prosegue per via digitale, in quanto viene trovato l’indirizzo da National Registry
 
   #OK------------>
-  @dev @workflowDigitale @mock
+  @workflowDigitale @mockNR
   Scenario: [B2B_TIMELINE_7597_4] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -212,7 +212,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #OK------------>test@pec.it
-  @dev @workflowDigitale @servizioReale
+  @uat @workflowDigitale @realNR
   Scenario: [B2B_TIMELINE_7597_4_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
