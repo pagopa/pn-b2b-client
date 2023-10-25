@@ -31,7 +31,9 @@ import org.springframework.test.context.TestPropertySource;
         PnWebPaClientImpl.class,
         PnPrivateDeliveryPushExternalClientImpl.class,
         InteropTokenSingleton.class,
-})
+        PnServiceDeskClientImpl.class,
+        PnServiceDeskClientImplNoApiKey.class,
+        PnServiceDeskClientImplWrongApiKey.class})
 @TestPropertySource(properties = {"spring.profiles.active=test"})
 public class CucumberSpringIntegration {
 

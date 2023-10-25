@@ -112,6 +112,10 @@ public class PnExternalServiceClientImpl {
         return safeStorageInfoWithHttpInfo(fileKey).getBody();
     }
 
+    public SafeStorageResponse safeStorageInfoPnServiceDesk(String fileKey) throws RestClientException {
+        return safeStoragePnServiceDeskInfoWithHttpInfo(fileKey).getBody();
+    }
+
 
     private void restTemplateAvoidSSlCertificate() throws NoSuchAlgorithmException, KeyManagementException {
         TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
@@ -454,6 +458,35 @@ public class PnExternalServiceClientImpl {
 
         final HttpHeaders headerParams = new HttpHeaders();
         headerParams.add("x-pagopa-safestorage-cx-id", "pn-delivery-push");
+
+
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json","*/*"
+        };
+        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
+        final MediaType localVarContentType = MediaType.APPLICATION_JSON;
+
+
+        ParameterizedTypeReference<SafeStorageResponse> returnType = new ParameterizedTypeReference<>() {
+        };
+        return invokeAPI(safeStorageBasePath, "/safe-storage/v1/files/{fileKey}", HttpMethod.GET, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
+    }
+
+    private ResponseEntity<SafeStorageResponse> safeStoragePnServiceDeskInfoWithHttpInfo(String fileKey) throws RestClientException {
+        Object postBody = null;
+
+        if (fileKey == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'fileKey' when calling consumeEventStream");
+        }
+
+        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        uriVariables.put("fileKey", fileKey);
+
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        queryParams.add("metadataOnly", "true");
+
+        final HttpHeaders headerParams = new HttpHeaders();
+        headerParams.add("x-pagopa-safestorage-cx-id", "pn-service-desk");
 
 
         final String[] localVarAccepts = {

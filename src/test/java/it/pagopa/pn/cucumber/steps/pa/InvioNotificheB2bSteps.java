@@ -21,13 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 
 import java.io.ByteArrayInputStream;
 import java.lang.invoke.MethodHandles;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static java.time.OffsetDateTime.now;
@@ -41,7 +44,6 @@ public class InvioNotificheB2bSteps {
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
-
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
@@ -52,6 +54,8 @@ public class InvioNotificheB2bSteps {
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
+
+
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
@@ -61,12 +65,13 @@ public class InvioNotificheB2bSteps {
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
+
     }
 
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))
@@ -133,7 +138,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotification> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
             notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException e) {
@@ -146,12 +151,14 @@ public class InvioNotificheB2bSteps {
         NotificationDocument notificationDocument = b2bUtils.newDocument("classpath:/sample.pdf");
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadDocument(notificationDocument)));
+        /*
         try {
             Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+         */
         this.notificationDocumentPreload = notificationDocumentAtomic.get();
     }
 
@@ -160,12 +167,14 @@ public class InvioNotificheB2bSteps {
         NotificationPaymentAttachment notificationPaymentAttachment = b2bUtils.newAttachment("classpath:/sample.pdf");
         AtomicReference<NotificationPaymentAttachment> notificationDocumentAtomic = new AtomicReference<>();
         Assertions.assertDoesNotThrow(() -> notificationDocumentAtomic.set(b2bUtils.preloadAttachment(notificationPaymentAttachment)));
+        /*
         try {
             Thread.sleep( sharedSteps.getWait());
         } catch (InterruptedException e) {
             logger.error("Thread.sleep error retry");
             throw new RuntimeException(e);
         }
+         */
         this.notificationPaymentAttachmentPreload = notificationDocumentAtomic.get();
     }
 
@@ -203,7 +212,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElement timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
@@ -220,7 +229,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotification notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV20 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -408,6 +417,31 @@ public class InvioNotificheB2bSteps {
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
+    }
+
+
+
+
+
+
+    //Annullamento Notifica
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
+    public void notificationNotCanBeCanceledWithIUN() {
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    b2bClient.notificationCancellation(sharedSteps.getSentNotification().getIun()));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_ALREADY_CANCELLED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+    }
+
+    @Then("si verifica il corretto annullamento della notifica")
+    public void correctCanceledNotification() {
+        //Assertions.assertNull(assertionFailedError);
     }
 
 

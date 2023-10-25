@@ -64,6 +64,7 @@ Feature: verifica audit-log su openSearch
       | AUD_PD_PREPARE_RECEIVE |
       | AUD_PD_EXECUTE         |
       | AUD_PD_EXECUTE_RECEIVE |
+      | AUD_NT_CANCELLED       |
 
 
   Scenario Outline: [AUDIT_OPEN_SEARCH_2] verifica presenza nel giusto indice e data di scrittura audit log 10y
@@ -134,6 +135,7 @@ Feature: verifica audit-log su openSearch
 
 
 
+
   Scenario Outline: [AUDIT_OPEN_SEARCH_3] verifica solo presenza audit log 5y
     Then viene verificato che esiste un audit log "<audit-log>" in "5y"
     Examples:
@@ -152,6 +154,7 @@ Feature: verifica audit-log su openSearch
       | AUD_DT_CREATE          |
       | AUD_DT_UPDATE          |
       #| AUD_DT_DELETE          |
+
 
 
 
@@ -176,4 +179,5 @@ Feature: verifica audit-log su openSearch
       | AUD_DT_CREATE          |
       | AUD_DT_UPDATE          |
       #| AUD_DT_DELETE          |
+
 

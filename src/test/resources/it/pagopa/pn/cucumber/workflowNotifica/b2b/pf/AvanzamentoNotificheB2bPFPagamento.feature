@@ -17,8 +17,12 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And destinatario
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
 
   @testLite @workflowDigitale
@@ -37,12 +41,14 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination     | Ada  |
+      | taxId | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
   @ignore
@@ -81,5 +87,22 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | payment_f24standard | NULL |
       | payment_creditorTaxId | 77777777777 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then l'avviso pagopa viene pagato correttamente
+    And si attende il corretto pagamento della notifica
+
+  @workflowDigitale
+  Scenario: [B2B-PA-PAY_8] Comunicazione da parte della PA dell'avvenuto pagamento di tipo PagoPA  7741
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario
+      | denomination     | Ada  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    #Questa API è a disposizione della Pubblica Amministrazione per inviare eventi di chiusura di una o più posizioni debitorie di tipo PagoPA.
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica

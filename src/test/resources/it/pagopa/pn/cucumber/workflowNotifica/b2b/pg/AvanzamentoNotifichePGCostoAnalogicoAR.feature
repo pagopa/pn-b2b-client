@@ -8,16 +8,18 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-      |  physicalAddress_zip    |    <CAP>   |
-      | payment_pagoPaForm      | NULL      |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_AR      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 80060 | 544   |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 80060 | 544   | MASSAQUANO   | NA       |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_PG_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo
@@ -27,17 +29,19 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-      | physicalAddress_zip     | <CAP>     |
-      | payment_pagoPaForm      | NULL      |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_AR      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 80060 | 0     |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 80060 | 0     | MASSAQUANO   | NA       |
 
   @dev @costoAnalogico @costoCartAAR
   Scenario: [B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo
@@ -88,24 +92,26 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-      | physicalAddress_zip     | <CAP>     |
-      | payment_pagoPaForm      | NULL      |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_AR      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 00118 | 454   |
-      | 00012 | 543   |
-      | 60010 | 448   |
-      | 60121 | 405   |
-      | 70121 | 372   |
-      | 80010 | 464   |
-      | 80121 | 393   |
-      | 81100 | 414   |
-      | 04100 | 481   |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 00118 | 454   | ROMA         | RM       |
+      | 00012 | 543   | ALBUCCIONE   | RM       |
+      | 60010 | 448   | CASINE       | AN       |
+      | 60121 | 405   | ANCONA       | AN       |
+      | 70121 | 372   | BARI         | BA       |
+      | 80010 | 464   | QUARTO       | NA       |
+      | 80121 | 393   | NAPOLI       | NA       |
+      | 81100 | 414   | BRIANO       | CE       |
+      | 04100 | 481   | FOGLIANO     | LT       |
 
 
   @dev @costoAnalogico
@@ -116,25 +122,27 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalCommunication | AR_REGISTERED_LETTER            |
       | feePolicy             | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL      |
-      | physicalAddress_address | Via@ok_AR |
-      | physicalAddress_zip     | <CAP>       |
-      | payment_pagoPaForm      | NULL      |
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_AR      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 00118 | 0     |
-      | 00012 | 0     |
-      | 60010 | 0     |
-      | 60121 | 0     |
-      | 70121 | 0     |
-      | 80010 | 0     |
-      | 80121 | 0     |
-      | 81100 | 0     |
-      | 04100 | 0     |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 00118 | 0     | ROMA         | RM       |
+      | 00012 | 0     | ALBUCCIONE   | RM       |
+      | 60010 | 0     | CASINE       | AN       |
+      | 60121 | 0     | ANCONA       | AN       |
+      | 70121 | 0     | BARI         | BA       |
+      | 80010 | 0     | QUARTO       | NA       |
+      | 80121 | 0     | NAPOLI       | NA       |
+      | 81100 | 0     | BRIANO       | CE       |
+      | 04100 | 0     | FOGLIANO     | LT       |
 
 
   @dev @costoAnalogico

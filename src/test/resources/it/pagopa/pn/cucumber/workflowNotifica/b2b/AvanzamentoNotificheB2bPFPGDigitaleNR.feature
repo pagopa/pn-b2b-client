@@ -195,6 +195,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   #Controllare ---KO serve una PIVA che va sui servizi reali e dove Fallisce IPA e  INIPEC mentre INAD restituisce la PEC (ATTUALMENTE TUTTE LE PG RESTITUISCONO UN 200 OK PER IPA)..
+
   @dev  @ignore
   Scenario: [B2B_TIMELINE_7597_5] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD
     Given viene generata una nuova notifica

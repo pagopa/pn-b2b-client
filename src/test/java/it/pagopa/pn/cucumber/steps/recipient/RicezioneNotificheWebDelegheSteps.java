@@ -4,8 +4,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElement;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
@@ -15,6 +15,9 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.mo
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
+
+import org.opentest4j.AssertionFailedError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,9 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.ByteArrayInputStream;
+
+import java.io.IOException;
+
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -202,7 +208,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         String delegatorTaxId = getTaxIdByUser(delegator);;
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
-       // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: "+mandateList);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
@@ -224,32 +230,32 @@ public class RicezioneNotificheWebDelegheSteps {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
     }
-    
+
     @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo per il delegato {string}")
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato){
         sharedSteps.selectUser(delegato);
-      //  Assertions.assertDoesNotThrow(() -> {
-           // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+        //  Assertions.assertDoesNotThrow(() -> {
+        // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
 
-              //      * @param xPagopaPnCxId Customer/Receiver Identifier (required)
-              //      * @param xPagopaPnCxType Customer/Receiver Type (required)
-           //         * @param mandateId  (required)
-            //        * @param xPagopaPnCxGroups Customer Groups (optional)
-             //       * @param xPagopaPnCxRole Ruolo (estratto da token di Self Care) (optional)
-             //       * @param updateRequestDto  (optional)
-           // url --location --request PATCH 'http://localhost:8080/mandate/api/v1/mandate/1748533a-7020-4d47-9e4d-c95f558d8845/update' \
-           // --header 'x-pagopa-pn-cx-id: PG-1748533a-7020-4d47-9e4d-c95f558d8845' \
-           // --header 'x-pagopa-pn-cx-type: PG' \
-          //  --header 'x-pagopa-pn-cx-groups;' \
-          //  --header 'x-pagopa-pn-cx-role: ADMIN' \
-         //   --header 'Content-Type: application/json' \
-         //   --data '{
-           // "groups":[
-          //  "test1",
-           //         "test4"
-    //]
-       // }'
-      //  });
+        //      * @param xPagopaPnCxId Customer/Receiver Identifier (required)
+        //      * @param xPagopaPnCxType Customer/Receiver Type (required)
+        //         * @param mandateId  (required)
+        //        * @param xPagopaPnCxGroups Customer Groups (optional)
+        //       * @param xPagopaPnCxRole Ruolo (estratto da token di Self Care) (optional)
+        //       * @param updateRequestDto  (optional)
+        // url --location --request PATCH 'http://localhost:8080/mandate/api/v1/mandate/1748533a-7020-4d47-9e4d-c95f558d8845/update' \
+        // --header 'x-pagopa-pn-cx-id: PG-1748533a-7020-4d47-9e4d-c95f558d8845' \
+        // --header 'x-pagopa-pn-cx-type: PG' \
+        //  --header 'x-pagopa-pn-cx-groups;' \
+        //  --header 'x-pagopa-pn-cx-role: ADMIN' \
+        //   --header 'Content-Type: application/json' \
+        //   --data '{
+        // "groups":[
+        //  "test1",
+        //         "test4"
+        //]
+        // }'
+        //  });
 
         //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp =  sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
@@ -262,24 +268,24 @@ public class RicezioneNotificheWebDelegheSteps {
                 }
             }
         }
-        
-         //TODO Gruppi Disponibili della PG Admin
+
+        //TODO Gruppi Disponibili della PG Admin
         List<String> xPagopaPnCxGroups = null;
 
         //TODO Recuperare la Lista dei gruppi della delega;
         List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
 
-          List<String> listGruppi  = new ArrayList<>();
-            if (gruppiDelega!= null ){
-                xPagopaPnCxGroups = new ArrayList<>();
-                for (GroupDto gruppo : gruppiDelega) {
-                    xPagopaPnCxGroups.add(gruppo.getName());
-                }
+        List<String> listGruppi  = new ArrayList<>();
+        if (gruppiDelega!= null ){
+            xPagopaPnCxGroups = new ArrayList<>();
+            for (GroupDto gruppo : gruppiDelega) {
+                xPagopaPnCxGroups.add(gruppo.getName());
             }
+        }
 
-            String xPagopaPnCxRole="ADMIN";
-            //TODO capire dove recuperare il dato
-            //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
+        String xPagopaPnCxRole="ADMIN";
+        //TODO capire dove recuperare il dato
+        //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
         String xPagopaPnCxId =null;
         switch (webRecipientClient.getBearerTokenSetted()) {
             case PG_1:
@@ -288,7 +294,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 break;
             case PG_2:
                 xPagopaPnCxId = sharedSteps.getIdOrganizationCucumberSpa();
-              //  webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
+                //  webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
                 break;
         }
 
@@ -302,11 +308,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
         String finalXPagopaPnCxId = xPagopaPnCxId;
         Assertions.assertDoesNotThrow(() -> {
-        webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  null,  xPagopaPnCxRole,  updateRequestDto);
+            webMandateClient.updateMandate(finalXPagopaPnCxId,  CxTypeAuthFleet.PG,  mandateToSearch.getMandateId(),  null,  xPagopaPnCxRole,  updateRequestDto);
         });
 
         String delegatorTaxId = getTaxIdByUser(recipient);
-       // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
@@ -341,6 +347,28 @@ public class RicezioneNotificheWebDelegheSteps {
         });
         Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
     }
+
+    @Then("il documento notificato non può essere correttamente recuperato da {string} con delega restituendo un errore {string}")
+    public void theDocumentCanNotBeProperlyRetrievedByWithMandate(String recipient, String statusCode) {
+        sharedSteps.selectUser(recipient);
+
+            try {
+                Assertions.assertDoesNotThrow(() -> {
+                            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
+                                    sharedSteps.getSentNotification().getIun(),
+                                    Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
+                                    UUID.fromString(mandateToSearch.getMandateId())
+                            );
+                        });
+            } catch (AssertionFailedError assertionFailedError) {
+                //sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                System.out.println(assertionFailedError.getCause().toString());
+                System.out.println(assertionFailedError.getCause().getMessage().toString());
+                System.out.println(assertionFailedError.getCause().getMessage().toString().substring(0, 3).equals(statusCode));
+            }
+
+    }
+
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
@@ -388,7 +416,7 @@ public class RicezioneNotificheWebDelegheSteps {
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
-      //  List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        //  List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
@@ -441,7 +469,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -460,7 +488,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElement timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategory.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);

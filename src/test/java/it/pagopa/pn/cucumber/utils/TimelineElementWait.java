@@ -1,24 +1,24 @@
 package it.pagopa.pn.cucumber.utils;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 
 public class TimelineElementWait {
 
-    private TimelineElementCategory timelineElementCategory;
+    private TimelineElementCategoryV20 timelineElementCategory;
     private Integer numCheck;
     private Integer waiting;
 
-    public TimelineElementWait(TimelineElementCategory timelineElementCategory, Integer numCheck, Integer waiting) {
+    public TimelineElementWait(TimelineElementCategoryV20 timelineElementCategory, Integer numCheck, Integer waiting) {
         this.timelineElementCategory = timelineElementCategory;
         this.numCheck = numCheck;
         this.waiting = waiting;
     }
 
-    public TimelineElementCategory getTimelineElementCategory() {
+    public TimelineElementCategoryV20 getTimelineElementCategory() {
         return timelineElementCategory;
     }
 
-    public void setTimelineElementCategory(TimelineElementCategory timelineElementCategory) {
+    public void setTimelineElementCategory(TimelineElementCategoryV20 timelineElementCategory) {
         this.timelineElementCategory = timelineElementCategory;
     }
 

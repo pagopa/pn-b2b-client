@@ -77,6 +77,27 @@ public class AppIOB2bSteps {
         }
     }
 
+    @Then("il documento notificato può essere recuperata tramite AppIO da {string}")
+    public void notifiedDocumentCanBeRetrievedAppIO(String recipient) {
+
+        try {
+            List<NotificationDocument> documents = sharedSteps.getSentNotification().getDocuments();
+            it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse sentNotificationDocument =
+                    iPnAppIOB2bClient.getSentNotificationDocument(sharedSteps.getSentNotification().getIun(), Integer.parseInt(documents.get(0).getDocIdx()),
+                            selectTaxIdUser(recipient));
+
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(sentNotificationDocument.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+
+            Assertions.assertEquals(this.sha256DocumentDownload, sentNotificationDocument.getSha256());
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notficationServerError = e;
+            }
+        }
+    }
+
     @And("{string} tenta il recupero della notifica tramite AppIO")
     public void attemptsNotificationRetrievalAppIO(String recipient) {
         try {

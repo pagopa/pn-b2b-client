@@ -49,7 +49,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotification newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV20 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });

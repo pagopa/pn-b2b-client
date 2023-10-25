@@ -7,16 +7,18 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS    |
-      | physicalAddress_zip     | <CAP>        |
-      | payment_pagoPaForm      | NULL         |
+      | digitalDomicile_address      | test@fail.it   |
+      | physicalAddress_address      | Via@ok_RS      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 60040 | 404   |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 60040 | 404   | COLLEPONI    | AN       |
 
 
   @dev @costoAnalogico
@@ -26,17 +28,19 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS    |
-      | physicalAddress_zip     | <CAP>        |
-      | payment_pagoPaForm      | NULL         |
+      | digitalDomicile_address      | test@fail.it   |
+      | physicalAddress_address      | Via@ok_RS      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 60040 | 0     |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 60040 | 0     | COLLEPONI    | AN       |
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo
@@ -84,21 +88,23 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS    |
-      | physicalAddress_zip     | <CAP>          |
-      | payment_pagoPaForm      | NULL         |
+      | digitalDomicile_address      | test@fail.it   |
+      | physicalAddress_address      | Via@ok_RS      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 00119 | 315   |
-      | 60122 | 296   |
-      | 60012 | 346   |
-      | 70122 | 275   |
-      | 03100 | 342   |
-      | 00013 | 404   |
+      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
+      | 00119 | 315   | ROMA           | RM       |
+      | 60122 | 296   | ANCONA         | AN       |
+      | 60012 | 346   | MONTERADO      | AN       |
+      | 70122 | 275   | BARI           | BA       |
+      | 03100 | 342   | FROSINONE      | FR       |
+      | 00013 | 404   | CASTELCHIODATO | RM       |
 
 
   @dev @costoAnalogico
@@ -108,22 +114,24 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | senderDenomination | Comune di palermo               |
       | feePolicy          | FLAT_RATE                       |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS    |
-      | physicalAddress_zip     | <CAP>          |
-      | payment_pagoPaForm      | NULL         |
+      | digitalDomicile_address      | test@fail.it   |
+      | physicalAddress_address      | Via@ok_RS      |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+      | payment_pagoPaForm           | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO |
-      | 00119 | 0     |
-      | 60122 | 0     |
-      | 60012 | 0     |
-      | 70122 | 0     |
-      | 03100 | 0     |
-      | 00013 | 0     |
+      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
+      | 00119 | 0     | ROMA           | RM       |
+      | 60122 | 0     | ANCONA         | AN       |
+      | 60012 | 0     | MONTERADO      | AN       |
+      | 70122 | 0     | BARI           | BA       |
+      | 03100 | 0     | FROSINONE      | FR       |
+      | 00013 | 0     | CASTELCHIODATO | RM       |
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + DELIVERY_MODE positivo
