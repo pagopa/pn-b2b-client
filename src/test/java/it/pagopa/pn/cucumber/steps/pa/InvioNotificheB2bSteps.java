@@ -106,6 +106,11 @@ public class InvioNotificheB2bSteps {
                         notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotificationV1().getIun()))
                 );
                 Assertions.assertNotNull(notificationByIun.get());
+            } else if (sharedSteps.getSentNotificationV2()!= null) {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotificationV2().getIun()))
+                );
+                Assertions.assertNotNull(notificationByIun.get());
             }else {
                 Assertions.assertNotNull(notificationByIun.get());
             }
@@ -118,9 +123,22 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV1() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()))
-            );
+            if(sharedSteps.getSentNotificationV1()!= null) {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()))
+                );
+            }else if(sharedSteps.getSentNotificationV2()!= null){
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV2().getIun()))
+                );
+            }else if(sharedSteps.getSentNotification()!= null){
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotification().getIun()))
+                );
+            }else {
+                Assertions.assertNotNull(notificationByIun.get());
+            }
+
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -131,9 +149,22 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV2() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
-            );
+                if(sharedSteps.getSentNotificationV1()!= null) {
+                    Assertions.assertDoesNotThrow(() ->
+                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV1().getIun()))
+                    );
+                }else if(sharedSteps.getSentNotificationV2()!= null){
+                    Assertions.assertDoesNotThrow(() ->
+                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
+                    );
+                }else if(sharedSteps.getSentNotification()!= null){
+                    Assertions.assertDoesNotThrow(() ->
+                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotification().getIun()))
+                    );
+                }else {
+                    Assertions.assertNotNull(notificationByIun.get());
+                }
+
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
