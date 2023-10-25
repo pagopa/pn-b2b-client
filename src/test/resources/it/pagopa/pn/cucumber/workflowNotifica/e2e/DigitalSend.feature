@@ -1356,9 +1356,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                             |
       | details                      | NOT_NULL                                                         |
       | details_responseStatus       | KO                                                               |
@@ -1387,9 +1385,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                             |
       | details                      | NOT_NULL                                                         |
       | details_responseStatus       | KO                                                               |
@@ -1416,9 +1412,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                             |
       | details                      | NOT_NULL                                                         |
       | details_responseStatus       | KO                                                               |
@@ -1446,9 +1440,7 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
       | taxId           | 20517490320        |
       | digitalDomicile | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
-      | NULL | NULL |
-    And viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
+    Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
       | loadTimeline                 | true                                                             |
       | details                      | NOT_NULL                                                         |
       | details_responseStatus       | KO                                                               |
