@@ -1,10 +1,12 @@
 Feature: annullamento notifiche b2b
 
+  Background:
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
 
   @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -17,8 +19,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -32,8 +34,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -46,8 +48,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @deleghe1
   Scenario:  [B2B-PF-ANNULLAMENTO_26_3] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -62,8 +64,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @deleghe1
   Scenario: [B2B-PA-ANNULLAMENTO_32] Invio notifica digitale mono destinatario e recupero documento notificato_scenario negativo
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -76,8 +78,8 @@ Feature: annullamento notifiche b2b
 
   @Annullamento @deleghe1
   Scenario: [B2B-PA-ANNULLAMENTO_33] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario negativo
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    #Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber;
+package it.pagopa.pn.cucumber.old;
 
 
 import org.junit.platform.suite.api.*;

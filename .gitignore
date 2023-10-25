@@ -39,7 +39,7 @@ build/
 
 ### VS Code ###
 .vscode/
-/config/api-keys-dev2.properties
-/config/bearer-token-dev2.properties
+/config/api-keys-dev.properties
+/config/bearer-token-dev.properties
 
 token.json
