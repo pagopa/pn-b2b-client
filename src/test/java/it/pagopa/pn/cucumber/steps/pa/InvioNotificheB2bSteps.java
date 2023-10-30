@@ -1074,11 +1074,8 @@ List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoReques
         }
     }
 
-    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} al tentativo {int}")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,Integer attemps) {
-
-        DataTest dataFromTest=new DataTest();
-        dataFromTest.setNumCheck(attemps);
+    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} al tentativo:")
+    public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,@Transpose DataTest dataFromTest ) {
 
         TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,dataFromTest);
 

@@ -621,7 +621,9 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo 0
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
   @Async
@@ -651,10 +653,14 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo 0
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo 1
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
   @Async
@@ -706,7 +712,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | apply_cost_pagopa       | SI                 |
       | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
@@ -740,10 +746,14 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And  lettura amount posizione debitoria di "Cucumber Analogic"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo 1
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
     And  lettura amount posizione debitoria di "Cucumber Analogic"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo 1
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
     Then viene cancellata la posizione debitoria di "Cucumber Analogic"
 
   @Async
