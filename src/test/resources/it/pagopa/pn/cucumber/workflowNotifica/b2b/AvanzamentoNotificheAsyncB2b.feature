@@ -554,7 +554,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | physicalAddress_address | Via@ok_RS          |
       | payment_pagoPaForm      | SI                 |
       | payment_f24flatRate     | NULL               |
-      | payment_f24standard     | NULL               |
+      | payment_f24standard     | SI               |
       | apply_cost_pagopa       | SI                 |
       | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
@@ -607,7 +607,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | denomination            | Cristoforo Colombo    |
       | taxId                   | CLMCST42R12D969Z      |
       | digitalDomicile         | NULL                    |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@ok_aR |
       | payment_creditorTaxId   | 77777777777           |
       | payment_pagoPaForm      | SI                    |
       | payment_f24flatRate     | NULL                  |
@@ -653,6 +653,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
+    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -686,7 +687,9 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene aggiunto il costo della notifica totale
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    Then  lettura amount posizione debitoria di "Cristoforo Colombo"
+    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     Then lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
@@ -716,7 +719,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
@@ -820,6 +823,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene aggiunto il costo della notifica totale
     Then lettura amount posizione debitoria di "Cristoforo Colombo"
+    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     And  viene cancellata la posizione debitoria di "Cristoforo Colombo"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
@@ -843,9 +847,8 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | payment_f24flatRate     | NULL               |
       | payment_f24standard     | NULL               |
       | apply_cost_pagopa       | NO                  |
-      | payment_multy_number    | 2                  |
-    When la notifica viene inviata dal "Comune_Multi"
-    And l'operazione ha prodotto un errore con status code "400"
+      | payment_multy_number    | 1                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then vengono cancellate le posizioni debitorie
 
   @Async
@@ -878,8 +881,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | payment_f24standard     | NULL         |
       | apply_cost_pagopa       | NO           |
       | payment_multy_number    | 2            |
-    When la notifica viene inviata dal "Comune_Multi"
-    And l'operazione ha prodotto un errore con status code "400"
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then vengono cancellate le posizioni debitorie
 
   @version @Async @ignore
@@ -953,3 +955,30 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     Then lettura amount posizione debitoria di "Cristoforo Colombo"
     And lettura amount posizione debitoria di "Cucumber_Society"
     Then vengono cancellate le posizioni debitorie
+
+
+
+  @testIntegrazione @ignore
+  Scenario: [B2B_PROVA_INTEGRAZIONE_CHECKOUT] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                         |
+    And destinatario
+      | denomination          | Cristoforo Colombo |
+      | taxId                 | CLMCST42R12D969Z   |
+      | payment_creditorTaxId | 77777777777        |
+      | payment_pagoPaForm    | SI                 |
+      | payment_f24flatRate   | NULL               |
+      | payment_f24standard   | NULL               |
+      | apply_cost_pagopa     | SI                 |
+      | payment_multy_number  | 1                  |
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And viene aggiunto il costo della notifica totale
+    And lettura amount posizione debitoria di "Cristoforo Colombo"
+    And l'avviso pagopa viene pagato correttamente su checkout
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED

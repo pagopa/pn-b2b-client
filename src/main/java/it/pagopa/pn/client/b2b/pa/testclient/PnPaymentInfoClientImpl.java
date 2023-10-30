@@ -3,9 +3,7 @@ package it.pagopa.pn.client.b2b.pa.testclient;
 
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.api.PaymentInfoApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfo;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfoV21;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -68,6 +66,10 @@ public class PnPaymentInfoClientImpl implements IPnPaymentInfoClientImpl{
     @Override
     public List<PaymentInfoV21> getPaymentInfoV21(List<PaymentInfoRequest> paymentInfoRequest) throws RestClientException {
         return paymentInfoApi.getPaymentInfoV21WithHttpInfo(paymentInfoRequest).getBody();
+    }
+
+    public PaymentResponse checkoutCart(PaymentRequest paymentRequest) throws RestClientException {
+        return paymentInfoApi.checkoutCartWithHttpInfo(paymentRequest).getBody();
     }
 
 }

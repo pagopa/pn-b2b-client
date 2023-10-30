@@ -16,9 +16,7 @@ import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.*;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfo;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfoRequest;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.PaymentInfoV21;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -65,6 +63,8 @@ public class InvioNotificheB2bSteps {
 
     private final PnPaymentInfoClientImpl pnPaymentInfoClient;
     private List<PaymentPositionModel> paymentPositionModel;
+
+    private PaymentResponse paymentResponse;
     private PaymentPositionModelBaseResponse paymentPositionModelBaseResponse;
     private List<PaymentInfoV21> paymentInfoResponse;
     private PaymentInfo paymentInfo;
@@ -1160,6 +1160,39 @@ List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoReques
 
         }
     }
+
+
+    @And("l'avviso pagopa viene pagato correttamente su checkout")
+    public void laNotificaVienePagatasuCheckout() {
+        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
+                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
+
+        PaymentRequest paymentRequest= new PaymentRequest();
+        PaymentNotice paymentNotice= new PaymentNotice();
+        paymentNotice.noticeNumber( sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
+        paymentNotice.fiscalCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
+        paymentNotice.companyName("Test Automation");
+        paymentNotice.amount(100);
+        paymentNotice.description("Test Automation Desk");
+        paymentRequest.paymentNotice(paymentNotice);
+        paymentRequest.returnUrl("https://api.uat.platform.pagopa.it");
+
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                paymentResponse=pnPaymentInfoClient.checkoutCart(paymentRequest);
+                logger.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
+            });
+            Assertions.assertNotNull(paymentResponse);
+
+        } catch (AssertionFailedError assertionFailedError) {
+
+            String message = assertionFailedError.getMessage() +
+                    "{la posizione debitoria " + (paymentResponse == null ? "NULL" : paymentResponse.toString()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+
+        }
+    }
+
 
 
 }
