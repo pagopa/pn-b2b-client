@@ -66,6 +66,7 @@ Feature: Invio messaggi cortesia e2e
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5_PG] invio messaggio di cortesia - invio notifica per email per ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@pecSuccess.it"
+        And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
         And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
         And viene generata una nuova notifica
             | subject | invio notifica con cucumber |
@@ -81,7 +82,8 @@ Feature: Invio messaggi cortesia e2e
             | details                | NOT_NULL                                           |
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex       | 0                                                  |
-
+        And viene cancellata l'email di cortesia per il comune "default"
+        And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
     @AOO_UO
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5] invio messaggio di cortesia - invio notifica per email per ente padre
@@ -106,10 +108,10 @@ Feature: Invio messaggi cortesia e2e
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6_PG] invio messaggio di cortesia - invio notifica per email per ente figlio per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@pecSuccess.it"
+        And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
         And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
         And viene generata una nuova notifica
-            | subject            | invio notifica con cucumber |
-            | senderDenomination | Comune di Sappada           |
+            | subject | invio notifica con cucumber |
         And destinatario
             | denomination    | Lucio Anneo Seneca |
             | recipientType   | PG                 |
@@ -122,6 +124,8 @@ Feature: Invio messaggi cortesia e2e
             | details                | NOT_NULL                                           |
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex       | 0                                                  |
+        And viene cancellata l'email di cortesia per il comune "default"
+        And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
     @AOO_UO
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6] invio messaggio di cortesia - invio notifica per email per ente figlio

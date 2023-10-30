@@ -425,9 +425,7 @@ public class RicezioneNotificheWebSteps {
             case "Galileo Galilei":
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 break;
-
             case "Lucio Anneo Seneca":
-
                 this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 break;
             default:
@@ -565,7 +563,7 @@ public class RicezioneNotificheWebSteps {
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
 
-        String senderIdPa="default";
+        String senderIdPa=null;
 
         switch (pa){
             case "Comune_1":
@@ -583,6 +581,8 @@ public class RicezioneNotificheWebSteps {
             case "Comune_Root":
                 senderIdPa=senderIdROOT;
                 break;
+            default:
+                senderIdPa="default";
         }
 
         try {
@@ -600,7 +600,7 @@ public class RicezioneNotificheWebSteps {
 
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
 
-        String senderIdPa="default";
+        String senderIdPa=null;
 
         switch (pa){
             case "Comune_1":
@@ -618,6 +618,8 @@ public class RicezioneNotificheWebSteps {
             case "Comune_Root":
                 senderIdPa=senderIdROOT;
                 break;
+            default:
+                senderIdPa="default";
         }
 
         try {
@@ -626,6 +628,41 @@ public class RicezioneNotificheWebSteps {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
+
+
+    @And("viene cancellata l'email di cortesia per il comune {string}")
+    public void vieneCancellataEmailDiCortesiaDalComune( String pa) {
+
+        String senderIdPa=null;
+
+        switch (pa){
+            case "Comune_1":
+                senderIdPa=senderId;
+                break;
+            case "Comune_2":
+                senderIdPa=senderId2;
+                break;
+            case "Comune_Multi":
+                senderIdPa=senderIdGA;
+                break;
+            case "Comune_Son":
+                senderIdPa=senderIdSON;
+                break;
+            case "Comune_Root":
+                senderIdPa=senderIdROOT;
+                break;
+            default:
+                senderIdPa="default";
+        }
+
+        try {
+            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+
 
     @Then("l'inserimento ha prodotto un errore con status code {string}")
     public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
