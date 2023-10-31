@@ -52,7 +52,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario altro
       | taxId | LVLDAA85T50G702B |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -69,7 +69,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario altro
       | taxId | LVLDAA85T50G702B |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -83,7 +83,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario altro
       | taxId | LVLDAA85T50G702B |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -97,7 +97,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario altro
       | taxId | LVLDAA85T50G702B |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -106,7 +106,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 1
     And non vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente 0
 
-    @ignore
+  @ignore
   Scenario: [B2B_TIMELINE_MULTI_PF_PF_09] Invio notifica multidestinatario da pagare destinatario 0 e destinatario 1 scenario  positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -117,7 +117,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | digitalDomicile | NULL |
       | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_AR |
-    And destinatario
+    And destinatario altro
       | denomination     | Polo  |
       | taxId | PLOMRC01P30L736Y |
       | digitalDomicile | NULL |
@@ -141,7 +141,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | digitalDomicile         | NULL       |
       | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_890 |
-    And destinatario
+    And destinatario altro
       | denomination     | Polo  |
       | taxId | PLOMRC01P30L736Y |
       | payment_pagoPaForm      | SI         |
