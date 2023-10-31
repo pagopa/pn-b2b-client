@@ -667,7 +667,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
   @Async
-  Scenario: [B2B_ASYNC_23] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato “SEND_SIMPLE_REGISTERED_LETTER“
+  Scenario: [B2B_ASYNC_23] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -764,9 +764,9 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     Then viene cancellata la posizione debitoria di "Cucumber Analogic"
 
   @Async
-  Scenario: [B2B_ASYNC_26] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato “SEND_SIMPLE_REGISTERED_LETTER“
+  Scenario: [B2B_ASYNC_26] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
-    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber_Society" con Piva "20517490320"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -784,7 +784,7 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | payment_f24standard     | NULL               |
       | apply_cost_pagopa       | SI                 |
       | payment_multy_number    | 1                  |
-    And destinatario Cucumber Society e:
+    And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS    |
       | payment_creditorTaxId   | 77777777777  |
@@ -793,15 +793,19 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
       | payment_f24standard     | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
+    Then  lettura amount posizione debitoria di "Cucumber Analogic"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
-    And  lettura amount posizione debitoria di "Cucumber_Society"
+    And  lettura amount posizione debitoria di "Cucumber Analogic"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 1
     Then vengono cancellate le posizioni debitorie
 
