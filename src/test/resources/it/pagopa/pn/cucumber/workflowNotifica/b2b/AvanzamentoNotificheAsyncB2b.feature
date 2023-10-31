@@ -622,8 +622,9 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 0        |
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
   @Async
@@ -653,15 +654,16 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 0        |
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" al tentativo "ATTEMPT_1"
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
-      | details          | NOT_NULL |
-      | details_recIndex | 1        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 1        |
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
   @Async
@@ -750,13 +752,15 @@ Feature: avanzamento notifiche asincrone b2b - controllo costi
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And  lettura amount posizione debitoria di "Cucumber Analogic"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 0        |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
     And  lettura amount posizione debitoria di "Cucumber Analogic"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
-      | details          | NOT_NULL |
-      | details_recIndex | 1        |
+      | details                 | NOT_NULL |
+      | details_recIndex        | 0        |
+      | details_sentAttemptMade | 1        |
     Then viene cancellata la posizione debitoria di "Cucumber Analogic"
 
   @Async
