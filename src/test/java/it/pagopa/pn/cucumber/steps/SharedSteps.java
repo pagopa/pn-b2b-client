@@ -261,14 +261,18 @@ public class SharedSteps {
     }
 
     @And("destinatario altro")
-    public void destinatarioAltro(@Transpose NotificationRecipientV21 recipient) {
+    public void destinatarioAltro(Map<String, String> data) {//@Transpose NotificationRecipientV21 recipient
+        NotificationRecipientV21 recipient = dataTableTypeUtil.convertNotificationRecipient(data);
         if (recipient.getDigitalDomicile()!=null && recipient.getDigitalDomicile().getAddress().isEmpty()) {
-            this.notificationRequest.addRecipientsItem(recipient
-                    .digitalDomicile(new NotificationDigitalAddress()
-                            .type(NotificationDigitalAddress.TypeEnum.PEC)
-                            .address(getDigitalAddressValueAlt())));
+            addRecipientToNotification(this.notificationRequest,
+                    recipient
+                            .digitalDomicile(new NotificationDigitalAddress()
+                                    .type(NotificationDigitalAddress.TypeEnum.PEC)
+                                    .address(getDigitalAddressValueAlt())) ,
+                    data); //TODO: perchè forzare il digitalDomicile?
+
         }else {
-            this.notificationRequest.addRecipientsItem(recipient);
+            addRecipientToNotification(this.notificationRequest, recipient , data);
         }
 
     }
