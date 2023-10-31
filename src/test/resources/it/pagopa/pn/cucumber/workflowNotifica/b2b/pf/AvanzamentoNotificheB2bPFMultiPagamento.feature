@@ -2902,44 +2902,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_96_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi su tutti i record) scenario negativo.
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm | NULL |
-      | apply_cost_pagopa | NULL |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL |
-      | payment_f24standard               | NULL |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL |
-      | payment_f24standard_inps          | NULL |
-      | payment_f24standard_inps_err      | SI |
-      | payment_f24standard_local         | NULL |
-      | payment_f24standard_region        | NULL |
-      | payment_f24standard_treasury      | NULL |
-      | payment_f24standard_social        | NULL |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL |
-      | payment_f24standard_inps_flat     | NULL |
-      | payment_f24standard_local_flat    | NULL |
-      | payment_f24standard_region_flat   | NULL |
-      | payment_f24standard_treasury_flat | NULL |
-      | payment_f24standard_social_flat   | NULL |
-      #-------------------------------------------
-      | title_payment | F24_STANDARD_INPS_LVLDAA85T50G702B |
-      | apply_cost_f24 | SI |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-
+    
   @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_96_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
