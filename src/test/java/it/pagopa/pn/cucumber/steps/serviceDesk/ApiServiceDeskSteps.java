@@ -41,6 +41,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -694,6 +695,73 @@ public class ApiServiceDeskSteps {
     }
 
     }
+
+
+    @Then("Il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è {string}")
+    public void verifySearchResponseWithStatusSplitNotify(String status){
+        boolean findOperationId=false;
+        boolean multiOperation=false;
+        String operationIdToSearch=operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
+        List<OperationResponse> lista=searchResponse.getOperations();
+        Assertions.assertNotNull(lista);
+        logger.info("SEARCH " +  searchResponse.getOperations().toString());
+        //Viene controllato che lo stato delle operation è superiore a 1
+
+
+        List<OperationResponse> listaSplit=new ArrayList<>();
+
+        //Analisi output
+        for(OperationResponse element:lista){
+            String actualOperationId=element.getOperationId();
+            logger.info("ACTUAL OPERATION ID: " +  actualOperationId);
+            if (actualOperationId.compareTo(operationIdToSearch)==0){
+                listaSplit.add(element);
+                logger.info("AGGIUNTO ELEMENTO: " +  actualOperationId);
+            }
+            Assertions.assertNotNull(listaSplit);
+        }
+        int numberOperation=listaSplit.size();
+
+        logger.info("Numero di response che contengono l'operation id " + numberOperation);
+        if(numberOperation>1){
+            multiOperation=true;
+        }
+        Assertions.assertTrue(multiOperation);
+        //Analisi output
+        for(OperationResponse element:listaSplit){
+            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
+            String actualOperationId=element.getOperationId();
+            Assertions.assertNotNull(actualOperationId);
+            if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
+                findOperationId=true;
+            }
+            // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+            //Viene verificato che l'operation id generato fa parte della lista
+
+            Assertions.assertNotNull(element.getIuns());
+
+            Assertions.assertNotNull(element.getUncompletedIuns());
+            Assertions.assertNotNull(element.getNotificationStatus());
+            //controllo sullo status
+            if(operationIdToSearch.compareTo(actualOperationId)==0){
+                logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
+                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+            }
+            Assertions.assertNotNull(element.getOperationCreateTimestamp());
+            Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+        }
+
+        //Se non viene trovato l'id operation lancio eccezione
+        try{
+            Assertions.assertTrue(findOperationId);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
+    }
+
 
     @Then("Il servizio SEARCH risponde con esito positivo per lo {string} e lo stato della consegna è {string}")
     public void verifySearchResponseWithStatusAndIun(String iun, String status){

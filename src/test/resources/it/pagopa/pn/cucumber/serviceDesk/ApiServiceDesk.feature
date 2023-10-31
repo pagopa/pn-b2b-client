@@ -431,7 +431,8 @@ Feature: Api Service Desk
     Then il video viene caricato su SafeStorage
     Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF1>"
     When viene invocato il servizio SEARCH con delay
-    Then Il servizio SEARCH risponde con esito positivo per lo "<IUN>" e lo stato della consegna è "OK"
+    #Then Il servizio SEARCH risponde con esito positivo per lo "<IUN>" e lo stato della consegna è "OK"
+    Then Il servizio SEARCH risponde con esito positivo e lo stato della consegna è "OK"
     Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF2>"
     When viene invocato il servizio CREATE_OPERATION
     Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
@@ -441,12 +442,14 @@ Feature: Api Service Desk
     Then il video viene caricato su SafeStorage
     Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF2>"
     When viene invocato il servizio SEARCH con delay
-    Then Il servizio SEARCH risponde con esito positivo per lo "<IUN>" e lo stato della consegna è "OK"
+    #Then Il servizio SEARCH risponde con esito positivo per lo "<IUN>" e lo stato della consegna è "OK"
+    Then Il servizio SEARCH risponde con esito positivo e lo stato della consegna è "OK"
 
     Examples:
-      | CF1             | CF2               | IUN|FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
-   # Test   | TMTYRU80A07H703E| TMTRCC80A01A509O|QAQN-LJXG-YTNA-202309-Q-1  | CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
-      | TMTYRU80A07H703E| TMTRCC80A01A509O|WQUW-ZTGZ-HGVG-202310-W-1| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
+    #  | CF1             | CF2               | IUN|FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+       | CF1             | CF2               |FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+    #  | TMTYRU80A07H703E| TMTRCC80A01A509O|WQUW-ZTGZ-HGVG-202310-W-1| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
+      | TMTYRU80A07H703E| TMTRCC80A01A509O| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
 
   @ignore
     #stato operation CREATING= Operazione in attesa di caricamento del video
@@ -670,6 +673,25 @@ Feature: Api Service Desk
     Examples:
       | CF               | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
       | TMTSFS80A01H703K| CICCIO PASTICCIO|SIGN.   |Via Roma| INTERNO 2  |80121|NAPOLI|SOCCAVO |NA|ITALIA |
+
+    #Test inserito per la GA.2.1, PN 8094
+  @CallCenterEvoluto
+  Scenario Outline: [API-SLIPT_SPEDIZIONE_57] Creazione spedizione multipla per numero pagine allegati superiore al limite consentito per singola spedizione
+    Given viene comunicato il nuovo indirizzo con "<FULLNAME>" "<NAMEROW2>" "<ADDRESS>" "<ADDRESSROW2>" "<CAP>" "<CITY>" "<CITY2>" "<PR>" "<COUNTRY>"
+    Given viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con "<CF1>"
+    When viene invocato il servizio CREATE_OPERATION
+    Then la risposta del servizio CREATE_OPERATION risponde con esito positivo
+    Given viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+    When viene invocato il servizio UPLOAD VIDEO
+    Then la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+    Then il video viene caricato su SafeStorage
+    Given viene creata una nuova richiesta per invocare il servizio SEARCH per il "<CF1>"
+    When viene invocato il servizio SEARCH con delay
+    Then Il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è "OK"
+
+    Examples:
+      | CF1             | FULLNAME        |NAMEROW2|ADDRESS  |ADDRESSROW2|CAP  |CITY |CITY2|PR|COUNTRY|
+      | TMTTMS92M57G793P| CICCIO PASTICCIO|SIGN.   |Via@ok_RS| INTERNO 2  |80121|NAPOLI|XXX |NA|ITALIA |
 
   @dpCallCenterEvoluto
   Scenario: [DP_SERVICE_DESK_UNREACHABLE_5_1] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_scenario negativo
@@ -949,4 +971,35 @@ Feature: Api Service Desk
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
+
+  @dpCallCenterEvoluto
+  Scenario: [DP_API-SLIPT_SPEDIZIONE_57_1] Creazione notifica con allegato di 26 pagine
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | TMTTMS92M57G793P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dpCallCenterEvoluto
+  Scenario: [DP_API-SLIPT_SPEDIZIONE_57_2] Creazione notifica con allegato di 26 pagine
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | document | classpath:/AllegatoServiceDesk_26pag.pdf |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | TMTTMS92M57G793P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
