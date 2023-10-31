@@ -202,6 +202,9 @@ public class SharedSteps {
     @Value("${pn.external.utilized.pec:testpagopa3@pec.pagopa.it}")
     private String digitalAddress;
 
+    @Value("${pn.external.utilized.pec.alt:testpagopa3@pec.pagopa.it}")
+    private String digitalAddressAlt;
+
     private String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
 
 
@@ -255,6 +258,19 @@ public class SharedSteps {
         NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest, notificationRecipientV21 ,data);
         //this.notificationRequest.addRecipientsItem(recipient);
+    }
+
+    @And("destinatario altro")
+    public void destinatarioAltro(@Transpose NotificationRecipientV21 recipient) {
+        if (recipient.getDigitalDomicile()!=null && recipient.getDigitalDomicile().getAddress().isEmpty()) {
+            this.notificationRequest.addRecipientsItem(recipient
+                    .digitalDomicile(new NotificationDigitalAddress()
+                            .type(NotificationDigitalAddress.TypeEnum.PEC)
+                            .address(getDigitalAddressValueAlt())));
+        }else {
+            this.notificationRequest.addRecipientsItem(recipient);
+        }
+
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria alla posizione {int}")
@@ -1523,6 +1539,11 @@ public class SharedSteps {
     public String getDigitalAddressValue() {
         if (digitalAddress == null || digitalAddress.equalsIgnoreCase("${pn.external.digitalDomicile.address}")) return defaultDigitalAddress;
         return digitalAddress;
+    }
+
+    public String getDigitalAddressValueAlt() {
+        if (digitalAddressAlt == null || digitalAddressAlt.equalsIgnoreCase("${pn.external.digitalDomicile.address.alt}")) return defaultDigitalAddress;
+        return digitalAddressAlt;
     }
 
     public Duration getSchedulingDaysSuccessDigitalRefinement() {
