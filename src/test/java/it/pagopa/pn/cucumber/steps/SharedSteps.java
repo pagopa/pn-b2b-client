@@ -865,6 +865,7 @@ public class SharedSteps {
     private void sendNotification() {
         try {
             Assertions.assertDoesNotThrow(() -> {
+                Thread.sleep(1000);
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
