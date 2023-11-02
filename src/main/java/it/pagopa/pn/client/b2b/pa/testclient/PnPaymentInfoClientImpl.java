@@ -34,7 +34,7 @@ public class PnPaymentInfoClientImpl implements IPnPaymentInfoClientImpl{
     public PnPaymentInfoClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.webapi.external.base-url.pagopa}") String deliveryBasePath ,
+            @Value("${pn.webapi.external.base-url}") String deliveryBasePath ,
             @Value("${pn.bearer-token-payinfo}") String key
     ) {
 
