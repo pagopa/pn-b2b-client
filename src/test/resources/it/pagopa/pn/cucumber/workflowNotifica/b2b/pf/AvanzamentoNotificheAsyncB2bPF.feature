@@ -177,16 +177,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                         |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
@@ -210,16 +209,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                         |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | payment_creditorTaxId   | 77777777777           |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 2                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | payment_creditorTaxId   | 77777777777        |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 2                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -242,16 +240,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                         |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | payment_creditorTaxId   | 77777777777           |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 2                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | payment_creditorTaxId   | 77777777777        |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 2                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -276,17 +273,16 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                         |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | payment_creditorTaxId   | 77777777777           |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | SI                    |
-      | apply_cost_f24          | SI                    |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | payment_creditorTaxId   | 77777777777        |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | SI                 |
+      | apply_cost_f24          | SI                 |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
@@ -406,16 +402,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene aggiunto il costo della notifica totale
@@ -436,16 +431,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
@@ -467,16 +461,16 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | payment_creditorTaxId   | 77777777777           |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | payment_creditorTaxId   | 77777777777        |
+      | digitalDomicile_address    | test@fail.it               |
+      | physicalAddress_address | Via@OK_RS          |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene aggiunto il costo della notifica totale
@@ -743,25 +737,23 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario
-      | denomination            | Cristoforo Colombo    |
-      | taxId                   | CLMCST42R12D969Z      |
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | denomination            | Cristoforo Colombo |
+      | taxId                   | CLMCST42R12D969Z   |
+      | digitalDomicile_address | test@fail.it       |
+      | payment_creditorTaxId   | 77777777777        |
+      | payment_pagoPaForm      | SI                 |
+      | payment_f24flatRate     | NULL               |
+      | payment_f24standard     | NULL               |
+      | apply_cost_pagopa       | SI                 |
+      | payment_multy_number    | 1                  |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | digitalDomicile_address | test@fail.it |
+      | payment_creditorTaxId   | 77777777777  |
+      | payment_pagoPaForm      | SI           |
+      | payment_f24flatRate     | NULL         |
+      | payment_f24standard     | NULL         |
+      | apply_cost_pagopa       | SI           |
+      | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
