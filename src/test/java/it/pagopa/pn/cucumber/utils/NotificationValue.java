@@ -63,6 +63,7 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
 
     PAYMENT_F24_STANDARD_INPS("payment_f24standard_inps","classpath:/f24_delivery_standard_inps.json",false),
+    PAYMENT_F24_STANDARD_INPS_ERR("payment_f24standard_inps_err","classpath:/f24_delivery_standard_inps_err.json",false),
     PAYMENT_F24_STANDARD_LOCAL("payment_f24standard_local","classpath:/f24_delivery_standard_local.json",false),
     PAYMENT_F24_STANDARD_REGION("payment_f24standard_region","classpath:/f24_delivery_standard_region.json",false),
     PAYMENT_F24_STANDARD_TREASURY("payment_f24standard_treasury","classpath:/f24_delivery_standard_treasury.json",false),
