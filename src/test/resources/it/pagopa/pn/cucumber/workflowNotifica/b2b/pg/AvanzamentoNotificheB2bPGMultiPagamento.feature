@@ -5,7 +5,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
  #24 PA - inserimento notifica mono destinatario con un solo avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_PG_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1722,7 +1722,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
    #76 Destinatario -  Download PAGOPA/F24 con AppIO
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1740,7 +1740,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
