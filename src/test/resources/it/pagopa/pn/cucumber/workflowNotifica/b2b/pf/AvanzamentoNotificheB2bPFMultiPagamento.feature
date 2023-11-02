@@ -2471,14 +2471,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | FLAT_RATE |
       | paFee | 100 |
     And destinatario
-      | denomination | Leonardo da Vinci |
-      | taxId | LVLDAA85T50G702B |
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_FLAT_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2495,14 +2495,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
-      | denomination | Leonardo da Vinci |
-      | taxId | DVNLRD52D15M059P |
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
-      | title_payment | F24_FLAT_LVLDAA85T50G702B |
+      | title_payment | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
@@ -2510,23 +2510,24 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
+
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_88] PA - Invio DELIVERY_MODE costi inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy | DELIVERY_MODE |
       | paFee | 100 |
     And destinatario
-      | denomination | Leonardo da Vinci |
-      | taxId | DVNLRD52D15M059P |
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -2543,14 +2544,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
-      | denomination | Leonardo da Vinci |
-      | taxId | DVNLRD52D15M059P |
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -2567,14 +2568,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
-      | denomination | Leonardo da Vinci |
-      | taxId | DVNLRD52D15M059P |
+      | denomination | Cristoforo Colombo |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Discovery_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
