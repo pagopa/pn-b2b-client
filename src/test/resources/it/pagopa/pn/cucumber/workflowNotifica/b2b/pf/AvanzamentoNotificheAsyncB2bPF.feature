@@ -546,6 +546,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10
+    And l'operazione ha prodotto un errore con status code "403"
     Then vengono cancellate le posizioni debitorie
 
   @version @Async
@@ -569,9 +570,10 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                  |
       | payment_multy_number    | 1                  |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
-    And la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20
+    And la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20 generando un errore
+    And l'operazione ha prodotto un errore con status code "403"
     Then vengono cancellate le posizioni debitorie
 
 

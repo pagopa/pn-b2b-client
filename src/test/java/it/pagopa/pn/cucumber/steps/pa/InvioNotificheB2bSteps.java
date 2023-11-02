@@ -179,23 +179,29 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20")
+    @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V20 generando un errore")
     public void notificationCanBeRetrievedWithIUNV2Error() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()));
-        } catch (AssertionFailedError assertionFailedError) {
-            logger.info("Errore di lettura notifica");
+            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotification().getIun()));
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                sharedSteps.setNotificationError(e);
+            }
         }
     }
 
-    @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10")
+    @And("la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V10 generando un errore")
     public void notificationCanBeRetrievedWithIUNV1Error() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()));
-        } catch (AssertionFailedError assertionFailedError) {
-            logger.info("Errore di lettura notifica");
+            //notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()));
+            notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotification().getIun()));
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                sharedSteps.setNotificationError(e);
+            }
         }
     }
 
