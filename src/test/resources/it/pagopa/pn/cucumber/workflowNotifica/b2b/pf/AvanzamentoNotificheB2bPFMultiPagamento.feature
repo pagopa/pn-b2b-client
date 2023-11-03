@@ -2630,7 +2630,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @digitaleF24
+  @pagamentiMultipli @digitaleF24 @mockPec
   Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -2641,6 +2641,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | title_payment | F24_FLAT_LVLDAA85T50G702B |
+      | digitalDomicile_address |   test@pecOk.it  |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
