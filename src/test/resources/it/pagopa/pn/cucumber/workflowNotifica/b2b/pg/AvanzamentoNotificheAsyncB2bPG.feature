@@ -40,7 +40,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     And lettura amount posizione debitoria di "Cucumber Analogic"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     And l'avviso pagopa viene pagato correttamente
-    Then la notifica può essere annullata dal sistema tramite codice IUN
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

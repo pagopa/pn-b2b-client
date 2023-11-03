@@ -223,7 +223,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And viene cancellata la posizione debitoria del pagamento 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And lettura amount posizione debitoria per pagamento 1
     And viene effettuato il controllo del amount di GPD = "100"
@@ -254,7 +254,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And l'avviso pagopa 1 viene pagato correttamente dall'utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And lettura amount posizione debitoria per pagamento 0
     And viene effettuato il controllo del amount di GPD = "100"
@@ -711,7 +711,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 2 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 3 del pagamento 1
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And la notifica può essere annullata dal sistema tramite codice IUN
