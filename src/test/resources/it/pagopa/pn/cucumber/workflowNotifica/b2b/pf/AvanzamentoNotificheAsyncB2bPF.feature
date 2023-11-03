@@ -289,7 +289,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And  lettura amount posizione debitoria per pagamento 0
+    And lettura amount posizione debitoria di "Cristoforo Colombo"
     Then viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del pagamento 0
     And viene cancellata la posizione debitoria del pagamento 0
 
@@ -764,10 +764,14 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0 :
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
     And  lettura amount posizione debitoria di "Cucumber Analogic"
-    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 1
+    And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 1 :
+      | details          | NOT_NULL |
+      | details_recIndex | 1        |
     Then vengono cancellate le posizioni debitorie
 
   @Async

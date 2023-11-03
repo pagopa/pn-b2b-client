@@ -106,8 +106,9 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" alla posizione 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" alla posizione 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And viene aggiunto il costo della notifica totale
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And lettura amount posizione debitoria per pagamento 0
     And viene effettuato il controllo del amount di GPD = "100"
