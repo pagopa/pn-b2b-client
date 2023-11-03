@@ -63,7 +63,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -135,7 +135,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata dal "Comune_1"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
 
@@ -157,7 +157,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
@@ -177,7 +177,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -259,7 +259,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -282,7 +282,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
       | payment_multy_number | 2 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   #TODO Vecchio Requisito
@@ -345,7 +345,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
@@ -556,7 +556,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
 
@@ -612,7 +612,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL   |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
     Then il download si conclude correttamente
@@ -1366,7 +1366,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | NO |
       | payment_multy_number | 2 |
       | payment_noticeCode | 302011697026785044 |
-    When la notifica viene inviata dal "Comune_1"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
   @pagamentiMultipli
@@ -1530,7 +1530,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1556,7 +1556,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
@@ -1569,7 +1569,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1578,7 +1578,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "PAGOPA"
 
@@ -1623,7 +1623,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1656,7 +1656,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_72_3] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1666,7 +1666,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "F24"
 
@@ -1677,7 +1677,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1701,7 +1701,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1711,7 +1711,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24 | SI |
       | payment_multy_number | 1 |
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     #viene fatta la stessa verifica sullo Sha256
@@ -1726,7 +1726,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1744,7 +1744,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1859,7 +1859,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_79] PA mittente: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenari positivi)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1880,7 +1880,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_79_1] PA mittente: dettaglio notifica annullata - download bollettini di pagamento F24 (scenari positivi)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Cucumber srl e:
@@ -1902,7 +1902,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_91] PA - Invio DELIVERY_MODE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
@@ -1924,7 +1924,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_92] PA - Invio DELIVERY_MODE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 100 |
     And destinatario
@@ -1942,17 +1942,18 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @digitaleF24
+  @pagamentiMultipli @digitaleF24 @mockPec
   Scenario: [B2B-PA-PAY_MULTI_PG_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
+      | digitalDomicile_address |   test@pecOk.it  |
       | title_payment | F24_FLAT_27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
@@ -1967,7 +1968,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_PG_94] PA - Invio FLAT_RATE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
       | paFee | 100 |
     And destinatario

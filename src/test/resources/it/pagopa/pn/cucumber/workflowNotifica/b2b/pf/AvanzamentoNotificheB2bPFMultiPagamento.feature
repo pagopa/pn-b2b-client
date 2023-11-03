@@ -1620,7 +1620,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1674,7 +1674,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1708,7 +1708,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_72_3] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1729,7 +1729,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | senderDenomination | Comune di Palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1753,7 +1753,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1778,7 +1778,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1796,7 +1796,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1911,7 +1911,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_79] PA mittente: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenari positivi)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -1932,7 +1932,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_79_1] PA mittente: dettaglio notifica annullata - download bollettini di pagamento F24 (scenari positivi)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario Mario Cucumber e:
@@ -2353,7 +2353,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - Invio RS FLATE_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - Invio 890 FLATE_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -2467,8 +2467,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_86] PA - Invio FLAT_RATE costi inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | physicalCommunication | REGISTERED_LETTER_890           |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | FLAT_RATE |
       | paFee | 100 |
     And destinatario
@@ -2491,8 +2491,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_87] PA - Invio FLAT_RATE costi non inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | physicalCommunication | REGISTERED_LETTER_890 |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
@@ -2517,7 +2517,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | physicalCommunication | REGISTERED_LETTER_890 |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
       | paFee | 100 |
     And destinatario
@@ -2540,8 +2540,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_89] PA - Invio DELIVERY_MODE costi non inclusi -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | physicalCommunication | REGISTERED_LETTER_890           |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
@@ -2565,7 +2565,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_90] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Irreperibile_AR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
@@ -2589,7 +2590,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_91] PA - Invio DELIVERY_MODE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
     And destinatario
@@ -2610,7 +2612,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_92] PA - Invio DELIVERY_MODE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
+      | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy | DELIVERY_MODE |
       | paFee | 100 |
     And destinatario
@@ -2631,7 +2634,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
@@ -2651,7 +2654,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   Scenario: [B2B-PA-PAY_MULTI_94] PA - Invio FLAT_RATE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | senderDenomination | Comune di Palermo |
       | feePolicy | FLAT_RATE |
       | paFee | 100 |
     And destinatario
