@@ -1,8 +1,5 @@
 Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
-Feature: avanzamento notifiche b2b persona fisica multi pagamento
-
-
  #24 PA - inserimento notifica mono destinatario con un solo avviso pagoPA [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica inclusi modalità DELIVERY_MODE (scenario positivo)
@@ -46,7 +43,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
         #Comune Palermo QZEH-UTHW-WVTK-202310-T-1 --PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (paFee=100 costo 200)
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_24_2] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_24_2] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -68,7 +65,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_24_3] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_24_3] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -141,7 +138,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
    #25 PA - inserimento notifica mono destinatario con un solo F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_25] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_25] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -161,7 +158,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_25_1] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_25_1] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica inclusi più paFee
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -183,7 +180,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
  #26 PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_26] PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_26] PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -204,7 +201,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #Comune Palermo UHRL-ZVPK-EJET-202310-N-1 --PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_26_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 3) e nessun F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_26_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 3) e nessun F24  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -223,7 +220,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_26_2] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 4) e nessun F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_26_2] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 4) e nessun F24  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -242,7 +239,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_26_3] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_26_3] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -266,7 +263,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
  #27  PA - inserimento notifica mono destinatario con più F24 e nessun avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_27] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_PG_27] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -288,7 +285,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #TODO Vecchio Requisito
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -308,7 +305,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #29  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_29] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_29] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -329,7 +326,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #30 PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_30] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_30] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -351,7 +348,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #31 PA - inserimento notifica multi destinatario con un solo avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_31] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_31] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -380,7 +377,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And viene verificato il costo = "100" della notifica per l'utente 1
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_31_1] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_31_1] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi più paFee
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -411,7 +408,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #32 PA - inserimento notifica multi destinatario con un solo F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_32] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_32] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -441,7 +438,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_32_1] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica inclusi
+  Scenario: [B2B-PA-PAY_MULTI_PG_32_1] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica inclusi più paFee
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -473,7 +470,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #33 PA - inserimento notifica multi destinatario con più avvisi pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_33] PA - inserimento notifica multi destinatario con più avvisi pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_PG_33] PA - inserimento notifica multi destinatario con più avvisi pagoPA  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -506,7 +503,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #34 PA - inserimento notifica multi destinatario con più F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_34] PA - inserimento notifica multi destinatario con un solo F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_34] PA - inserimento notifica multi destinatario con un solo F24  e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -539,10 +536,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #35 PA - download modello F24
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_35] PA - download modello F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_35] PA - inserimento notifica mono destinatario con un solo F24 e costi inclusi -  download modello F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo            |
+      | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee | 0 |
     And destinatario
@@ -561,7 +558,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene richiesto il download del documento "F24"
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_35_1] PA - download modello F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_35_1] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi - download modello F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
@@ -597,7 +594,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #36 PA - download allegato pagoPA
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_36] PA - download allegato pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_PG_36] PA - inserimento notifica mono destinatario con un solo pagoPA e costi inclusi - download allegato pagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
@@ -626,7 +623,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #38 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -659,7 +656,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  #TODO CHIEDERE INFO.............
   #39 PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -698,7 +695,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #42 Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -721,7 +718,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #TODO TEST MANUALE.........INFO
   #43 Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso
+  Scenario: [B2B-PA-PAY_MULTI_PG_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -743,7 +740,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_43_1] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di più avvisi
+  Scenario: [B2B-PA-PAY_MULTI_PG_43_1] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di più avvisi costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -767,7 +764,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #TODO TEST MANUALE.........INFO
   #44 Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
+  Scenario: [B2B-PA-PAY_MULTI_PG_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -791,7 +788,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   @pagamentiMultipli @ignore
     #TODO Non è possibile effettuare il pagamento lato Destinatario accertare il pagamento di un solo avviso...Chiudere la posizione debitoria
-  Scenario: [B2B-PA-PAY_MULTI_PG_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
+  Scenario: [B2B-PA-PAY_MULTI_PG_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -809,14 +806,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #TODO parametrizzare lo step per avviso di pagamento.......
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
 
   #45 Destinatario - download modello F24
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_45] Destinatario PG: download allegato F24
+  Scenario: [B2B-PA-PAY_MULTI_PG_45] Destinatario PG: inserimento notifica mono destinatario con solo F24 e costi inclusi - download allegato F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
@@ -837,7 +833,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #46 Destinatario - download allegato pagoPA
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_46] Destinatario PG: download allegato pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_PG_46] Destinatario PG:inserimento notifica mono destinatario con solo pagoPA e costi inclusi - download allegato pagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo            |
@@ -857,7 +853,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #47 Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
   #TODO Non è possibile effettuare il pagamento lato Destinatario quindi si può solo lato PA verificare la posizione Debitoria del Destinatario
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA
+  Scenario: [B2B-PA-PAY_MULTI_PG_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -888,7 +884,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica dell'utente 1
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_47_1] Destinatario 1 - pagamento notifica multi destinatario con più avvisi pagoPA e con pagamento di un solo avviso
+  Scenario: [B2B-PA-PAY_MULTI_PG_47_1] Destinatario 1 - pagamento notifica multi destinatario con più avvisi pagoPA e con pagamento di un solo avviso e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -919,7 +915,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 1
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_47_2] Destinatario 1 - pagamento notifica multi destinatario con più avvisi PagoPa e modello F24 e con pagamento di un solo avviso
+  Scenario: [B2B-PA-PAY_MULTI_PG_47_2] Destinatario 1 - pagamento notifica multi destinatario con più avvisi PagoPa e modello F24 e con pagamento di un solo avviso e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -956,7 +952,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #48 Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_48] Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_48] Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -991,7 +987,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #TODO Modificare il metodo che verifica il pagamento di un solo avviso......
   #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: pagamento di un avviso
+  Scenario: [B2B-PA-PAY_MULTI_PG_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1023,7 +1019,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #50 Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
   #TODO Non è possibile effettuare il pagamento lato Destinatario
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)
+  Scenario: [B2B-PA-PAY_MULTI_PG_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1082,11 +1078,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #52 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_52] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_52] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
@@ -1095,7 +1091,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -1103,21 +1099,21 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #53 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_53] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_53] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_27957814470 |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -1149,22 +1145,22 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #55 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_27957814470 |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
@@ -1207,7 +1203,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #57 PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_57] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_57] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1220,7 +1216,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
@@ -1229,7 +1225,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
@@ -1240,31 +1236,31 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #58 PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_58] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_58] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
       | recipientType   | PG             |
       | taxId | 27957814470 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_27957814470 |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
       | taxId | 70412331207 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_70412331207 |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -1308,7 +1304,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
@@ -1317,17 +1313,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm | SI |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
+      | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
     And destinatario
       | denomination     | DivinaCommedia Srl  |
       | recipientType   | PG             |
       | taxId | 70412331207 |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_70412331207 |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -1413,7 +1409,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #67 Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_67] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_67] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1449,7 +1445,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_67_1] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]
+  Scenario: [B2B-PA-PAY_MULTI_PG_67_1] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1484,7 +1480,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_CANCELED', // Payment canceled
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
-  #TODO ....Alessandro deve fornire lo iuv per restituire gli errori sopra.......
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_68] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]
     Given viene generata una nuova notifica
@@ -1513,7 +1508,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   #TODO Modificare lo scenario..................
   #Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e delegato possono scaricare l'avviso
   @pagamentiMultipli @deleghe1
-  Scenario: [B2B-PA-PAY_MULTI_PG_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso2
+  Scenario: [B2B-PA-PAY_MULTI_PG_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA e F24
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -1541,7 +1536,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
   #70 Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
   @pagamentiMultipli @deleghe1
-  Scenario: [B2B-PA-PAY_MULTI_PG_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante paga avviso1 e delegato paga avviso1 (Stesso avviso - pagoPA)
+  Scenario: [B2B-PA-PAY_MULTI_PG_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
@@ -1722,6 +1717,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
    #76 Destinatario -  Download PAGOPA/F24 con AppIO
+  #TODO Eseguibile in ambiente uat...
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
@@ -1740,6 +1736,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
 
+    #TODO Eseguibile in ambiente uat...
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
@@ -1899,7 +1896,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_PG_91] PA - Invio DELIVERY_MODE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+  Scenario: [B2B-PA-PAY_MULTI_PG_91] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1921,7 +1918,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_PG_92] PA - Invio DELIVERY_MODE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+  Scenario: [B2B-PA-PAY_MULTI_PG_92] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1943,7 +1940,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_PG_93] PA - Invio FLAT_RATE costi non inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+  Scenario: [B2B-PA-PAY_MULTI_PG_93] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1965,7 +1962,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_PG_94] PA - Invio FLAT_RATE costi  inclusi -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
+  Scenario: [B2B-PA-PAY_MULTI_PG_94] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
