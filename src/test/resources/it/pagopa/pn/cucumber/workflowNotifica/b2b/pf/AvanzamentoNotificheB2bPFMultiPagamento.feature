@@ -1178,8 +1178,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
