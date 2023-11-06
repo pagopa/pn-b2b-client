@@ -1917,6 +1917,28 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_PG_91_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
+      | digitalDomicile_address |   pectest@pec.pagopa.it  |
+      |payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_27957814470 |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
   @pagamentiMultipli @digitaleF24 @mockPec
   Scenario: [B2B-PA-PAY_MULTI_PG_92] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
     Given viene generata una nuova notifica
@@ -1929,6 +1951,28 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType   | PG             |
       | taxId | 27957814470 |
       | digitalDomicile_address |   test@pecOk.it  |
+      |payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | SI |
+      | title_payment | F24_STANDARD_27957814470 |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_PG_92_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
+      | digitalDomicile_address |   pectest@pec.pagopa.it  |
       |payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -1961,6 +2005,28 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_PG_93_1] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
+      | digitalDomicile_address |   pectest@pec.pagopa.it  |
+      | title_payment | F24_FLAT_27957814470 |
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
   @pagamentiMultipli @digitaleF24 @mockPec
   Scenario: [B2B-PA-PAY_MULTI_PG_94] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
     Given viene generata una nuova notifica
@@ -1973,6 +2039,28 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType   | PG             |
       | taxId | 27957814470 |
       | digitalDomicile_address | test@ok.it |
+      | title_payment | F24_FLAT_27957814470 |
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_PG_94_1] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Convivio Spa  |
+      | recipientType   | PG             |
+      | taxId | 27957814470 |
+      | digitalDomicile_address | pectest@pec.pagopa.it |
       | title_payment | F24_FLAT_27957814470 |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
