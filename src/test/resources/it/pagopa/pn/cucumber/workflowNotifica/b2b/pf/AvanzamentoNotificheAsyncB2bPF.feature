@@ -599,7 +599,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
   @Async
   Scenario: [B2B_ASYNC_2_MULTI] Notifica multi PF/PG-Verifica amount GPD in fase "REQUEST_REFUSED" costo aggiornato a 0
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -616,7 +616,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24standard   | NULL               |
       | apply_cost_pagopa     | SI                 |
       | payment_multy_number  | 1                  |
-    And destinatario Cucumber Analogic e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId | 77777777777 |
       | physicalAddress_zip   | 0000        |
       | payment_pagoPaForm    | SI          |
@@ -625,19 +625,19 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 1 del pagamento 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
     And  viene effettuato il controllo del amount di GPD = "100"
-    And  lettura amount posizione debitoria di "Cucumber Analogic"
+    And  lettura amount posizione debitoria di "Gherkin Analogic"
     And  viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
-    And viene cancellata la posizione debitoria di "Cucumber Analogic"
+    And viene cancellata la posizione debitoria di "Gherkin Analogic"
 
   @Async
   Scenario: [B2B_ASYNC_3_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "NOTIFICATION_CANCELLED"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
+    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -655,7 +655,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24standard     | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
-    And destinatario Cucumber Analogic e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -665,12 +665,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 1 del pagamento 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
     And  viene effettuato il controllo del amount di GPD = "100"
-    And  lettura amount posizione debitoria di "Cucumber Analogic"
+    And  lettura amount posizione debitoria di "Gherkin Analogic"
     And  viene effettuato il controllo del amount di GPD = "100"
     Then vengono cancellate le posizioni debitorie
 
@@ -679,8 +679,8 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
   Scenario: [B2B_ASYNC_4_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC per Multipagamento
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
-    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
-    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -700,7 +700,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 1 del pagamento 1
-    And destinatario Cucumber Analogic e:
+    And destinatario Gherkin Analogic e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
@@ -709,8 +709,8 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24standard     | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 2                     |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 2 del pagamento 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 3 del pagamento 1
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 2 del pagamento 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 3 del pagamento 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
@@ -729,7 +729,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
   @Async
   Scenario: [B2B_ASYNC_5_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
-    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber Analogic" con Piva "SNCLNN65D19Z131V"
+    And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -746,7 +746,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24standard     | NULL               |
       | apply_cost_pagopa       | SI                 |
       | payment_multy_number    | 1                  |
-    And destinatario Cucumber Analogic e:
+    And destinatario Gherkin Analogic e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
@@ -755,12 +755,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cristoforo Colombo" per la posizione debitoria 0 del pagamento 0
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Cucumber Analogic" per la posizione debitoria 1 del pagamento 0
+    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria di "Cristoforo Colombo"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    Then  lettura amount posizione debitoria di "Cucumber Analogic"
+    Then  lettura amount posizione debitoria di "Gherkin Analogic"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And  lettura amount posizione debitoria di "Cristoforo Colombo"
@@ -768,7 +768,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | details          | NOT_NULL |
       | details_recIndex | 0        |
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
-    And  lettura amount posizione debitoria di "Cucumber Analogic"
+    And  lettura amount posizione debitoria di "Gherkin Analogic"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 1 :
       | details          | NOT_NULL |
       | details_recIndex | 1        |
