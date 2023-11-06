@@ -181,8 +181,7 @@ public class SharedSteps {
     private String cucumberSocietyTaxID = "20517490320" ;// "DNNGRL83A01C352D";
     private String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
     // private String gherkinSrltaxId = "CCRMCT06A03A433H";
-
-
+    private String gherkinAnalogicTaxID = "05722930657";
     private String gherkinSrltaxId = "12666810299";
     private String cucumberSpataxId = "20517490320"; //
 
@@ -588,6 +587,18 @@ public class SharedSteps {
                         .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG));
 
          */
+    }
+
+    @And("destinatario Gherkin Analogic e:")
+    public void destinatarioGherkinAnalogicParam(Map<String, String> data) {//@Transpose NotificationRecipientV21 recipient
+        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        addRecipientToNotification(this.notificationRequest,
+                (notificationRecipientV21
+                        .denomination("Gherkin Analogic")
+                        .taxId(gherkinAnalogicTaxID)
+                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)),
+                data);
+
     }
 
     @And("destinatario Cucumber Analogic e:")
