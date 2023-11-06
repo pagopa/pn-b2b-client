@@ -1271,7 +1271,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | FLATE_RATE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Ada Lovelace  |
@@ -2018,7 +2018,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_80_3] PA - Invio RS FLATE_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_80_3] PA - Invio RS FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -2196,7 +2196,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_82_3] PA - Invio AR FLATE_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLATE_RATE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_82_3] PA - Invio AR FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -2349,7 +2349,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - Invio 890 FLATE_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - Invio 890 FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
