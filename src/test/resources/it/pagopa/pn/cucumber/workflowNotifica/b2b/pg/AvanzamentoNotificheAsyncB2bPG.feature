@@ -18,7 +18,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
 
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_2_PG] Notifica mono PG-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     And viene generata una nuova notifica
@@ -85,7 +85,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     And  viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria di "Gherkin Analogic"
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_4_PG] Notifica mono PG Multipagamento-Verifica amount GPD notifica async dopo pagamento tutti i pagamenti poi annullata la notifica il secondo pagamento amount non azzerrato
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "00749900049"

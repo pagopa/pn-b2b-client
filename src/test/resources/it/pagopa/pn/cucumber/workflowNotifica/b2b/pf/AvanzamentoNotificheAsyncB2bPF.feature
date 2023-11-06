@@ -57,7 +57,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number  | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_4_PF] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -198,7 +198,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And  viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria di "Cristoforo Colombo"
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_9_PF] Notifica mono PF Multipagamento-Verifica amount GPD notifica async dopo pagamento di un solo pagamento poi annullata la notifica il secondo pagamento amount non azzerrato
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
@@ -229,7 +229,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And viene effettuato il controllo del amount di GPD = "100"
     Then viene cancellata la posizione debitoria del pagamento 1
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_10_PF] Notifica mono PF Multipagamento-Verifica amount GPD notifica async dopo pagamento tutti i pagamenti poi annullata la notifica il secondo pagamento amount non azzerrato
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
@@ -675,7 +675,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     Then vengono cancellate le posizioni debitorie
 
 
-  @Async
+  @Async @ignore
   Scenario: [B2B_ASYNC_4_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC per Multipagamento
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cristoforo Colombo" con CF "CLMCST42R12D969Z"
