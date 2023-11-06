@@ -1302,14 +1302,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
@@ -1317,10 +1317,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
       | title_payment | F24_STANDARD_CSRGGL44L13H501E |
-      | apply_cost_f24 | SI |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"

@@ -1207,7 +1207,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
+      | feePolicy | FLAT_RATE |
       | paFee | 0 |
     And destinatario
       | denomination     | Convivio Spa  |
