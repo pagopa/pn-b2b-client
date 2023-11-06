@@ -16,6 +16,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 
 @ExcludeTags({"ignore", "mockPec"})
-@IncludeTags({"pagamentiMultipli" , "appIo"})
+@IncludeTags({"pagamentiMultipli"})
 public class MultipagamentoF24TestUat {
 }
