@@ -1435,7 +1435,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | notice_code | 302011697026785045 |
+      | payment_noticeCode | 302011697026785045 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1444,10 +1444,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | notice_code | 302011697026785045 |
+      | payment_noticeCode | 302011697026785045 |
 
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
 
 
 
@@ -1794,8 +1794,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
    #76 Destinatario -  Download PAGOPA/F24 con AppIO
-  #TODO Eseguibile in ambiente uat...
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli @appIo
   Scenario: [B2B-PA-PAY_MULTI_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1813,8 +1812,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
 
-      #TODO Eseguibile in ambiente uat...
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli @appIo
   Scenario: [B2B-PA-PAY_MULTI_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
