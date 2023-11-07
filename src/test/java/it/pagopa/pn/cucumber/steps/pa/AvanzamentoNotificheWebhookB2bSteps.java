@@ -741,6 +741,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         SharedSteps.lastEventID=lastEventID;
         System.out.println("ELEMENTI NEL WEBHOOK LAST EVENT ID2: "+lastEventID);
     }
+
+
+    @And("vengono letti gli eventi dello stream che contenga {int} eventi")
+    public void readStreamNumberEvents(Integer numEventi) {
+        Assertions.assertDoesNotThrow(() -> {
+            List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
+            logger.info("EventProgress: " + progressResponseElements);
+
+            Assertions.assertTrue(progressResponseElements.size() == numEventi);
+            System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.size());
+        });
+
+    }
 }
 
 
