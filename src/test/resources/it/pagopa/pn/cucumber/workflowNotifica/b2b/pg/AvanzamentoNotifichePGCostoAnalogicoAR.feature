@@ -200,7 +200,6 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalAddress_zip          | ZONE_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-      | payment_pagoPaForm           | NULL       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1095" della notifica
@@ -219,7 +218,6 @@ Feature: costo notifica con workflow analogico per persona giuridica
       | physicalAddress_zip          | ZONE_3     |
       | physicalAddress_province     | Tasmania   |
       | physicalAddress_address      | Via@ok_RIR |
-      | payment_pagoPaForm           | NULL       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
