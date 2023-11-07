@@ -322,6 +322,22 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
+    private TimelineElementWait getTimelineElementCategoryShortAnnullamento(String timelineEventCategory) {
+        Integer waiting = sharedSteps.getWorkFlowWait();
+        TimelineElementWait timelineElementWait;
+        switch (timelineEventCategory) {
+            case "NOTIFICATION_CANCELLATION_REQUEST":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST, 2, 11000);
+                break;
+            case "NOTIFICATION_CANCELLED":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.NOTIFICATION_CANCELLED, 5, 11000 * 3);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+        return timelineElementWait;
+    }
+
 
     private TimelineElementWait getTimelineElementCategory(String timelineEventCategory) {
         Integer waiting = sharedSteps.getWorkFlowWait();
@@ -805,7 +821,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElementWait timelineElementWait = getTimelineElementCategoryShortAnnullamento(timelineEventCategory);
 
         TimelineElementV20 timelineElement = null;
 

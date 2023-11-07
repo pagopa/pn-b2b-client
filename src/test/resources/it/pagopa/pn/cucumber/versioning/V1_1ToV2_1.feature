@@ -142,10 +142,13 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
     And destinatario Mario Cucumber e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm | NULL |
       | payment_f24standard | SI |
+      | apply_cost_f24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1

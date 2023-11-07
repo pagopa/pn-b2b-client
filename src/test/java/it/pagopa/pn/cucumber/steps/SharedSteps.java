@@ -984,18 +984,18 @@ public class SharedSteps {
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
                 try {
-                    Thread.sleep(getWorkFlowWait());
+                    Thread.sleep(11000);
                 } catch (InterruptedException e) {
                     logger.error("Thread.sleep error retry");
                     throw new RuntimeException(e);
                 }
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+                notificationResponseComplete = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
 
             });
 
             try {
-                Thread.sleep(getWorkFlowWait());
+                Thread.sleep(11000);
             } catch (InterruptedException e) {
                 logger.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
