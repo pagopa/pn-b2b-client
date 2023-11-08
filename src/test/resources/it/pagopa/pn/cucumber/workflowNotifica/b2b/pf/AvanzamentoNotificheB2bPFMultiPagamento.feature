@@ -1469,7 +1469,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then l'operazione ha prodotto un errore con status code "400"
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_64_2] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti
+  Scenario: [B2B-PA-PAY_MULTI_64_2] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy FLAT_RATE e  destinatario2 con applyCostTrue
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1496,6 +1496,94 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
+
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_64_3] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1 con applyCost false -  destinatario2 con applyCost true
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302011697026785045 |
+    And destinatario
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302111697026785077 |
+
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_64_4] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti (destinatario1 più pagamenti e destinatario2 un solo pagamento)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 4 |
+    And destinatario
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_64_5] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1  e  destinatario2 con importi diversi
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302011697026785045 |
+    And destinatario
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302111697026785077 |
+
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
     #302011697026785045---->120
     #302111697026785077---->70
