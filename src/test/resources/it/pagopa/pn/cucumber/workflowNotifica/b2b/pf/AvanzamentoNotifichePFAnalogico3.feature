@@ -10,7 +10,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | OK-Giacenza-gt10_890 |
+      | denomination | OK-Giacenza-gt10-890 |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-Giacenza-gt10_890 |
@@ -40,7 +40,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | FAIL-Giacenza-gt10_890 |
+      | denomination | FAIL-Giacenza-gt10-890 |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
@@ -55,7 +55,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination | OK-CompiutaGiacenza_890 |
+      | denomination | OK-CompiutaGiacenza-890 |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
@@ -222,7 +222,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination            | FAIL-Giacenza-lte10_890     |
+      | denomination            | FAIL-Giacenza-lte10-890     |
       | taxId                   | DVNLRD52D15M059P            |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Giacenza-lte10_890 |
