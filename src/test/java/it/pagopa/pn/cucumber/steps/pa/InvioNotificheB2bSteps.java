@@ -1203,5 +1203,35 @@ public class InvioNotificheB2bSteps {
     }
 
 
+    @Then("verifica stato pagamento di una notifica creditorTaxID {string} noticeCode {string} con errore {string}")
+    public void verificaStatoPagamentoNotifica(String creditorTaxID , String noticeCode,String codiceErrore) {
 
+
+        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
+
+        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
+                .creditorTaxId(creditorTaxID)
+                .noticeCode(noticeCode);
+
+        paymentInfoRequestList.add(paymentInfoRequest);
+
+        logger.info("Messaggio json da allegare: " + paymentInfoRequest);
+
+
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                paymentInfoResponse=pnPaymentInfoClient.getPaymentInfoV21(paymentInfoRequestList);
+                logger.info("Informazioni sullo stato del Pagamento: " + paymentInfoResponse.toString());
+            });
+            Assertions.assertNotNull(paymentInfoResponse);
+            Assertions.assertTrue(codiceErrore.equalsIgnoreCase(paymentInfoResponse.get(0).getErrorCode()));
+
+        } catch (AssertionFailedError assertionFailedError) {
+
+            String message = assertionFailedError.getMessage() +
+                    "{Informazioni sullo stato del Pagamento: " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+
+        }
+    }
 }

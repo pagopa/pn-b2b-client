@@ -1454,7 +1454,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302011697026785045 |
+      | payment_noticeCode | 302011697026785049 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1463,7 +1463,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302011697026785045 |
+      | payment_noticeCode | 302011697026785049 |
 
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -1483,7 +1483,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302011697026785045 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1492,7 +1491,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302111697026785077 |
 
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -1513,7 +1511,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302011697026785045 |
     And destinatario
       | denomination     | Gaio Giulio Cesare  |
       | taxId | CSRGGL44L13H501E |
@@ -1522,7 +1519,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
-      | payment_noticeCode | 302111697026785077 |
 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
@@ -1555,38 +1551,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_64_5] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1  e  destinatario2 con importi diversi
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
-      | payment_noticeCode | 302011697026785045 |
-    And destinatario
-      | denomination     | Gaio Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
-      | payment_noticeCode | 302111697026785077 |
-
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-    #302011697026785045---->120
-    #302111697026785077---->70
 
 
 
@@ -1671,7 +1635,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]
+  Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato correttamente
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1684,13 +1648,63 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
-      | payment_multy_number | 2 |
-      | notice_code | 302011697026785045 |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
-    #TODO utilizzando iun predisposti  controllare il tipo di errore restituisto
-    And si attende il non corretto pagamento della notifica con l' avviso 0 dal destinatario 0
-    #And l'operazione ha prodotto un errore con status code "400"
+    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302000100000019421" con errore ""
+
+  @pagamentiMultipli @ignore
+  Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 409 PAGAMENTO_DUPLICATO
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302191689948151964" con errore "409"
+
+  @pagamentiMultipli @ignore
+  Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 404 PAGAMENTO_SCONOSCIUTO
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302300118000019102" con errore "404"
+
+  @pagamentiMultipli @ignore
+  Scenario: [B2B-PA-PAY_MULTI_68_3] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 400 stazione int PA sconosciuta
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "402000118000019102" con errore "400"
 
 
 
