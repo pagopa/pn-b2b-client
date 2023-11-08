@@ -483,41 +483,22 @@ public class PnPaB2bUtils {
 
 
     public FullSentNotificationV21 waitForRequestAcceptation( NewNotificationResponse response) {
-
-        log.info("Request status for " + response.getNotificationRequestId() );
-        NewNotificationRequestStatusResponseV21 status = null;
-        long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 8; i++ ) {
-
-            try {
-                Thread.sleep( getAcceptedWait());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException( exc );
-            }
-
-            status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
-
-            log.info("New Notification Request status {}", status.getNotificationRequestStatus());
-            if ( "ACCEPTED".equals( status.getNotificationRequestStatus() )) {
-                break;
-            }
-        }
-        long endTime = System.currentTimeMillis();
-        log.info("Execution time {}ms",(endTime - startTime));
-        String iun = status.getIun();
-
-        return iun == null? null : client.getSentNotification( iun );
+        return waitForRequestAcceptation(response,8,getAcceptedWait());
     }
 
     public FullSentNotificationV21 waitForRequestAcceptationShort( NewNotificationResponse response) {
+        return waitForRequestAcceptation(response,8,21000);
+    }
 
+
+    private FullSentNotificationV21 waitForRequestAcceptation( NewNotificationResponse response, int numCheck, int waiting ) {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponseV21 status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 8; i++ ) {
+        for( int i = 0; i < numCheck; i++ ) {
 
             try {
-                Thread.sleep( 21000);
+                Thread.sleep( waiting);
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }
