@@ -80,6 +80,8 @@ public class InvioNotificheB2bSteps {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+    private static final Integer NUM_CHECK_PAYMENT_INFO = 4;
+    private static final Integer WAITING_PAYMENT_INFO = 1000;
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps) {
         this.safeStorageClient = safeStorageClient;
@@ -896,25 +898,27 @@ public class InvioNotificheB2bSteps {
 
         logger.info("User: " + postionUser);
         logger.info("Messaggio json da allegare: " + paymentInfoRequest);
-
-
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                paymentInfoResponse=pnPaymentInfoClient.getPaymentInfoV21(paymentInfoRequestList);
-                logger.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
-            });
-            Assertions.assertNotNull(paymentInfoResponse);
-
-            amountGPD=paymentInfoResponse.get(0).getAmount();
-            logger.info("Amount GPD: " + amountGPD);
-            Assertions.assertNotNull(amountGPD);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
+        for(int i=0; i< NUM_CHECK_PAYMENT_INFO ;i++) {
+            try {
+                Assertions.assertDoesNotThrow(() -> {
+                    paymentInfoResponse = pnPaymentInfoClient.getPaymentInfoV21(paymentInfoRequestList);
+                    logger.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
+                });
+                Assertions.assertNotNull(paymentInfoResponse);
+                if(amountGPD != paymentInfoResponse.get(0).getAmount()){
+                    amountGPD = paymentInfoResponse.get(0).getAmount();
+                    break;
+                }
+                try {
+                    Thread.sleep(WAITING_PAYMENT_INFO);
+                } catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+            } catch (AssertionFailedError assertionFailedError) {
+                String message = assertionFailedError.getMessage() +
+                        "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
+                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+            }
         }
     }
 
