@@ -130,6 +130,25 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then l'operazione ha prodotto un errore con status code "400"
 
 
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_24_6] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE applyCost false (scenario negativo)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy             | DELIVERY_MODE      |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | SI |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
    #25 PA - inserimento notifica mono destinatario con un solo F24 [TA]
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_25] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
@@ -1448,6 +1467,38 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
+
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_64_2] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | NO |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302011697026785045 |
+    And destinatario
+      | denomination     | Gaio Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+      | apply_cost_pagopa | SI |
+      | payment_multy_number | 1 |
+      | payment_noticeCode | 302111697026785077 |
+
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+    #302011697026785045---->120
+    #302111697026785077---->70
 
 
 
@@ -3198,7 +3249,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi su tutti i record) scenario negativo.
+  Scenario: [B2B-PA-PAY_MULTI_96_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=true su tutti i record) scenario negativo.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -3217,6 +3268,44 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
       | payment_f24standard_inps_err      | SI |
+      | payment_f24standard_local         | NULL |
+      | payment_f24standard_region        | NULL |
+      | payment_f24standard_treasury      | NULL |
+      | payment_f24standard_social        | NULL |
+      #F24 completo a sezioni modalità Flat------ costi non inclusi--
+      | payment_f24_simplified_flat       | NULL |
+      | payment_f24standard_inps_flat     | NULL |
+      | payment_f24standard_local_flat    | NULL |
+      | payment_f24standard_region_flat   | NULL |
+      | payment_f24standard_treasury_flat | NULL |
+      | payment_f24standard_social_flat   | NULL |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_INPS_LVLDAA85T50G702B |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_96_4] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=false su tutti i record ) scenario negativo.
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24_simplified            | NULL |
+      | payment_f24standard_inps          | NULL |
+      | payment_f24standard_inps_err      | NULL |
+      | payment_f24standard_inps_err1     | SI |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
