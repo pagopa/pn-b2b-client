@@ -322,7 +322,7 @@ public class AvanzamentoNotificheB2bSteps {
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.SCHEDULE_REFINEMENT, 5, waiting);
                 break;
             case "REFINEMENT":
-                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.REFINEMENT, 10, waiting);
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.REFINEMENT, 15, waiting);
                 break;
             case "REQUEST_REFUSED":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.REQUEST_REFUSED, 2, waiting);

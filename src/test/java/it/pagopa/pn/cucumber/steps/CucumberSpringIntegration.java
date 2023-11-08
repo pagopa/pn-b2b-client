@@ -34,7 +34,7 @@ import org.springframework.test.context.TestPropertySource;
         PnServiceDeskClientImpl.class,
         PnServiceDeskClientImplNoApiKey.class,
         PnServiceDeskClientImplWrongApiKey.class})
-@TestPropertySource(properties = {"spring.profiles.active=test"})
+@TestPropertySource(properties = {"spring.profiles.active=hotfix"})
 public class CucumberSpringIntegration {
 
 }

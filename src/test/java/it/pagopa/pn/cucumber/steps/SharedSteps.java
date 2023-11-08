@@ -260,7 +260,7 @@ public class SharedSteps {
     public void destinatarioGherkinSpa() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Gherkin_spa")
+                        .denomination("Gherkin spa")
                         .taxId(gherkinSpaTaxID)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -336,7 +336,7 @@ public class SharedSteps {
     public void destinatarioCucumberSociety() {
         this.notificationRequest.addRecipientsItem(
                 dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
-                        .denomination("Cucumber_Society")
+                        .denomination("Cucumber Society")
                         .taxId(cucumberSocietyTaxID)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
@@ -348,7 +348,7 @@ public class SharedSteps {
     public void destinatarioCucumberSocietyParam(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(
                 recipient
-                        .denomination("Cucumber_Society")
+                        .denomination("Cucumber Society")
                         .taxId(cucumberSocietyTaxID)
                         .recipientType(NotificationRecipient.RecipientTypeEnum.PG));
     }
