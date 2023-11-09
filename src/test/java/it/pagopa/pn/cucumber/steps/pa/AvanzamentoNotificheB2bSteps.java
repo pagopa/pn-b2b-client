@@ -85,20 +85,20 @@ public class AvanzamentoNotificheB2bSteps {
                 notificationInternalStatus = NotificationStatus.DELIVERING;
                 break;
             case "DELIVERED":
-                numCheck = 16;
-                waiting = waiting * 4;
+                numCheck = 10;
+                waiting = waiting * 3;
                 notificationInternalStatus = NotificationStatus.DELIVERED;
                 break;
             case "CANCELLED":
                 notificationInternalStatus = NotificationStatus.CANCELLED;
                 break;
             case "EFFECTIVE_DATE":
-                numCheck = 16;
+                numCheck = 8;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.EFFECTIVE_DATE;
                 break;
             case "COMPLETELY_UNREACHABLE":
-                numCheck = 16;
+                numCheck = 8;
                 waiting = waiting * 4;
                 notificationInternalStatus = NotificationStatus.UNREACHABLE;
                 break;
