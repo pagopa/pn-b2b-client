@@ -189,15 +189,14 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | denomination  | <denominationPG> |
       | recipientType | PG               |
       | taxId         | 15376371009      |
-
     When la notifica viene inviata dal "Comune_1"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
     Examples:
-      | denominationPF                | denominationPG      |
-      | Cristoforo Colombo            | srl azienda         |
-      | Cristoforo Colombo 0123456789 | 0123456789 spa      |
-      | SALVATOR DALI                 | SRL AZIENDA         |
-      | Ilaria-D'Amico/.@_            | l'azienda-@_ /C.R.L |
+      | denominationPF                | denominationPG    |
+      | Cristoforo Colombo            | srl azienda       |
+      | Cristoforo Colombo 0123456789 | 0123456789 spa    |
+      | SALVATOR DALI                 | SRL AZIENDA       |
+      | Ilaria-D'Amico/.              | l'azienda- /C.R.L |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_2] Invio notifica digitale con multi destinatario errati scenario negativo

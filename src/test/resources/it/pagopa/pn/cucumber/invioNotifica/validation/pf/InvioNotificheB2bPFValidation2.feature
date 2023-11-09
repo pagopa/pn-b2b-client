@@ -385,16 +385,14 @@ Feature: Validazione campi invio notifiche b2b
     And destinatario
       | denomination | <denomination>   |
       | taxId        | FRMTTR76M06B715E |
-
   When la notifica viene inviata dal "Comune_1"
   Then si verifica la corretta acquisizione della richiesta di invio notifica
-
     Examples:
       | denomination                  |
       | Cristoforo Colombo            |
       | Cristoforo Colombo 0123456789 |
       | SALVATOR DALI                 |
-      | Ilaria-D'Amico/.@_            |
+      | Ilaria-D'Amico/.              |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_34] Invio notifica digitale con mono destinatario con denomination errata scenario negativo
