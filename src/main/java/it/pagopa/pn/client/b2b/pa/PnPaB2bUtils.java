@@ -483,14 +483,22 @@ public class PnPaB2bUtils {
 
 
     public FullSentNotificationV21 waitForRequestAcceptation( NewNotificationResponse response) {
+        return waitForRequestAcceptation(response,8,getAcceptedWait());
+    }
 
+    public FullSentNotificationV21 waitForRequestAcceptationShort( NewNotificationResponse response) {
+        return waitForRequestAcceptation(response,8,21000);
+    }
+
+
+    private FullSentNotificationV21 waitForRequestAcceptation( NewNotificationResponse response, int numCheck, int waiting ) {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponseV21 status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 5; i++ ) {
+        for( int i = 0; i < numCheck; i++ ) {
 
             try {
-                Thread.sleep( getAcceptedWait());
+                Thread.sleep( waiting);
             } catch (InterruptedException exc) {
                 throw new RuntimeException( exc );
             }

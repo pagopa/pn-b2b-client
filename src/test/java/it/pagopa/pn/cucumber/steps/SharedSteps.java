@@ -883,13 +883,18 @@ public class SharedSteps {
     }
 
     private void sendNotification() {
+        sendNotification(getWorkFlowWait());
+    }
+
+
+    private void sendNotification(int wait){
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
                 try {
-                    Thread.sleep(getWorkFlowWait());
+                    Thread.sleep(wait);
                 } catch (InterruptedException e) {
                     logger.error("Thread.sleep error retry");
                     throw new RuntimeException(e);
@@ -899,7 +904,7 @@ public class SharedSteps {
             });
 
             try {
-                Thread.sleep(getWorkFlowWait());
+                Thread.sleep(wait);
             } catch (InterruptedException e) {
                 logger.error("Thread.sleep error retry");
                 throw new RuntimeException(e);
@@ -978,79 +983,22 @@ public class SharedSteps {
 
 
     private void sendNotificationAndCancell() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+        sendNotification(11000);
 
-                try {
-                    Thread.sleep(getWorkFlowWait());
-                } catch (InterruptedException e) {
-                    logger.error("Thread.sleep error retry");
-                    throw new RuntimeException(e);
-                }
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
 
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
 
-            });
-
-            try {
-                Thread.sleep(getWorkFlowWait());
-            } catch (InterruptedException e) {
-                logger.error("Thread.sleep error retry");
-                throw new RuntimeException(e);
-            }
-            Assertions.assertNotNull(notificationResponseComplete);
-
-            Assertions.assertDoesNotThrow(() -> {
-                RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
-                        b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
-
-                Assertions.assertNotNull(resp);
-                Assertions.assertNotNull(resp.getDetails());
-                Assertions.assertTrue(resp.getDetails().size()>0);
-                Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
-
-            });
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
+        });
     }
 
     private void sendNotificationGPD() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
-
-                try {
-                    Thread.sleep(WAITING_GPD);
-                } catch (InterruptedException e) {
-                    logger.error("Thread.sleep error retry");
-                    throw new RuntimeException(e);
-                }
-
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
-
-            });
-
-            try {
-                Thread.sleep(WAITING_GPD);
-            } catch (InterruptedException e) {
-                logger.error("Thread.sleep error retry");
-                throw new RuntimeException(e);
-            }
-            Assertions.assertNotNull(notificationResponseComplete);
-
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
+        sendNotification(WAITING_GPD);
     }
 
 

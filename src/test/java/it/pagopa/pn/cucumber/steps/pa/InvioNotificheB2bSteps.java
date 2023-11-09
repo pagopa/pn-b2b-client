@@ -126,9 +126,6 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV1() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()))
-            );
             if(sharedSteps.getSentNotificationV1()!= null) {
                 Assertions.assertDoesNotThrow(() ->
                         notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()))
@@ -158,21 +155,21 @@ public class InvioNotificheB2bSteps {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
             );
-                if(sharedSteps.getSentNotificationV1()!= null) {
-                    Assertions.assertDoesNotThrow(() ->
-                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV1().getIun()))
-                    );
-                }else if(sharedSteps.getSentNotificationV2()!= null){
-                    Assertions.assertDoesNotThrow(() ->
-                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
-                    );
-                }else if(sharedSteps.getSentNotification()!= null){
-                    Assertions.assertDoesNotThrow(() ->
-                            notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotification().getIun()))
-                    );
-                }else {
-                    Assertions.assertNotNull(notificationByIun.get());
-                }
+            if(sharedSteps.getSentNotificationV1()!= null) {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV1().getIun()))
+                );
+            }else if(sharedSteps.getSentNotificationV2()!= null){
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
+                );
+            }else if(sharedSteps.getSentNotification()!= null){
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotification().getIun()))
+                );
+            }else {
+                Assertions.assertNotNull(notificationByIun.get());
+            }
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -237,7 +234,7 @@ public class InvioNotificheB2bSteps {
                 notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.CANCELLED;
                 break;
             case "EFFECTIVE_DATE":
-               notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.EFFECTIVE_DATE;
+                notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.EFFECTIVE_DATE;
                 break;
             case "REFUSED":
                 notificationInternalStatus = it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.REFUSED;
@@ -889,7 +886,7 @@ public class InvioNotificheB2bSteps {
             }
         }
 
-List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
+        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
 
         PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
                 .creditorTaxId(postionUser.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode())
@@ -965,14 +962,14 @@ List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoReques
 
         try {
 
-        for(PaymentPositionModel position: paymentPositionModel){
-            if(position.getFullName().equalsIgnoreCase(user)){
-                Assertions.assertDoesNotThrow(() -> {
-                    DeleteGDPresponse = pnGPDClientImpl.deletePosition(position.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), position.getIupd(), null);
-                });
-            }
+            for(PaymentPositionModel position: paymentPositionModel){
+                if(position.getFullName().equalsIgnoreCase(user)){
+                    Assertions.assertDoesNotThrow(() -> {
+                        DeleteGDPresponse = pnGPDClientImpl.deletePosition(position.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), position.getIupd(), null);
+                    });
+                }
 
-        }
+            }
 
             Assertions.assertNotNull(DeleteGDPresponse);
             logger.info("Risposta evento cancellazione: " + DeleteGDPresponse);
@@ -993,9 +990,9 @@ List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoReques
 
         try {
 
-                    Assertions.assertDoesNotThrow(() -> {
-                        DeleteGDPresponse = pnGPDClientImpl.deletePosition(paymentPositionModel.get(pagamento).getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
-                    });
+            Assertions.assertDoesNotThrow(() -> {
+                DeleteGDPresponse = pnGPDClientImpl.deletePosition(paymentPositionModel.get(pagamento).getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
+            });
 
 
             Assertions.assertNotNull(DeleteGDPresponse);
@@ -1157,9 +1154,9 @@ List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoReques
         try {
 
             for(int i=0;i<amountNotifica.size();i++) {
-                    int costototale=costoBaseNotifica+ sharedSteps.getSentNotification().getPaFee();
-                    logger.info("Amount+costo base:"+costototale);
-                    amountNotifica.set(i, amountNotifica.get(i) + costototale);
+                int costototale=costoBaseNotifica+ sharedSteps.getSentNotification().getPaFee();
+                logger.info("Amount+costo base:"+costototale);
+                amountNotifica.set(i, amountNotifica.get(i) + costototale);
             }
 
             Assertions.assertNotNull(amountNotifica);

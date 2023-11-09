@@ -132,10 +132,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                           |
     And destinatario
-      | denomination            | Cristoforo Colombo |
-      | taxId                   | CLMCST42R12D969Z   |
-      | payment_creditorTaxId   | 77777777777        |
-      | physicalAddress_zip   | 0000               |
+      | denomination          | Cristoforo Colombo |
+      | taxId                 | CLMCST42R12D969Z   |
+      | physicalAddress_zip   | KO                 |
+      | digitalDomicile       | NULL               |
+      | payment_creditorTaxId | 77777777777        |
       | payment_pagoPaForm    | SI                 |
       | payment_f24flatRate   | NULL               |
       | payment_f24standard   | NULL               |
@@ -609,16 +610,18 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario
       | denomination          | Cristoforo Colombo |
       | taxId                 | CLMCST42R12D969Z   |
+      | physicalAddress_zip   | KO                 |
+      | digitalDomicile       | NULL               |
       | payment_creditorTaxId | 77777777777        |
-      | physicalAddress_zip   | 0000               |
       | payment_pagoPaForm    | SI                 |
       | payment_f24flatRate   | NULL               |
       | payment_f24standard   | NULL               |
       | apply_cost_pagopa     | SI                 |
       | payment_multy_number  | 1                  |
     And destinatario Gherkin Analogic e:
+      | physicalAddress_zip   | KO          |
+      | digitalDomicile       | NULL        |
       | payment_creditorTaxId | 77777777777 |
-      | physicalAddress_zip   | 0000        |
       | payment_pagoPaForm    | SI          |
       | payment_f24flatRate   | NULL        |
       | payment_f24standard   | NULL        |
