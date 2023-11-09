@@ -326,6 +326,9 @@ public class AvanzamentoNotificheB2bSteps {
         Integer waiting = sharedSteps.getWorkFlowWait();
         TimelineElementWait timelineElementWait;
         switch (timelineEventCategory) {
+            case "REQUEST_ACCEPTED":
+                timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.REQUEST_ACCEPTED, 2, waiting);
+                break;
             case "NOTIFICATION_CANCELLATION_REQUEST":
                 timelineElementWait = new TimelineElementWait(TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST, 2, 11000);
                 break;
@@ -818,10 +821,20 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica annullata {string}")
+    public void readingEventUpToTheTimelineElementOfNotificationDelete(String timelineEventCategory) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategoryShortAnnullamento(timelineEventCategory);
+        readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
+    }
+
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
-        TimelineElementWait timelineElementWait = getTimelineElementCategoryShortAnnullamento(timelineEventCategory);
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
+    }
+
+    public void readingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
 
         TimelineElementV20 timelineElement = null;
 
@@ -858,6 +871,8 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
     public void readingEventUpToTheTimelineElementOfNotificationV1(String timelineEventCategory) {

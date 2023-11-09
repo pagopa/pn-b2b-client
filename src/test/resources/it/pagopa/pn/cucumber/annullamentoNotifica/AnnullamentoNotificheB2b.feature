@@ -719,7 +719,7 @@ Feature: annullamento notifiche b2b
       | taxId | RMSLSO31M04Z404R |
       | digitalDomicile | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
   @Annullamento  #DOPO L'AANUULLAMENTO NON E POSSIBILE VERIFICARE LATO TA L'AVVENUTA RICEZIONE DEL email
@@ -757,7 +757,7 @@ Feature: annullamento notifiche b2b
       | taxId | GLLGLL64B15G702I |
       | digitalDomicile | NULL |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
   @Annullamento   #Da Verificare...............OK OPPURE UN kO CHE NON SIA DOVUTO ALL'ANNULLAMENTO  DOPO L'ANNULLAMENTO DOVREBBE ESSERE INIBITO
@@ -1007,7 +1007,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" non esiste
 
   @Annullamento

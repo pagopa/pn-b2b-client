@@ -1635,7 +1635,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato correttamente
+  Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1649,11 +1649,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302000100000019421" con errore ""
 
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 409 PAGAMENTO_DUPLICATO
+  Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1667,11 +1667,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302191689948151964" con errore "409"
 
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 404 PAGAMENTO_SCONOSCIUTO
+  Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento sconosciuto  errore 404 PAGAMENTO_SCONOSCIUTO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1685,11 +1685,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302300118000019102" con errore "404"
 
   @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68_3] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato con errore 400 stazione int PA sconosciuta
+  Scenario: [B2B-PA-PAY_MULTI_68_3] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - PA sconosciuta  errore 400 stazione int PA sconosciuta
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
@@ -1703,7 +1703,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard | NULL |
       | apply_cost_pagopa | NO |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "402000118000019102" con errore "400"
 
 
