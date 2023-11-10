@@ -93,7 +93,7 @@ public class SharedSteps {
 
     private String errorCode = null;
 
-    private static final Integer WAITING_GPD = 5000;
+    private static final Integer WAITING_GPD = 3000;
 
 
 
