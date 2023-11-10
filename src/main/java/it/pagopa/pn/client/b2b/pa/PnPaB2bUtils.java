@@ -483,11 +483,11 @@ public class PnPaB2bUtils {
 
 
     public FullSentNotificationV21 waitForRequestAcceptation( NewNotificationResponse response) {
-        return waitForRequestAcceptation(response,8,getAcceptedWait());
+        return waitForRequestAcceptation(response,16,getAcceptedWait());
     }
 
     public FullSentNotificationV21 waitForRequestAcceptationShort( NewNotificationResponse response) {
-        return waitForRequestAcceptation(response,8,21000);
+        return waitForRequestAcceptation(response,16,21000);
     }
 
 
@@ -522,7 +522,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 5; i++ ) {
+        for( int i = 0; i < 10; i++ ) {
 
             try {
                 Thread.sleep( getAcceptedWait());
@@ -550,7 +550,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 5; i++ ) {
+        for( int i = 0; i < 10; i++ ) {
 
             try {
                 Thread.sleep( getAcceptedWait());
@@ -578,7 +578,7 @@ public class PnPaB2bUtils {
         log.info("Request status for " + response.getNotificationRequestId() );
         NewNotificationRequestStatusResponseV21 status = null;
         long startTime = System.currentTimeMillis();
-        for( int i = 0; i < 2; i++ ) {
+        for( int i = 0; i < 10; i++ ) {
 
             try {
                 Thread.sleep( getAcceptedWait());

@@ -407,13 +407,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_VIEWED;
                 break;
             case "SEND_COURTESY_MESSAGE":
-                numCheck = 16;
+                numCheck = 10;
                 timelineElementCategory = TimelineElementCategoryV20.SEND_COURTESY_MESSAGE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_COURTESY_MESSAGE;
                 break;
             case "DIGITAL_FAILURE_WORKFLOW":
-                numCheck = 16;
+                numCheck = 9;
                 timelineElementCategory = TimelineElementCategoryV20.DIGITAL_FAILURE_WORKFLOW;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.DIGITAL_FAILURE_WORKFLOW;
@@ -433,7 +433,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SCHEDULE_ANALOG_WORKFLOW;
                 break;
             case "NOT_HANDLED":
-                numCheck = 16;
+                numCheck = 9;
                 timelineElementCategory = TimelineElementCategoryV20.NOT_HANDLED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOT_HANDLED;
@@ -446,7 +446,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_DIGITAL_FEEDBACK;
                 break;
             case "SEND_ANALOG_DOMICILE":
-                numCheck = 16;
+                numCheck = 9;
                 timelineElementCategory = TimelineElementCategoryV20.SEND_ANALOG_DOMICILE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_ANALOG_DOMICILE;
@@ -473,13 +473,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.PUBLIC_REGISTRY_RESPONSE;
                 break;
             case "NOTIFICATION_CANCELLATION_REQUEST":
-                numCheck = 16;
+                numCheck = 9;
                 timelineElementCategory = TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_CANCELLATION_REQUEST;
                 break;
             case "NOTIFICATION_CANCELLED":
-                numCheck = 16;
+                numCheck = 10;
                 timelineElementCategory = TimelineElementCategoryV20.NOTIFICATION_CANCELLED;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_CANCELLED;
