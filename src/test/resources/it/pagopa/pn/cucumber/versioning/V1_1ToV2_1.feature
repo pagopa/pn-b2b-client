@@ -137,7 +137,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 
-  @version
+  @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_6] Invio notifica digitale mono destinatario e mono pagamento con payment senza PagopaForm_scenario V2.1 e recupero con V1.1 positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -151,6 +151,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | apply_cost_f24 | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
+    #TODO: NON DEVE POTER ESSERE RECUPERATA
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
   @version
@@ -161,6 +162,21 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "ACCEPTED" V1
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_19] Invio notifica digitale mono destinatario e mono pagamento con PagopaForm_scenario V2.1 e recupero con V1.1 positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Cucumber e:
+      | payment_creditorTaxId | 77777777777 |
+      | payment_pagoPaForm | SI |
+      | payment_multy_number | 2 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
 
   @version

@@ -154,9 +154,6 @@ public class InvioNotificheB2bSteps {
     public void notificationCanBeRetrievedWithIUNV2() {
         AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
         try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV2().getIun()))
-            );
             if(sharedSteps.getSentNotificationV1()!= null) {
                 Assertions.assertDoesNotThrow(() ->
                         notificationByIun.set(b2bUtils.getNotificationByIunV2(sharedSteps.getSentNotificationV1().getIun()))
