@@ -262,6 +262,7 @@ public class RicezioneNotificheWebDelegheSteps {
         //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
+            logger.debug("MANDATE-LIST: {}",mandateList);
             if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;

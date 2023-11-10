@@ -169,7 +169,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG005C"
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @bugSecondoTentativo_PN-8719
   Scenario: [B2B_TIMELINE_ANALOG_35] Attesa elemento di timeline SEND_ANALOG_DOMICILE_scenario positivo PN-5283 Presente
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

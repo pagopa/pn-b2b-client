@@ -934,14 +934,14 @@ Feature: annullamento notifiche b2b
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
     Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati
 
-  @Annullamento @webhook2
+  @Annullamento @webhook2 @cleanC3
   Scenario: [B2B-STREAM_TIMELINE_24_4] Invio notifica digitale ed attesa di un eventi di Timeline stream v1  con controllo EventId incrementale e senza duplicati scenario positivo
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi"
     And viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo                |
     And destinatario Mario Gherkin
-    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si predispone 1 nuovo stream V2 denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_Multi"
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"

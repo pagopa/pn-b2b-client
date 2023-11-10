@@ -236,7 +236,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
   #Da verificare--------------
 
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @bugSecondoTentativo_PN-8719
   Scenario: [B2B_TIMELINE_ANALOG_53] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_AR_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -335,7 +335,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     #"@sequence.MANCANTE
 
 
-  @dev @workflowAnalogico
+  @dev @workflowAnalogico @bugSecondoTentativo_PN-8719
   Scenario: [B2B_TIMELINE_ANALOG_58] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -429,7 +429,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
 
 
-  @irreperibile_7623_Test  @workflowAnalogico
+  @irreperibile_7623_Test  @workflowAnalogico @bugSecondoTentativo_PN-8719
   Scenario: [B2B_TIMELINE_ANALOG_64] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
