@@ -755,7 +755,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             List<ProgressResponseElement> progressResponseElements = webhookB2bClient.consumeEventStream(this.eventStreamList.get(0).getStreamId(), null);
             logger.info("EventProgress: " + progressResponseElements);
 
-            Assertions.assertTrue(progressResponseElements.size() == numEventi);
+            Assertions.assertEquals(progressResponseElements.size() , numEventi);
             System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.size());
         });
 
