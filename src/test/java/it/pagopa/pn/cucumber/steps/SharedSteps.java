@@ -93,7 +93,7 @@ public class SharedSteps {
 
     private String errorCode = null;
 
-    private static final Integer WAITING_GPD = 3000;
+    private static final Integer WAITING_GPD = 2000;
 
 
 
@@ -1040,7 +1040,7 @@ public class SharedSteps {
     }
 
     private void sendNotificationGPD() {
-        sendNotification(WAITING_GPD);
+        sendNotificationRapid(WAITING_GPD);
     }
 
 

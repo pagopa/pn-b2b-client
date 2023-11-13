@@ -80,7 +80,7 @@ public class InvioNotificheB2bSteps {
 
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    private static final Integer NUM_CHECK_PAYMENT_INFO = 15;
+    private static final Integer NUM_CHECK_PAYMENT_INFO = 26;
     private static final Integer WAITING_PAYMENT_INFO = 1000;
     @Autowired
     public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps) {
