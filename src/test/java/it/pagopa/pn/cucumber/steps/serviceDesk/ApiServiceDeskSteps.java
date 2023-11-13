@@ -115,13 +115,13 @@ public class ApiServiceDeskSteps {
 
 
     @Autowired
-    public ApiServiceDeskSteps(SharedSteps sharedSteps, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
+    public ApiServiceDeskSteps(SharedSteps sharedSteps,RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.safeStorageClient=safeStorageClient;
         this.ipServiceDeskClient= sharedSteps.getServiceDeskClient();
-
+        this.restTemplate = restTemplate;
         this.notificationRequest=new NotificationRequest();
         this.notificationsUnreachableResponse=notificationsUnreachableResponse;
         this.analogAddress=new AnalogAddress();
@@ -129,7 +129,6 @@ public class ApiServiceDeskSteps {
         this.videoUploadRequest=new VideoUploadRequest();
         this.searchNotificationRequest=new SearchNotificationRequest();
         this.ctx=ctx;
-        this.restTemplate = newRestTemplate();
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
@@ -878,16 +877,6 @@ public class ApiServiceDeskSteps {
         restTemplate.exchange( URI.create(url), HttpMethod.PUT, req, Object.class);
     }
 
-    private static final RestTemplate newRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(800_000);
-        requestFactory.setReadTimeout(800_000);
-        requestFactory.setConnectionRequestTimeout(800_000);
-        requestFactory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(requestFactory);
-        return restTemplate;
-    }
 
 
     public Integer getWorkFlowWait() {

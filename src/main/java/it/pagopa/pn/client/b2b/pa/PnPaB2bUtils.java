@@ -51,8 +51,8 @@ public class PnPaB2bUtils {
     private IPnPaB2bClient client;
 
 
-    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client) {
-        this.restTemplate = newRestTemplate();
+    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
         this.ctx = ctx;
         this.client = client;
     }
@@ -63,16 +63,6 @@ public class PnPaB2bUtils {
         this.client = client;
     }
 
-    private static final RestTemplate newRestTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(800_000);
-        requestFactory.setReadTimeout(800_000);
-        requestFactory.setConnectionRequestTimeout(800_000);
-        requestFactory.setBufferRequestBody(false);
-        restTemplate.setRequestFactory(requestFactory);
-        return restTemplate;
-    }
 
 
     public NewNotificationResponse uploadNotification( NewNotificationRequestV21 request) throws IOException {
@@ -487,7 +477,7 @@ public class PnPaB2bUtils {
     }
 
     public FullSentNotificationV21 waitForRequestAcceptationShort( NewNotificationResponse response) {
-        return waitForRequestAcceptation(response,16,11000);
+        return waitForRequestAcceptation(response,230,5000);
     }
 
 

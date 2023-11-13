@@ -236,7 +236,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW" per l'utente 0
 
-  @irreperibile_7623_Test @workflowAnalogico
+  @irreperibile_7623_Test @workflowAnalogico @bugD02
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_12] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - caso Multi
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -249,8 +249,8 @@ Feature: avanzamento b2b notifica multi destinatario analogico
       | physicalAddress_zip                 | 40121                        |
       | physicalAddress_municipality        | BOLOGNA                      |
       | physicalAddress_province            | BO                           |
-      | physicalAddress_addressDetails      | NULL                         |
-      | physicalAddress_municipalityDetails | NULL                         |
+      | physicalAddress_addressDetails      | 0_CHAR                         |
+      | physicalAddress_municipalityDetails | 0_CHAR                         |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02" per l'utente 0

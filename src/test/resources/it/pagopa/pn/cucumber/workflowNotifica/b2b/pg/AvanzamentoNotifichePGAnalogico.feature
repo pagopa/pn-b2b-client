@@ -278,7 +278,7 @@ Feature: avanzamento notifiche analogico persona giuridica
       | senderDenomination | Comune di milano |
     And destinatario Cucumber Analogic e:
       | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_890 |
+      | physicalAddress_address | Via@ok_890_SLOW |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
     Then si attende la corretta sospensione dell'invio cartaceo

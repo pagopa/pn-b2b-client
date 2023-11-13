@@ -62,7 +62,7 @@ Feature: Invio messaggi cortesia e2e
         | NULL | NULL |
 
 
-    @AOO_UO
+    @AOO_UO @platformDependent
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5_PG] invio messaggio di cortesia - invio notifica per email per ente padre per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@pecSuccess.it"
@@ -85,7 +85,7 @@ Feature: Invio messaggi cortesia e2e
         And viene cancellata l'email di cortesia per il comune "default"
         And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
-    @AOO_UO
+    @AOO_UO @platformDependent
     Scenario: [E2E-SEND_COURTESY_MESSAGE_5] invio messaggio di cortesia - invio notifica per email per ente padre
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@pecSuccess.it"
@@ -104,7 +104,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
             | details_recIndex       | 0                                                  |
 
-    @AOO_UO
+    @AOO_UO @platformDependent
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6_PG] invio messaggio di cortesia - invio notifica per email per ente figlio per PG
         Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
         And viene inserito un recapito legale "example@pecSuccess.it"
@@ -127,7 +127,7 @@ Feature: Invio messaggi cortesia e2e
         And viene cancellata l'email di cortesia per il comune "default"
         And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
-    @AOO_UO
+    @AOO_UO @platformDependent
     Scenario: [E2E-SEND_COURTESY_MESSAGE_6] invio messaggio di cortesia - invio notifica per email per ente figlio
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@pecSuccess.it"

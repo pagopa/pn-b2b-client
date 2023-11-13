@@ -338,7 +338,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | paFee              | 10                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                     |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
       | payment_creditorTaxId   | 77777777777              |
       | payment_pagoPaForm      | SI                       |
       | payment_f24flatRate     | NULL                     |

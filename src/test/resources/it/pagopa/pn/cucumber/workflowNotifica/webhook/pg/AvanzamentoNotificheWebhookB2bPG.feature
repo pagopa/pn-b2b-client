@@ -138,7 +138,7 @@ Feature: avanzamento notifiche webhook b2b per persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "PUBLIC_REGISTRY_RESPONSE"
 
-  @clean @dev @webhook3
+  @cleanC2 @dev @webhook3
   Scenario: [B2B-STREAM_TIMELINE_PG_13] Invio notifica  mono destinatario con documenti pre-caricati non trovati su safestorage scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

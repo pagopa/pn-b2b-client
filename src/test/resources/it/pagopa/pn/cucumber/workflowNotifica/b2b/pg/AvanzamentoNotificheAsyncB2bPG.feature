@@ -117,7 +117,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
     Then vengono cancellate le posizioni debitorie
 
 
-  @Async @bugSecondoTentativo_PN-8719
+  @Async
   Scenario: [B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
     Given viene generata una nuova notifica
@@ -127,7 +127,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | paFee         | 10                          |
     And destinatario Gherkin Analogic e:
       | digitalDomicile         | NULL                     |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
       | payment_creditorTaxId   | 77777777777              |
       | payment_pagoPaForm      | SI                       |
       | payment_f24flatRate     | NULL                     |

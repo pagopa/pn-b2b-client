@@ -736,6 +736,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
+    public void laNotificaVieneInviataOkRapidCheck(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationRapidCheck();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED V1")
     public void laNotificaVieneInviataOkV1(String paType) {
         selectPA(paType);
@@ -886,6 +893,10 @@ public class SharedSteps {
         sendNotification(getWorkFlowWait());
     }
 
+    private void sendNotificationRapidCheck() {
+        sendNotificationRapid(100);
+    }
+
 
     private void sendNotification(int wait){
         try {
@@ -918,7 +929,7 @@ public class SharedSteps {
         }
     }
 
-    private void sendNotificationCancel(int wait){
+    private void sendNotificationRapid(int wait){
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
@@ -1014,7 +1025,7 @@ public class SharedSteps {
 
 
     private void sendNotificationAndCancel() {
-        sendNotificationCancel(11000);
+        sendNotificationRapid(1000);
 
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
@@ -1439,13 +1450,11 @@ public class SharedSteps {
 
     public void selectUser(String recipient) {
         switch (recipient.trim().toLowerCase()){
-            case "mario cucumber":
-            case "ettore fieramosca":
+            case "mario cucumber", "ettore fieramosca":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 break;
-            case "mario gherkin":
-            case "cristoforo colombo":
+            case "mario gherkin", "cristoforo colombo":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 break;

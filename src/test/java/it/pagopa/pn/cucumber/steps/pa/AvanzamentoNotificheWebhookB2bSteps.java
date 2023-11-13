@@ -552,7 +552,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         sharedSteps.setProgressResponseElements(progressResponseElements);
 
         System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.toString());
-        if(deepCount >= 200){
+        if(deepCount >= 250){
             throw new IllegalStateException("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                     +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount);
         }
@@ -582,7 +582,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 Thread.sleep(500);
                 return searchInWebhook(timeLineOrStatus,lastProgress.getEventId(),(deepCount+1));
             }catch (IllegalStateException illegalStateException){
-                if(deepCount == 199 || deepCount == 198 || deepCount == 197){
+                if(deepCount == 249 || deepCount == 248 || deepCount == 247){
                     throw new IllegalStateException((illegalStateException.getMessage()+("LOP: PROGRESS-ELEMENTS: "+progressResponseElements
                             +" WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" IUN: "+sharedSteps.getSentNotification().getIun()+" DEEP: "+deepCount)));
                 }else{
@@ -672,6 +672,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void cleanC3() {
         setPaWebhook("Comune_Multi");
         cleanWebhook();
+        SharedSteps.lastEventID = 0;
     }
 
     private void cleanWebhook(){
@@ -724,7 +725,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         Assertions.assertNotNull(progressResponseElements);
         boolean counterIncrement = true ;
         int lastEventID = SharedSteps.lastEventID;
-        System.out.println("ELEMENTI NEL WEBHOOK LAST EVENT ID1: "+lastEventID);
+        //logger.info("ELEMENTI NEL WEBHOOK LAST EVENT ID1: "+lastEventID);
         for(ProgressResponseElement elem: progressResponseElements){
             if (lastEventID==0){
                 lastEventID = Integer.parseInt(elem.getEventId());
@@ -737,9 +738,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 lastEventID = Integer.parseInt(elem.getEventId());
             }
         }//for
-        Assertions.assertTrue(counterIncrement);
+        try{
+            Assertions.assertTrue(counterIncrement);
+        }catch (AssertionFailedError assertionFailedError){
+            throw new AssertionFailedError(assertionFailedError.getMessage()+" PROGRESS-ELEMENT: \n"+progressResponseElements);
+        }
+
         SharedSteps.lastEventID=lastEventID;
-        System.out.println("ELEMENTI NEL WEBHOOK LAST EVENT ID2: "+lastEventID);
+        //logger.info("ELEMENTI NEL WEBHOOK LAST EVENT ID2: "+lastEventID);
     }
 
 

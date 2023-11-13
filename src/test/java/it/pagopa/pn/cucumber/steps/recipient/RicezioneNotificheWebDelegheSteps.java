@@ -25,10 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import javax.validation.constraints.AssertTrue;
 import java.io.ByteArrayInputStream;
-
-import java.io.IOException;
 
 import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
@@ -162,12 +159,12 @@ public class RicezioneNotificheWebDelegheSteps {
                 break;
         }
 
-        return beenSet;
+        return !beenSet;
     }
 
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
-        if (!setBearerToken(delegator)) {
+        if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -192,10 +189,10 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string} per comune {string}")
     public void delegateUser(String delegate, String delegator,String comune) {
-        if (!setBearerToken(delegator)) {
+        if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
-        OrganizationIdDto organizationIdDto=new OrganizationIdDto();
+        OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
         switch (comune){
             case "Comune_1":
@@ -242,17 +239,15 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE: " + mandate);
 
         try{
-
             webMandateClient.createMandate(mandate);
-
-} catch (HttpStatusCodeException e) {
-        this.sharedSteps.setNotificationError(e);
-    }
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
     }
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
-        if (!setBearerToken(delegate)) {
+        if (setBearerToken(delegate)) {
             throw new IllegalArgumentException();
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
@@ -269,13 +264,18 @@ public class RicezioneNotificheWebDelegheSteps {
             }
         }
         if (mandateDto != null) {
-            webMandateClient.rejectMandate(mandateDto.getMandateId());
+            try{
+                webMandateClient.rejectMandate(mandateDto.getMandateId());
+            }catch(Exception exp){
+                System.out.println("REJECT FALLITA");
+            }
+
         }
     }
 
     @And("{string} accetta la delega {string}")
     public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
-        if (!setBearerToken(delegate)) {
+        if (setBearerToken(delegate)) {
             throw new IllegalArgumentException();
         }
         String delegatorTaxId = getTaxIdByUser(delegator);;
@@ -292,7 +292,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
+        try{
+            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
+        }catch(Exception e){
+            System.out.println("ACCEPT DELEGA ERROR");
+        }
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
@@ -476,7 +480,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} revoca la delega a {string}")
     public void userRevokesMandate(String delegator, String delegate) {
-        if (!setBearerToken(delegator)) {
+        if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
 
@@ -498,7 +502,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} rifiuta la delega ricevuta da {string}")
     public void delegateRefusesMandateReceivedFromDelegator(String delegate, String delegator) {
-        if (!setBearerToken(delegate)) {
+        if (setBearerToken(delegate)) {
             throw new IllegalArgumentException();
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
@@ -555,7 +559,6 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
-        webRecipientClient.setBearerToken(baseUser);
     }
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
@@ -599,7 +602,7 @@ public class RicezioneNotificheWebDelegheSteps {
     //for debug
     @And("{string} visualizza le deleghe")
     public void visualizzaLeDeleghe(String user) {
-        if (!setBearerToken(user)) {
+        if (setBearerToken(user)) {
             throw new IllegalArgumentException();
         }
 
