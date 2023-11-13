@@ -221,6 +221,20 @@ public class DataTableTypeUtil {
                                                 .title(getValue(data, TITLE_PAYMENT.key))
                                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS.key))) : null));
+                    }else if (getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key) != null) {
+                        addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key) == null ? null :
+                                (getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key).equalsIgnoreCase("SI") ?
+                                        new F24Payment()
+                                                .title(getValue(data, TITLE_PAYMENT.key))
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key))) : null));
+                    }else if (getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key) != null) {
+                        addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key) == null ? null :
+                                (getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key).equalsIgnoreCase("SI") ?
+                                        new F24Payment()
+                                                .title(getValue(data, TITLE_PAYMENT.key))
+                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key))) : null));
                     }else if (getValue(data, PAYMENT_F24_STANDARD_REGION.key) != null) {
                         addPaymentsItem.f24(getValue(data, PAYMENT_F24_STANDARD_REGION.key) == null ? null :
                                 (getValue(data, PAYMENT_F24_STANDARD_REGION.key).equalsIgnoreCase("SI") ?

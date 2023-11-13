@@ -35,7 +35,7 @@ public class InteropTokenSingleton {
             @Value("${pn.interop.base-url}") String interopBaseUrl,
             @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
             @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
-            @Value("${interop.clientId}") String interopClientId){
+            @Value("${pn.interop.clientId}") String interopClientId){
 
         this.ctx = ctx;
         this.restTemplate = restTemplate;
