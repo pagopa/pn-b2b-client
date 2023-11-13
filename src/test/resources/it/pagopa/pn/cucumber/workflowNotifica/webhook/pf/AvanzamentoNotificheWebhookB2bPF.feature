@@ -258,7 +258,7 @@ Feature: avanzamento notifiche webhook b2b
     And destinatario Mario Cucumber e:
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_FAILURE_WORKFLOW"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And vengono letti gli eventi dello stream che contenga 50 eventi
 
 
