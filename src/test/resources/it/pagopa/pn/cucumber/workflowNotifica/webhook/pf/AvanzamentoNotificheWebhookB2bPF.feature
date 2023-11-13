@@ -242,7 +242,8 @@ Feature: avanzamento notifiche webhook b2b
     And si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then vengono letti gli eventi dello stream del "Comune_1" con la verifica di Allegato non trovato
 
-  Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK positivo
+  @clean @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24_7878] Invio notifiche digitali e controllo che vengano letti 50 eventi nel webhook
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
