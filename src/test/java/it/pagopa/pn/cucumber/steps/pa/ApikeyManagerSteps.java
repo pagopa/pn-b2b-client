@@ -288,6 +288,15 @@ public class ApikeyManagerSteps {
         }
     }
 
+    @Then("si tenta il recupero dal sistema tramite codice IUN con api v1")
+    public void siTentaIlRecuperoDalSistemaTramiteCodiceIUNV1() {
+        try {
+            sharedSteps.getB2bUtils().getNotificationByIunV1(sharedSteps.getSentNotification().getIun());
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
     @And("Si cambia al comune {string}")
     public void lApiKeyNonÈPresenteDalComune(String settedPa) {
         sharedSteps.selectPA(settedPa);
