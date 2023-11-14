@@ -115,7 +115,7 @@ Feature: Validazione campi invio notifiche b2b
       #4) Lettera omocodia non contemplata (primi 2 numeri)
       #5) Lettera omocodia non contemplata (seconda serie di 2 numeri)
       #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
-      #7) Lettera codice fiscale solo numerico
+      #7) CF solo numerico
 
   Scenario Outline: [B2B-PA-SEND_VALID_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
