@@ -108,13 +108,14 @@ Feature: Validazione campi invio notifiche b2b
       | FRMTTRZ6M06B715E  |
       | FRMTTR76M0YB715E  |
       | FRMTTR76M06B7W5E  |
+      | 20517490320       |
       #1) 10 numeri (min 11)
       #2) 17 numeri (max 16)
       #3) CF non valido (lettera finale mancante)
       #4) Lettera omocodia non contemplata (primi 2 numeri)
       #5) Lettera omocodia non contemplata (seconda serie di 2 numeri)
       #6) Lettera omocodia non contemplata (serie di 3 numeri finale)
-
+      #7) Lettera codice fiscale solo numerico
 
   Scenario Outline: [B2B-PA-SEND_VALID_12] invio notifiche digitali mono destinatario con parametri denomination errati_scenario negativo
     Given viene generata una nuova notifica
