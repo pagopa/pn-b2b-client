@@ -1634,7 +1634,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_CANCELED', // Payment canceled
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
-  @pagamentiMultipli
+  @pagamentiMultipli @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare  e status REQUIRED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1644,7 +1644,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then verifica stato pagamento di una notifica con status "REQUIRED"
 
   #TODO al momento non è possibile effettuare pagamenti..
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli @ignore @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1654,7 +1654,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     #Then l'avviso pagopa viene pagato correttamente su checkout con errore "409"
     Then verifica stato pagamento di una notifica con status "REQUIRED"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento sconosciuto  errore 404  e status FAILURE PAGAMENTO_SCONOSCIUTO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -1663,7 +1663,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_noticeCode | 302300118000019102 |
     Then verifica stato pagamento di una notifica con status "FAILURE"
 
-  @pagamentiMultipli
+  @pagamentiMultipli @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_3_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - PA sconosciuta  errore 400 e status FAILURE  stazione int PA sconosciuta
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -3818,6 +3818,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
+      | payment_f24standard_inps_debit_credit          | NULL |
+      | payment_f24standard_inps_debit_credit_1          | NULL |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
