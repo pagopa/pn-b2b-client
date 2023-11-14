@@ -3199,7 +3199,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SEMPLIFICATO_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3310,7 +3310,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_INPS_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_INPS_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3348,7 +3348,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_INPS_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_INPS_ERR_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -3386,7 +3386,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_INPS_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_INPS_ERR1_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -3497,7 +3497,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_LOCAL_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_LOCAL_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3608,7 +3608,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_REGION_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_REGION_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3719,7 +3719,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | SI   |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_TREASURY_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_TREASURY_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3818,8 +3818,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
-      | payment_f24standard_inps_debit_credit          | NULL |
-      | payment_f24standard_inps_debit_credit_1          | NULL |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
@@ -3832,7 +3830,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | SI |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SOCIAL_FLAT_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3858,7 +3856,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
       | payment_f24standard_inps_debit_credit          | SI |
-      | payment_f24standard_inps_debit_credit_1          | NULL |
+      | payment_f24standard_inps_debit_credit_1        | NULL |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
@@ -3871,7 +3869,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_INPS_DC_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3897,7 +3895,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
       | payment_f24standard_inps_debit_credit          | NULL |
-      | payment_f24standard_inps_debit_credit_1          | SI |
+      | payment_f24standard_inps_debit_credit_1        | SI |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
@@ -3910,8 +3908,58 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_treasury_flat | NULL |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_INPS_DC1_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_100_5] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE DELIVERY_MODE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica inclusi).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | f24_delivery_standard_treasury_ae            | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_TREASURY_AE_LVLDAA85T50G702B |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_100_6] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi non inclusi--
+      | f24_delivery_standard_treasury_ae_flat            | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_TREASURY_AE_LVLDAA85T50G702B |
+      | apply_cost_f24 | NO |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
