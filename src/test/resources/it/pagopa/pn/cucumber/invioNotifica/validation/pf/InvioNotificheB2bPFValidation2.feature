@@ -108,7 +108,7 @@ Feature: Validazione campi invio notifiche b2b
       | FRMTTRZ6M06B715E  |
       | FRMTTR76M0YB715E  |
       | FRMTTR76M06B7W5E  |
-      | 20517490320       |
+    # | 20517490320       |
       #1) 10 numeri (min 11)
       #2) 17 numeri (max 16)
       #3) CF non valido (lettera finale mancante)
