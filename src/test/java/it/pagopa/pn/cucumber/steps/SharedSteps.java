@@ -192,9 +192,6 @@ public class SharedSteps {
     @Value("${pn.interop.token-oauth2.client-assertion}")
     private String clientAssertion;
 
-    @Value("${interop.clientId}")
-    private String interopClientId;
-
     @Value("${pn.external.bearer-token-pg1.id}")
     private String idOrganizationGherkinSrl;
     @Value("${pn.external.bearer-token-pg2.id}")

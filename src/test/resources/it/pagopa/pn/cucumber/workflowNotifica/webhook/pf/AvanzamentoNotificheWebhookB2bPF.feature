@@ -242,6 +242,24 @@ Feature: avanzamento notifiche webhook b2b
     And si verifica che la notifica non viene accettata causa "ALLEGATO"
     Then vengono letti gli eventi dello stream del "Comune_1" con la verifica di Allegato non trovato
 
+  @clean @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_24_7878] Invio notifiche digitali e controllo che vengano letti 50 eventi nel webhook
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano                 |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | test@fail.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    And vengono letti gli eventi dello stream che contenga 50 eventi
 
 
 

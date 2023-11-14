@@ -52,11 +52,6 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
             @Value("${pn.external.api-key}") String apiKeyMvp1,
             @Value("${pn.external.api-key-2}") String apiKeyMvp2,
             @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.interop.base-url}") String interopBaseUrl,
-            @Value("${pn.interop.token-oauth2.path}") String tokenOauth2Path,
-            @Value("${pn.interop.token-oauth2.client-assertion}") String clientAssertion,
-            @Value("${interop.clientId}") String interopClientId,
-
             @Value("${pn.interop.enable}") String enableInterop
     ) {
         this.ctx = ctx;
