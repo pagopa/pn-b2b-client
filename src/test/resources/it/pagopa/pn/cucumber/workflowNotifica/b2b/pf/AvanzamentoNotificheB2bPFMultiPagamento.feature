@@ -1634,7 +1634,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_CANCELED', // Payment canceled
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare  e status REQUIRED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
