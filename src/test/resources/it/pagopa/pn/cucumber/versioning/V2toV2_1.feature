@@ -1,6 +1,6 @@
 Feature: verifica compatibilità tra v2 a v2.1
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_16] Invio notifica V2.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
