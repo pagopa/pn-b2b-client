@@ -10,9 +10,9 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" V1
-    #TODO: con Comune_Multi fallisce con errore sul gruppo
+
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_12] Invio e visualizzazione notifica e verifica amount e effectiveDate da V1 in ambiente con versione superiore
