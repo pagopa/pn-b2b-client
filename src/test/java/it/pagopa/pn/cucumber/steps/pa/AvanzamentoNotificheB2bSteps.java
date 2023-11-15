@@ -855,7 +855,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void readingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
 
         TimelineElementV20 timelineElement = null;
-
+        String iun = null;
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
             try {
                 Thread.sleep(timelineElementWait.getWaiting());
@@ -864,15 +864,16 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
             if (sharedSteps.getSentNotification()!= null) {
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+                iun = sharedSteps.getSentNotification().getIun();
 
             } else if (sharedSteps.getSentNotificationV1()!= null) {
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotificationV1().getIun()));
+                iun = sharedSteps.getSentNotificationV1().getIun();
 
             } else if (sharedSteps.getSentNotificationV2()!= null) {
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotificationV2().getIun()));
+                iun = sharedSteps.getSentNotificationV2().getIun();
             }
 
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
@@ -894,7 +895,7 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementWait timelineElementWait = getTimelineElementCategoryV1(timelineEventCategory);
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
-
+        String iun = null;
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
             try {
                 Thread.sleep(timelineElementWait.getWaiting());
@@ -903,15 +904,16 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
             if (sharedSteps.getSentNotification()!= null) {
-                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotification().getIun()));
+                iun = sharedSteps.getSentNotification().getIun();
 
             } else if (sharedSteps.getSentNotificationV1()!= null) {
-                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV1().getIun()));
+                iun = sharedSteps.getSentNotificationV1().getIun();
 
             } else if (sharedSteps.getSentNotificationV2()!= null) {
-                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV2().getIun()));
+                iun = sharedSteps.getSentNotificationV2().getIun();
             }
 
+            sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(iun));
             logger.info("NOTIFICATION_TIMELINE V1 : " + sharedSteps.getSentNotificationV1().getTimeline());
 
             timelineElement = sharedSteps.getSentNotificationV1().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategoryV1())).findAny().orElse(null);
@@ -931,7 +933,7 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementWait timelineElementWait = getTimelineElementCategoryV2(timelineEventCategory);
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20 timelineElement = null;
-
+        String iun = null;
         for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
             try {
                 Thread.sleep(timelineElementWait.getWaiting());
@@ -940,16 +942,16 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
             if (sharedSteps.getSentNotification()!= null) {
-                sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(sharedSteps.getSentNotification().getIun()));
+                iun = sharedSteps.getSentNotification().getIun();
 
             } else if (sharedSteps.getSentNotificationV1()!= null) {
-                sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(sharedSteps.getSentNotificationV1().getIun()));
+                iun = sharedSteps.getSentNotificationV1().getIun();
 
             } else if (sharedSteps.getSentNotificationV2()!= null) {
-                sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(sharedSteps.getSentNotificationV2().getIun()));
-
+                iun = sharedSteps.getSentNotificationV2().getIun();
             }
 
+            sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(iun));
             logger.info("NOTIFICATION_TIMELINE V2: " + sharedSteps.getSentNotificationV2().getTimeline());
 
             timelineElement = sharedSteps.getSentNotificationV2().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategoryV2())).findAny().orElse(null);
