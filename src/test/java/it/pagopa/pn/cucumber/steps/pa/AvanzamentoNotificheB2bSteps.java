@@ -536,11 +536,6 @@ public class AvanzamentoNotificheB2bSteps {
             case "PREPARE_ANALOG_DOMICILE":
                 timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory.PREPARE_ANALOG_DOMICILE, 4, waiting * 5);
                 break;
-            /**
-             case "PREPARE_ANALOG_DOMICILE_FAILURE":
-             timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory,20, sharedSteps.getWorkFlowWait());
-             break;
-             **/
             case "COMPLETELY_UNREACHABLE":
                 timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory.COMPLETELY_UNREACHABLE, 10, sharedSteps.getWorkFlowWait());
                 break;
@@ -565,14 +560,6 @@ public class AvanzamentoNotificheB2bSteps {
             case "DIGITAL_DELIVERY_CREATION_REQUEST":
                 timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory.DIGITAL_DELIVERY_CREATION_REQUEST, 5, waiting * 3);
                 break;
-            /**
-             case "NOTIFICATION_CANCELLATION_REQUEST":
-             timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory.NOTIFICATION_CANCELLATION_REQUEST, 2, waiting);
-             break;
-             case "NOTIFICATION_CANCELLED":
-             timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory.NOTIFICATION_CANCELLED, 5, waiting * 3);
-             break;
-             **/
             default:
                 throw new IllegalArgumentException();
         }
