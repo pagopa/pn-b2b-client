@@ -927,12 +927,12 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
 
-            if (sharedSteps.getSentNotificationV1()!= null) {
-                sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(sharedSteps.getSentNotificationV1().getIun()));
+            if (sharedSteps.getSentNotification()!= null) {
+                sharedSteps.setSentNotificationV2(b2bClient.getSentNotificationV2(sharedSteps.getSentNotification().getIun()));
 
                 logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
-                timelineElement = sharedSteps.getSentNotificationV2().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategoryV1())).findAny().orElse(null);
+                timelineElement = sharedSteps.getSentNotificationV2().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
                 if (timelineElement != null) {
                     break;
                 }

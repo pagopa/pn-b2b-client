@@ -1634,77 +1634,43 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
  # 'PAYMENT_CANCELED', // Payment canceled
  # 'PAYMENT_DUPLICATED', // Payment duplicated
  # 'GENERIC_ERROR'
-  @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare
+  @pagamentiMultipli @mockCheckout
+  Scenario: [B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare  e status REQUIRED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | FLAT_RATE |
-      | paFee | 0 |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302000100000019421" con errore ""
+      | payment_creditorTaxId | 77777777777 |
+      | payment_noticeCode | 302000100000019421 |
+    Then verifica stato pagamento di una notifica con status "REQUIRED"
 
-  @pagamentiMultipli @ignore
+  #TODO al momento non è possibile effettuare pagamenti..
+  @pagamentiMultipli @ignore @mockCheckout
   Scenario: [B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | FLAT_RATE |
-      | paFee | 0 |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302191689948151964" con errore "409"
+      | payment_creditorTaxId | 77777777777 |
+      | payment_noticeCode | 302191689948151964 |
+    #Then l'avviso pagopa viene pagato correttamente su checkout con errore "409"
+    Then verifica stato pagamento di una notifica con status "REQUIRED"
 
-  @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento sconosciuto  errore 404 PAGAMENTO_SCONOSCIUTO
+  @pagamentiMultipli @mockCheckout
+  Scenario: [B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento sconosciuto  errore 404  e status FAILURE PAGAMENTO_SCONOSCIUTO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | FLAT_RATE |
-      | paFee | 0 |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "302300118000019102" con errore "404"
+      | payment_creditorTaxId | 77777777777 |
+      | payment_noticeCode | 302300118000019102 |
+    Then verifica stato pagamento di una notifica con status "FAILURE"
 
-  @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_68_3] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - PA sconosciuta  errore 400 stazione int PA sconosciuta
+  @pagamentiMultipli @mockCheckout
+  Scenario: [B2B-PA-PAY_MULTI_68_3_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - PA sconosciuta  errore 400 e status FAILURE  stazione int PA sconosciuta
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | FLAT_RATE |
-      | paFee | 0 |
     And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | NO |
-      | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then verifica stato pagamento di una notifica creditorTaxID "77777777777" noticeCode "402000118000019102" con errore "400"
+      | payment_creditorTaxId | 77777777777 |
+      | payment_noticeCode | 402000118000019102 |
+    Then verifica stato pagamento di una notifica con status "FAILURE"
 
 
 
@@ -3750,7 +3716,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_f24standard_inps_flat     | NULL |
       | payment_f24standard_local_flat    | NULL |
       | payment_f24standard_region_flat   | NULL |
-      | payment_f24standard_treasury_flat | SI |
+      | payment_f24standard_treasury_flat | SI   |
       | payment_f24standard_social_flat   | NULL |
       #-------------------------------------------
       | title_payment | F24_STANDARD_TREASURY_LVLDAA85T50G702B |
@@ -3852,6 +3818,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified            | NULL |
       | payment_f24standard_inps          | NULL |
+      | payment_f24standard_inps_debit_credit          | NULL |
+      | payment_f24standard_inps_debit_credit_1          | NULL |
       | payment_f24standard_local         | NULL |
       | payment_f24standard_region        | NULL |
       | payment_f24standard_treasury      | NULL |
@@ -3866,6 +3834,84 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       #-------------------------------------------
       | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
       | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_100_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24_simplified            | NULL |
+      | payment_f24standard_inps          | NULL |
+      | payment_f24standard_inps_debit_credit          | SI |
+      | payment_f24standard_inps_debit_credit_1          | NULL |
+      | payment_f24standard_local         | NULL |
+      | payment_f24standard_region        | NULL |
+      | payment_f24standard_treasury      | NULL |
+      | payment_f24standard_social        | NULL |
+      #F24 completo a sezioni modalità Flat------ costi non inclusi--
+      | payment_f24_simplified_flat       | NULL |
+      | payment_f24standard_inps_flat     | NULL |
+      | payment_f24standard_local_flat    | NULL |
+      | payment_f24standard_region_flat   | NULL |
+      | payment_f24standard_treasury_flat | NULL |
+      | payment_f24standard_social_flat   | NULL |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_100_4] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee su debit di importo 0 ).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 100 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24_simplified            | NULL |
+      | payment_f24standard_inps          | NULL |
+      | payment_f24standard_inps_debit_credit          | NULL |
+      | payment_f24standard_inps_debit_credit_1          | SI |
+      | payment_f24standard_local         | NULL |
+      | payment_f24standard_region        | NULL |
+      | payment_f24standard_treasury      | NULL |
+      | payment_f24standard_social        | NULL |
+      #F24 completo a sezioni modalità Flat------ costi non inclusi--
+      | payment_f24_simplified_flat       | NULL |
+      | payment_f24standard_inps_flat     | NULL |
+      | payment_f24standard_local_flat    | NULL |
+      | payment_f24standard_region_flat   | NULL |
+      | payment_f24standard_treasury_flat | NULL |
+      | payment_f24standard_social_flat   | NULL |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_SOCIAL_LVLDAA85T50G702B |
+      | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
