@@ -1,7 +1,7 @@
 Feature: verifica compatibilità tra v1.1 a v2.1
 
   #ok_AR -> successo raccomandata a/r
-  @version @mockPec
+  @version
   Scenario: [B2B-PA-SEND_VERSION_8] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW da V1 in ambiente con versione superiore
     Given viene generata una nuova notifica V1
       | subject | notifica analogica con cucumber v1 |

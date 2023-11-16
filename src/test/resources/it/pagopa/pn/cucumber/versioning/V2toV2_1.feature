@@ -1,13 +1,22 @@
 Feature: verifica compatibilità tra v2 a v2.1
 
-  @version
+  @version @mockPec
   Scenario: [B2B-PA-SEND_VERSION_16] Invio notifica V2.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario Mario Cucumber e:
       | digitalDomicile_address |   test@pecOk.it  |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V2
+
+  @version @realPec
+  Scenario: [B2B-PA-SEND_VERSION_16_UAT] Invio notifica V2.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | pectest@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V2
 
