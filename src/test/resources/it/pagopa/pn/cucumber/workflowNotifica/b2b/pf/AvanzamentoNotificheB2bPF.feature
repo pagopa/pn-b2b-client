@@ -149,7 +149,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
 
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_16] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -159,7 +159,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
 
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_17] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

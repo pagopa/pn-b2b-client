@@ -6,7 +6,7 @@ Feature: avanzamento b2b notifica analogico difgitale
 
     #Scenario di Test Fix Simone
  # 1	monodestinatario PF -> insuccesso e verifica nuovo WF (con controllo date perfezionamento per decorrenza termini)
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_1] Notifica mono destinatario con workflow digitale fallito - Destinatario PF
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -106,7 +106,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And la PA richiede il download dell'attestazione opponibile "COMPLETELY_UNREACHABLE"
 
  # 6	multidestinatario -> insuccesso e verifica nuovo WF (con controllo date perfezionamento per decorrenza termini) --> caso completed per tutti i destinatari
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_6] Notifica multi destinatario con workflow digitale fallito per tutti i destinatari
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -129,7 +129,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And esiste l'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 1
 
  # 7	multidestinatario -> insuccesso e verifica nuovo WF (con controllo date perfezionamento per decorrenza termini) --> caso completed per 1 dei due destinatari e verifica stato complessivo notifica
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_7] Notifica multi destinatario con workflow digitale fallito per un destinatario
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -172,7 +172,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_8_1] Notifica multi destinatario con workflow analogico con un destinatario irreperibile
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -197,7 +197,7 @@ Feature: avanzamento b2b notifica analogico difgitale
       #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
-  @workflowDigitale @mockPec
+  @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_8_2] Notifica multi destinatario con workflow analogico con un destinatario irreperibile
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
