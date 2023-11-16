@@ -292,7 +292,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And destinatario
       | denomination            | Test AR Fail 2              |
       | recipientType           | PG                          |
-      | taxId                   | 06328131211                 |
+      | taxId                   | 00749900049                 |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
