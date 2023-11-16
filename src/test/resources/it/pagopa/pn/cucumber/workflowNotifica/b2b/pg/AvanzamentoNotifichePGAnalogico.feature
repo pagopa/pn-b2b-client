@@ -284,7 +284,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     Then si attende la corretta sospensione dell'invio cartaceo
 
 
-  @irreperibile_7623_Test  @workflowAnalogico
+  @mockNR  @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_19] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D00 non trovato - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -292,7 +292,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And destinatario
       | denomination            | Test AR Fail 2              |
       | recipientType           | PG                          |
-      | taxId                   | 00749900049                 |
+      | taxId                   | 06328131211                 |
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR 16 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -300,7 +300,7 @@ Feature: avanzamento notifiche analogico persona giuridica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
 
-  @irreperibile_7623_Test @ignore @workflowAnalogico
+  @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_20] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D01 non valido - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -317,9 +317,7 @@ Feature: avanzamento notifiche analogico persona giuridica
 
 
 
-
-
-  @irreperibile_7623_Test @ignore @workflowAnalogico
+  @ignore @workflowAnalogico
   Scenario: [B2B_TIMELINE_PG_ANALOG_21] Attesa elemento di timeline PREPARE_ANALOG_DOMICILE_FAILURE con failureCode D02 coincidente - PG
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
