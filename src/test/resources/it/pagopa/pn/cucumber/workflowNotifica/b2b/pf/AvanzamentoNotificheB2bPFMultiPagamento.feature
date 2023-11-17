@@ -1930,6 +1930,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
+    And il download non ha prodotto errori
 
   @pagamentiMultipli @appIo
   Scenario: [B2B-PA-PAY_MULTI_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
@@ -1948,6 +1949,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
+    And il download non ha prodotto errori
+   # And la notifica può essere recuperata tramite AppIO
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_77] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)
@@ -3963,3 +3966,27 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_100_7] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi e credit e debit valorizzati sullo stesso record - scenario negativo).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | FLAT_RATE |
+      | paFee | 0 |
+    And destinatario
+      | denomination     | Ada Lovelace  |
+      | taxId | LVLDAA85T50G702B |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24flatRate               | NULL |
+      | payment_f24standard               | NULL |
+      #F24 completo a sezioni modalità Delivery - costi non inclusi--
+      | f24_delivery_standard_treasury_ae_err_flat            | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_TREASURY_AE_LVLDAA85T50G702B |
+      | apply_cost_f24 | NO |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED

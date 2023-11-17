@@ -300,6 +300,12 @@ public class DataTableTypeUtil {
                                         .title(getValue(data, TITLE_PAYMENT.key))
                                         .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                         .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_AE_FLAT.key))));
+                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT.key))));
                     }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_SOCIAL_FLAT.key), "SI")) {
                         addPaymentsItem.f24(
                                         new F24Payment()

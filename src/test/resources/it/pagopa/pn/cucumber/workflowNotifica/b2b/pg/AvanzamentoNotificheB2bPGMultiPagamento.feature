@@ -811,7 +811,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #45 Destinatario - download modello F24
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_45] Destinatario PG: inserimento notifica mono destinatario con solo F24 e costi inclusi - download allegato F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -832,7 +832,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 
 
   #46 Destinatario - download allegato pagoPA
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_46] Destinatario PG:inserimento notifica mono destinatario con solo pagoPA e costi inclusi - download allegato pagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1651,7 +1651,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
@@ -1662,21 +1662,21 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
     #viene fatta la stessa verifica sullo Sha256
-    Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
+    Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa"
 
 #TODO SOLO TM....
   #75 PA -  Visualizzazione Box Allegati Modelli F24
 
 
    #76 Destinatario -  Download PAGOPA/F24 con AppIO
-  @pagamentiMultipli @appIo
+  @pagamentiMultipli @appIo @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
@@ -1685,16 +1685,19 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "Mario Cucumber"
+    Then il documento di pagamento "PAGOPA" può essere recuperata tramite AppIO da "CucumberSpa"
+    And il download non ha prodotto errori
 
-  @pagamentiMultipli @appIo
+
+
+  @pagamentiMultipli @appIo @ignore
   Scenario: [B2B-PA-PAY_MULTI_PG_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | NULL   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
@@ -1703,7 +1706,8 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
+    Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "CucumberSpa"
+    And il download non ha prodotto errori
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_77] Destinatario PG: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)
@@ -1712,7 +1716,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | senderDenomination | comune di palermo            |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario Cucumber srl e:
+    And destinatario CucumberSpa e:
       | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | NULL |
@@ -1721,7 +1725,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
-    When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
+    When "CucumberSpa" tenta il recupero dell'allegato "PAGOPA"
     Then il download ha prodotto un errore con status code "404"
 
   @pagamentiMultipli

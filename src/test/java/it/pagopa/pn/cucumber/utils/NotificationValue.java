@@ -79,6 +79,7 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_REGION_FLAT("payment_f24standard_region_flat","classpath:/f24_flat_standard_region.json",false),
     PAYMENT_F24_STANDARD_TREASURY_FLAT("payment_f24standard_treasury_flat","classpath:/f24_flat_standard_treasury.json",false),
     PAYMENT_F24_STANDARD_TREASURY_AE_FLAT("f24_delivery_standard_treasury_ae_flat","classpath:/f24_flat_delivery_standard_treasury_ae.json",false),
+    PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT("f24_delivery_standard_treasury_ae_err_flat","classpath:/f24_flat_delivery_standard_treasury_ae_err.json",false),
     PAYMENT_F24_STANDARD_SOCIAL_FLAT("payment_f24standard_social_flat","classpath:/f24_flat_standard_social.json",false),
     PAYMENT_F24_SIMPLIFIED_FLAT("payment_f24_simplified_flat","classpath:/f24_flat_simplified.json",false),
 

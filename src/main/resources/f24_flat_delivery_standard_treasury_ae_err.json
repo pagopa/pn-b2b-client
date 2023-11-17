@@ -1,0 +1,62 @@
+{
+  "f24Standard": {
+    "taxPayer": {
+      "taxCode": "RSSMRA80A01F205X",
+      "isNotTaxYear": true,
+      "person": {
+        "personalData": {
+          "surname": "ROSSI",
+          "name": "MARIO",
+          "birthDate": "01-01-1980",
+          "sex": "M",
+          "birthPlace": "MILANO",
+          "birthProvince": "MI"
+        },
+        "taxAddress": {
+          "municipality": "MILANO",
+          "province": "MI",
+          "address": "VIA LARGA 21"
+        }
+      },
+      "id": "9W"
+    },
+    "treasury": {
+      "records": [
+        {
+          "applyCost": false,
+          "taxType": "3425",
+          "installment": "",
+          "year": "2021",
+          "debit": "3096",
+          "credit": "0"
+        },
+        {
+          "applyCost": false,
+          "taxType": "3427",
+          "installment": "",
+          "year": "2021",
+          "debit": "926",
+          "credit": "0"
+        },
+        {
+          "applyCost": false,
+          "taxType": "3426",
+          "installment": "",
+          "year": "2021",
+          "debit": "203",
+          "credit": "100"
+        },
+        {
+          "applyCost": false,
+          "taxType": "9400",
+          "installment": "",
+          "year": "2021",
+          "debit": "518",
+          "credit": "0"
+        }
+      ],
+      "office": "TAD",
+      "document": "99999999999"
+    }
+  }
+}
