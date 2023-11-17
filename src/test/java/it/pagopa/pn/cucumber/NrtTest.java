@@ -15,7 +15,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"ignore","uat","realPec","appIo"})
+@ExcludeTags({"ignore","uat","appIo"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli",
             "costoAnalogico","Async", "f24", "version","AOO_UO", "Annullamento",
             "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
