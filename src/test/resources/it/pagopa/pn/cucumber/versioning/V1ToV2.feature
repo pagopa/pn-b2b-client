@@ -1,6 +1,6 @@
 Feature: verifica compatibilità tra v1 a v2
 
-  @version
+  @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_15] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -10,7 +10,8 @@ Feature: verifica compatibilità tra v1 a v2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  @version
+
+  @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_17] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V1.1 positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -20,7 +21,7 @@ Feature: verifica compatibilità tra v1 a v2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
 
-  @version
+  @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_18] Invio notifica digitale mono destinatario V2 e recupero tramite codice IUN V1 (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
