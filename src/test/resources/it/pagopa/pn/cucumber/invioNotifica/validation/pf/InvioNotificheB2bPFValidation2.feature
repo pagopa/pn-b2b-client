@@ -91,7 +91,7 @@ Feature: Validazione campi invio notifiche b2b
       | via dà via è via ì via ò                     |
       | via dell'adige via sull’adige via sull`adige |
 
-
+  @validation
   Scenario Outline: [B2B-PA-SEND_VALID_11] invio notifiche digitali mono destinatario con parametri tax_id errati_scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
