@@ -210,12 +210,22 @@ public class SharedSteps {
         this.notificationRequest = notificationRequest;
     }
 
+    @Given("viene generata una nuova notifica V1")
+    public void vieneGenerataUnaNotificaV1(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1) {
+        this.notificationRequestV1 = notificationRequestV1;
+    }
+
+
 
     @And("destinatario")
     public void destinatario(@Transpose NotificationRecipient recipient) {
         this.notificationRequest.addRecipientsItem(recipient);
     }
 
+    @And("destinatario V1")
+    public void destinatario(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient recipient) {
+        this.notificationRequestV1.addRecipientsItem(recipient);
+    }
 
     @And("destinatario Mario Cucumber")
     public void destinatarioMarioCucumber() {
@@ -227,6 +237,19 @@ public class SharedSteps {
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())));
     }
+
+    @And("destinatario Mario Cucumber V1")
+    public void destinatarioMarioCucumberV1() {
+        this.notificationRequestV1.addRecipientsItem(
+                dataTableTypeUtil.convertNotificationRecipientV1(new HashMap<>())
+                        .denomination("Mario Cucumber")
+                        .taxId(marioCucumberTaxID)
+                        .digitalDomicile(new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress()
+                                .type(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress.TypeEnum.PEC)
+                                .address(getDigitalAddressValue())));
+    }
+
+
 
     @And("destinatario Mario Cucumber e:")
     public void destinatarioMarioCucumberParam(@Transpose NotificationRecipient recipient) {

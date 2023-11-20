@@ -82,6 +82,28 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1")
+    public void notificationCanBeRetrievedWithIUNV1() {
+        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+        try {
+            if(sharedSteps.getSentNotificationV1()!= null) {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotificationV1().getIun()))
+                );
+            }else if(sharedSteps.getSentNotification()!= null){
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV1(sharedSteps.getSentNotification().getIun()))
+                );
+            }else {
+                Assertions.assertNotNull(notificationByIun.get());
+            }
+
+            Assertions.assertNotNull(notificationByIun.get());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA")
     public void notificationCanBeRetrievedWithIUNWebPA() {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
