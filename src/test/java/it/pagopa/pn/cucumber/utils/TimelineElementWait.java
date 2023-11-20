@@ -5,11 +5,18 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 public class TimelineElementWait {
 
     private TimelineElementCategoryV20 timelineElementCategory;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory timelineElementCategoryV1;
     private Integer numCheck;
     private Integer waiting;
 
     public TimelineElementWait(TimelineElementCategoryV20 timelineElementCategory, Integer numCheck, Integer waiting) {
         this.timelineElementCategory = timelineElementCategory;
+        this.numCheck = numCheck;
+        this.waiting = waiting;
+    }
+
+    public TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory timelineElementCategoryV1, Integer numCheck, Integer waiting) {
+        this.timelineElementCategoryV1 = timelineElementCategoryV1;
         this.numCheck = numCheck;
         this.waiting = waiting;
     }
