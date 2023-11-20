@@ -554,6 +554,12 @@ public class PnPaB2bUtils {
                 .contentType("application/pdf")
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDocument newDocumentV1(String resourcePath ) {
+        return new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDocument()
+                .contentType("application/pdf")
+                .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
 
 
     public NotificationPaymentAttachment newAttachment(String resourcePath ) {
@@ -562,6 +568,11 @@ public class PnPaB2bUtils {
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationPaymentAttachment newAttachmentV1(String resourcePath ) {
+        return new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationPaymentAttachment()
+                .contentType("application/pdf")
+                .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentBodyRef().key( resourcePath ));
+    }
 
     private Integer getWorkFlowWait() {
         if(workFlowWait == null)return 31000;

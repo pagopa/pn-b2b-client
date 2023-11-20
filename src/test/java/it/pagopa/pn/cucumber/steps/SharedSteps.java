@@ -65,8 +65,11 @@ public class SharedSteps {
     private final PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey;
 
     private NewNotificationResponse newNotificationResponse;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private NewNotificationRequest notificationRequest;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
     private FullSentNotificationV20 notificationResponseComplete;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime notificationCreationDate;
     public static final String DEFAULT_PA = "Comune_1";
@@ -953,6 +956,10 @@ public class SharedSteps {
         return notificationResponseComplete;
     }
 
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1() {
+        return notificationResponseCompleteV1;
+    }
+
     public OffsetDateTime getNotificationCreationDate() {
         return notificationCreationDate;
     }
@@ -965,6 +972,10 @@ public class SharedSteps {
 
     public void setSentNotification(FullSentNotificationV20 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
+    }
+
+    public void setSentNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1) {
+        this.notificationResponseCompleteV1 = notificationResponseCompleteV1;
     }
 
     public void selectPA(String apiKey) {
