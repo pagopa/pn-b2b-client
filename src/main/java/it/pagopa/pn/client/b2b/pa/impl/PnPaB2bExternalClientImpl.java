@@ -26,8 +26,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final NewNotificationApi newNotificationApi;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.NewNotificationApi newNotificationApiV1;
     private final SenderReadB2BApi senderReadB2BApi;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi senderReadB2BApiV1;
     private final PaymentEventsApi paymentEventsApi;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.PaymentEventsApi paymentEventsApiV1;
     private final LegalFactsApi legalFactsApi;
     private final NotificationPriceApi notificationPriceApi;
     private final NotificationCancellationApi  notificationCancellationApi;
@@ -65,10 +68,13 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.newNotificationApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.NewNotificationApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.senderReadB2BApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.paymentEventsApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.notificationCancellationApi = new NotificationCancellationApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
 
         this.interopTokenSingleton = interopTokenSingleton;
@@ -134,16 +140,25 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     public void setApiKey(String apiKey){
         this.newNotificationApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
+        this.newNotificationApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.senderReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
+        this.senderReadB2BApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
         this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
         this.paymentEventsApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
+        this.paymentEventsApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.notificationCancellationApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,bearerTokenInterop,enableInterop));
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveSentNotificationDocument(iun, docidx);
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationDocumentV1(String iun, Integer docidx) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveSentNotificationDocument(iun, docidx);
     }
 
     public NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname) {
@@ -184,6 +199,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.sendNewNotification( newNotificationRequest );
     }
 
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
+        refreshTokenInteropClient();
+        return newNotificationApiV1.sendNewNotification( newNotificationRequest );
+    }
+
     @Override
     public FullSentNotificationV20 getSentNotification(String iun) {
         refreshTokenInteropClient();
@@ -191,9 +212,21 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveSentNotification( iun );
+    }
+
+    @Override
     public NewNotificationRequestStatusResponse getNotificationRequestStatus(String notificationRequestId) {
         refreshTokenInteropClient();
         return senderReadB2BApi.retrieveNotificationRequestStatus( notificationRequestId, null, null );
+    }
+
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveNotificationRequestStatus( notificationRequestId, null, null );
     }
 
     @Override
@@ -209,6 +242,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public void paymentEventsRequestPagoPaV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
+        refreshTokenInteropClient();
+        this.paymentEventsApiV1.paymentEventsRequestPagoPaWithHttpInfo(paymentEventsRequestPagoPa);
+    }
+
+    @Override
     public void paymentEventsRequestF24(PaymentEventsRequestF24 paymentEventsRequestF24) throws RestClientException {
         refreshTokenInteropClient();
         this.paymentEventsApi.paymentEventsRequestF24WithHttpInfo(paymentEventsRequestF24);
@@ -221,6 +260,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return status;
     }
 
+    @Override
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachmentV1(String iun, Integer recipientIdx, String attachmentName) {
+        refreshTokenInteropClient();
+        return senderReadB2BApiV1.retrieveSentNotificationAttachment(iun, recipientIdx, attachmentName);
+    }
 
 
 }

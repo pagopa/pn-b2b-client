@@ -545,7 +545,9 @@ public class PnPaB2bUtils {
         return client.getSentNotification( iun );
     }
 
-
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getNotificationByIunV1(String iun) {
+        return client.getSentNotificationV1( iun );
+    }
 
     public NotificationDocument newDocument(String resourcePath ) {
         return new NotificationDocument()
