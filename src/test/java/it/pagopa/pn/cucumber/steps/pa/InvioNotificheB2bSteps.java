@@ -264,6 +264,15 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string} con la V1")
+    public void retrievalAttemptedIUNConV1(String IUN) {
+        try {
+            b2bUtils.getNotificationByIunV1(IUN);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
     @When("viene richiesto il download del documento {string}")
     public void documentDownload(String type) {
         String downloadType;

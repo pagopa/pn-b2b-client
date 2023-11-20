@@ -143,6 +143,101 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
+    @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
+    public void readingEventUpToTheStatusOfNotificationV1(String status) {
+        Integer numCheck = 10;
+        Integer waiting = sharedSteps.getWorkFlowWait();
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus notificationInternalStatus;
+        switch (status) {
+            case "ACCEPTED":
+                numCheck = 2;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.ACCEPTED;
+                break;
+            case "DELIVERING":
+                numCheck = 2;
+                waiting = waiting * 4;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.DELIVERING;
+                break;
+            case "DELIVERED":
+                numCheck = 10;
+                waiting = waiting * 3;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.DELIVERED;
+                break;
+            case "CANCELLED":
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.CANCELLED;
+                break;
+            case "EFFECTIVE_DATE":
+                numCheck = 8;
+                waiting = waiting * 4;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.EFFECTIVE_DATE;
+                break;
+            case "COMPLETELY_UNREACHABLE":
+                numCheck = 8;
+                waiting = waiting * 4;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.UNREACHABLE;
+                break;
+            case "VIEWED":
+                numCheck = 4;
+                waiting = waiting * 4;
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.VIEWED;
+                break;
+            case "PAID":
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.PAID;
+                break;
+            case "IN_VALIDATION":
+                notificationInternalStatus = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatus.IN_VALIDATION;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement notificationStatusHistoryElementV1 = null;
+        NotificationStatusHistoryElement notificationStatusHistoryElement = null;
+
+        for (int i = 0; i < numCheck; i++) {
+
+            if (sharedSteps.getSentNotification()!= null){
+                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+                logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
+
+                notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+
+            } else if (sharedSteps.getSentNotificationV1()!= null) {
+                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV1().getIun()));
+
+                logger.info("NOTIFICATION_STATUS_HISTORY v1: " + sharedSteps.getSentNotificationV1().getNotificationStatusHistory());
+
+                notificationStatusHistoryElementV1 = sharedSteps.getSentNotificationV1().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+
+            }
+
+
+            if (notificationStatusHistoryElement != null || notificationStatusHistoryElementV1!=null) {
+                break;
+            }
+            try {
+                Thread.sleep(waiting);
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+        }
+        try {
+            if (notificationStatusHistoryElement != null){
+                Assertions.assertNotNull(notificationStatusHistoryElement);
+            }
+            if (notificationStatusHistoryElementV1 != null){
+                Assertions.assertNotNull(notificationStatusHistoryElementV1);
+            }
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+
+    }
+
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int destinatario, String evento) {
@@ -756,6 +851,35 @@ public class AvanzamentoNotificheB2bSteps {
         }
         try {
             Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+
+    @Then("vengono letti gli eventi della timeline e si controlla che non abbia lo stato {string} con la V1")
+    public void readingEventsOfTimelineElementOfNotificationV1(String timelineEventCategory) {
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
+        String iun = null;
+
+
+            if (sharedSteps.getSentNotification()!= null) {
+                iun = sharedSteps.getSentNotification().getIun();
+
+            } else if (sharedSteps.getSentNotificationV1()!= null) {
+                iun = sharedSteps.getSentNotificationV1().getIun();
+
+            }
+
+            sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(iun));
+            logger.info("NOTIFICATION_TIMELINE V1 : " + sharedSteps.getSentNotificationV1().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotificationV1().getTimeline().stream().filter(elem -> elem.getCategory().getValue().equals(timelineEventCategory)).findAny().orElse(null);
+
+        try {
+            Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }

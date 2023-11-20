@@ -493,6 +493,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED V1")
+    public void laNotificaVieneInviataOkV1(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromPropertiesV1();
+        sendNotificationV1();
+    }
+
     @And("la notifica può essere annullata dal sistema tramite codice IUN dal comune {string}")
     public void notificationCanBeCanceledWithIUNByComune(String paType) {
         selectPA(paType);
@@ -642,6 +649,38 @@ public class SharedSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationV1() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponseV1 = b2bUtils.uploadNotificationV1(notificationRequestV1);
+
+                try {
+                    Thread.sleep(getWorkFlowWait());
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseCompleteV1 = b2bUtils.waitForRequestAcceptationV1(newNotificationResponseV1);
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(notificationResponseCompleteV1);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV1 == null ? "NULL" : newNotificationResponseV1.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -923,6 +962,24 @@ public class SharedSteps {
 
     }
 
+    public void setSenderTaxIdFromPropertiesV1() {
+        switch (settedPa) {
+            case "Comune_1":
+                this.notificationRequestV1.setSenderTaxId(this.senderTaxId);
+                setGrupV1(SettableApiKey.ApiKeyType.MVP_1);
+                break;
+            case "Comune_2":
+                this.notificationRequestV1.setSenderTaxId(this.senderTaxIdTwo);
+                setGrupV1(SettableApiKey.ApiKeyType.MVP_2);
+                break;
+            case "Comune_Multi":
+                this.notificationRequestV1.setSenderTaxId(this.senderTaxIdGa);
+                setGrupV1(SettableApiKey.ApiKeyType.GA);
+                break;
+        }
+
+    }
+
     public String getSenderTaxIdFromProperties(String settedPa) {
         switch (settedPa) {
             case "Comune_1":
@@ -949,6 +1006,22 @@ public class SharedSteps {
             }
             if (id == null) return;
             this.notificationRequest.setGroup(id);
+        }
+    }
+
+    private void setGrupV1(SettableApiKey.ApiKeyType apiKeyType) {
+        if (groupToSet && this.notificationRequestV1.getGroup() == null) {
+            List<HashMap<String, String>> hashMapsList = pnExternalServiceClient.paGroupInfo(apiKeyType);
+            if (hashMapsList == null || hashMapsList.size() == 0) return;
+            String id = null;
+            for (HashMap<String, String> elem : hashMapsList) {
+                if (elem.get("status").equalsIgnoreCase("ACTIVE")) {
+                    id = elem.get("id");
+                    break;
+                }
+            }
+            if (id == null) return;
+            this.notificationRequestV1.setGroup(id);
         }
     }
 
