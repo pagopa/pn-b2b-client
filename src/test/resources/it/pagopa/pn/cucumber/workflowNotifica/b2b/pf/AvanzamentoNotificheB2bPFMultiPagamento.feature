@@ -2622,7 +2622,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@fail-Discovery_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -2646,7 +2646,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@fail-Discovery_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | SI |
       | payment_f24standard | NULL |
@@ -2671,7 +2671,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@fail-Discovery_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -2695,7 +2695,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@fail-Discovery_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
@@ -2720,7 +2720,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination | Cristoforo Colombo |
       | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR |
+      | physicalAddress_address | via@fail-Discovery_AR |
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
       | payment_f24standard | SI |
