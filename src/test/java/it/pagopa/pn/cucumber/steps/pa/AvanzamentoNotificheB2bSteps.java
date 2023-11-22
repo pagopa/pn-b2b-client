@@ -571,12 +571,12 @@ public class AvanzamentoNotificheB2bSteps {
         Integer waiting = sharedSteps.getWorkFlowWait();
         TimelineElementWait timelineElementWait;
         switch (timelineEventCategory) {
-
             case "DIGITAL_SUCCESS_WORKFLOW":
                 timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementCategoryV20.DIGITAL_SUCCESS_WORKFLOW, 3, waiting * 3);
                 break;
-
-
+            case "NOTIFICATION_CANCELLED":
+                timelineElementWait = new TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementCategoryV20.NOTIFICATION_CANCELLED, 5, waiting * 3);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -955,7 +955,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi della timeline e si controlla che non abbia lo stato {string} con la V1")
+    @Then("vengono letti gli eventi della timeline e si controlla che l'evento di timeline {string} non esista con la V1")
     public void readingEventsOfTimelineElementOfNotificationV1(String timelineEventCategory) {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
@@ -968,7 +968,9 @@ public class AvanzamentoNotificheB2bSteps {
         } else if (sharedSteps.getSentNotificationV1()!= null) {
             iun = sharedSteps.getSentNotificationV1().getIun();
 
-        }
+        } else if (sharedSteps.getSentNotificationV2()!= null) {
+        iun = sharedSteps.getSentNotificationV2().getIun();
+    }
 
         sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(iun));
         logger.info("NOTIFICATION_TIMELINE V1 : " + sharedSteps.getSentNotificationV1().getTimeline());
@@ -1573,9 +1575,9 @@ public class AvanzamentoNotificheB2bSteps {
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             }
-        }else {
+        }else if(sharedSteps.getSentNotificationV2()!= null) {
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
-            sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotification().getIun()));
+            sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV2().getIun()));
             for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement element : sharedSteps.getSentNotificationV1().getTimeline()) {
 
                 if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getDetails().getRecIndex().equals(destinatario)) {
@@ -1588,6 +1590,22 @@ public class AvanzamentoNotificheB2bSteps {
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             }
+
+        }else{
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
+                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotification().getIun()));
+                for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement element : sharedSteps.getSentNotificationV1().getTimeline()) {
+
+                    if (element.getCategory().equals(timelineElementWait.getTimelineElementCategory()) && element.getDetails().getRecIndex().equals(destinatario)) {
+                        timelineElement = element;
+                    }
+                }
+
+                try {
+                    Assertions.assertNull(timelineElement);
+                } catch (AssertionFailedError assertionFailedError) {
+                    sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                }
         }
 
 

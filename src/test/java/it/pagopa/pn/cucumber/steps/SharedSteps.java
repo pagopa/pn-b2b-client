@@ -810,6 +810,13 @@ public class SharedSteps {
         sendNotificationAndCancel();
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata V2")
+    public void laNotificaVieneInviataOkAndCancelledV2(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromPropertiesV2();
+        sendNotificationAndCancelV2();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataRefused(String paType) {
         selectPA(paType);
@@ -1039,6 +1046,21 @@ public class SharedSteps {
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
+
+            Assertions.assertNotNull(resp);
+            Assertions.assertNotNull(resp.getDetails());
+            Assertions.assertTrue(resp.getDetails().size()>0);
+            Assertions.assertTrue("NOTIFICATION_CANCELLATION_ACCEPTED".equalsIgnoreCase(resp.getDetails().get(0).getCode()));
+
+        });
+    }
+
+    private void sendNotificationAndCancelV2() {
+        sendNotificationV2();
+
+        Assertions.assertDoesNotThrow(() -> {
+            RequestStatus resp =  Assertions.assertDoesNotThrow(() ->
+                    b2bClient.notificationCancellation(notificationResponseCompleteV2.getIun()));
 
             Assertions.assertNotNull(resp);
             Assertions.assertNotNull(resp.getDetails());
