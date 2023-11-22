@@ -199,7 +199,6 @@ Feature: costo notifica con workflow analogico per multi destinatario
       | physicalAddress_zip          | ZONE_1     |
       | physicalAddress_province     | Paris      |
       | physicalAddress_address      | Via@ok_RIR |
-      | payment          | NULL       |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1

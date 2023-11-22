@@ -119,7 +119,6 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment                      | NULL           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "<COSTO>" della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"

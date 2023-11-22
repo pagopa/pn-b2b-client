@@ -16,7 +16,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment          | NULL           |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -40,7 +39,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment          | NULL           |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -64,7 +62,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_province     | Paris        |
       | digitalDomicile_address      | test@fail.it |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment         | NULL         |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -86,7 +83,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_zip          | ZONE_1       |
       | physicalAddress_province     | Paris        |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment         | NULL         |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -106,7 +102,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment         | NULL           |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -134,7 +129,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_municipality | <MUNICIPALITY> |
       | physicalAddress_province     | <PROVINCE>     |
       | physicalAddress_zip          | <CAP>          |
-      | payment         | NULL           |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -163,7 +157,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_zip          | ZONA_2         |
       | physicalAddress_province     | Santa Catarina |
       | physicalAddress_address      | Via@ok_RIS     |
-      | payment         | NULL           |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
@@ -205,7 +198,6 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
       | physicalAddress_zip          | ZONA_3       |
       | physicalAddress_province     | Tasmania     |
       | physicalAddress_address      | Via@ok_RIS   |
-      | payment          | NULL         |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
