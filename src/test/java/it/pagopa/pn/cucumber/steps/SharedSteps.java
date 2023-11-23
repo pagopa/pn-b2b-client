@@ -274,6 +274,12 @@ public class SharedSteps {
         this.notificationRequestV1.addRecipientsItem(recipient);
     }
 
+    @And("destinatario V2")
+    public void destinatario(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient recipient) {
+        this.notificationRequestV2.addRecipientsItem(recipient);
+    }
+
+
     @And("destinatario Mario Cucumber")
     public void destinatarioMarioCucumber() {
         addRecipientToNotification(this.notificationRequest,
