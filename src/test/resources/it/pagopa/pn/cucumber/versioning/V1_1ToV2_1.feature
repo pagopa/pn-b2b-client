@@ -232,7 +232,6 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-      | pagoPaIntMode | NULL |
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
@@ -246,7 +245,6 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-      | pagoPaIntMode | NULL |
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24flatRate | NULL |
