@@ -260,12 +260,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_LVLDAA85T50G702B |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
-      | payment_multy_number | 1 |
+      | payment_multy_number | 2 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And viene verificato il costo = "100" della notifica
 
-
+    
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_26_4] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 2) e nessun F24 con costi non inclusi
     Given viene generata una nuova notifica
