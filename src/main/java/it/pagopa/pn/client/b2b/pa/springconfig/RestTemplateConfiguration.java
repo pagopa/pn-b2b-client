@@ -28,9 +28,9 @@ public class RestTemplateConfiguration {
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-       requestFactory.setConnectTimeout(800_000);
-        requestFactory.setReadTimeout(800_000);
-        requestFactory.setConnectionRequestTimeout(800_000);
+        requestFactory.setConnectTimeout(990_000);
+        requestFactory.setReadTimeout(990_000);
+        requestFactory.setConnectionRequestTimeout(990_000);
         requestFactory.setBufferRequestBody(false);
         restTemplate.setRequestFactory(requestFactory);
 

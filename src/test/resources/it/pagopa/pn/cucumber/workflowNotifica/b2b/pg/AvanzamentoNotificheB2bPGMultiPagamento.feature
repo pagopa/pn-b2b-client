@@ -255,7 +255,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | title_payment | F24_STANDARD_27957814470 |
       | apply_cost_pagopa | SI |
       | apply_cost_f24 | SI |
-      | payment_multy_number | 2 |
+      | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 

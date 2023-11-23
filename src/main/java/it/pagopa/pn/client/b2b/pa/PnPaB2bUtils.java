@@ -7,6 +7,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.Notificatio
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -45,6 +46,7 @@ public class PnPaB2bUtils {
     @Value("${pn.configuration.workflow.wait.accepted.millis:91000}")
     private Integer workFlowAcceptedWait;
 
+    @Autowired
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
 
@@ -56,13 +58,10 @@ public class PnPaB2bUtils {
         this.ctx = ctx;
         this.client = client;
     }
-
-
-
+    
     public void setClient(IPnPaB2bClient client) {
         this.client = client;
     }
-
 
 
     public NewNotificationResponse uploadNotification( NewNotificationRequestV21 request) throws IOException {

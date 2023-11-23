@@ -370,6 +370,14 @@ public class SharedSteps {
                         .denomination("Mario Gherkin")
                         .taxId(marioGherkinTaxID));
     }
+    @And("destinatario Mario Gherkin V2 e:")
+    public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient recipient) {
+        this.notificationRequestV2.addRecipientsItem(
+                recipient
+                        .denomination("Mario Gherkin")
+                        .taxId(marioGherkinTaxID));
+    }
+
 
     @And("destinatario Mario Gherkin e:")
     public void destinatarioMarioGherkinParam(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient

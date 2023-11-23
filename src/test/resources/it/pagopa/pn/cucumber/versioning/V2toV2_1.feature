@@ -35,3 +35,47 @@ Feature: verifica compatibilità tra v2 a v2.1
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+
+   @version @ignore
+  Scenario: [B2B-PA-SEND_VERSION_20] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2 a V2.1 senza pagoPaIntMode PN-8843
+    Given viene generata una nuova notifica V2
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | pagoPaIntMode | NULL |
+    And destinatario Mario Gherkin V2 e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    Then si verifica la corretta acquisizione della notifica V2
+
+
+  @version @ignore
+  Scenario: [B2B-PA-SEND_VERSION_21] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V2.1 e recupero con V2.0 senza payment_pagoPaForm PN-8842
+    Given viene generata una nuova notifica V2
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | pagoPaIntMode | NULL |
+    And destinatario Mario Gherkin V2 e:
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+  @version @ignore
+  Scenario: [B2B-PA-SEND_VERSION_22] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V2.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842
+    Given viene generata una nuova notifica V2
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | pagoPaIntMode | NULL |
+    And destinatario Mario Gherkin V2 e:
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
