@@ -92,7 +92,7 @@ Feature: Allegati notifica
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+    And viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
@@ -101,7 +101,7 @@ Feature: Allegati notifica
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
+    Then viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
@@ -127,7 +127,7 @@ Feature: Allegati notifica
       | loadTimeline | true |
       | details | NOT_NULL |
       | details_recIndex | 0 |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
+    And viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
     Then la notifica può essere correttamente recuperata da "Mario Cucumber"
@@ -136,7 +136,7 @@ Feature: Allegati notifica
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
-    Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
+    Then viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
@@ -157,7 +157,7 @@ Feature: Allegati notifica
       | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
+    And viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "REQUEST_ACCEPTED"
       | NULL | NULL |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
@@ -165,6 +165,6 @@ Feature: Allegati notifica
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | legalFactsIds | [{"category": "RECIPIENT_ACCESS"}] |
-    And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
+    And viene effettuato un controllo sulla durata dei giorni della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
       | details | NOT_NULL |
       | details_recIndex | 0 |
