@@ -46,12 +46,13 @@ public class PnPaB2bUtils {
     @Value("${pn.configuration.workflow.wait.accepted.millis:91000}")
     private Integer workFlowAcceptedWait;
 
+
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
 
     private IPnPaB2bClient client;
 
-
+    @Autowired
     public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.ctx = ctx;
