@@ -118,4 +118,31 @@ Feature: verifica compatibilità tra v1 a v2
     And "Mario Cucumber" legge la notifica ricevuta "V1"
     Then l'operazione ha prodotto un errore con status code "403"
 
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_11] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V2 senza payment_pagoPaForm PN-8842
+    Given viene generata una nuova notifica V1
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Gherkin V1 e:
+      | payment_pagoPaForm | NULL |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_12] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 senza pagoPaIntMode PN-8843
+    Given viene generata una nuova notifica V2
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+      | pagoPaIntMode | NULL |
+    And destinatario Mario Gherkin V2 e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    Then vengono verificati costo = "100" e data di perfezionamento della notifica "V2"
+
 

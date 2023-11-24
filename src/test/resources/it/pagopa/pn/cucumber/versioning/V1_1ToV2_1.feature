@@ -211,7 +211,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And si attende il corretto pagamento della notifica V1
 
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_17] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 senza pagoPaIntMode PN-8843
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
@@ -226,7 +226,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V1"
 
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_18] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V1.1 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
@@ -239,7 +239,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_19] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
