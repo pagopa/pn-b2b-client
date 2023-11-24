@@ -196,7 +196,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
 
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V21_16] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.1 a V1.1
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_16] Invio e pagamento notifica da  V2.1 a V1.1
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -212,7 +212,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
 
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V21_17] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 senza pagoPaIntMode PN-8843
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_17] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 senza pagoPaIntMode PN-8843
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -227,7 +227,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
 
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V21_18] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V1.1 senza payment_pagoPaForm PN-8842
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_18] Invio notifica e recupero con V1.1 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -240,7 +240,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V21_19] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_19] Invio notifica V1.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

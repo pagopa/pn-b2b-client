@@ -34,7 +34,7 @@ Feature: verifica compatibilità tra v1 a v2
 
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_4] Recupero notifica V1 non esistente su Send V2.0
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_4] Recupero notifica non esistente su Send V2.0 e V1
     When si tenta il recupero della notifica dal sistema tramite codice IUN "UGYD-XHEZ-KLRM-202208-X-0" con la V2
     Then l'operazione ha prodotto un errore con status code "404"
     And si tenta il recupero della notifica dal sistema tramite codice IUN "UGYD-XHEZ-KLRM-202208-X-0" con la V1
@@ -78,7 +78,7 @@ Feature: verifica compatibilità tra v1 a v2
     And si attende il corretto pagamento della notifica V1
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_8] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V1.1
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_8] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.0
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -94,7 +94,7 @@ Feature: verifica compatibilità tra v1 a v2
 
    #Da chiedere se è corretto che sia voluto che restituisca un 403
   @version @ignore
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_9]  Invio notifica digitale mono destinatario e mono pagamento V2.0 e recupero visualizzazione notifica e verifica amount e effectiveDate V2.0
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_9]  Invio notifica digitale mono destinatario e mono pagamento V2.0 e fallimento visualizzazione notifica
     Given viene generata una nuova notifica V2
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -107,7 +107,7 @@ Feature: verifica compatibilità tra v1 a v2
 
     #Da chiedere se è corretto che sia voluto che restituisca un 403
   @version @ignore
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_10]  Invio notifica digitale mono destinatario e mono pagamento V1.1 e recupero visualizzazione notifica e verifica amount e effectiveDate V1.1
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_10]  Invio notifica digitale mono destinatario e mono pagamento V1.1 e fallimento visualizzazione notifica
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -119,7 +119,7 @@ Feature: verifica compatibilità tra v1 a v2
     Then l'operazione ha prodotto un errore con status code "403"
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_11] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V2 senza payment_pagoPaForm PN-8842
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_11] Invio notifica da V1.1 e recupero con V2 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
