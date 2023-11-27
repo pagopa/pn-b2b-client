@@ -219,9 +219,10 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | feePolicy | DELIVERY_MODE |
       | pagoPaIntMode | NULL |
     And destinatario Mario Gherkin V1 e:
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm         | SI   |
+      | payment_noticeCodeOptional | NULL |
+      | payment_f24flatRate        | NULL |
+      | payment_f24standard        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V1"
 
