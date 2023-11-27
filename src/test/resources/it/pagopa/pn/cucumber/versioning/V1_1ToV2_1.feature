@@ -220,7 +220,6 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | pagoPaIntMode | NULL |
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm         | SI   |
-      | payment_noticeCodeOptional | NULL |
       | payment_f24flatRate        | NULL |
       | payment_f24standard        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
