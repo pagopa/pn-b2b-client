@@ -1949,4 +1949,16 @@ public class SharedSteps {
         }
     }
 
+    public String getIunVersionamento(){
+        if (getSentNotificationV1()!= null) {
+            return getSentNotificationV1().getIun();
+        }else if (getSentNotificationV2()!= null){
+            return getSentNotificationV2().getIun();
+        }else if (getSentNotification()!= null) {
+            return getSentNotification().getIun();
+        }else {
+            return null;
+        }
+    }
+
 }
