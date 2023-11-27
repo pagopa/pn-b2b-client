@@ -2199,7 +2199,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void userReadReceivedNotification(String recipient) {
         sharedSteps.selectUser(recipient);
 
-        String iun =getIunVersionamento();
+        String iun =sharedSteps.getIunVersionamento();
 
             Assertions.assertDoesNotThrow(() -> {
                 webRecipientClient.getReceivedNotification(iun, null);
@@ -2216,7 +2216,7 @@ public class AvanzamentoNotificheB2bSteps {
     public void userReadReceivedNotificationVersioning(String recipient,String versione) {
         sharedSteps.selectUser(recipient);
 
-        String iun = getIunVersionamento();
+        String iun = sharedSteps.getIunVersionamento();
 
         try {
         if (versione.equalsIgnoreCase("V1")) {
@@ -2834,7 +2834,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si attende il corretto pagamento della notifica V1")
     public void siAttendeIlCorrettoPagamentoDellaNotificaV1() {
 
-        String iun =getIunVersionamento();
+        String iun =sharedSteps.getIunVersionamento();
 
             TimelineElementWait timelineElementWait = getTimelineElementCategoryV1("PAYMENT");
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement timelineElement = null;
@@ -2862,7 +2862,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si attende il corretto pagamento della notifica V2")
     public void siAttendeIlCorrettoPagamentoDellaNotificaV2() {
 
-        String iun =getIunVersionamento();
+        String iun =sharedSteps.getIunVersionamento();
 
         TimelineElementWait timelineElementWait = getTimelineElementCategoryV2("PAYMENT");
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementV20 timelineElement = null;
@@ -3770,19 +3770,6 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertTrue(timelineElement.getDetails().getNotRefinedRecipientIndexes().size()>0);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
-
-
-    private String getIunVersionamento(){
-        if (sharedSteps.getSentNotificationV1()!= null) {
-            return sharedSteps.getSentNotificationV1().getIun();
-        }else if (sharedSteps.getSentNotificationV2()!= null){
-            return sharedSteps.getSentNotificationV2().getIun();
-        }else if (sharedSteps.getSentNotification()!= null) {
-            return sharedSteps.getSentNotification().getIun();
-        }else {
-            return null;
         }
     }
 
