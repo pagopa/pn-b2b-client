@@ -192,7 +192,8 @@ public class DataTableTypeUtil {
                                             .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                             .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
                                             .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
-                                            .attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
+                                            .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
+                                            //.attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
 
                     if(Objects.equals(getValue(data, PAYMENT_F24_STANDARD.key), "SI")) {
                         addPaymentsItem.f24(
@@ -214,6 +215,31 @@ public class DataTableTypeUtil {
                                                 .title(getValue(data, TITLE_PAYMENT.key))
                                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED.key))));
+                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_1.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_1.key))));
+                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR1.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR1.key))));
+                    }
+                    else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR2.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR2.key))));
+                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR3.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR3.key))));
                     }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS.key), "SI")) {
                         addPaymentsItem.f24(
                                         new F24Payment()

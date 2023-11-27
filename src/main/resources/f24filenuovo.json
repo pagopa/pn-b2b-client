@@ -1,0 +1,30 @@
+{
+   "f24Simplified":{
+      "taxPayer":{
+         "taxCode":"RSSMRA80A01F205X",
+         "personalData":{
+            "surname":"ROSSI",
+            "name":"MARIO",
+            "birthDate":"01-01-1980",
+            "sex":"M",
+            "birthPlace":"MILANO",
+            "birthProvince":"MI"
+         },
+         "relativePersonTaxCode":"AVRGAL12E02E311V",
+         "id": "9W"
+      },
+      "payments":{
+         "records":[
+            {
+               "applyCost":true,
+               "municipality":"L424",
+               "section":"EL",
+               "taxType":"3944",
+               "year":"2023",
+               "debit":"12000",
+               "reconsideration":false
+            }
+         ]
+      }
+   }
+}

@@ -1,0 +1,39 @@
+{
+   "f24Simplified": {
+      "taxPayer": {
+         "taxCode": "WCCLXTLVEQRD1LUQ",
+         "personalData": {
+            "surname": "dPl>p",
+            "name": "VCT",
+            "birthDate": "66-42-8051",
+            "sex": "F",
+            "birthPlace": "\"$CzA3",
+            "birthProvince": "LI"
+         },
+         "relativePersonTaxCode": "LWFFKYL6CN5OP81U",
+         "id": "Z0",
+         "document": "81541484035",
+         "office": "C78"
+      },
+      "payments": {
+         "operationId": "OMR1Z56WXNBATC85B8",
+         "records": [
+            {
+               "applyCost": true,
+               "section": "ER",
+               "municipality": "3G98",
+               "taxType": "XD95",
+               "reconsideration": true,
+               "propertiesChanges": false,
+               "advancePayment": false,
+               "fullPayment": true,
+               "numberOfProperties": "026",
+               "installment": "6666",
+               "year": "2046",
+               "debit": 0,
+               "credit": 0
+            }
+         ]
+      }
+   }
+}

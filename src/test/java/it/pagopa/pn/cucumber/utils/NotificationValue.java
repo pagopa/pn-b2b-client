@@ -72,7 +72,12 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_TREASURY("payment_f24standard_treasury","classpath:/f24_delivery_standard_treasury.json",false),
     PAYMENT_F24_STANDARD_TREASURY_AE("f24_delivery_standard_treasury_ae","classpath:/f24_delivery_standard_treasury_ae.json",false),
     PAYMENT_F24_STANDARD_SOCIAL("payment_f24standard_social","classpath:/f24_delivery_standard_social.json",false),
-    PAYMENT_F24_SIMPLIFIED("payment_f24_simplified","classpath:/f24_delivery_simplified.json",false),
+    PAYMENT_F24_SIMPLIFIED("payment_f24_simplified","classpath:/test03.json",false),
+    PAYMENT_F24_SIMPLIFIED_1("payment_f24_simplified_1","classpath:/f24filenuovo.json",false),
+    PAYMENT_F24_SIMPLIFIED_ERR1("payment_f24_simplified_err1","classpath:/test01.json",false),
+    PAYMENT_F24_SIMPLIFIED_ERR2("payment_f24_simplified_err2","classpath:/test02.json",false),
+    PAYMENT_F24_SIMPLIFIED_ERR3("payment_f24_simplified_err3","classpath:/test03.json",false),
+
 
     PAYMENT_F24_STANDARD_INPS_FLAT("payment_f24standard_inps_flat","classpath:/f24_flat_standard_inps.json",false),
     PAYMENT_F24_STANDARD_LOCAL_FLAT("payment_f24standard_local_flat","classpath:/f24_flat_standard_local.json",false),
