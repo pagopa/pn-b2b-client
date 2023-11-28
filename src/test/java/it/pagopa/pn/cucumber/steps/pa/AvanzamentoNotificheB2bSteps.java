@@ -2060,6 +2060,17 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("vengono verificati costo = {string} e data di perfezionamento della notifica V2")
+    public void notificationPriceAndDateVerificationV2(String price) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 2);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+
+        priceVerificationV2(price, null, 0);
+    }
+
 
     @Then("viene verificato il costo = {string} della notifica")
     public void notificationPriceVerification(String price) {
@@ -2144,7 +2155,10 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+
+
     }
+
 
     private void priceVerificationV2(String price, String date, Integer destinatario) {
         NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotificationV2().getRecipients().get(destinatario).getPayment().getCreditorTaxId(),

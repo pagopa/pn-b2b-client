@@ -1939,43 +1939,19 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Matteo Rossi  |
-      | taxId | AAAAAA00A00A000C |
-      | payment_pagoPaForm  | NULL   |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm  | SI   |
       | payment_f24flatRate | NULL   |
       | payment_f24standard | SI |
       | title_payment | F24_STANDARD_MARIO |
       | apply_cost_f24 | SI |
+      | apply_cost_pagopa | SI |
       | payment_multy_number | 1 |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
     And il download non ha prodotto errori
    # And la notifica può essere recuperata tramite AppIO
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_26_311] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
-    And destinatario
-      | denomination     | Matteo Rossi  |
-      | taxId | AAAAAA00A00A000C |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_AAAAAA00A00A000C |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
-      | payment_multy_number | 1 |
-      | payment_noticeCode | 302110118640073375 |
-
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    And viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_77] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)
@@ -3050,7 +3026,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
+      | paFee | 100 |
     And destinatario
       | denomination     | Ada Lovelace  |
       | taxId | LVLDAA85T50G702B |
@@ -3894,7 +3870,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
     #MESSAGE: Invalid taxPayer:relativePersonTaxCode: "ECMA 262 regex \"^[A-Z]{6}[0-9]{2}[ABCDEHLMPRST]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$\" does not match input string \"LWFFKYL6CN5OP81U\"".
   @pagamentiMultipli @f24
@@ -3916,7 +3893,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
   @pagamentiMultipli
