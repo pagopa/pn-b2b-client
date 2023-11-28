@@ -429,7 +429,7 @@ public class DataTableTypeUtil {
                 .payment(getValue(data,PAYMENT.key)== null? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationPaymentInfo()
                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
+                                .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI")? getDefaultValue(PAYMENT_NOTICE_CODE_OPTIONAL.key) : null)
 
                                 .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
                                         null : utils.newAttachmentV1(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))
@@ -488,7 +488,7 @@ public class DataTableTypeUtil {
                 .payment(getValue(data,PAYMENT.key)== null? null : new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPaymentInfo()
                                 .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                 .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                //.noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key))
+                                .noticeCodeAlternative(getValue(data, PAYMENT_NOTICE_CODE_OPTIONAL.key).equalsIgnoreCase("SI")? getDefaultValue(PAYMENT_NOTICE_CODE_OPTIONAL.key) : null)
 
                                 .pagoPaForm(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ?
                                         null : utils.newAttachmentV2(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))

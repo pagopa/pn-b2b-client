@@ -465,13 +465,13 @@ public class InvioNotificheB2bSteps {
         }
         try{
             this.downloadResponse = b2bClient
-                    .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+                    .getSentNotificationAttachment(sharedSteps.getIunVersionamento(), 0, downloadType,0);
 
             if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
                 try {
                     Thread.sleep(downloadResponse.getRetryAfter()*3);
                     this.downloadResponse = b2bClient
-                            .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), 0, downloadType,0);
+                            .getSentNotificationAttachment(sharedSteps.getIunVersionamento(), 0, downloadType,0);
 
                 } catch (InterruptedException exc) {
                     throw new RuntimeException(exc);
@@ -1347,4 +1347,46 @@ public class InvioNotificheB2bSteps {
 
         }
     }
+
+
+    @And("la notifica a 2 avvisi di pagamento con OpenApi V1")
+    public void notificationCanBeRetrievePaymentV1() {
+        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+
+        String iun =sharedSteps.getIunVersionamento();
+
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(b2bUtils.getNotificationByIunV1(iun))
+            );
+
+            Assertions.assertNotNull(notificationByIun.get());
+            Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode());
+            Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCodeAlternative());
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @And("la notifica a 2 avvisi di pagamento con OpenApi V2")
+    public void notificationCanBeRetrievePaymentV2() {
+        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20> notificationByIun = new AtomicReference<>();
+
+        String iun =sharedSteps.getIunVersionamento();
+
+        try {
+                Assertions.assertDoesNotThrow(() ->
+                        notificationByIun.set(b2bUtils.getNotificationByIunV2(iun))
+                );
+
+            Assertions.assertNotNull(notificationByIun.get());
+            Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode());
+            Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCodeAlternative());
+
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 }

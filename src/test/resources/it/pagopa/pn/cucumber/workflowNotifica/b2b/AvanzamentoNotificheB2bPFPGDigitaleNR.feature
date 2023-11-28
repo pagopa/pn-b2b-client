@@ -24,7 +24,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination | Test digitale ok |
-      | taxId | CRBFNC95E66G337I  |
+      | taxId | TRVVCN73H02L259I  |
       | digitalDomicile         | NULL      |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry

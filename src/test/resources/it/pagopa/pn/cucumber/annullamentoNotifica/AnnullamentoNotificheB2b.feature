@@ -1047,7 +1047,7 @@ Feature: annullamento notifiche b2b
     When la notifica non può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     Then l'operazione di annullamento ha prodotto un errore con status code "404"
 
-  @Annullamento  @ignore
+  @Annullamento
   Scenario: [B2B-PA-ANNULLAMENTO_39] Generazione con gruppo e invio notifica con gruppo e cancellazione notifica con gruppo diverso ApiKey_scenario netagivo
     Given Viene creata una nuova apiKey per il comune "Comune_1" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata

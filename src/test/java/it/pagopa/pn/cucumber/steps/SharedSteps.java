@@ -274,6 +274,12 @@ public class SharedSteps {
         this.notificationRequestV1.addRecipientsItem(recipient);
     }
 
+    @And("destinatario V2")
+    public void destinatario(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient recipient) {
+        this.notificationRequestV2.addRecipientsItem(recipient);
+    }
+
+
     @And("destinatario Mario Cucumber")
     public void destinatarioMarioCucumber() {
         addRecipientToNotification(this.notificationRequest,
@@ -1940,6 +1946,18 @@ public class SharedSteps {
             if(recipient.getDenomination().equalsIgnoreCase(denominazione)){
                 recipient.getPayments().get(pagamento).getPagoPa().setNoticeCode(getIuvGPD(posizioneDebitoria));
             }
+        }
+    }
+
+    public String getIunVersionamento(){
+        if (getSentNotificationV1()!= null) {
+            return getSentNotificationV1().getIun();
+        }else if (getSentNotificationV2()!= null){
+            return getSentNotificationV2().getIun();
+        }else if (getSentNotification()!= null) {
+            return getSentNotification().getIun();
+        }else {
+            return null;
         }
     }
 

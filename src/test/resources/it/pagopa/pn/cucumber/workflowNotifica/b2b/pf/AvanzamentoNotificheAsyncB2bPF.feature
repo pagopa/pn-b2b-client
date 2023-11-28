@@ -337,14 +337,14 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                     |
-      | physicalAddress_address | via@FAIL-Irreperibile_AR_SLOW |
-      | payment_creditorTaxId   | 77777777777              |
-      | payment_pagoPaForm      | SI                       |
-      | payment_f24flatRate     | NULL                     |
-      | payment_f24standard     | NULL                     |
-      | apply_cost_pagopa       | SI                       |
-      | payment_multy_number    | 1                        |
+      | digitalDomicile         | NULL                  |
+      | physicalAddress_address | via@fail-Discovery_AR |
+      | payment_creditorTaxId   | 77777777777           |
+      | payment_pagoPaForm      | SI                    |
+      | payment_f24flatRate     | NULL                  |
+      | payment_f24standard     | NULL                  |
+      | apply_cost_pagopa       | SI                    |
+      | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale

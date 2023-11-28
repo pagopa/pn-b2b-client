@@ -41,6 +41,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final NotificationCancellationApi  notificationCancellationApi;
     private final PaymentEventsApi paymentEventsApi;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.PaymentEventsApi paymentEventsApiV1;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.PaymentEventsApi paymentEventsApiV2;
     private final String basePath;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
@@ -93,6 +94,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this. notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v1.PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.paymentEventsApiV2 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.notificationCancellationApi = new NotificationCancellationApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
 
         this.interopTokenSingleton = interopTokenSingleton;
@@ -114,6 +116,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
             this.notificationProcessCostApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.paymentEventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.paymentEventsApiV1.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+            this.paymentEventsApiV2.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
             this.notificationCancellationApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
         }
     }
@@ -343,6 +346,12 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     public void paymentEventsRequestPagoPaV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
         refreshTokenInteropClient();
         this.paymentEventsApiV1.paymentEventsRequestPagoPaWithHttpInfo(paymentEventsRequestPagoPa);
+    }
+
+    @Override
+    public void paymentEventsRequestPagoPaV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException {
+        refreshTokenInteropClient();
+        this.paymentEventsApiV2.paymentEventsRequestPagoPaWithHttpInfo(paymentEventsRequestPagoPa);
     }
 
     @Override
