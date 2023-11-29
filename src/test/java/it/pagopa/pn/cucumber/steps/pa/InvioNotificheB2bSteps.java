@@ -369,22 +369,6 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    //Viene scritto questo frase per l'esigenza di effettuare il controllo della retention sui giorni e non anche sui minuti per gli scenari legati al big PN-8120
-    @And("viene effettuato un controllo sulla durata dei giorni della retention di {string} per l'elemento di timeline {string}")
-    public void retentionCheckLoadDayForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-        switch (documentType) {
-            case "ATTACHMENTS":
-                for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
-                    String key = sharedSteps.getSentNotification().getDocuments().get(i).getRef().getKey();
-                    Assertions.assertTrue(checkRetetion(key, retentionTimeLoad));
-                }
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-    }
-
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
         TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
