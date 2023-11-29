@@ -150,7 +150,7 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Ilaria-D'Amico/.@_            | l'azienda-@_ /C.R.L |
 
 
-  @validation
+  @validation @uat
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_8] Invio notifica digitale mono destinatario con physicalAddress_province corretto scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
