@@ -158,7 +158,7 @@ Feature: Radd fsu
     And viene conclusa la visualizzati di atti ed attestazioni della notifica
     And vengono caricati i documento di identità del cittadino
     When Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR utilizzando il precedente operationId
-    Then l'operazione di download degli atti genera un errore "transazione già esistente o con stato completed o aborted" con codice 99
+    Then l'operazione di download degli atti genera un errore "stampa già eseguita" con codice 99
 
   @radd
   Scenario: [B2B_RADD_ACT-11] start transaction utilizzando il qr code di una transazione precedente con lo stesso IUN
