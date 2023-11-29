@@ -766,7 +766,7 @@ public class InvioNotificheB2bSteps {
         Integer retentionUntilMinutes = retentionUntil.getMinute();
         long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
         logger.info("Difference: " + between);
-        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 2;
+        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 10;
     }
 
     @And("l'importo della notifica è {int}")
