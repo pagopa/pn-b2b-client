@@ -1,12 +1,12 @@
 {
    "f24Simplified": {
       "taxPayer": {
-         "taxCode": "WCCLXTLVEQRD1LUQ",
-         "personalData": {
-            "surname": "dPl>p",
-            "name": "VCT",
-            "birthDate": "66-42-8051",
-            "sex": "F",
+         "taxCode":"RSSMRA80A01F205X",
+         "personalData":{
+            "surname":"ROSSI",
+            "name":"MARIO",
+            "birthDate":"01-01-1980",
+            "sex":"M",
             "birthPlace": "\"$CzA3",
             "birthProvince": "LI"
          },
@@ -21,7 +21,7 @@
             {
                "applyCost": true,
                "section": "ER",
-               "municipality": "3333",
+               "municipality": "3F33",
                "taxType": "XD95",
                "reconsideration": true,
                "propertiesChanges": false,

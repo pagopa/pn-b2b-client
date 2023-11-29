@@ -1,0 +1,125 @@
+{
+	"f24Standard": {
+		"taxPayer": {
+			"taxCode": "RSSMRA80A01F205X",
+			"isNotTaxYear": true,
+			"person": {
+				"personalData": {
+					"surname": "ROSSI",
+					"name": "MARIO",
+					"birthDate": "01-01-1980",
+					"sex": "M",
+					"birthPlace": "MILANO",
+					"birthProvince": "MI"
+				},
+				"taxAddress": {
+					"municipality": "MILANO",
+					"province": "MI",
+					"address": "VIA LARGA 21"
+				}
+			},
+			"relativePersonTaxCode": "TDITLC46H54C619Q",
+			"id": "9W"
+		},
+		"treasury": {
+			"records": [
+				{
+					"applyCost": true,
+					"taxType": "B9AD33",
+					"installment": "88MP5",
+					"year": "26123",
+					"debit": 73094,
+					"credit": 0
+				},
+				{
+					"applyCost": false,
+					"taxType": "B9AD22",
+					"installment": "88MP",
+					"year": "26173",
+					"debit": 73094,
+					"credit": 0
+				}
+			],
+			"office": "FRH22",
+			"document": "2954284864477"
+		},
+		"inps": {
+			"records": [
+				{
+					"applyCost": false,
+					"office": "567000",
+					"reason": "HHWWW",
+					"inps": "32W95Mf2222222222222",
+					"period": {
+						"startDate": "22403120",
+						"endDate": "222084198"
+					},
+					"debit": 840,
+					"credit": 0
+				}
+			]
+		},
+		"region": {
+			"records": [
+				{
+					"applyCost": false,
+					"region": "6011",
+					"taxType": "ZEMORR",
+					"installment": "A",
+					"year": "23062",
+					"debit": 901492,
+					"credit": 0
+				}
+			]
+		},
+		"localTax": {
+			"operationId": "A0VU5WBKUUJPCBE8AKWWW",
+			"records": [
+				{
+					"applyCost": false,
+					"municipality": "99YZ33EEEWW",
+					"reconsideration": true,
+					"propertiesChanges": true,
+					"advancePayment": true,
+					"fullPayment": true,
+					"numberOfProperties": "43322222",
+					"taxType": "0943222444",
+					"installment": "43CV22ZZZZZ",
+					"year": "24342333",
+					"debit": 6002916,
+					"credit": 0
+				}
+			],
+			"deduction": "9709187722222222444"
+		},
+		"socialSecurity": {
+			"records": [
+				{
+					"applyCost": false,
+					"office": "69605333",
+					"company": "47858729777",
+					"control": "543344",
+					"refNumber": "7922449999",
+					"reason": "BAA",
+					"debit": 600,
+					"credit": 0
+				}
+			],
+			"socSecRecords": [
+				{
+					"applyCost": false,
+					"institution": "1234555",
+					"office": "B6COPRR",
+					"reason": "G1D222",
+					"position": "69385096122222",
+					"period": {
+						"startDate": "150401",
+						"endDate": "671726"
+					},
+					"debit": "360",
+					"credit": "0"
+				}
+			]
+		}
+	}
+}

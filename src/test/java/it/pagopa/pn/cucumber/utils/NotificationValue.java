@@ -62,6 +62,17 @@ public enum NotificationValue {
 
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_FORMAT("payment_f24standard_no_valid_format","classpath:/METADATA_CORRETTO_NO_VALID_FORMAT.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_LENGH("payment_f24standard_no_valid_lengh","classpath:/METADATA_CORRETTO_NO_VALID_LENGH.json",false),
+    PAYMENT_F24_STANDARD_VALID_ANAG("payment_f24standard_valid_anag","classpath:/METADATA_CORRETTO_VALID_103.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG("payment_f24standard_no_valid_anag","classpath:/METADATA_CORRETTO_VALID_104.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_1("payment_f24standard_no_valid_anag_1","classpath:/METADATA_CORRETTO_VALID_105.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_2("payment_f24standard_no_valid_anag_2","classpath:/METADATA_CORRETTO_VALID_106.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_3("payment_f24standard_no_valid_anag_3","classpath:/METADATA_CORRETTO_VALID_107.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_4("payment_f24standard_no_valid_anag_4","classpath:/METADATA_CORRETTO_VALID_108.json",false),
+
+
+
 
     PAYMENT_F24_STANDARD_INPS("payment_f24standard_inps","classpath:/f24_delivery_standard_inps.json",false),
     PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT("payment_f24standard_inps_debit_credit","classpath:/f24_delivery_standard_inps_debit_credit.json",false),

@@ -3804,93 +3804,79 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-
-  #ID code can`t be empty if the tax code is present
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_8] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-ID code can`t be empty if the tax code is present.
+  Scenario: [B2B-PA-PAY_MULTI_100_8] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-ID code empty if the tax code is present.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm | NULL |
       | apply_cost_pagopa | NULL |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified_1            | SI |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-    #MESSAGE: Invalid paymentReasonSection:reasonRecordList:0:month: "ECMA 262 regex \"^[0-9]{4}$\" does not match input string \"6Z\"".
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_81] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid paymentReasonSection.
+  Scenario: [B2B-PA-PAY_MULTI_100_81] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm | NULL |
       | apply_cost_pagopa | NULL |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified_err1            | SI |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-    #MESSAGE: Invalid taxPayer:relativePersonTaxCode: "ECMA 262 regex \"^[A-Z]{6}[0-9]{2}[ABCDEHLMPRST]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$\" does not match input string \"LWFFKYL6CN5OP81U\"".
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_82] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid taxPayer:relativePersonTaxCode.
+  Scenario: [B2B-PA-PAY_MULTI_100_82] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm | NULL |
       | apply_cost_pagopa | NULL |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified_err2            | SI |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-    #MESSAGE: Invalid taxPayer:relativePersonTaxCode: "ECMA 262 regex \"^[A-Z]{6}[0-9]{2}[ABCDEHLMPRST]{1}[0-9]{2}[A-Z]{1}[0-9]{3}[A-Z]{1}$\" does not match input string \"LWFFKYL6CN5OP81U\"".
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_83] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid taxPayer:relativePersonTaxCode.
+  Scenario: [B2B-PA-PAY_MULTI_100_83] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-taxCode e comune non cogruente.
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
       | feePolicy | DELIVERY_MODE |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
       | payment_pagoPaForm | NULL |
       | apply_cost_pagopa | NULL |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
       | payment_f24_simplified_err3            | SI |
       #-------------------------------------------
-      | title_payment | F24_STANDARD_SEMPLIFICATO_LVLDAA85T50G702B |
+      | title_payment | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3904,9 +3890,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy          | DELIVERY_MODE       |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | NOALLEGATO |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -3924,9 +3908,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo |
       | feePolicy          | DELIVERY_MODE       |
       | paFee | 0 |
-    And destinatario
-      | denomination     | Ada Lovelace  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | NOALLEGATO |
       | payment_f24flatRate | NULL |
       | payment_f24standard | NULL |
@@ -3935,5 +3917,158 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "100" della notifica
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_103] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato)  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica  inclusi).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_valid_anag               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_104] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_anag               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_105] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_anag_1               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_106] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Debit Numerico di 15 - Numeric value (730927309273092) out of range of int (-2147483648 - 2147483647) .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_anag_2               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_107] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_anag_3               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_108] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_anag_4               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_109] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Format scenario negativo" .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_format               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_110] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Lengh scenario negativo" .
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+      | feePolicy | DELIVERY_MODE |
+      | paFee | 0 |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm | NULL |
+      | apply_cost_pagopa | NULL |
+      #F24 completo-------------------------------
+      | payment_f24standard_no_valid_lengh               | SI |
+      #-------------------------------------------
+      | title_payment | F24_STANDARD_AE |
+      | apply_cost_f24 | SI |
+      | payment_multy_number | 1 |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 

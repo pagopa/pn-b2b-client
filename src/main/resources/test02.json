@@ -1,14 +1,14 @@
 {
    "f24Simplified": {
       "taxPayer": {
-         "taxCode": "WCCLXTLVEQRD1LUQ",
-         "personalData": {
-            "surname": "dPl>p",
-            "name": "VCT",
-            "birthDate": "66-42-8051",
-            "sex": "F",
-            "birthPlace": "\"$CzA3",
-            "birthProvince": "LI"
+         "taxCode":"WCCLXTLVEQRD105Q",
+         "personalData":{
+            "surname":"ROSSI",
+            "name":"MARIO",
+            "birthDate":"01-01-1980",
+            "sex":"M",
+            "birthPlace":"MILANO",
+            "birthProvince":"MI"
          },
          "relativePersonTaxCode": "LWFFKYL6CN5OP81U",
          "id": "Z0",

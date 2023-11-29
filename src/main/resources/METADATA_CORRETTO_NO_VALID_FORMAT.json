@@ -1,0 +1,125 @@
+{
+	"f24Standard": {
+		"taxPayer": {
+			"taxCode": "RSSMRA80A01F205X",
+			"isNotTaxYear": true,
+			"person": {
+				"personalData": {
+					"surname": "ROSSI",
+					"name": "MARIO",
+					"birthDate": "01-01-1980",
+					"sex": "M",
+					"birthPlace": "MILANO",
+					"birthProvince": "MI"
+				},
+				"taxAddress": {
+					"municipality": "MILANO",
+					"province": "MI",
+					"address": "VIA LARGA 21"
+				}
+			},
+			"relativePersonTaxCode": "TDITLC46H54C619Q",
+			"id": "9W"
+		},
+		"treasury": {
+			"records": [
+				{
+					"applyCost": true,
+					"taxType": "B9AD33",
+					"installment": "88MP5",
+					"year": "2612A",
+					"debit": 73094,
+					"credit": 0
+				},
+				{
+					"applyCost": false,
+					"taxType": "B9AD22",
+					"installment": "88MP",
+					"year": "26173",
+					"debit": 73094,
+					"credit": 0
+				}
+			],
+			"office": "222",
+			"document": "2954284864A"
+		},
+		"inps": {
+			"records": [
+				{
+					"applyCost": false,
+					"office": "567A00",
+					"reason": "222",
+					"inps": "32W95Mf2",
+					"period": {
+						"startDate": "2403120",
+						"endDate": "22084198"
+					},
+					"debit": 840,
+					"credit": 0
+				}
+			]
+		},
+		"region": {
+			"records": [
+				{
+					"applyCost": false,
+					"region": "6A",
+					"taxType": "222",
+					"installment": "A",
+					"year": "230S2",
+					"debit": 901492,
+					"credit": 0
+				}
+			]
+		},
+		"localTax": {
+			"operationId": "A0VU5WBKUUJPCBE8AK",
+			"records": [
+				{
+					"applyCost": false,
+					"municipality": "99YZ33EEE",
+					"reconsideration": true,
+					"propertiesChanges": true,
+					"advancePayment": true,
+					"fullPayment": true,
+					"numberOfProperties": "43A",
+					"taxType": "0943W",
+					"installment": "43CV22",
+					"year": "243S",
+					"debit": 6002916,
+					"credit": 0
+				}
+			],
+			"deduction": "9709187722222222444"
+		},
+		"socialSecurity": {
+			"records": [
+				{
+					"applyCost": false,
+					"office": "69605333",
+					"company": "47858729777",
+					"control": "543344",
+					"refNumber": "792244W",
+					"reason": "22",
+					"debit": 600,
+					"credit": 0
+				}
+			],
+			"socSecRecords": [
+				{
+					"applyCost": false,
+					"institution": "123E",
+					"office": "B6COPRR",
+					"reason": "G1D",
+					"position": "693850WW",
+					"period": {
+						"startDate": "15W401",
+						"endDate": "6W1726"
+					},
+					"debit": "360",
+					"credit": "0"
+				}
+			]
+		}
+	}
+}
