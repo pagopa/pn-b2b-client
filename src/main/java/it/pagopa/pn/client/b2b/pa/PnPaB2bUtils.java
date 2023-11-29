@@ -639,9 +639,11 @@ public class PnPaB2bUtils {
 
         String error = null;
         if (status != null && status.getErrors()!= null && status.getErrors().size()>0) {
-            log.info("Detail status {}", status.getErrors().get(0).getDetail());
-            error = status.getErrors().get(0).getCode();
+            for (ProblemError err :status.getErrors()) {
+                error = error+ " "+ err.getDetail();
+            }
         }
+        log.info("Detail status {}", error);
         return error == null? null : error;
     }
 
