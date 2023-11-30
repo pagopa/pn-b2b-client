@@ -984,11 +984,25 @@ public class SharedSteps {
         sendNotificationWithErrorNotFindAllegato(true);
     }
 
+    @When("la notifica viene inviata tramite api b2b effettuando la preload ma senza caricare nessun allegato json dal {string} e si attende che lo stato diventi REFUSED")
+    public void laNotificaVieneInviataTramiteApiBBEffettuandoLaPreloadMaSenzaCaricareNessunAllegatoJsonDalESiAttendeCheLoStatoDiventiREFUSED(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithErrorNotFindAllegatoJson(true);
+    }
+
     @When("la notifica viene inviata tramite api b2b con sha256 differente dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataConShaDifferente(String paType) {
         selectPA(paType);
         setSenderTaxIdFromProperties();
         sendNotificationWithErrorSha();
+    }
+
+    @When("la notifica viene inviata tramite api b2b con sha256 Json differente dal {string} e si attende che lo stato diventi REFUSED")
+    public void laNotificaVieneInviataConShaJsonDifferente(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithErrorShaJson();
     }
 
     @When("la notifica viene inviata tramite api b2b con estensione errata dal {string} e si attende che lo stato diventi REFUSED")
@@ -1258,6 +1272,32 @@ public class SharedSteps {
 
     }
 
+    private void sendNotificationWithErrorNotFindAllegatoJson(boolean noUpload) {
+
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponse = b2bUtils.uploadNotificationNotFindAllegatoJson(notificationRequest,noUpload);
+                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+
+            Assertions.assertNotNull(errorCode);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
+    }
+
 
     private void sendNotificationWithErrorSha() {
         try {
@@ -1283,6 +1323,31 @@ public class SharedSteps {
         }
     }
 
+
+
+    private void sendNotificationWithErrorShaJson() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponse = b2bUtils.uploadNotificationNotEqualShaJson(notificationRequest);
+                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+
+            Assertions.assertNotNull(errorCode);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
     private void sendNotificationWithWrongExtension() {
         try {
             Assertions.assertDoesNotThrow(() -> {
