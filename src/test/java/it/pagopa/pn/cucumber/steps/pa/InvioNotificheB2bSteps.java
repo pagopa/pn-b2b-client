@@ -892,11 +892,9 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-    @And("lettura amount posizione debitoria di {string}")
+    @And("lettura amount posizione debitoria per la notifica corrente di {string}")
     public void letturaAmountPosizioneDebitoria(String user) {
-
         PaymentPositionModel postionUser = new PaymentPositionModel();
-
         for(PaymentPositionModel position: paymentPositionModel){
             if(position.getFullName().equalsIgnoreCase(user)){
                 postionUser=position;
@@ -1129,9 +1127,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("viene effettuato il controllo dell'aggiornamento del costo totale del utente {int}")
     public void vieneEffettuatoIlControlloDelCambiamentoDelCostoTotale(Integer user) {
-
         try {
-
             logger.info("Costo base presente su Notifica"+amountNotifica.get(user));
             logger.info("Costo base presente su GPD"+amountGPD);
 
@@ -1144,6 +1140,40 @@ public class InvioNotificheB2bSteps {
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
 
         }
+    }
+
+
+    //dopo accettato amount_gpd + 100 (costo base) + pafee
+    //Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di  + analog_cost.
+    //se riufiutata amount_gpd
+    @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
+    public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
+        FullSentNotificationV21 sentNotification = sharedSteps.getSentNotification();
+        Integer analogCost = 0;
+        for(TimelineElementV20 timelineElem: sentNotification.getTimeline()){
+            Integer currentCost = timelineElem.getDetails() == null ? Integer.valueOf(0) : timelineElem.getDetails().getAnalogCost();
+            if(currentCost!= null && currentCost > 0)analogCost+=currentCost;
+        }
+        Integer paFee = sentNotification.getPaFee();
+        Integer costoBaseSend = this.costoBaseNotifica;
+        Integer amountGpd = amountNotifica.get(0);
+
+        Integer costoTotale = amountGpd + costoBaseSend + (paFee == null ? 0 : paFee) + analogCost;
+
+        String creditorTaxId = Assertions.assertDoesNotThrow(()->sentNotification.getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
+        String noticeCode = Assertions.assertDoesNotThrow(()->sentNotification.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
+        Assertions.assertNotNull(creditorTaxId);
+        Assertions.assertNotNull(noticeCode);
+
+        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
+                .creditorTaxId(creditorTaxId)
+                .noticeCode(noticeCode);
+
+        paymentInfoResponse = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClient.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
+        Assertions.assertNotNull(paymentInfoResponse);
+        System.out.println("Costo totale previsto: {}"+costoTotale);
+        System.out.println("Costo attuale su gpd: {}"+paymentInfoResponse.get(0).getAmount());
+        Assertions.assertEquals(costoTotale,paymentInfoResponse.get(0).getAmount());
     }
 
     @And("viene aggiunto il costo della notifica totale del utente {int}")
@@ -1169,15 +1199,12 @@ public class InvioNotificheB2bSteps {
 
     @And("viene aggiunto il costo della notifica totale")
     public void vieneAggiuntoIlCostoDellaNotificaTotale() {
-
         try {
-
             for(int i=0;i<amountNotifica.size();i++) {
-                int costototale=costoBaseNotifica+ sharedSteps.getSentNotification().getPaFee();
+                int costototale = costoBaseNotifica+ sharedSteps.getSentNotification().getPaFee();
                 logger.info("Amount+costo base:"+costototale);
                 amountNotifica.set(i, amountNotifica.get(i) + costototale);
             }
-
             Assertions.assertNotNull(amountNotifica);
 
         } catch (AssertionFailedError assertionFailedError) {
