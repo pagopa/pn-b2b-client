@@ -851,6 +851,8 @@ public class InvioNotificheB2bSteps {
         logger.info("IUPD generate: " + organitationCode +"-64c8e41bfec846e04"+ iuv, System.currentTimeMillis());
         sharedSteps.addIuvGPD(iuv);
 
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
                 .iupd(String.format(organitationCode+"-64c8e41bfec846e04"+  iuv, System.currentTimeMillis()))
                 .type(PaymentPositionModel.TypeEnum.F)
@@ -862,8 +864,8 @@ public class InvioNotificheB2bSteps {
                         .amount(Long.parseLong(amount))
                         .description("Test Automation")
                         .isPartialPayment(false)
-                        .dueDate(new StringBuilder("2050-09-30T15:30:00"))
-                        .retentionDate(new StringBuilder("2050-09-30T15:30:00"))
+                        .dueDate(new StringBuilder(dateTimeFormatter.format(OffsetDateTime.now())))
+                        .retentionDate(new StringBuilder(dateTimeFormatter.format(OffsetDateTime.now())))
                         .addTransferItem(new TransferModel()
                                 .idTransfer(TransferModel.IdTransferEnum._1)
                                 .organizationFiscalCode(organitationCode)
