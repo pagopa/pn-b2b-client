@@ -38,7 +38,6 @@ import org.springframework.test.context.TestPropertySource;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=test"})
 public class CucumberSpringIntegration {
 
 }
