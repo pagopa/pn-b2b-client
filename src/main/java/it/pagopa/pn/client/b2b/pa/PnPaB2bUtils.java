@@ -227,17 +227,23 @@ public class PnPaB2bUtils {
         }
         request.setDocuments(newdocs);
 
+
         for (NotificationRecipientV21 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
 
             }
         }
 
+        /**
         //for (NotificationRecipientV21 recipient : request.getRecipients()) {
             /**
             NotificationPaymentInfo paymentInfo = recipient.getPayment();
@@ -267,6 +273,49 @@ public class PnPaB2bUtils {
         return response;
     }
 
+    public NewNotificationResponse uploadNotificationNotFindAllegatoJson( NewNotificationRequestV21 request, boolean noUpload) throws IOException {
+//TODO Modificare.............
+        List<NotificationDocument> newdocs = new ArrayList<>();
+
+        for (NotificationDocument doc : request.getDocuments()) {
+                newdocs.add(this.preloadDocument(doc));
+        }
+
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadNoMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
+                }
+
+            }
+        }
+
+
+        log.info("New Notification Request {}", request);
+        if ((request.getDocuments()!= null && request.getDocuments().size()>0) && !noUpload){
+            NotificationDocument notificationDocument = request.getDocuments().get(0);
+            notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
+        }
+
+        if ((request.getRecipients()!= null && request.getRecipients().size()>0) && !noUpload){
+            NotificationRecipientV21 notificationRecipientV21 = request.getRecipients().get(0);
+            notificationRecipientV21.getPayments().get(0).getF24().getMetadataAttachment().getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
+            //notificationDocument.getRef().setKey("PN_NOTIFICATION_ATTACHMENTS-zbeda19f8997469bb75d28ff12bdf321.pdf");
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
     public NewNotificationResponse uploadNotificationNotEqualSha( NewNotificationRequestV21 request) throws IOException {
 //TODO Modificare.............
         List<NotificationDocument> newdocs = new ArrayList<>();
@@ -279,10 +328,13 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
-
             }
         }
 
@@ -318,6 +370,42 @@ public class PnPaB2bUtils {
         return response;
     }
 
+
+    public NewNotificationResponse uploadNotificationNotEqualShaJson( NewNotificationRequestV21 request) throws IOException {
+//TODO Modificare.............
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (NotificationRecipientV21 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
+                }
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        if (request.getRecipients()!= null && request.getRecipients().size()>0){
+            // the document uploaded to safe storage is multa.pdf
+            // I compute a different sha256 and I replace the old one
+            String sha256 = computeSha256( "classpath:/multa.pdf" );
+            request.getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getDigests().setSha256(sha256);
+        }
+
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
     public NewNotificationResponse uploadNotificationWrongExtension( NewNotificationRequestV21 request) throws IOException {
 //TODO Modificare.............
         if (request.getDocuments()!= null && request.getDocuments().size()>0){
@@ -335,8 +423,12 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
 
             }
@@ -386,8 +478,12 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
             }
         }
@@ -434,8 +530,12 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
 
             }
@@ -487,8 +587,12 @@ public class PnPaB2bUtils {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if(paymentList != null){
                 for (NotificationPaymentItem paymentInfo: paymentList) {
-                    paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
                 }
             }
         }
@@ -1006,6 +1110,7 @@ public class PnPaB2bUtils {
 
         log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
                 resourceName, sha256, secret, url));
+
         document.getRef().setKey( key );
         document.getRef().setVersionToken("v1");
         document.digests( new NotificationAttachmentDigests().sha256( sha256 ));
@@ -1114,6 +1219,34 @@ public class PnPaB2bUtils {
                     resourceName, sha256, secret, url));
 
             loadToPresignedMetadati( url, secret, sha256, resourceName );
+
+            attachment.getRef().setKey( key );
+            attachment.getRef().setVersionToken("v1");
+            attachment.digests( new NotificationAttachmentDigests().sha256( sha256 ));
+
+            return attachment;
+        }
+        else {
+            return null;
+        }
+
+    }
+
+    public NotificationMetadataAttachment preloadNoMetadataAttachment( NotificationMetadataAttachment attachment) throws IOException {
+        if( attachment != null ) {
+            String resourceName = attachment.getRef().getKey();
+            resourceName= "classpath:/test.xml";
+            String sha256 = computeSha256( resourceName );
+
+            PreLoadResponse preloadResp = getPreLoadMetaDatiResponse( sha256 );
+            String key = preloadResp.getKey();
+            String secret = preloadResp.getSecret();
+            String url = preloadResp.getUrl();
+
+            log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                    resourceName, sha256, secret, url));
+
+           // loadToPresignedMetadati( url, secret, sha256, resourceName );
 
             attachment.getRef().setKey( key );
             attachment.getRef().setVersionToken("v1");
