@@ -526,9 +526,8 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | indirizzo                |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
+      | indirizzo                                                    |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
   @validation
@@ -541,9 +540,9 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | indirizzo                |
-      | via dà via è via ì via ò |
-      | via dell adige  ()=?*+;,!^& |
+      | indirizzo                                                    |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_43] Invio notifica digitale mono destinatario con physicalAddress_municipality errato (p.fisica)_scenario negativo
@@ -555,9 +554,8 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | comune                               |
-      | san donà Erbè Forlì Nardò Brùsaporto |
-      | san_dona  ()=?*+;,!^&                |
+      | comune                                                       |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_44] Invio notifica digitale mono destinatario con physicalAddress_municipalityDetails errato (p.fisica)_scenario negativo
@@ -569,9 +567,10 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | localita                             |
-      | san donà Erbè Forlì Nardò Brùsaporto |
-      | san_dona  ()=?*+;,!^&                |
+      | localita                            |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂ       |
+      | via ĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_45] Invio notifica digitale mono destinatario con physicalAddress_State errato (p.fisica)_scenario negativo
@@ -583,9 +582,9 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | state                            |
-      | Città d'Avòrio Rénmín Mùrìtaniya |
-      | Citta d Avorio ()=?*+;,!^&       |
+      | state                                                        |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_46] Invio notifica digitale mono destinatario con physicalAddress_zip errato (p.fisica)_scenario negativo
@@ -597,9 +596,8 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | zip_code               |
-      | dà via è via ì via ò   |
-      | dell adige ()=?*+;,!^& |
+      | zip_code                                                 |
+      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_47] Invio notifica digitale mono destinatario con physicalAddress_province errato (p.fisica)_scenario negativo
@@ -611,9 +609,8 @@ Feature: Validazione campi invio notifiche b2b
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | province                         |
-      | Città d'Avòrio Rénmín Mùrìtaniya |
-      | Citta d Avorio ()=?*+;,!^&       |
+      | province                                                     |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_48] invio notifiche digitali mono destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo

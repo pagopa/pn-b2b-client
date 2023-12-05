@@ -177,9 +177,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | indirizzo                    |
-      | via dà via è via ì via ò     |
-      | via dell`adige :"()=?*+;,!^& |
+      | indirizzo                                                    |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
   @validation
@@ -193,9 +192,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | comune                               |
-      | san donà Erbè Forlì Nardò Brùsaporto |
-      | san dona :"()=?*+;,!^&               |
+      | comune                                                       |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo
@@ -205,12 +203,12 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     And destinatario Mario Cucumber
     And destinatario Gherkin spa e:
       | physicalAddress_municipalityDetails | <localita> |
-    When la notifica viene inviata dal "Comune_1"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | localita                             |
-      | san donà Erbè Forlì Nardò Brùsaporto |
-      | san dona :"()=?*+;,!^&               |
+      | localita                            |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂ       |
+      | via ĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo
@@ -223,9 +221,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | state                            |
-      | Città d'Avòrio Rénmín Mùrìtaniya |
-      | Citta d`Avorio :"()=?*+;,!^&     |
+      | state                                                        |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo
@@ -238,9 +235,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | zip_code                     |
-      | via dà via è via ì via ò     |
-      | via dell`adige :"()=?*+;,!^& |
+      | zip_code                                                     |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo
@@ -253,9 +249,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | province                         |
-      | Città d'Avòrio Rénmín Mùrìtaniya |
-      | Citta d`Avorio :"()=?*+;,!^&     |
+      | province                                                     |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_16] invio notifiche digitali multi destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
