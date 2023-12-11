@@ -556,6 +556,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
+    And il download non ha prodotto errori
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_PG_35_1] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi - download modello F24
@@ -589,7 +590,10 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24" per il destinatario 0
+    And il download non ha prodotto errori
     And viene richiesto il download del documento "F24" per il destinatario 1
+    And il download non ha prodotto errori
+
 
 
   #36 PA - download allegato pagoPA

@@ -161,6 +161,23 @@ Feature: verifica compatibilità tra v1 a v2
     And  la notifica a 2 avvisi di pagamento con OpenApi V1
 
   @version
+  Scenario: [B2B-PA-SEND_VERSION_V1_V2_13_1] Notifica creata con GA1.1 con un pagamento (primario)
+    Given viene generata una nuova notifica V1
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+      | feePolicy          | DELIVERY_MODE                   |
+    And destinatario Mario Gherkin V1 e:
+      | payment_pagoPaForm         | SI   |
+      | payment_noticeCodeOptional | NO   |
+      | payment_f24flatRate        | NULL |
+      | payment_f24standard        | NULL |
+      | payment_noticeCode | 315992228092491924 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    And  la notifica a 1 avvisi di pagamento con OpenApi V1
+
+
+
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_14] Notifica creata con GA2.0 con due pagamenti (primario e secondario)
     Given viene generata una nuova notifica V2
       | subject            | invio notifica con cucumber |
