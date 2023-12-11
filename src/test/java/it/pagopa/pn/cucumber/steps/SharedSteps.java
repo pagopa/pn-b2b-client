@@ -1562,6 +1562,10 @@ public class SharedSteps {
         this.notificationError = notificationError;
     }
 
+    public HttpStatusCodeException getNotificationError() {
+        return  notificationError = notificationError;
+    }
+
     public void setSenderTaxIdFromProperties() {
         switch (settedPa) {
             case "Comune_1":

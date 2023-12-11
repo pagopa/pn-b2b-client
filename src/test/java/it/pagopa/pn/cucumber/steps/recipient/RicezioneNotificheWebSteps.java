@@ -218,7 +218,7 @@ public class RicezioneNotificheWebSteps {
 
     @Then("(il download)(il recupero) non ha prodotto errori")
     public void operationProducedErrorWithStatusCode() {
-        Assertions.assertTrue((this.notificationError == null) );
+        Assertions.assertTrue((this.notificationError == null && sharedSteps.getNotificationError() == null) );
     }
 
 

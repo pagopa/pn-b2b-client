@@ -3881,8 +3881,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-
-
   @pagamentiMultipli @ignore
   Scenario: [B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e senza paFee - PN-8906
     Given viene generata una nuova notifica
@@ -3901,31 +3899,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then viene richiesto il download del documento "F24"
-    And il download si conclude correttamente
+    And il download non ha prodotto errori
    # Then viene richiesto il download del documento "F24"
    # And l'operazione ha generato un errore con status code "500"
 
-
-  @pagamentiMultipli @ignore
-  Scenario: [B2B-PA-PAY_MULTI_96_1] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e senza paFee - PN-8906
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo |
-      | feePolicy | DELIVERY_MODE |
-      | paFee              | NULL              |
-    And destinatario
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
-      | payment_multy_number | 1 |
-      | payment_multy_number_f24 | 2 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
