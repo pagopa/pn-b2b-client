@@ -1145,7 +1145,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
 #SOLO TM
   #55 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_PG_55] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo |
