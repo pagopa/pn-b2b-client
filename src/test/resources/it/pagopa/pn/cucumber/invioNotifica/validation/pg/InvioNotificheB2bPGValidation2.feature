@@ -177,9 +177,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | indirizzo                |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
+      | indirizzo                                                    |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
   @validation
@@ -193,10 +192,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | comune                   |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
-
+      | comune                                                       |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_12] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo
@@ -209,10 +206,9 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | localita                 |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
-
+      | localita                            |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂ       |
+      | via ĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_13] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo
@@ -225,10 +221,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | state                    |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
-
+      | state                                                        |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_14] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo
@@ -241,9 +235,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | zip_code                 |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
+      | zip_code                                                     |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_15] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo
@@ -256,9 +249,8 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | province                 |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
+      | province                                                     |
+      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
   @validation
   Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_16] invio notifiche digitali multi destinatario con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province corretti scenario positivo
@@ -299,92 +291,3 @@ Feature: Validazione campi invio notifiche b2b persona giuridica
       | Milano       | 90121    | PA       |
       | MILANO       | 90121    | MI       |
       | Milano       | 90121    | RM       |
-
-
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_18] Invio notifica digitale multi destinatario con physicalAddress_address errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_address | <indirizzo> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | indirizzo                                                    |
-      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
-
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_19] Invio notifica digitale multi destinatario con physicalAddress_municipality errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_municipality | <comune> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | comune                                                       |
-      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_20] Invio notifica digitale multi destinatario con physicalAddress_municipalityDetails errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_municipalityDetails | <localita> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | localita                            |
-      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂ       |
-      | via ĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_21] Invio notifica digitale multi destinatario con physicalAddress_State errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_State | <state> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | state                    |
-      | via dà via è via ì via ò |
-      | via dell ()=?*+;,!^&     |
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_22] Invio notifica digitale multi destinatario con physicalAddress_zip errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_zip | <zip_code> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | zip_code                                                     |
-      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
-
-  @validation
-  Scenario Outline: [B2B-PA-SEND_VALID_PF_PG_23] Invio notifica digitale multi destinatario con physicalAddress_province errato scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Mario Cucumber
-    And destinatario Gherkin spa e:
-      | physicalAddress_province | <province> |
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | province                                                     |
-      | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
