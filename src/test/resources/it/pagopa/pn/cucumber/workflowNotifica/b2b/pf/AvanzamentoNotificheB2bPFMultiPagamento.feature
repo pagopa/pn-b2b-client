@@ -3902,10 +3902,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24 | SI |
       | payment_multy_number | 1 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
-   # Then viene richiesto il download del documento "F24"
-   # And l'operazione ha generato un errore con status code "500"
+
 
 
