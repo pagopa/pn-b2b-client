@@ -1,23 +1,81 @@
 Feature: Api Service Cruscotto Assitenza
 
-  Scenario: [API-SERVICE-CA_CE02.1_1] Invocazione del servizio e verifica restituzione array di oggetti con nome e iddella PA
+  @cruscottoAssistenza
+  Scenario: [API-SERVICE-CA_CE02.1_1] Invocazione del servizio e verifica restituzione array di oggetti con nome e id della PA
+    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    Then Il servizio risponde con esito positivo
 
-  Scenario: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.2_3] Invocazione del servizio con taxId non formalmente corretto
+    Examples:
+      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_3] Invocazione del servizio con taxId non formalmente corretto
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
+    Given l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con recipientType vuoto
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.2_6] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CLMCST42R12D969Z |         PG   |   NULL             |       NULL            |   NULL   |  NULL  |
 
-  Scenario: [API-SERVICE-CA_CE02.2_7] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
 
-  Scenario: [API-SERVICE-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_6] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   NULL   |  NULL  |
 
+    
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_7] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde con esito positivo
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CLMCST42R12D969Z |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde con esito positivo
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |  NULL  |
 
   Scenario: [API-SERVICE-CA_CE02.2_10] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 0
 

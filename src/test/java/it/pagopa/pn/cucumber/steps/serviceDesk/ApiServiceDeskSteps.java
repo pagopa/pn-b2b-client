@@ -5,6 +5,14 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplNoApiKey;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplWrongApiKey;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.CompleteTransactionRequest;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.TransferModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.PaSummary;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.SearchNotificationsRequest;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.SearchNotificationsResponse;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -40,6 +48,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,6 +74,7 @@ public class ApiServiceDeskSteps {
 
     private NotificationsUnreachableResponse notificationsUnreachableResponse;
 
+
     private CreateOperationRequest createOperationRequest;
 
     private OperationsResponse operationsResponse;
@@ -80,6 +90,8 @@ public class ApiServiceDeskSteps {
     private SearchResponse searchResponse;
 
     private static final String CF_vuoto =null;
+
+    private static final String CF_corretto ="CLMCST42R12D969Z";
 
     private static final String CF_errato ="CPNTMS85T15H703WCPNTMS85T15H703W|";
 
@@ -114,6 +126,9 @@ public class ApiServiceDeskSteps {
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
     private static final String NUMERIC_STRING = "0123456789";
 
+    private List<PaSummary> listPa = null;
+    private SearchNotificationsResponse searchNotificationsResponse;
+    private SearchNotificationsRequest searchNotificationsRequest;
 
     @Autowired
     public ApiServiceDeskSteps(SharedSteps sharedSteps,RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
@@ -997,5 +1012,158 @@ public class ApiServiceDeskSteps {
         logger.info("Difference: " + between);
         return retentionTime == between;
     }
+
+
+
+    //Cruscotto Assistenza............
+    @And("l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding")
+    public void elencoPaOnboarding() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                listPa = ipServiceDeskClient.getListOfOnboardedPA();
+            });
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Elenco delle PA onbordate " + (listPa == null ? "NULL" : listPa.size()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @Then("Il servizio risponde con esito positivo")
+    public void verifyServiceResponse(){
+        Assertions.assertNotNull(listPa);
+    }
+
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfVuoto() {
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(CF_vuoto);
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf errato {string}")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfErrato(String cf) {
+
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(cf);
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con recipientType vuoto")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConRecipientTypeVuoto() {
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(CF_corretto);
+            searchNotificationsRequest.setRecipientType(null);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String cf, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate ) {
+        try {
+            Integer size = null;
+            String nextPagesKey = null;
+            OffsetDateTime sDate = null;
+            OffsetDateTime eDate = null;
+
+            DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+
+
+            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
+                size = Integer.parseInt(searchPageSize);
+            }
+
+            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+                nextPagesKey = searchNextPagesKey;
+            }
+
+            if (!"NULL".equalsIgnoreCase(startDate)) {
+                sDate = OffsetDateTime.parse(startDate, offsetDateTimeFormatter);
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                eDate = OffsetDateTime.parse(endDate, offsetDateTimeFormatter);
+            }
+
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            if (!"NULL".equalsIgnoreCase(cf)) {
+                searchNotificationsRequest.setTaxId(cf);
+            }
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType(searchNotificationsRequest, recipientType);
+            }
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    public void setRecipientType(SearchNotificationsRequest searchNotificationsRequest, String recipientType) {
+        switch (recipientType) {
+            case "Pf":
+                searchNotificationsRequest.setRecipientType(RecipientType.PF);
+                break;
+            case "PG":
+                searchNotificationsRequest.setRecipientType(RecipientType.PG);
+                break;
+            default:
+                searchNotificationsRequest.setRecipientType(null);;
+        }
+    }
+
 
 }
