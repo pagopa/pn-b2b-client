@@ -63,3 +63,79 @@ Feature: Api Service Cruscotto Assitenza
   Scenario: [API-SERVICE-CA_CE02.4_29] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
 
   Scenario: [API-SERVICE-CA_CE02.4_30] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.5_39] Invocazione del servizio con IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.5_40] Invocazione del servizio con IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.5_42] Invocazione del servizio con IUN corretto e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.6_44] Invocazione del servizio con taxId valorizzato ma IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.6_46] Invocazione del servizio con IUN corretto ma taxId vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.6_47] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
+
+  Scenario: [API-SERVICE-CA_CE02.6_48] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
+
+  Scenario: [API-SERVICE-CA_CE02.6_49] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.7_50] Invocazione del servizio con IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.7_51] Invocazione del servizio con IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.7_53] Invocazione del servizio con IUN corretto ma taxId vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.7_54] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
+
+  Scenario: [API-SERVICE-CA_CE02.7_55] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
+
+  Scenario: [API-SERVICE-CA_CE02.7_56] Invocazione del servizio con IUN (notifica multi destinatario) corretto e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.8_57] Invocazione del servizio con IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.8_58] Invocazione del servizio con IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.8_62] Invocazione del servizio con IUN esistente, recipientType corretto ma con recipientTaxId non corrispondente al destinatario della notifica
+
+  Scenario: [API-SERVICE-CA_CE02.8_63] Invocazione del servizio con IUN esistente, ma recipientType non coerente rispetto al recipientTaxId della notifica
+
+  Scenario: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.9_65] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica ma senza searchMandateId
+
+  Scenario: [API-SERVICE-CA_CE02.9_66] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, con searchMandateId ma senza searchDelegateInternalId
+
+  Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma consearchMandateId non coerente con ilsearchDelegateInternalId
+
+  Scenario: [API-SERVICE-CA_CE02.10_74] Invocazione del servizio e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.11_80] Invocazione del servizio con paId inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.12_90] Invocazione del servizio con IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.12_91] Invocazione del servizio con IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.12_93] Invocazione del servizio con IUN corretto e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.13_94] Invocazione del servizio con IUN vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.13_95] Invocazione del servizio con IUN inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.13_97] Invocazione del servizio con IUN corretto e verifica risposta
+
+  Scenario: [API-SERVICE-CA_CE02.14_98] Invocazione del servizio con paId vuoto
+
+  Scenario: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
+
+  Scenario: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
