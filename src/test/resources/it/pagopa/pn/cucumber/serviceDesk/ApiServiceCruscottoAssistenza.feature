@@ -329,8 +329,6 @@ Feature: Api Service Cruscotto Assitenza
 
 
 
-
-
   Scenario: [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
 
   Scenario: [API-SERVICE-CA_CE02.6_44] Invocazione del servizio con taxId valorizzato ma IUN inesistente

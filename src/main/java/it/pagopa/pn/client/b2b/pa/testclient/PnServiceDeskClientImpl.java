@@ -190,11 +190,15 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     }
 
     public SearchNotificationsResponse searchNotificationsAsDelegateFromInternalId(String mandateId, String delegateInternalId, Integer size, String nextPagesKey, OffsetDateTime startDate, OffsetDateTime endDate) throws RestClientException {
-        return notificationAndMessageApi.searchNotificationsAsDelegateFromInternalId(operatorId, mandateId, delegateInternalId, size, nextPagesKey, startDate, endDate );
+       return notificationAndMessageApi.searchNotificationsAsDelegateFromInternalId(operatorId, mandateId, delegateInternalId, startDate, endDate, size, nextPagesKey );
     }
 
     public SearchNotificationsResponse searchNotificationsFromTaxId(Integer size, String nextPagesKey, OffsetDateTime startDate, OffsetDateTime endDate, SearchNotificationsRequest searchNotificationsRequest) throws RestClientException {
-        return notificationAndMessageApi.searchNotificationsFromTaxId(operatorId, size,nextPagesKey, startDate, endDate, searchNotificationsRequest);
+        return notificationAndMessageApi.searchNotificationsFromTaxId(operatorId, startDate, endDate, size,nextPagesKey,  searchNotificationsRequest);
+    }
+
+    public TimelineResponse getTimelineOfIUNAndTaxId(String iun, SearchNotificationsRequest searchNotificationsRequest) throws RestClientException{
+        return notificationAndMessageApi.getTimelineOfIUNAndTaxId(operatorId, iun, searchNotificationsRequest);
     }
 
     public List<PaSummary> getListOfOnboardedPA() throws RestClientException {
