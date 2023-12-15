@@ -127,6 +127,7 @@ public class ApiServiceDeskSteps {
     private ProfileRequest profileRequest;
     private ProfileResponse profileResponse;
     private NotificationDetailResponse notificationDetailResponse;
+    private TimelineResponse timelineResponse;
 
 
 
@@ -1318,4 +1319,34 @@ public class ApiServiceDeskSteps {
             }
         }
     }
+
+    @And("invocazione servizio per recupero dettaglio timeline notifica con cf {string} e iun {string}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String cf, String iun) {
+        try{
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            if ("NULL".equalsIgnoreCase(cf)) {
+                searchNotificationsRequest.setTaxId(cf);
+            }else if ("VUOTO".equalsIgnoreCase(cf)) {
+                searchNotificationsRequest.setTaxId("");
+            }else {
+                searchNotificationsRequest.setTaxId(cf);
+            }
+            String iunSearch = null;
+           if ("VUOTO".equalsIgnoreCase(iun)) {
+               iunSearch = "";
+            }else {
+               iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+            Assertions.assertNotNull(searchNotificationsResponse.getResults());
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
 }
+
