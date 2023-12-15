@@ -9,10 +9,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.mo
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.TransferModel;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.PaSummary;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.SearchNotificationsRequest;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.SearchNotificationsResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -127,6 +124,10 @@ public class ApiServiceDeskSteps {
     private List<PaSummary> listPa = null;
     private SearchNotificationsResponse searchNotificationsResponse;
     private SearchNotificationsRequest searchNotificationsRequest;
+    private ProfileRequest profileRequest;
+    private ProfileResponse profileResponse;
+
+
 
     @Autowired
     public ApiServiceDeskSteps(SharedSteps sharedSteps,RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
@@ -1141,13 +1142,12 @@ public class ApiServiceDeskSteps {
                 eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
             }
 
-
             searchNotificationsRequest = new SearchNotificationsRequest();
             if (!"NULL".equalsIgnoreCase(cf)) {
                 searchNotificationsRequest.setTaxId(cf);
             }
             if (!"NULL".equalsIgnoreCase(recipientType)) {
-                setRecipientType(searchNotificationsRequest, recipientType);
+                setRecipientType( recipientType);
             }
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
 
@@ -1162,16 +1162,32 @@ public class ApiServiceDeskSteps {
 
 
 
-    public void setRecipientType(SearchNotificationsRequest searchNotificationsRequest, String recipientType) {
+    public void setRecipientType(String recipientType) {
         switch (recipientType) {
             case "PF":
-                searchNotificationsRequest.setRecipientType(RecipientType.PF);
+                if(searchNotificationsRequest!= null){
+                    searchNotificationsRequest.setRecipientType(RecipientType.PF);
+                }
+                if(profileRequest!= null) {
+                    profileRequest.setRecipientType(RecipientType.PF);
+                }
                 break;
             case "PG":
-                searchNotificationsRequest.setRecipientType(RecipientType.PG);
+                if(searchNotificationsRequest!= null){
+                    searchNotificationsRequest.setRecipientType(RecipientType.PG);
+                }
+                if(profileRequest!= null) {
+                    profileRequest.setRecipientType(RecipientType.PG);
+                }
                 break;
             default:
-                searchNotificationsRequest.setRecipientType(null);;
+                if(searchNotificationsRequest!= null){
+                    searchNotificationsRequest.setRecipientType(null);
+                }
+                if(profileRequest!= null) {
+                    profileRequest.setRecipientType(null);
+                }
+
         }
     }
 
@@ -1180,4 +1196,26 @@ public class ApiServiceDeskSteps {
     public void ilServizioRispondeCorrettamente() {
         Assertions.assertNull(notificationError);
     }
+
+    @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con cf {string} e recipientType  {string}")
+    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String cf, String recipientType) {
+
+    try{
+            profileRequest = new ProfileRequest();
+            if (!"NULL".equalsIgnoreCase(cf)) {
+                profileRequest.setTaxId(cf);
+            }
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType( recipientType);
+            }
+
+            profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
 }

@@ -156,6 +156,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE    |END_DATE|
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |   2023-01-01 |   NULL |
 
+     #TODO valutare se inserire una latra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16_1] Invocazione del servizio con taxId e recipientType corretti, con startDate  ed endDate  valorizzati correttamente
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -165,19 +166,70 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
+    #TODO valutare se inserire una latra Assertion per verifica se la lista dei risultati e coerente
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.3_18] Invocazione del servizio con taxId non formalmente corretto
+    Examples:
+      | CF   |RECIPIENT_TYPE|
+      | NULL |   PF         |
 
-  Scenario: [API-SERVICE-CA_CE02.3_19] Invocazione del servizio con recipientType vuoto
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_18] Invocazione del servizio con taxId non formalmente corretto
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.3_20] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+    Examples:
+      | CF                                |RECIPIENT_TYPE|
+      | CPNTMS85T15H703WCPNTMS85T15H703W! |   PF         |
 
-  Scenario: [API-SERVICE-CA_CE02.3_21] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_19] Invocazione del servizio con recipientType vuoto
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.3_22] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
+    Examples:
+      | CF               |RECIPIENT_TYPE  |
+      | CLMCST42R12D969Z |   NULL         |
 
-  Scenario: [API-SERVICE-CA_CE02.3_23] Invocazione del servizio con taxId e recipientType corretti e verifica risposta
+    #TODO CONTROLLARE NON ARRIVA IL 400............
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_20] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|
+      | CLMCST42R12D969Z |   PG         |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_21] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               |RECIPIENT_TYPE  |
+      | CLMCST42R12D969Z |   NULL         |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_22] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF    |RECIPIENT_TYPE|
+      | NULL  |   PF         |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.3_23] Invocazione del servizio con taxId e recipientType corretti e verifica risposta
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Then Il servizio risponde correttamente
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|
+      | CLMCST42R12D969Z |   PF         |
 
   Scenario: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
 
