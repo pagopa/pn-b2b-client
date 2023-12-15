@@ -295,20 +295,41 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
+#TODO verificare il 405.................
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.5_39] Invocazione del servizio con IUN vuoto
+    Given come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo (IUN) "<IUN>"
+    Then il servizio risponde con errore "405"
+
+    Examples:
+      | IUN   |
+      | VUOTO |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.5_40] Invocazione del servizio con IUN inesistente
+    Given come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo (IUN) "<IUN>"
+    Then il servizio risponde con errore "404"
+
+    Examples:
+      | IUN   |
+      | JRDT-XAPH-JQYW-202312-J-1 |
 
 
-  Scenario: [API-SERVICE-CA_CE02.5_39] Invocazione del servizio con IUN vuoto
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.5_42] Invocazione del servizio con IUN corretto e verifica risposta
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+    And invocazione servizio per recupero dettaglio notifica
+    And Il servizio risponde correttamente
 
-  Scenario: [API-SERVICE-CA_CE02.5_40] Invocazione del servizio con IUN inesistente
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.5_42] Invocazione del servizio con IUN corretto e verifica risposta
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+
+
 
   Scenario: [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
 

@@ -126,6 +126,7 @@ public class ApiServiceDeskSteps {
     private SearchNotificationsRequest searchNotificationsRequest;
     private ProfileRequest profileRequest;
     private ProfileResponse profileResponse;
+    private NotificationDetailResponse notificationDetailResponse;
 
 
 
@@ -1276,6 +1277,41 @@ public class ApiServiceDeskSteps {
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
 
             Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
+    public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN(String iun) {
+        try{
+            profileRequest = new ProfileRequest();
+            if ("NULL".equalsIgnoreCase(iun)) {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(null);
+            }else if ("VUOTO".equalsIgnoreCase(iun)) {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN("");
+            }else {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iun);
+            }
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @And("invocazione servizio per recupero dettaglio notifica")
+    public void recuperoDettaglioNotifica() {
+        try{
+                Assertions.assertNotNull(searchNotificationsResponse);
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(searchNotificationsResponse.getResults().get(0).getIun());
+
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
