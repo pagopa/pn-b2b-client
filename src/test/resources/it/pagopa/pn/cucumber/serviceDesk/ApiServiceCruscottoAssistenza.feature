@@ -12,7 +12,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | NULL |         PF   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_3] Invocazione del servizio con taxId non formalmente corretto
@@ -21,7 +21,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | CF                                |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
@@ -30,16 +30,16 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "500"
+    Then il servizio risponde con errore "400"
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CLMCST42R12D969Z |         PG   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE|
+      | CLMCST42R12D969Z |         PG   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
   @cruscottoAssistenza
@@ -49,7 +49,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
   @cruscottoAssistenza
@@ -59,7 +59,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | NULL |         PF   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
   @cruscottoAssistenza
@@ -136,27 +136,25 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |  2023-12-01    |  2023-01-01  |
 
-    #TODO Chiedere Info............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_15] Invocazione del servizio con taxId e recipientType corretti, con endDate valorizzata ma senza startDate
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "500"
+    Then il servizio risponde con errore "400"
 
     Examples:
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |   NULL    |   2023-12-01 |
 
-       #TODO Chiedere Info............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16] Invocazione del servizio con taxId e recipientType corretti, con startDate valorizzata ma senza endDate
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "500"
+    Then il servizio risponde con errore "400"
 
     Examples:
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE    |END_DATE|
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |   2023-01-01 |   NULL |
 
-     #TODO valutare se inserire una latra Assertion per verifica se la lista dei risultati e coerente
+     #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16_1] Invocazione del servizio con taxId e recipientType corretti, con startDate  ed endDate  valorizzati correttamente
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -166,7 +164,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-    #TODO valutare se inserire una latra Assertion per verifica se la lista dei risultati e coerente
+    #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
     Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
@@ -231,26 +229,86 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|
       | CLMCST42R12D969Z |   PF         |
 
-  Scenario: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
+    #TODO simile CE02.2............
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE  |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
+      | NULL |   PF         |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
-  Scenario: [API-SERVICE-CA_CE02.4_25] Invocazione del servizio con taxId non formalmente corretto
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_25] Invocazione del servizio con taxId non formalmente corretto
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.4_26] Invocazione del servizio con recipientType vuoto
+    Examples:
+      | CF                                |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
+      | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.4_27] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+    #TODO gestire il caso vuoto............
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_26] Invocazione del servizio con recipientType vuoto
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.4_28] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+    Examples:
+      | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
+      | CLMCST42R12D969Z |   NULL         |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.4_29] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_27] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.4_30] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+    Examples:
+      | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
+      | CLMCST42R12D969Z |   PG           |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_28] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
+      | CLMCST42R12D969Z |   NULL         |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_29] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF   |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
+      | NULL |   PF           |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.4_30] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
+
+
 
   Scenario: [API-SERVICE-CA_CE02.5_39] Invocazione del servizio con IUN vuoto
 
   Scenario: [API-SERVICE-CA_CE02.5_40] Invocazione del servizio con IUN inesistente
 
   Scenario: [API-SERVICE-CA_CE02.5_42] Invocazione del servizio con IUN corretto e verifica risposta
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   Scenario: [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
 

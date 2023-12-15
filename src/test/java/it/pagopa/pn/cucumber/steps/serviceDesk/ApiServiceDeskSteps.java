@@ -1100,6 +1100,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
+    //TODO Codice Duplicato
     @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String cf, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate ) {
         try {
@@ -1150,6 +1151,9 @@ public class ApiServiceDeskSteps {
                 setRecipientType( recipientType);
             }
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
+
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+            Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getCourtesyMessages().size()>0);
 
             Assertions.assertNotNull(searchNotificationsResponse);
         } catch (HttpStatusCodeException e) {
@@ -1218,4 +1222,64 @@ public class ApiServiceDeskSteps {
 
     }
 
+    //TODO Codice Duplicato
+    @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String cf, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate) {
+
+        try {
+            Integer size = null;
+            String nextPagesKey = null;
+            OffsetDateTime sDate = null;
+            OffsetDateTime eDate = null;
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            OffsetDateTime sentAt = OffsetDateTime.now();
+
+            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
+                size = Integer.parseInt(searchPageSize);
+            }else {
+                //Default Value
+                size = 10;
+            }
+
+            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+                nextPagesKey = searchNextPagesKey;
+            }
+
+            if (!"NULL".equalsIgnoreCase(startDate)) {
+                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
+                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
+
+                if (!"NULL".equalsIgnoreCase(endDate)) {
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+                }
+                /**
+                 else {
+                 eDate = sentAt;
+                 }
+                 **/
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+            }
+
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            if (!"NULL".equalsIgnoreCase(cf)) {
+                searchNotificationsRequest.setTaxId(cf);
+            }
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType( recipientType);
+            }
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
 }
