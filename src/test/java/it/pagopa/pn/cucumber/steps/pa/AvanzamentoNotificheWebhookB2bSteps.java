@@ -445,6 +445,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_DIGITAL_FEEDBACK;
                 break;
+            case "SEND_ANALOG_FEEDBACK":
+                numCheck = 10;
+                timelineElementCategory = TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK;
+                break;
             case "SEND_ANALOG_DOMICILE":
                 numCheck = 9;
                 timelineElementCategory = TimelineElementCategoryV20.SEND_ANALOG_DOMICILE;
@@ -457,6 +463,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementCategory = TimelineElementCategoryV20.SEND_DIGITAL_PROGRESS;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_DIGITAL_PROGRESS;
+                break;
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS":
+                numCheck = 15;
+                timelineElementCategory = TimelineElementCategoryV20.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS;
                 break;
             case "PUBLIC_REGISTRY_CALL":
                 numCheck = 2;
@@ -471,6 +483,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementCategory = TimelineElementCategoryV20.PUBLIC_REGISTRY_RESPONSE;
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.PUBLIC_REGISTRY_RESPONSE;
+                break;
+            case "PAYMENT":
+                numCheck = 9;
+                timelineElementCategory = TimelineElementCategoryV20.PAYMENT;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.PAYMENT;
                 break;
             case "NOTIFICATION_CANCELLATION_REQUEST":
                 numCheck = 9;
