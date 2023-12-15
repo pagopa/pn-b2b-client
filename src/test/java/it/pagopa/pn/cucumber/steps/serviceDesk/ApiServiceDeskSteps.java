@@ -1154,7 +1154,7 @@ public class ApiServiceDeskSteps {
 
     public void setRecipientType(SearchNotificationsRequest searchNotificationsRequest, String recipientType) {
         switch (recipientType) {
-            case "Pf":
+            case "PF":
                 searchNotificationsRequest.setRecipientType(RecipientType.PF);
                 break;
             case "PG":

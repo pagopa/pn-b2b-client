@@ -11,7 +11,7 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
   @cruscottoAssistenza
@@ -20,7 +20,7 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF                                |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
   @cruscottoAssistenza
@@ -34,7 +34,7 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CLMCST42R12D969Z |         PG   |   NULL             |       NULL            |   NULL   |  NULL  |
 
 
@@ -44,17 +44,17 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   NULL   |  NULL  |
 
-    
+
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_7] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
-      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF   |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | NULL |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
 
@@ -64,7 +64,7 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde con esito positivo
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CLMCST42R12D969Z |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
 
@@ -74,7 +74,7 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde con esito positivo
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE|SEARCH_NEXT_PAGE_KEY|START_DATE|END_DATE|
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |  NULL  |
 
   Scenario: [API-SERVICE-CA_CE02.2_10] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 0
