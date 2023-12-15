@@ -1108,7 +1108,7 @@ public class ApiServiceDeskSteps {
             OffsetDateTime eDate = null;
 
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+            OffsetDateTime sentAt = OffsetDateTime.now();
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1122,16 +1122,23 @@ public class ApiServiceDeskSteps {
             }
 
             if (!"NULL".equalsIgnoreCase(startDate)) {
-                OffsetDateTime sentAt = OffsetDateTime.now();
                 LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
                 sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
                 if (!"NULL".equalsIgnoreCase(endDate)) {
                     LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
                     eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-                } else {
+                }
+                /**
+                else {
                     eDate = sentAt;
                 }
+                 **/
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
             }
 
 
