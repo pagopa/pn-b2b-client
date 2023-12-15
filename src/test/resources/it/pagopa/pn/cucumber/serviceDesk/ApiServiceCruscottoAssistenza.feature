@@ -75,11 +75,11 @@ Feature: Api Service Cruscotto Assitenza
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then Il servizio risponde con esito positivo
+    Then Il servizio risponde correttamente
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |  NULL  |
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-10-01   |   2023-12-01 |
 
   Scenario: [API-SERVICE-CA_CE02.2_10] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 0
 
