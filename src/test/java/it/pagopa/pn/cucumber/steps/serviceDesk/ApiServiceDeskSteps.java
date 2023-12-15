@@ -1330,16 +1330,19 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId("");
             }else {
                 searchNotificationsRequest.setTaxId(cf);
+                searchNotificationsRequest.setRecipientType(RecipientType.PF);
             }
             String iunSearch = null;
            if ("VUOTO".equalsIgnoreCase(iun)) {
                iunSearch = "";
             }else {
+               Assertions.assertNotNull(searchNotificationsResponse);
+               Assertions.assertNotNull(searchNotificationsResponse.getResults());
+               Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+
                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
             }
-            Assertions.assertNotNull(searchNotificationsResponse);
-            Assertions.assertNotNull(searchNotificationsResponse.getResults());
-            Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
 
         } catch (HttpStatusCodeException e) {
