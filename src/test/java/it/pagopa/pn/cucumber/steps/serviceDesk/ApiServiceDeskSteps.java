@@ -44,13 +44,11 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -1109,12 +1107,14 @@ public class ApiServiceDeskSteps {
             OffsetDateTime sDate = null;
             OffsetDateTime eDate = null;
 
-            DateTimeFormatter offsetDateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
+            }else {
+                //Default Value
+                size = 10;
             }
 
             if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
@@ -1122,12 +1122,18 @@ public class ApiServiceDeskSteps {
             }
 
             if (!"NULL".equalsIgnoreCase(startDate)) {
-                sDate = OffsetDateTime.parse(startDate, offsetDateTimeFormatter);
+                OffsetDateTime sentAt = OffsetDateTime.now();
+                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
+                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
+
+                if (!"NULL".equalsIgnoreCase(endDate)) {
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+                } else {
+                    eDate = sentAt;
+                }
             }
 
-            if (!"NULL".equalsIgnoreCase(endDate)) {
-                eDate = OffsetDateTime.parse(endDate, offsetDateTimeFormatter);
-            }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
             if (!"NULL".equalsIgnoreCase(cf)) {
@@ -1137,12 +1143,7 @@ public class ApiServiceDeskSteps {
                 setRecipientType(searchNotificationsRequest, recipientType);
             }
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
-            try {
-                Thread.sleep(getWorkFlowWait());
-            } catch (InterruptedException e) {
-                logger.error("Thread.sleep error retry");
-                throw new RuntimeException(e);
-            }
+
             Assertions.assertNotNull(searchNotificationsResponse);
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -1150,6 +1151,8 @@ public class ApiServiceDeskSteps {
             }
         }
     }
+
+
 
 
     public void setRecipientType(SearchNotificationsRequest searchNotificationsRequest, String recipientType) {
@@ -1166,4 +1169,8 @@ public class ApiServiceDeskSteps {
     }
 
 
+    @Then("Il servizio risponde correttamente")
+    public void ilServizioRispondeCorrettamente() {
+        Assertions.assertNull(notificationError);
+    }
 }

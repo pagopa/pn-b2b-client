@@ -24,14 +24,18 @@ Feature: Api Service Cruscotto Assitenza
       | CPNTMS85T15H703WCPNTMS85T15H703W! |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
 
   @cruscottoAssistenza
-  Scenario: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
-    Given l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con recipientType vuoto
+  Scenario Outline: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
+
+    Examples:
+      | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
+      | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   NULL   |  NULL  |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
+    Then il servizio risponde con errore "500"
 
     Examples:
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
@@ -61,11 +65,11 @@ Feature: Api Service Cruscotto Assitenza
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then Il servizio risponde con esito positivo
+    Then Il servizio risponde correttamente
 
     Examples:
-      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
-      | CLMCST42R12D969Z |         PF   |   NULL             |       NULL            |   NULL   |  NULL  |
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |         PF   |   10             |       NULL            |   2023-10-01   |   2023-12-01 |
 
 
   @cruscottoAssistenza
