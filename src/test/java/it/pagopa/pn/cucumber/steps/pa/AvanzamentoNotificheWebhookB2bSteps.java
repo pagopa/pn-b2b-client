@@ -509,6 +509,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 timelineElementInternalCategory =
                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.NOTIFICATION_CANCELLED;
                 break;
+            case "REFINEMENT":
+                numCheck = 15;
+                timelineElementCategory = TimelineElementCategoryV20.REFINEMENT;
+                timelineElementInternalCategory =
+                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.REFINEMENT;
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -633,6 +639,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
             EventTimestamp = progressResponseElementList.stream().filter(elem -> elem.getTimelineEventCategory().equals(timelineElementCategory)).findAny().get().getTimestamp();
             NotificationTimestamp =sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp();
+
+            logger.info("event timestamp : {}",EventTimestamp);
+            logger.info("notification timestamp : {}",NotificationTimestamp);
+
+            Assertions.assertTrue(EventTimestamp!=NotificationTimestamp);
+
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
+    }
             logger.info("event timestamp : {}",EventTimestamp);
             logger.info("notification timestamp : {}",NotificationTimestamp);
 
