@@ -257,3 +257,28 @@ Feature: Notifica visualizzata
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
     Then viene verificato che il numero di elementi di timeline "SEND_ANALOG_DOMICILE" della notifica sia di 1
+
+
+  @e2e
+  Scenario: [E2E-WF-INHIBITION-8] Casistica in cui la visualizzazione di una notifica dopo i 10gg del refinement della notifica.
+  La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_SUCCESS_WORKFLOW. Questa lettura deve generare
+  un evento di timeline REFINEMENT.
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+    And destinatario
+      | denomination            | Leonardo da Vinci           |
+      | taxId                   | DVNLRD52D15M059P            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | @OK-RITARDO_PERFEZIONAMENTO |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+      | loadTimeline     | true     |
+      | pollingTime      | 40000    |
+      | numCheck         | 36       |
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    Then la notifica può essere correttamente recuperata da "Leonardo da Vinci"
+    And viene verificato che l'elemento di timeline "REFINEMENT" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg

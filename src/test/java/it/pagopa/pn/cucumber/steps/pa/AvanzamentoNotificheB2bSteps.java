@@ -844,6 +844,22 @@ public class AvanzamentoNotificheB2bSteps {
         readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
     }
 
+    @Then("si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT")
+    public void verificationDateScheduleRefinementWithRefinement() {
+
+    try {
+        OffsetDateTime ricezioneRaccomandata = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+        OffsetDateTime refinementDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+    logger.info("ricezioneRaccomandata : {}", ricezioneRaccomandata);
+    logger.info("refinementDate : {}", refinementDate);
+
+        Assertions.assertEquals(ricezioneRaccomandata,refinementDate);
+
+    }catch (AssertionFailedError assertionFailedError) {
+        sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+    }
+    }
+
     public void readingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
 
         TimelineElementV20 timelineElement = null;
@@ -3142,6 +3158,22 @@ public class AvanzamentoNotificheB2bSteps {
                 checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
             }
         } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg")
+    public void verificationDateScheduleRefinementWithRefinementPlus10Days() {
+
+        try {
+            OffsetDateTime scheduleDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp().plus(sharedSteps.getSchedulingDaysSuccessAnalogRefinement());
+            OffsetDateTime refinementDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            logger.info("scheduleDate : {}", scheduleDate);
+            logger.info("refinementDate : {}", refinementDate);
+
+            Assertions.assertEquals(scheduleDate,refinementDate);
+
+        }catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
