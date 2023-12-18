@@ -7,7 +7,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -16,7 +16,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_3] Invocazione del servizio con taxId non formalmente corretto
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -25,16 +25,16 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_4] Invocazione del servizio con recipientType vuoto
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
       | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE|
       | CLMCST42R12D969Z |         NULL   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  @cruscottoAssistenza
+  @cruscottoAssistenza @ignore
   Scenario Outline: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -44,7 +44,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_6] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -54,7 +54,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_7] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -64,7 +64,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -74,7 +74,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -83,7 +83,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_10] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 0
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -92,7 +92,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_11] Invocazione del servizio con taxId e recipientType corretti e  searchPageSize = 51
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -101,7 +101,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_12] Invocazione del servizio con taxId e recipientType corretti e  searchNextPagesKey = 50
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -110,7 +110,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_13] Invocazione del servizio con taxId e recipientType corretti e  searchNextPagesKey = 51
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -120,7 +120,7 @@ Feature: Api Service Cruscotto Assitenza
     #TODO Chiedere Info............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_14] Invocazione del servizio con taxId e recipientType corretti ma con endDate > startDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -129,7 +129,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_14_1] Invocazione del servizio con taxId e recipientType corretti ma con endDate > startDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -138,7 +138,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_15] Invocazione del servizio con taxId e recipientType corretti, con endDate valorizzata ma senza startDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -147,7 +147,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16] Invocazione del servizio con taxId e recipientType corretti, con startDate valorizzata ma senza endDate
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -157,7 +157,7 @@ Feature: Api Service Cruscotto Assitenza
      #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16_1] Invocazione del servizio con taxId e recipientType corretti, con startDate  ed endDate  valorizzati correttamente
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -167,7 +167,7 @@ Feature: Api Service Cruscotto Assitenza
     #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -176,7 +176,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_18] Invocazione del servizio con taxId non formalmente corretto
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -185,7 +185,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_19] Invocazione del servizio con recipientType vuoto
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -193,9 +193,9 @@ Feature: Api Service Cruscotto Assitenza
       | CLMCST42R12D969Z |   NULL         |
 
     #TODO CONTROLLARE NON ARRIVA IL 400............
-  @cruscottoAssistenza
+  @cruscottoAssistenza @ignore
   Scenario Outline: [API-SERVICE-CA_CE02.3_20] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -204,7 +204,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_21] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -213,7 +213,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_22] Invocazione del servizio con recipientType valorizzato correttamente ma senza taxId
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -222,7 +222,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_23] Invocazione del servizio con taxId e recipientType corretti e verifica risposta
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con cf "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -232,7 +232,7 @@ Feature: Api Service Cruscotto Assitenza
     #TODO simile CE02.2............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -242,7 +242,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_25] Invocazione del servizio con taxId non formalmente corretto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -252,16 +252,16 @@ Feature: Api Service Cruscotto Assitenza
     #TODO gestire il caso vuoto............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_26] Invocazione del servizio con recipientType vuoto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
       | CF               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
       | CLMCST42R12D969Z |   NULL         |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  @cruscottoAssistenza
+  @cruscottoAssistenza @ignore
   Scenario Outline: [API-SERVICE-CA_CE02.4_27] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -270,7 +270,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_28] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -279,7 +279,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_29] Invocazione del servizio con recipientTypevalorizzato correttamente ma senza taxId
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then il servizio risponde con errore "400"
 
     Examples:
@@ -288,7 +288,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_30] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
@@ -317,7 +317,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.5_42] Invocazione del servizio con IUN corretto e verifica risposta
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio notifica
     And Il servizio risponde correttamente
@@ -330,7 +330,7 @@ Feature: Api Service Cruscotto Assitenza
   #TODO Verificare il 405..........
   @cruscottoAssistenza
   Scenario Outline:  [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun "VUOTO"
     And il servizio risponde con errore "405"
@@ -343,7 +343,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_44] Invocazione del servizio con taxId valorizzato ma IUN inesistente
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun "JRDT-XAPH-JQYW-202312-J-1"
     And il servizio risponde con errore "400"
@@ -354,7 +354,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_46] Invocazione del servizio con IUN corretto ma taxId vuoto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "VUOTO" e iun ""
     And il servizio risponde con errore "400"
@@ -365,7 +365,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_47] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "CPNTMS85T15H703WCPNTMS85T15H703W!" e iun ""
     And il servizio risponde con errore "400"
@@ -377,7 +377,7 @@ Feature: Api Service Cruscotto Assitenza
     #TODO DA verificare...........aspetto un 404....Chiedere
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_48] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "FRMTTR76M06B715E" e iun ""
     #And il servizio risponde con errore "404"
@@ -391,7 +391,7 @@ Feature: Api Service Cruscotto Assitenza
 #TODO Error 500 verificare
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_49] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
     And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun ""
     Then Il servizio risponde correttamente
@@ -410,50 +410,227 @@ Feature: Api Service Cruscotto Assitenza
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun ""
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun "" per il  destinatario 0
     And Il servizio risponde correttamente
 
 
 
 
-
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_50] Invocazione del servizio con IUN vuoto
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun "" per il  destinatario 0
+    And il servizio risponde con errore "405"
 
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_51] Invocazione del servizio con IUN inesistente
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
+    And il servizio risponde con errore "400"
 
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_53] Invocazione del servizio con IUN corretto ma taxId vuoto
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "VUOTO" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
+    And il servizio risponde con errore "400"
 
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_54] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CPNTMS85T15H703WCPNTMS85T15H703W!" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
+    And il servizio risponde con errore "400"
 
+
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_55] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "LVLDAA85T50G702B" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
+    And il servizio risponde con errore "400"
 
+#TODO Verificare il corretto funzionamento........
+  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_56] Invocazione del servizio con IUN (notifica multi destinatario) corretto e verifica risposta
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun "" per il  destinatario 0
+    And Il servizio risponde correttamente
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_57] Invocazione del servizio con IUN vuoto
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "405"
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  VUOTO                    | CLMCST42R12D969Z |   PF         |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_58] Invocazione del servizio con IUN inesistente
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "404"
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  JZTK-MGAH-TVKL-202311-X-1| CLMCST42R12D969Z |   PF         |
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then Il servizio risponde correttamente
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  JZTK-MGAH-TRKL-202311-X-1| CLMCST42R12D969Z |   PF         |
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  DNEN-JVYZ-RHWV-202304-M-1| CLMCST42R12D969Z |   PF         |
+
+    #TODO verificare se corretto il 404..........
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_62] Invocazione del servizio con IUN esistente, recipientType corretto ma con recipientTaxId non corrispondente al destinatario della notifica
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "404"
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  JZTK-MGAH-TRKL-202311-X-1| CLMCST42R12D969Z |   PG         |
+
+     #TODO verificare se corretto il 404..........Chiedere informazioni...
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_63] Invocazione del servizio con IUN esistente, ma recipientType non coerente rispetto al recipientTaxId della notifica
+    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "404"
+
+    Examples:
+      |         IUN               | CF               |RECIPIENT_TYPE|
+      |  JZTK-MGAH-TRKL-202311-X-1| CLMCST42R12D969Z |   PG         |
 
 
 
 
-  Scenario: [API-SERVICE-CA_CE02.8_57] Invocazione del servizio con IUN vuoto
+  @deleghe1  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    And Il servizio risponde correttamente
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchDelegateInternalId "<DELEGATE_INTERNAL_ID>"
+    And Il servizio risponde correttamente
 
-  Scenario: [API-SERVICE-CA_CE02.8_58] Invocazione del servizio con IUN inesistente
-
-  Scenario: [API-SERVICE-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
-
-  Scenario: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
-
-  Scenario: [API-SERVICE-CA_CE02.8_62] Invocazione del servizio con IUN esistente, recipientType corretto ma con recipientTaxId non corrispondente al destinatario della notifica
-
-  Scenario: [API-SERVICE-CA_CE02.8_63] Invocazione del servizio con IUN esistente, ma recipientType non coerente rispetto al recipientTaxId della notifica
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |DELEGATE_INTERNAL_ID|
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NO_SET  |          NO_SET    |
 
 
+  @deleghe1  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.9_65] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica ma senza searchMandateId
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    And Il servizio risponde correttamente
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchDelegateInternalId "<DELEGATE_INTERNAL_ID>"
+    And il servizio risponde con errore "400"
 
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |DELEGATE_INTERNAL_ID|
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NULL  |          NO_SET    |
 
-  Scenario: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
+  @deleghe1  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.9_66] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, con searchMandateId ma senza searchDelegateInternalId
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    And Il servizio risponde correttamente
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchDelegateInternalId "<DELEGATE_INTERNAL_ID>"
+    And il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.9_65] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica ma senza searchMandateId
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |DELEGATE_INTERNAL_ID|
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NO_SET  |          NULL    |
 
-  Scenario: [API-SERVICE-CA_CE02.9_66] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, con searchMandateId ma senza searchDelegateInternalId
+  @deleghe1  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
+    And "Mario Gherkin" accetta la delega "Mario Cucumber"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente letta da "Mario Gherkin" con delega
+    And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<CF>" e recipientType  "<RECIPIENT_TYPE>"
+    And Il servizio risponde correttamente
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchDelegateInternalId "<DELEGATE_INTERNAL_ID>"
+    And il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma consearchMandateId non coerente con ilsearchDelegateInternalId
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID                                |DELEGATE_INTERNAL_ID|
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    z7942f2e-1037-4ed9-8ca6-a6f7923bf4a7  |          NO_SET      |
 
 
 

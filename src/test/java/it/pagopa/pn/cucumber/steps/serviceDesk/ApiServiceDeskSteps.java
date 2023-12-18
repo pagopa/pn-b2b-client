@@ -1,7 +1,7 @@
 package it.pagopa.pn.cucumber.steps.serviceDesk;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplNoApiKey;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplWrongApiKey;
@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOp
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.TransferModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -18,8 +19,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
@@ -128,7 +127,8 @@ public class ApiServiceDeskSteps {
     private ProfileResponse profileResponse;
     private NotificationDetailResponse notificationDetailResponse;
     private TimelineResponse timelineResponse;
-
+    private DocumentsRequest documentsRequest;
+    private DocumentsResponse documentsResponse;
 
 
     @Autowired
@@ -1103,8 +1103,8 @@ public class ApiServiceDeskSteps {
     }
 
     //TODO Codice Duplicato
-    @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con cf {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
-    public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String cf, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate ) {
+    @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String taxId, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate ) {
         try {
             Integer size = null;
             String nextPagesKey = null;
@@ -1146,9 +1146,14 @@ public class ApiServiceDeskSteps {
             }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
-            if (!"NULL".equalsIgnoreCase(cf)) {
-                searchNotificationsRequest.setTaxId(cf);
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId("");
+            }else {
+                searchNotificationsRequest.setTaxId(taxId);
             }
+
             if (!"NULL".equalsIgnoreCase(recipientType)) {
                 setRecipientType( recipientType);
             }
@@ -1177,6 +1182,10 @@ public class ApiServiceDeskSteps {
                 if(profileRequest!= null) {
                     profileRequest.setRecipientType(RecipientType.PF);
                 }
+                if(documentsRequest!= null) {
+                    documentsRequest.setRecipientType(RecipientType.PF);
+                }
+
                 break;
             case "PG":
                 if(searchNotificationsRequest!= null){
@@ -1185,6 +1194,9 @@ public class ApiServiceDeskSteps {
                 if(profileRequest!= null) {
                     profileRequest.setRecipientType(RecipientType.PG);
                 }
+                if(documentsRequest!= null) {
+                    documentsRequest.setRecipientType(RecipientType.PG);
+                }
                 break;
             default:
                 if(searchNotificationsRequest!= null){
@@ -1192,6 +1204,9 @@ public class ApiServiceDeskSteps {
                 }
                 if(profileRequest!= null) {
                     profileRequest.setRecipientType(null);
+                }
+                if(documentsRequest!= null) {
+                    documentsRequest.setRecipientType(null);
                 }
 
         }
@@ -1203,19 +1218,25 @@ public class ApiServiceDeskSteps {
         Assertions.assertNull(notificationError);
     }
 
-    @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con cf {string} e recipientType  {string}")
-    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String cf, String recipientType) {
+    @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
+    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
 
     try{
             profileRequest = new ProfileRequest();
-            if (!"NULL".equalsIgnoreCase(cf)) {
-                profileRequest.setTaxId(cf);
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                profileRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                profileRequest.setTaxId("");
+            }else {
+                profileRequest.setTaxId(taxId);
             }
-            if (!"NULL".equalsIgnoreCase(recipientType)) {
+
+        if (!"NULL".equalsIgnoreCase(recipientType)) {
                 setRecipientType( recipientType);
             }
 
             profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
+            Assertions.assertNotNull(profileResponse);
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -1225,8 +1246,8 @@ public class ApiServiceDeskSteps {
     }
 
     //TODO Codice Duplicato
-    @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
-    public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String cf, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate) {
+    @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType,String searchPageSize,String searchNextPagesKey, String startDate, String  endDate) {
 
         try {
             Integer size = null;
@@ -1269,9 +1290,14 @@ public class ApiServiceDeskSteps {
             }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
-            if (!"NULL".equalsIgnoreCase(cf)) {
-                searchNotificationsRequest.setTaxId(cf);
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId("");
+            }else {
+                searchNotificationsRequest.setTaxId(taxId);
             }
+
             if (!"NULL".equalsIgnoreCase(recipientType)) {
                 setRecipientType( recipientType);
             }
@@ -1367,17 +1393,17 @@ public class ApiServiceDeskSteps {
     }
 
 
-    @Then("invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId {string} e iun {string}")
-    public void invocazioneServizioPerRecuperoDettaglioTimelineNotificaMultidestinatarioConCfEIun(String cf, String iun) {
+    @Then("invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId {string} e iun {string} per il  destinatario {int}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotificaMultidestinatarioConCfEIun(String taxId, String iun, Integer destinatario) {
         try{
             searchNotificationsRequest = new SearchNotificationsRequest();
             searchNotificationsRequest.setRecipientType(RecipientType.PF);
-            if ("NULL".equalsIgnoreCase(cf)) {
-                searchNotificationsRequest.setTaxId(cf);
-            }else if ("VUOTO".equalsIgnoreCase(cf)) {
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            }else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             }else {
-                searchNotificationsRequest.setTaxId(cf);
+                searchNotificationsRequest.setTaxId(taxId);
             }
             String iunSearch = null;
             if ("VUOTO".equalsIgnoreCase(iun)) {
@@ -1388,6 +1414,11 @@ public class ApiServiceDeskSteps {
 
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
 
+            Assertions.assertNotNull(timelineResponse);
+            TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> !elem.getDetails().getRecIndex().equals(destinatario)).findAny().orElse(null);
+            Assertions.assertNull(timelineElement);
+
+
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -1395,5 +1426,140 @@ public class ApiServiceDeskSteps {
         }
 
     }
+
+    @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
+    public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitàValiditàEDimensioneDegliAllegatiConIUNRecipientType(String iun,String taxId, String recipientType) {
+
+        try{
+            documentsRequest  = new DocumentsRequest();
+            setRecipientType(recipientType);
+
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId(null);
+            }else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId("");
+            }else {
+                documentsRequest.setTaxId(taxId);
+            }
+
+            String iunSearch = null;
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
+            }else {
+                iunSearch = iun;
+            }
+
+            documentsResponse = ipServiceDeskClient.getDocumentsOfIUN(iunSearch, documentsRequest);
+
+            Assertions.assertNotNull(documentsResponse);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica")
+    public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridica() {
+
+        try{
+
+            String mandateId= "f7942f2e-1037-4ed9-8ca6-a6f7923bf4a7";
+
+            String delegateInternalId ="PF-4147b547-87b9-4a23-9420-cac57755b26c";
+
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateId, delegateInternalId, 10, null, null, null);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchDelegateInternalId {string}")
+    public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchDelegateInternalId ) {
+
+        try{
+            Assertions.assertNotNull(profileResponse);
+            Assertions.assertNotNull(profileResponse.getDelegateMandates());
+            Assertions.assertTrue(profileResponse.getDelegateMandates().size()>0);
+
+            Integer size = null;
+            String nextPagesKey = null;
+            OffsetDateTime sDate = null;
+            OffsetDateTime eDate = null;
+
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            OffsetDateTime sentAt = OffsetDateTime.now();
+
+            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
+                size = Integer.parseInt(searchPageSize);
+            }else {
+                //Default Value
+                size = 10;
+            }
+
+            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+                nextPagesKey = searchNextPagesKey;
+            }
+
+            if (!"NULL".equalsIgnoreCase(startDate)) {
+                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
+                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
+
+                if (!"NULL".equalsIgnoreCase(endDate)) {
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+                }else {
+                    eDate = sentAt;
+                }
+            }else {
+                sDate = sentAt;
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+            }else {
+                eDate = sentAt;
+            }
+
+            String mandateIdSearch = null;
+            if("NULL".equalsIgnoreCase(searchMandateId)){
+                mandateIdSearch = null;
+            } else if ("NO_SET".equalsIgnoreCase(searchMandateId)) {
+                mandateIdSearch = profileResponse.getDelegateMandates().get(0).getMandateId();
+            } else {
+                mandateIdSearch = searchMandateId;
+            }
+
+            String delegateInternalIdSearch = null;
+            if("NULL".equalsIgnoreCase(searchDelegateInternalId)){
+                delegateInternalIdSearch = null;
+            } else if ("NO_SET".equalsIgnoreCase(searchDelegateInternalId)) {
+                delegateInternalIdSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
+            } else {
+                delegateInternalIdSearch = searchDelegateInternalId;
+            }
+
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, delegateInternalIdSearch, size, nextPagesKey, sDate, eDate);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+
 }
 
