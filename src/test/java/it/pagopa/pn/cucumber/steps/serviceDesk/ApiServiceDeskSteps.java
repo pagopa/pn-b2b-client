@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPo
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.TransferModel;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.TimelineElement;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -1415,9 +1416,16 @@ public class ApiServiceDeskSteps {
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
 
             Assertions.assertNotNull(timelineResponse);
-            TimelineElementV20 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> !elem.getDetails().getRecIndex().equals(destinatario)).findAny().orElse(null);
-            Assertions.assertNull(timelineElement);
 
+            TimelineElement timelineElement = null;
+            for ( TimelineElement element : timelineResponse.getTimeline()) {
+                if (element.getDetail()!= null && element.getDetail().getRecIndex()!= null && !destinatario.equals(element.getDetail().getRecIndex())) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            Assertions.assertNull(timelineElement);
 
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -1461,28 +1469,7 @@ public class ApiServiceDeskSteps {
 
     }
 
-    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica")
-    public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridica() {
-
-        try{
-
-            String mandateId= "f7942f2e-1037-4ed9-8ca6-a6f7923bf4a7";
-
-            String delegateInternalId ="PF-4147b547-87b9-4a23-9420-cac57755b26c";
-
-            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateId, delegateInternalId, 10, null, null, null);
-
-            Assertions.assertNotNull(searchNotificationsResponse);
-
-        } catch (HttpStatusCodeException e) {
-            if (e instanceof HttpStatusCodeException) {
-                this.notificationError = (HttpStatusCodeException) e;
-            }
-        }
-
-    }
-
-    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchDelegateInternalId {string}")
+    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come delegato di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchDelegateInternalId {string}")
     public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchDelegateInternalId ) {
 
         try{
