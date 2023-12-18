@@ -327,12 +327,12 @@ Feature: Api Service Cruscotto Assitenza
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
-
+  #TODO Verificare il 405..........
   @cruscottoAssistenza
   Scenario Outline:  [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-    And invocazione servizio per recupero dettaglio timeline notifica con cf "CLMCST42R12D969Z" e iun "VUOTO"
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun "VUOTO"
     And il servizio risponde con errore "405"
 
     Examples:
@@ -345,20 +345,77 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_44] Invocazione del servizio con taxId valorizzato ma IUN inesistente
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-    And invocazione servizio per recupero dettaglio timeline notifica con cf "CLMCST42R12D969Z" e iun "JRDT-XAPH-JQYW-202312-J-1"
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun "JRDT-XAPH-JQYW-202312-J-1"
     And il servizio risponde con errore "400"
 
     Examples:
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.6_46] Invocazione del servizio con IUN corretto ma taxId vuoto
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.6_46] Invocazione del servizio con IUN corretto ma taxId vuoto
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "VUOTO" e iun ""
+    And il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.6_47] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  Scenario: [API-SERVICE-CA_CE02.6_48] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.6_47] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CPNTMS85T15H703WCPNTMS85T15H703W!" e iun ""
+    And il servizio risponde con errore "400"
 
-  Scenario: [API-SERVICE-CA_CE02.6_49] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
+
+    #TODO DA verificare...........aspetto un 404....Chiedere
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.6_48] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "FRMTTR76M06B715E" e iun ""
+    #And il servizio risponde con errore "404"
+    And Il servizio risponde correttamente
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
+
+
+#TODO Error 500 verificare
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.6_49] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con cf "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Then Il servizio risponde correttamente
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun ""
+    Then Il servizio risponde correttamente
+
+    Examples:
+      | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
+      | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
+
+
+  @cruscottoAssistenza
+  Scenario: [API-SERVICE-CA_CE02.7_4933] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
+    Given viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CLMCST42R12D969Z" e iun ""
+    And Il servizio risponde correttamente
+
+
+
+
 
   Scenario: [API-SERVICE-CA_CE02.7_50] Invocazione del servizio con IUN vuoto
 
@@ -372,6 +429,9 @@ Feature: Api Service Cruscotto Assitenza
 
   Scenario: [API-SERVICE-CA_CE02.7_56] Invocazione del servizio con IUN (notifica multi destinatario) corretto e verifica risposta
 
+
+
+
   Scenario: [API-SERVICE-CA_CE02.8_57] Invocazione del servizio con IUN vuoto
 
   Scenario: [API-SERVICE-CA_CE02.8_58] Invocazione del servizio con IUN inesistente
@@ -384,6 +444,9 @@ Feature: Api Service Cruscotto Assitenza
 
   Scenario: [API-SERVICE-CA_CE02.8_63] Invocazione del servizio con IUN esistente, ma recipientType non coerente rispetto al recipientTaxId della notifica
 
+
+
+
   Scenario: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
 
   Scenario: [API-SERVICE-CA_CE02.9_65] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica ma senza searchMandateId
@@ -392,7 +455,11 @@ Feature: Api Service Cruscotto Assitenza
 
   Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma consearchMandateId non coerente con ilsearchDelegateInternalId
 
+
+
   Scenario: [API-SERVICE-CA_CE02.10_74] Invocazione del servizio e verifica risposta
+
+
 
   Scenario: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
 
@@ -400,17 +467,21 @@ Feature: Api Service Cruscotto Assitenza
 
   Scenario: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
 
+
+
   Scenario: [API-SERVICE-CA_CE02.12_90] Invocazione del servizio con IUN vuoto
 
   Scenario: [API-SERVICE-CA_CE02.12_91] Invocazione del servizio con IUN inesistente
 
   Scenario: [API-SERVICE-CA_CE02.12_93] Invocazione del servizio con IUN corretto e verifica risposta
 
+
   Scenario: [API-SERVICE-CA_CE02.13_94] Invocazione del servizio con IUN vuoto
 
   Scenario: [API-SERVICE-CA_CE02.13_95] Invocazione del servizio con IUN inesistente
 
   Scenario: [API-SERVICE-CA_CE02.13_97] Invocazione del servizio con IUN corretto e verifica risposta
+
 
   Scenario: [API-SERVICE-CA_CE02.14_98] Invocazione del servizio con paId vuoto
 

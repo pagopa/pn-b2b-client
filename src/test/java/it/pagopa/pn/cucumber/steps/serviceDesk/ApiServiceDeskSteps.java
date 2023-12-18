@@ -1320,27 +1320,70 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @And("invocazione servizio per recupero dettaglio timeline notifica con cf {string} e iun {string}")
-    public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String cf, String iun) {
+    @And("invocazione servizio per recupero dettaglio timeline notifica con taxId {string} e iun {string}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String taxid, String iun) {
+        try{
+            //Parametri di Richiesta utilizzati per il recupero della notifica
+            String taxidQuery = searchNotificationsRequest.getTaxId();
+            RecipientType recipientType = searchNotificationsRequest.getRecipientType();
+
+            //Nuovi Parametri di Richiesta per il recupero della timeline
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setRecipientType(recipientType);
+
+            String iunSearch = null;
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
+            }else {
+                Assertions.assertNotNull(searchNotificationsResponse);
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            }
+
+            boolean diversoTaxid= false;
+            if ("NULL".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(null);
+            }else if ("VUOTO".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId("");
+            }else {
+                searchNotificationsRequest.setTaxId(taxid);
+                if(!taxid.equalsIgnoreCase(taxidQuery)){
+                    diversoTaxid = true;
+                }
+            }
+
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
+
+            if (diversoTaxid){
+                Assertions.assertNull(timelineResponse);
+            }
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Then("invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId {string} e iun {string}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotificaMultidestinatarioConCfEIun(String cf, String iun) {
         try{
             searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
             if ("NULL".equalsIgnoreCase(cf)) {
                 searchNotificationsRequest.setTaxId(cf);
             }else if ("VUOTO".equalsIgnoreCase(cf)) {
                 searchNotificationsRequest.setTaxId("");
             }else {
                 searchNotificationsRequest.setTaxId(cf);
-                searchNotificationsRequest.setRecipientType(RecipientType.PF);
             }
             String iunSearch = null;
-           if ("VUOTO".equalsIgnoreCase(iun)) {
-               iunSearch = "";
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
             }else {
-               Assertions.assertNotNull(searchNotificationsResponse);
-               Assertions.assertNotNull(searchNotificationsResponse.getResults());
-               Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
-
-               iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+                iunSearch = sharedSteps.getSentNotification().getIun();
             }
 
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
@@ -1350,6 +1393,7 @@ public class ApiServiceDeskSteps {
                 this.notificationError = (HttpStatusCodeException) e;
             }
         }
+
     }
 }
 
