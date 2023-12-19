@@ -1,10 +1,12 @@
 Feature: Api Service Cruscotto Assitenza
 
+  #CE02.1 Come operatore devo accedere all’elenco di tutte le PA che hanno effettuato on boarding
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.1_1] Invocazione del servizio e verifica restituzione array di oggetti con nome e id della PA
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     Then Il servizio risponde con esito positivo
 
+  #CE02.2 Come operatore devo accedere all’elenco di tutti i messaggi di cortesia inviati...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_2] Invocazione del servizio con taxId vuoto
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -154,6 +156,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE    |END_DATE|
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |   2023-01-01 |   NULL |
 
+
      #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_16_1] Invocazione del servizio con taxId e recipientType corretti, con startDate  ed endDate  valorizzati correttamente
@@ -164,6 +167,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
+   #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche
     #TODO valutare se inserire una altra Assertion per verifica se la lista dei risultati e coerente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.3_17] Invocazione del servizio con taxId vuoto
@@ -229,6 +233,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|
       | CLMCST42R12D969Z |   PF         |
 
+  #CE02.4 Come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche
     #TODO simile CE02.2............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_24] Invocazione del servizio con taxId vuoto
@@ -295,6 +300,8 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
+
+    #CE02.5 Come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo (IUN)
 #TODO verificare il 405.................
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.5_39] Invocazione del servizio con IUN vuoto
@@ -327,6 +334,7 @@ Feature: Api Service Cruscotto Assitenza
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
+    #CE02.6 Come operatore devo accedere alla storia (timeline) di una notifica di cui conosco l’identificativo (IUN)
   #TODO Verificare il 405..........
   @cruscottoAssistenza
   Scenario Outline:  [API-SERVICE-CA_CE02.6_43] Invocazione del servizio con taxId valorizzato ma IUN vuoto
@@ -401,6 +409,7 @@ Feature: Api Service Cruscotto Assitenza
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
+  #CE02.7 Come operatore devo accedere alla storia (timeline) di una notifica multi-destinatario di cui conosco l’identificativo (IUN)
   @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.7_4933] Invocazione del servizio con IUN (notifica mono destinatario)  corretto e verifica risposta
     Given viene generata una nuova notifica
@@ -492,6 +501,7 @@ Feature: Api Service Cruscotto Assitenza
     And Il servizio risponde correttamente
 
 
+    #CE02.8 Come operatore devo effettuare un check sulla disponibilità (nel momento della verifica), validità e dimensione degli allegati. (cancellazione a 120 gg)
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_57] Invocazione del servizio con IUN vuoto
     Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<CF>"  recipientType  "<RECIPIENT_TYPE>"
@@ -551,7 +561,7 @@ Feature: Api Service Cruscotto Assitenza
 
 
 
-
+#CE02.9 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica.
   @deleghe1  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
@@ -634,6 +644,7 @@ Feature: Api Service Cruscotto Assitenza
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    z7942f2e-1037-4ed9-8ca6-a6f7923bf4a7  |          NO_SET      |
 
 
+  #CE02.10 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario ma sono state “trattate” da altro utente da lui “delegato”
   @deleghe1  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.10_74] Invocazione del servizio e verifica risposta
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
@@ -654,7 +665,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |    INTERNAL_ID     |
       | FRMTTR76M06B715E |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NO_SET  |          NO_SET    |
 
-
+  #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.11_79] Invocazione del servizio con paId vuoto
     Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -685,6 +696,7 @@ Feature: Api Service Cruscotto Assitenza
       | 4db741cf-17e1-4751-9b7b-7675ccca472b  |   1             |       NULL         |   2023-01-01   |   2023-12-01 |
 
 
+  #CE02.12 Come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo (IUN) fornito dall'Ente mittente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.12_90] Invocazione del servizio con IUN vuoto
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -695,6 +707,7 @@ Feature: Api Service Cruscotto Assitenza
     Examples:
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
+
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.12_91] Invocazione del servizio con IUN inesistente
@@ -707,6 +720,7 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
+ # CE02.13 Come operatore devo accedere alla storia (timeline) di una notifica di cui conosco l’identificativo (IUN) fornito dall'Ente mittente
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.12_93] Invocazione del servizio con IUN corretto e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -718,7 +732,8 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-  @cruscottoAssistenza
+
+ @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.13_94] Invocazione del servizio con IUN vuoto
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And Il servizio risponde correttamente
@@ -751,7 +766,9 @@ Feature: Api Service Cruscotto Assitenza
       | CF               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   2023-01-01   |   2023-12-01 |
 
-        #TODO Verificare il comportamento corretto...Errore 500
+
+   #CE02.14 Come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma
+   #TODO Verificare il comportamento corretto...Errore 500
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_98] Invocazione del servizio con paId vuoto
     Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
@@ -779,3 +796,6 @@ Feature: Api Service Cruscotto Assitenza
     Examples:
       |  paID  |
       | 4db741cf-17e1-4751-9b7b-7675ccca472b  |
+
+
+#8c9ed305-f1ab-4031-b3f0-5241216d0635 MILANO
