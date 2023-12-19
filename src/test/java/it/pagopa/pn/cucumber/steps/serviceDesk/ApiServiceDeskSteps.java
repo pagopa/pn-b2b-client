@@ -1030,7 +1030,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @Then("Il servizio risponde con esito positivo")
+    @Then("Il servizio risponde con esito positivo con la lista delle PA")
     public void verifyServiceResponse() {
         Assertions.assertNotNull(listPa);
     }
