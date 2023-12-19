@@ -260,7 +260,7 @@ Feature: Notifica visualizzata
 
 
   @e2e
-  Scenario: [E2E-WF-INHIBITION-8] Casistica in cui la visualizzazione di una notifica dopo i 10gg del refinement della notifica.
+  Scenario: [E2E-WF-INHIBITION-8] Casistica in cui la visualizzazione di una notifica dopo i 10gg del refinement della notifica. PN-9059
   La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_SUCCESS_WORKFLOW. Questa lettura deve generare
   un evento di timeline REFINEMENT.
     Given viene generata una nuova notifica

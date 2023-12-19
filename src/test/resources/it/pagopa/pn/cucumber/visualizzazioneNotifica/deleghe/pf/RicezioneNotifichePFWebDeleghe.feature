@@ -190,7 +190,7 @@ Feature: Ricezione notifiche destinate al delegante
     And la PA richiede il download dell'attestazione opponibile "SENDER_ACK"
 
   @deleghe1
-  Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo
+  Scenario: [WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo PN-9059
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
