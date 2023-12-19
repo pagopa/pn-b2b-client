@@ -1158,10 +1158,19 @@ public class ApiServiceDeskSteps {
             }
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
 
+            Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+
+            if(size==1 && nextPagesKey==null){
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==1);
+            }
+            if(size==50 && nextPagesKey==null){
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==50);
+            }
+
             Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getCourtesyMessages().size() > 0);
 
-            Assertions.assertNotNull(searchNotificationsResponse);
+
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -1301,6 +1310,11 @@ public class ApiServiceDeskSteps {
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
 
             Assertions.assertNotNull(searchNotificationsResponse);
+            if (size==1 && nextPagesKey==null ){
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==1);
+            }
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -1357,11 +1371,14 @@ public class ApiServiceDeskSteps {
             String iunSearch = null;
             if ("VUOTO".equalsIgnoreCase(iun)) {
                 iunSearch = "";
-            } else {
+            }   else if("".equalsIgnoreCase(iun)){
                 Assertions.assertNotNull(searchNotificationsResponse);
                 Assertions.assertNotNull(searchNotificationsResponse.getResults());
                 Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
                 iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+
+            } else {
+                iunSearch = iun;
             }
 
             boolean diversoTaxid = false;
@@ -1405,8 +1422,12 @@ public class ApiServiceDeskSteps {
             String iunSearch = null;
             if ("VUOTO".equalsIgnoreCase(iun)) {
                 iunSearch = "";
-            } else {
+            } else if ("NULL".equalsIgnoreCase(iun)) {
+                iunSearch = null;
+            } else if ("".equalsIgnoreCase(iun)) {
                 iunSearch = sharedSteps.getSentNotification().getIun();
+            } else {
+                iunSearch = iun;
             }
 
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
@@ -1449,6 +1470,8 @@ public class ApiServiceDeskSteps {
             String iunSearch = null;
             if ("VUOTO".equalsIgnoreCase(iun)) {
                 iunSearch = "";
+            }else if ("NULL".equalsIgnoreCase(iun)) {
+                    iunSearch = null;
             } else {
                 iunSearch = iun;
             }
@@ -1540,6 +1563,9 @@ public class ApiServiceDeskSteps {
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, typeSearch, size, nextPagesKey, sDate, eDate);
 
             Assertions.assertNotNull(searchNotificationsResponse);
+            Assertions.assertNotNull(searchNotificationsResponse.getResults());
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+            Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getIun().equalsIgnoreCase(sharedSteps.getSentNotification().getIun()));
 
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -1622,13 +1648,15 @@ public class ApiServiceDeskSteps {
         try {
             if ("VUOTO".equalsIgnoreCase(iun)) {
                 iunSearch = "";
-            } else if (!"".equalsIgnoreCase(iun)) {
-                iunSearch = iun;
-            } else {
+            }else if ("NULL".equalsIgnoreCase(iun)) {
+                    iunSearch = null;
+            } else if ("".equalsIgnoreCase(iun)) {
                 Assertions.assertNotNull(searchNotificationsResponse);
                 Assertions.assertNotNull(searchNotificationsResponse.getResults());
                 Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
                 iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            } else {
+                iunSearch = iun;
             }
 
             notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunSearch);
@@ -1649,13 +1677,16 @@ public class ApiServiceDeskSteps {
         try {
             if ("VUOTO".equalsIgnoreCase(iun)) {
                 iunSearch = "";
-            } else if (!"".equalsIgnoreCase(iun)) {
-                iunSearch = iun;
-            } else {
+            } else if ("".equalsIgnoreCase(iun)) {
                 Assertions.assertNotNull(searchNotificationsResponse);
                 Assertions.assertNotNull(searchNotificationsResponse.getResults());
                 Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
                 iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+
+            } else if ("NULL".equalsIgnoreCase(iun)) {
+                iunSearch = null;
+            } else {
+                iunSearch = iun;
             }
 
             timelineResponse = ipServiceDeskClient.getTimelineOfIUN(iunSearch);
