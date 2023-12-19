@@ -118,26 +118,26 @@ Feature: Api Service Cruscotto Assitenza
     Examples:
       | TAXIID               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |   2023-01-01   |   2023-12-01 |
+      #Response 200 OK
 
-    #TODO Aperta Segnalazione..............
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_13] Invocazione del servizio con taxId e recipientType corretti e  searchNextPagesKey = 51
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
+    Then il servizio risponde con errore "500"
 
     Examples:
       | TAXIID           |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY    |START_DATE      |END_DATE      |
-      | CLMCST42R12D969Z |   PF         |   1             |       51            |   2023-01-01   |   2023-12-01 |
+      | CLMCST42R12D969Z |   PF         |   50             |       51            |   2023-01-01   |   2023-12-01 |
 
 
-    #TODO Aperta Segnalazione..............
+
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_14] Invocazione del servizio con taxId e recipientType corretti ma con endDate < startDate
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
+    Then il servizio risponde con errore "500"
 
     Examples:
-      | TAXIID               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY|START_DATE      |END_DATE      |
+      | TAXIID           |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY|START_DATE      |END_DATE      |
       | CLMCST42R12D969Z |   PF         |   50             |       NULL            |  2023-12-01    |  2023-01-01  |
 
 

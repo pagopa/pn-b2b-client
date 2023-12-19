@@ -1111,6 +1111,7 @@ public class ApiServiceDeskSteps {
             OffsetDateTime eDate = null;
 
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             OffsetDateTime sentAt = OffsetDateTime.now();
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
