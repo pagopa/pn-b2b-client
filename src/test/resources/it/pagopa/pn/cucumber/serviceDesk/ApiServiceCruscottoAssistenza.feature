@@ -662,7 +662,7 @@ Feature: Api Service Cruscotto Assitenza
     And Il servizio risponde correttamente
 
     Examples:
-      | TAXIID               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |    INTERNAL_ID     |
+      | TAXIID           |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |    INTERNAL_ID     |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NO_SET  |          NO_SET    |
     #Mario Gherkin - DELEGATO - CLMCST42R12D969Z
   #Response 500 INTERNAL_SERVER_ERROR

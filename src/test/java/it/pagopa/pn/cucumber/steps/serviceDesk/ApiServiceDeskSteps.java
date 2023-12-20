@@ -1561,7 +1561,7 @@ public class ApiServiceDeskSteps {
                 internalIdSearch = searchInternalId;
             }
 
-            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, typeSearch, size, nextPagesKey, sDate, eDate);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, typeSearch,recipientType, size, nextPagesKey, sDate, eDate);
 
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());

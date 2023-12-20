@@ -1257,7 +1257,6 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.serviceDeskIntegration.model</modelPackage>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
         </plugins>
