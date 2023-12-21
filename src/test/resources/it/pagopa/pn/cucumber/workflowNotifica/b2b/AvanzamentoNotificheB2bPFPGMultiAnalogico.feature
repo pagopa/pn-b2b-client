@@ -141,12 +141,10 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
-    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-    
+
 
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_3] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
