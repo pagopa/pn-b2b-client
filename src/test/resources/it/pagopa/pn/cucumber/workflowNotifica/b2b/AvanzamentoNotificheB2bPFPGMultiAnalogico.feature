@@ -103,6 +103,51 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
 
+
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_2222] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_890 |
+    And destinatario Cucumber Society
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22223] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Cucumber Society
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+
+    
+
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_3] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo
     Given viene generata una nuova notifica
