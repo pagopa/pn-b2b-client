@@ -144,6 +144,144 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22224] Invio notifica multidestinatario con 2 tentativi ed attesa fino al REFINEMENT con controllo data
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Gherkin e:
+      | denomination            | Test AR discovery multi           |
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
+    And destinatario Gherkin Analogic e:
+      | denomination            | Test AR discovery multi           |
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    Then verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 1
+
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22225] Invio notifica multidestinatario con 2 tentativi ed attesa fino al REFINEMENT con controllo data
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination            | Leonardo Da Vinci        |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Cucumber Society
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    Then "Leonardo Da Vinci" legge la notifica
+    And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    Then verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22226] Invio notifica multidestinatario con 2 tentativi ed attesa fino al REFINEMENT con controllo data
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination            | Leonardo Da Vinci        |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And destinatario Gherkin Analogic e:
+      | digitalDomicile_address      | test@fail.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_2227] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_890 |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 1
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_2228] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 1
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_2229] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                           |
+      | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
+    And destinatario
+      | denomination            | Leonardo Da Vinci     |
+      | taxId                   | DVNLRD52D15M059P      |
+      | digitalDomicile         | NULL                  |
+      | physicalAddress_address | Via@FAIL-Discovery_AR |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 2
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 2
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 1
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
   @dev @workflowAnalogico
