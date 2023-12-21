@@ -282,3 +282,31 @@ Feature: Notifica visualizzata
       | details | NOT_NULL |
       | details_recIndex | 0 |
     And viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg
+
+
+  @e2e
+  Scenario: [E2E-WF-INHIBITION-9] Visualizzazione Notifica dopo che la notifica è in stato Depositata per PN-9059
+  La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_SUCCESS_WORKFLOW. Questa lettura non deve generare
+  un evento di timeline REFINEMENT.
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+    And destinatario
+      | denomination            | Leonardo da Vinci   |
+      | taxId                   | DVNLRD52D15M059P    |
+      | digitalDomicile         | NULL                |
+      | physicalAddress_address | @FAIL-Discovery_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 16     |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    Then la notifica può essere correttamente recuperata da "Leonardo da Vinci"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And si attende che sia presente il perfezionamento per decorrenza termini
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+    And viene verificato che l'elemento di timeline "REFINEMENT" non esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
