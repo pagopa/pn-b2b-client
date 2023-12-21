@@ -868,25 +868,29 @@ public class AvanzamentoNotificheB2bSteps {
             OffsetDateTime complettelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE)).findAny().get().getTimestamp();
             OffsetDateTime complettelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE_CREATION_REQUEST)).findAny().get().getTimestamp();
             OffsetDateTime analogFailureDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.ANALOG_FAILURE_WORKFLOW)).findAny().get().getTimestamp();
-            OffsetDateTime sendAnalogProgressDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getDetails().getNotificationDate();
-            OffsetDateTime sendFeedbackDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp();
             OffsetDateTime sendFeedbackNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getDetails().getNotificationDate();
 
 
-            logger.info("sendFeedbackDate : {}", sendFeedbackDate);
-            logger.info("analogFailureDate : {}", analogFailureDate);
-            logger.info("complettelyUnreachableRequestDate : {}", complettelyUnreachableRequestDate);
-            logger.info("complettelyUnreachableDate : {}", complettelyUnreachableDate);
+            logger.info("sendAnalogProgressTimestampDate : {}", sendAnalogProgressTimestampDate);
+            logger.info("sendFeedbackTimestampDate : {} ", sendFeedbackTimestampDate);
+            logger.info("analogFailureDate Timestamp : {}", analogFailureDate);
+            logger.info("complettelyUnreachableRequestDate Timestamp : {}", complettelyUnreachableRequestDate);
+            logger.info("complettelyUnreachableDate Timestamp : {}", complettelyUnreachableDate);
 
-            logger.info("shedulingDate : {}", shedulingDate);
+            logger.info("shedulingDate Timestamp: {}", shedulingDate);
 
-            logger.info("sendAnalogProgressDate : {}", sendAnalogProgressDate);
+            logger.info("sendAnalogProgressNotificationDate : {}", sendAnalogProgressNotificationDate);
             logger.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
 
             Assertions.assertEquals(shedulingDate,complettelyUnreachableDate);
             Assertions.assertEquals(shedulingDate,complettelyUnreachableRequestDate);
             Assertions.assertEquals(shedulingDate,analogFailureDate);
-            Assertions.assertEquals(shedulingDate,sendFeedbackDate);
+            Assertions.assertEquals(shedulingDate,sendFeedbackTimestampDate);
+            Assertions.assertEquals(sendAnalogProgressTimestampDate,sendAnalogProgressNotificationDate);
+            Assertions.assertEquals(sendFeedbackTimestampDate,sendFeedbackNotificationDate);
             //TODO  Verificare..
            // Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
 
@@ -904,24 +908,26 @@ public class AvanzamentoNotificheB2bSteps {
 
         try {
             OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT)).findAny().get().getTimestamp();
-            OffsetDateTime sendAnalogProgressDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getDetails().getNotificationDate();
-            OffsetDateTime sendFeedbackDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS)).findAny().get().getTimestamp();
+            OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp();
             OffsetDateTime sendFeedbackNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getDetails().getNotificationDate();
             OffsetDateTime analogSuccessDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.ANALOG_SUCCESS_WORKFLOW)).findAny().get().getTimestamp();
 
-            logger.info("sendFeedbackDate : {}", sendFeedbackDate);
-            logger.info("analogSuccessDate : {}", analogSuccessDate);
-            logger.info("shedulingDate : {}", shedulingDate);
+            logger.info("sendAnalogProgressTimestampDate: {}", sendAnalogProgressTimestampDate);
+            logger.info("sendFeedbackTimestampDate: {}", sendFeedbackTimestampDate);
+            logger.info("analogSuccessDate Timestamp: {}", analogSuccessDate);
+            logger.info("shedulingDate Timestamp: {}", shedulingDate);
 
-            logger.info("sendAnalogProgressDate : {}", sendAnalogProgressDate);
+
             logger.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
+            logger.info("sendAnalogProgressNotificationDate: {}", sendAnalogProgressNotificationDate);
 
             Assertions.assertEquals(shedulingDate,analogSuccessDate);
-            Assertions.assertEquals(shedulingDate,sendFeedbackDate);
+            Assertions.assertEquals(shedulingDate,sendFeedbackTimestampDate);
 
-            //Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
-
-            Assertions.assertEquals(sendFeedbackDate,sendFeedbackNotificationDate);
+            Assertions.assertEquals(sendAnalogProgressTimestampDate,sendAnalogProgressNotificationDate);
+            Assertions.assertEquals(sendFeedbackTimestampDate,sendFeedbackNotificationDate);
 
         }catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
