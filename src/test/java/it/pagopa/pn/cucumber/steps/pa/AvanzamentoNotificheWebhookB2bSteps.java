@@ -651,18 +651,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
         }
     }
-            logger.info("event timestamp : {}",EventTimestamp);
-            logger.info("notification timestamp : {}",NotificationTimestamp);
-
-            Assertions.assertNotSame(EventTimestamp,NotificationTimestamp);
-
-        }catch(AssertionFailedError assertionFailedError){
-            String message = assertionFailedError.getMessage()+
-                    "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
-            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
-        }
-    }
-
 
 
     private <T> ProgressResponseElement searchInWebhook(T timeLineOrStatus,String lastEventId, int deepCount){
