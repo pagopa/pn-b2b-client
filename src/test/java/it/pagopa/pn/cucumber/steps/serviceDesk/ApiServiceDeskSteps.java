@@ -49,6 +49,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static java.time.OffsetDateTime.now;
+
 
 public class ApiServiceDeskSteps {
 
@@ -1504,8 +1506,8 @@ public class ApiServiceDeskSteps {
 
             String typeSearch = null;
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            OffsetDateTime sentAt = OffsetDateTime.now();
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            OffsetDateTime sentAt = OffsetDateTime.parse(dateTimeFormatter.format(OffsetDateTime.now()));
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1529,6 +1531,7 @@ public class ApiServiceDeskSteps {
                     eDate = sentAt;
                 }
             } else {
+
                 sDate = sentAt;
             }
 

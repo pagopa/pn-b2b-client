@@ -254,7 +254,8 @@ Feature: Api Service Cruscotto Assitenza
       | TAXIID               |RECIPIENT_TYPE|
       | CLMCST42R12D969Z |   PF         |
     #  Response 200 OK
-    #{"userAddresses":[{"courtesyAddressType":"COURTESY","courtesyValue":"testEmail@email.it","courtesyChannelType":"EMAIL","legalAddressType":null,"legalValue":null,"legalChannelType":null}],"delegatorMandates":[],"delegateMandates":[{"mandateId":"3d98dae5-58ef-4716-b174-f149f42bad07","taxId":"CLMCST42R12D969Z","recipientType":"PF","dateFrom":"2023-08-19T22:00:00Z","dateTo":"2023-12-19T22:59:59Z","delegatorInternalId":"PF-37654561-446a-4c88-b328-6699a8322b33","delegateInternalId":"PF-aa0c4556-5a6f-45b1-800c-0f4f3c5a57b6"},{"mandateId":"f7942f2e-1037-4ed9-8ca6-a6f7923bf4a7","taxId":"CLMCST42R12D969Z","recipientType":"PF","dateFrom":"2023-06-20T22:00:00Z","dateTo":"2024-02-16T22:59:59Z","delegatorInternalId":"PF-37654561-446a-4c88-b328-6699a8322b33","delegateInternalId":"PF-4147b547-87b9-4a23-9420-cac57755b26c"}]}
+    #{"userAddresses":[{"courtesyAddressType":"COURTESY","courtesyValue":"testEmail@email.it","courtesyChannelType":"EMAIL","legalAddressType":null,"legalValue":null,"legalChannelType":null}],"delegatorMandates":[],"delegateMandates":[{"mandateId":"1006cff3-ffde-4811-ac29-c420b6f38ce2","taxId":"FRMTTR76M06B715E","recipientType":"PF","dateFrom":"2023-08-21T22:00:00Z","dateTo":"2023-12-21T22:59:59Z","delegatorInternalId":"PF-aa0c4556-5a6f-45b1-800c-0f4f3c5a57b6","delegateInternalId":"PF-37654561-446a-4c88-b328-6699a8322b33"}]}
+
 
   #CE02.4 Come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche
     #TODO simile CE02.2............
@@ -658,7 +659,7 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And Il servizio risponde correttamente
 
     Examples:
@@ -683,7 +684,7 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And il servizio risponde con errore "400"
 
     Examples:
@@ -710,7 +711,7 @@ Feature: Api Service Cruscotto Assitenza
     Examples:
       | TAXIID               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE |SEARCH_NEXT_PAGE_KEY   |START_DATE|END_DATE      |MANDATE_ID  |      INTERNAL_ID |
       | CLMCST42R12D969Z |   PF         |   1             |       NULL            |   NULL   |   NULL       |    NO_SET  |          NULL    |
-# Errore: 400 BAD_REQUEST 400 Missing the required parameter 'delegateInternalId' when calling searchNotificationsAsDelegateFromInternalId null
+    # Errore: 400 BAD_REQUEST 400 Missing the required parameter 'delegateInternalId' when calling searchNotificationsAsDelegateFromInternalId null
 
    #TODO Fatta segnalazione ricerca la notifica partendo da ieri........e non da oggi
   @deleghe1  @cruscottoAssistenza
@@ -726,7 +727,7 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<CF>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And il servizio risponde con errore "400"
 
     Examples:
