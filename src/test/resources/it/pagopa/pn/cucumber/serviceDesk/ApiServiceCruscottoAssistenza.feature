@@ -674,7 +674,7 @@ Feature: Api Service Cruscotto Assitenza
       | IUN    | TAXIID      | RECIPIENT_TYPE |
       | NO_SET | CucumberSpa | PG             |
 
-  @cruscottoAssistenza
+  @cruscottoAssistenza @ignore
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
@@ -685,35 +685,64 @@ Feature: Api Service Cruscotto Assitenza
 
     #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-658186d3-09993dbb0f08a2f731ac7238","timestamp":"2023-12-19T12:04:35.888715266Z","errors":[]}] null
 
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_61_1] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
+    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "400"
+
+    Examples:
+      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Gherkin | PF             | NULL             | NULL                 | 2023-01-01 | 2023-05-01 |
+    #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-6585bfef-39e3629554030a8d73dcf647","timestamp":"2023-12-22T16:57:19.95458306Z","errors":[]}] null
+
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_62] Invocazione del servizio con IUN esistente, recipientType corretto ma con recipientTaxId non corrispondente al destinatario della notifica
-    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario CucumberSpa
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
 
     Examples:
-      | IUN                       | TAXIID         | RECIPIENT_TYPE |
-      | JZTK-MGAH-TRKL-202311-X-1 | Mario Cucumber | PF             |
+      | IUN    | TAXIID         | RECIPIENT_TYPE |
+      | NO_SET | Mario Cucumber | PF             |
     #Response 404 NOT_FOUND
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-PG-CA_CE02.8_62] Invocazione del servizio con IUN esistente, recipientType corretto ma con recipientTaxId non corrispondente al destinatario della notifica
-    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
 
     Examples:
-      | IUN                       | TAXIID      | RECIPIENT_TYPE |
-      | JZTK-MGAH-TRKL-202311-X-1 | CucumberSpa | PG             |
+      | IUN    | TAXIID      | RECIPIENT_TYPE |
+      | NO_SET | CucumberSpa | PG             |
 
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_63] Invocazione del servizio con IUN esistente, ma recipientType non coerente rispetto al recipientTaxId della notifica
-    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "404"
 
     Examples:
-      | IUN                       | TAXIID        | RECIPIENT_TYPE |
-      | JZTK-MGAH-TRKL-202311-X-1 | Mario Gherkin | PG             |
+      | IUN     | TAXIID        | RECIPIENT_TYPE |
+      | NO_SET | Mario Gherkin | PG             |
     #Response 404 NOT_FOUND
 
 

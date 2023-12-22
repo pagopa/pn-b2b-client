@@ -1676,7 +1676,11 @@ public class ApiServiceDeskSteps {
         }else if ("NULL".equalsIgnoreCase(iun)) {
             iunSearch = null;
         } else if("NO_SET".equalsIgnoreCase(iun)) {
-            iunSearch = sharedSteps.getSentNotification().getIun();
+            if (searchNotificationsResponse!= null && searchNotificationsResponse.getResults()!= null && searchNotificationsResponse.getResults().size()>0){
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            }else if(sharedSteps.getSentNotification()!= null){
+                iunSearch = sharedSteps.getSentNotification().getIun();
+            }
         }else {
             iunSearch = iun;
         }
