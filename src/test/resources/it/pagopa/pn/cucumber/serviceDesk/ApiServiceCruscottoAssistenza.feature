@@ -37,8 +37,6 @@ Feature: Api Service Cruscotto Assitenza
       | Mario Gherkin | NULL           | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]
 
-
-
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_6] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -850,7 +848,7 @@ Feature: Api Service Cruscotto Assitenza
     Examples:
       | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
       | Mario Cucumber | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
-    # Response 500 INTERNAL_SERVER_ERROR
+
 
   #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
   @cruscottoAssistenza

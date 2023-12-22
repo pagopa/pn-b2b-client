@@ -1107,22 +1107,11 @@ public class ApiServiceDeskSteps {
     @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
         try {
-            Integer size = null;
-            String nextPagesKey = null;
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
 
             OffsetDateTime sDate =  setDateSearch(startDate);
             OffsetDateTime eDate =  setDateSearch(endDate);
-
-            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
-                size = Integer.parseInt(searchPageSize);
-            } else {
-                //Default Value
-                size = 10;
-            }
-
-            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
-                nextPagesKey = searchNextPagesKey;
-            }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -1282,22 +1271,12 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
 
         try {
-            Integer size = null;
-            String nextPagesKey = null;
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
 
             OffsetDateTime sDate =  setDateSearch(startDate);
             OffsetDateTime eDate =  setDateSearch(endDate);
 
-            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
-                size = Integer.parseInt(searchPageSize);
-            } else {
-                //Default Value
-                size = 10;
-            }
-
-            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
-                nextPagesKey = searchNextPagesKey;
-            }
 
 
             searchNotificationsRequest = new SearchNotificationsRequest();
@@ -1425,16 +1404,8 @@ public class ApiServiceDeskSteps {
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
-            String iunSearch = null;
-            if ("VUOTO".equalsIgnoreCase(iun)) {
-                iunSearch = "";
-            } else if ("NULL".equalsIgnoreCase(iun)) {
-                iunSearch = null;
-            } else if ("".equalsIgnoreCase(iun)) {
-                iunSearch = sharedSteps.getSentNotification().getIun();
-            } else {
-                iunSearch = iun;
-            }
+
+            String iunSearch = setIUNNotifica(iun);
 
             timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
 
@@ -1479,16 +1450,7 @@ public class ApiServiceDeskSteps {
                 documentsRequest.setTaxId(setTaxID(taxId));
             }
 
-            String iunSearch = null;
-            if ("VUOTO".equalsIgnoreCase(iun)) {
-                iunSearch = "";
-            }else if ("NULL".equalsIgnoreCase(iun)) {
-                    iunSearch = null;
-            } else if("NO_SET".equalsIgnoreCase(iun)) {
-                iunSearch = sharedSteps.getSentNotification().getIun();
-            }else {
-                iunSearch = iun;
-            }
+            String iunSearch = setIUNNotifica(iun);
 
             documentsResponse = ipServiceDeskClient.getDocumentsOfIUN(iunSearch, documentsRequest);
 
@@ -1503,23 +1465,7 @@ public class ApiServiceDeskSteps {
     }
 
 
-    public static void main(String[] args) {
-        // example OffsetDateTime
-        OffsetDateTime offsetEndDt = OffsetDateTime.of(OffsetDateTime.now().getYear(), OffsetDateTime.now().getMonth().getValue(), OffsetDateTime.now().getDayOfMonth(), 0, 0, 0, 0,
-                ZoneOffset.UTC);
-        // define a formatter for the output
-        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
-        // print it using the previously defined formatter
-        System.out.println(offsetEndDt.format(myFormatter));
-        // create a new OffsetDateTime with time information
-        OffsetDateTime realEndOfDay = offsetEndDt
-                .withHour(23)
-                .withMinute(59)
-                .withSecond(59)
-                .withNano(0);
-        // print that, too
-        System.out.println(realEndOfDay.format(myFormatter));
-    }
+
 
     @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come {string} di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchInternalId {string}")
     public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String type, String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchInternalId) {
@@ -1529,8 +1475,8 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(profileResponse.getDelegateMandates());
             Assertions.assertTrue(profileResponse.getDelegateMandates().size() > 0);
 
-            Integer size = null;
-            String nextPagesKey = null;
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
             OffsetDateTime sDate = null;
             OffsetDateTime eDate = null;
             String typeSearch = null;
@@ -1567,17 +1513,6 @@ public class ApiServiceDeskSteps {
                 eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));;
             }
 
-            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
-                nextPagesKey = searchNextPagesKey;
-            }
-
-            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
-                size = Integer.parseInt(searchPageSize);
-            } else {
-                //Default Value
-                size = 10;
-            }
-
             String mandateIdSearch = null;
             if ("NULL".equalsIgnoreCase(searchMandateId)) {
                 mandateIdSearch = null;
@@ -1591,21 +1526,20 @@ public class ApiServiceDeskSteps {
                 mandateIdSearch = searchMandateId;
             }
 
-            String internalIdSearch = null;
+            String delegateInternalIdSearch = null;
             if ("NULL".equalsIgnoreCase(searchInternalId)) {
-                internalIdSearch = null;
+                delegateInternalIdSearch = null;
             } else if ("NO_SET".equalsIgnoreCase(searchInternalId)) {
                 if ("delegato".equalsIgnoreCase(type)) {
-                    typeSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
+                    delegateInternalIdSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
                 } else if ("delegante".equalsIgnoreCase(type)) {
-                    typeSearch = profileResponse.getDelegatorMandates().get(0).getDelegateInternalId();
-
+                    delegateInternalIdSearch = profileResponse.getDelegatorMandates().get(0).getDelegateInternalId();
                 }
             } else {
-                internalIdSearch = searchInternalId;
+                delegateInternalIdSearch = searchInternalId;
             }
 
-            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, typeSearch,recipientType, size, nextPagesKey, sDate, eDate);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, delegateInternalIdSearch,recipientType, size, nextPagesKey, sDate, eDate);
 
             Assertions.assertNotNull(searchNotificationsResponse);
             Assertions.assertNotNull(searchNotificationsResponse.getResults());
@@ -1624,23 +1558,11 @@ public class ApiServiceDeskSteps {
     @Given("come operatore devo accedere alla lista di tutte le notifiche depositate da un ente \\(mittente) su Piattaforma Notifiche in un range temporale con paId {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void comeOperatoreDevoAccedereAllaListaDiTutteLeNotificheDepositateDaUnEnteMittenteSuPiattaformaNotificheInUnRangeTemporaleConPaIdEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String paId, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
         try {
-            Integer size = null;
-            String nextPagesKey = null;
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
 
             OffsetDateTime sDate =  setDateSearch(startDate);
             OffsetDateTime eDate =  setDateSearch(endDate);
-
-            if (!"NULL".equalsIgnoreCase(searchPageSize)) {
-                size = Integer.parseInt(searchPageSize);
-            } else {
-                //Default Value
-                size = 10;
-            }
-
-            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
-                nextPagesKey = searchNextPagesKey;
-            }
-
 
             paNotificationsRequest = new PaNotificationsRequest();
             if ("NULL".equalsIgnoreCase(paId)) {
@@ -1727,7 +1649,6 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAlleInformazioniRelativeAlleRichiesteDiAPIKeyAvanzateDaUnEnteMittenteDiNotificheSullaPiattaforma(String paId){
         try {
 
-
             String paIDSearch = null;
             if ("NULL".equalsIgnoreCase(paId)) {
                 paIDSearch = null;
@@ -1745,6 +1666,38 @@ public class ApiServiceDeskSteps {
                 this.notificationError = (HttpStatusCodeException) e;
             }
         }
+    }
+
+    public String setIUNNotifica(String iun){
+        String iunSearch = null;
+
+        if ("VUOTO".equalsIgnoreCase(iun)) {
+            iunSearch = "";
+        }else if ("NULL".equalsIgnoreCase(iun)) {
+            iunSearch = null;
+        } else if("NO_SET".equalsIgnoreCase(iun)) {
+            iunSearch = sharedSteps.getSentNotification().getIun();
+        }else {
+            iunSearch = iun;
+        }
+        return iunSearch;
+    }
+
+
+    public Integer setSearchPageSize(String searchPageSize){
+        Integer size = 10;
+        if (!"NULL".equalsIgnoreCase(searchPageSize)) {
+            size = Integer.parseInt(searchPageSize);
+        }
+        return size;
+    }
+
+    public String setNextPagesKey(String searchNextPagesKey){
+        String nextPagesKey = null;
+        if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+            nextPagesKey = searchNextPagesKey;
+        }
+        return nextPagesKey;
     }
 
 
