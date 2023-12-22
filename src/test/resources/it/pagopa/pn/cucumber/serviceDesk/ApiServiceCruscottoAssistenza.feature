@@ -37,15 +37,6 @@ Feature: Api Service Cruscotto Assitenza
       | Mario Gherkin |         NULL   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]
 
-  #Caso di test Eliminato poiché da un CF non siamo in grado di sapere se è un PF o un PG, ci dobbiamo fidare di quello che ci passa il client..
-  @cruscottoAssistenza @ignore
-  Scenario Outline: [API-SERVICE-CA_CE02.2_5] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID               |RECIPIENT_TYPE|SEARCH_PAGE_SIZE    |SEARCH_NEXT_PAGE_KEY   |START_DATE      |END_DATE|
-      | Mario Gherkin |         PG   |   NULL             |       NULL            |   2023-01-01   |   2023-12-01 |
 
 
   @cruscottoAssistenza
@@ -235,15 +226,6 @@ Feature: Api Service Cruscotto Assitenza
       | Mario Gherkin |   VUOTO         |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]
 
-    #TODO CONTROLLARE NON ARRIVA IL 400............
-  @cruscottoAssistenza @ignore
-  Scenario Outline: [API-SERVICE-CA_CE02.3_20] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID               |RECIPIENT_TYPE|
-      | Mario Gherkin |   PG         |
 
 
   @cruscottoAssistenza
@@ -326,15 +308,6 @@ Feature: Api Service Cruscotto Assitenza
       | TAXIID           |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
       | Mario Gherkin |   VUOTO         |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
   #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"recipientType","detail":"must not be null"}]}
-
-  @cruscottoAssistenza @ignore
-  Scenario Outline: [API-SERVICE-CA_CE02.4_27] Invocazione del servizio con taxId valorizzato correttamente ma non corrispondente al recipientType inserito
-    Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | TAXIID               |RECIPIENT_TYPE  |SEARCH_PAGE_SIZE     |SEARCH_NEXT_PAGE_KEY   |START_DATE  |END_DATE|
-      | Mario Gherkin |   PG           |   NULL              |       NULL            |   2023-01-01   |   2023-12-01 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.4_28] Invocazione del servizio con taxId valorizzato correttamente ma senza recipientType
