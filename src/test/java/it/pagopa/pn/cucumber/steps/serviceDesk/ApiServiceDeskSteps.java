@@ -1109,12 +1109,9 @@ public class ApiServiceDeskSteps {
         try {
             Integer size = null;
             String nextPagesKey = null;
-            OffsetDateTime sDate = null;
-            OffsetDateTime eDate = null;
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            OffsetDateTime sentAt = OffsetDateTime.now();
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1125,26 +1122,6 @@ public class ApiServiceDeskSteps {
 
             if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
                 nextPagesKey = searchNextPagesKey;
-            }
-
-            if (!"NULL".equalsIgnoreCase(startDate)) {
-                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
-                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-                if (!"NULL".equalsIgnoreCase(endDate)) {
-                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-                }
-                /**
-                 else {
-                 eDate = sentAt;
-                 }
-                 **/
-            }
-
-            if (!"NULL".equalsIgnoreCase(endDate)) {
-                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
             }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
@@ -1184,13 +1161,26 @@ public class ApiServiceDeskSteps {
                 Assertions.assertTrue(listCourtesyMessage.size()>0);
             }
 
-
-
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
             }
         }
+    }
+
+    public OffsetDateTime setDateSearch( String dateInputString ) {
+        OffsetDateTime resultDate = null;
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        OffsetDateTime sentAt = OffsetDateTime.now();
+
+        if (!"NULL".equalsIgnoreCase(dateInputString)) {
+            LocalDateTime localDate = LocalDate.parse(dateInputString, dateTimeFormatter).atStartOfDay();
+            resultDate = OffsetDateTime.of(localDate, sentAt.getOffset());
+
+        }
+        return resultDate;
     }
 
     public String setTaxID(String taxId) {
@@ -1294,11 +1284,9 @@ public class ApiServiceDeskSteps {
         try {
             Integer size = null;
             String nextPagesKey = null;
-            OffsetDateTime sDate = null;
-            OffsetDateTime eDate = null;
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            OffsetDateTime sentAt = OffsetDateTime.now();
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1311,25 +1299,6 @@ public class ApiServiceDeskSteps {
                 nextPagesKey = searchNextPagesKey;
             }
 
-            if (!"NULL".equalsIgnoreCase(startDate)) {
-                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
-                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-                if (!"NULL".equalsIgnoreCase(endDate)) {
-                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-                }
-                /**
-                 else {
-                 eDate = sentAt;
-                 }
-                 **/
-            }
-
-            if (!"NULL".equalsIgnoreCase(endDate)) {
-                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-            }
 
             searchNotificationsRequest = new SearchNotificationsRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -1564,7 +1533,6 @@ public class ApiServiceDeskSteps {
             String nextPagesKey = null;
             OffsetDateTime sDate = null;
             OffsetDateTime eDate = null;
-
             String typeSearch = null;
 
             OffsetDateTime offsetEndDt = OffsetDateTime.of(OffsetDateTime.now().getYear(), OffsetDateTime.now().getMonth().getValue(), OffsetDateTime.now().getDayOfMonth(), 0, 0, 0, 0,
@@ -1572,10 +1540,6 @@ public class ApiServiceDeskSteps {
             // define a formatter for the output
             DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
 
-            OffsetDateTime sentAt = OffsetDateTime.parse(myFormatter.format(offsetEndDt));
-
-            // print it using the previously defined formatter
-            System.out.println(offsetEndDt.format(myFormatter));
             // create a new OffsetDateTime with time information
             OffsetDateTime realEndOfDay = offsetEndDt
                     .withHour(23)
@@ -1583,7 +1547,29 @@ public class ApiServiceDeskSteps {
                     .withSecond(59)
                     .withNano(0);
 
-            OffsetDateTime sentEndAt = OffsetDateTime.parse(myFormatter.format(realEndOfDay));
+            if (!"NULL".equalsIgnoreCase(startDate)) {
+
+                sDate = setDateSearch(startDate);
+
+                if (!"NULL".equalsIgnoreCase(endDate)) {
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, OffsetDateTime.now().getOffset());
+                } else {
+                    eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));;
+                }
+            } else {
+                sDate = OffsetDateTime.parse(myFormatter.format(offsetEndDt));
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                eDate = setDateSearch(endDate);
+            } else {
+                eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));;
+            }
+
+            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+                nextPagesKey = searchNextPagesKey;
+            }
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1592,37 +1578,15 @@ public class ApiServiceDeskSteps {
                 size = 10;
             }
 
-            if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
-                nextPagesKey = searchNextPagesKey;
-            }
-
-            if (!"NULL".equalsIgnoreCase(startDate)) {
-                LocalDateTime localDateStart = LocalDate.parse(startDate, myFormatter).atStartOfDay();
-                sDate = OffsetDateTime.of(localDateStart, OffsetDateTime.now().getOffset());
-
-                if (!"NULL".equalsIgnoreCase(endDate)) {
-                    LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
-                    eDate = OffsetDateTime.of(localDateEnd, OffsetDateTime.now().getOffset());
-                } else {
-                    eDate = sentEndAt;
-                }
-            } else {
-
-                sDate = sentAt;
-            }
-
-            if (!"NULL".equalsIgnoreCase(endDate)) {
-                LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
-                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-            } else {
-                eDate = sentEndAt;
-            }
-
             String mandateIdSearch = null;
             if ("NULL".equalsIgnoreCase(searchMandateId)) {
                 mandateIdSearch = null;
             } else if ("NO_SET".equalsIgnoreCase(searchMandateId)) {
-                mandateIdSearch = profileResponse.getDelegateMandates().get(0).getMandateId();
+                if ("delegato".equalsIgnoreCase(type)) {
+                    mandateIdSearch = profileResponse.getDelegateMandates().get(0).getMandateId();
+                }else if ("delegante".equalsIgnoreCase(type)) {
+                    mandateIdSearch = profileResponse.getDelegatorMandates().get(0).getMandateId();
+                }
             } else {
                 mandateIdSearch = searchMandateId;
             }
@@ -1635,6 +1599,7 @@ public class ApiServiceDeskSteps {
                     typeSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
                 } else if ("delegante".equalsIgnoreCase(type)) {
                     typeSearch = profileResponse.getDelegatorMandates().get(0).getDelegateInternalId();
+
                 }
             } else {
                 internalIdSearch = searchInternalId;
@@ -1661,11 +1626,9 @@ public class ApiServiceDeskSteps {
         try {
             Integer size = null;
             String nextPagesKey = null;
-            OffsetDateTime sDate = null;
-            OffsetDateTime eDate = null;
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            OffsetDateTime sentAt = OffsetDateTime.now();
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1678,25 +1641,6 @@ public class ApiServiceDeskSteps {
                 nextPagesKey = searchNextPagesKey;
             }
 
-            if (!"NULL".equalsIgnoreCase(startDate)) {
-                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
-                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-                if (!"NULL".equalsIgnoreCase(endDate)) {
-                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-                }
-                /**
-                 else {
-                 eDate = sentAt;
-                 }
-                 **/
-            }
-
-            if (!"NULL".equalsIgnoreCase(endDate)) {
-                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-            }
 
             paNotificationsRequest = new PaNotificationsRequest();
             if ("NULL".equalsIgnoreCase(paId)) {
