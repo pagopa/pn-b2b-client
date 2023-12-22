@@ -874,6 +874,7 @@ public class AvanzamentoNotificheB2bSteps {
             OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
             OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
             OffsetDateTime sendFeedbackNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime prepareAnalogDomicileFailureTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE_FAILURE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
 
             logger.info("DESTINATARIO : {}", destinatario);
             logger.info("sendAnalogProgressTimestampDate : {}", sendAnalogProgressTimestampDate);
@@ -881,6 +882,7 @@ public class AvanzamentoNotificheB2bSteps {
             logger.info("analogFailureDate Timestamp : {}", analogFailureDate);
             logger.info("complettelyUnreachableRequestDate Timestamp : {}", complettelyUnreachableRequestDate);
             logger.info("complettelyUnreachableDate Timestamp : {}", complettelyUnreachableDate);
+            logger.info("prepareAnalogDomicileFailureTimestamp : {}", prepareAnalogDomicileFailureTimestamp);
 
             logger.info("shedulingDate Timestamp: {}", shedulingDate);
 
@@ -890,7 +892,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertEquals(shedulingDate,complettelyUnreachableDate);
             Assertions.assertEquals(shedulingDate,complettelyUnreachableRequestDate);
             Assertions.assertEquals(shedulingDate,analogFailureDate);
-            Assertions.assertEquals(shedulingDate,sendFeedbackTimestampDate);
+            Assertions.assertEquals(shedulingDate,prepareAnalogDomicileFailureTimestamp);
             Assertions.assertEquals(sendAnalogProgressTimestampDate,sendAnalogProgressNotificationDate);
             Assertions.assertEquals(sendFeedbackTimestampDate,sendFeedbackNotificationDate);
             //TODO  Verificare..
