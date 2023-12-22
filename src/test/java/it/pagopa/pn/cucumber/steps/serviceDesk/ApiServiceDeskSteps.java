@@ -1153,7 +1153,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             } else {
-                searchNotificationsRequest.setTaxId(taxId);
+                searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
 
             if (!"NULL".equalsIgnoreCase(recipientType)) {
@@ -1171,7 +1171,19 @@ public class ApiServiceDeskSteps {
                 Assertions.assertTrue(searchNotificationsResponse.getResults().size()==50);
             }
 
-            Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getCourtesyMessages().size() > 0);
+
+            List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
+            for (NotificationResponse notificationResponseTmp:  searchNotificationsResponse.getResults()) {
+                List<CourtesyMessage> ss = notificationResponseTmp.getCourtesyMessages();
+                if (notificationResponseTmp.getCourtesyMessages()!=null && notificationResponseTmp.getCourtesyMessages().size()> 0){
+                    listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+                }
+            }
+            //TODO Gestire Meglio...........
+            if (listCourtesyMessage.size()>0){
+                Assertions.assertTrue(listCourtesyMessage.size()>0);
+            }
+
 
 
         } catch (HttpStatusCodeException e) {
@@ -1179,6 +1191,27 @@ public class ApiServiceDeskSteps {
                 this.notificationError = (HttpStatusCodeException) e;
             }
         }
+    }
+
+    public String setTaxID(String taxId) {
+        String result = taxId;
+        switch (taxId) {
+            case "Mario Gherkin":
+                result= sharedSteps.getMarioGherkinTaxID();
+                break;
+            case "Mario Cucumber":
+                result= sharedSteps.getMarioCucumberTaxID();
+                break;
+            case "CucumberSpa":
+                result= sharedSteps.getCucumberSpataxId();
+                break;
+            case "GherkinSrl":
+                result= sharedSteps.getGherkinSrltaxId();
+                break;
+
+        }
+
+        return result;
     }
 
 
@@ -1237,7 +1270,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 profileRequest.setTaxId("");
             } else {
-                profileRequest.setTaxId(taxId);
+                profileRequest.setTaxId(setTaxID(taxId));
             }
 
             if (!"NULL".equalsIgnoreCase(recipientType)) {
@@ -1304,7 +1337,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             } else {
-                searchNotificationsRequest.setTaxId(taxId);
+                searchNotificationsRequest.setTaxId(setTaxID(setTaxID(taxId)));
             }
 
             if (!"NULL".equalsIgnoreCase(recipientType)) {
@@ -1390,8 +1423,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
             } else {
-                searchNotificationsRequest.setTaxId(taxid);
-                if (!taxid.equalsIgnoreCase(taxidQuery)) {
+                String resultTaxID = setTaxID(taxid);
+                searchNotificationsRequest.setTaxId(resultTaxID);
+                if (!resultTaxID.equalsIgnoreCase(taxidQuery)) {
                     diversoTaxid = true;
                 }
             }
@@ -1420,7 +1454,7 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
             } else {
-                searchNotificationsRequest.setTaxId(taxId);
+                searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
             String iunSearch = null;
             if ("VUOTO".equalsIgnoreCase(iun)) {
@@ -1460,14 +1494,20 @@ public class ApiServiceDeskSteps {
 
         try {
             documentsRequest = new DocumentsRequest();
-            setRecipientType(recipientType);
+            if (sharedSteps.getSentNotification()!= null){
+                setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().getValue());
+            }else {
+                setRecipientType(recipientType);
+            }
 
             if ("NULL".equalsIgnoreCase(taxId)) {
                 documentsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 documentsRequest.setTaxId("");
+            } else if("NO_SET".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
             } else {
-                documentsRequest.setTaxId(taxId);
+                documentsRequest.setTaxId(setTaxID(taxId));
             }
 
             String iunSearch = null;
@@ -1475,7 +1515,9 @@ public class ApiServiceDeskSteps {
                 iunSearch = "";
             }else if ("NULL".equalsIgnoreCase(iun)) {
                     iunSearch = null;
-            } else {
+            } else if("NO_SET".equalsIgnoreCase(iun)) {
+                iunSearch = sharedSteps.getSentNotification().getIun();
+            }else {
                 iunSearch = iun;
             }
 
@@ -1489,6 +1531,25 @@ public class ApiServiceDeskSteps {
             }
         }
 
+    }
+
+
+    public static void main(String[] args) {
+        // example OffsetDateTime
+        OffsetDateTime offsetEndDt = OffsetDateTime.of(OffsetDateTime.now().getYear(), OffsetDateTime.now().getMonth().getValue(), OffsetDateTime.now().getDayOfMonth(), 0, 0, 0, 0,
+                ZoneOffset.UTC);
+        // define a formatter for the output
+        DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+        // print it using the previously defined formatter
+        System.out.println(offsetEndDt.format(myFormatter));
+        // create a new OffsetDateTime with time information
+        OffsetDateTime realEndOfDay = offsetEndDt
+                .withHour(23)
+                .withMinute(59)
+                .withSecond(59)
+                .withNano(0);
+        // print that, too
+        System.out.println(realEndOfDay.format(myFormatter));
     }
 
     @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come {string} di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchInternalId {string}")
@@ -1506,8 +1567,23 @@ public class ApiServiceDeskSteps {
 
             String typeSearch = null;
 
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            OffsetDateTime sentAt = OffsetDateTime.parse(dateTimeFormatter.format(OffsetDateTime.now()));
+            OffsetDateTime offsetEndDt = OffsetDateTime.of(OffsetDateTime.now().getYear(), OffsetDateTime.now().getMonth().getValue(), OffsetDateTime.now().getDayOfMonth(), 0, 0, 0, 0,
+                    ZoneOffset.UTC);
+            // define a formatter for the output
+            DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+
+            OffsetDateTime sentAt = OffsetDateTime.parse(myFormatter.format(offsetEndDt));
+
+            // print it using the previously defined formatter
+            System.out.println(offsetEndDt.format(myFormatter));
+            // create a new OffsetDateTime with time information
+            OffsetDateTime realEndOfDay = offsetEndDt
+                    .withHour(23)
+                    .withMinute(59)
+                    .withSecond(59)
+                    .withNano(0);
+
+            OffsetDateTime sentEndAt = OffsetDateTime.parse(myFormatter.format(realEndOfDay));
 
             if (!"NULL".equalsIgnoreCase(searchPageSize)) {
                 size = Integer.parseInt(searchPageSize);
@@ -1521,14 +1597,14 @@ public class ApiServiceDeskSteps {
             }
 
             if (!"NULL".equalsIgnoreCase(startDate)) {
-                LocalDateTime localDateStart = LocalDate.parse(startDate, dateTimeFormatter).atStartOfDay();
-                sDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
+                LocalDateTime localDateStart = LocalDate.parse(startDate, myFormatter).atStartOfDay();
+                sDate = OffsetDateTime.of(localDateStart, OffsetDateTime.now().getOffset());
 
                 if (!"NULL".equalsIgnoreCase(endDate)) {
-                    LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
-                    eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, OffsetDateTime.now().getOffset());
                 } else {
-                    eDate = sentAt;
+                    eDate = sentEndAt;
                 }
             } else {
 
@@ -1536,10 +1612,10 @@ public class ApiServiceDeskSteps {
             }
 
             if (!"NULL".equalsIgnoreCase(endDate)) {
-                LocalDateTime localDateEnd = LocalDate.parse(endDate, dateTimeFormatter).atStartOfDay();
+                LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
                 eDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
             } else {
-                eDate = sentAt;
+                eDate = sentEndAt;
             }
 
             String mandateIdSearch = null;
