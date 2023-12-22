@@ -590,7 +590,7 @@ Feature: Api Service Cruscotto Assitenza
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "LVLDAA85T50G702B" e iun "" per il  destinatario 0
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "LVLDAA85T50G702B" e iun "NO_SET" per il  destinatario 0
     And il servizio risponde con errore "404"
     #Response 404 NOT_FOUND
 
@@ -603,8 +603,8 @@ Feature: Api Service Cruscotto Assitenza
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "" per il  destinatario 0
-    And invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Cucumber" e iun "" per il  destinatario 1
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Gherkin" e iun "NO_SET" per il  destinatario 0
+    And invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Cucumber" e iun "NO_SET" per il  destinatario 1
     And Il servizio risponde correttamente
 
     #Ogni Destinatario vede la sua Timeline...
