@@ -65,9 +65,8 @@ Feature: deleghe test new feature
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     And l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
 
@@ -82,13 +81,12 @@ Feature: deleghe test new feature
       | feePolicy          | DELIVERY_MODE              |
       | paFee              | 0                          |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_pagopa    | NO                 |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     And l'allegato "F24" può essere correttamente recuperato da "Mario Gherkin" con delega
 
@@ -99,7 +97,7 @@ Feature: deleghe test new feature
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | Comune di Aglientu                |
+      | senderDenomination | Comune di Aglientu         |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Root" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
@@ -119,9 +117,8 @@ Feature: deleghe test new feature
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then il documento notificato non può essere correttamente recuperato da "Mario Gherkin" con delega restituendo un errore "404"
@@ -144,12 +141,11 @@ Feature: deleghe test new feature
     And "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
-      | subject            | invio notifica GA cucumber |
-      | senderDenomination | Ufficio per la transizione al Digitale         |
+      | subject            | invio notifica GA cucumber             |
+      | senderDenomination | Ufficio per la transizione al Digitale |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     And l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
@@ -159,14 +155,13 @@ Feature: deleghe test new feature
     And "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
-      | subject            | invio notifica GA cucumber |
-      | senderDenomination | Ufficio per la transizione al Digitale          |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
+      | subject            | invio notifica GA cucumber             |
+      | senderDenomination | Ufficio per la transizione al Digitale |
+      | feePolicy          | DELIVERY_MODE                          |
+      | paFee              | 0                                      |
     And destinatario GherkinSrl e:
       | payment_pagoPaForm   | NULL                 |
-      | payment_f24flatRate  | NULL                 |
-      | payment_f24standard  | SI                   |
+      | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_pagopa    | NO                   |
       | apply_cost_f24       | SI                   |
@@ -180,8 +175,8 @@ Feature: deleghe test new feature
     And "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_Root"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Given viene generata una nuova notifica
-      | subject            | invio notifica GA cucumber |
-      | senderDenomination | Ufficio per la transizione al Digitale         |
+      | subject            | invio notifica GA cucumber             |
+      | senderDenomination | Ufficio per la transizione al Digitale |
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_Son" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
@@ -193,17 +188,16 @@ Feature: deleghe test new feature
     And "CucumberSpa" accetta la delega "GherkinSrl"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo            |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | SI |
-      | title_payment | F24_STANDARD_GHERKING_SRL |
-      | apply_cost_pagopa | SI |
-      | apply_cost_f24 | SI |
-      | payment_multy_number | 1 |
+      | payment_pagoPaForm   | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
+      | title_payment        | F24_STANDARD_GHERKING_SRL |
+      | apply_cost_pagopa    | SI                        |
+      | apply_cost_f24       | SI                        |
+      | payment_multy_number | 1                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
@@ -221,15 +215,14 @@ Feature: deleghe test new feature
     And "CucumberSpa" accetta la delega "GherkinSrl"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo            |
-      | feePolicy | DELIVERY_MODE |
-      | paFee | 0 |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL   |
-      | payment_f24standard | NULL |
-      | apply_cost_pagopa | SI |
-      | payment_multy_number | 1 |
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"

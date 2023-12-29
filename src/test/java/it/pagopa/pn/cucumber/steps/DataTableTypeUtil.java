@@ -194,204 +194,8 @@ public class DataTableTypeUtil {
                                             .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
                                             .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
                                             //.attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
-
-                    if(Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_FORMAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_FORMAT.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_LENGH.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_LENGH.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_VALID_ANAG.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_VALID_ANAG.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG_1.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_1.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG_2.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_2.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG_3.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_3.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG_4.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_4.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_FLAT.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_1.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_1.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR1.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR1.key))));
-                    } else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR2.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR2.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_ERR3.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_ERR3.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key), "SI")) {
-                        addPaymentsItem.f24(new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key), "SI")) {
-                        addPaymentsItem.f24(new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_REGION.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_REGION.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_LOCAL.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_LOCAL.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY_AE.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_AE.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_SOCIAL.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_SOCIAL.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_REGION_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_REGION_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_LOCAL_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_LOCAL_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY_AE_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_AE_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                new F24Payment()
-                                        .title(getValue(data, TITLE_PAYMENT.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_SOCIAL_FLAT.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_SOCIAL_FLAT.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS_ERR.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_ERR.key))));
-                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_INPS_ERR1.key), "SI")) {
-                        addPaymentsItem.f24(
-                                        new F24Payment()
-                                                .title(getValue(data, TITLE_PAYMENT.key))
-                                                .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                                .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_INPS_ERR1.key))));
-                    }
+                    //LOAD METADATI F24
+                    setMetadatiF24(data, addPaymentsItem, i);
 
                     listPayment.add(addPaymentsItem);
                 }
@@ -439,6 +243,63 @@ public class DataTableTypeUtil {
             e.printStackTrace();
         }
         return notificationRecipient;
+    }
+
+    private void setMetadatiF24(Map<String, String> data, NotificationPaymentItem addPaymentsItem, int i) {
+
+        if(!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
+            addPaymentsItem.f24(
+                    new F24Payment()
+                            .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
+
+        }
+
+    }
+
+    private NotificationMetadataAttachment getNotificationMetadataAttachment(String metadataAttachment) {
+        String metadati = null;
+
+        switch (metadataAttachment.toUpperCase().trim()) {
+            case "PAYMENT_F24_STANDARD_NO_VALID_FORMAT" -> metadati = "classpath:/METADATA_CORRETTO_NO_VALID_FORMAT.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_LENGH" -> metadati = "classpath:/METADATA_CORRETTO_NO_VALID_LENGH.json";
+            case "PAYMENT_F24_STANDARD_VALID_ANAG" -> metadati = "classpath:/METADATA_CORRETTO_VALID_103.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_ANAG" -> metadati = "classpath:/METADATA_CORRETTO_VALID_104.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_ANAG_1" -> metadati = "classpath:/METADATA_CORRETTO_VALID_105.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_ANAG_2" -> metadati = "classpath:/METADATA_CORRETTO_VALID_106.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_ANAG_3" -> metadati = "classpath:/METADATA_CORRETTO_VALID_107.json";
+            case "PAYMENT_F24_STANDARD_NO_VALID_ANAG_4" -> metadati = "classpath:/METADATA_CORRETTO_VALID_108.json";
+            case "PAYMENT_F24_STANDARD" -> metadati = "classpath:/METADATA_CORRETTO.json";
+            case "PAYMENT_F24_FLAT" -> metadati = "classpath:/METADATA_CORRETTO_FLAT.json";
+            case "PAYMENT_F24_SIMPLIFIED" -> metadati = "classpath:/f24_delivery_simplified.json";
+            case "PAYMENT_F24_SIMPLIFIED_1" -> metadati = "classpath:/f24filenuovo.json";
+            case "PAYMENT_F24_SIMPLIFIED_ERR1" -> metadati = "classpath:/test01.json";
+            case "PAYMENT_F24_SIMPLIFIED_ERR2" -> metadati = "classpath:/test02.json";
+            case "PAYMENT_F24_SIMPLIFIED_ERR3" -> metadati = "classpath:/test03.json";
+            case "PAYMENT_F24_STANDARD_INPS" -> metadati = "classpath:/f24_delivery_standard_inps.json";
+            case "PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT" -> metadati = "classpath:/f24_delivery_standard_inps_debit_credit.json";
+            case "PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1" -> metadati = "classpath:/f24_delivery_standard_inps_debit_credit_1.json";
+            case "PAYMENT_F24_STANDARD_REGION" -> metadati = "classpath:/f24_delivery_standard_region.json";
+            case "PAYMENT_F24_STANDARD_LOCAL" -> metadati = "classpath:/f24_delivery_standard_local.json";
+            case "PAYMENT_F24_STANDARD_TREASURY" -> metadati = "classpath:/f24_delivery_standard_treasury.json";
+            case "PAYMENT_F24_STANDARD_TREASURY_AE" -> metadati = "classpath:/f24_delivery_standard_treasury_ae.json";
+            case "PAYMENT_F24_STANDARD_SOCIAL" -> metadati = "classpath:/f24_delivery_standard_social.json";
+            case "PAYMENT_F24_SIMPLIFIED_FLAT" -> metadati = "classpath:/f24_flat_simplified.json";
+            case "PAYMENT_F24_STANDARD_INPS_FLAT" -> metadati = "classpath:/f24_flat_standard_inps.json";
+            case "PAYMENT_F24_STANDARD_REGION_FLAT" -> metadati = "classpath:/f24_flat_standard_region.json";
+            case "PAYMENT_F24_STANDARD_LOCAL_FLAT" -> metadati = "classpath:/f24_flat_standard_local.json";
+            case "PAYMENT_F24_STANDARD_TREASURY_FLAT" -> metadati = "classpath:/f24_flat_standard_treasury.json";
+            case "PAYMENT_F24_STANDARD_TREASURY_AE_FLAT" -> metadati = "classpath:/f24_flat_delivery_standard_treasury_ae.json";
+            case "PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT" -> metadati = "classpath:/f24_flat_delivery_standard_treasury_ae_err.json";
+            case "PAYMENT_F24_STANDARD_SOCIAL_FLAT" -> metadati = "classpath:/f24_flat_standard_social.json";
+            case "PAYMENT_F24_STANDARD_INPS_ERR" -> metadati = "classpath:/f24_delivery_standard_inps_err.json";
+            case "PAYMENT_F24_STANDARD_INPS_ERR1" -> metadati = "classpath:/f24_delivery_standard_inps_err1.json";
+
+            default ->  metadati = getDefaultValue(PAYMENT_F24.key);
+        }
+
+        return utils.newMetadataAttachment(metadati);
     }
 
 
