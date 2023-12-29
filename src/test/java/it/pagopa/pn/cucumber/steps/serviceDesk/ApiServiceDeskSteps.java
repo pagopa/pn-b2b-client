@@ -1239,6 +1239,24 @@ public class ApiServiceDeskSteps {
         Assertions.assertNull(notificationError);
     }
 
+    @Then("Il servizio risponde correttamente con presenza di allegati {string}")
+    public void ilServizioRispondeCorrettamenteAllegatiTrue(String presenzaAllegati) {
+        Assertions.assertNull(notificationError);
+
+        Assertions.assertNotNull(documentsResponse);
+
+        if ("true".equalsIgnoreCase(presenzaAllegati)){
+            Assertions.assertTrue(documentsResponse.getDocumentsAvailable());
+        }else {
+            Assertions.assertFalse(documentsResponse.getDocumentsAvailable());
+        }
+
+    }
+
+
+
+
+
     @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
     public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
 

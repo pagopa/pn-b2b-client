@@ -651,13 +651,31 @@ Feature: Api Service Cruscotto Assitenza
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza di allegati "true"
 
     Examples:
       | IUN    | TAXIID        | RECIPIENT_TYPE |
       | NO_SET | Mario Gherkin | PF             |
     # Response 200 OK
     #{"documentsAvailable":true,"totalSize":3028,"documents":[{"filename":"JZTK-MGAH-TRKL-202311-X-1__null.pdf","contentType":"application/pdf","contentLength":3028}]}
+
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE02.8_58_1] Invocazione del servizio con IUN esistente e notifica annullata
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
+    Then il servizio risponde con errore "404"
+
+    Examples:
+      | IUN    | TAXIID        | RECIPIENT_TYPE |
+      | NO_SET | Mario Gherkin | PF             |
+
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-PG-CA_CE02.8_60] Invocazione del servizio con IUN esistente (notifica emessa < 120 gg) e verifica risposta
@@ -668,7 +686,7 @@ Feature: Api Service Cruscotto Assitenza
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza di allegati "true"
 
     Examples:
       | IUN    | TAXIID      | RECIPIENT_TYPE |
@@ -741,7 +759,7 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "404"
 
     Examples:
-      | IUN     | TAXIID        | RECIPIENT_TYPE |
+      | IUN    | TAXIID        | RECIPIENT_TYPE |
       | NO_SET | Mario Gherkin | PG             |
     #Response 404 NOT_FOUND
 
@@ -1062,3 +1080,19 @@ Feature: Api Service Cruscotto Assitenza
 
 
 #8c9ed305-f1ab-4031-b3f0-5241216d0635 MILANO
+
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE03.01_101] Impostare nuova tipologia di Audit Log
+    Then viene verificato che esiste un audit log "<audit-log>" in "10y"
+    Examples:
+      | audit-log                  |
+      | AUD_CA_SEARCH_NOTIFICATION |
+      | AUD_CA_VIEW_USERPROFILE    |
+      | AUD_CA_VIEW_NOTIFICATION   |
+      | AUD_CA_AK_VIEW             |
+
+  # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
+  # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
+  # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
+  # AUD_CA_AK_VIEW (visualizzazione lista api key)
