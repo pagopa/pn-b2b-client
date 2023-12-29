@@ -921,13 +921,15 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.11_84] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
+    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    And Il servizio risponde con esito positivo con la lista delle PA
+    When  come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale con paId "<paID>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
 
     Examples:
-      | paID                                 | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | 4db741cf-17e1-4751-9b7b-7675ccca472b | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
-    #  Response 200 OK
+      | paID   | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | NO_SET | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+    #  Response 200 OK a95dace4-4a47-4149-a814-0e669113ce40
     #{"results":[],"moreResult":false,"nextPagesKey":[]}
 
   #CE02.12 Come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo (IUN) fornito dall'Ente mittente

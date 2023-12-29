@@ -1035,6 +1035,7 @@ public class ApiServiceDeskSteps {
     @Then("Il servizio risponde con esito positivo con la lista delle PA")
     public void verifyServiceResponse() {
         Assertions.assertNotNull(listPa);
+        Assertions.assertTrue(listPa.size()>0);
     }
 
 
@@ -1587,10 +1588,18 @@ public class ApiServiceDeskSteps {
                 paNotificationsRequest.setId(null);
             } else if ("VUOTO".equalsIgnoreCase(paId)) {
                 paNotificationsRequest.setId("");
+            } else if ("NO_SET".equalsIgnoreCase(paId)) {
+                for (PaSummary paSummary: listPa) {
+                    if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")){
+                        paNotificationsRequest.setId(paSummary.getId());
+                        break;
+                    }
+                }
+
             } else {
+
                 paNotificationsRequest.setId(paId);
             }
-
 
             paNotificationsRequest.setStartDate(sDate);
             paNotificationsRequest.setEndDate(eDate);
