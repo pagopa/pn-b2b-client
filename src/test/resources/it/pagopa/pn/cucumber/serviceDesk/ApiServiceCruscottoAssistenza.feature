@@ -1071,12 +1071,14 @@ Feature: Api Service Cruscotto Assitenza
   #TODO Verificare il comportamento corretto...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
-    Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
+    Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
+    And Il servizio risponde con esito positivo con la lista delle PA
+    When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
     Then Il servizio risponde correttamente
 
     Examples:
       | paID                                 |
-      | 4db741cf-17e1-4751-9b7b-7675ccca472b |
+      | NO_SET|
     #Response 200 OK
     #{"type":null,"status":200,"title":"ERROR_ON_KEYS_MANAGER_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-6581a796-07d32d7277fad01f3dc8d5cd","timestamp":"2023-12-19T14:24:23.034470445Z","errors":[]}"
 

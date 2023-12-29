@@ -1584,22 +1584,7 @@ public class ApiServiceDeskSteps {
             OffsetDateTime eDate =  setDateSearch(endDate);
 
             paNotificationsRequest = new PaNotificationsRequest();
-            if ("NULL".equalsIgnoreCase(paId)) {
-                paNotificationsRequest.setId(null);
-            } else if ("VUOTO".equalsIgnoreCase(paId)) {
-                paNotificationsRequest.setId("");
-            } else if ("NO_SET".equalsIgnoreCase(paId)) {
-                for (PaSummary paSummary: listPa) {
-                    if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")){
-                        paNotificationsRequest.setId(paSummary.getId());
-                        break;
-                    }
-                }
-
-            } else {
-
-                paNotificationsRequest.setId(paId);
-            }
+            paNotificationsRequest.setId(setPaID( paId));
 
             paNotificationsRequest.setStartDate(sDate);
             paNotificationsRequest.setEndDate(eDate);
@@ -1676,17 +1661,9 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAlleInformazioniRelativeAlleRichiesteDiAPIKeyAvanzateDaUnEnteMittenteDiNotificheSullaPiattaforma(String paId){
         try {
 
-            String paIDSearch = null;
-            if ("NULL".equalsIgnoreCase(paId)) {
-                paIDSearch = null;
-            } else if ("VUOTO".equalsIgnoreCase(paId)) {
-                paIDSearch = "";
-            }else {
-                paIDSearch = paId;
-            }
+            String paIDSearch =  setPaID( paId);
 
              responseApiKeys = ipServiceDeskClient.getApiKeys(paIDSearch);
-
             Assertions.assertNotNull(responseApiKeys);
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -1712,6 +1689,25 @@ public class ApiServiceDeskSteps {
             iunSearch = iun;
         }
         return iunSearch;
+    }
+
+    public String  setPaID(String paId){
+        String paIDSearch = null;
+        if ("NULL".equalsIgnoreCase(paId)) {
+            paIDSearch = null;
+        } else if ("VUOTO".equalsIgnoreCase(paId)) {
+            paIDSearch = "";
+        } else if ("NO_SET".equalsIgnoreCase(paId)) {
+            for (PaSummary paSummary: listPa) {
+                if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")){
+                    paIDSearch = paSummary.getId();
+                    break;
+                }
+            }
+        }else {
+            paIDSearch = paId;
+        }
+        return paIDSearch;
     }
 
 
