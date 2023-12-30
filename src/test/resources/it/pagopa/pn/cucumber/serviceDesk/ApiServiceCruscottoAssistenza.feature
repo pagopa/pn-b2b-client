@@ -1077,8 +1077,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | paID                                 |
-      | NO_SET|
+      | paID   |
+      | NO_SET |
     #Response 200 OK
     #{"type":null,"status":200,"title":"ERROR_ON_KEYS_MANAGER_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-6581a796-07d32d7277fad01f3dc8d5cd","timestamp":"2023-12-19T14:24:23.034470445Z","errors":[]}"
 
