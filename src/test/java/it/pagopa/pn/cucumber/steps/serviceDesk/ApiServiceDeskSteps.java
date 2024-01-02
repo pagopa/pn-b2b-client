@@ -1699,11 +1699,13 @@ public class ApiServiceDeskSteps {
             paIDSearch = "";
         } else if ("NO_SET".equalsIgnoreCase(paId)) {
             for (PaSummary paSummary: listPa) {
+                paIDSearch = paSummary.getId();
                 if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")){
                     paIDSearch = paSummary.getId();
                     break;
                 }
             }
+
         }else {
             paIDSearch = paId;
         }

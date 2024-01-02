@@ -681,17 +681,6 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
-    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | IUN                       | TAXIID        | RECIPIENT_TYPE |
-      | DNEN-JVYZ-RHWV-202304-M-1 | Mario Gherkin | PF             |
-
-    #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-658186d3-09993dbb0f08a2f731ac7238","timestamp":"2023-12-19T12:04:35.888715266Z","errors":[]}] null
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.8_61_1] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
