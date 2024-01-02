@@ -175,7 +175,7 @@ public class DataTableTypeUtil {
         );
 
         //N PAGAMENTI
-        if (getValue(data,PAYMENT.key)!= null && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
+        if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
                 listPayment = new ArrayList<NotificationPaymentItem>();
                 for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
                     try {
@@ -195,7 +195,9 @@ public class DataTableTypeUtil {
                                             .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
                                             //.attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
                     //LOAD METADATI F24
-                    setMetadatiF24(data, addPaymentsItem, i);
+                    if (getValue(data,PAYMENT_F24.key)!= null  && !getValue(data,PAYMENT_F24.key).isEmpty()) {
+                        setMetadatiF24(data, addPaymentsItem, i);
+                    }
 
                     listPayment.add(addPaymentsItem);
                 }

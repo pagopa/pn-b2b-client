@@ -93,6 +93,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm   | SI               |
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
+      | apply_cost_f24       | NO               |
       | payment_multy_number | 1                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica

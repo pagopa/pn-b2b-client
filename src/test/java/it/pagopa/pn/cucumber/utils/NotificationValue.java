@@ -56,7 +56,7 @@ public enum NotificationValue {
     PAYMENT_PAGOPA_FORM_1("payment_pagoPaForm_1","classpath:/AvvisoPagoPA.pdf",false),
     PAYMENT_PAGOPA_NOTICE_DUPLICATE("notice_duplicate",null,false),
 
-    PAYMENT_F24("payment_f24","classpath:/METADATA_CORRETTO.json",false), //NON USATO ??
+    PAYMENT_F24("payment_f24",null,false), //NON USATO ??
 
 
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
