@@ -296,7 +296,7 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT" -> metadati = "classpath:/f24_flat_delivery_standard_treasury_ae_err.json";
             case "PAYMENT_F24_STANDARD_SOCIAL_FLAT" -> metadati = "classpath:/f24_flat_standard_social.json";
             case "PAYMENT_F24_STANDARD_INPS_ERR" -> metadati = "classpath:/f24_delivery_standard_inps_err.json";
-            case "PAYMENT_F24_STANDARD_INPS_ERR1" -> metadati = "classpath:/f24_delivery_standard_inps_err1.json";
+            case "PAYMENT_F24_STANDARD_INPS_ERR_1" -> metadati = "classpath:/f24_delivery_standard_inps_err1.json";
 
             default ->  metadati = getDefaultValue(PAYMENT_F24.key);
         }

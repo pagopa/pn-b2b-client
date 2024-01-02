@@ -2721,12 +2721,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm        | NULL                                |
-      | apply_cost_pagopa         | NULL                                |
-      | payment_f24standard_local | PAYMENT_F24_STANDARD_LOCAL          |
-      | title_payment             | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
-      | apply_cost_f24            | SI                                  |
-      | payment_multy_number      | 1                                   |
+      | payment_pagoPaForm   | NULL                                |
+      | apply_cost_pagopa    | NULL                                |
+      | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
+      | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                  |
+      | payment_multy_number | 1                                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2738,12 +2738,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm        | NULL                                |
-      | apply_cost_pagopa         | NULL                                |
-      | payment_f24standard_local | PAYMENT_F24_STANDARD_LOCAL          |
-      | title_payment             | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
-      | apply_cost_f24            | SI                                  |
-      | payment_multy_number      | 1                                   |
+      | payment_pagoPaForm   | NULL                                |
+      | apply_cost_pagopa    | NULL                                |
+      | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
+      | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                  |
+      | payment_multy_number | 1                                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 

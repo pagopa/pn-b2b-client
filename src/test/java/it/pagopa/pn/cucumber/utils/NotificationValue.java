@@ -58,7 +58,7 @@ public enum NotificationValue {
 
     PAYMENT_F24("payment_f24",null,false), //NON USATO ??
 
-
+/**
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_FORMAT("payment_f24standard_no_valid_format","classpath:/METADATA_CORRETTO_NO_VALID_FORMAT.json",false),
@@ -98,7 +98,7 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT("f24_delivery_standard_treasury_ae_err_flat","classpath:/f24_flat_delivery_standard_treasury_ae_err.json",false),
     PAYMENT_F24_STANDARD_SOCIAL_FLAT("payment_f24standard_social_flat","classpath:/f24_flat_standard_social.json",false),
     PAYMENT_F24_SIMPLIFIED_FLAT("payment_f24_simplified_flat","classpath:/f24_flat_simplified.json",false),
-
+**/
 
     PAYMENT_APPLY_COST_PAGOPA("apply_cost_pagopa","NO",false),
     PAYMENT_APPLY_COST_F24("apply_cost_f24","NO",false),
