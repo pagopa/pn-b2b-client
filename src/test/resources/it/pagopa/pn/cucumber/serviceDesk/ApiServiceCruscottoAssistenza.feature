@@ -679,7 +679,7 @@ Feature: Api Service Cruscotto Assitenza
       | IUN    | TAXIID      | RECIPIENT_TYPE |
       | NO_SET | CucumberSpa | PG             |
 
-  @cruscottoAssistenza @ignore
+  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
@@ -1069,7 +1069,7 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_101] Impostare nuova tipologia di Audit Log
-    Then viene verificato che esiste un audit log "<audit-log>" in "10y"
+    Then viene verificato che esiste un audit log "<audit-log>" in "2y"
     Examples:
       | audit-log                  |
       | AUD_CA_SEARCH_NOTIFICATION |
@@ -1081,3 +1081,19 @@ Feature: Api Service Cruscotto Assitenza
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
   # AUD_CA_AK_VIEW (visualizzazione lista api key)
+
+  @cruscottoAssistenza
+  Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
+    And viene verificato che non esiste un audit log "<audit-log>" in "5y"
+    Examples:
+      | audit-log                  |
+      | AUD_CA_SEARCH_NOTIFICATION |
+      | AUD_CA_VIEW_USERPROFILE    |
+      | AUD_CA_VIEW_NOTIFICATION   |
+      | AUD_CA_AK_VIEW             |
+
+  # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
+  # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
+  # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
+  # AUD_CA_AK_VIEW (visualizzazione lista api key)
+
