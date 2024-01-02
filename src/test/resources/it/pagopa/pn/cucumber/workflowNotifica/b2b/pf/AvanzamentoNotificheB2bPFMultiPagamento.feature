@@ -91,7 +91,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI               |
-      | payment_f24flatRate  | PAYMENT_F24_FLAT |
+      | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
       | payment_multy_number | 1                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

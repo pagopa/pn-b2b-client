@@ -89,8 +89,7 @@ Feature: invio notifiche b2b
       | feePolicy | FLAT_RATE |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24 | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
@@ -101,8 +100,7 @@ Feature: invio notifiche b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24| NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 

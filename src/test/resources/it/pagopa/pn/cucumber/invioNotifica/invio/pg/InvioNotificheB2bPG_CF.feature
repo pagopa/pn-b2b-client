@@ -82,8 +82,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
       | feePolicy | FLAT_RATE |
     And destinatario Cucumber Society e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24 | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
@@ -94,8 +93,7 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
       | feePolicy | DELIVERY_MODE |
     And destinatario Cucumber Society e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24 | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
