@@ -65,7 +65,7 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl{
     public PnServiceDeskClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
-            @Value("${pn.externalChannels.base-url}") String deliveryBasePath ,
+            @Value("${pn.delivery.base-url}") String deliveryBasePath ,
             @Value("${pn.external.api-keys.service-desk}") String apiKeyBase ,
             @Value("${pn.internal.pa-id}") String paId
     ) {
