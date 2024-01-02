@@ -281,8 +281,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-      | payment_f24 | PAYMENT_F24_STANDARD |
-
 
   #TODO Vecchio Requisito
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
