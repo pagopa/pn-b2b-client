@@ -99,15 +99,14 @@ Feature: invio notifiche b2b per la persona giuridica con codice fiscale (societ
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  Scenario: [B2B-PA-SEND_PG-CF_15] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo
+  Scenario: [B2B-PA-SEND_PG-CF_15] Invio notifica digitale mono destinatario senza taxonomyCode PN-8896
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | taxonomyCode |   NULL   |
     And destinatario Cucumber Society
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And viene controllato la presenza del taxonomyCode
+    When la notifica viene inviata dal "Comune_1"
+    And l'operazione ha prodotto un errore con status code "400"
     
 
 
