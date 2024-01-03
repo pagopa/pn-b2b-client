@@ -1491,8 +1491,14 @@ public class ApiServiceDeskSteps {
 
         try {
             Assertions.assertNotNull(profileResponse);
-            Assertions.assertNotNull(profileResponse.getDelegateMandates());
-            Assertions.assertTrue(profileResponse.getDelegateMandates().size() > 0);
+
+            if ("delegato".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegateMandates());
+                Assertions.assertTrue(profileResponse.getDelegateMandates().size() > 0);
+            }else if ("delegante".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegatorMandates());
+                Assertions.assertTrue(profileResponse.getDelegatorMandates().size() > 0);
+            }
 
             Integer size = setSearchPageSize(searchPageSize);
             String nextPagesKey = setNextPagesKey(searchNextPagesKey);
