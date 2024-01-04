@@ -265,6 +265,14 @@ Feature: avanzamento notifiche b2b persona fisica
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
-
+  @workflowDigitale
+  Scenario: [B2B_TIMELINE_25] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And "utente token scaduto" tenta di leggere la notifica ricevuta
+    Then l'operazione ha prodotto un errore con status code "403"
 
 
