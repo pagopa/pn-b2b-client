@@ -1777,6 +1777,10 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 break;
+            case "utente token scaduto":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+                break;
             default:
                 throw new IllegalArgumentException();
         }
