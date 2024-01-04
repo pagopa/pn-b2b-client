@@ -3884,7 +3884,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-  @pagamentiMultipli @ignore
+  @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e senza paFee - PN-8906
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
