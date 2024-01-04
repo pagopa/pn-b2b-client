@@ -382,7 +382,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+      | Mario Gherkin | PF             | 10                | NULL                 | 2023-01-01 | 2023-12-01 |
     #Response 200 OK
 
   @cruscottoAssistenza
@@ -828,6 +828,7 @@ Feature: Api Service Cruscotto Assitenza
       | Mario Gherkin | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NULL        |
     # Errore: 400 BAD_REQUEST 400 Missing the required parameter 'delegateInternalId' when calling searchNotificationsAsDelegateFromInternalId null
 
+   #TODO Verificare il comportamento corretto...
   @deleghe1  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
@@ -848,7 +849,7 @@ Feature: Api Service Cruscotto Assitenza
       | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID               | INTERNAL_ID |
       | Mario Cucumber | PF             | 10               | NULL                 | NULL       | NULL     | z7942f2e-1037-4ed9-8ca6- | NO_SET      |
 
-    # Response 500 INTERNAL_SERVER_ERROR
+    # Response 400 INTERNAL_SERVER_ERROR
 
   #CE02.10 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario ma sono state “trattate” da altro utente da lui “delegato”
 
@@ -1065,11 +1066,18 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
       | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_ONBOARDING     |
+      | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
   # AUD_CA_AK_VIEW (visualizzazione lista api key)
+  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
+  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
+
+
+
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
@@ -1080,6 +1088,8 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
       | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_ONBOARDING     |
+      | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
