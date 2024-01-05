@@ -1034,7 +1034,7 @@ Feature: Api Service Cruscotto Assitenza
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
     Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza delle apiKey
 
     Examples:
       | paID           |
@@ -1047,7 +1047,7 @@ Feature: Api Service Cruscotto Assitenza
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza delle apiKey
 
     Examples:
       | paID   |

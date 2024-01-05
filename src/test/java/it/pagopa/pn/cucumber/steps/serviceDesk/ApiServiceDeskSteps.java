@@ -1240,6 +1240,12 @@ public class ApiServiceDeskSteps {
         Assertions.assertNull(notificationError);
     }
 
+    @Then("Il servizio risponde correttamente con presenza delle apiKey")
+    public void ilServizioRispondeCorrettamenteConPresenzaApikey() {
+        Assertions.assertNotNull(responseApiKeys.getTotal());
+    }
+
+
     @Then("Il servizio risponde correttamente con presenza di allegati {string}")
     public void ilServizioRispondeCorrettamenteAllegatiTrue(String presenzaAllegati) {
         Assertions.assertNull(notificationError);
@@ -1667,10 +1673,11 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAlleInformazioniRelativeAlleRichiesteDiAPIKeyAvanzateDaUnEnteMittenteDiNotificheSullaPiattaforma(String paId){
         try {
 
-            String paIDSearch =  setPaID( paId);
+            String paIDSearch =  setPaID(paId);
 
              responseApiKeys = ipServiceDeskClient.getApiKeys(paIDSearch);
             Assertions.assertNotNull(responseApiKeys);
+
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
