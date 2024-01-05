@@ -1030,7 +1030,6 @@ Feature: Api Service Cruscotto Assitenza
       | VUOTO |
   #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_SIZE","element":"_getApiKeys.paId","detail":"size must be between 1 and 50"}]}
 
-    #TODO Verificare il comportamento corretto...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
     Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
@@ -1041,7 +1040,6 @@ Feature: Api Service Cruscotto Assitenza
       | 4db941cf-17e1- |
     #Response 200 OK
 
-  #TODO Verificare il comportamento corretto...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
@@ -1051,10 +1049,10 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | paID   |
-      | NO_SET |
+      | 026e8c72-7944-4dcd-8668-f596447fec6d |
     #Response 200 OK
 
-#8c9ed305-f1ab-4031-b3f0-5241216d0635 MILANO
+#026e8c72-7944-4dcd-8668-f596447fec6d MILANO
 
 
   @cruscottoAssistenza
@@ -1065,14 +1063,14 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_SEARCH_NOTIFICATION |
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
-      | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_AK             |
       | AUD_CA_VIEW_ONBOARDING     |
       | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
-  # AUD_CA_AK_VIEW (visualizzazione lista api key)
+  # AUD_CA_VIEW_AK (visualizzazione lista api key)
   # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
   # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
 
@@ -1087,12 +1085,14 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_SEARCH_NOTIFICATION |
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
-      | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_AK             |
       | AUD_CA_VIEW_ONBOARDING     |
       | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
-  # AUD_CA_AK_VIEW (visualizzazione lista api key)
+  # AUD_CA_VIEW_AK (visualizzazione lista api key)
+  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
+  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
 
