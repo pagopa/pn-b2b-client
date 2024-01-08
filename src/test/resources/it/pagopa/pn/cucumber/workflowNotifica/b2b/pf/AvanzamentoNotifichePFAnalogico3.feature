@@ -482,3 +482,29 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+
+  @workflowAnalogico
+  Scenario: [B2B_TIMELINE_ANALOG_68] Attesa elemento di timeline REFINEMENT con physicalAddress OK-Giacenza-lte10_890-2
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL           |
+      | physicalAddress_address | Via@OK-Giacenza-lte10_890-2 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+
+  @workflowAnalogico
+  Scenario: [B2B_TIMELINE_ANALOG_69] Attesa elemento di timeline REFINEMENT con physicalAddress OK-Giacenza-lte10_890-3
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL           |
+      | physicalAddress_address | Via@OK-Giacenza-lte10_890-3 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
