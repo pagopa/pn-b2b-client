@@ -1,10 +1,17 @@
 package it.pagopa.pn.cucumber.steps.serviceDesk;
 
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplNoApiKey;
 import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplWrongApiKey;
+import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.CompleteTransactionRequest;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentPositionModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.TransferModel;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.TimelineElement;
 import org.assertj.core.api.Assert;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
@@ -13,8 +20,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
@@ -36,14 +41,15 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.time.OffsetDateTime.now;
 
 
 public class ApiServiceDeskSteps {
@@ -65,6 +71,7 @@ public class ApiServiceDeskSteps {
 
     private NotificationsUnreachableResponse notificationsUnreachableResponse;
 
+
     private CreateOperationRequest createOperationRequest;
 
     private OperationsResponse operationsResponse;
@@ -79,23 +86,25 @@ public class ApiServiceDeskSteps {
 
     private SearchResponse searchResponse;
 
-    private static final String CF_vuoto =null;
+    private static final String CF_vuoto = null;
 
-    private static final String CF_errato ="CPNTMS85T15H703WCPNTMS85T15H703W|";
+    private static final String CF_corretto = "CLMCST42R12D969Z";
 
-    private static final String CF_errato2 ="CPNTM@85T15H703W";
+    private static final String CF_errato = "CPNTMS85T15H703WCPNTMS85T15H703W|";
 
-    private static final String ticketid_vuoto =null;
+    private static final String CF_errato2 = "CPNTM@85T15H703W";
 
-    private static final String ticketid_errato ="XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
+    private static final String ticketid_vuoto = null;
 
-    private static final String ticketoperationid_vuoto =null;
+    private static final String ticketid_errato = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
 
-    private static final String ticketoperationid_errato ="abcdfeghilm";
+    private static final String ticketoperationid_vuoto = null;
+
+    private static final String ticketoperationid_errato = "abcdfeghilm";
 
     private final Integer workFlowWaitDefault = 31000;
 
-    private final Integer delay=420000;
+    private final Integer delay = 420000;
 
     @Value("${pn.configuration.workflow.wait.millis:31000}")
     private Integer workFlowWait;
@@ -114,22 +123,33 @@ public class ApiServiceDeskSteps {
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
     private static final String NUMERIC_STRING = "0123456789";
 
+    private List<PaSummary> listPa = null;
+    private SearchNotificationsResponse searchNotificationsResponse;
+    private SearchNotificationsRequest searchNotificationsRequest;
+    private ProfileRequest profileRequest;
+    private ProfileResponse profileResponse;
+    private NotificationDetailResponse notificationDetailResponse;
+    private TimelineResponse timelineResponse;
+    private DocumentsRequest documentsRequest;
+    private DocumentsResponse documentsResponse;
+    private PaNotificationsRequest paNotificationsRequest;
+    private ResponseApiKeys responseApiKeys;
 
     @Autowired
-    public ApiServiceDeskSteps(SharedSteps sharedSteps,RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient,ApplicationContext ctx,PnExternalServiceClientImpl safeStorageClient) {
+    public ApiServiceDeskSteps(SharedSteps sharedSteps, RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient, ApplicationContext ctx, PnExternalServiceClientImpl safeStorageClient) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
-        this.safeStorageClient=safeStorageClient;
-        this.ipServiceDeskClient= sharedSteps.getServiceDeskClient();
+        this.safeStorageClient = safeStorageClient;
+        this.ipServiceDeskClient = sharedSteps.getServiceDeskClient();
         this.restTemplate = restTemplate;
-        this.notificationRequest=new NotificationRequest();
-        this.notificationsUnreachableResponse=notificationsUnreachableResponse;
-        this.analogAddress=new AnalogAddress();
-        this.createOperationRequest=new CreateOperationRequest();
-        this.videoUploadRequest=new VideoUploadRequest();
-        this.searchNotificationRequest=new SearchNotificationRequest();
-        this.ctx=ctx;
+        this.notificationRequest = new NotificationRequest();
+        this.notificationsUnreachableResponse = notificationsUnreachableResponse;
+        this.analogAddress = new AnalogAddress();
+        this.createOperationRequest = new CreateOperationRequest();
+        this.videoUploadRequest = new VideoUploadRequest();
+        this.searchNotificationRequest = new SearchNotificationRequest();
+        this.ctx = ctx;
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
@@ -146,21 +166,21 @@ public class ApiServiceDeskSteps {
                 break;
             default:
                 notificationRequest.setTaxId(cf);
-                logger.info("Inserito CF:"+cf);
+                logger.info("Inserito CF:" + cf);
         }
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE con cf vuoto")
     public void createVerifyUnreachableRequest() {
-                notificationRequest.setTaxId(CF_vuoto);
+        notificationRequest.setTaxId(CF_vuoto);
     }
 
     @When("viene invocato il servizio UNREACHABLE")
-    public void NotificationsUnreachableResponse(){
+    public void NotificationsUnreachableResponse() {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
-                notificationsUnreachableResponse=ipServiceDeskClient.notification(notificationRequest);
+                notificationsUnreachableResponse = ipServiceDeskClient.notification(notificationRequest);
             });
 
             try {
@@ -179,7 +199,7 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocato il servizio UNREACHABLE con errore")
-    public void NotificationsUnreachableResponseWithError(){
+    public void NotificationsUnreachableResponseWithError() {
         try {
             notificationsUnreachableResponse = ipServiceDeskClient.notification(notificationRequest);
             try {
@@ -198,20 +218,21 @@ public class ApiServiceDeskSteps {
 
 
     @Then("la risposta del servizio UNREACHABLE è {long}")
-    public void verifyNotificationsUnreachableResponse(Long count){
-        Long notificationsCount=notificationsUnreachableResponse.getNotificationsCount();
+    public void verifyNotificationsUnreachableResponse(Long count) {
+        Long notificationsCount = notificationsUnreachableResponse.getNotificationsCount();
         Assertions.assertEquals(notificationsCount, count);
-        logger.info("Presenza notifiche per il CF"+this.notificationRequest.getTaxId()+":"+notificationsCount);
+        logger.info("Presenza notifiche per il CF" + this.notificationRequest.getTaxId() + ":" + notificationsCount);
     }
 
     @Then("il servizio risponde con errore {string}")
     public void operationProducedAnError(String statusCode) {
         Assertions.assertTrue((notificationError.getStatusCode() != null) &&
                 (notificationError.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+        logger.info("Errore: " + notificationError.getStatusCode() + " " + notificationError.getMessage() + " " + notificationError.getCause());
     }
 
     @Given("viene comunicato il nuovo indirizzo con {string} {string} {string} {string} {string} {string} {string} {string} {string}")
-    public void createNewAddressRequest(String fullname, String namerow2, String address,String addressRow2,String cap, String city, String city2,String pr,String country) {
+    public void createNewAddressRequest(String fullname, String namerow2, String address, String addressRow2, String cap, String city, String city2, String pr, String country) {
         analogAddress.setFullname(fullname);
         analogAddress.setNameRow2(namerow2);
         analogAddress.setAddress(address);
@@ -239,22 +260,22 @@ public class ApiServiceDeskSteps {
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con {string}")
     public void createOperationReq(String cf) {
         createOperationRequest.setTaxId(cf);
-        logger.info("CF:"+cf);
-        String ticketid= null;
+        logger.info("CF:" + cf);
+        String ticketid = null;
         try {
-            ticketid = "AUT"+randomAlphaNumeric(12);
+            ticketid = "AUT" + randomAlphaNumeric(12);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        logger.info("ticketid:"+ticketid);
+        logger.info("ticketid:" + ticketid);
         createOperationRequest.setTicketId(ticketid);
-        String ticketOperationid= null;
+        String ticketOperationid = null;
         try {
-            ticketOperationid = "AUT"+randomAlphaNumeric(7);
+            ticketOperationid = "AUT" + randomAlphaNumeric(7);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        logger.info("ticketOperationid:"+ticketOperationid);
+        logger.info("ticketOperationid:" + ticketOperationid);
         createOperationRequest.setTicketOperationId(ticketOperationid);
         createOperationRequest.setAddress(analogAddress);
 
@@ -296,30 +317,28 @@ public class ApiServiceDeskSteps {
     }
 
 
-
     @Given("viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con cf vuoto")
     public void createOperationReqCFVuoto() {
         createOperationRequest.setTaxId(CF_vuoto);
-        String ticketid= null;
+        String ticketid = null;
         try {
-            ticketid = "AUT"+randomAlphaNumeric(12);
+            ticketid = "AUT" + randomAlphaNumeric(12);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        logger.info("ticketid:"+ticketid);
+        logger.info("ticketid:" + ticketid);
         createOperationRequest.setTicketId(ticketid);
-        String ticketOperationid= null;
+        String ticketOperationid = null;
         try {
-            ticketOperationid = "AUT"+randomAlphaNumeric(7);
+            ticketOperationid = "AUT" + randomAlphaNumeric(7);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        logger.info("ticketOperationid:"+ticketOperationid);
+        logger.info("ticketOperationid:" + ticketOperationid);
         createOperationRequest.setTicketOperationId(ticketOperationid);
         createOperationRequest.setAddress(analogAddress);
 
     }
-
 
 
     @When("viene invocato il servizio CREATE_OPERATION con errore")
@@ -342,10 +361,10 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocato il servizio CREATE_OPERATION")
-    public void createOperationResponse(){
+    public void createOperationResponse() {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                operationsResponse=ipServiceDeskClient.createOperation(createOperationRequest);
+                operationsResponse = ipServiceDeskClient.createOperation(createOperationRequest);
             });
 
             try {
@@ -364,20 +383,20 @@ public class ApiServiceDeskSteps {
     }
 
     @Then("la risposta del servizio CREATE_OPERATION risponde con esito positivo")
-    public void verifyCreateOperationResponse(){
-        String idoperation=operationsResponse.getOperationId();
+    public void verifyCreateOperationResponse() {
+        String idoperation = operationsResponse.getOperationId();
         Assertions.assertNotNull(idoperation);
-        logger.info("L'operation di creato per il CF:"+createOperationRequest.getTaxId()+" "+idoperation);
+        logger.info("L'operation di creato per il CF:" + createOperationRequest.getTaxId() + " " + idoperation);
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO")
     public void createPreUploadVideoRequest() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        logger.info("Resource name:"+resourceName);
-        String sha256 = computeSha256( resourceName );
-        logger.info("sha:"+sha256);
-        videoUploadRequest.setPreloadIdx("AUT"+randomAlphaNumeric(5));
+        logger.info("Resource name:" + resourceName);
+        String sha256 = computeSha256(resourceName);
+        logger.info("sha:" + sha256);
+        videoUploadRequest.setPreloadIdx("AUT" + randomAlphaNumeric(5));
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType("application/octet-stream");
 
@@ -387,20 +406,20 @@ public class ApiServiceDeskSteps {
     public void createPreUploadVideoRequestFormatVideoNotValid() throws Exception {
         notificationDocument = newDocument("classpath:/video.avi");
         String resourceName = notificationDocument.getRef().getKey();
-        logger.info("Resource name:"+resourceName);
-        String sha256 = computeSha256( resourceName );
-        logger.info("sha:"+sha256);
-        videoUploadRequest.setPreloadIdx("AUT"+randomAlphaNumeric(5));
+        logger.info("Resource name:" + resourceName);
+        String sha256 = computeSha256(resourceName);
+        logger.info("sha:" + sha256);
+        videoUploadRequest.setPreloadIdx("AUT" + randomAlphaNumeric(5));
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType("application/octet-stream");
 
     }
 
     @When("viene invocato il servizio UPLOAD VIDEO")
-    public void preUploadVideoResponse(){
+    public void preUploadVideoResponse() {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                videoUploadResponse=ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(),videoUploadRequest);
+                videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
             });
 
             try {
@@ -419,9 +438,9 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocato il servizio UPLOAD VIDEO con {string} con errore")
-    public void preUploadVideoResponse(String operationId){
+    public void preUploadVideoResponse(String operationId) {
         try {
-            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationId,videoUploadRequest);
+            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationId, videoUploadRequest);
             try {
                 Thread.sleep(getWorkFlowWait());
             } catch (InterruptedException e) {
@@ -437,9 +456,9 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocato il servizio UPLOAD VIDEO con operationid vuoto")
-    public void preUploadVideoResponseOperationIdNull(){
+    public void preUploadVideoResponseOperationIdNull() {
         try {
-            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(null,videoUploadRequest);
+            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(null, videoUploadRequest);
             try {
                 Thread.sleep(getWorkFlowWait());
             } catch (InterruptedException e) {
@@ -456,10 +475,10 @@ public class ApiServiceDeskSteps {
 
 
     @When("viene invocato il servizio UPLOAD VIDEO con errore")
-    public void preUploadVideoResponseWithError(){
+    public void preUploadVideoResponseWithError() {
         try {
-            logger.error("Operation id:"+operationsResponse.getOperationId());
-            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(),videoUploadRequest);
+            logger.error("Operation id:" + operationsResponse.getOperationId());
+            videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
             try {
                 Thread.sleep(getWorkFlowWait());
             } catch (InterruptedException e) {
@@ -479,8 +498,8 @@ public class ApiServiceDeskSteps {
     public void createPreUploadVideoRequestSha256Null() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        String sha256 = computeSha256( resourceName );
-        videoUploadRequest.setPreloadIdx("AUT"+randomAlphaNumeric(5));
+        String sha256 = computeSha256(resourceName);
+        videoUploadRequest.setPreloadIdx("AUT" + randomAlphaNumeric(5));
         videoUploadRequest.setSha256(null);
         videoUploadRequest.setContentType("application/octet-stream");
 
@@ -490,9 +509,9 @@ public class ApiServiceDeskSteps {
     public void createPreUploadVideoRequestSha256Error() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        String sha256 = computeSha256( resourceName );
-        videoUploadRequest.setPreloadIdx("AUT"+randomAlphaNumeric(5));
-        videoUploadRequest.setSha256(sha256+"ERR");
+        String sha256 = computeSha256(resourceName);
+        videoUploadRequest.setPreloadIdx("AUT" + randomAlphaNumeric(5));
+        videoUploadRequest.setSha256(sha256 + "ERR");
         videoUploadRequest.setContentType("application/octet-stream");
 
     }
@@ -501,7 +520,7 @@ public class ApiServiceDeskSteps {
     public void createPreUploadVideoRequestPreloadIdxNull() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        String sha256 = computeSha256( resourceName );
+        String sha256 = computeSha256(resourceName);
         videoUploadRequest.setPreloadIdx(null);
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType("application/octet-stream");
@@ -509,8 +528,8 @@ public class ApiServiceDeskSteps {
 
     @Given("viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO con preloadIdx errato")
     public void createPreUploadVideoRequestpreloadIdxNotValid() throws Exception {
-        String resourceName= "classpath:/test.xml";
-        String sha256 = computeSha256( resourceName );
+        String resourceName = "classpath:/test.xml";
+        String sha256 = computeSha256(resourceName);
         videoUploadRequest.setPreloadIdx("@@||!!");
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType("application/octet-stream");
@@ -522,23 +541,23 @@ public class ApiServiceDeskSteps {
     public void createPreUploadVideoRequestContentTypeull() throws Exception {
         notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        String sha256 = computeSha256( resourceName );
-        videoUploadRequest.setPreloadIdx("AUT"+randomAlphaNumeric(5));
+        String sha256 = computeSha256(resourceName);
+        videoUploadRequest.setPreloadIdx("AUT" + randomAlphaNumeric(5));
         videoUploadRequest.setSha256(sha256);
         videoUploadRequest.setContentType(null);
     }
 
     @Then("la risposta del servizio UPLOAD VIDEO risponde con esito positivo")
-    public void verifyUploadVideoResponse(){
-        String url=videoUploadResponse.getUrl();
+    public void verifyUploadVideoResponse() {
+        String url = videoUploadResponse.getUrl();
         Assertions.assertNotNull(url);
-        logger.info("generata la url:"+url);
-        String secretkey=videoUploadResponse.getSecret();
+        logger.info("generata la url:" + url);
+        String secretkey = videoUploadResponse.getSecret();
         Assertions.assertNotNull(secretkey);
-        logger.info("generata la secret key:"+secretkey);
-        String filekey=videoUploadResponse.getFileKey();
+        logger.info("generata la secret key:" + secretkey);
+        String filekey = videoUploadResponse.getFileKey();
         Assertions.assertNotNull(filekey);
-        logger.info("generata la file key:"+filekey);
+        logger.info("generata la file key:" + filekey);
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio SEARCH per il {string}")
@@ -559,7 +578,7 @@ public class ApiServiceDeskSteps {
     }
 
     @When("viene invocato il servizio SEARCH con errore")
-    public void searchResponseWithError(){
+    public void searchResponseWithError() {
         try {
             searchResponse = ipServiceDeskClient.searchOperationsFromTaxId(searchNotificationRequest);
             try {
@@ -631,21 +650,21 @@ public class ApiServiceDeskSteps {
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo")
-    public void verifySearchResponse(){
-        List<OperationResponse> lista=searchResponse.getOperations();
+    public void verifySearchResponse() {
+        List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
-        logger.info("SEARCH " +  searchResponse.getOperations().toString());
+        logger.info("SEARCH " + searchResponse.getOperations().toString());
         //Analalisi output
-        for(OperationResponse element :lista){
-            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
+        for (OperationResponse element : lista) {
+            logger.info("STAMPA ELEMENTO LISTA " + element.toString());
             Assertions.assertNotNull(element.getOperationId());
-            logger.info("CF attuale" +  element.getTaxId());
-            logger.info("CF da cercare" +  searchNotificationRequest.getTaxId());
-            Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
+            logger.info("CF attuale" + element.getTaxId());
+            logger.info("CF da cercare" + searchNotificationRequest.getTaxId());
+            Assertions.assertEquals(element.getTaxId(), searchNotificationRequest.getTaxId());
             Assertions.assertNotNull(element.getIuns());
             Assertions.assertNotNull(element.getUncompletedIuns());
             Assertions.assertNotNull(element.getNotificationStatus());
-            logger.info("STATO NOTIFICA " +  lista.get(0).getNotificationStatus().getStatus().getValue());
+            logger.info("STATO NOTIFICA " + lista.get(0).getNotificationStatus().getStatus().getValue());
             Assertions.assertNotNull(element.getOperationCreateTimestamp());
             Assertions.assertNotNull(element.getOperationUpdateTimestamp());
 
@@ -654,86 +673,20 @@ public class ApiServiceDeskSteps {
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo e lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatus(String status){
-        boolean findOperationId=false;
-            String operationIdToSearch=operationsResponse.getOperationId();
-            logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
-            List<OperationResponse> lista=searchResponse.getOperations();
-            Assertions.assertNotNull(lista);
-            logger.info("SEARCH " +  searchResponse.getOperations().toString());
-            //Analisi output
-            for(OperationResponse element:lista){
-                logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
-                String actualOperationId=element.getOperationId();
-                Assertions.assertNotNull(actualOperationId);
-                if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
-                    findOperationId=true;
-                }
-                // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
-                //Viene verificato che l'operation id generato fa parte della lista
-
-                Assertions.assertNotNull(element.getIuns());
-
-                Assertions.assertNotNull(element.getUncompletedIuns());
-                Assertions.assertNotNull(element.getNotificationStatus());
-                //controllo sullo status
-                if(operationIdToSearch.compareTo(actualOperationId)==0){
-                    logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
-                    Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
-                }
-                Assertions.assertNotNull(element.getOperationCreateTimestamp());
-                Assertions.assertNotNull(element.getOperationUpdateTimestamp());
-        }
-
-        //Se non viene trovato l'id operation lancio eccezione
-        try{
-        Assertions.assertTrue(findOperationId);
-        } catch (AssertionFailedError assertionFailedError) {
-        String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
-        throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-    }
-
-    }
-
-
-    @Then("Il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusSplitNotify(String status){
-        boolean findOperationId=false;
-        boolean multiOperation=false;
-        String operationIdToSearch=operationsResponse.getOperationId();
-        logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
-        List<OperationResponse> lista=searchResponse.getOperations();
+    public void verifySearchResponseWithStatus(String status) {
+        boolean findOperationId = false;
+        String operationIdToSearch = operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
+        List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
-        logger.info("SEARCH " +  searchResponse.getOperations().toString());
-        //Viene controllato che lo stato delle operation è superiore a 1
-
-
-        List<OperationResponse> listaSplit=new ArrayList<>();
-
+        logger.info("SEARCH " + searchResponse.getOperations().toString());
         //Analisi output
-        for(OperationResponse element:lista){
-            String actualOperationId=element.getOperationId();
-            logger.info("ACTUAL OPERATION ID: " +  actualOperationId);
-            if (actualOperationId.compareTo(operationIdToSearch)==0){
-                listaSplit.add(element);
-                logger.info("AGGIUNTO ELEMENTO: " +  actualOperationId);
-            }
-            Assertions.assertNotNull(listaSplit);
-        }
-        int numberOperation=listaSplit.size();
-
-        logger.info("Numero di response che contengono l'operation id " + numberOperation);
-        if(numberOperation>1){
-            multiOperation=true;
-        }
-        Assertions.assertTrue(multiOperation);
-        //Analisi output
-        for(OperationResponse element:listaSplit){
-            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
-            String actualOperationId=element.getOperationId();
+        for (OperationResponse element : lista) {
+            logger.info("STAMPA ELEMENTO LISTA " + element.toString());
+            String actualOperationId = element.getOperationId();
             Assertions.assertNotNull(actualOperationId);
-            if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
-                findOperationId=true;
+            if (actualOperationId.compareTo(operationIdToSearch) == 0 && findOperationId == false) {
+                findOperationId = true;
             }
             // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
             //Viene verificato che l'operation id generato fa parte della lista
@@ -743,19 +696,85 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(element.getUncompletedIuns());
             Assertions.assertNotNull(element.getNotificationStatus());
             //controllo sullo status
-            if(operationIdToSearch.compareTo(actualOperationId)==0){
-                logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
-                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
+            if (operationIdToSearch.compareTo(actualOperationId) == 0) {
+                logger.info("STATO NOTIFICA " + element.getNotificationStatus().getStatus().getValue());
+                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(), status);
             }
             Assertions.assertNotNull(element.getOperationCreateTimestamp());
             Assertions.assertNotNull(element.getOperationUpdateTimestamp());
         }
 
         //Se non viene trovato l'id operation lancio eccezione
-        try{
+        try {
             Assertions.assertTrue(findOperationId);
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
+            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" + findOperationId + "}";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
+    }
+
+
+    @Then("Il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è {string}")
+    public void verifySearchResponseWithStatusSplitNotify(String status) {
+        boolean findOperationId = false;
+        boolean multiOperation = false;
+        String operationIdToSearch = operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
+        List<OperationResponse> lista = searchResponse.getOperations();
+        Assertions.assertNotNull(lista);
+        logger.info("SEARCH " + searchResponse.getOperations().toString());
+        //Viene controllato che lo stato delle operation è superiore a 1
+
+
+        List<OperationResponse> listaSplit = new ArrayList<>();
+
+        //Analisi output
+        for (OperationResponse element : lista) {
+            String actualOperationId = element.getOperationId();
+            logger.info("ACTUAL OPERATION ID: " + actualOperationId);
+            if (actualOperationId.compareTo(operationIdToSearch) == 0) {
+                listaSplit.add(element);
+                logger.info("AGGIUNTO ELEMENTO: " + actualOperationId);
+            }
+            Assertions.assertNotNull(listaSplit);
+        }
+        int numberOperation = listaSplit.size();
+
+        logger.info("Numero di response che contengono l'operation id " + numberOperation);
+        if (numberOperation > 1) {
+            multiOperation = true;
+        }
+        Assertions.assertTrue(multiOperation);
+        //Analisi output
+        for (OperationResponse element : listaSplit) {
+            logger.info("STAMPA ELEMENTO LISTA " + element.toString());
+            String actualOperationId = element.getOperationId();
+            Assertions.assertNotNull(actualOperationId);
+            if (actualOperationId.compareTo(operationIdToSearch) == 0 && findOperationId == false) {
+                findOperationId = true;
+            }
+            // Assertions.assertEquals(element.getTaxId(),notificationRequest.getTaxId());
+            //Viene verificato che l'operation id generato fa parte della lista
+
+            Assertions.assertNotNull(element.getIuns());
+
+            Assertions.assertNotNull(element.getUncompletedIuns());
+            Assertions.assertNotNull(element.getNotificationStatus());
+            //controllo sullo status
+            if (operationIdToSearch.compareTo(actualOperationId) == 0) {
+                logger.info("STATO NOTIFICA " + element.getNotificationStatus().getStatus().getValue());
+                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(), status);
+            }
+            Assertions.assertNotNull(element.getOperationCreateTimestamp());
+            Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+        }
+
+        //Se non viene trovato l'id operation lancio eccezione
+        try {
+            Assertions.assertTrue(findOperationId);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" + findOperationId + "}";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
 
@@ -763,116 +782,116 @@ public class ApiServiceDeskSteps {
 
 
     @Then("Il servizio SEARCH risponde con esito positivo per lo {string} e lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusAndIun(String iun, String status){
-        boolean findOperationId=false;
-        boolean findIun=false;
-        String operationIdToSearch=operationsResponse.getOperationId();
-        logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
-        List<OperationResponse> lista=searchResponse.getOperations();
+    public void verifySearchResponseWithStatusAndIun(String iun, String status) {
+        boolean findOperationId = false;
+        boolean findIun = false;
+        String operationIdToSearch = operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
+        List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
-        logger.info("SEARCH " +  searchResponse.getOperations().toString());
+        logger.info("SEARCH " + searchResponse.getOperations().toString());
         //Analisi output
-        for(OperationResponse element:lista){
-            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
-            String actualOperationId=element.getOperationId();
+        for (OperationResponse element : lista) {
+            logger.info("STAMPA ELEMENTO LISTA " + element.toString());
+            String actualOperationId = element.getOperationId();
             Assertions.assertNotNull(actualOperationId);
-            if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
-                findOperationId=true;
+            if (actualOperationId.compareTo(operationIdToSearch) == 0 && findOperationId == false) {
+                findOperationId = true;
             }
-             Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
+            Assertions.assertEquals(element.getTaxId(), searchNotificationRequest.getTaxId());
             //Viene verificato che l'operation id generato fa parte della lista
 
             Assertions.assertNotNull(element.getIuns());
-            List<SDNotificationSummary> listaiuns=element.getIuns();
-            if(findOperationId){
-            for(SDNotificationSummary acutalIun :listaiuns){
-            //Verifica se lo iun è presente nella lista
-                logger.info("IUN ATTUALE " +  acutalIun.getIun());
-                if(acutalIun.getIun().compareTo(iun)==0 && findIun==false){
-                findIun=true;
+            List<SDNotificationSummary> listaiuns = element.getIuns();
+            if (findOperationId) {
+                for (SDNotificationSummary acutalIun : listaiuns) {
+                    //Verifica se lo iun è presente nella lista
+                    logger.info("IUN ATTUALE " + acutalIun.getIun());
+                    if (acutalIun.getIun().compareTo(iun) == 0 && findIun == false) {
+                        findIun = true;
+                    }
+                }
+                Assertions.assertNotNull(element.getUncompletedIuns());
+                Assertions.assertNotNull(element.getNotificationStatus());
+                //controllo sullo status
+                if (operationIdToSearch.compareTo(actualOperationId) == 0) {
+                    logger.info("STATO NOTIFICA " + element.getNotificationStatus().getStatus().getValue());
+                    Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(), status);
+                }
+                Assertions.assertNotNull(element.getOperationCreateTimestamp());
+                Assertions.assertNotNull(element.getOperationUpdateTimestamp());
             }
-            }
-            Assertions.assertNotNull(element.getUncompletedIuns());
-            Assertions.assertNotNull(element.getNotificationStatus());
-            //controllo sullo status
-            if(operationIdToSearch.compareTo(actualOperationId)==0){
-                logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
-                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
-            }
-            Assertions.assertNotNull(element.getOperationCreateTimestamp());
-            Assertions.assertNotNull(element.getOperationUpdateTimestamp());
-        }
         }
         //Se non viene trovato l'id operation lancio eccezione
-        try{
+        try {
             Assertions.assertTrue(findOperationId);
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" +findOperationId+"}";
+            String message = assertionFailedError.getMessage() + "{L'operation id non è presente nella lista" + findOperationId + "}";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
         //Se non viene trovato lo IUN lancio operazione
-        try{
+        try {
             Assertions.assertTrue(findIun);
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() + "{Lo iun non è associato al CF" +searchNotificationRequest.getTaxId()+"}";
+            String message = assertionFailedError.getMessage() + "{Lo iun non è associato al CF" + searchNotificationRequest.getTaxId() + "}";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
     @Then("Il servizio SEARCH risponde con esito positivo con uncompleted iun lo stato della consegna è {string}")
-    public void verifySearchResponseWithStatusAndUncompletedIun(String status){
-        boolean findOperationId=false;
-        boolean findIun=false;
-        String operationIdToSearch=operationsResponse.getOperationId();
-        logger.info("OPERATION ID TO SEARCH: " +  operationIdToSearch);
-        List<OperationResponse> lista=searchResponse.getOperations();
+    public void verifySearchResponseWithStatusAndUncompletedIun(String status) {
+        boolean findOperationId = false;
+        boolean findIun = false;
+        String operationIdToSearch = operationsResponse.getOperationId();
+        logger.info("OPERATION ID TO SEARCH: " + operationIdToSearch);
+        List<OperationResponse> lista = searchResponse.getOperations();
         Assertions.assertNotNull(lista);
-        logger.info("SEARCH " +  searchResponse.getOperations().toString());
+        logger.info("SEARCH " + searchResponse.getOperations().toString());
         //Analisi output
-        for(OperationResponse element:lista){
-            logger.info("STAMPA ELEMENTO LISTA " +  element.toString());
-            String actualOperationId=element.getOperationId();
+        for (OperationResponse element : lista) {
+            logger.info("STAMPA ELEMENTO LISTA " + element.toString());
+            String actualOperationId = element.getOperationId();
             Assertions.assertNotNull(actualOperationId);
-            if(actualOperationId.compareTo(operationIdToSearch)==0 && findOperationId==false){
-                findOperationId=true;
+            if (actualOperationId.compareTo(operationIdToSearch) == 0 && findOperationId == false) {
+                findOperationId = true;
             }
-             Assertions.assertEquals(element.getTaxId(),searchNotificationRequest.getTaxId());
+            Assertions.assertEquals(element.getTaxId(), searchNotificationRequest.getTaxId());
             //Viene verificato che l'operation id generato fa parte della lista
 
             Assertions.assertNotNull(element.getUncompletedIuns());
-            List<SDNotificationSummary> listaiuns=element.getUncompletedIuns();
-                Assertions.assertNotNull(element.getIuns());
-                Assertions.assertNotNull(element.getNotificationStatus());
-                //controllo sullo status
-                if(operationIdToSearch.compareTo(actualOperationId)==0){
-                    logger.info("STATO NOTIFICA " +  element.getNotificationStatus().getStatus().getValue());
-                    Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(),status);
-                }
-                Assertions.assertNotNull(element.getOperationCreateTimestamp());
-                Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+            List<SDNotificationSummary> listaiuns = element.getUncompletedIuns();
+            Assertions.assertNotNull(element.getIuns());
+            Assertions.assertNotNull(element.getNotificationStatus());
+            //controllo sullo status
+            if (operationIdToSearch.compareTo(actualOperationId) == 0) {
+                logger.info("STATO NOTIFICA " + element.getNotificationStatus().getStatus().getValue());
+                Assertions.assertEquals(element.getNotificationStatus().getStatus().getValue(), status);
             }
+            Assertions.assertNotNull(element.getOperationCreateTimestamp());
+            Assertions.assertNotNull(element.getOperationUpdateTimestamp());
+        }
     }
 
     @Then("Il servizio SEARCH risponde con lista vuota")
-    public void verifySearchResponseEmpty(){
-        List<OperationResponse> lista=searchResponse.getOperations();
-        logger.info("STAMPA LISTA " +  lista.toString());
-     //   Assertions.assertNull(lista);
-        Assertions.assertEquals(lista.toString(),"[]");
+    public void verifySearchResponseEmpty() {
+        List<OperationResponse> lista = searchResponse.getOperations();
+        logger.info("STAMPA LISTA " + lista.toString());
+        //   Assertions.assertNull(lista);
+        Assertions.assertEquals(lista.toString(), "[]");
 
     }
 
     @Then("il video viene caricato su SafeStorage")
     public void loadFileSafeStorage() {
         logger.info("PROVAA");
-       // notificationDocument = newDocument("classpath:/video.mp4");
+        // notificationDocument = newDocument("classpath:/video.mp4");
         String resourceName = notificationDocument.getRef().getKey();
-        logger.info("Resouce name"+resourceName);
+        logger.info("Resouce name" + resourceName);
         AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
-        loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
-        notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
+        loadToPresigned(videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName);
+        notificationDocument.getRef().setKey(videoUploadResponse.getFileKey());
         notificationDocument.getRef().setVersionToken("v1");
-        notificationDocument.digests( new NotificationAttachmentDigests().sha256( videoUploadRequest.getSha256() ));
+        notificationDocument.digests(new NotificationAttachmentDigests().sha256(videoUploadRequest.getSha256()));
     }
 
 
@@ -884,10 +903,10 @@ public class ApiServiceDeskSteps {
                 Thread.sleep(3720000);//aspetta 62 minuti
                 // notificationDocument = newDocument("classpath:/video.mp4");
                 String resourceName = notificationDocument.getRef().getKey();
-                logger.info("Resouce name"+resourceName);
+                logger.info("Resouce name" + resourceName);
                 AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
-                loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
-                notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
+                loadToPresigned(videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName);
+                notificationDocument.getRef().setKey(videoUploadResponse.getFileKey());
                 notificationDocument.getRef().setVersionToken("v1");
             } catch (InterruptedException e) {
                 logger.error("Thread.sleep error retry");
@@ -903,15 +922,15 @@ public class ApiServiceDeskSteps {
 
     @Then("il video viene caricato su SafeStorage con errore")
     public void loadFileSafeStorageWithError() {
-            try {
-                logger.info("PROVAA");
-                // notificationDocument = newDocument("classpath:/video.mp4");
-                String resourceName = notificationDocument.getRef().getKey();
-                logger.info("Resouce name"+resourceName);
-                AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
-                loadToPresigned( videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName );
-                notificationDocument.getRef().setKey( videoUploadResponse.getFileKey() );
-                notificationDocument.getRef().setVersionToken("v1");
+        try {
+            logger.info("PROVAA");
+            // notificationDocument = newDocument("classpath:/video.mp4");
+            String resourceName = notificationDocument.getRef().getKey();
+            logger.info("Resouce name" + resourceName);
+            AtomicReference<NotificationDocument> notificationDocumentAtomic = new AtomicReference<>();
+            loadToPresigned(videoUploadResponse.getUrl(), videoUploadResponse.getSecret(), videoUploadRequest.getSha256(), resourceName);
+            notificationDocument.getRef().setKey(videoUploadResponse.getFileKey());
+            notificationDocument.getRef().setVersionToken("v1");
         } catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -923,7 +942,7 @@ public class ApiServiceDeskSteps {
     @Then("viene effettuato un controllo sulla durata della retention")
     public void retentionCheckPreload() {
         String key = notificationDocument.getRef().getKey();
-        logger.info("Resouce name"+key);
+        logger.info("Resouce name" + key);
         try {
             Thread.sleep(900000);
         } catch (InterruptedException e) {
@@ -935,16 +954,15 @@ public class ApiServiceDeskSteps {
     }
 
 
-    private void loadToPresigned( String url, String secret, String sha256, String resource ) {
+    private void loadToPresigned(String url, String secret, String sha256, String resource) {
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("Content-type", "application/octet-stream");
         headers.add("x-amz-checksum-sha256", sha256);
         headers.add("x-amz-meta-secret", secret);
 
-        HttpEntity<Resource> req = new HttpEntity<>( ctx.getResource( resource), headers);
-        restTemplate.exchange( URI.create(url), HttpMethod.PUT, req, Object.class);
+        HttpEntity<Resource> req = new HttpEntity<>(ctx.getResource(resource), headers);
+        restTemplate.exchange(URI.create(url), HttpMethod.PUT, req, Object.class);
     }
-
 
 
     public Integer getWorkFlowWait() {
@@ -970,18 +988,18 @@ public class ApiServiceDeskSteps {
         return builder.toString();
     }
 
-    public NotificationDocument newDocument(String resourcePath ) {
+    public NotificationDocument newDocument(String resourcePath) {
         return new NotificationDocument()
                 .contentType("application/mp4")
-                .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
+                .ref(new NotificationAttachmentBodyRef().key(resourcePath));
     }
 
-    private String computeSha256( String resName ) throws IOException {
-        Resource res = ctx.getResource( resName );
-        return computeSha256( res );
+    private String computeSha256(String resName) throws IOException {
+        Resource res = ctx.getResource(resName);
+        return computeSha256(res);
     }
 
-    private String computeSha256( Resource res ) throws IOException {
+    private String computeSha256(Resource res) throws IOException {
         return b2bUtils.computeSha256(res.getInputStream());
     }
 
@@ -998,4 +1016,733 @@ public class ApiServiceDeskSteps {
         return retentionTime == between;
     }
 
+
+    //Cruscotto Assistenza............
+    @And("l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding")
+    public void elencoPaOnboarding() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                listPa = ipServiceDeskClient.getListOfOnboardedPA();
+            });
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{Elenco delle PA onbordate " + (listPa == null ? "NULL" : listPa.size()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @Then("Il servizio risponde con esito positivo con la lista delle PA")
+    public void verifyServiceResponse() {
+        Assertions.assertNotNull(listPa);
+        Assertions.assertTrue(listPa.size()>0);
+    }
+
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf vuoto")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfVuoto() {
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(CF_vuoto);
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con cf errato {string}")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConCfErrato(String cf) {
+
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(cf);
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Given("l'operatore richiede l'elenco di tutti i messaggi di cortesia inviati con recipientType vuoto")
+    public void lOperatoreRichiedeLElencoDiDiTuttiIMessaggiDiCortesiaInviatiConRecipientTypeVuoto() {
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setTaxId(CF_corretto);
+            searchNotificationsRequest.setRecipientType(null);
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
+            try {
+                Thread.sleep(getWorkFlowWait());
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    //TODO Codice Duplicato
+    @Given("l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void lOperatoreRichiedeLElencoDiTuttiIMessaggiDiCortesiaInviatiConCfErratoERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
+        try {
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
+
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
+
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId("");
+            } else {
+                searchNotificationsRequest.setTaxId(setTaxID(taxId));
+            }
+
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType(recipientType);
+            }
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+
+            if(size==1 && nextPagesKey==null){
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==1);
+            }
+            if(size==50 && nextPagesKey==null){
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==50);
+            }
+
+
+            List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
+            for (NotificationResponse notificationResponseTmp:  searchNotificationsResponse.getResults()) {
+                List<CourtesyMessage> ss = notificationResponseTmp.getCourtesyMessages();
+                if (notificationResponseTmp.getCourtesyMessages()!=null && notificationResponseTmp.getCourtesyMessages().size()> 0){
+                    listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+                }
+            }
+            //TODO Gestire Meglio...........
+            if (listCourtesyMessage.size()>0){
+                Assertions.assertTrue(listCourtesyMessage.size()>0);
+            }
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    public OffsetDateTime setDateSearch( String dateInputString ) {
+        OffsetDateTime resultDate = null;
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        OffsetDateTime sentAt = OffsetDateTime.now();
+
+        if (!"NULL".equalsIgnoreCase(dateInputString)) {
+            LocalDateTime localDate = LocalDate.parse(dateInputString, dateTimeFormatter).atStartOfDay();
+            resultDate = OffsetDateTime.of(localDate, sentAt.getOffset());
+
+        }
+        return resultDate;
+    }
+
+    public String setTaxID(String taxId) {
+        String result = taxId;
+        switch (taxId) {
+            case "Mario Gherkin":
+                result= sharedSteps.getMarioGherkinTaxID();
+                break;
+            case "Mario Cucumber":
+                result= sharedSteps.getMarioCucumberTaxID();
+                break;
+            case "CucumberSpa":
+                result= sharedSteps.getCucumberSpataxId();
+                break;
+            case "GherkinSrl":
+                result= sharedSteps.getGherkinSrltaxId();
+                break;
+
+        }
+
+        return result;
+    }
+
+
+    public void setRecipientType(String recipientType) {
+        switch (recipientType) {
+            case "PF":
+                if (searchNotificationsRequest != null) {
+                    searchNotificationsRequest.setRecipientType(RecipientType.PF);
+                }
+                if (profileRequest != null) {
+                    profileRequest.setRecipientType(RecipientType.PF);
+                }
+                if (documentsRequest != null) {
+                    documentsRequest.setRecipientType(RecipientType.PF);
+                }
+
+                break;
+            case "PG":
+                if (searchNotificationsRequest != null) {
+                    searchNotificationsRequest.setRecipientType(RecipientType.PG);
+                }
+                if (profileRequest != null) {
+                    profileRequest.setRecipientType(RecipientType.PG);
+                }
+                if (documentsRequest != null) {
+                    documentsRequest.setRecipientType(RecipientType.PG);
+                }
+                break;
+            default:
+                if (searchNotificationsRequest != null) {
+                    searchNotificationsRequest.setRecipientType(null);
+                }
+                if (profileRequest != null) {
+                    profileRequest.setRecipientType(null);
+                }
+                if (documentsRequest != null) {
+                    documentsRequest.setRecipientType(null);
+                }
+
+        }
+    }
+
+
+    @Then("Il servizio risponde correttamente")
+    public void ilServizioRispondeCorrettamente() {
+        Assertions.assertNull(notificationError);
+    }
+
+    @Then("Il servizio risponde correttamente con presenza delle apiKey")
+    public void ilServizioRispondeCorrettamenteConPresenzaApikey() {
+        Assertions.assertNotNull(responseApiKeys.getTotal());
+    }
+
+
+    @Then("Il servizio risponde correttamente con presenza di allegati {string}")
+    public void ilServizioRispondeCorrettamenteAllegatiTrue(String presenzaAllegati) {
+        Assertions.assertNull(notificationError);
+
+        Assertions.assertNotNull(documentsResponse);
+
+        if ("true".equalsIgnoreCase(presenzaAllegati)){
+            Assertions.assertTrue(documentsResponse.getDocumentsAvailable());
+        }else {
+            Assertions.assertFalse(documentsResponse.getDocumentsAvailable());
+        }
+
+    }
+
+
+
+
+
+    @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
+    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
+
+        try {
+            profileRequest = new ProfileRequest();
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                profileRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                profileRequest.setTaxId("");
+            } else {
+                profileRequest.setTaxId(setTaxID(taxId));
+            }
+
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType(recipientType);
+            }
+
+            profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
+            Assertions.assertNotNull(profileResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    //TODO Codice Duplicato
+    @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
+
+        try {
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
+
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
+
+
+
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId("");
+            } else {
+                searchNotificationsRequest.setTaxId(setTaxID(setTaxID(taxId)));
+            }
+
+            if (!"NULL".equalsIgnoreCase(recipientType)) {
+                setRecipientType(recipientType);
+            }
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(size, nextPagesKey, sDate, eDate, searchNotificationsRequest);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+            if (size==1 && nextPagesKey==null ){
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size()==1);
+            }
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
+    public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN(String iun) {
+        try {
+            profileRequest = new ProfileRequest();
+            if ("NULL".equalsIgnoreCase(iun)) {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(null);
+            } else if ("VUOTO".equalsIgnoreCase(iun)) {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN("");
+            } else {
+                notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iun);
+            }
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @And("invocazione servizio per recupero dettaglio notifica")
+    public void recuperoDettaglioNotifica() {
+        try {
+            Assertions.assertNotNull(searchNotificationsResponse);
+            Assertions.assertNotNull(searchNotificationsResponse.getResults());
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(searchNotificationsResponse.getResults().get(0).getIun());
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @And("invocazione servizio per recupero dettaglio timeline notifica con taxId {string} e iun {string}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String taxid, String iun) {
+        try {
+            //Parametri di Richiesta utilizzati per il recupero della notifica
+            String taxidQuery = searchNotificationsRequest.getTaxId();
+            RecipientType recipientType = searchNotificationsRequest.getRecipientType();
+
+            //Nuovi Parametri di Richiesta per il recupero della timeline
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setRecipientType(recipientType);
+
+            String iunSearch = null;
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
+            }   else if("".equalsIgnoreCase(iun)){
+                Assertions.assertNotNull(searchNotificationsResponse);
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+
+            } else {
+                iunSearch = iun;
+            }
+
+            boolean diversoTaxid = false;
+            if ("NULL".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId("");
+            } else {
+                String resultTaxID = setTaxID(taxid);
+                searchNotificationsRequest.setTaxId(resultTaxID);
+                if (!resultTaxID.equalsIgnoreCase(taxidQuery)) {
+                    diversoTaxid = true;
+                }
+            }
+
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
+
+            if (diversoTaxid) {
+                Assertions.assertNull(timelineResponse);
+            }
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @Then("invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId {string} e iun {string} per il  destinatario {int}")
+    public void invocazioneServizioPerRecuperoDettaglioTimelineNotificaMultidestinatarioConCfEIun(String taxId, String iun, Integer destinatario) {
+        try {
+            searchNotificationsRequest = new SearchNotificationsRequest();
+            searchNotificationsRequest.setRecipientType(RecipientType.PF);
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId("");
+            } else {
+                searchNotificationsRequest.setTaxId(setTaxID(taxId));
+            }
+
+            String iunSearch = setIUNNotifica(iun);
+
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUNAndTaxId(iunSearch, searchNotificationsRequest);
+
+            Assertions.assertNotNull(timelineResponse);
+
+            TimelineElement timelineElement = null;
+            for (TimelineElement element : timelineResponse.getTimeline()) {
+                if (element.getDetail() != null && element.getDetail().getRecIndex() != null && !destinatario.equals(element.getDetail().getRecIndex())) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+
+            Assertions.assertNull(timelineElement);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+    @Given("come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN {string} e taxId {string}  recipientType  {string}")
+    public void comeOperatoreDevoEffettuareUnCheckSullaDisponibilitàValiditàEDimensioneDegliAllegatiConIUNRecipientType(String iun, String taxId, String recipientType) {
+
+        try {
+            documentsRequest = new DocumentsRequest();
+            if (sharedSteps.getSentNotification()!= null){
+                setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().getValue());
+            }else {
+                setRecipientType(recipientType);
+            }
+
+            if ("NULL".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId(null);
+            } else if ("VUOTO".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId("");
+            } else if("NO_SET".equalsIgnoreCase(taxId)) {
+                documentsRequest.setTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
+            } else {
+                documentsRequest.setTaxId(setTaxID(taxId));
+            }
+
+            String iunSearch = setIUNNotifica(iun);
+
+            documentsResponse = ipServiceDeskClient.getDocumentsOfIUN(iunSearch, documentsRequest);
+
+            Assertions.assertNotNull(documentsResponse);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+
+
+
+    @Then("come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come {string} di una persona fisica o di una persona giuridica con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string} searchMandateId {string} searchInternalId {string}")
+    public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String type, String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchInternalId) {
+
+        try {
+            Assertions.assertNotNull(profileResponse);
+
+            if ("delegato".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegateMandates());
+                Assertions.assertTrue(profileResponse.getDelegateMandates().size() > 0);
+            }else if ("delegante".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegatorMandates());
+                Assertions.assertTrue(profileResponse.getDelegatorMandates().size() > 0);
+            }
+
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
+            OffsetDateTime sDate = null;
+            OffsetDateTime eDate = null;
+            String typeSearch = null;
+
+            OffsetDateTime offsetEndDt = OffsetDateTime.of(OffsetDateTime.now().getYear(), OffsetDateTime.now().getMonth().getValue(), OffsetDateTime.now().getDayOfMonth(), 0, 0, 0, 0,
+                    ZoneOffset.UTC);
+            // define a formatter for the output
+            DateTimeFormatter myFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+
+            // create a new OffsetDateTime with time information
+            OffsetDateTime realEndOfDay = offsetEndDt
+                    .withHour(23)
+                    .withMinute(59)
+                    .withSecond(59)
+                    .withNano(0);
+
+            if (!"NULL".equalsIgnoreCase(startDate)) {
+
+                sDate = setDateSearch(startDate);
+
+                if (!"NULL".equalsIgnoreCase(endDate)) {
+                    LocalDateTime localDateEnd = LocalDate.parse(endDate, myFormatter).atStartOfDay();
+                    eDate = OffsetDateTime.of(localDateEnd, OffsetDateTime.now().getOffset());
+                } else {
+                    eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));;
+                }
+            } else {
+                sDate = OffsetDateTime.parse(myFormatter.format(offsetEndDt));
+            }
+
+            if (!"NULL".equalsIgnoreCase(endDate)) {
+                eDate = setDateSearch(endDate);
+            } else {
+                eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));;
+            }
+
+            String mandateIdSearch = null;
+            if ("NULL".equalsIgnoreCase(searchMandateId)) {
+                mandateIdSearch = null;
+            } else if ("NO_SET".equalsIgnoreCase(searchMandateId)) {
+                if ("delegato".equalsIgnoreCase(type)) {
+                    mandateIdSearch = profileResponse.getDelegateMandates().get(0).getMandateId();
+                }else if ("delegante".equalsIgnoreCase(type)) {
+                    mandateIdSearch = profileResponse.getDelegatorMandates().get(0).getMandateId();
+                }
+            } else {
+                mandateIdSearch = searchMandateId;
+            }
+
+            String delegateInternalIdSearch = null;
+            if ("NULL".equalsIgnoreCase(searchInternalId)) {
+                delegateInternalIdSearch = null;
+            } else if ("NO_SET".equalsIgnoreCase(searchInternalId)) {
+                if ("delegato".equalsIgnoreCase(type)) {
+                    delegateInternalIdSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
+                } else if ("delegante".equalsIgnoreCase(type)) {
+                    delegateInternalIdSearch = profileResponse.getDelegatorMandates().get(0).getDelegateInternalId();
+                }
+            } else {
+                delegateInternalIdSearch = searchInternalId;
+            }
+
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, delegateInternalIdSearch,recipientType, size, nextPagesKey, sDate, eDate);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+            Assertions.assertNotNull(searchNotificationsResponse.getResults());
+            Assertions.assertTrue(searchNotificationsResponse.getResults().size()>0);
+            //  Assertions.assertTrue(searchNotificationsResponse.getResults().get(0).getIun().equalsIgnoreCase(sharedSteps.getSentNotification().getIun()));
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+
+    }
+
+
+    @Given("come operatore devo accedere alla lista di tutte le notifiche depositate da un ente \\(mittente) su Piattaforma Notifiche in un range temporale con paId {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
+    public void comeOperatoreDevoAccedereAllaListaDiTutteLeNotificheDepositateDaUnEnteMittenteSuPiattaformaNotificheInUnRangeTemporaleConPaIdEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String paId, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
+        try {
+            Integer size = setSearchPageSize(searchPageSize);
+            String nextPagesKey = setNextPagesKey(searchNextPagesKey);
+
+            OffsetDateTime sDate =  setDateSearch(startDate);
+            OffsetDateTime eDate =  setDateSearch(endDate);
+
+            paNotificationsRequest = new PaNotificationsRequest();
+            paNotificationsRequest.setId(setPaID( paId));
+
+            paNotificationsRequest.setStartDate(sDate);
+            paNotificationsRequest.setEndDate(eDate);
+
+            searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromSenderId(size, nextPagesKey, paNotificationsRequest);
+
+            Assertions.assertNotNull(searchNotificationsResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @And("invocazione servizio per recupero dettaglio notifica con iun {string}")
+    public void invocazioneServizioPerRecuperoDettaglioNotificaConIun(String iun) {
+
+        String iunSearch = null;
+        try {
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
+            }else if ("NULL".equalsIgnoreCase(iun)) {
+                    iunSearch = null;
+            } else if ("".equalsIgnoreCase(iun)) {
+                Assertions.assertNotNull(searchNotificationsResponse);
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            } else {
+                iunSearch = iun;
+            }
+
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunSearch);
+
+            Assertions.assertNotNull(notificationDetailResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+    @And("invocazione servizio per recupero timeline notifica con iun {string}")
+    public void invocazioneServizioPerRecuperoTimelineNotificaConIun(String iun) {
+
+        String iunSearch = null;
+        try {
+            if ("VUOTO".equalsIgnoreCase(iun)) {
+                iunSearch = "";
+            } else if ("".equalsIgnoreCase(iun)) {
+                Assertions.assertNotNull(searchNotificationsResponse);
+                Assertions.assertNotNull(searchNotificationsResponse.getResults());
+                Assertions.assertTrue(searchNotificationsResponse.getResults().size() > 0);
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+
+            } else if ("NULL".equalsIgnoreCase(iun)) {
+                iunSearch = null;
+            } else {
+                iunSearch = iun;
+            }
+
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(iunSearch);
+
+            Assertions.assertNotNull(timelineResponse);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    @Given("come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma {string}")
+    public void comeOperatoreDevoAccedereAlleInformazioniRelativeAlleRichiesteDiAPIKeyAvanzateDaUnEnteMittenteDiNotificheSullaPiattaforma(String paId){
+        try {
+
+            String paIDSearch =  setPaID(paId);
+
+             responseApiKeys = ipServiceDeskClient.getApiKeys(paIDSearch);
+            Assertions.assertNotNull(responseApiKeys);
+
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+    public String setIUNNotifica(String iun){
+        String iunSearch = null;
+
+        if ("VUOTO".equalsIgnoreCase(iun)) {
+            iunSearch = "";
+        }else if ("NULL".equalsIgnoreCase(iun)) {
+            iunSearch = null;
+        } else if("NO_SET".equalsIgnoreCase(iun)) {
+            if (searchNotificationsResponse!= null && searchNotificationsResponse.getResults()!= null && searchNotificationsResponse.getResults().size()>0){
+                iunSearch = searchNotificationsResponse.getResults().get(0).getIun();
+            }else if(sharedSteps.getSentNotification()!= null){
+                iunSearch = sharedSteps.getSentNotification().getIun();
+            }
+        }else {
+            iunSearch = iun;
+        }
+        return iunSearch;
+    }
+
+    public String  setPaID(String paId){
+        String paIDSearch = null;
+        if ("NULL".equalsIgnoreCase(paId)) {
+            paIDSearch = null;
+        } else if ("VUOTO".equalsIgnoreCase(paId)) {
+            paIDSearch = "";
+        } else if ("NO_SET".equalsIgnoreCase(paId)) {
+            for (PaSummary paSummary: listPa) {
+                paIDSearch = paSummary.getId();
+                if (paSummary.getName().contains("Milano") || paSummary.getName().contains("Verona") || paSummary.getName().contains("Palermo")){
+                    paIDSearch = paSummary.getId();
+                    break;
+                }
+            }
+
+        }else {
+            paIDSearch = paId;
+        }
+        return paIDSearch;
+    }
+
+
+    public Integer setSearchPageSize(String searchPageSize){
+        Integer size = 10;
+        if (!"NULL".equalsIgnoreCase(searchPageSize)) {
+            size = Integer.parseInt(searchPageSize);
+        }
+        return size;
+    }
+
+    public String setNextPagesKey(String searchNextPagesKey){
+        String nextPagesKey = null;
+        if (!"NULL".equalsIgnoreCase(searchNextPagesKey)) {
+            nextPagesKey = searchNextPagesKey;
+        }
+        return nextPagesKey;
+    }
+
+
+
 }
+

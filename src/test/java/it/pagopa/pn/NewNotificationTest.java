@@ -5,8 +5,11 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bInternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.testclient.InteropTokenSingleton;
+import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -19,19 +22,38 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-@SpringBootTest( classes = {
-        PnPaB2bExternalClientImpl.class,
-        PnPaB2bInternalClientImpl.class,
+@SpringBootTest(classes = {
         ApiKeysConfiguration.class,
+        BearerTokenConfiguration.class,
+        TimingConfiguration.class,
         RestTemplateConfiguration.class,
         PnPaB2bUtils.class,
-        InteropTokenSingleton.class
+        PnPaB2bExternalClientImpl.class,
+        PnWebRecipientExternalClientImpl.class,
+        PnWebhookB2bExternalClientImpl.class,
+        PnWebMandateExternalClientImpl.class,
+        PnExternalServiceClientImpl.class,
+        PnWebUserAttributesExternalClientImpl.class,
+        PnAppIOB2bExternalClientImpl.class,
+        PnApiKeyManagerExternalClientImpl.class,
+        PnDowntimeLogsExternalClientImpl.class,
+        PnIoUserAttributerExternaClientImpl.class,
+        PnWebPaClientImpl.class,
+        PnPrivateDeliveryPushExternalClientImpl.class,
+        InteropTokenSingleton.class,
+        PnServiceDeskClientImpl.class,
+        PnServiceDeskClientImplNoApiKey.class,
+        PnServiceDeskClientImplWrongApiKey.class,
+        PnGPDClientImpl.class,
+        PnPaymentInfoClientImpl.class,
+        PnRaddFsuClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=dev"})
+@TestPropertySource(properties = {"spring.profiles.active=dev2"})
 public class NewNotificationTest {
 
     @Autowired
     private PnPaB2bUtils utils;
+
 
     @Test
     public void insertNewNotification() {
@@ -65,7 +87,9 @@ public class NewNotificationTest {
                 //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 ;
 
+
         Assertions.assertDoesNotThrow(() -> {
+
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
             FullSentNotificationV21 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
