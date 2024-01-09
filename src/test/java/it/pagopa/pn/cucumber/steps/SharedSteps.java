@@ -884,6 +884,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
+    public void laNotificaVieneInviataNoAccept(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationNoAccept();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOkRapidCheck(String paType) {
         selectPA(paType);
@@ -1092,6 +1099,10 @@ public class SharedSteps {
         sendNotification(getWorkFlowWait());
     }
 
+    private void sendNotificationNoAccept() {
+        sendNotificationNoAccept(getWorkFlowWait());
+    }
+
     private void sendNotificationRapidCheck() {
         sendNotificationRapid(100);
     }
@@ -1120,6 +1131,37 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
             Assertions.assertNotNull(notificationResponseComplete);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationNoAccept(int wait){
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseComplete = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(wait);
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNull(notificationResponseComplete);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
