@@ -68,6 +68,7 @@ public class PnPaB2bUtils {
         this.raddFsuClient = raddFsuClient;
     }
 
+
     public void setClient(IPnPaB2bClient client) {
         this.client = client;
     }
@@ -82,7 +83,10 @@ public class PnPaB2bUtils {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            newdocs.add(this.preloadDocument(doc));
+
+            if (doc!= null) {
+                newdocs.add(this.preloadDocument(doc));
+            }
         }
         request.setDocuments(newdocs);
 
@@ -102,7 +106,6 @@ public class PnPaB2bUtils {
                     if (paymentInfo.getF24()!= null) {
                         paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
                     }
-
                 }
 
                // paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
@@ -631,6 +634,11 @@ public class PnPaB2bUtils {
         return waitForRequestAcceptation(response,16,getAcceptedWait());
     }
 
+    public FullSentNotificationV21 waitForRequestNoAcceptation( NewNotificationResponse response) {
+        return waitForRequestAcceptation(response,8,getAcceptedWait());
+    }
+
+
     public FullSentNotificationV21 waitForRequestAcceptationShort( NewNotificationResponse response) {
         return waitForRequestAcceptation(response,230,5000);
     }
@@ -767,8 +775,7 @@ public class PnPaB2bUtils {
 
         int i = 0;
         for (NotificationRecipientV21 recipient : fsn.getRecipients()) {
-
-            if(fsn.getRecipients().get(i).getPayments() != null &&
+            if(fsn.getRecipients().get(i).getPayments() != null && fsn.getRecipients().get(i).getPayments().size()>0 &&
                     fsn.getRecipients().get(i).getPayments().get(0).getPagoPa() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
@@ -776,7 +783,7 @@ public class PnPaB2bUtils {
 
                 checkAttachment( resp );
             }
-            if(fsn.getRecipients().get(i).getPayments() != null &&
+            if(fsn.getRecipients().get(i).getPayments() != null && fsn.getRecipients().get(i).getPayments().size()>0 &&
                     fsn.getRecipients().get(i).getPayments().get(0).getF24() != null){
                 NotificationAttachmentDownloadMetadataResponse resp;
 
