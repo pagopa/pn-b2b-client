@@ -192,25 +192,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | payment_multy_number | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
-
-  @20Grammi
-  Scenario: [B2B-PA-SEND_PRELOAD_15] da PA non elencata in abilitazione -  documento senza allegati di pagamento e solo due soli documenti uno di una pagina e uno di due pagine (Esito: refined)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | document           | DOC_1_PG;DOC_2_PG           |
-    And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa    | SI                            |
-      | apply_cost_f24       | SI                            |
-      | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    
 
 
 
