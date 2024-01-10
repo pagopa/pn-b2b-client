@@ -49,11 +49,11 @@ public class DataTableTypeUtil {
                                 NewNotificationRequestV21.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
                                         NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC:null
-        )))
+        ))));
+
+        notificationRequest = addDocument(notificationRequest,data);   
 
 
-
-        );
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
@@ -61,6 +61,46 @@ public class DataTableTypeUtil {
         }
         return notificationRequest;
     }
+
+    private NewNotificationRequestV21 addDocument(NewNotificationRequestV21 notificationRequest, Map<String, String> data) {
+        String documentsToAdd = getValue(data,DOCUMENT.key);
+        if( documentsToAdd == null){
+            return notificationRequest.addDocumentsItem(null);
+        }
+
+        if(documentsToAdd.contains(";")){
+            for(String documentElem : documentsToAdd.split(";")){
+                notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentElem));
+            }
+        }else{
+            notificationRequest = notificationRequest.addDocumentsItem(getNotificationDocument(documentsToAdd));
+        }
+        return notificationRequest;
+
+
+    }
+
+    private NotificationDocument getNotificationDocument(String documentElem) {
+        String document = null;
+
+        switch (documentElem.toUpperCase().trim()) {
+            case "DOC_1_PG" -> document = "classpath:/sample_1pg.pdf";
+            case "DOC_2_PG" -> document = "classpath:/sample_2pg.pdf";
+            case "DOC_3_PG" -> document = "classpath:/sample_3pg.pdf";
+            case "DOC_4_PG" -> document = "classpath:/sample_4pg.pdf";
+            case "DOC_5_PG" -> document = "classpath:/sample_5pg.pdf";
+            case "DOC_6_PG" -> document = "classpath:/sample_6pg.pdf";
+            case "DOC_7_PG" -> document = "classpath:/sample_7pg.pdf";
+            case "DOC_8_PG" -> document = "classpath:/sample_8pg.pdf";
+            case "DOC_50_PG" -> document = "classpath:/AllegatoServiceDesk_50pag.pdf";
+            case "DOC_100_PG" -> document = "classpath:/sample_100pg.pdf";
+            case "DOC_300_PG" -> document = "classpath:/sample_300pg.pdf";
+            default ->  document = getDefaultValue(DOCUMENT.key);
+        }
+
+        return utils.newDocument(document);
+    }
+
 
     @DataTableType
     public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest convertNotificationRequestV1(Map<String, String> data){
