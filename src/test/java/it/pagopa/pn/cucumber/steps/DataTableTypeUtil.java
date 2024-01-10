@@ -41,7 +41,6 @@ public class DataTableTypeUtil {
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
                                         NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                                         NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocument(getDefaultValue(DOCUMENT.key)))
 
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .pagoPaIntMode(
@@ -51,8 +50,7 @@ public class DataTableTypeUtil {
                                         NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC:null
         ))));
 
-        notificationRequest = addDocument(notificationRequest,data);   
-
+        notificationRequest = addDocument(notificationRequest, data);
 
         try {
             Thread.sleep(2);
