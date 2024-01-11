@@ -670,6 +670,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @And("{string} legge la notifica dopo i 120 giorni")
+    public void userReadNotificationAfterTot(String recipient) {
+        sharedSteps.selectUser(recipient);
+        try {
+            Thread.sleep(480000);
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+        Assertions.assertDoesNotThrow(() -> {
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        });
+        try {
+            Thread.sleep(sharedSteps.getWorkFlowWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
 
     @Then("si verifica nello stream del {string} che la notifica abbia lo stato VIEWED")
     public void checkViewedState(String pa) {

@@ -550,3 +550,16 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     Then si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
+
+
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_26] Invio notifica multidestinatario ritardo analogicoe controllo notificationCost non settato PN-9488
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                           |
+      | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then "Mario Gherkin" legge la notifica dopo i 120 giorni
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" abbia notificationCost ugauale a 0
+
