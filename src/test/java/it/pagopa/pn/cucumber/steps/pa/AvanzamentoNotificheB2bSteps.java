@@ -844,6 +844,22 @@ public class AvanzamentoNotificheB2bSteps {
         readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
     }
 
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string}")
+    public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElementV20 event = takingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
+
+        Long notificationCost = event.getDetails().getNotificationCost();
+
+        if (cost.equalsIgnoreCase("null")) {
+            Assertions.assertNull(notificationCost);
+        } else {
+            Assertions.assertEquals(Long.parseLong(cost), notificationCost);
+        }
+
+
+    }
+
     @Then("si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente {int}")
     public void verificationDateScheduleRefinementWithRefinement(Integer destinatario) {
 
@@ -975,6 +991,44 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+
+    public TimelineElementV20 takingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
+
+        TimelineElementV20 timelineElement = null;
+        String iun = null;
+        for (int i = 0; i < timelineElementWait.getNumCheck(); i++) {
+            try {
+                Thread.sleep(timelineElementWait.getWaiting());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException(exc);
+            }
+
+            if (sharedSteps.getSentNotification()!= null) {
+                iun = sharedSteps.getSentNotification().getIun();
+
+            } else if (sharedSteps.getSentNotificationV1()!= null) {
+                iun = sharedSteps.getSentNotificationV1().getIun();
+
+            } else if (sharedSteps.getSentNotificationV2()!= null) {
+                iun = sharedSteps.getSentNotificationV2().getIun();
+            }
+
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+            timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
+            if (timelineElement != null) {
+                break;
+            }
+        }
+        try {
+            Assertions.assertNotNull(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+        return timelineElement;
+    }
 
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
