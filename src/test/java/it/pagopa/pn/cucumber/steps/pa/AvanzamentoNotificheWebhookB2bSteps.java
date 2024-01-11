@@ -670,7 +670,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @And("{string} legge la notifica dopo i 120 giorni")
+    @And("{string} legge la notifica dopo i 10 giorni")
     public void userReadNotificationAfterTot(String recipient) {
         sharedSteps.selectUser(recipient);
         try {

@@ -277,7 +277,7 @@ Feature: Notifica visualizzata
       | numCheck         | 36       |
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-    Then la notifica può essere correttamente recuperata da "Leonardo da Vinci"
+    Then "leonardo da vinci" legge la notifica dopo i 10 giorni
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

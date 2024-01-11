@@ -560,6 +560,9 @@ Feature: avanzamento b2b notifica multi destinatario analogico
       | digitalDomicile         | NULL                           |
       | physicalAddress_address | Via@OK-RITARDO_PERFEZIONAMENTO |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then "Mario Gherkin" legge la notifica dopo i 120 giorni
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" abbia notificationCost ugauale a 0
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+    Then "Mario Gherkin" legge la notifica dopo i 10 giorni
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" abbia notificationCost ugauale a "null"
+
 
