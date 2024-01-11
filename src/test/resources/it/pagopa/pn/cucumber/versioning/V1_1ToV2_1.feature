@@ -287,3 +287,35 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Examples:
       | indirizzo                                                |
       | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_22] Notifica creata con GA1.0 con due pagamenti (primario e secondario)-PN-9475
+    Given viene generata una nuova notifica V1
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Gherkin V1 e:
+      | payment_pagoPaForm         | SI   |
+      | payment_noticeCodeOptional | SI   |
+      | payment_f24flatRate        | NULL |
+      | payment_f24standard        | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    And  la notifica a 2 avvisi di pagamento con OpenApi V1
+
+  @version
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_23] Notifica creata con GA1.0 con due pagamenti (primario e secondario)-PN-9475
+    Given viene generata una nuova notifica V1
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Gherkin V1 e:
+      | payment_pagoPaForm         | SI   |
+      | payment_noticeCodeOptional | SI   |
+      | payment_f24flatRate        | NULL |
+      | payment_f24standard        | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    And la notifica può essere annullata dal sistema tramite codice IUN
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
+    And  la notifica a 2 avvisi di pagamento con OpenApi V1
+    And vengono letti gli eventi fino allo stato della notifica "CANCELLED" V1
