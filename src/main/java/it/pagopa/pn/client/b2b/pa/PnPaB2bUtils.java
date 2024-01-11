@@ -670,6 +670,22 @@ public class PnPaB2bUtils {
         return iun == null? null : client.getSentNotification( iun );
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification searchForRequestV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
+
+        log.info("Request status for " + response.getNotificationRequestId() );
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse status = null;
+
+        status = client.getNotificationRequestStatusV1( response.getNotificationRequestId() );
+
+        log.info("New Notification Request status {}", status.getNotificationRequestStatus());
+
+        String iun = status.getIun();
+
+        return iun == null? null : client.getSentNotificationV1( iun );
+    }
+
+
+
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification waitForRequestAcceptationV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
 
         log.info("Request status for " + response.getNotificationRequestId() );

@@ -905,6 +905,13 @@ public class SharedSteps {
         sendNotificationV1();
     }
 
+    @When("recupero la notifica inviata tramite api b2b dal {string} con V1")
+    public void recuperoNotificaVieneInviataOkV1(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromPropertiesV1();
+        searchNotificationV1();
+    }
+
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED V2")
     public void laNotificaVieneInviataOkV2(String paType) {
@@ -1197,6 +1204,20 @@ public class SharedSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    private void searchNotificationV1() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationResponseCompleteV1 = b2bUtils.searchForRequestV1(newNotificationResponseV1);
+            });
+            Assertions.assertNotNull(notificationResponseCompleteV1);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV1 == null ? "NULL" : newNotificationResponseV1.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
