@@ -210,12 +210,12 @@ public class AvanzamentoNotificheB2bSteps {
 
             }
             else if (sharedSteps.getSentNotification()!= null){
-                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV1().getIun()));
+                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotification().getIun()));
 
                 logger.info("NOTIFICATION_STATUS_HISTORY v1: " + sharedSteps.getSentNotificationV1().getNotificationStatusHistory());
 
                 notificationStatusHistoryElementV1 = sharedSteps.getSentNotificationV1().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
-                
+
             }
 
 
