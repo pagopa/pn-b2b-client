@@ -673,11 +673,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("{string} legge la notifica dopo i 10 giorni")
     public void userReadNotificationAfterTot(String recipient) {
         sharedSteps.selectUser(recipient);
+
         try {
-            Thread.sleep(480000);
+            Thread.sleep(sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMillis());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
+
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
