@@ -381,3 +381,31 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 2538  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
 
 
+
+
+  @CostoCartaceoComplete
+  Scenario Outline: [CALCOLO-COSTO_890-20GR_13] Invio notifica e verifica calcolo del costo su raccomandata con peso > 20gr e con un f24
+    Given viene generata una nuova notifica
+      | subject               | <SUBJECT>             |
+      | senderDenomination    | Comune di palermo     |
+      | physicalCommunication | REGISTERED_LETTER_890 |
+      | feePolicy             | DELIVERY_MODE         |
+      | document              | DOC_5_PG;             |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                          |
+      | physicalAddress_address      | Via@ok_890                    |
+      | physicalAddress_municipality | <MUNICIPALITY>                |
+      | physicalAddress_province     | <PROVINCE>                    |
+      | physicalAddress_zip          | <CAP>                         |
+      | payment_pagoPaForm           | NOALLEGATO                    |
+      | payment_f24flatRate          | NULL                          |
+      | payment_f24standard          | SI                            |
+      | title_payment                | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_f24               | SI                            |
+      | payment_multy_number         | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo = "<COSTO>" della notifica
+    Examples:
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
+      | 05010 | 1111  | COLLELUNGO   | TR       | notifica analogica FSU |
