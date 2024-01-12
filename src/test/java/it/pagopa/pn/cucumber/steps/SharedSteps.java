@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -905,11 +906,12 @@ public class SharedSteps {
         sendNotificationV1();
     }
 
-    @When("recupero la notifica inviata tramite api b2b dal {string} con V1")
-    public void recuperoNotificaVieneInviataOkV1(String paType) {
+    @And("viene effettuato recupero stato della notifica con la V1 dal comune {string}")
+    public void retriveStateNotification(String paType) {
         selectPA(paType);
+        this.notificationRequestV1= new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest();
         setSenderTaxIdFromPropertiesV1();
-        searchNotificationV1();
+        searchNotificationV1(Base64Utils.encodeToString(getSentNotification().getIun().getBytes()));
     }
 
 
@@ -1208,12 +1210,13 @@ public class SharedSteps {
         }
     }
 
-    private void searchNotificationV1() {
+
+    private void searchNotificationV1(String requestId) {
         try {
             Assertions.assertDoesNotThrow(() -> {
-                notificationResponseCompleteV1 = b2bUtils.searchForRequestV1(newNotificationResponseV1);
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse notificationV1 = b2bClient.getNotificationRequestStatusV1(requestId);
             });
-            Assertions.assertNotNull(notificationResponseCompleteV1);
+
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1221,6 +1224,7 @@ public class SharedSteps {
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
+
 
     private void sendNotificationV1() {
         try {
