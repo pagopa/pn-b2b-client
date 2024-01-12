@@ -220,7 +220,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(140), OffsetDateTime.now().minusDays(130),null,null,null,null,10,null))
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(140), OffsetDateTime.now().minusDays(130),null,null,null,null,20,null))
             );
 
             Assertions.assertNotNull(notificationByIun.get());
