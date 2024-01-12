@@ -319,3 +319,9 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     And  la notifica a 2 avvisi di pagamento con OpenApi V1
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED" V1
+
+
+
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_23] recupero notifica vecchia di 120 giorni con recupero stato dalla versione V1 PN-9475
+    When recuepera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento
+    Then viene effettuato recupero stato della notifica con la V1 dal comune "Comune_1"
