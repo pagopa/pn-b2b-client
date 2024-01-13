@@ -3898,7 +3898,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm                  | NULL                      |
       | apply_cost_pagopa                   | NULL                      |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24standard_no_valid_anag_4 | SI                        |
+      | payment_f24standard_no_valid_anag_5 | SI                        |
       #-------------------------------------------
       | title_payment                       | F24_STANDARD_SEMPLIFICATO |
       | apply_cost_f24                      | SI                        |

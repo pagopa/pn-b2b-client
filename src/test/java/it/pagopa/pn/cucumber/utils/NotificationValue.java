@@ -71,7 +71,8 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_1("payment_f24standard_no_valid_anag_1","classpath:/METADATA_CORRETTO_VALID_105.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_2("payment_f24standard_no_valid_anag_2","classpath:/METADATA_CORRETTO_VALID_106.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_3("payment_f24standard_no_valid_anag_3","classpath:/METADATA_CORRETTO_VALID_107.json",false),
-    PAYMENT_F24_STANDARD_NO_VALID_ANAG_4("payment_f24standard_no_valid_anag_4","classpath:/test_invalid_metadata.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_4("payment_f24standard_no_valid_anag_4","classpath:/METADATA_CORRETTO_VALID_108.json",false),
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_5("payment_f24standard_no_valid_anag_5","classpath:/test_invalid_metadata.json",false),
 
 
 
