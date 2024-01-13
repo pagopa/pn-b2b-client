@@ -40,15 +40,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario
-      | denomination         | Ada                           |
-      | taxId                | LVLDAA85T50G702B              |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
-      | payment_multy_number | 3                             |
+      | payment_multy_number | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -93,7 +91,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm   | SI               |
       | payment_f24          | PAYMENT_F24_FLAT |
       | apply_cost_pagopa    | NO               |
-      | apply_cost_f24       | NO               |
       | payment_multy_number | 1                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
@@ -217,9 +214,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario
-      | denomination         | Ada                           |
-      | taxId                | LVLDAA85T50G702B              |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
@@ -281,7 +276,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 2                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
 
   #TODO Vecchio Requisito
   #28  PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]
@@ -364,7 +358,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_30_2] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] e costi inclusi più paFee
@@ -485,13 +478,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_32_1] PA - inserimento notifica multi destinatario con il destinatario 1 con un solo F24 e destinatario 2 con solo avviso pagoPa e costi di notifica inclusi
+  Scenario: [B2B-PA-PAY_MULTI_32_2] PA - inserimento notifica multi destinatario con il destinatario 1 con un solo F24 e destinatario 2 con solo avviso pagoPa e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      | payment_pagoPaForm   | NULL                          |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
@@ -579,6 +573,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24"
+    And il download non ha prodotto errori
 
   @pagamentiMultipli
   Scenario: [B2B-PA-PAY_MULTI_35_1] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi - download modello F24
@@ -606,7 +601,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then viene richiesto il download del documento "F24" per il destinatario 0
+    And il download non ha prodotto errori
     And viene richiesto il download del documento "F24" per il destinatario 1
+    And il download non ha prodotto errori
 
 
   #36 PA - download allegato pagoPA
@@ -651,7 +648,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24          | NULL               |
+      | payment_f24flatRate  | NULL               |
+      | payment_f24standard  | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1049,8 +1047,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
-
-
 #SOLO TM
   #54 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
@@ -1073,7 +1069,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 #SOLO TM
   #55 PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
+  Scenario: [B2B-PA-PAY_MULTI_55] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -1081,7 +1077,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | PAYMENT_F24_FLAT              |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | NO                            |
@@ -1089,8 +1085,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa 0 viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
-
-
 
 
 #SOLO TM
@@ -1173,7 +1167,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
 #SOLO TM
   #59 PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)
   @pagamentiMultipli
@@ -1212,7 +1205,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
       | payment_f24          | NULL |
-
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
@@ -1226,8 +1218,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica dell'utente 0
-
-
 
 
 
@@ -1365,7 +1355,23 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 #TODO NO TEST....
   #66 Timeline: Verifica PagoPa con più di un pagamento effettuato (presenza di più istanze di pagamento) [TA] .. NO TEST...
-
+  @pagamentiMultipli
+  Scenario: [B2B-PA-PAY_MULTI_66] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm   | SI   |
+      | payment_f24          | NULL |
+      | apply_cost_pagopa    | SI   |
+      | payment_multy_number | 2    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
+    And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
+    And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
+    And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
 
 
 
@@ -1400,26 +1406,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And si attende il corretto pagamento della notifica dell'utente 0
     And si attende il corretto pagamento della notifica dell'utente 1
     And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_67_1] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | SI   |
-      | payment_f24          | NULL |
-      | apply_cost_pagopa    | SI   |
-      | payment_multy_number | 2    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then gli avvisi PagoPa vengono pagati correttamente dal destinatario 0
-    And si attende il corretto pagamento della notifica con l' avviso 0 dal destinatario 0
-    And si attende il corretto pagamento della notifica con l' avviso 1 dal destinatario 0
-    And verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario 0
-
-
 
 
 #TODO da Verificare........
@@ -1952,7 +1938,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat
-  Scenario: [B2B-PA-PAY_MULTI_81] PA - Invio RS DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
+  Scenario: [B2B-PA-PAY_MULTI_80_4] PA - Invio RS DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -1972,7 +1958,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat
-  Scenario: [B2B-PA-PAY_MULTI_81_1] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
+  Scenario: [B2B-PA-PAY_MULTI_80_5] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -1992,7 +1978,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat
-  Scenario: [B2B-PA-PAY_MULTI_81_1_1] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
+  Scenario: [B2B-PA-PAY_MULTI_80_6] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2012,7 +1998,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat
-  Scenario: [B2B-PA-PAY_MULTI_81_2] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_80_7] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2032,7 +2018,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat
-  Scenario: [B2B-PA-PAY_MULTI_81_3] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
+  Scenario: [B2B-PA-PAY_MULTI_80_8] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2052,7 +2038,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_82] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_81] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2070,7 +2056,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_82_1] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_81_1] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2088,7 +2074,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_82_3] PA - Invio AR FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_81_2] PA - Invio AR FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2106,7 +2092,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_83] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_3] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2125,7 +2111,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_83_1] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_4] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2145,7 +2131,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_83_2] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_5] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2163,9 +2149,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_83_3] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee
+  Scenario: [B2B-PA-PAY_MULTI_81_6] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -2183,143 +2168,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_84] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      | payment_pagoPaForm      | SI         |
-      | payment_f24             | NULL       |
-      | apply_cost_pagopa       | SI         |
-      | apply_cost_f24          | NO         |
-      | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_84_1] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      | payment_pagoPaForm      | SI         |
-      | payment_f24             | NULL       |
-      | apply_cost_pagopa       | SI         |
-      | apply_cost_f24          | NO         |
-      | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - Invio 890 FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-      | payment_pagoPaForm      | SI         |
-      | payment_f24             | NULL       |
-      | apply_cost_pagopa       | NO         |
-      | apply_cost_f24          | NO         |
-      | payment_multy_number    | 1          |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_85] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                          |
-      | physicalAddress_address | Via@ok_890                    |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_85_1] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                          |
-      | physicalAddress_address | Via@ok_890                    |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_85_2] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@ok_890                |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_85_3] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@ok_890                |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
-
-
-  @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_86] PA - Invio AR FLAT_RATE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo costi di notifica non inclusi più paFee
+  Scenario: [B2B-PA-PAY_MULTI_81_7] PA - Invio AR FLAT_RATE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo costi di notifica non inclusi più paFee
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -2340,7 +2190,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_87] PA - Invio AR FLAT_RATE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica non inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_8] PA - Invio AR FLAT_RATE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica non inclusi
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -2362,7 +2212,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_88] PA - Invio AR DELIVERY_MODE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi più paFee
+  Scenario: [B2B-PA-PAY_MULTI_81_9] PA - Invio AR DELIVERY_MODE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi più paFee
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -2383,7 +2233,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_89] PA - Invio AR DELIVERY_MODE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_10] PA - Invio AR DELIVERY_MODE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
@@ -2405,7 +2255,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_90] PA - Invio AR DELIVERY_MODE  -  Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Irreperibile_AR_scenario positivo e costi di notifica inclusi
+  Scenario: [B2B-PA-PAY_MULTI_81_11] PA - Invio AR DELIVERY_MODE  -  Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Irreperibile_AR_scenario positivo e costi di notifica inclusi
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di Palermo               |
@@ -2425,167 +2275,148 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-    #--------------------------DIGITALE---------------------------------
-  @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_91] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-      | feePolicy             | DELIVERY_MODE               |
-      | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@pecOk.it                 |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @digitaleF24 @realPec
-  Scenario: [B2B-PA-PAY_MULTI_91_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-      | feePolicy             | DELIVERY_MODE               |
-      | paFee                 | 0                           |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_92] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-      | feePolicy             | DELIVERY_MODE               |
-      | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@pecOk.it                 |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @digitaleF24 @realPec
-  Scenario: [B2B-PA-PAY_MULTI_92_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di Palermo           |
-      | physicalCommunication | AR_REGISTERED_LETTER        |
-      | feePolicy             | DELIVERY_MODE               |
-      | paFee                 | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | test@pecOk.it             |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-
-  @pagamentiMultipli @digitaleF24 @realPec
-  Scenario: [B2B-PA-PAY_MULTI_93_1] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @digitaleF24 @mockPec
-  Scenario: [B2B-PA-PAY_MULTI_94] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@pecOk.it             |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-  @pagamentiMultipli @digitaleF24 @realPec
-  Scenario: [B2B-PA-PAY_MULTI_94_1] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24             | PAYMENT_F24_FLAT          |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 1                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
-
-#--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_95] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | payment_f24             | NULL       |
+      | apply_cost_pagopa       | SI         |
+      | apply_cost_f24          | NO         |
+      | payment_multy_number    | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_1] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | payment_f24             | NULL       |
+      | apply_cost_pagopa       | SI         |
+      | apply_cost_f24          | NO         |
+      | payment_multy_number    | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_2] PA - Invio 890 FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | payment_f24             | NULL       |
+      | apply_cost_pagopa       | NO         |
+      | apply_cost_f24          | NO         |
+      | payment_multy_number    | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_3] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via@ok_890                    |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_4] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via@ok_890                    |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_5] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@ok_890                |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_82_6] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@ok_890                |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_83] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                       |
       | apply_cost_pagopa    | NULL                                       |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED                     |
@@ -2596,13 +2427,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+  Scenario: [B2B-PA-PAY_MULTI_83_1] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                       |
       | apply_cost_pagopa    | NULL                                       |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED                     |
@@ -2613,13 +2445,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_83_2] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                            |
       | apply_cost_pagopa    | NULL                                            |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED_FLAT                     |
@@ -2630,13 +2463,93 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_83_3] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-ID code empty if the tax code is present.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                      |
+      | apply_cost_pagopa    | NULL                      |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_1  |
+      #-------------------------------------------
+      | title_payment        | F24_STANDARD_SEMPLIFICATO |
+      | apply_cost_f24       | SI                        |
+      | payment_multy_number | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_83_4] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR1 |
+      #-------------------------------------------
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_83_5] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR2 |
+      #-------------------------------------------
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_83_6] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-taxCode e comune non cogruente.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
+      #F24 completo a sezioni modalità Delivery - costi inclusi--
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR3 |
+      #-------------------------------------------
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_84] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                               |
       | apply_cost_pagopa    | NULL                               |
       | payment_f24          | PAYMENT_F24_STANDARD_INPS          |
@@ -2646,31 +2559,16 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                               |
-      | apply_cost_pagopa    | NULL                               |
-      | payment_f24          | PAYMENT_F24_STANDARD_INPS          |
-      | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
-      | apply_cost_f24       | SI                                 |
-      | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_84_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                    |
       | apply_cost_pagopa    | NULL                                    |
       | payment_f24          | PAYMENT_F24_STANDARD_INPS_FLAT          |
@@ -2681,13 +2579,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=true su tutti i record) scenario negativo.
+  Scenario: [B2B-PA-PAY_MULTI_84_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=true su tutti i record) scenario negativo.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
       | payment_f24          | PAYMENT_F24_STANDARD_INPS_ERR          |
@@ -2697,13 +2596,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_96_4] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=false su tutti i record ) scenario negativo.
+  Scenario: [B2B-PA-PAY_MULTI_84_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=false su tutti i record ) scenario negativo.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                    |
       | apply_cost_pagopa    | NULL                                    |
       | payment_f24          | PAYMENT_F24_STANDARD_INPS_ERR_1         |
@@ -2714,13 +2614,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_85] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
       | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
@@ -2731,13 +2632,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_97_1] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+  Scenario: [B2B-PA-PAY_MULTI_85_1] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
       | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
@@ -2748,13 +2650,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_97_2] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_85_2] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                     |
       | apply_cost_pagopa    | NULL                                     |
       | payment_f24          | PAYMENT_F24_STANDARD_LOCAL_FLAT          |
@@ -2765,13 +2668,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_86] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_REGION          |
@@ -2782,13 +2686,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_98_1] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+  Scenario: [B2B-PA-PAY_MULTI_86_1] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_REGION          |
@@ -2799,13 +2704,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_98_2] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_86_2] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
       | payment_f24          | PAYMENT_F24_STANDARD_REGION_FLAT          |
@@ -2815,31 +2721,73 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+#--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
+
+
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_99] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_87] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                                   |
-      | apply_cost_pagopa    | NULL                                   |
-      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY          |
-      | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
-      | apply_cost_f24       | SI                                     |
-      | payment_multy_number | 1                                      |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
+      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_99_1] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+  Scenario: [B2B-PA-PAY_MULTI_87_1] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
+      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_87_2] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL_FLAT          |
+      | title_payment        | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                        |
+      | payment_multy_number | 1                                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_88] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                   |
       | apply_cost_pagopa    | NULL                                   |
       | payment_f24          | PAYMENT_F24_STANDARD_TREASURY          |
@@ -2850,13 +2798,32 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_99_2] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_88_1] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY          |
+      | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_88_2] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                        |
       | apply_cost_pagopa    | NULL                                        |
       | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_FLAT          |
@@ -2867,99 +2834,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_88_3] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE DELIVERY_MODE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                                 |
-      | apply_cost_pagopa    | NULL                                 |
-      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
-      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
-      | apply_cost_f24       | SI                                   |
-      | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_1] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                                 |
-      | apply_cost_pagopa    | NULL                                 |
-      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
-      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
-      | apply_cost_f24       | SI                                   |
-      | payment_multy_number | 1                                    |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_2] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-
-      | payment_pagoPaForm   | NULL                                      |
-      | apply_cost_pagopa    | NULL                                      |
-      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL_FLAT          |
-      | title_payment        | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24       | NO                                        |
-      | payment_multy_number | 1                                         |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                                   |
-      | apply_cost_pagopa    | NULL                                   |
-      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT |
-      | title_payment        | F24_STANDARD_INPS_DC_CLMCST42R12D969Z  |
-      | apply_cost_f24       | SI                                     |
-      | payment_multy_number | 1                                      |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_4] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee su debit di importo 0 ).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                                     |
-      | apply_cost_pagopa    | NULL                                     |
-      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1 |
-      | title_payment        | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z   |
-      | apply_cost_f24       | SI                                       |
-      | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_5] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE DELIVERY_MODE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica inclusi).
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
       | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE          |
@@ -2970,13 +2852,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_6] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_88_4] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
       | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE_FLAT     |
@@ -2987,13 +2870,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_7] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi e credit e debit valorizzati sullo stesso record - scenario negativo).
+  Scenario: [B2B-PA-PAY_MULTI_88_5] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi e credit e debit valorizzati sullo stesso record - scenario negativo).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                      |
       | apply_cost_pagopa    | NULL                                      |
       | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT |
@@ -3003,75 +2887,252 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_8] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-ID code empty if the tax code is present.
+  @pagamentiMultipli @ignore
+  Scenario: [B2B-PA-PAY_MULTI_90] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | denomination         | Matteo Rossi                  |
+      | taxId                | AAAAAA00A00A000C              |
+      | payment_pagoPaForm   | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
+      | title_payment        | F24_STANDARD_AAAAAA00A00A000C |
+      | apply_cost_pagopa    | SI                            |
+      | apply_cost_f24       | SI                            |
+      | payment_multy_number | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And viene verificato il costo = "100" della notifica
+
+  @pagamentiMultipli @ignore
+  Scenario: [B2B-PA-PAY_MULTI_90_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario
+      | denomination         | Matteo Rossi              |
+      | taxId                | AAAAAA00A00A000C          |
       | payment_pagoPaForm   | NULL                      |
-      | apply_cost_pagopa    | NULL                      |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED_1  |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
+      | title_payment        | F24_TARI_AAAAAA00A00A000C |
+      | apply_cost_pagopa    | SI                        |
       | apply_cost_f24       | SI                        |
-      | payment_multy_number | 1                         |
+      | payment_multy_number | 4                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+   # And viene verificato il costo = "100" della notifica
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_91] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                               |
+      | apply_cost_pagopa    | NULL                               |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS          |
+      | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                 |
+      | payment_multy_number | 1                                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_81] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
+  Scenario: [B2B-PA-PAY_MULTI_91_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | paFee              | 100                         |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                        |
-      | apply_cost_pagopa    | NULL                        |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR1 |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
-      | apply_cost_f24       | SI                          |
-      | payment_multy_number | 1                           |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_82] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                        |
-      | apply_cost_pagopa    | NULL                        |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR2 |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
-      | apply_cost_f24       | SI                          |
-      | payment_multy_number | 1                           |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_100_83] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-taxCode e comune non cogruente.
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                        |
-      | apply_cost_pagopa    | NULL                        |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR3 |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
-      | apply_cost_f24       | SI                          |
-      | payment_multy_number | 1                           |
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT |
+      | title_payment        | F24_STANDARD_INPS_DC_CLMCST42R12D969Z  |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_92] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee su debit di importo 0 ).
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                     |
+      | apply_cost_pagopa    | NULL                                     |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1 |
+      | title_payment        | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z   |
+      | apply_cost_f24       | SI                                       |
+      | payment_multy_number | 1                                        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+      #--------------------------DIGITALE---------------------------------
+  @pagamentiMultipli @digitaleF24 @mockPec
+  Scenario: [B2B-PA-PAY_MULTI_93] PA - Invio pec DELIVERY_MODE  -   Invio notifica DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@pecOk.it                 |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_93_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica  DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @mockPec
+  Scenario: [B2B-PA-PAY_MULTI_93_2] PA - Invio pec DELIVERY_MODE  -   Invio notifica  DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@pecOk.it                 |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_93_3] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @mockPec
+  Scenario: [B2B-PA-PAY_MULTI_93_4] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | digitalDomicile_address | test@pecOk.it             |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_93_5] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @mockPec
+  Scenario: [B2B-PA-PAY_MULTI_93_6] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@pecOk.it             |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+
+  @pagamentiMultipli @digitaleF24 @realPec
+  Scenario: [B2B-PA-PAY_MULTI_93_7] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | FLAT_RATE                   |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
+      | apply_cost_pagopa       | NO                        |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 1                         |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_101] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) senza Avviso PagoPA
+  Scenario: [B2B-PA-PAY_MULTI_94] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) - senza allegato Avviso PagoPA
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -3086,27 +3147,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_941] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) - senza allegato Avviso PagoPA
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination         | Ada              |
-      | taxId                | LVLDAA85T50G702B |
-      | payment_pagoPaForm   | NOALLEGATO       |
-      | payment_f24          | NULL             |
-      | apply_cost_pagopa    | SI               |
-      | apply_cost_f24       | NO               |
-      | payment_multy_number | 1                |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
 
   @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_102] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) senza Avviso PagoPA everifica costo
+  Scenario: [B2B-PA-PAY_MULTI_94_1] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) - senza allegato Avviso PagoPA e verifica costo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
@@ -3122,13 +3165,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene verificato il costo = "100" della notifica
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_103] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato)  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica  inclusi).
+  Scenario: [B2B-PA-PAY_MULTI_95] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato)  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica  inclusi).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                            |
       | apply_cost_pagopa    | NULL                            |
       | payment_f24          | PAYMENT_F24_STANDARD_VALID_ANAG |
@@ -3139,13 +3183,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_104] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).
+  Scenario: [B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                               |
       | apply_cost_pagopa    | NULL                               |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG |
@@ -3155,13 +3200,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_105] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .
+  Scenario: [B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_1 |
@@ -3171,13 +3217,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_106] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Debit Numerico di 15 - Numeric value (730927309273092) out of range of int (-2147483648 - 2147483647) .
+  Scenario: [B2B-PA-PAY_MULTI_95_3] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Debit Numerico di 15 - Numeric value (730927309273092) out of range of int (-2147483648 - 2147483647) .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_2 |
@@ -3187,13 +3234,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_107] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .
+  Scenario: [B2B-PA-PAY_MULTI_95_4] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_3 |
@@ -3203,13 +3251,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_108] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
+  Scenario: [B2B-PA-PAY_MULTI_95_5] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_4 |
@@ -3219,13 +3268,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_109] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Format scenario negativo" .
+  Scenario: [B2B-PA-PAY_MULTI_95_6] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Format scenario negativo" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                 |
       | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_FORMAT |
@@ -3235,13 +3285,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_110] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Lengh scenario negativo" .
+  Scenario: [B2B-PA-PAY_MULTI_95_7] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Lengh scenario negativo" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
       | payment_pagoPaForm   | NULL                                |
       | apply_cost_pagopa    | NULL                                |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_LENGH |
@@ -3249,5 +3300,69 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | apply_cost_f24       | SI                                  |
       | payment_multy_number | 1                                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e senza paFee - PN-8906
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | NULL                        |
+    And destinatario
+      | denomination         | Ada                           |
+      | taxId                | LVLDAA85T50G702B              |
+      | payment_pagoPaForm   | NULL                          |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
+      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa    | NO                            |
+      | apply_cost_f24       | SI                            |
+      | payment_multy_number | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then viene richiesto il download del documento "F24"
+    And il download non ha prodotto errori
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Only one type of tax payer is allowed. - PN-9070
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm                  | NULL                      |
+      | apply_cost_pagopa                   | NULL                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_5 |
+      | title_payment                       | F24_STANDARD_SEMPLIFICATO |
+      | apply_cost_f24                      | SI                        |
+      | payment_multy_number                | 1                         |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 STANDARD LOCAL VALID (Lunghezza e formato TEFA-TEFN-TEFZ)  e controllo coerenza dei dati del modello F24 TARI (Costi di notifica  inclusi).-PN-9143
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm               | NULL                    |
+      | apply_cost_pagopa                | NULL                    |
+      #F24 local-------------------------------
+      | f24_delivery_standard_local_tefa | SI                      |
+      | payment_f24          | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
+      #-------------------------------------------
+      | title_payment                    | F24_STANDARD_LOCAL_TARI |
+      | apply_cost_f24                   | SI                      |
+      | payment_multy_number             | 1                       |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
 
 
