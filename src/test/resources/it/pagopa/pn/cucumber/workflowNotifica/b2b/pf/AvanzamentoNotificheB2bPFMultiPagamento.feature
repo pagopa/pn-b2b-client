@@ -3333,12 +3333,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL                      |
-      | apply_cost_pagopa                   | NULL                      |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
       | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_5 |
-      | title_payment                       | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24                      | SI                        |
-      | payment_multy_number                | 1                         |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO            |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
@@ -3351,15 +3351,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm               | NULL                    |
-      | apply_cost_pagopa                | NULL                    |
+      | payment_pagoPaForm               | NULL                                     |
+      | apply_cost_pagopa                | NULL                                     |
       #F24 local-------------------------------
-      | f24_delivery_standard_local_tefa | SI                      |
-      | payment_f24          | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
+      | f24_delivery_standard_local_tefa | SI                                       |
+      | payment_f24                      | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
       #-------------------------------------------
-      | title_payment                    | F24_STANDARD_LOCAL_TARI |
-      | apply_cost_f24                   | SI                      |
-      | payment_multy_number             | 1                       |
+      | title_payment                    | F24_STANDARD_LOCAL_TARI                  |
+      | apply_cost_f24                   | SI                                       |
+      | payment_multy_number             | 1                                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
