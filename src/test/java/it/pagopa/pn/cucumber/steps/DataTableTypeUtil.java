@@ -90,6 +90,9 @@ public class DataTableTypeUtil {
             case "DOC_6_PG" -> document = "classpath:/sample_6pg.pdf";
             case "DOC_7_PG" -> document = "classpath:/sample_7pg.pdf";
             case "DOC_8_PG" -> document = "classpath:/sample_8pg.pdf";
+            case "DOC_50_PG" -> document = "classpath:/AllegatoServiceDesk_50pag.pdf";
+            case "DOC_100_PG" -> document = "classpath:/sample_100pg.pdf";
+            case "DOC_300_PG" -> document = "classpath:/sample_300pg.pdf";
             default ->  document = getDefaultValue(DOCUMENT.key);
         }
 
