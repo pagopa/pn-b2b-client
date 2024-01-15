@@ -1074,3 +1074,56 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "5908" della notifica
 
+
+
+  @CostoCartaceoComplete
+  Scenario Outline: [CALCOLO-COSTO_AR-50GR-F24_53] Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr e con un f24
+    Given viene generata una nuova notifica
+      | subject               | <SUBJECT>            |
+      | senderDenomination    | Comune di palermo    |
+      | physicalCommunication | AR_REGISTERED_LETTER |
+      | feePolicy             | DELIVERY_MODE        |
+      | document              | DOC_8_PG;DOC_6_PG;   |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL                          |
+      | physicalAddress_address      | Via@ok_AR                     |
+      | physicalAddress_municipality | <MUNICIPALITY>                |
+      | physicalAddress_province     | <PROVINCE>                    |
+      | physicalAddress_zip          | <CAP>                         |
+      | payment_pagoPaForm           | NOALLEGATO                    |
+      | payment_f24flatRate          | NULL                          |
+      | payment_f24standard          | SI                            |
+      | title_payment                | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_f24               | SI                            |
+      | payment_multy_number         | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo = "<COSTO>" della notifica
+    Examples:
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
+      | 80060 | 638   | Vico Equense | NA       | notifica analogica FSU |
+
+
+
+  @CostoCartaceoComplete
+  Scenario: [CALCOLO-COSTO_AR-50GR-F24_54]Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr e con un f24
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica ZONA 1 |
+      | senderDenomination    | Comune di palermo         |
+      | physicalCommunication | AR_REGISTERED_LETTER      |
+      | feePolicy             | DELIVERY_MODE             |
+      | document              | DOC_8_PG;DOC_6_PG;        |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_State   | ALBANIA                       |
+      | physicalAddress_zip     | ZONE_1                        |
+      | physicalAddress_address | Via@ok_RIR                    |
+      | payment_pagoPaForm      | NOALLEGATO                    |
+      | payment_f24flatRate     | NULL                          |
+      | payment_f24standard     | SI                            |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo = "1056" della notifica
