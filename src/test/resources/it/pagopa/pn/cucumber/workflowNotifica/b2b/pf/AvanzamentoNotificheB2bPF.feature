@@ -287,7 +287,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
 
   @workflowDigitale
-  Scenario: [B2B_TIMELINE_25] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
+  Scenario: [B2B_TIMELINE_27] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
