@@ -34,6 +34,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -884,6 +885,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
+    public void laNotificaVieneInviataNoAccept(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationNoAccept();
+    }
+
     @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOkRapidCheck(String paType) {
         selectPA(paType);
@@ -896,6 +904,14 @@ public class SharedSteps {
         selectPA(paType);
         setSenderTaxIdFromPropertiesV1();
         sendNotificationV1();
+    }
+
+    @And("viene effettuato recupero stato della notifica con la V1 dal comune {string}")
+    public void retriveStateNotification(String paType) {
+        selectPA(paType);
+        this.notificationRequestV1= new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest();
+        setSenderTaxIdFromPropertiesV1();
+        searchNotificationV1(Base64Utils.encodeToString(getSentNotification().getIun().getBytes()));
     }
 
 
@@ -1092,6 +1108,10 @@ public class SharedSteps {
         sendNotification(getWorkFlowWait());
     }
 
+    private void sendNotificationNoAccept() {
+        sendNotificationNoAccept(getWorkFlowWait());
+    }
+
     private void sendNotificationRapidCheck() {
         sendNotificationRapid(100);
     }
@@ -1120,6 +1140,37 @@ public class SharedSteps {
                 throw new RuntimeException(e);
             }
             Assertions.assertNotNull(notificationResponseComplete);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationNoAccept(int wait){
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    logger.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseComplete = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(wait);
+            } catch (InterruptedException e) {
+                logger.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNull(notificationResponseComplete);
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1158,6 +1209,22 @@ public class SharedSteps {
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
+
+
+    private void searchNotificationV1(String requestId) {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse notificationV1 = b2bClient.getNotificationRequestStatusV1(requestId);
+            });
+
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV1 == null ? "NULL" : newNotificationResponseV1.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
 
     private void sendNotificationV1() {
         try {

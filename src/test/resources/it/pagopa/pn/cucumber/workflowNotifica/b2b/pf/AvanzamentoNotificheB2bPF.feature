@@ -264,6 +264,27 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
+  @workflowDigitale
+  Scenario: [B2B_TIMELINE_25] Invio notifica digitale con verifica uguaglianza tra scheduleDate di SCHEDULE_REFINEMENT e timestamp del REFINEMENT PN-9059
+    Given viene generata una nuova notifica
+      | subject            | invio notifica multi cucumber |
+      | senderDenomination | Comune di milano              |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+
+  @workflowDigitale
+  Scenario: [B2B_TIMELINE_26] Invio notifica digitale che va in DIGITAL_FAILURE con verifica uguaglianza tra scheduleDate di SCHEDULE_REFINEMENT e timestamp del REFINEMENT PN-9059
+    Given viene generata una nuova notifica
+      | subject            | invio notifica multi cucumber |
+      | senderDenomination | Comune di milano              |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile_address | test@fail.it |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
 
   @workflowDigitale
   Scenario: [B2B_TIMELINE_25] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
