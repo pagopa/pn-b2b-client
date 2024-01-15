@@ -1085,17 +1085,17 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | feePolicy             | DELIVERY_MODE        |
       | document              | DOC_8_PG;DOC_6_PG;   |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                          |
-      | physicalAddress_address      | Via@ok_AR                     |
-      | physicalAddress_municipality | <MUNICIPALITY>                |
-      | physicalAddress_province     | <PROVINCE>                    |
-      | physicalAddress_zip          | <CAP>                         |
-      | payment_pagoPaForm           | NOALLEGATO                    |
-      | payment_f24flatRate          | NULL                          |
-      | payment_f24standard          | SI                            |
-      | title_payment                | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_f24               | SI                            |
-      | payment_multy_number         | 1                             |
+      | digitalDomicile              | NULL                              |
+      | physicalAddress_address      | Via@ok_AR                         |
+      | physicalAddress_municipality | <MUNICIPALITY>                    |
+      | physicalAddress_province     | <PROVINCE>                        |
+      | physicalAddress_zip          | <CAP>                             |
+      | payment_pagoPaForm           | NOALLEGATO                        |
+      | payment_f24flatRate          | NULL                              |
+      | payment_f24_simplified       | SI                                |
+      | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24               | SI                                |
+      | payment_multy_number         | 1                                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "<COSTO>" della notifica
@@ -1114,16 +1114,16 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | feePolicy             | DELIVERY_MODE             |
       | document              | DOC_8_PG;DOC_6_PG;        |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                          |
-      | physicalAddress_State   | ALBANIA                       |
-      | physicalAddress_zip     | ZONE_1                        |
-      | physicalAddress_address | Via@ok_RIR                    |
-      | payment_pagoPaForm      | NOALLEGATO                    |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_State   | ALBANIA                           |
+      | physicalAddress_zip     | ZONE_1                            |
+      | physicalAddress_address | Via@ok_RIR                        |
+      | payment_pagoPaForm      | NOALLEGATO                        |
+      | payment_f24flatRate     | NULL                              |
+      | payment_f24_simplified  | SI                                |
+      | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                                |
+      | payment_multy_number    | 1                                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1056" della notifica
