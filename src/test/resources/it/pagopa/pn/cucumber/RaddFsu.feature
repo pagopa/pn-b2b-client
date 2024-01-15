@@ -195,6 +195,58 @@ Feature: Radd fsu
     Then l'operazione di download degli atti genera un errore "Stampa già eseguita" con codice 99
 
   @radd
+  Scenario: [B2B_RADD_ACT-12] Abort su transaction già abortita
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And Il cittadino "Mario Cucumber" mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti
+    And la scansione si conclude correttamente
+    And vengono caricati i documento di identità del cittadino
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR
+    Then la transazione viene abortita
+    And la transazione viene abortita
+    And l'operazione di abort genera un errore "La transazione risulta annullata" con codice 99
+
+  @radd
+  Scenario: [B2B_RADD_ACT-13] Abort su transaction già abortita
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And Il cittadino "Mario Cucumber" mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti
+    And la scansione si conclude correttamente
+    And vengono caricati i documento di identità del cittadino
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR
+    Then la transazione viene abortita
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica
+    And la chiusura delle transazione per il recupero degli aar ha generato l'errore "La transazione risulta annullata" con statusCode 2
+
+  @radd
+  Scenario: [B2B_RADD_ACT-14] Abort su transaction già abortita
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    And Il cittadino "Mario Cucumber" mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti
+    And la scansione si conclude correttamente
+    And vengono caricati i documento di identità del cittadino
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica
+    And la transazione viene abortita
+    And l'operazione di abort genera un errore "La transazione risulta già completa" con codice 2
+
+
+  @radd
   Scenario: [B2B_RADD_AOR-1] inquiry per cittadino con nessuna notifica in stato irreperibile
     Given Il cittadino "signor generato" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
@@ -276,3 +328,5 @@ Feature: Radd fsu
     And vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
     When Il cittadino Signor casuale chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99
+
+

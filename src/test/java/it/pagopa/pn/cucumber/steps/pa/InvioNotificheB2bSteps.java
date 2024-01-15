@@ -485,14 +485,12 @@ public class InvioNotificheB2bSteps {
             }else if("F24".equalsIgnoreCase(downloadType)) {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(this.downloadResponse.getUrl()));
-            }
+                this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
 
+            }
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
-
-
-
     }
 
 
@@ -526,8 +524,8 @@ public class InvioNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
 
+        try{
         this.downloadResponse = b2bClient
-
                 .getSentNotificationAttachment(sharedSteps.getSentNotification().getIun(), destinatario, downloadType,0);
         if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
             try {
@@ -546,6 +544,10 @@ public class InvioNotificheB2bSteps {
         }else if("F24".equalsIgnoreCase(downloadType)) {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
                     b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
+        }
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
         }
     }
 
@@ -648,6 +650,7 @@ public class InvioNotificheB2bSteps {
             this.sharedSteps.setNotificationError(e);
         }
     }
+
 
     @Then("il download si conclude correttamente")
     public void correctlyDownload() {
@@ -1414,6 +1417,23 @@ public class InvioNotificheB2bSteps {
             Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode());
             Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCodeAlternative());
 
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    @And("la notifica a 1 avvisi di pagamento con OpenApi V1")
+    public void notificationCanBeRetrievePayment1V1() {
+        AtomicReference<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification> notificationByIun = new AtomicReference<>();
+        String iun =sharedSteps.getIunVersionamento();
+        try {
+            Assertions.assertDoesNotThrow(() ->
+                    notificationByIun.set(b2bUtils.getNotificationByIunV1(iun))
+            );
+            Assertions.assertNotNull(notificationByIun.get());
+            Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCode());
+            //  Assertions.assertNotNull(notificationByIun.get().getRecipients().get(0).getPayment().getNoticeCodeAlternative());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }

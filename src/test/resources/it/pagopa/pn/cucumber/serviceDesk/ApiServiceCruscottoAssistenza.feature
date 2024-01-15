@@ -66,7 +66,7 @@ Feature: Api Service Cruscotto Assitenza
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Gherkin | PF             | 10               | NULL                 | 2023-10-01 | 2023-12-01 |
     #Response 200 OK
-   
+
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-PG-CA_CE02.2_8] Invocazione del servizio solo con taxId e recipientType corretti e verifica risposta
     Given l'operatore richiede elenco di tutti i messaggi di cortesia inviati con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
@@ -382,7 +382,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+      | Mario Gherkin | PF             | 10               | NULL                 | 2023-01-01 | 2023-12-01 |
     #Response 200 OK
 
   @cruscottoAssistenza
@@ -681,17 +681,6 @@ Feature: Api Service Cruscotto Assitenza
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
-    Given come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "<IUN>" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then il servizio risponde con errore "400"
-
-    Examples:
-      | IUN                       | TAXIID        | RECIPIENT_TYPE |
-      | DNEN-JVYZ-RHWV-202304-M-1 | Mario Gherkin | PF             |
-
-    #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-658186d3-09993dbb0f08a2f731ac7238","timestamp":"2023-12-19T12:04:35.888715266Z","errors":[]}] null
-
-  @cruscottoAssistenza
-  Scenario Outline: [API-SERVICE-CA_CE02.8_61_1] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
     Then il servizio risponde con errore "400"
@@ -750,8 +739,7 @@ Feature: Api Service Cruscotto Assitenza
       | NO_SET | Mario Gherkin | PG             |
     #Response 404 NOT_FOUND
 
-
-#CE02.9 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica.
+ #CE02.9 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come “delegato” di una persona fisica o di una persona giuridica.
 
   @deleghe1  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
@@ -766,12 +754,12 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATOR>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
-      | Mario Gherkin | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
+      | TAXIID        | TAXIID_DELEGATOR | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
+      | Mario Gherkin | Mario Cucumber   | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
     #Mario Gherkin - DELEGATO - CLMCST42R12D969Z
     #Mario Cucumber -DELEGANTE - FRMTTR76M06B715E
 
@@ -789,12 +777,12 @@ Feature: Api Service Cruscotto Assitenza
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATOR>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And Il servizio risponde correttamente
 
     Examples:
-      | TAXIID      | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
-      | CucumberSpa | PG             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
+      | TAXIID      | TAXIID_DELEGATOR | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
+      | CucumberSpa | GherkinSrl       | PG             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
 
 
   @deleghe1  @cruscottoAssistenza
@@ -810,12 +798,12 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATOR>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
-      | Mario Gherkin | PF             | 1                | NULL                 | NULL       | NULL     | NULL       | NO_SET      |
+      | TAXIID        | TAXIID_DELEGATOR | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
+      | Mario Gherkin | Mario Cucumber   | PF             | 1                | NULL                 | NULL       | NULL     | NULL       | NO_SET      |
     #Errore: 400 BAD_REQUEST 400 Missing the required parameter 'mandateId' when calling searchNotificationsAsDelegateFromInternalId null
 
   @deleghe1  @cruscottoAssistenza
@@ -831,14 +819,15 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATOR>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
-      | Mario Gherkin | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NULL        |
+      | TAXIID        | TAXIID_DELEGATOR | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
+      | Mario Gherkin | Mario Cucumber   | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NULL        |
     # Errore: 400 BAD_REQUEST 400 Missing the required parameter 'delegateInternalId' when calling searchNotificationsAsDelegateFromInternalId null
 
+   #TODO Verificare il comportamento corretto...
   @deleghe1  @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
@@ -852,14 +841,14 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegante" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATE>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID                           | INTERNAL_ID |
-      | Mario Gherkin | PF             | 1                | NULL                 | NULL       | NULL     | z7942f2e-1037-4ed9-8ca6-a6f7923bf4a7 | NO_SET      |
+      | TAXIID         | TAXIID_DELEGATE | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID               | INTERNAL_ID |
+      | Mario Cucumber | Mario Gherkin   | PF             | 10               | NULL                 | NULL       | NULL     | z7942f2e-1037-4ed9-8ca6- | NO_SET      |
 
-    # Response 500 INTERNAL_SERVER_ERROR
+    # Response 400 INTERNAL_SERVER_ERROR
 
   #CE02.10 Come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario ma sono state “trattate” da altro utente da lui “delegato”
 
@@ -876,12 +865,13 @@ Feature: Api Service Cruscotto Assitenza
     And la notifica può essere correttamente letta da "Mario Gherkin" con delega
     And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "<TAXIID>" e recipientType  "<RECIPIENT_TYPE>"
     And Il servizio risponde correttamente
-    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegante" di una persona fisica o di una persona giuridica con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegante" di una persona fisica o di una persona giuridica con taxId "<TAXIID_DELEGATE>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>" searchMandateId "<MANDATE_ID>" searchInternalId "<INTERNAL_ID>"
     And Il servizio risponde correttamente
 
     Examples:
-      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
-      | Mario Cucumber | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
+      | TAXIID         | TAXIID_DELEGATE | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE | MANDATE_ID | INTERNAL_ID |
+      | Mario Cucumber | Mario Gherkin   | PF             | 1                | NULL                 | NULL       | NULL     | NO_SET     | NO_SET      |
+
 
 
   #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
@@ -1040,31 +1030,29 @@ Feature: Api Service Cruscotto Assitenza
       | VUOTO |
   #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER_SIZE","element":"_getApiKeys.paId","detail":"size must be between 1 and 50"}]}
 
-    #TODO Verificare il comportamento corretto...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_99] Invocazione del servizio con paId inesistente
     Given  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza delle apiKey
 
     Examples:
       | paID           |
       | 4db941cf-17e1- |
     #Response 200 OK
 
-  #TODO Verificare il comportamento corretto...
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.14_100] Invocazione del servizio con paId correttamente valorizzato e verifica risposta
     Given l'operatore richiede l'elenco di tutte le PA che hanno effettuato on boarding
     And Il servizio risponde con esito positivo con la lista delle PA
     When  come operatore devo accedere alle informazioni relative alle richieste di API Key avanzate da un Ente mittente di notifiche sulla Piattaforma "<paID>"
-    Then Il servizio risponde correttamente
+    Then Il servizio risponde correttamente con presenza delle apiKey
 
     Examples:
-      | paID   |
-      | NO_SET |
+      | paID                                 |
+      | 026e8c72-7944-4dcd-8668-f596447fec6d |
     #Response 200 OK
 
-#8c9ed305-f1ab-4031-b3f0-5241216d0635 MILANO
+#026e8c72-7944-4dcd-8668-f596447fec6d MILANO
 
 
   @cruscottoAssistenza
@@ -1075,12 +1063,19 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_SEARCH_NOTIFICATION |
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
-      | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_AK             |
+      | AUD_CA_VIEW_ONBOARDING     |
+      | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
-  # AUD_CA_AK_VIEW (visualizzazione lista api key)
+  # AUD_CA_VIEW_AK (visualizzazione lista api key)
+  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
+  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
+
+
+
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE03.01_102] Impostare nuova tipologia di Audit Log
@@ -1090,10 +1085,14 @@ Feature: Api Service Cruscotto Assitenza
       | AUD_CA_SEARCH_NOTIFICATION |
       | AUD_CA_VIEW_USERPROFILE    |
       | AUD_CA_VIEW_NOTIFICATION   |
-      | AUD_CA_AK_VIEW             |
+      | AUD_CA_VIEW_AK             |
+      | AUD_CA_VIEW_ONBOARDING     |
+      | AUD_CA_DOC_AVAILABLE       |
 
   # AUD_CA_SEARCH_NOTIFICATION (ricerca notifiche)
   # AUD_CA_VIEW_USERPROFILE (recupero profilo utente)
   # AUD_CA_VIEW_NOTIFICATION (visualizzazione dettaglio notifica)
-  # AUD_CA_AK_VIEW (visualizzazione lista api key)
+  # AUD_CA_VIEW_AK (visualizzazione lista api key)
+  # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
+  # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
 

@@ -227,3 +227,4 @@ Feature: deleghe test new feature
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     And "GherkinSrl" tenta il recupero dell'allegato "PAGOPA"
     And il download non ha prodotto errori
+

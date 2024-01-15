@@ -197,6 +197,7 @@ public class DataTableTypeUtil {
                     //LOAD METADATI F24
                     if (getValue(data,PAYMENT_F24.key)!= null  && !getValue(data,PAYMENT_F24.key).isEmpty()) {
                         setMetadatiF24(data, addPaymentsItem, i);
+
                     }
 
                     listPayment.add(addPaymentsItem);
