@@ -3357,7 +3357,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_pagoPaForm               | NULL                                     |
       | apply_cost_pagopa                | NULL                                     |
       #F24 local-------------------------------
-      | f24_delivery_standard_local_tefa | SI                                       |
       | payment_f24                      | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
       #-------------------------------------------
       | title_payment                    | F24_STANDARD_LOCAL_TARI                  |
