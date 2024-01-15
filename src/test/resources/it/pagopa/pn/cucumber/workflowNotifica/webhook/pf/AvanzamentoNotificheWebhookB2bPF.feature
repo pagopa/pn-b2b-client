@@ -262,5 +262,31 @@ Feature: avanzamento notifiche webhook b2b
     And vengono letti gli eventi dello stream che contenga 50 eventi
 
 
+  @clean @dev @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa elemento di timeline PAYMENT
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+      | feePolicy | DELIVERY_MODE |
+    And destinatario Mario Gherkin e:
+      | payment_pagoPaForm | SI |
+      | payment_f24flatRate | NULL |
+      | payment_f24standard | NULL |
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And l'avviso pagopa viene pagato correttamente
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "PAYMENT"
 
-
+  @clean @webhook1
+  Scenario: [B2B-STREAM_TIMELINE_26] Invio notifica digitale ed attesa elemento di timeline REFINEMENT e verifica corretteza data PN-9059
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
+    And si crea il nuovo stream per il "Comune_1"
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And l'avviso pagopa viene pagato correttamente
+    Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT"
+    And Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook
