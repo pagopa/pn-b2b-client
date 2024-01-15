@@ -82,6 +82,39 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_ANALOG_1_11111] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@ok_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
+    And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0 al tentativo 0
+
+  @dev @workflowAnalogico
+  Scenario: [B2B_TIMELINE_ANALOG_271111] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_AR_scenario negativo PN-9059
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 0
+
+
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica

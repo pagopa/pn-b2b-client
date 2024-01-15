@@ -255,7 +255,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
 
 
   @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V21_20]  Invio notifica V1.1 con taxId errato PN-8913
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_20]  Invio notifica V1.1 con taxId errato
     Given viene generata una nuova notifica V1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -274,3 +274,21 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | payment_noticeCode | 355312817721270543 |
     When la notifica viene inviata dal "Comune_1" dalla "V1"
     Then l'operazione ha prodotto un errore con status code "409"
+
+  @version
+  Scenario Outline: [B2B-PA-SEND_VERSION_V1_V21_22] Invio notifica digitale V1.1 physicalAddress_address non valido PN-8913
+    Given viene generata una nuova notifica V1
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin V1 e:
+      | physicalAddress_address | <indirizzo> |
+    When la notifica viene inviata dal "Comune_1" dalla "V1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | indirizzo                                                |
+      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
+
+  Scenario: [B2B-PA-SEND_VERSION_V1_V21_23] recupero notifica vecchia di 120 giorni con recupero stato dalla versione V1 PN-9475
+    When recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento
+    Then viene effettuato recupero stato della notifica con la V1 dal comune "Comune_1"

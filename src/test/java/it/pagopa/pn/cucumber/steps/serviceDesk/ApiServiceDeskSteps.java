@@ -1496,6 +1496,7 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAllaListaDelleNotifichePerLeQualiLUtenteRisultaDestinatarioComeDelegatoDiUnaPersonaFisicaODiUnaPersonaGiuridicaConCfRecipientTypeEConSearchPageSizeSearchNextPagesKeyStartDateEndDate(String type, String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, String searchMandateId, String searchInternalId) {
 
         try {
+
             Assertions.assertNotNull(profileResponse);
 
             if ("delegato".equalsIgnoreCase(type)) {
@@ -1549,9 +1550,21 @@ public class ApiServiceDeskSteps {
                 mandateIdSearch = null;
             } else if ("NO_SET".equalsIgnoreCase(searchMandateId)) {
                 if ("delegato".equalsIgnoreCase(type)) {
-                    mandateIdSearch = profileResponse.getDelegateMandates().get(0).getMandateId();
+                    String taxIdDelegator = setTaxID(taxId);
+                    for (Mandate mandate: profileResponse.getDelegateMandates()) {
+                        if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())){
+                            mandateIdSearch = mandate.getMandateId();
+                            break;
+                        }
+                    }
                 }else if ("delegante".equalsIgnoreCase(type)) {
-                    mandateIdSearch = profileResponse.getDelegatorMandates().get(0).getMandateId();
+                    for (Mandate mandate: profileResponse.getDelegatorMandates()) {
+                        String taxIdDelegate = setTaxID(taxId);
+                        if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())){
+                            mandateIdSearch = mandate.getMandateId();
+                            break;
+                        }
+                    }
                 }
             } else {
                 mandateIdSearch = searchMandateId;
@@ -1562,9 +1575,25 @@ public class ApiServiceDeskSteps {
                 delegateInternalIdSearch = null;
             } else if ("NO_SET".equalsIgnoreCase(searchInternalId)) {
                 if ("delegato".equalsIgnoreCase(type)) {
-                    delegateInternalIdSearch = profileResponse.getDelegateMandates().get(0).getDelegateInternalId();
+
+                    String taxIdDelegator = setTaxID(taxId);
+                    for (Mandate mandate: profileResponse.getDelegateMandates()) {
+                        if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())){
+                            delegateInternalIdSearch = mandate.getDelegateInternalId();
+                            break;
+                        }
+                    }
+
                 } else if ("delegante".equalsIgnoreCase(type)) {
-                    delegateInternalIdSearch = profileResponse.getDelegatorMandates().get(0).getDelegateInternalId();
+                    for (Mandate mandate: profileResponse.getDelegatorMandates()) {
+                        String taxIdDelegate = setTaxID(taxId);
+                        if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())){
+                            delegateInternalIdSearch = mandate.getDelegateInternalId();
+                            break;
+                        }
+                    }
+
+
                 }
             } else {
                 delegateInternalIdSearch = searchInternalId;

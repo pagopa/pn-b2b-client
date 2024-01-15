@@ -23,6 +23,8 @@ public enum NotificationValue {
     NOTIFICATION_FEE_POLICY("feePolicy","FLAT_RATE",false),
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication","REGISTERED_LETTER_890",false),
     DOCUMENT("document","classpath:/sample.pdf",false),
+    DOCUMENT_1("document_1",null,false),
+    DOCUMENT_2("document_2",null,false),
     TAXONOMY_CODE("taxonomyCode","010202N",false),
     AMOUNT("amount",null,false),
     PA_FEE("paFee",null,false),
@@ -62,6 +64,8 @@ public enum NotificationValue {
 
     PAYMENT_F24_FLAT("payment_f24flatRate","classpath:/METADATA_CORRETTO_FLAT.json",false),
     PAYMENT_F24_STANDARD("payment_f24standard","classpath:/METADATA_CORRETTO.json",false),
+    PAYMENT_F24_STANDARD_PG("payment_f24standard_pg","classpath:/METADATA_CORRETTO_PG.json",false),
+    PAYMENT_F24_STANDARD_EXCISE_PG("payment_f24_standard_excise_pg","classpath:/test_excise_pg.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_FORMAT("payment_f24standard_no_valid_format","classpath:/METADATA_CORRETTO_NO_VALID_FORMAT.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_LENGH("payment_f24standard_no_valid_lengh","classpath:/METADATA_CORRETTO_NO_VALID_LENGH.json",false),
     PAYMENT_F24_STANDARD_VALID_ANAG("payment_f24standard_valid_anag","classpath:/METADATA_CORRETTO_VALID_103.json",false),
@@ -70,7 +74,7 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_2("payment_f24standard_no_valid_anag_2","classpath:/METADATA_CORRETTO_VALID_106.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_3("payment_f24standard_no_valid_anag_3","classpath:/METADATA_CORRETTO_VALID_107.json",false),
     PAYMENT_F24_STANDARD_NO_VALID_ANAG_4("payment_f24standard_no_valid_anag_4","classpath:/METADATA_CORRETTO_VALID_108.json",false),
-
+    PAYMENT_F24_STANDARD_NO_VALID_ANAG_5("payment_f24standard_no_valid_anag_5","classpath:/test_invalid_metadata.json",false),
 
 
 
@@ -80,15 +84,19 @@ public enum NotificationValue {
     PAYMENT_F24_STANDARD_INPS_ERR("payment_f24standard_inps_err","classpath:/f24_delivery_standard_inps_err.json",false),
     PAYMENT_F24_STANDARD_INPS_ERR1("payment_f24standard_inps_err1","classpath:/f24_delivery_standard_inps_err1.json",false),
     PAYMENT_F24_STANDARD_LOCAL("payment_f24standard_local","classpath:/f24_delivery_standard_local.json",false),
+    PAYMENT_F24_STANDARD_LOCAL_TARI("f24_delivery_standard_local_tefa","classpath:/f24_delivery_standard_local_tefa.json",false),
+
     PAYMENT_F24_STANDARD_REGION("payment_f24standard_region","classpath:/f24_delivery_standard_region.json",false),
     PAYMENT_F24_STANDARD_TREASURY("payment_f24standard_treasury","classpath:/f24_delivery_standard_treasury.json",false),
     PAYMENT_F24_STANDARD_TREASURY_AE("f24_delivery_standard_treasury_ae","classpath:/f24_delivery_standard_treasury_ae.json",false),
     PAYMENT_F24_STANDARD_SOCIAL("payment_f24standard_social","classpath:/f24_delivery_standard_social.json",false),
     PAYMENT_F24_SIMPLIFIED("payment_f24_simplified","classpath:/f24_delivery_simplified.json",false),
+    PAYMENT_F24_SIMPLIFIED_PG("payment_f24_simplified_pg","classpath:/test_simplified_pg.json",false),
     PAYMENT_F24_SIMPLIFIED_1("payment_f24_simplified_1","classpath:/f24filenuovo.json",false),
     PAYMENT_F24_SIMPLIFIED_ERR1("payment_f24_simplified_err1","classpath:/test01.json",false),
     PAYMENT_F24_SIMPLIFIED_ERR2("payment_f24_simplified_err2","classpath:/test02.json",false),
     PAYMENT_F24_SIMPLIFIED_ERR3("payment_f24_simplified_err3","classpath:/test03.json",false),
+    PAYMENT_F24_SIMPLIFIED_ERR4("payment_f24_simplified_err3","classpath:/test03.json",false),
 
 
     PAYMENT_F24_STANDARD_INPS_FLAT("payment_f24standard_inps_flat","classpath:/f24_flat_standard_inps.json",false),
@@ -170,6 +178,7 @@ public enum NotificationValue {
         String randomClassePagamento = new Random().nextInt(14)+"";
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0"+randomClassePagamento : randomClassePagamento;
         String finalNumber = "" + String.format("302" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-4));
+       // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
         if(finalNumber.length() > NOTICE_CODE_LENGTH){
             finalNumber = finalNumber.substring(0,NOTICE_CODE_LENGTH);
         }else{
