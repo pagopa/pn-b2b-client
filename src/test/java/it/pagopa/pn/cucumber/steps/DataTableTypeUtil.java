@@ -275,10 +275,10 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_STANDARD_NO_VALID_ANAG_5" -> metadati = "classpath:/test_invalid_metadata.json";
             case "PAYMENT_F24_STANDARD" -> metadati = "classpath:/METADATA_CORRETTO.json";
             case "PAYMENT_F24_STANDARD_PG" -> metadati = "classpath:/METADATA_CORRETTO_PG.json";
-            case "PAYMENT_F24_STANDARD_EXCISE_PG" -> metadati = "classpath:/payment_f24_standard_excise_pg.json";
+            case "PAYMENT_F24_STANDARD_EXCISE_PG" -> metadati = "classpath:/test_excise_pg.json";
             case "PAYMENT_F24_FLAT" -> metadati = "classpath:/METADATA_CORRETTO_FLAT.json";
             case "PAYMENT_F24_SIMPLIFIED" -> metadati = "classpath:/f24_delivery_simplified.json";
-            case "PAYMENT_F24_SIMPLIFIED_PG" -> metadati = "classpath:/payment_f24_simplified_pg.json";
+            case "PAYMENT_F24_SIMPLIFIED_PG" -> metadati = "classpath:/test_simplified_pg.json";
             case "PAYMENT_F24_SIMPLIFIED_1" -> metadati = "classpath:/f24filenuovo.json";
             case "PAYMENT_F24_SIMPLIFIED_ERR1" -> metadati = "classpath:/test01.json";
             case "PAYMENT_F24_SIMPLIFIED_ERR2" -> metadati = "classpath:/test02.json";
