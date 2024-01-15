@@ -174,7 +174,7 @@ public class PnPaB2bUtils {
 
     public NewNotificationResponse uploadNotification50size( NewNotificationRequestV21 request) throws IOException {
         //PRELOAD DOCUMENTI NOTIFICA
-        NotificationDocument notificationDocument = newDocument("classpath:/AllegatoServiceDesk_50pag.pdf");
+        NotificationDocument notificationDocument = newDocument("classpath:/AllegatoServiceDesk_100pag.pdf");
 
         List<NotificationDocument> newdocs = new ArrayList<>();
         newdocs.add(this.preloadDocument(notificationDocument));

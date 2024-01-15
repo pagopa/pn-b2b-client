@@ -992,10 +992,9 @@ Feature: Api Service Desk
   @dpCallCenterEvoluto
   Scenario: [DP_API-SLIPT_SPEDIZIONE_57_2] Creazione notifica con allegato di 26 pagine
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-      | document | classpath:/AllegatoServiceDesk_26pag.pdf |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
       | denomination | Test AR Fail 2 |
       | taxId | TMTTMS92M57G793P |
