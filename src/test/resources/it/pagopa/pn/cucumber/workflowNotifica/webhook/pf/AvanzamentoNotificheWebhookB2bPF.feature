@@ -270,8 +270,7 @@ Feature: avanzamento notifiche webhook b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24        | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE"
     And si crea il nuovo stream per il "Comune_1"
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED

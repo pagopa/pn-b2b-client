@@ -3,8 +3,8 @@ Feature: invio notifiche b2b per la persona giuridica
   @testLite
   Scenario: [B2B-PA-SEND_PG_1] Invio notifica digitale mono destinatario persona giuridica lettura tramite codice IUN (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Gherkin spa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -13,9 +13,9 @@ Feature: invio notifiche b2b per la persona giuridica
   @testLite
   Scenario: [B2B-PA-SEND_PG_2] Invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | idempotenceToken | AME2E3626070001.1  |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | idempotenceToken   | AME2E3626070001.1           |
     And destinatario Gherkin spa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
@@ -25,9 +25,9 @@ Feature: invio notifiche b2b per la persona giuridica
 
   Scenario: [B2B-PA-SEND_PG_3] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | idempotenceToken | AME2E3626070001.1  |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | idempotenceToken   | AME2E3626070001.1           |
     And destinatario Gherkin spa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
@@ -37,8 +37,8 @@ Feature: invio notifiche b2b per la persona giuridica
 
   Scenario: [B2B-PA-SEND_PG_4] invio notifiche digitali mono destinatario (p.giuridica)_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
     And destinatario Gherkin spa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -50,8 +50,8 @@ Feature: invio notifiche b2b per la persona giuridica
 
   Scenario: [B2B-PA-SEND_PG_5] invio notifiche digitali mono destinatario (p.giuridica)_scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
     And destinatario Gherkin spa e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -63,8 +63,8 @@ Feature: invio notifiche b2b per la persona giuridica
   @ignore
   Scenario: [B2B-PA-SEND_PG_9] invio notifiche digitali mono destinatario senza physicalAddress (p.giuridica)_scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
     And destinatario Gherkin spa e:
       | physicalAddress | NULL |
     When la notifica viene inviata dal "Comune_1"
@@ -81,33 +81,31 @@ Feature: invio notifiche b2b per la persona giuridica
 
   Scenario: [B2B-PA-SEND_PG_11] Invio notifica digitale mono destinatario Flat_rate_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | feePolicy | FLAT_RATE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | feePolicy          | FLAT_RATE                   |
     And destinatario Gherkin spa e:
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI   |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
   Scenario: [B2B-PA-SEND_PG_12] Invio notifica digitale mono destinatario Delivery_mode_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Gherkin spa e:
-      | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI   |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
   Scenario: [B2B-PA-SEND_PG_15] Invio notifica digitale mono destinatario senza taxonomyCode (verifica Default)_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | taxonomyCode |   NULL   |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | taxonomyCode       | NULL                        |
     And destinatario Gherkin spa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
@@ -115,9 +113,9 @@ Feature: invio notifiche b2b per la persona giuridica
 
   Scenario: [B2B-PA-SEND_PG_16] Invio notifica digitale mono destinatario con taxonomyCode (verifica Default)_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | taxonomyCode |   010202N   |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | taxonomyCode       | 010202N                     |
     And destinatario Gherkin spa
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica

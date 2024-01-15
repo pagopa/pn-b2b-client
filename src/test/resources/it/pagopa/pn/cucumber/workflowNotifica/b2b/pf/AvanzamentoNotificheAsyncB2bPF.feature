@@ -11,8 +11,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
@@ -28,8 +27,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | NO          |
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -45,8 +43,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -59,12 +56,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -80,12 +76,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -103,8 +98,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -118,7 +112,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                           |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | physicalAddress_municipality | Palermo     |
       | physicalAddress_zip          | 20019       |
@@ -126,8 +120,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile              | NULL        |
       | payment_creditorTaxId        | 77777777777 |
       | payment_pagoPaForm           | SI          |
-      | payment_f24flatRate          | NULL        |
-      | payment_f24standard          | NULL        |
+      | payment_f24                  | NULL        |
       | apply_cost_pagopa            | SI          |
       | payment_multy_number         | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -144,12 +137,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -162,13 +154,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -192,13 +183,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 2            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -221,13 +211,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 2            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -252,16 +241,15 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
-      | payment_creditorTaxId   | 77777777777  |
-      | digitalDomicile_address | test@fail.it |
-      | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | SI           |
-      | apply_cost_f24          | SI           |
-      | apply_cost_pagopa       | SI           |
-      | payment_multy_number    | 1            |
+      | payment_creditorTaxId   | 77777777777          |
+      | digitalDomicile_address | test@fail.it         |
+      | payment_pagoPaForm      | SI                   |
+      | payment_f24             | PAYMENT_F24_STANDARD |
+      | apply_cost_f24          | SI                   |
+      | apply_cost_pagopa       | SI                   |
+      | payment_multy_number    | 1                    |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
@@ -280,13 +268,12 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                           |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777  |
       | digitalDomicile_address | test@fail.it |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -310,8 +297,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_creditorTaxId   | 77777777777           |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -335,14 +321,13 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | via@fail-Discovery_AR |
       | payment_creditorTaxId   | 77777777777           |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -377,8 +362,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
@@ -404,8 +388,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -433,8 +416,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@OK_RS    |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -460,8 +442,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | NO                    |
       | payment_multy_number    | 1                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
@@ -481,8 +462,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -496,14 +476,13 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | SYNC                           |
+      | pagoPaIntMode      | SYNC                        |
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -521,8 +500,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -563,8 +541,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -588,8 +565,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -607,21 +583,19 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And destinatario Cucumber Society e:
-      | payment_creditorTaxId | 77777777777      |
-      | payment_pagoPaForm    | SI                 |
-      | payment_f24flatRate   | NULL               |
-      | payment_f24standard   | NULL               |
-      | apply_cost_pagopa     | SI                 |
-      | payment_multy_number  | 1                  |
+      | payment_creditorTaxId | 77777777777 |
+      | payment_pagoPaForm    | SI          |
+      | payment_f24           | NULL        |
+      | apply_cost_pagopa     | SI          |
+      | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @Async
@@ -633,7 +607,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | physicalAddress_municipality | Palermo     |
       | physicalAddress_zip          | 20019       |
@@ -641,8 +615,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile              | NULL        |
       | payment_creditorTaxId        | 77777777777 |
       | payment_pagoPaForm           | SI          |
-      | payment_f24flatRate          | NULL        |
-      | payment_f24standard          | NULL        |
+      | payment_f24                  | NULL        |
       | apply_cost_pagopa            | SI          |
       | payment_multy_number         | 1           |
     And destinatario Gherkin Analogic e:
@@ -652,8 +625,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile              | NULL        |
       | payment_creditorTaxId        | 77777777777 |
       | payment_pagoPaForm           | SI          |
-      | payment_f24flatRate          | NULL        |
-      | payment_f24standard          | NULL        |
+      | payment_f24                  | NULL        |
       | apply_cost_pagopa            | SI          |
       | payment_multy_number         | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
@@ -675,14 +647,13 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And destinatario Gherkin Analogic e:
@@ -690,8 +661,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 1                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
@@ -716,14 +686,13 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId   | 77777777777           |
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
@@ -733,8 +702,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | SI                    |
       | payment_multy_number    | 2                     |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 2 del pagamento 0
@@ -768,16 +736,14 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And destinatario Gherkin Analogic e:
       | digitalDomicile_address | test@fail.it |
       | payment_creditorTaxId   | 77777777777  |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
@@ -816,29 +782,26 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | NO                    |
       | payment_multy_number    | 2                     |
     And destinatario Cucumber Society e:
       | digitalDomicile         | NULL                  |
       | physicalAddress_address | Via@FAIL-Discovery_AR |
       | payment_pagoPaForm      | SI                    |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | NULL                  |
       | apply_cost_pagopa       | NO                    |
       | payment_multy_number    | 2                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then vengono cancellate le posizioni debitorie
 
-    @testIntegrazione @ignore
+  @testIntegrazione @ignore
   Scenario: [B2B_PROVA_INTEGRAZIONE_GPD] Viene creata una posizione debitoria, interrogata e cancellata
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber_Society" con Piva "20517490320"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And lettura amount posizione debitoria per la notifica corrente di "Cucumber_Society"
     Then vengono cancellate le posizioni debitorie
-
 
 
   @testIntegrazione @ignore
@@ -849,12 +812,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -873,12 +835,11 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                         |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
-      | payment_f24flatRate   | NULL        |
-      | payment_f24standard   | NULL        |
+      | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
