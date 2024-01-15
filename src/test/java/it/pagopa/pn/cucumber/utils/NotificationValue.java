@@ -23,6 +23,8 @@ public enum NotificationValue {
     NOTIFICATION_FEE_POLICY("feePolicy","FLAT_RATE",false),
     PHYSICAL_COMMUNICATION_TYPE("physicalCommunication","REGISTERED_LETTER_890",false),
     DOCUMENT("document","classpath:/sample.pdf",false),
+    DOCUMENT_1("document_1",null,false),
+    DOCUMENT_2("document_2",null,false),
     TAXONOMY_CODE("taxonomyCode","010202N",false),
     AMOUNT("amount",null,false),
     PA_FEE("paFee",null,false),
@@ -170,6 +172,7 @@ public enum NotificationValue {
         String randomClassePagamento = new Random().nextInt(14)+"";
         randomClassePagamento = randomClassePagamento.length() < 2 ? "0"+randomClassePagamento : randomClassePagamento;
         String finalNumber = "" + String.format("302" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-4));
+       // String finalNumber = "" + String.format("30210" +randomClassePagamento + numberOfThread + timeNano.substring(0, timeNano.length()-6));
         if(finalNumber.length() > NOTICE_CODE_LENGTH){
             finalNumber = finalNumber.substring(0,NOTICE_CODE_LENGTH);
         }else{

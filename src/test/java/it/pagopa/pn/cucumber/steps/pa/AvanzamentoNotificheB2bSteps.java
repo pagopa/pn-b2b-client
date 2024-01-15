@@ -201,15 +201,16 @@ public class AvanzamentoNotificheB2bSteps {
 
         for (int i = 0; i < numCheck; i++) {
 
-            if (sharedSteps.getSentNotification()!= null){
-                sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-                logger.info("NOTIFICATION_STATUS_HISTORY: " + sharedSteps.getSentNotification().getNotificationStatusHistory());
-
-                notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
-
-            } else if (sharedSteps.getSentNotificationV1()!= null) {
+            if (sharedSteps.getSentNotificationV1()!= null) {
                 sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotificationV1().getIun()));
+
+                logger.info("NOTIFICATION_STATUS_HISTORY v1: " + sharedSteps.getSentNotificationV1().getNotificationStatusHistory());
+
+                notificationStatusHistoryElementV1 = sharedSteps.getSentNotificationV1().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+
+            }
+            else if (sharedSteps.getSentNotification()!= null){
+                sharedSteps.setSentNotificationV1(b2bClient.getSentNotificationV1(sharedSteps.getSentNotification().getIun()));
 
                 logger.info("NOTIFICATION_STATUS_HISTORY v1: " + sharedSteps.getSentNotificationV1().getNotificationStatusHistory());
 
@@ -844,7 +845,119 @@ public class AvanzamentoNotificheB2bSteps {
         readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
     }
 
-    public void readingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string}")
+    public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
+        TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
+        TimelineElementV20 event = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineElementWait);
+
+        Long notificationCost = event.getDetails().getNotificationCost();
+
+        if (cost.equalsIgnoreCase("null")) {
+            Assertions.assertNull(notificationCost);
+        } else {
+            Assertions.assertEquals(Long.parseLong(cost), notificationCost);
+        }
+
+
+    }
+
+    @Then("si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente {int}")
+    public void verificationDateScheduleRefinementWithRefinement(Integer destinatario) {
+
+    try {
+        OffsetDateTime ricezioneRaccomandata = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getSchedulingDate();
+        OffsetDateTime refinementDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+
+        logger.info("DESTINATARIO : {}", destinatario);
+        logger.info("ricezioneRaccomandata : {}", ricezioneRaccomandata);
+        logger.info("refinementDate : {}", refinementDate);
+
+        Assertions.assertEquals(ricezioneRaccomandata,refinementDate);
+
+    }catch (AssertionFailedError assertionFailedError) {
+        sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+    }
+    }
+
+    @Then("verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente {int}")
+    public void verificationDateComplettelyUnreachableWithRefinement(Integer destinatario) {
+
+        try {
+            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime complettelyUnreachableDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime complettelyUnreachableRequestDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE_CREATION_REQUEST) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime analogFailureDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.ANALOG_FAILURE_WORKFLOW) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime sendFeedbackNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime prepareAnalogDomicileFailureTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.PREPARE_ANALOG_DOMICILE_FAILURE) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+
+            logger.info("DESTINATARIO : {}", destinatario);
+            logger.info("sendAnalogProgressTimestampDate : {}", sendAnalogProgressTimestampDate);
+            logger.info("sendFeedbackTimestampDate : {} ", sendFeedbackTimestampDate);
+            logger.info("analogFailureDate Timestamp : {}", analogFailureDate);
+            logger.info("complettelyUnreachableRequestDate Timestamp : {}", complettelyUnreachableRequestDate);
+            logger.info("complettelyUnreachableDate Timestamp : {}", complettelyUnreachableDate);
+            logger.info("prepareAnalogDomicileFailureTimestamp : {}", prepareAnalogDomicileFailureTimestamp);
+
+            logger.info("shedulingDate Timestamp: {}", shedulingDate);
+
+            logger.info("sendAnalogProgressNotificationDate : {}", sendAnalogProgressNotificationDate);
+            logger.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
+
+            Assertions.assertEquals(shedulingDate,complettelyUnreachableDate);
+            Assertions.assertEquals(shedulingDate,complettelyUnreachableRequestDate);
+            Assertions.assertEquals(shedulingDate,analogFailureDate);
+            Assertions.assertEquals(shedulingDate,prepareAnalogDomicileFailureTimestamp);
+            Assertions.assertEquals(sendAnalogProgressTimestampDate,sendAnalogProgressNotificationDate);
+            Assertions.assertEquals(sendFeedbackTimestampDate,sendFeedbackNotificationDate);
+            //TODO  Verificare..
+           // Assertions.assertEquals(sendFeedbackDate,sendAnalogProgressDate);
+
+
+        }catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+
+
+    @Then("verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente {int} al tentativo {int}")
+    public void verificationDateScheduleRefinementWithSendAnalogFeedback(Integer destinatario,Integer tentativo) {
+
+        try {
+            OffsetDateTime shedulingDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime sendAnalogProgressNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime sendAnalogProgressTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+            OffsetDateTime sendFeedbackTimestampDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario) && elem.getDetails().getSentAttemptMade().equals(tentativo)).findAny().get().getTimestamp();
+            OffsetDateTime sendFeedbackNotificationDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK) && elem.getDetails().getRecIndex().equals(destinatario) && elem.getDetails().getSentAttemptMade().equals(tentativo)).findAny().get().getDetails().getNotificationDate();
+            OffsetDateTime analogSuccessDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.ANALOG_SUCCESS_WORKFLOW) && elem.getDetails().getRecIndex().equals(destinatario)).findAny().get().getTimestamp();
+
+            logger.info("DESTINATARIO : {}", destinatario);
+            logger.info("sendAnalogProgressTimestampDate: {}", sendAnalogProgressTimestampDate);
+            logger.info("sendFeedbackTimestampDate: {}", sendFeedbackTimestampDate);
+            logger.info("analogSuccessDate Timestamp: {}", analogSuccessDate);
+            logger.info("shedulingDate Timestamp: {}", shedulingDate);
+
+
+            logger.info("sendFeedbackNotificationDate : {}", sendFeedbackNotificationDate);
+            logger.info("sendAnalogProgressNotificationDate: {}", sendAnalogProgressNotificationDate);
+
+            Assertions.assertEquals(shedulingDate,analogSuccessDate);
+            Assertions.assertEquals(shedulingDate,sendFeedbackTimestampDate);
+
+            Assertions.assertEquals(sendAnalogProgressTimestampDate,sendAnalogProgressNotificationDate);
+            Assertions.assertEquals(sendFeedbackTimestampDate,sendFeedbackNotificationDate);
+
+        }catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    public TimelineElementV20 readingEventUpToTheTimelineElementOfNotificationForCategory(TimelineElementWait timelineElementWait) {
 
         TimelineElementV20 timelineElement = null;
         String iun = null;
@@ -878,8 +991,9 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-    }
 
+        return timelineElement;
+    }
 
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
@@ -3142,6 +3256,22 @@ public class AvanzamentoNotificheB2bSteps {
                 checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
             }
         } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg")
+    public void verificationDateScheduleRefinementWithRefinementPlus10Days() {
+
+        try {
+            OffsetDateTime scheduleDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SEND_ANALOG_FEEDBACK)).findAny().get().getTimestamp().plus(sharedSteps.getSchedulingDaysSuccessAnalogRefinement());
+            OffsetDateTime refinementDate = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            logger.info("scheduleDate : {}", scheduleDate);
+            logger.info("refinementDate : {}", refinementDate);
+
+            Assertions.assertEquals(scheduleDate,refinementDate);
+
+        }catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }

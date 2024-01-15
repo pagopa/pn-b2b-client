@@ -117,6 +117,25 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @Then("l'utente {string} controlla che la data di refinement sia corretta")
+    public void theNotificationDateOfRefinementIsCorrectFromUser(String recipient) {
+        sharedSteps.selectUser(recipient);
+
+        String iun =sharedSteps.getIunVersionamento();
+
+
+        try {
+            OffsetDateTime scheduleDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            logger.info("scheduleDate : {}", scheduleDate);
+            logger.info("refinementDate : {}", refinementDate);
+
+            Assertions.assertEquals(scheduleDate,refinementDate);
+
+        }catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string}")
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {

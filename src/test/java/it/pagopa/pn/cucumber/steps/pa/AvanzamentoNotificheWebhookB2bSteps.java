@@ -564,6 +564,27 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook")
+    public void readStreamTimelineElementAndVerifyDate() {
+        OffsetDateTime EventTimestamp=null;
+        OffsetDateTime NotificationTimestamp=null;
+        try{
+            Assertions.assertNotNull(progressResponseElementList);
+
+            EventTimestamp = progressResponseElementList.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            NotificationTimestamp =sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            logger.info("event timestamp : {}",EventTimestamp);
+            logger.info("notification timestamp : {}",NotificationTimestamp);
+
+            Assertions.assertNotSame(EventTimestamp,NotificationTimestamp);
+
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
+    }
+
 
     @Then("Si verifica che l'elemento di timeline {string} dello stream di {string} non abbia il timestamp uguale a quella della notifica")
     public void readStreamTimelineElementAndVerify(String timelineEventCategory,String pa) {
@@ -762,6 +783,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @And("{string} legge la notifica dopo i 10 giorni")
+    public void userReadNotificationAfterTot(String recipient) {
+        sharedSteps.selectUser(recipient);
+
+        try {
+            Thread.sleep(sharedSteps.getSchedulingDaysSuccessAnalogRefinement().toMillis());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+        Assertions.assertDoesNotThrow(() -> {
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        });
+        try {
+            Thread.sleep(sharedSteps.getWorkFlowWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+    }
 
     @Then("si verifica nello stream del {string} che la notifica abbia lo stato VIEWED")
     public void checkViewedState(String pa) {
