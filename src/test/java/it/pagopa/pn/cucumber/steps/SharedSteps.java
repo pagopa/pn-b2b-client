@@ -1562,6 +1562,7 @@ public class SharedSteps {
         this.notificationError = notificationError;
     }
 
+
     public void setSenderTaxIdFromProperties() {
         switch (settedPa) {
             case "Comune_1":

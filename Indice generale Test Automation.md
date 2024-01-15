@@ -1,26 +1,31 @@
 # Questo elenco riporta i Test Automatici che sono attualmente implementati
 ## Table of Contents
 
-1. [Annullamento_Notifica](#annullamento-notifica)
+1. [Annullamento Notifica](#annullamento-notifica)
 2. [Invio Notifica](#invio-notifica)
    1. [Invio](#invio)
-   2. [Download](#download)
+   2. [Download](#Download notifica)
    3. [Validation](#validation)
 3. [Service_Desk](#service-desk)
-4. [Visualizzazione notifica](#visualizzazione-notifica)
+4. [Versioning API](#versioning)
+5. [Visualizzazione notifica](#visualizzazione-notifica)
    1. [Deleghe](#deleghe)
    2. [Destinatario persona fisica](#destinatario-persona-fisica)
-5. [Workflow notifica](#workflow-notifica)
+6. [Workflow notifica](#workflow-notifica)
    1. [B2B](#b2b)
-   2. [Download](#notifica)
-   3. [Webhook](#webhook)
-6. [Allegati](#allegati)
-7. [Api Key Manager](#api-key-manager)
-8. [Downtime logs](#downtime-logs)
-9. [User Attributes](#user-attributes)
-10. [Test di integrazione della pubblica amministrazione](#test-di-integrazione-della-pubblica-amministrazione)
+   2. [Download](#Download)
+   3. [E2E](#E2E)
+   4. [Webhook](#webhook)
+7. [Address Validation](#Address Validation)
+8. [Allegati](#allegati)
+9. [Api Key Manager](#api-key-manager)
+10. [Audit-Log OpenSeach](#Audit Log OpenSearch)
+11. [Deleghe](#Deleghe new feature)
+12. [Downtime logs](#downtime-logs)
+13. [User Attributes](#user-attributes)
+14. [Test di integrazione della pubblica amministrazione](#test-di-integrazione-della-pubblica-amministrazione)
 
-## Annullamento_Notifica
+## annullamento-notifica
 
 ### Annullamento Notifiche B2b
 
@@ -522,9 +527,9 @@
 1. Viene creata una nuova notifica con destinatario Mario Cucumber
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION" e successivamente annullata
-3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-4. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
-5. il download ha prodotto un errore con status code "`404`"
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. il documento notificato non può essere correttamente recuperato da "`Mario Cucumber`"
+6. il download ha prodotto un errore con status code "`404`"
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
@@ -1250,127 +1255,6 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2b.feature)
 
 </details>
-
-### Annullamento Notifiche B2b Deleghe
-
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. la notifica può essere correttamente recuperata da `Mario Cucumber`
-8. la notifica può essere correttamente letta da `Mario Gherkin` con delega
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PF-ANNULLAMENTO_26_1] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
-8. la notifica può essere correttamente recuperata da `Mario Cucumber`
-9. la notifica può essere correttamente letta da `Mario Gherkin` con delega
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PF-ANNULLAMENTO_26_2] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. la notifica può essere correttamente recuperata da `Mario Cucumber`
-8. la notifica può essere correttamente letta da `Mario Gherkin` con delega
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PF-ANNULLAMENTO_26_3] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
-8. la notifica può essere correttamente recuperata da `Mario Cucumber`
-9. la notifica può essere correttamente letta da `Mario Gherkin` con delega
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-ANNULLAMENTO_32] Invio notifica digitale mono destinatario e recupero documento notificato_scenario negativo
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
-8. il documento notificato non può essere correttamente recuperato da `Mario Gherkin` con delega restituendo un errore `404`
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-ANNULLAMENTO_33] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario negativo
-</summary>
-
-**Descrizione**
-
-1. Mario Gherkin  rifiuta se presente la delega ricevuta Mario Cucumber
-2. Mario Gherkin viene delegato da Mario Cucumber
-3. Mario Gherkin accetta la delega Mario Cucumber
-4. Viene creata una nuova notifica con destinatario Mario Cucumber
-5. la notifica viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED` e successivamente annullata
-6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
-7. il documento notificato non può essere correttamente recuperato da `Mario Gherkin` con delega restituendo un errore `404`
-
-
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/annullamentoNotifica/AnnullamentoNotificheB2bDeleghe.feature)
-
-</details>
-
 
 ### Annullamento Notifiche B2b PG
 
@@ -2135,18 +2019,7 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
 
 </details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-PA-SEND_39] Invio notifica  mono destinatario con allegato Max Num Allegati scenario negativo</summary>
 
-**Descrizione**
-
-1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
-2. la notifica viene inviata tramite api b2b over 15 preload allegato dal `Comune_Multi` e si attende che lo stato diventi REFUSED
-3. si verifica che la notifica non viene accettata causa `INVALID_PARAMETER_MAX_ATTACHMENT`
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
-
-</details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B-PA-SEND_40] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata</summary>
 
@@ -2163,6 +2036,36 @@
 
 </details>
 
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_41] Invio notifica digitale_scenario da PA figlio e non riesce a recuperare la notifica PA padre</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+3. si tenta il recupero dal sistema tramite codice IUN dalla PA `Comune_Root`
+4. l'operazione ha generato un errore con status code `404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_42] Invio notifica digitale_scenario da PA padre e non riesce a recuperare la notifica  PA figlio</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+3. si tenta il recupero dal sistema tramite codice IUN dalla PA `Comune_Son`
+4. l'operazione ha generato un errore con status code `404`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/invioNotifica/invio/pf/InvioNotificheB2bPF2.feature)
+
+</details>
 
 ##### Invio notifiche b2b con altre PA, multi-destinatario e senza pagamento
 
@@ -2256,11 +2159,10 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B-MULTI-PA-SEND_7] Invio notifica multi destinatario destinatario duplicato_scenario negativo</summary>
+  <summary>[B2B-MULTI-PA-SEND_8] Invio notifica multidestinatario max recipient_scenario negativo</summary>
 
 **Descrizione**
 
-:warning: _Ignored_
 
 1. Viene creata una nuova notifica multi destinatario con 15 destinatari
 2. Viene inviata dal `Comune_Multi`
@@ -3138,7 +3040,7 @@
 
 </details>
 
-### Download
+### Download notifica
 
 #### Persona fisica
 
@@ -4660,6 +4562,8 @@
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
 3. viene invocato il servizio CREATE_OPERATION
@@ -4675,6 +4579,31 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_18_1] Invocazione del servizio CREATE_OPERATION con indirizzo errato</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con CF `TMTSFS80A01H703K`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il CF `TMTSFS80A01H703K`
+10. viene invocato il servizio SEARCH con delay
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `KO`
+12. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il `TMTSFS80A01H703K`
+13. viene invocato il servizio UNREACHABLE
+14. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-SERVICE_DESK_CREATE_OPERATION_19] Invocazione del servizio CREATE_OPERATION con ticket id vuoto</summary>
 
@@ -5000,7 +4929,7 @@
 8. il video viene caricato su SafeStorage
 9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTMRC66A01H703L`
 10. viene invocato il servizio SEARCH con delay
-11. Il servizio SEARCH risponde con esito positivo per lo `QAQN-LJXG-YTNA-202309-Q-1` e lo stato della consegna è `OK`
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
 12. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTRCC80A01A509O`
 13. viene invocato il servizio CREATE_OPERATION
 14. la risposta del servizio CREATE_OPERATION risponde con esito positivo
@@ -5010,16 +4939,18 @@
 18. il video viene caricato su SafeStorage
 19. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTRCC80A01A509O`
 20. viene invocato il servizio SEARCH con delay
-21. Il servizio SEARCH risponde con esito positivo per lo `QAQN-LJXG-YTNA-202309-Q-1` e lo stato della consegna è `OK`
+21. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[API-SERVICE_SEARCH_42] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
+  <summary>[API-SERVICE_SEARCH_42_1] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
 
 **Descrizione**
+
+:warning: _Ignored_
 
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
@@ -5035,6 +4966,30 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SERVICE_SEARCH_42] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+9. viene invocato il servizio SEARCH
+10. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `CREATING`
+11. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il `FRMTTR76M06B715E`
+12. viene invocato il servizio UNREACHABLE
+13. la risposta del servizio UNREACHABLE è `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-SERVICE_SEARCH_43] Inserimento di una nuova richista di reinvio pratiche con stato operation id in CREATED</summary>
 
@@ -5126,6 +5081,8 @@
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. viene comunicato il nuovo indirizzo
 2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTVCN80A01H501P`
 3. viene invocato il servizio CREATE_OPERATION
@@ -5152,6 +5109,42 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E_50_1] CF per il quale una consegna per irreperibilità totale è andata  KO e si reinserisce nuova richiesta</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTVCN80A01H501P`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTVCN80A01H501P`
+10. viene invocato il servizio SEARCH
+11. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `KO`
+12. viene comunicato il nuovo indirizzo
+13. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `TMTVCN80A01H501P`
+14. viene invocato il servizio CREATE_OPERATION
+15. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+16. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+17. viene invocato il servizio UPLOAD VIDEO
+18. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+19. il video viene caricato su SafeStorage
+20. viene creata una nuova richiesta per invocare il servizio SEARCH per il `TMTVCN80A01H501P`
+21. viene invocato il servizio SEARCH con delay
+22. Il servizio SEARCH risponde con esito positivo e lo stato della consegna è `OK`
+23. viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il `TMTVCN80A01H501P`
+24. viene invocato il servizio UNREACHABLE
+25. la risposta del servizio UNREACHABLE è `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[API-SERVICE_PREUPLOAD_VIDEO_51] Inserimento di una nuova richista di reinvio pratiche con stato caricamento video su SafeStorage e verifica retention
 </summary>
@@ -5210,7 +5203,7 @@
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary></summary>
+  <summary>[API-AUTH_56] Connessione al client con api key errata</summary>
 
 **Descrizione**
 
@@ -5231,6 +5224,484 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-SLIPT_SPEDIZIONE_57] Creazione spedizione multipla per numero pagine allegati superiore al limite consentito per singola spedizione</summary>
+
+**Descrizione**
+
+1. viene comunicato il nuovo indirizzo
+2. viene creata una nuova richiesta per invocare il servizio CREATE_OPERATION con `FRMTTR76M06B715E`
+3. viene invocato il servizio CREATE_OPERATION
+4. la risposta del servizio CREATE_OPERATION risponde con esito positivo
+5. viene creata una nuova richiesta per invocare il servizio UPLOAD VIDEO
+6. viene invocato il servizio UPLOAD VIDEO
+7. la risposta del servizio UPLOAD VIDEO risponde con esito positivo
+8. il video viene caricato su SafeStorage
+9. viene creata una nuova richiesta per invocare il servizio SEARCH per il `FRMTTR76M06B715E`
+10. viene invocato il servizio SEARCH con delay
+11. il servizio SEARCH risponde con esito positivo con spedizione multipla e lo stato della consegna è `OK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/serviceDesk/ApiServiceDesk.feature)
+
+</details>
+
+## Versioning
+
+### verifica compatibilità tra v1.1 a v2.1
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_8] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW da V1 in ambiente con versione superiore</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_2` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_12] Invio e visualizzazione notifica e verifica amount e effectiveDate da V1 in ambiente con versione superiore</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `LVLDAA85T50G702B` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. l'avviso pagopa viene pagato correttamente dall'utente `0` con versione API V1
+4. si attende il corretto pagamento della notifica con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_10] Invio notifica digitale mono destinatario V1.1 con annullamento V2.1 e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_9] Invio notifica ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario da V1 in ambiente con versione superiore</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_10](da aggiornare id) Invio notifica V1.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2.1 positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_13] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `LVLDAA85T50G702B` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. l'avviso pagopa viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_1] Invio notifica digitale mono destinatario e mono pagamento V2.1 e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_3] Invio notifica digitale mono destinatario e mono pagamento V1.1 e recupero tramite codice IUN V2.1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. si verifica la corretta acquisizione della notifica con versione API V1
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_4] Invio notifica digitale mono destinatario e mono pagamento V2.1 Ccon annullamento e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+5. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_4_1] Invio notifica digitale mono destinatario e mono pagamento V2.1 con annullamento e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+4. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+5. vengono letti gli eventi e verificho che l'utente `0` non abbia associato un evento `NOTIFICATION_CANCELLATION_REQUEST` con versione API V1
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_5] Invio notifica digitale mono destinatario e mono pagamento V1.1 e recupero visualizzazione notifica e verifica amount e effectiveDate V2.1</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. si verifica la corretta acquisizione della notifica con versione API V1
+4. `Mario Cucumber` legge la notifica ricevuta
+5. vengono verificati costo = `100` e data di perfezionamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_6] Invio notifica digitale mono destinatario e mono pagamento con payment senza PagopaForm_scenario V2.1 e recupero con V1.1 positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. si tenta il recupero dal sistema tramite codice IUN con versione API V1
+5. l'operazione ha generato un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_7] Invio notifica digitale V2.1 ed attesa stato ACCEPTED_scenario V1.1 positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. vengono letti gli eventi fino allo stato della notifica `ACCEPTED` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_19] Invio notifica digitale mono destinatario e mono pagamento con PagopaForm_scenario V2.1 e recupero con V1.1 positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_11] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono verificati costo = `100` e data di perfezionamento della notifica con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_14] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.1 a V1.1</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED 
+3. l'avviso pagopa viene pagato correttamente dall'utente `0` con versione API V1
+4. si attende il corretto pagamento della notifica V1 con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_12] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 senza pagoPaIntMode PN-8843</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono verificati costo = `100` e data di perfezionamento della notifica V1 con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_13] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V1.1 senza payment_pagoPaForm PN-8842</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_14] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1_1ToV2_1.feature)
+
+</details>
+
+
+### verifica compatibilità tra v1 a v2
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_15] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED  con versione API V2
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_17] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V1.1 positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED  con versione API V2
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_18] Invio notifica digitale mono destinatario V2 e recupero tramite codice IUN V1 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber` con versione API V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED  con versione API V2
+3. si verifica la corretta acquisizione della notifica con versione API V2
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_19] Recupero notifica V1 non esistente su Send V2.0</summary>
+
+**Descrizione**
+
+1. si tenta il recupero della notifica dal sistema tramite codice IUN `UGYD-XHEZ-KLRM-202208-X-0` con versione API V2
+2. l'operazione ha prodotto un errore con status code `404`
+3. si tenta il recupero della notifica dal sistema tramite codice IUN `UGYD-XHEZ-KLRM-202208-X-0` con versione API V1
+4. l'operazione ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_20] Invio notifica digitale mono destinatario V2 e controllo che V1 non abbia l'evento "NOTIFICATION_CANCELLED"</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario Mario Cucumber e versione API V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata con versione API V2
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED` con versione API V2
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con versione API V1
+5. vengono letti gli eventi della timeline e si controlla che l'evento di timeline `NOTIFICATION_CANCELLED` non esista con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_21] Controlle se presente lo stato ACCEPTED nella versione V1</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario Mario Cucumber e versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED con versione API V1
+3. vengono letti gli eventi fino allo stato della notifica `ACCEPTED` con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V1ToV2.feature)
+
+</details>
+
+### verifica compatibilità tra v2 a v2.1
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_16] Invio notifica V2.1 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` con versione API V2
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_2] Invio notifica digitale mono destinatario e mono pagamento V2.1 e recupero tramite codice IUN V2.0 (p.fisica)_scenario positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_19](aggiorare id duplicato) Invio notifica digitale mono destinatario e mono pagamento con PagopaForm_scenario V2.1 e recupero con V1.1 positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_20] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2 a V2.1 senza pagoPaIntMode PN-8843</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione Api V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione Api V2
+3. si verifica la corretta acquisizione della notifica con versione Api V2
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_21] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V2.1 e recupero con V2.0 senza payment_pagoPaForm PN-8842</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione Api V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione Api V2
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN con versione OpenApi V20
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-SEND_VERSION_22] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V2.1 e recupero con V2.1 senza payment_pagoPaForm PN-8842</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin` con versione Api V2
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED con versione Api V2
+3. la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/versioning/V2toV2_1.feature)
+
+</details>
+
 
 ## Visualizzazione notifica
 
@@ -5678,6 +6149,90 @@
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PG-MANDATE_14] Invio notifica digitale con delega senza gruppo e assegnazione di un gruppo alla delega da parte del PG amministratore  positivo PN-5962</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` viene delegato da `GherkinSrl`
+2. `CucumberSpa` accetta la delega `GherkinSrl`
+3. Viene generata una nuova notifica con destinatario `GherkinSrl`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. come amministratore `GherkinSrl` associa alla delega il primo gruppo disponibile attivo per il delegato `CucumberSpa`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-PG-MANDATE_15] Invio notifica digitale con delega ad un PG amministratore e recupero della stessa positivo</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` viene delegato da `Mario Cucumber`
+2. `CucumberSpa` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. la notifica può essere correttamente letta da `CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-PG-MANDATE_16] Invio notifica digitale con delega senza gruppo e assegnazione di un gruppo alla delega da parte del PG amministratore e recupero della stessa positivo</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` viene delegato da `Mario Cucumber`
+2. `CucumberSpa` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. la notifica può essere correttamente letta da `CucumberSpa` con delega
+6. come amministratore `Mario Cucumber` associa alla delega il primo gruppo disponibile attivo per il delegato `CucumberSpa`
+7. la notifica può essere correttamente letta da `CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-PG-MANDATE_17] Invio notifica digitale con delega senza gruppo ad un PG amministratore e altro destinatario e recupero_scenario positivo</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` viene delegato da `Mario Cucumber`
+2. `CucumberSpa` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatari `Mario Cucumber` e `CucumberSpa`
+4. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. la notifica può essere correttamente letta da `Mario Cucumber`
+6. la notifica può essere correttamente letta da `CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-PG-MANDATE_18] Invio notifica digitale con delega senza gruppo ad un PG amministratore e altro destinatario e assegnazione di un gruppo con recupero_scenario positivo</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` viene delegato da `Mario Cucumber`
+2. `CucumberSpa` accetta la delega `Mario Cucumber`
+3. Viene generata una nuova notifica con destinatari `Mario Cucumber` e `CucumberSpa`
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+5. la notifica può essere correttamente letta da `Mario Cucumber`
+6. la notifica può essere correttamente letta da `CucumberSpa` con delega
+6. come amministratore `Mario Cucumber` associa alla delega il primo gruppo disponibile attivo per il delegato `CucumberSpa`
+7. la notifica può essere correttamente letta da `CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/visualizzazioneNotifica/deleghe/pg/RicezioneNotifichePGWebDeleghe.feature)
+
+</details>
+
+
 
 
 #### Persona fisica e giuridica
@@ -6466,6 +7021,538 @@
 
 #### Persona fisica
 
+##### Avanzamento notifiche b2b asincrona con controllo costi su GPD per persona fisica
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_1_PF] Notifica mono PF-Caso creazione Notifica di tipo non ASYNC, validazione non prevista</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica sincrona con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_2_PF] Notifica mono PF-Senza verifica amount GPD per notifica ASYNC e campo feePolicy a FLAT_RATE</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_3_PF] Notifica mono PF-Rifiuto in caso di notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi non abilitati alla modalità asincrona</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_4_PF] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. l'avviso pagopa viene pagato correttamente
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `PAYMENT` e successivamente annullata
+10. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+11. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+12. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+13. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+14. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_5_PF] Notifica mono PF-Senza verifica amount GPD per notifica ASYNC e campo paFee non popolato - Refused</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_6_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato “REQUEST_REFUSED“</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+5. lettura amount posizione debitoria di `Mario Gherkin`
+6. viene effettuato il controllo del amount di GPD = `100`
+7. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_7_PF] Notifica mono PF-Aggiornamento costi KO per posizione debitoria non presente</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_8_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato “NOTIFICATION_CANCELLED“</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+9. la notifica può essere annullata dal sistema tramite codice IUN
+10. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+11. lettura amount posizione debitoria di `Mario Gherkin`
+12. viene effettuato il controllo del amount di GPD = `100`
+13. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_9_PF] Notifica mono PF Multipagamento-Verifica amount GPD notifica async dopo pagamento di un solo pagamento poi annullata la notifica il secondo pagamento amount non azzerrato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `1`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+6. viene cancellata la posizione debitoria del pagamento `0`
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` e successivamente annullata
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+9. lettura amount posizione debitoria per pagamento `1`
+10. viene effettuato il controllo del amount di GPD = `100`
+11. viene cancellata la posizione debitoria del pagamento `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_10_PF] Notifica mono PF Multipagamento-Verifica amount GPD notifica async dopo pagamento tutti i pagamenti poi annullata la notifica il secondo pagamento amount non azzerrato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `1`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+6. viene cancellata la posizione debitoria del pagamento `0`
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` e successivamente annullata
+10. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+11. viene cancellata la posizione debitoria del pagamento `0`
+12. viene effettuato il controllo del amount di GPD = `100`
+13. lettura amount posizione debitoria per pagamento `1`
+14. viene effettuato il controllo del amount di GPD = `100`
+15. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_11_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC per Multipagamento</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona multipagamento con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+9. lettura amount posizione debitoria di `Mario Gherkin`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del pagamento `0`
+11. viene cancellata la posizione debitoria del pagamento `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_12_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato “VALIDATION“</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_13_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al primo tentativo</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_0`
+9. lettura amount posizione debitoria di `Mario Gherkin`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
+11. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_14_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_0`
+9. lettura amount posizione debitoria di `Mario Gherkin`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` utente `0` al tentativo `0`
+11. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `ATTEMPT_1`
+12. lettura amount posizione debitoria di `Mario Gherkin`
+13. viene effettuato il controllo del cambiamento del amount nella timeline`SEND_ANALOG_DOMICILE` utente `0` al tentativo `1`
+14. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_15_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0` del pagamento `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+9. lettura amount posizione debitoria di `Mario Gherkin`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
+11. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_16_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato "VALIDATION" --> “SEND_SIMPLE_REGISTERED_LETTER“</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+9. lettura amount posizione debitoria di `Mario Gherkin`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` del utente `0`
+11. viene cancellata la posizione debitoria di `Mario Gherkin`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_17_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC cancellazione posizione debitoria dopo validazione della notifica</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Mario Gherkin`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. viene cancellata la posizione debitoria di `Mario Gherkin`
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_18_PF] Notifica mono PF-Verifica scarto notifica se applyCostFlag a false</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+5. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_1_VERSIONAMENTO] Creazione notifica ASYNC con V1 - Errore</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin` con versione API V1
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED con versione API V1
+5. si verifica lo scarto dell' acquisizione della notifica con versione API V1
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_2_VERSIONAMENTO] Creazione notifica ASYNC con V2.1 e recupero tramite codice IUN V1 (p.fisica)_scenario negativo</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. si verifica la corretta acquisizione della notifica
+6. la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V1 generando un errore
+7. l'operazione ha prodotto un errore con status code `400`
+8. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_3_VERSIONAMENTO] Creazione notifica ASYNC con V2.1 e recupero tramite codice IUN V2.0 (p.fisica)_scenario negativo</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. si verifica la corretta acquisizione della notifica
+6. la notifica non può essere recuperata dal sistema tramite codice IUN con OpenApi V2 generando un errore
+7. l'operazione ha prodotto un errore con status code `400`
+8. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_1_MULTI] Notifica multi PF/PG-Rifiuto di notifiche con modalità asincrona di integrazione al cui interno risultano avvisi non abilitati alla modalità asincrona</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica asincrona con destinatario `Mario Gherkin`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_2_MULTI] Notifica multi PF/PG-Verifica amount GPD in fase "REQUEST_REFUSED" costo aggiornato a 0</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `05722930657`
+3. viene generata una nuova notifica asincrona con destinatari `Mario Gherkin`e `Gherkin Analogic`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione `0` del pagamento `0`
+5. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `1` del pagamento `0`
+6. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+7. lettura amount posizione debitoria di `Mario Gherkin`
+8. viene effettuato il controllo del amount di GPD = `100`
+9. lettura amount posizione debitoria di `Gherkin Analogic`
+10. viene effettuato il controllo del amount di GPD = `100`
+11. viene cancellata la posizione debitoria di `Mario Gherkin`
+12. viene cancellata la posizione debitoria di `Gherkin Analogic`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_3_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "NOTIFICATION_CANCELLED"</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `05722930657`
+3. viene generata una nuova notifica asincrona con destinatari `Mario Gherkin`e `Gherkin Analogic`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione debitoria `0` del pagamento `0`
+5. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione debitoria `1` del pagamento `0`
+6. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+8. lettura amount posizione debitoria di `Mario Gherkin`
+9. viene effettuato il controllo del amount di GPD = `100`
+10. lettura amount posizione debitoria di `Gherkin Analogic`
+11. viene effettuato il controllo del amount di GPD = `100`
+12. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_4_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC per Multipagamento</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `05722930657`
+3. viene generata una nuova notifica asincrona con destinatari `Mario Gherkin`e `Gherkin Analogic`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione debitoria `0` del pagamento `0`
+5. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione debitoria `1` del pagamento `1`
+6. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione debitoria `2` del pagamento `0`
+7. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione debitoria `3` del pagamento `1`
+8. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+9. viene aggiunto il costo della notifica totale
+10. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+11. la notifica può essere annullata dal sistema tramite codice IUN
+12. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+13. lettura amount posizione debitoria per pagamento `0`
+14. viene effettuato il controllo del amount di GPD con amount notifica del pagamento `0`
+15. lettura amount posizione debitoria per pagamento `1`
+16. viene effettuato il controllo del amount di GPD = `100`
+17. lettura amount posizione debitoria per pagamento `2`
+18. viene effettuato il controllo del amount di GPD = `100`
+19. lettura amount posizione debitoria per pagamento `3`
+20. viene effettuato il controllo del amount di GPD = `100`
+21. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_5_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `05722930657`
+3. viene generata una nuova notifica asincrona con destinatari `Mario Gherkin`e `Gherkin Analogic`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Mario Gherkin` alla posizione debitoria `0` del pagamento `0`
+5. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione debitoria `1` del pagamento `0`
+6. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+7. viene aggiunto il costo della notifica totale
+8. lettura amount posizione debitoria di `Mario Gherkin`
+9. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+10. lettura amount posizione debitoria di `Gherkin Analogic`
+11. viene effettuato il controllo dell'aggiornamento del costo totale del utente `1`
+12. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0`
+13. lettura amount posizione debitoria di `Mario Gherkin`
+14. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0` al tentativo `0`
+15. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1` 
+16. lettura amount posizione debitoria di `Gherkin Analogic`
+17. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1` al tentativo `1`
+18. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_6_MULTI] Notifica mono PF/PG-Verifica scarto notifica se applyCostFlag a false</summary>
+
+**Descrizione**
+
+
+1. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Mario Gherkin` con CF `CLMCST42R12D969Z`
+2. viene creata una nuova richiesta per istanziare 2 nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `05722930657`
+3. viene generata una nuova notifica asincrona con destinatari `Mario Gherkin`e `Gherkin Analogic`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+5. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheAsyncB2bPF.feature)
+
+</details>
+
 ##### Avanzamento notifiche b2b persona fisica
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6740,10 +7827,60 @@
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. Viene generata una nuova notifica con destinatario persona fisica
 2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW`
 4. Viene verificato che nell'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW` sia presente il campo Digital Address
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_23] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE sia presente il campo Digital Address scenario positivo PN-5992</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_DIGITAL_WORKFLOW`
+4. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_24] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
+5. `Mario Gherkin` legge la notifica ricevuta
+6. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_VIEWED`
+7. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_DIGITAL_UAT_10000] Invio notifica ed attesa elemento di  positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino allo stato della notifica `DELIVERED`
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPF.feature)
 
@@ -6886,6 +8023,2274 @@
 
 </details>
 
+##### Avanzamento notifiche b2b multi pagamento
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_1] PA - inserimento notifica mono destinatario con un due avvisi pagoPA e costi di notifica inclusi  modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_2] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_3] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene verificato il costo = `100` della notifica per l'utente `0`
+5. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_4] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_5] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE applyCost true (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_24_6] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità DELIVERY_MODE applyCost false (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_25] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_25_1] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PA-PAY_MULTI_26] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 2)  e nessun F24 con costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PA-PAY_MULTI_26_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 3) e nessun F24 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_26_2] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 4) e nessun F24 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_26_3] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_26_4] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 2) e nessun F24 con costi non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_27] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA e costi  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_27_1] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA e costi non  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_29] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_29_1] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_30] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_30_1] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] e costi non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_30_2] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] e costi inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_31] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_31_1] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica non  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `0` della notifica per l'utente `0`
+4. viene verificato il costo = `0` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_32] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_32_1] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica non  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_32_2] PA - inserimento notifica multi destinatario con il destinatario 1 con un solo F24 e destinatario 2 con solo avviso pagoPa e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_33] PA - inserimento notifica multi destinatario con più avvisi pagoPA e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_34] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_35] PA - inserimento notifica mono destinatario con un solo F24 e costi inclusi -  download modello F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene richiesto il download del documento `F24`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_35_1] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi - download modello F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. si verifica la corretta acquisizione della notifica
+5. viene richiesto il download del documento `F24` per il destinatario `0`
+6. il download non ha prodotto errori
+7. viene richiesto il download del documento `F24` per il destinatario `1`
+8. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_36] PA - inserimento notifica mono destinatario con un solo pagoPA e costi inclusi - download allegato pagoPA</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene richiesto il download del documento `PAGOPA`
+5. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]  costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_43_1] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di più avvisi costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4  l'avviso pagopa `1` viene pagato correttamente dall'utente `0`
+5. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica con l' avviso `1` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_44_1](da completare) Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_45] Destinatario PF: inserimento notifica mono destinatario con solo F24 e costi inclusi - download allegato F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. l'allegato `F24` può essere correttamente recuperato da `Mario Cucumber`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_46] Destinatario PF: inserimento notifica mono destinatario con solo pagoPA e costi inclusi - download allegato pagoPA</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Cucumber`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_47_1] Destinatario 1 - pagamento notifica multi destinatario con più avvisi pagoPA (almeno 2) e con pagamento di un solo avviso e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_47_2] Destinatario 1 - pagamento notifica multi destinatario con più avvisi PagoPa e modello F24 e con pagamento di un solo avviso e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_48] Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica l'utente  `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica l'utente  `0`
+4. viene verificato il costo = `100` della notifica l'utente  `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_51] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_52] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_53] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_55] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_56] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_57] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_58] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_59] PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_60] PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. si attende il corretto pagamento della notifica dell'utente `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_64] Test di Validazione degli oggetti di pagamento ricevuti: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_64_1] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_64_2] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy FLAT_RATE e  destinatario2 con applyCostTrue</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_64_3] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti feePolicy DELIVERY_MODE e destinatario1 con applyCost false -  destinatario2 con applyCost true</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_64_4] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: istanze di pagamento non coerenti (destinatario1 più pagamenti e destinatario2 un solo pagamento)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_66] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. gli avvisi PagoPa vengono pagati correttamente dal destinatario  `0`
+4. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+5. si attende il corretto pagamento della notifica con l' avviso `1` dal destinatario `0`
+6. verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_67] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA] e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dal destinatario  `0`
+4. l'avviso pagopa viene pagato correttamente dal destinatario `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+7. verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_68] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento da effettuare  e status REQUIRED</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con creditore `77777777777` e `302000100000019421`
+2. verifica stato pagamento di una notifica con status `REQUIRED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_68_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento effettuato  errore 409 PAGAMENTO_DUPLICATO</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con creditore `77777777777` e `302191689948151964`
+2. verifica stato pagamento di una notifica con status `REQUIRED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_68_2] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - Pagamento sconosciuto  errore 404  e status FAILURE PAGAMENTO_SCONOSCIUTO</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con creditore `77777777777` e `302300118000019102`
+2. verifica stato pagamento di una notifica con status `FAILURE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_68_3_1] Pagamenti in FAILURE: Verifica di tutti i possibili KO [TA] - PA sconosciuta  errore 400 e status FAILURE  stazione int PA sconosciuta</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con creditore `77777777777` e `402000118000019102`
+2. verifica stato pagamento di una notifica con status `FAILURE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA e F24</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Cucumber` accetta la delega `Mario Cucumber`
+4. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+6. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Gherkin` con delega
+7. `Mario Cucumber` tenta il recupero dell'allegato `PAGOPA`
+8. il download non ha prodotto errori
+9. l'allegato `F24` può essere correttamente recuperato da `Mario Gherkin` con delega
+10. `Mario Cucumber` tenta il recupero dell'allegato `F24`
+11. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Cucumber` accetta la delega `Mario Cucumber`
+4. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+6. l'allegato `PAGOPA` può essere correttamente recuperato da `Mario Gherkin` con delega
+7. `Mario Cucumber` tenta il recupero dell'allegato `PAGOPA`
+8. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `PAGOPA`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_71_2] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `REFINEMENT` esista
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT` 
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_71_1] Verifica retention allegati di pagamento (7gg precaricato) - PagoPa</summary>
+
+**Descrizione**
+
+1. viene effettuato il pre-caricamento di un allegato
+2. viene effettuato un controllo sulla durata della retention di `PAGOPA` precaricato
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+5. viene verificato che l'elemento di timeline `REFINEMENT` esista
+6. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT` 
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_72_4] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+5. viene verificato che l'elemento di timeline `REFINEMENT` esista
+6. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT` 
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_72_1](id già presente da aggiornare) Verifica retention allegati di pagamento (7gg precaricato) - F24</summary>
+
+**Descrizione**
+
+1. viene effettuato il pre-caricamento dei metadati f24
+2. viene effettuato un controllo sulla durata della retention di `F24` precaricato
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_72_3] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `F24`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene richiesto il download del documento `F24`
+5. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. l'allegato `F24` può essere correttamente recuperato da `Mario Cucumber`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. il documento di pagamento `PAGOPA` può essere recuperata tramite AppIO da `Mario Cucumber`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. il documento di pagamento `F24` può essere recuperata tramite AppIO da `Mario Cucumber`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_77] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `Mario Cucumber` tenta il recupero dell'allegato `PAGOPA`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_77_1] Destinatario PF: dettaglio notifica annullata - download bollettini di pagamento F24 (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `Mario Cucumber` tenta il recupero dell'allegato `F24`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_78] Destinatario Multi PF: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `Mario Cucumber` e `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `Mario Cucumber` tenta il recupero dell'allegato `PAGOPA`
+6. il download ha prodotto un errore con status code `404`
+7. `Mario Gherkin` tenta il recupero dell'allegato `PAGOPA`
+8. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_78_1] Destinatario Multi PF: dettaglio notifica annullata - download bollettini di pagamento F24 (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `Mario Cucumber` e `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `Mario Cucumber` tenta il recupero dell'allegato `F24`
+6. il download ha prodotto un errore con status code `404`
+7. `Mario Gherkin` tenta il recupero dell'allegato `F24`
+8. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_79] PA mittente: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+7. viene richiesto il download del documento `PAGOPA`
+8. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_79_1] PA mittente: dettaglio notifica annullata - download bollettini di pagamento F24 (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. viene richiesto il download del documento `F24`
+8. l'operazione ha generato un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80] PA - Invio RS DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_1_1] PA - Invio RS DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_2] PA - Invio RS DELIVERY_MODE con Costi inclusi - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_3] PA - Invio RS FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_4] PA - Invio RS DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_5] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_6] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_7] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_80_8] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_1] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_2] PA - Invio AR FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_3] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_4] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_5] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_6] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_7] PA - Invio AR FLAT_RATE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo costi di notifica non inclusi più paFee</summary>
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_8] PA - Invio AR FLAT_RATE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_9] PA - Invio AR DELIVERY_MODE -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_10] PA - Invio AR DELIVERY_MODE  -  Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_81_11] PA - Invio AR DELIVERY_MODE  -  Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Irreperibile_AR_scenario positivo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. 1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_1] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_2] PA - Invio 890 FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_3] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_4] PA - Invio 890 DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_5] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_82_6] PA - Invio 890 FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_1] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_2] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_3] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-ID code empty if the tax code is present.</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_4] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_5] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_83_6] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-taxCode e comune non cogruente.</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_84] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_84_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_84_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=true su tutti i record) scenario negativo.</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_84_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=false su tutti i record ) scenario negativo.</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_85] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_85_1] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_85_2] PA - inserimento notifica mono destinatario con un solo F24 LOCAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_86] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_86_1] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_86_2] PA - inserimento notifica mono destinatario con un solo F24 REGION DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_87] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_87_1] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_87_2] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_88] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_88_1] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PA-PAY_MULTI_88_2] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PA-PAY_MULTI_88_3] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE DELIVERY_MODE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary> [B2B-PA-PAY_MULTI_88_4] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_88_5] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi e credit e debit valorizzati sullo stesso record - scenario negativo).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_90] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Rossi`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_90_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24 (almeno 2) e costi inclusi</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Rossi`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_91] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Rossi`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_91_1] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_92] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee su debit di importo 0 ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93] PA - Invio pec DELIVERY_MODE  -   Invio notifica DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica  DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_2] PA - Invio pec DELIVERY_MODE  -   Invio notifica  DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_3] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_4] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_5] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_6] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_93_7] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_94] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) - senza allegato Avviso PagoPA</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_94_1] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) - senza allegato Avviso PagoPA e verifica costo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato)  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica  inclusi).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_3] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Debit Numerico di 15 - Numeric value (730927309273092) out of range of int (-2147483648 - 2147483647) .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_4] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_5] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_6] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Format scenario negativo" .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_95_7] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Lengh scenario negativo" .</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `REFUSED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_96] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e senza paFee - PN-8906</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene richiesto il download del documento `F24`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFMultiPagamento.feature)
+
+
+
 ##### Avanzamento notifiche b2b persona fisica pagamento
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -6976,6 +10381,20 @@
 :warning: _Ignored_
 
 1. Viene generata una nuova notifica con feePolicy `DELIVERY_MODE`, `payment_pagoPaForm` e creditorTaxId `77777777777`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+3. L'avviso pagopa viene pagato correttamente
+4. Si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotificheB2bPFPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_8] Comunicazione da parte della PA dell'avvenuto pagamento di tipo PagoPA  7741</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con feePolicy `DELIVERY_MODE` e `payment_pagoPaForm`
 2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
 3. L'avviso pagopa viene pagato correttamente
 4. Si attende il corretto pagamento della notifica
@@ -8059,97 +11478,69 @@
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
 
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_890_5] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
 
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `REGISTERED_LETTER_890 `, physicalAddress `Via@ok_890`, feePolicy `DELIVERY_MODE` e `physicalAddress_zip 16121`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 391` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_890_6] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `REGISTERED_LETTER_890 `, physicalAddress `Via@ok_890`, feePolicy `FLAT_RATE` e `physicalAddress_zip 16121`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `REGISTERED_LETTER_890 `, physicalAddress `Via@ok_890`, feePolicy `DELIVERY_MODE`, `physicalAddress_zip 16121` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 521` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, physicalCommunication `REGISTERED_LETTER_890 `, physicalAddress `Via@ok_890`, feePolicy `FLAT_RATE`, `physicalAddress_zip 16121` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogico890.feature)
-
-</details>
-
-
-##### Costo notifica con workflow analogico per persona fisica
+##### Costo notifica con workflow analogico per persona fisica AR
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 400` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il `costo = 544` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_2] Invio notifica e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
 1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+5. Viene verificato il `costo = 0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
+
+
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PF_AR_3] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy DELIVERY_MODE`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. Viene verificato il `costo = 0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_4] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy FLAT_RATE`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. Viene verificato il `costo = 0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+5. Viene verificato il `costo = 0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PF_AR_5] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -8163,19 +11554,18 @@ Dati destinatario
 | physicalAddress_zip          | 88010          |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
-| payment_pagoPaForm           | NULL           |
 
 1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 565` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il `costo = 1037` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_5] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -8186,50 +11576,21 @@ Dati destinatario
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
+| physicalAddress_zip          | ZONA_2         |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
-| payment_pagoPaForm           | NULL           |
 
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il `costo = 1037` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_5] Invio notifica con allegato e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy DELIVERY_MODE` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 533` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_6] Invio notifica con allegato e verifica costo con FSU + @OK_AR + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy FLAT_RATE` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_7] Invio notifica verifica con e allegato costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_6] Invio notifica con allegato e verifica costo con ZONA_2 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -8237,25 +11598,25 @@ Dati destinatario
 
 | parameter                    | value          |
 | ---------------------------- | -------------- |
-| payment_pagoPaForm           | SI             |
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
+| physicalAddress_zip          | ZONA_2         |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
 
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 798` della notifica
+3. Viene verificato il `costo = 0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+5. Viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_7] Invio notifica e verifica costo ZONA_1 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -8263,183 +11624,103 @@ Dati destinatario
 
 | parameter                    | value          |
 | ---------------------------- | -------------- |
-| payment_pagoPaForm           | SI             |
 | digitalDomicile              | NULL           |
-| physicalAddress_State        | BRASILE        |
-| physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
-| physicalAddress_province     | Santa Catarina |
+| physicalAddress_State        | FRANCIA        |
+| physicalAddress_municipality | Parigi  	|
+| physicalAddress_zip          | ZONA_1         |
+| physicalAddress_province     | Paris		|
 | physicalAddress_address      | Via@ok_RIR     |
 
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il `costo = 921` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_9] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy DELIVERY_MODE` e `physicalAddress_zip 38121`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 374` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_10] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy FLAT_RATE` e `physicalAddress_zip 38121`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_8] Invio notifica e verifica costo ZONA_1 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter                    | value      |
-| ---------------------------- | ---------- |
-| digitalDomicile              | NULL       |
-| physicalAddress_State        | FRANCIA    |
-| physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
-| physicalAddress_province     | Paris      |
-| physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| parameter                    | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | FRANCIA        |
+| physicalAddress_municipality | Parigi  	|
+| physicalAddress_zip          | ZONA_1         |
+| physicalAddress_province     | Paris		|
+| physicalAddress_address      | Via@ok_RIR     |
+
+
+1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. Viene verificato il `costo = 0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+5. Viene verificato il `costo = 0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PF_AR_9] Invio notifica e verifica costo ZONA_3 + @OK_RIR + DELIVERY_MODE positivo</summary>
+
+**Descrizione**
+
+Dati destinatario
+
+| parameter                    | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | AUSTRALIA      |
+| physicalAddress_municipality | Hobart  	|
+| physicalAddress_zip          | ZONA_3         |
+| physicalAddress_province     | Tasmania	|
+| physicalAddress_address      | Via@ok_RIR     |
+
 
 1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 511` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il `costo = 1095` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_AR_10] Invio notifica e verifica costo ZONA_3 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter                    | value      |
-| ---------------------------- | ---------- |
-| digitalDomicile              | NULL       |
-| physicalAddress_State        | FRANCIA    |
-| physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
-| physicalAddress_province     | Paris      |
-| physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| parameter                    | value          |
+| ---------------------------- | -------------- |
+| digitalDomicile              | NULL           |
+| physicalAddress_State        | AUSTRALIA      |
+| physicalAddress_municipality | Hobart  	|
+| physicalAddress_zip          | ZONA_3         |
+| physicalAddress_province     | Tasmania	|
+| physicalAddress_address      | Via@ok_RIR     |
+
 
 1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
 
 </details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + DELIVERY_MODE positivo</summary>
 
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy DELIVERY_MODE`, `physicalAddress_zip 38121` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 497` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `physicalAddress_address Via@ok_AR`, `feePolicy FLAT_RATE`, `physicalAddress_zip 38121` e `payment_pagoPaForm SI`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value      |
-| ---------------------------- | ---------- |
-| payment_pagoPaForm           | SI         |
-| digitalDomicile              | NULL       |
-| physicalAddress_State        | FRANCIA    |
-| physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
-| physicalAddress_province     | Paris      |
-| physicalAddress_address      | Via@ok_RIR |
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy DELIVERY_MODE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 700` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value      |
-| ---------------------------- | ---------- |
-| payment_pagoPaForm           | SI         |
-| digitalDomicile              | NULL       |
-| physicalAddress_State        | FRANCIA    |
-| physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
-| physicalAddress_province     | Paris      |
-| physicalAddress_address      | Via@ok_RIR |
-
-1. Viene generata una nuova notifica con destinatario persona fisica, `physicalCommunication AR_REGISTERED_LETTER`, `feePolicy FLAT_RATE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoAR.feature)
-
-</details>
 
 ##### Costo notifica con workflow analogico per persona fisica RIS
 
@@ -8448,19 +11729,10 @@ Dati destinatario
 
 **Descrizione**
 
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 233` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = 404` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
@@ -8470,25 +11742,16 @@ Dati destinatario
 
 **Descrizione**
 
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 0` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = 0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RIS_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -8498,119 +11761,21 @@ Dati destinatario
 | ---------------------------- | ------------ |
 | physicalAddress_State        | FRANCIA      |
 | physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| digitalDomicile_address      | test@fail.it |
-| physicalAddress_address      | Via@ok_RIS   |
-| payment_pagoPaForm           | NULL         |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 233` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value        |
-| ---------------------------- | ------------ |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
-| physicalAddress_province     | Paris        |
-| digitalDomicile_address      | test@fail.it |
-| physicalAddress_address      | Via@ok_RIS   |
-| payment_pagoPaForm           | NULL         |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_5] Invio notifica con allegato e verifica costo con FSU + @OK_RS + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 233` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_6] Invio notifica con allegato e verifica costo con FSU + @OK_RS + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_7] Invio notifica verifica con allegato e costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value        |
-| ---------------------------- | ------------ |
-| payment_pagoPaForm           | SI           |
-| physicalAddress_State        | FRANCIA      |
-| physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
+| physicalAddress_zip          | ZONE_1       |
 | physicalAddress_province     | Paris        |
 | digitalDomicile_address      | test@fail.it |
 | physicalAddress_address      | Via@ok_RIS   |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 233` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = 742` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_8] Invio notifica con allegato e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[[B2B_COSTO_ANALOG_PF_RIS_4] Invio notifica e verifica costo con ZONE_1 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -8618,10 +11783,9 @@ Dati destinatario
 
 | parameter                    | value        |
 | ---------------------------- | ------------ |
-| payment_pagoPaForm           | SI           |
 | physicalAddress_State        | FRANCIA      |
 | physicalAddress_municipality | Parigi       |
-| physicalAddress_zip          | 75007        |
+| physicalAddress_zip          | ZONE_1       |
 | physicalAddress_province     | Paris        |
 | digitalDomicile_address      | test@fail.it |
 | physicalAddress_address      | Via@ok_RIS   |
@@ -8636,41 +11800,22 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_9] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RS_5] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| physicalAddress_zip     | 39100        |
-| payment_pagoPaForm      | NULL         |
-
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 212` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = <COSTO>` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_10] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RS_6] Invio notifica e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
 
 **Descrizione**
-
-Dati destinatario
-
-| parameter               | value        |
-| ----------------------- | ------------ |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| physicalAddress_zip     | 39100        |
-| payment_pagoPaForm      | NULL         |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -8682,47 +11827,44 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_11] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RIS_7] Invio notifica e verifica costo ZONA_2 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter                    | value          |
-| ---------------------------- | -------------- |
-| digitalDomicile_address      | test@fail.it   |
-| physicalAddress_State        | BRASILE        |
-| physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
-| physicalAddress_province     | Santa Catarina |
-| physicalAddress_address      | Via@ok_RIS     |
-| payment_pagoPaForm           | NULL           |
+| parameter                    | value        |
+| ---------------------------- | ------------ |
+| physicalAddress_State        | BRASILE      |
+| physicalAddress_municipality | Florianopolis|
+| physicalAddress_zip          | ZONA_2       |
+| physicalAddress_province     | Santa Catarina|
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 302` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = 858` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_12] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RIS_8] Invio notifica e verifica costo ZONA_2 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter                    | value          |
-| ---------------------------- | -------------- |
-| digitalDomicile_address      | test@fail.it   |
-| physicalAddress_State        | BRASILE        |
-| physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
-| physicalAddress_province     | Santa Catarina |
-| physicalAddress_address      | Via@ok_RIS     |
-| payment_pagoPaForm           | NULL           |
+| parameter                    | value        |
+| ---------------------------- | ------------ |
+| physicalAddress_State        | AUSTRALIA    |
+| physicalAddress_municipality | Hobart       |
+| physicalAddress_zip          | ZONA_2       |
+| physicalAddress_province     | Tasmania     |
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -8734,93 +11876,44 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_13] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RIS_9] Invio notifica e verifica costo ZONA_3 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter               | value        |
-| ----------------------- | ------------ |
-| payment_pagoPaForm      | SI           |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| physicalAddress_zip     | 39100        |
+| parameter                    | value        |
+| ---------------------------- | ------------ |
+| physicalAddress_State        | AUSTRALIA    |
+| physicalAddress_municipality | Florianopolis|
+| physicalAddress_zip          | ZONA_3       |
+| physicalAddress_province     | Santa Catarina|
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 212` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il `costo = 915` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RS_14] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PF_RIS_10] Invio notifica e verifica costo ZONA_3 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
 Dati destinatario
 
-| parameter               | value        |
-| ----------------------- | ------------ |
-| payment_pagoPaForm      | SI           |
-| digitalDomicile_address | test@fail.it |
-| physicalAddress_address | Via@ok_RS    |
-| physicalAddress_zip     | 39100        |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_15] Invio notifica verifica con e allegato costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value          |
-| ---------------------------- | -------------- |
-| payment_pagoPaForm           | SI             |
-| digitalDomicile_address      | test@fail.it   |
-| physicalAddress_State        | BRASILE        |
-| physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
-| physicalAddress_province     | Santa Catarina |
-| physicalAddress_address      | Via@ok_RIS     |
-
-1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy DELIVERY_MODE`
-2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
-3. Viene verificato il `costo = 100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-5. Viene verificato il `costo = 302` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/AvanzamentoNotifichePFCostoAnalogicoRS.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PF_RIS_16] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-Dati destinatario
-
-| parameter                    | value          |
-| ---------------------------- | -------------- |
-| payment_pagoPaForm           | SI             |
-| digitalDomicile_address      | test@fail.it   |
-| physicalAddress_State        | BRASILE        |
-| physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
-| physicalAddress_province     | Santa Catarina |
-| physicalAddress_address      | Via@ok_RIS     |
+| parameter                    | value        |
+| ---------------------------- | ------------ |
+| physicalAddress_State        | AUSTRALIA    |
+| physicalAddress_municipality | Florianopolis|
+| physicalAddress_zip          | ZONA_3       |
+| physicalAddress_province     | Santa Catarina|
+| digitalDomicile_address      | test@fail.it |
+| physicalAddress_address      | Via@ok_RIS   |
 
 1. Viene generata una nuova notifica con destinatario persona fisica e `feePolicy FLAT_RATE`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
@@ -8832,8 +11925,209 @@ Dati destinatario
 
 </details>
 
+##### Verifica workflow cartaceo Paper Channel
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_2] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `physicalAddress Via@OK-WO_890`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_3] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@OK-WO-Giacenza-lte10_890`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_4] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@OK-WO-Giacenza-lte10_890`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_5] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@FAIL-WO_AR`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_FEEDBACK` con responseStatus `OK`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_6] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@OK-WO-DoubleRECAG012`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_7] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@OK-WO-Giacenza_AR`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_VERIFICA_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin` con `Via@ok_890`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pf/TestVerificaPaperChannel.feature)
+
+</details>
 
 #### Persona giuridica
+
+##### Avanzamento notifiche b2b asincrona con controllo costi su GPD per persona giuridica
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_1_PG] Notifica mono PG-Caso creazione Notifica di tipo non ASYNC, validazione non prevista</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica sincrona con destinatario `Cucumber Society`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_2_PG] Notifica mono PG-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `00749900049`
+2. viene generata una nuova notifica asincrona con destinatario `Gherkin Analogic`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Gherkin Analogic`
+7. viene effettuato il controllo dell'aggiornamento del costo totale del utente `0`
+8. l'avviso pagopa viene pagato correttamente
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` e successivamente annullata
+10. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+11. viene generata una nuova notifica sincrona con destinatario `Gherkin Analogic`
+12. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `0`
+13. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+14. viene cancellata la posizione debitoria di `Gherkin Analogic`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_3_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC in stato “NOTIFICATION_CANCELLED“</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `00749900049`
+2. viene generata una nuova notifica asincrona con destinatario `Gherkin Analogic`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+6. lettura amount posizione debitoria di `Gherkin Analogic`
+7. viene effettuato il controllo del amount di GPD = `100`
+8. viene cancellata la posizione debitoria di `Gherkin Analogic`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_4_PG] Notifica mono PG Multipagamento-Verifica amount GPD notifica async dopo pagamento tutti i pagamenti poi annullata la notifica il secondo pagamento amount non azzerrato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene creata una nuova richiesta per istanziare due nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `00749900049`
+2. viene generata una nuova notifica asincrona multipagamento con destinatario `Gherkin Analogic`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `0`
+4. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `1`
+5. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+6. viene aggiunto il costo della notifica totale
+7. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE` e successivamente annullata
+9. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLED`
+10. lettura amount posizione debitoria per pagamento `0`
+11. viene effettuato il controllo del amount di GPD = `100`
+12. 10. lettura amount posizione debitoria per pagamento `1`
+13. viene effettuato il controllo del amount di GPD con amount notifica del utente `1`
+14. vengono cancellate le posizioni debitorie
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ASYNC_5_PG] Notifica mono PG-Verifica amount GPD per notifica ASYNC fino a "SEND_ANALOG_DOMICILE" al secondo tentativo</summary>
+
+**Descrizione**
+
+1. viene creata una nuova richiesta per istanziare due nuove posizioni debitorie per l'ente creditore `77777777777` e amount `100` per `Gherkin Analogic` con Piva `00749900049`
+2. viene generata una nuova notifica asincrona con destinatario `Gherkin Analogic`
+3. al destinatario viene associato lo iuv creato mediante partita debitoria per `Gherkin Analogic` alla posizione `0`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED per controllo GPD
+5. viene aggiunto il costo della notifica totale
+6. lettura amount posizione debitoria di `Gherkin Analogic`
+7. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+8. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `0`
+9. lettura amount posizione debitoria di `Gherkin Analogic`
+10. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `0`
+11. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` al tentativo `1`
+12. lettura amount posizione debitoria di "Gherkin Analogic"
+13. viene effettuato il controllo del cambiamento del amount nella timeline `SEND_ANALOG_DOMICILE` del utente `0` al tentativo `1`
+14. vengono cancellate la posizione debitoria di "Gherkin Analogic"
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheAsyncB2bPG.feature)
+
+</details>
+
 
 ##### Avanzamento b2b persona giuridica
 
@@ -9062,6 +12356,19 @@ Dati destinatario
 
 </details>
 
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_PG_16] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE sia presente il campo Digital Address scenario positivo PN-5992</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario `Gherkin spa`
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
+3. viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPG.feature)
+
+</details>
+
 ##### Avanzamento b2b persona giuridica digitale National Registry
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -9265,6 +12572,1156 @@ Dati destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGMulti.feature)
 
 </details>
+
+##### avanzamento notifiche b2b persona giuridica multi pagamento
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica inclusi modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24_1] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica inclusi  modalità DELIVERY_MODE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24_2] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24_3] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24_4] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `0` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_24_5] PA - inserimento notifica mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE applyCost true (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_25] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_25_1] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_26] PA - inserimento notifica mono destinatario con più avvisi pagoPA e nessun F24  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_26_1] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 3) e nessun F24  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_26_2] PA - inserimento notifica mono destinatario con più avvisi pagoPA (almeno 4) e nessun F24  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_26_3] PA - inserimento notifica mono destinatario con più avvisi pagoPA e  F24  e costi di notifica inclusi</summary>
+
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_27] PA - inserimento notifica mono destinatario con più F24 (Almeno 2) e nessun avviso pagoPA  e costi di notifica inclusi</summary>
+
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_28] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_29] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA]  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_30] PA - inserimento notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA]  e costi di notifica inclusi</summary>
+
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_31] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_31_1] PA - inserimento notifica multi destinatario con un solo avviso pagoPA e costi di notifica  inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_32] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica  inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_32_1] PA - inserimento notifica multi destinatario con un solo F24 e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_33] PA - inserimento notifica multi destinatario con più avvisi pagoPA  e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_34] PA - inserimento notifica multi destinatario con un solo F24  e costi di notifica inclusi</summary>
+
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_35] PA - inserimento notifica mono destinatario con un solo F24 e costi inclusi -  download modello F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene richiesto il download del documento `F24`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_35_1] PA - inserimento notifica multi destinatario con un solo F24 e costi inclusi - download modello F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. si verifica la corretta acquisizione della notifica
+5. viene richiesto il download del documento `F24` per il destinatario `0`
+6. il download non ha prodotto errori
+7. viene richiesto il download del documento `F24` per il destinatario `1`
+8. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_36] PA - inserimento notifica mono destinatario con un solo pagoPA e costi inclusi - download allegato pagoPA</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene richiesto il download del documento `PAGOPA`
+5. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_38] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include l’avviso pagoPA ma non il modello F24 [TA] costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica per l'utente `0`
+4. viene verificato il costo = `100` della notifica per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_39] PA - inserimento notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: un istanza di pagamento include il modello F24 ma non l’avviso pagoPA [TA] costi inclusi</summary>
+
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_42] Notifica mono destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_43] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di un avviso costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. l'avviso pagopa `1` viene pagato correttamente dall'utente `0`
+5. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica con l' avviso `1` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_43_1] Destinatario - notifica mono destinatario con più avvisi pagoPA: pagamento di più avvisi costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. l'avviso pagopa `1` viene pagato correttamente dall'utente `0`
+5. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica con l' avviso `1` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_44] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+3. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_44_1] Destinatario - notifica mono destinatario con presenza contemporanea di avviso pagoPA e F24: pagamento di uno degli avvisi (PagoPa) costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+3. si attende il corretto pagamento della notifica
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_45] Destinatario PG: inserimento notifica mono destinatario con solo F24 e costi inclusi - download allegato F24</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. l'allegato `F24` può essere correttamente recuperato da `CucumberSpa`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_46] Destinatario PG:inserimento notifica mono destinatario con solo pagoPA e costi inclusi - download allegato pagoPA</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. l'allegato `PAGOPA` può essere correttamente recuperato da `CucumberSpa`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_47] Destinatario 1 - pagamento notifica multi destinatario con un solo avviso pagoPA e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_47_1] Destinatario 1 - pagamento notifica multi destinatario con più avvisi pagoPA e con pagamento di un solo avviso e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_47_2] Destinatario 1 - pagamento notifica multi destinatario con più avvisi PagoPa e modello F24 e con pagamento di un solo avviso e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `1` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_48] Notifica multi destinatario pagata - verifica posizione debitoria (IUV) dopo aver effettuato il pagamento [TA] e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_49] Destinatario 1 - notifica multi destinatario con più avvisi pagoPA: verifica costo della notifica del destinatario 1 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica l'utente  `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_50] Destinatario 1 - notifica multi destinatario con presenza contemporanea di avviso pagoPA e F24: verifica costo della notifica del destinatario 1/2 e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica l'utente  `0`
+4. viene verificato il costo = `100` della notifica l'utente  `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_51] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa  viene pagato correttamente dall'utente  `0`
+4. si attende il corretto pagamento della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_52] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa  viene pagato correttamente dall'utente  `0`
+4. si attende il corretto pagamento della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_53] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_54] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_55] PA - visualizzazione box di pagamento su notifica mono destinatario pagata  solo con avviso PagoPa e modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente `0`
+4. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_56] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_57] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con avviso PagoPa e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa `0` viene pagato correttamente dall'utente  `0`
+4. l'avviso pagopa `0` viene pagato correttamente dall'utente `1`
+5. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `0`
+6. si attende il corretto pagamento della notifica dell'utente `0` dal destinatario `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_58] PA - visualizzazione box di pagamento su notifica multi destinatario pagata  solo con modello F24 e costi di notifica non  inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_59] PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_60] PA - visualizzazione box di pagamento su notifica multi destinatario pagata solo con avviso PagoPa e modello F24 e costi di notifica non inclusi (scenario dedicato alla verifica della coerenza con il Figma, da eseguire solo tramite test manuali)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dall'utente  `0`
+4. si attende il corretto pagamento della notifica dell'utente `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_64] Test di Validazione degli oggetti di pagamento ricevuti: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_64_1] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `27957814470` e `70412331207`
+2. la notifica viene inviata dal `Comune_Multi`
+3. l'operazione ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_67] PA Timeline: Esecuzione di più pagamenti, sia F24 che PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatari `27957814470` e `70412331207`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dal destinatario  `0`
+4. l'avviso pagopa viene pagato correttamente dal destinatario `1`
+5. si attende il corretto pagamento della notifica dell'utente `0`
+6. si attende il corretto pagamento della notifica dell'utente `1`
+7. verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_67_1] PA Timeline: Esecuzione di più pagamenti, PagoPa -> Verifica in timeline presenza solo dei pagamenti PagoPa [TA]  e costi inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica multipagamento con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. l'avviso pagopa viene pagato correttamente dal destinatario  `0`
+4. si attende il corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+5. si attende il corretto pagamento della notifica con l' avviso `1` dal destinatario `0`
+6. verifica presenza in Timeline dei solo pagamenti di avvisi PagoPA del destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_68] Test di Validazione degli oggetti di pagamento ricevuti multidestinatario: Univocità istanza di pagamento e sue alternative (scenario negativo, se presenti più istanze uguali devo ricevere KO) [TA]</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica multipagamento con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. gli avvisi pagopa vengono pagati correttamente dal destinatario  `0`
+4. si attende il non corretto pagamento della notifica con l' avviso `0` dal destinatario `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_71] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `PAGOPA`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_71_2] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - PagoPa</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `LVLDAA85T50G702B`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `REFINEMENT` esista
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT` 
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_71_1] Verifica retention allegati di pagamento (7gg precaricato) - PagoPa</summary>
+
+**Descrizione**
+
+1. viene effettuato il pre-caricamento di un allegato
+2. viene effettuato un controllo sulla durata della retention di `PAGOPA` precaricato
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_72] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+5. viene verificato che l'elemento di timeline `REFINEMENT` esista
+6. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT` 
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_72_1] Verifica retention allegati di pagamento (7gg precaricato) - F24</summary>
+
+**Descrizione**
+
+1. viene effettuato il pre-caricamento dei metadati f24
+2. viene effettuato un controllo sulla durata della retention di `F24` precaricato
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_72_3] Verifica retention allegati di pagamento (120gg da data perfezionamento Notifica) - F24 [TA]</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. si verifica la corretta acquisizione della notifica
+4. viene effettuato un controllo sulla durata della retention di `F24`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_73] PA -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. viene richiesto il download del documento `F24`
+5. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_74]  Destinatario -  Verifica presenza SHA F24 su attestazione opponibile a terzi notifica depositata</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. l'allegato `F24` può essere correttamente recuperato da `CucumberSpa`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_76] Invio notifica con api b2b e recupero documento di pagamento PAGOPA con AppIO</summary>
+
+**Descrizione**
+
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. il documento di pagamento `PAGOPA` può essere recuperata tramite AppIO da `CucumberSpa`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_76_1] Invio notifica con api b2b e recupero documento di pagamento F24 con AppIO</summary>
+
+**Descrizione**
+
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
+4. il documento di pagamento `F24` può essere recuperata tramite AppIO da `CucumberSpa`
+5. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_77] Destinatario PG: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `CucumberSpa`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `CucumberSpa` tenta il recupero dell'allegato `PAGOPA`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_77_1] Destinatario PG: dettaglio notifica annullata - download bollettini di pagamento F24 (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `GherkinSrl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `GherkinSrl` tenta il recupero dell'allegato `F24`
+6. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_78] Destinatario Multi PG: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `CucumberSpa` e `GherkinSrl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `CucumberSpa` tenta il recupero dell'allegato `PAGOPA`
+6. il download ha prodotto un errore con status code `404`
+7. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+8. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_78_1] Destinatario Multi PG: dettaglio notifica annullata - download bollettini di pagamento F24 (scenario negativo)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatari `CucumberSpa` e `GherkinSrl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN dal comune `Comune_Multi`
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. `CucumberSpa` tenta il recupero dell'allegato `F24`
+6. il download ha prodotto un errore con status code `404`
+7. `GherkinSrl` tenta il recupero dell'allegato `F24`
+8. il download ha prodotto un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_79] PA mittente: dettaglio notifica annullata - download bollettini di pagamento PagoPA (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. viene verificato il costo = `100` della notifica
+4. la notifica può essere annullata dal sistema tramite codice IUN
+5. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+6. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+7. viene richiesto il download del documento `PAGOPA`
+8. il download si conclude correttamente
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_79_1] PA mittente: dettaglio notifica annullata - download bollettini di pagamento F24 (scenari positivi)</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Cucumber srl`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. la notifica può essere annullata dal sistema tramite codice IUN
+4. vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+5. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+6. viene richiesto il download del documento `F24`
+8. l'operazione ha generato un errore con status code `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_91] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_91_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo e costi di notifica inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_92] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_92_1] PA - Invio pec DELIVERY_MODE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_93] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_93_1] PA - Invio pec FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_94] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_94_1] PA - Invio pec  FLAT_RATE  -   Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo  e costi di notifica non inclusi più paFee</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `27957814470`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotificheB2bPGPagamento.feature)
+
+</details>
+
 
 ##### Avanzamento b2b persona giuridica pagamento
 
@@ -9877,12 +14334,10 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_890
-   - **physicalAddress_zip**: 00010
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: 05010
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `399` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il costo = `1105` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
 
@@ -9897,51 +14352,10 @@ Dati destinatario
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_890
-   - **physicalAddress_zip**: 00010
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: 05010
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_890_3] Invio notifica con allegato e verifica costo con FSU + @OK_890 + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   - **physicalCommunication**: REGISTERED_LETTER_890
-   - **feePolicy**: DELIVERY_MODE
-   - **payment_pagoPaForm**: SI
-   - **digitalDomicile**: NULL
-   - **physicalAddress_address**: Via@ok_890
-2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `521` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_890_4] Invio notifica con allegato e verifica costo con FSU + @OK_890 + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-:warning: _Ignored_
-
-1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   - **physicalCommunication**: REGISTERED_LETTER_890
-   - **feePolicy**: FLAT_RATE
-   - **payment_pagoPaForm**: SI
-   - **digitalDomicile**: NULL
-   - **physicalAddress_address**: Via@ok_890
-2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il costo = `0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
@@ -9957,12 +14371,12 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_890
-   - **physicalAddress_zip**: 16121
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_municipality**: <MUNICIPALITY>
+   - **physicalAddress_province**: <PROVINCE> 
+   - **physicalAddress_zip**: <CAP>
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `391` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il costo = `<COSTO>` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
 
@@ -9977,60 +14391,19 @@ Dati destinatario
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_890
-   - **physicalAddress_zip**: 64010
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_municipality**: <MUNICIPALITY>
+   - **physicalAddress_province**: <PROVINCE> 
+   - **physicalAddress_zip**: <CAP>
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `0` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_890_7] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + DELIVERY_MODE positivo</summary>
-
-**Descrizione**
-
-1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   - **physicalCommunication**: REGISTERED_LETTER_890
-   - **feePolicy**: DELIVERY_MODE
-   - **payment_pagoPaForm**: SI
-   - **digitalDomicile**: NULL
-   - **physicalAddress_zip**: 16121
-   - **physicalAddress_address**: Via@ok_890
-2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `516` della notifica
-
-[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
-
-</details>
-<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_890_8] Invio notifica con allegato e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo</summary>
-
-**Descrizione**
-
-:warning: _Ignored_
-
-1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
-   - **physicalCommunication**: REGISTERED_LETTER_890
-   - **feePolicy**: FLAT_RATE
-   - **payment_pagoPaForm**: SI
-   - **digitalDomicile**: NULL
-   - **physicalAddress_zip**: 16121
-   - **physicalAddress_address**: Via@ok_890
-2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il costo = `0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogico890.feature)
 
 </details>
 
-##### Costo notifica con workflow analogico per persona giuridica
+##### Costo notifica con workflow analogico per persona giuridica AR
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_PG_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
@@ -10042,12 +14415,11 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
-   - **physicalAddress_zip**: 18025
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: 80060
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `400` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il costo = `544` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
@@ -10057,25 +14429,23 @@ Dati destinatario
 
 **Descrizione**
 
-:warning: _Ignored_
-
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
    - **physicalCommunication**: AR_REGISTERED_LETTER
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
-   - **physicalAddress_zip**: 18025
+   - **physicalAddress_zip**: 80060
    - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il costo = `0` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_3] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -10085,24 +14455,21 @@ Dati destinatario
    - **digitalDomicile**: NULL
    - **physicalAddress_State**: BRASILE
    - **physicalAddress_municipality**: Florianopolis
-   - **physicalAddress_zip**: 88010
+   - **physicalAddress_zip**: ZONA_2
    - **physicalAddress_province**: Santa Catarina
    - **physicalAddress_address**: Via@ok_RIR
-   - **payment_pagoPaForm**: NULL
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
-3. Viene verificato il costo = `100` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
-5. Viene verificato il costo = `565` della notifica
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Viene verificato il costo = `1037` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_4] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
-
-:warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
    - **physicalCommunication**: AR_REGISTERED_LETTER
@@ -10110,10 +14477,10 @@ Dati destinatario
    - **digitalDomicile**: NULL
    - **physicalAddress_State**: BRASILE
    - **physicalAddress_municipality**: Florianopolis
-   - **physicalAddress_zip**: 88010
+   - **physicalAddress_zip**: ZONA_2
    - **physicalAddress_province**: Santa Catarina
    - **physicalAddress_address**: Via@ok_RIR
-   - **payment_pagoPaForm**: NULL
+   - **payment**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
@@ -10133,29 +14500,29 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
-   - **physicalAddress_zip**: 60121
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_municipality**: <MUNICIPALITY>
+   - **physicalAddress_province**: <PROVINCE> 
+   - **physicalAddress_zip**: <CAP>
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
-4. Viene verificato il costo = `381` della notifica
+4. Viene verificato il costo = `<COSTO>` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_6] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_6] [B2B_COSTO_ANALOG_PG_6] Invio notifica e verifica costo con RECAPITISTA + @OK_AR + FLAT_RATE positivo</summary>
 
 **Descrizione**
-
-:warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
    - **physicalCommunication**: AR_REGISTERED_LETTER
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile**: NULL
    - **physicalAddress_address**: Via@ok_AR
-   - **physicalAddress_zip**: 60121
+   - **physicalAddress_zip**: <CAP>
    - **payment_pagoPaForm**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
@@ -10166,7 +14533,7 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_7] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_7] Invio notifica e verifica costo con ZONE_1 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -10176,24 +14543,23 @@ Dati destinatario
    - **digitalDomicile**: NULL
    - **physicalAddress_State**: FRANCIA
    - **physicalAddress_municipality**: Parigi
-   - **physicalAddress_zip**: 75007
+   - **physicalAddress_zip**: ZONE_1
    - **physicalAddress_province**: Paris
    - **physicalAddress_address**: Via@ok_RIR
-   - **payment_pagoPaForm**: NULL
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
-4. Viene verificato il costo = `856` della notifica
+4. Viene verificato il costo = `921` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_8] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_8] Invio notifica e verifica costo con ZONE_1 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
-:warning: _Ignored_
 
 1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
    - **physicalCommunication**: AR_REGISTERED_LETTER
@@ -10201,19 +14567,69 @@ Dati destinatario
    - **digitalDomicile**: NULL
    - **physicalAddress_State**: FRANCIA
    - **physicalAddress_municipality**: Parigi
-   - **physicalAddress_zip**: 75007
+   - **physicalAddress_zip**: ZONE_1
    - **physicalAddress_province**: Paris
    - **physicalAddress_address**: Via@ok_RIR
-   - **payment_pagoPaForm**: NULL
+   - **payment**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
-4. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
 5. Viene verificato il costo = `0` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PG_9] Invio notifica e verifica costo con ZONE_3 + @OK_RIR + DELIVERY_MODE positivo</summary>
+
+**Descrizione**
+
+
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: AUSTRALIA
+   - **physicalAddress_municipality**: Hobart
+   - **physicalAddress_zip**: ZONE_3
+   - **physicalAddress_province**: Tasmania
+   - **physicalAddress_address**: Via@ok_RIR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+4. Viene verificato il costo = `1095` della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PG_10] Invio notifica e verifica costo con ZONE_3 + @OK_RIR + FLAT_RATE positivo</summary>
+
+**Descrizione**
+
+
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   - **physicalCommunication**: AR_REGISTERED_LETTER
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile**: NULL
+   - **physicalAddress_State**: AUSTRALIA
+   - **physicalAddress_municipality**: Hobart
+   - **physicalAddress_zip**: ZONE_3
+   - **physicalAddress_province**: Tasmania
+   - **physicalAddress_address**: Via@ok_RIR
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Viene verificato il costo = `0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE`
+5. Viene verificato il costo = `0` della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoAR.feature)
+
+</details>
+
 
 ##### Costo notifica con workflow analogico per persona giuridica RS
 
@@ -10226,10 +14642,11 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_address**: Via@ok_RS
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: 60040
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-4. Viene verificato il costo = `323` della notifica
+4. Viene verificato il costo = `404` della notifica
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
 
@@ -10243,8 +14660,8 @@ Dati destinatario
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_address**: Via@ok_RS
-   - **physicalAddress_zip**: 01100
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: 60040
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
@@ -10254,7 +14671,7 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -10266,17 +14683,17 @@ Dati destinatario
    - **physicalAddress_province**: Paris
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_address**: Via@ok_RIS
-   - **payment_pagoPaForm**: NULL
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-4. Viene verificato il costo = `691` della notifica
+4. Viene verificato il costo = `742` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_RIS_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_4] Invio notifica e verifica costo con ZONE_1 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -10289,7 +14706,7 @@ Dati destinatario
    - **physicalAddress_zip**: ZONE_1
    - **physicalAddress_province**: Paris
    - **physicalAddress_address**: Via@ok_RIS
-   - **payment_pagoPaForm**: NULL
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
@@ -10308,11 +14725,13 @@ Dati destinatario
    - **feePolicy**: DELIVERY_MODE
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_address**: Via@ok_RS
-   - **physicalAddress_zip**: 70122
-   - **payment_pagoPaForm**: NULL
+     **physicalAddress_municipality**: <MUNICIPALITY>
+   - **physicalAddress_province**: <PROVINCE> 
+   - **physicalAddress_zip**: <CAP>
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-4. Viene verificato il costo = `262` della notifica
+4. Viene verificato il costo = `<COSTO>` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
@@ -10328,8 +14747,8 @@ Dati destinatario
    - **feePolicy**: FLAT_RATE
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_address**: Via@ok_RS
-   - **physicalAddress_zip**: 70122
-   - **payment_pagoPaForm**: NULL
+   - **physicalAddress_zip**: <CAP>
+   - **payment**: NULL
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
 4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
@@ -10339,7 +14758,7 @@ Dati destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -10348,20 +14767,20 @@ Dati destinatario
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_State**: BRASILE
    - **physicalAddress_municipality**: Florianopolis
-   - **physicalAddress_zip**: 60012
+   - **physicalAddress_zip**: ZONA_2
    - **physicalAddress_province**: Santa Catarina
    - **physicalAddress_address**: Via@ok_RIS
-   - **payment_pagoPaForm**: NULL
+   - **payment_pagoPaForm**: SI
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
-4. Viene verificato il costo = `798` della notifica
+4. Viene verificato il costo = `858` della notifica
 
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_PG_RIS_8] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_8] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -10371,8 +14790,55 @@ Dati destinatario
    - **digitalDomicile_address**: test@fail.it
    - **physicalAddress_State**: BRASILE
    - **physicalAddress_municipality**: Florianopolis
-   - **physicalAddress_zip**: 60012
+   - **physicalAddress_zip**: ZONA_2
    - **physicalAddress_province**: Santa Catarina
+   - **physicalAddress_address**: Via@ok_RIS
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Viene verificato il costo = `0` della notifica
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+5. Viene verificato il costo = `0` della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_9] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + DELIVERY_MODE positivo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   - **feePolicy**: DELIVERY_MODE
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_State**: AUSTRALIA
+   - **physicalAddress_municipality**: Hobart
+   - **physicalAddress_zip**: ZONA_3
+   - **physicalAddress_province**: Tasmania Catarina
+   - **physicalAddress_address**: Via@ok_RIS
+   - **payment_pagoPaForm**: SI
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+4. Viene verificato il costo = `915` della notifica
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/pg/AvanzamentoNotifichePGCostoAnalogicoRS.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_PG_RIS_10] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + FLAT_RATE positivo</summary>
+
+**Descrizione**
+
+
+1. Viene creata una nuova notifica mono destinatario con destinatario `Cucumber Analogic` e
+   - **feePolicy**: FLAT_RATE
+   - **digitalDomicile_address**: test@fail.it
+   - **physicalAddress_State**: AUSTRALIA
+   - **physicalAddress_municipality**: Hobart
+   - **physicalAddress_zip**: ZONA_3
+   - **physicalAddress_province**: Tasmania Catarina
    - **physicalAddress_address**: Via@ok_RIS
 2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo = `0` della notifica
@@ -10385,6 +14851,433 @@ Dati destinatario
 </details>
 
 #### Persona fisica e giuridica
+
+##### Avanzamento notifica b2b analogico digitale con persona fisica e giuridica
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_1] Notifica mono destinatario con workflow digitale fallito - Destinatario PF</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `DIGITAL_DELIVERY_CREATION_REQUEST`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW`
+7. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+8. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_DELIVERY_CREATION_REQUEST`
+9. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `SCHEDULE_REFINEMENT_WORKFLOW`
+10. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `SEND_SIMPLE_REGISTERED_LETTER`
+11. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_FAILURE_WORKFLOW`
+12. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY_FAILURE`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_2] Notifica mono destinatario con workflow digitale fallito - Destinatario PG</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario Cucumber Society
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST`
+4. Verifica generazione Atto opponibile senza la messa a disposizione in `DIGITAL_DELIVERY_CREATION_REQUEST`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `DIGITAL_DELIVERY_CREATION_REQUEST`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW`
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER`
+8. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_3] Notifica mono destinatario con workflow digitale completato con successo - Destinatario PF</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+4. Verifica generazione Atto opponibile senza la messa a disposizione in `DIGITAL_DELIVERY_CREATION_REQUEST`
+5. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+6. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_DELIVERY_CREATION_REQUEST`
+7. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `SCHEDULE_REFINEMENT_WORKFLOW`
+8. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_SUCCESS_WORKFLOW`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+10. Vengono letti gli eventi fino allo stato della notifica `DIGITAL_SUCCESS_WORKFLOW`
+11. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_4] Notifica mono destinatario con workflow digitale completato con successo - Destinatario PG</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario Cucumber Society
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+4. Verifica generazione Atto opponibile senza la messa a disposizione in `DIGITAL_DELIVERY_CREATION_REQUEST`
+5. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+6. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_DELIVERY_CREATION_REQUEST`
+7. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `SCHEDULE_REFINEMENT_WORKFLOW`
+8. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_SUCCESS_WORKFLOW`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+10. Vengono letti gli eventi fino allo stato della notifica `DIGITAL_SUCCESS_WORKFLOW`
+11. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_5] Notifica analogica mono destinatario con destinatario irreperibile - Destinatario PF</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario DVNLRD52D15M059P
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE`
+4. Vengono letti gli eventi fino allo stato della notifica `COMPLETELY_UNREACHABLE`
+5. la PA richiede il download dell'attestazione opponibile `COMPLETELY_UNREACHABLE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_6] Notifica multi destinatario con workflow digitale fallito per tutti i destinatari</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Mario Gherkin e Cucumber Analogic
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `1`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `DIGITAL_DELIVERY_CREATION_REQUEST`
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `1` rispetto ell'evento in timeline `DIGITAL_DELIVERY_CREATION_REQUEST`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `1`
+10. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW` per l'utente `1`
+11. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW` per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_7] Notifica multi destinatario con workflow digitale fallito per un destinatario</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Mario Gherkin e Cucumber Society
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `1`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `1` rispetto ell'evento in timeline `DIGITAL_DELIVERY_CREATION_REQUEST`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente `0`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `1`
+10. Vengono letti gli eventi e verificho che l'utente `1` non abbia associato un evento `SEND_SIMPLE_REGISTERED_LETTER`
+11. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW` per l'utente `0`
+12. Vengono letti gli eventi fino allo stato della notifica `EFFECTIVE_DATE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_8] Notifica multi destinatario con workflow analogico con destinatari irreperibili</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari DVNLRD52D15M059P e Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi e verificho che l'utente `0` non abbia associato un evento `COMPLETELY_UNREACHABLE`
+4. Vengono letti gli eventi e verificho che l'utente `1` non abbia associato un evento
+5. Vengono letti gli eventi fino allo stato della notifica `EFFECTIVE_DATE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_8_1] Notifica multi destinatario con workflow analogico con un destinatario irreperibile</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Cucumber Society e DVNLRD52D15M059P
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `0`
+7. la PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `COMPLETELY_UNREACHABLE` per l'utente `1`
+9. Vengono letti gli eventi fino allo stato della notifica `EFFECTIVE_DATE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_8_2] Notifica multi destinatario con workflow analogico con un destinatario irreperibile</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Cucumber Society e DVNLRD52D15M059P
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+4. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+5. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_DELIVERY_CREATION_REQUEST`
+6. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `SCHEDULE_REFINEMENT_WORKFLOW`
+7. Vengono letti gli eventi fino allo stato della notifica `DELIVERED` per il destinatario `0` e presente l'evento `DIGITAL_SUCCESS_WORKFLOW`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+9. Vengono letti gli eventi fino allo stato della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `0`
+10. La PA richiede il download dell'attestazione opponibile `DIGITAL_DELIVERY`
+11. Vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente `1`
+12. Vengono letti gli eventi fino allo stato della notifica `EFFECTIVE_DATE`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_9] Notifica multi destinatario PG PF con workflow digitale completato con successo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Cucumber Society e Mario Gherkin
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `1`
+5. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `1` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `0`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_FIX_7179_10] Notifica multi destinatario PF PF con workflow digitale completato con successo</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatari Mario Gherkin e GLLGLL64B15G702I
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `0`
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_DELIVERY_CREATION_REQUEST` per l'utente `1`
+5. Vengono letti gli eventi fino allo stato della notifica `DELIVERED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `0` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SCHEDULE_REFINEMENT`e verifica data schedulingDate per il destinatario `1` rispetto ell'evento in timeline `SEND_DIGITAL_FEEDBACK`
+8. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `0`
+9. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleAnalogico.feature)
+
+</details>
+
+##### Avanzamento notifiche b2b digitale con chiamata a National Registry (INAD-IPA-INIPEC)
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario CRBFNC95E66G337I
+2. Viene inviata tramite api b2b dal `Comune_Multi` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario JHKRFU96H15F068N
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario PPPPLT80A01H501V
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario 92051670641
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario PRVMNL80A01F205M
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde KO e viene fatta chiamata a INIPEC</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario CTNMCP34B16H501T
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2_4] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde KO e viene fatta chiamata a INIPEC</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario 03498760374
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_2_5] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde OK e non viene fatta chiamata a INIPEC</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario 06328131211
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario 70472431207
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_4] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario RMSLSO31M04Z404R
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_5] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. Viene creata una nuova notifica con destinatario 13022491008
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_TIMELINE_7597_4_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA e INIPEC risponde lista vuota e parte chiamata INAD</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova notifica con destinatario FRNGRG88A64A794S
+2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in ACCEPTED
+3. Viene verificato che nell'elemento di timeline della notifica `PUBLIC_REGISTRY_RESPONSE` sia presente il campo Digital Address da National Registry
+4. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_FEEDBACK`con responseStatus `OK` e digitalAddressSource `GENERAL`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGDigitaleNR.feature)
+
+</details>
+
 
 ##### Avanzamento notifiche b2b multi destinatario con persona fisica e giuridica
 
@@ -10914,8 +15807,10 @@ Dati Destinatario
 |-----------------------------|------------|
 | digitalDomicile             | NULL       |
 | physicalAddress_address     | Via@ok_890 |
-| physicalAddress_address_zip | 00010      |
-| payment_pagoPaForm          | NULL       |
+| physicalAddress_municipality| <MUNICIPALITY> |
+| physicalAddress_province    | <PROVINCE>     |
+| physicalAddress_zip         | <CAP>          |
+| payment_pagoPaForm          | SI       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -10924,7 +15819,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `842` della notifica per l'utente 0
+8. viene verificato il costo = `1105` della notifica per l'utente 0
 9.  viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -10942,8 +15837,10 @@ Dati Destinatario
 |------------------------------| ---------- |
 | digitalDomicile              | NULL       |
 | physicalAddress_address      | Via@ok_890 |
-| physicalAddress_address_zip  | 00010      |
-| payment_pagoPaForm           | NULL       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
+| payment_pagoPaForm           | SI       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -10971,8 +15868,10 @@ Dati Destinatario
 | ----------------------- | ---------- |
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 64010      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -10981,7 +15880,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `887` della notifica per l'utente 0
+8. viene verificato il costo = `<COSTO>` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -10999,8 +15898,10 @@ Dati Destinatario
 | ----------------------- | ---------- |
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 64010      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11017,7 +15918,7 @@ Dati Destinatario
 
 </details>
 
-##### Costo notifica con workflow analogico per multi destinatario
+##### Costo notifica con workflow analogico per multi destinatario AR
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_COSTO_ANALOG_MULTI_1] Invio notifica e verifica costo con FSU + @OK_AR + DELIVERY_MODE positivo</summary>
@@ -11030,8 +15931,10 @@ Dati Destinatario
 | ----------------------- |------------|
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 18025      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11039,8 +15942,8 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `508` della notifica per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `544` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11058,8 +15961,10 @@ Dati Destinatario
 | ----------------------- | ---------- |
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 18025      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11067,7 +15972,7 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
 8. viene verificato il costo = `0` della notifica per l'utente 0
 9. viene verificato il costo = `0` della notifica per l'utente 1
 
@@ -11076,7 +15981,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_MULTI_3] Invio notifica e verifica costo con FSU + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_MULTI_3] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -11087,10 +15992,10 @@ Dati Destinatario
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
+| physicalAddress_zip          | ZONA_2         |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
-| payment_pagoPaForm           | NULL           |
+| payment_pagoPaForm           | SI           |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11098,8 +16003,8 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `963` della notifica per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `1037` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11107,7 +16012,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_MULTI_4] Invio notifica e verifica costo con ZONA_2 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -11118,7 +16023,7 @@ Dati Destinatario
 | digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 88010          |
+| physicalAddress_zip          | ZONA_2         |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
 | payment_pagoPaForm           | NULL           |
@@ -11129,7 +16034,7 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
 8. viene verificato il costo = `0` della notifica per l'utente 0
 9. viene verificato il costo = `0` della notifica per l'utente 1
 
@@ -11148,8 +16053,10 @@ Dati Destinatario
 | ----------------------- | ---------- |
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 60121      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11157,8 +16064,8 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `381` della notifica per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `<COSTO>` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11176,8 +16083,10 @@ Dati Destinatario
 | ----------------------- | ---------- |
 | digitalDomicile         | NULL       |
 | physicalAddress_address | Via@ok_890 |
-| payment_pagoPaForm      | NULL       |
-| physicalAddress_zip     | 60121      |
+| payment_pagoPaForm      | SI       |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11185,7 +16094,7 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
 8. viene verificato il costo = `0` della notifica per l'utente 0
 9. viene verificato il costo = `0` della notifica per l'utente 1
 
@@ -11194,7 +16103,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_MULTI_7] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_MULTI_7] Invio notifica e verifica costo con ZONE_1 + @OK_RIR + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -11205,10 +16114,10 @@ Dati Destinatario
 | digitalDomicile              | NULL       |
 | physicalAddress_State        | FRANCIA    |
 | physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
+| physicalAddress_zip          | ZONE_1     |
 | physicalAddress_province     | Paris      |
 | physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| payment_pagoPaForm           | SI       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11216,8 +16125,8 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
-8. viene verificato il costo = `856` della notifica per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `921` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11225,7 +16134,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_MULTI_8] Invio notifica e verifica costo con RECAPITISTA + @OK_RIR + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_MULTI_8] Invio notifica e verifica costo con ZONE_1 + @OK_RIR + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -11236,10 +16145,10 @@ Dati Destinatario
 | digitalDomicile              | NULL       |
 | physicalAddress_State        | FRANCIA    |
 | physicalAddress_municipality | Parigi     |
-| physicalAddress_zip          | 75007      |
+| physicalAddress_zip          | ZONE_1     |
 | physicalAddress_province     | Paris      |
 | physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| payment           | NULL       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11247,7 +16156,70 @@ Dati Destinatario
 4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
-7. Vengono letti gli eventi fino all'elemento di timeline della notifica `ANALOG_SUCCESS_WORKFLOW` per l'utente 0
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `0` della notifica per l'utente 0
+9. viene verificato il costo = `0` della notifica per l'utente 1
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_MULTI_9] Invio notifica e verifica costo con ZONE_3 + @OK_RIR + DELIVERY_MODE positivo</summary>
+
+**Descrizione**
+
+Dati Destinatario
+
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | AUSTRALIA  |
+| physicalAddress_municipality | Hobart     |
+| physicalAddress_zip          | ZONE_3     |
+| physicalAddress_province     | Tasmania   |
+| physicalAddress_address      | Via@ok_RIR |
+
+1. Viene generata nuova notifica
+2. Destinatario Mario Gherkin
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
+8. viene verificato il costo = `1095` della notifica per l'utente 0
+9. viene verificato il costo = `100` della notifica per l'utente 1
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoAR.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_MULTI_10] Invio notifica e verifica costo con ZONE_3 + @OK_RIR + FLAT_RATE positivo</summary>
+
+**Descrizione**
+
+Dati Destinatario
+
+| paramter                     | value      |
+| ---------------------------- | ---------- |
+| digitalDomicile              | NULL       |
+| physicalAddress_State        | AUSTRALIA  |
+| physicalAddress_municipality | Hobart     |
+| physicalAddress_zip          | ZONE_3     |
+| physicalAddress_province     | Tasmania   |
+| physicalAddress_address      | Via@ok_RIR |
+
+1. Viene generata nuova notifica
+2. Destinatario Mario Gherkin
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_ANALOG_DOMICILE` per l'utente 0
 8. viene verificato il costo = `0` della notifica per l'utente 0
 9. viene verificato il costo = `0` della notifica per l'utente 1
 
@@ -11269,8 +16241,8 @@ Dati Destinatario
 | ----------------------- |--------------|
 | digitalDomicile_address | test@fail.it |
 | physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-| physicalAddress_zip     | 01100        |
+| payment      | NULL         |
+| physicalAddress_zip     | 60040        |
 
 
 1. Viene generata nuova notifica
@@ -11280,7 +16252,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
-8. viene verificato il costo = `323` della notifica per l'utente 0
+8. viene verificato il costo = `404` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11298,8 +16270,8 @@ Dati Destinatario
 | ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
 | physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-| physicalAddress_zip     | 01100        |
+| payment		  | NULL         |
+| physicalAddress_zip     | 60040        |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11316,7 +16288,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_3] Invio notifica verifica costo con FSU + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -11324,13 +16296,12 @@ Dati Destinatario
 
 | paramter                     | value      |
 | ---------------------------- |------------|
-| digitalDomicile              | NULL       |
 | physicalAddress_State        | FRANCIA    |
 | physicalAddress_municipality | Parigi     |
 | physicalAddress_zip          | ZONE_1     |
 | physicalAddress_province     | Paris      |
 | physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| payment		       | NULL       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11339,7 +16310,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
-8. viene verificato il costo = `691` della notifica per l'utente 0
+8. viene verificato il costo = `742` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11347,7 +16318,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_4] Invio notifica e verifica costo con FSU + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_4] Invio notifica e verifica costo con ZONE_1 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -11355,13 +16326,12 @@ Dati Destinatario
 
 | paramter                     | value      |
 | ---------------------------- | ---------- |
-| digitalDomicile              | NULL       |
 | physicalAddress_State        | FRANCIA    |
 | physicalAddress_municipality | Parigi     |
 | physicalAddress_zip          | ZONE_1      |
 | physicalAddress_province     | Paris      |
 | physicalAddress_address      | Via@ok_RIR |
-| payment_pagoPaForm           | NULL       |
+| payment          | NULL       |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11388,8 +16358,10 @@ Dati Destinatario
 | ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
 | physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-| physicalAddress_zip     | 70122        |
+| payment		  | NULL         |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11398,7 +16370,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
-8. viene verificato il costo = `262` della notifica per l'utente 0
+8. viene verificato il costo = `<COSTO>` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11416,8 +16388,10 @@ Dati Destinatario
 | ----------------------- | ------------ |
 | digitalDomicile_address | test@fail.it |
 | physicalAddress_address | Via@ok_RS    |
-| payment_pagoPaForm      | NULL         |
-| physicalAddress_zip     | 70122        |
+| payment      | NULL         |
+| physicalAddress_municipality | <MUNICIPALITY> |
+| physicalAddress_province     | <PROVINCE>     |
+| physicalAddress_zip          | <CAP>          |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11434,7 +16408,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_7] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + DELIVERY_MODE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_7] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
 **Descrizione**
 
@@ -11442,13 +16416,12 @@ Dati Destinatario
 
 | paramter                     | value          |
 | ---------------------------- | -------------- |
-| digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 60012          |
+| physicalAddress_zip          | ZONA_2          |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
-| payment_pagoPaForm           | NULL           |
+| payment          | NULL           |
 
 1. Viene generata nuova notifica
 2. Destinatario Mario Gherkin
@@ -11457,7 +16430,7 @@ Dati Destinatario
 5. Si attende che lo stato diventi `ACCEPTED`
 6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
 7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
-8. viene verificato il costo = `798` della notifica per l'utente 0
+8. viene verificato il costo = `858` della notifica per l'utente 0
 9. viene verificato il costo = `100` della notifica per l'utente 1
 
 
@@ -11465,7 +16438,7 @@ Dati Destinatario
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
-  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_8] Invio notifica e verifica costo con RECAPITISTA + @OK_RIS + FLAT_RATE positivo</summary>
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_8] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + FLAT_RATE positivo</summary>
 
 **Descrizione**
 
@@ -11473,10 +16446,9 @@ Dati Destinatario
 
 | paramter                     | value          |
 | ---------------------------- | -------------- |
-| digitalDomicile              | NULL           |
 | physicalAddress_State        | BRASILE        |
 | physicalAddress_municipality | Florianopolis  |
-| physicalAddress_zip          | 60012          |
+| physicalAddress_zip          | ZONA_2         |
 | physicalAddress_province     | Santa Catarina |
 | physicalAddress_address      | Via@ok_RIR     |
 | payment_pagoPaForm           | NULL           |
@@ -11496,8 +16468,69 @@ Dati Destinatario
 
 </details>
 
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_9] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + DELIVERY_MODE positivo</summary>
 
-### Download
+**Descrizione**
+
+Dati Destinatario
+
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| physicalAddress_State        | AUSTRALIA      |
+| physicalAddress_municipality | Hobart         |
+| physicalAddress_zip          | ZONA_3         |
+| physicalAddress_province     | Tasmania       |
+| physicalAddress_address      | Via@ok_RIR     |
+| payment          | NULL           |
+
+1. Viene generata nuova notifica
+2. Destinatario Mario Gherkin
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
+8. viene verificato il costo = `915` della notifica per l'utente 0
+9. viene verificato il costo = `100` della notifica per l'utente 1
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_COSTO_ANALOG_RIS_MULTI_10] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + FLAT_RATE positivo</summary>
+
+**Descrizione**
+
+Dati Destinatario
+
+| paramter                     | value          |
+| ---------------------------- | -------------- |
+| physicalAddress_State        | AUSTRALIA      |
+| physicalAddress_municipality | Hobart         |
+| physicalAddress_zip          | ZONA_3         |
+| physicalAddress_province     | Tasmania       |
+| physicalAddress_address      | Via@ok_RIR     |     |
+
+1. Viene generata nuova notifica
+2. Destinatario Mario Gherkin
+3. Destinatario Cucumber Society
+4. La notifica viene inviata tramite api b2b dal `Comune_Multi`
+5. Si attende che lo stato diventi `ACCEPTED`
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_SUCCESS_WORKFLOW` per l'utente 1
+7. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_SIMPLE_REGISTERED_LETTER` per l'utente 0
+8. viene verificato il costo = `0` della notifica per l'utente 0
+9. viene verificato il costo = `0` della notifica per l'utente 1
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/b2b/AvanzamentoNotificheB2bPFPGMultiCostoAnalogicoRS.feature)
+
+</details>
+
+
+## Download
 
 #### Persona fisica
 
@@ -11548,6 +16581,40 @@ Dati Destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_PA_LEGALFACT_3_1] Invio notifica e download atto opponibile PEC_RECEIPT e verifica estensione ricevuta pec formato eml scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata la notifica
+2. Destinatario Mario Gherkin
+3. La notifica viene inviata tramite api b2b dal `Comune_1`
+4. Si attende che lo stato diventi `ACCEPTED`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. La PA richiede il download dell'attestazione opponibile PEC_RECEIPT
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_WEB-RECIPIENT_LEGALFACT_3_1] Invio notifica e download atto opponibile PEC_RECEIPT e verifica estensione ricevuta pec formato eml scenario positivo</summary>
+
+**Descrizione**
+
+1. Viene generata la notifica
+2. Destinatario Mario Gherkin
+3. La notifica viene inviata tramite api b2b dal `Comune_1`
+4. Si attende che lo stato diventi `ACCEPTED`
+5. Vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_PROGRESS`
+6. La PA richiede il download dell'attestazione opponibile PEC_RECEIPT
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/download/pf/AvanzamentoNotifichePFLegalFact.feature)
+
+</details>
+
+
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
   <summary>[B2B_PA_LEGALFACT_4] Invio notifica e download atto opponibile RECIPIENT_ACCESS_scenario positivo</summary>
 
@@ -12155,6 +17222,1896 @@ Dati Destinatario
 
 </details>
 
+### E2E
+
+#### Analog send e2e
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_SEND_1] Invio ad indirizzo fisico successo al primo tentativo</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+5. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+7. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+8. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+9. si attende che sia presente il perfezionamento per decorrenza termini
+10. viene verificato che l'elemento di timeline `REFINEMENT` esista
+11. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_SEND_2] Invio ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+5. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` con tentativo `0` esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK`con tentativo `1`  esista
+8. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+10. si attende che sia presente il perfezionamento per decorrenza termini
+11. viene verificato che l'elemento di timeline `REFINEMENT` esista
+12. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ANALOG_SEND_3] Invio ad indirizzo fisico fallimento al primo tentativo e al secondo tentativo</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+5. viene verificato che l'elemento di timeline `COMPLETELY_UNREACHABLE` esista
+6. viene verificato che l'elemento di timeline `ANALOG_FAILURE_WORKFLOW` esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` con tentativo `0` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK`con tentativo `1`  esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+10. si attende che sia presente il perfezionamento per decorrenza termini
+11. viene verificato che l'elemento di timeline `REFINEMENT` esista
+12. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogSend.feature)
+
+</details>
+
+#### Workflow analogico
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-1] Invio notifica con percorso analogico 890 con verifica elementi di timeline SEND_ANALOG_PROGRESS con legalFactId di category ANALOG_DELIVERY e documentType 23L, SEND_ANALOG_FEEDBACK e ANALOG_SUCCESS_WORKFLOW</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-4] Invio notifica con percorso analogico. Successo invio RS (OK_RS)</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` esista
+5. viene verificato che l'elemento di timeline `DIGITAL_DELIVERY_CREATION_REQUEST` esista
+6. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+7. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+8. viene schedulato il perfezionamento per decorrenza termini per il caso `DIGITAL_FAILURE_WORKFLOW`
+9. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-5] Invio notifica con percorso analogico. Successo invio RS (OK_RS) in cui la notifica viene visualizzata prima</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario CLMCST42R12D969Z
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. la notifica può essere correttamente recuperata da `Cristoforo Colombo`
+5. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+6. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER_PROGRESS` della notifica sia di `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-6] Invio notifica con percorso analogico. Successo al secondo tentativo invio RS (OK-Retry_RS).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` esista
+5. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+6. viene schedulato il perfezionamento per decorrenza termini per il caso `DIGITAL_FAILURE_WORKFLOW`
+7. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` esista
+8. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER_PROGRESS` per il tentavivo `0` esista
+9. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER_PROGRESS` per il tentavivo `1` esista
+10. viene verificato che il numero di elementi di timeline `SEND_SIMPLE_REGISTERED_LETTER_PROGRESS` sia di `2`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-8] Invio notifica con percorso analogico. Successo giacenza gt 890 (OK-Giacenza-gt10_890).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-9] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-Giacenza-gt10-23L_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-10] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-GiacenzaDelegato-gt10-23L_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG006C esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-11] Partenza workflow cartaceo se viene inviato un messaggio di cortesia</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario CLMCST42R12D969Z
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` esista
+5. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+6. viene verificato che l'elemento di timeline `SCHEDULE_ANALOG_WORKFLOW` esista
+7. controlla che il timestamp di `SEND_ANALOG_DOMICILE`sia dopo quello di invio e di attesa di lettura del messaggio di cortesia
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-12] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-13] Invio notifica con percorso analogico. Successo giacenza delegato gt 23L 890 (OK-GiacenzaDelegato-gt10-23L_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per documentType 23L esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` per RECAG006C esista
+8. viene verificato che l'elemento di timeline `REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-14] Invio notifica con percorso analogico. Fallimento giacenza gt 890 (FAIL-Giacenza-gt10_890).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` per RECAG006C esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-15] Invio notifica con percorso analogico. Fallimento giacenza gt 23L 890 (FAIL-Giacenza-gt10-23L_890).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` per RECAG006C esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-16] Invio notifica con percorso analogico. Compiuta giacenza 890 (OK-CompiutaGiacenza_890).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` per RECAG006C esista
+9. viene verificato che l'elemento di timeline `REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-17] Invio notifica con percorso analogico. Successo giacenza ar (OK-Giacenza_AR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN011 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN003B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene verificato che l'elemento di timeline `REFINEMENT` esista
+11. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+12. si attende che sia presente il perfezionamento per decorrenza termini
+13. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-18] Successo invio raccomandata semplice</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECAG007B esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-19] Invio notifica con percorso analogico. Fallimento giacenza lte 890 (FAIL-Giacenza-lte10_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECAG007B esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+10. si attende che sia presente il perfezionamento per decorrenza termini
+11. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-20] Invio notifica con percorso analogico. Fallimento giacenza AR (FAIL-Giacenza_AR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN011 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN004B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_SUCCESS_WORKFLOW`
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-21] Fallimento invio raccomandata semplice</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN002B esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-22] Invio notifica con percorso analogico. Successo giacenza gt 10 AR (OK-Giacenza-gt10_AR).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN011 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN003B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-23] Invio notifica con percorso analogico. Fallimento giacenza gt 10 AR (FAIL-Giacenza-gt10_AR).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN011 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN004B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-24] Invio notifica con percorso analogico. Fallimento compiuta giacenza AR (FAIL-CompiutaGiacenza_AR).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN011 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN005B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-25] Invio notifica con percorso analogico. Successo seconda raccomandata AR (OK-Retry_AR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che il numero di elementi di timeline `SEND_ANALOG_PROGRESS`sia di `2`
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN006 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN001B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-26] Invio notifica con percorso analogico. Successo non rendicontabile AR (OK-NonRendicontabile_AR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che il numero di elementi di timeline `SEND_ANALOG_PROGRESS`sia di `2`
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN013 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN001B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-27] Invio notifica con percorso analogico. Successo causa forza maggiore AR (OK-CausaForzaMaggiore_AR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN015 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN001B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-28] Invio notifica con percorso analogico. Fallimento 890 (FAIL_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG003B esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+10. si attende che sia presente il perfezionamento per decorrenza termini
+11. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-29] Invio notifica con percorso analogico. Fallimento irreperibile 890 (FAIL-Irreperibile_890).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_FAILURE_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG003E esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+9. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+10. si attende che sia presente il perfezionamento per decorrenza termini
+11. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-30] Invio notifica con percorso analogico. Fallimento primo tentativo e successo secondo tentativo 890 (FAIL-Discovery_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG003E esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 con tentativo 1 esista
+9. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per documentType 23L con tentativo 1 esista
+10. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+11. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+12. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+13. si attende che sia presente il perfezionamento per decorrenza termini
+14. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-31] Invio notifica con percorso analogico. Fallimento primo tentativo e secondo tentativo 890 (FAIL-DiscoveryIrreperibile_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_FAILURE_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG003E esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 con tentativo 1 esista
+9. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG003E con tentativo 1 esista
+10. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+11. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+12. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+13. si attende che sia presente il perfezionamento per decorrenza termini
+14. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-32] Invio notifica con percorso analogico. Successo non rendicontabile 890 (OK-NonRendicontabile_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che il numero di elementi di timeline `SEND_ANALOG_PROGRESS`sia di `2`
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECRN013 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN001B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-33] Invio notifica con percorso analogico. Successo causa forza maggiore 890 (OK-CausaForzaMaggiore_890).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS`per RECAG015 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRN001B esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-34] Invio notifica con percorso analogico. Successo RIS (OK_RIS).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` esista
+5. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER_PROGRESS`esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-35] Invio notifica con percorso digitale. Fallimento RIS (FAIL_RIS).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per CON080 esista
+5. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per RECRSI004B esista
+6. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per RECRSI004C esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-36] Invio notifica con percorso analogico. Successo RIR (OK_RIR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRI001 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRI002 esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-37] Invio notifica con percorso analogico. Fallimento RIR (FAIL_RIR).</summary>
+
+**Descrizione**
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRI001 esista
+7. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRI002 esista
+8. viene verificato che l'elemento di timeline `SEND_ANALOG_PROGRESS` per RECRI004B esista
+9. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+10. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+11. viene schedulato il perfezionamento per decorrenza termini per il caso "ANALOG_SUCCESS_WORKFLOW"
+12. si attende che sia presente il perfezionamento per decorrenza termini
+13. viene verificato che l'elemento di timeline `REFINEMENT` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-38] Invio notifica con percorso analogico. Fallimento RS (FAIL_RS).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per RECRS002B esista
+5. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per CON080 esista
+6. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` per RECRS002C esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-ANALOG-39] Invio notifica con percorso analogico. Fallimento consolidatore AR (FAIL_Consolidatore-AR).</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata nuova notifica
+2. destinatario DVNLRD52D15M059P
+3. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+4. viene verificato che l'elemento di timeline `ANALOG_FAILURE_WORKFLOW` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/AnalogWorkflow.feature)
+
+</details>
+
+#### Scelta canale di invio (Digitale o analogico)
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-CHOOSE-DELIVERY-MODE-1] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene verificato che l'elemento di timeline `GET_ADDRESS` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/ChooseDeliveryMode.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-CHOOSE-DELIVERY-MODE-2] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma MA ha valorizzato l’indirizzo Speciale</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `CLMCST42R12D969Z`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource SPECIAL esista
+4. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource PLATFORM esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/ChooseDeliveryMode.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-CHOOSE-DELIVERY-MODE-3] Invio notifica mono destinatario. L’utente NON ha configurato l’indirizzo di piattaforma,NON ha valorizzato l’indirizzo Speciale MA ha valorizzato l’indirizzo GENERALE</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `RMSLSO31M04Z404R`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource GENERAL esista
+4. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource SPECIAL esista
+5. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource PLATFORM esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/ChooseDeliveryMode.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-CHOOSE-DELIVERY-MODE-4] Invio notifica mono destinatario. L’utente non ha configurato nessuno degli indirizzi digitali</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `RMSLSO31M04Z404R`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource SPECIAL esista
+4. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource PLATFORM esista
+5. viene verificato che l'elemento di timeline `GET_ADDRESS` per digitalAddressSource GENERAL esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/ChooseDeliveryMode.feature)
+
+</details>
+
+#### Digital send e2e
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_1] Invio ad indirizzo di piattaforma successo al primo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+6. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+9. viene verificato che l'elemento di timeline `GET_ADDRESS` esista
+10. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+11. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+12. si attende che sia presente il perfezionamento per decorrenza termini
+13. viene verificato che l'elemento di timeline `REFINEMENT` esista
+14. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_2] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 0 esista
+9. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+10. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+12. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+13. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+14. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 0 esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 di retry esista
+17. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 esista
+18. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+19. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+20. si attende che sia presente il perfezionamento per decorrenza termini
+21. viene verificato che l'elemento di timeline `REFINEMENT` esista
+22. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_3] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+8. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+9. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+12. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+13. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 esista
+17. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+18. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+19. si attende che sia presente il perfezionamento per decorrenza termini
+20. viene verificato che l'elemento di timeline `REFINEMENT` esista
+21. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_4] Invio ad indirizzo di piattaforma fallimento al primo tentativo e al ritentativo, successo al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@FAIL-pecFirstKOSecondKO.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+8. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+9. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+12. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+13. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 esista
+17. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+18. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+19. si attende che sia presente il perfezionamento per decorrenza termini
+20. viene verificato che l'elemento di timeline `REFINEMENT` esista
+21. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_5] Invio ad indirizzo di piattaforma fallimento al primo tentativo, al ritentativo e al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@FAIL-pecFirstKOSecondKO.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+8. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+9. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+12. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+13. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per il tentativo 1 esista
+18. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` esista
+19. viene verificato che l'elemento di timeline `DIGITAL_DELIVERY_CREATION_REQUEST` esista
+20. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+21. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
+22. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` esista
+23. si attende che sia presente il perfezionamento per decorrenza termini
+24. viene verificato che l'elemento di timeline `REFINEMENT` esista
+25. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_6] Invio ad indirizzo speciale successo al primo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+7. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM esista
+8. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL esista
+9. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+10. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+11. si attende che sia presente il perfezionamento per decorrenza termini
+12. viene verificato che l'elemento di timeline `REFINEMENT` esista
+13. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_7] Invio ad indirizzo speciale fallimento al primo tentativo e successo al secondo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo `0` esista
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo `0` esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo `1` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo `1` esista
+
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_8] Invio ad indirizzo speciale fallimento al primo tentativo e fallimento al secondo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `SEND_DIGITAL_DOMICILE`
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo `0` esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo `0` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo `1` esista
+7. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo `1` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_9] Invio ad indirizzo generale successo al primo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Louis Armstrong`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` 
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`
+7. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL esista
+8. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM esista
+9. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL esista
+10. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+11. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+12. si attende che sia presente il perfezionamento per decorrenza termini
+13. viene verificato che l'elemento di timeline `REFINEMENT` esista
+14. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_10] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Sara Bianchi`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+6. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+7. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+9. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+12. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 0 esista
+13. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 0 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 di retry esista
+17. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 di retry esista
+18. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 esista
+19. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 esista
+20. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 esista
+21. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+22. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+23. si attende che sia presente il perfezionamento per decorrenza termini
+24. viene verificato che l'elemento di timeline `REFINEMENT` esista
+25. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_11] Invio ad indirizzo generale fallimento al primo tentativo, successo al ritentativo e al secondo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Rossi`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+6. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+7. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+9. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+12. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 0 esista
+13. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 0 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 di retry esista
+17. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 di retry esista
+18. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 esista
+19. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 esista
+20. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 esista
+21. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+22. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+23. si attende che sia presente il perfezionamento per decorrenza termini
+24. viene verificato che l'elemento di timeline `REFINEMENT` esista
+25. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_12] Invio ad indirizzo generale fallimento al primo tentativo e al ritentativo, successo al secondo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gialli`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+6. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+7. viene verificato che l'elemento di timeline `DIGITAL_SUCCESS_WORKFLOW` esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+9. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+12. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 0 esista
+13. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 0 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 di retry esista
+17. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 di retry esista
+18. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 esista
+19. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 esista
+20. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 esista
+21. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+22. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_SUCCESS_WORKFLOW"
+23. si attende che sia presente il perfezionamento per decorrenza termini
+24. viene verificato che l'elemento di timeline `REFINEMENT` esista
+25. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_13] Invio ad indirizzo generale fallimento al primo tentativo, al ritentativo e al secondo tentativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Mario Gialli`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` per il tentativo 0 esista
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 0 esista
+6. si attende che si ritenti l'invio dopo l'evento `SEND_DIGITAL_DOMICILE`
+7. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+8. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 di retry esista
+9. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 di retry esista
+10. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` per il tentativo 1 esista
+11. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK`per il tentativo 1 esista
+12. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 0 esista
+13. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 0 esista
+14. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 0 esista
+15. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 di retry esista
+16. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 di retry esista
+17. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 di retry esista
+18. viene verificato che l'elemento di timeline `GET_ADDRESS`per PLATFORM il tentativo 1 esista
+19. viene verificato che l'elemento di timeline `GET_ADDRESS`per SPECIAL il tentativo 1 esista
+20. viene verificato che l'elemento di timeline `GET_ADDRESS`per GENERAL il tentativo 1 esista
+21. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` esista
+22. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+23. viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
+24. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` esista
+24. si attende che sia presente il perfezionamento per decorrenza termini
+26. viene verificato che l'elemento di timeline `REFINEMENT` esista
+27. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_15] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@OK-pecFirstFailSecondSuccess.it` per il comune `Comune_Root`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_15_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene inserito un recapito legale `example@OK-pecFirstFailSecondSuccess.it` per il comune `Comune_Root`
+3. viene generata una nuova notifica con destinatario `Lucio Anneo Seneca`
+4. la notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_16] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@OK-pecFirstFailSecondSuccess.it` per il comune `Comune_Root`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_DIGITAL_SEND_16_PG] Invio ad indirizzo di piattaforma fallimento al primo tentativo, successo al ritentativo e fallimento al secondo tentativo</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene inserito un recapito legale `example@OK-pecFirstFailSecondSuccess.it` per il comune `Comune_Root`
+3. viene generata una nuova notifica con destinatario `Lucio Anneo Seneca`
+4. la notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+5. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+6. viene verificato che l'elemento di timeline `SEND_DIGITAL_DOMICILE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/DigitalSend.feature)
+
+</details>
+
+#### Notifica pagata
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-PAID-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline SCHEDULE_REFINEMENT. Il pagamento non deve generare un evento di timeline REFINEMENT.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+4. l'avviso pagopa viene pagato correttamente
+5. si attende il corretto pagamento della notifica
+6. viene schedulato il perfezionamento per decorrenza termini per il caso `DIGITAL_SUCCESS_WORKFLOW`
+7. si attende che sia presente il perfezionamento per decorrenza termini
+8. viene verificato che l'elemento di timeline `REFINEMENT` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline DIGITAL_FAILURE_WORKFLOW. Il pagamento non deve generare un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+4. l'avviso pagopa viene pagato correttamente
+5. si attende il corretto pagamento della notifica
+6. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` non esista
+7. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-PAID-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. Viene effettuato il pagamento subito dopo che la notifica è stata accettata. Il pagamento non deve generare un evento di timeline SEND_ANALOG_DOMICILE.</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. l'avviso pagopa viene pagato correttamente
+4. si attende il corretto pagamento della notifica
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationPaid.feature)
+
+</details>
+
+#### Validazione notifica e2e
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_ATTACHMENT_1] validazione fallita allegati notifica - file non caricato su SafeStorage</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `ALLEGATO`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_ATTACHMENT_2] validazione fallita allegati notifica - Sha256 differenti</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `SHA_256`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_ATTACHMENT_3] validazione fallita allegati notifica - estensione errata</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `EXTENSION`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_ATTACHMENT_4] validazione fallita allegati notifica - file non caricato su SafeStorage</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `ALLEGATO`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_TAXID] Invio notifica mono destinatario con taxId non valido scenario negativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `LNALNI80A01H501T`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `TAX_ID`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_PHYSICAL_ADDRESS] Invio notifica mono destinatario con indirizzo fisico non valido scenario negativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi REFUSED
+3. si verifica che la notifica non viene accettata causa `ADDRESS`
+4. viene verificato che l'elemento di timeline `REQUEST_REFUSED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_ASINC_OK] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED e controllo che sia presente nel campo legalFactsIds l'atto opponibile a terzi con category SENDER_ACK positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `REQUEST_ACCEPTED` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION_VALIDATION_AAR_GENERATION] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION sia presente il campo generatedAarUrl valorizzato positivo</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `AAR_GENERATION` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationValidation.feature)
+
+</details>
+
+#### Notifica visualizzata
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION-VIEWED-1] Visualizzazione da parte del destinatario della notifica</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Ettore Fieramosca`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `REQUEST_ACCEPTED` esista
+4. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+5. la notifica può essere correttamente recuperata da `Mario Cucumber`
+6. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+7. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION-VIEWED-2] Visualizzazione da parte del delegato della notifica</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. viene generata una nuova notifica con destinatario `Ettore Fieramosca`
+5. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+6. viene verificato che l'elemento di timeline `REQUEST_ACCEPTED` esista
+7. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+8. la notifica può essere correttamente recuperata da `Mario Gherkin` con delega
+9. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+10. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION-VIEWED-4] A valle della visualizzazione della notifica non deve essere generato un nuovo elemento di timeline NOTIFICATION VIEWED</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Ettore Fieramosca`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `REQUEST_ACCEPTED` esista
+4. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+5. la notifica può essere correttamente recuperata da `Mario Cucumber`
+6. verifico che l'atto opponibile a terzi di `NOTIFICATION_VIEWED` sia lo stesso
+7. viene verificato che il numero di elementi di timeline `NOTIFICATION_VIEWED` della notifica sia di `1`
+8. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-NOTIFICATION-VIEWED-5] A valle della visualizzazione della notifica, il destinatario non deve essere nella tabella pn-paper-notification-failed</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Leonardo da Vinci`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `COMPLETELY_UNREACHABLE` esista
+4. viene verificato che il destinatario `DSRDNI00A01A225I` di tipo `PF` sia nella tabella pn-paper-notification-failed
+5. la notifica può essere correttamente recuperata da `Dino Sauro`
+6. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+7. viene verificato che il destinatario `DSRDNI00A01A225I` di tipo `PF` non sia nella tabella pn-paper-notification-failed
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-2] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+4. la notifica può essere correttamente recuperata da `Cristoforo Colombo`
+5. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+6. viene verificato che il numero di elementi di timeline `SCHEDULE_REFINEMENT` della notifica sia di `0`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-3] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. La notifica viene letta subito dopo la generazione dell'evento di timeline SCHEDULE_REFINEMENT. Questa lettura non deve generare un evento di timeline REFINEMENT.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+5. la notifica può essere correttamente recuperata da `Cristoforo Colombo`
+6. viene schedulato il perfezionamento per decorrenza termini per il caso `DIGITAL_SUCCESS_WORKFLOW`
+7. si attende che sia presente il perfezionamento per decorrenza termini
+8. viene verificato che l'elemento di timeline `REFINEMENT` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. La notifica viene letta subito dopo la generazione dell'evento di timeline DIGITAL_FAILURE_WORKFLOW. Questa lettura non deve generare un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+4. la notifica può essere correttamente recuperata da `Cristoforo Colombo`
+5. viene verificato che l'elemento di timeline `PREPARE_SIMPLE_REGISTERED_LETTER` non esista
+6. viene verificato che l'elemento di timeline `SEND_SIMPLE_REGISTERED_LETTER` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-5] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Ettore Fieramosca`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `DIGITAL_FAILURE_WORKFLOW` esista
+4. la notifica può essere correttamente recuperata da `Ettore Fieramosca`
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_DOMICILE` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-6] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica. La notifica viene letta subito dopo la generazione dell'evento di timeline ANALOG_FAILURE_WORKFLOW. Questa lettura non deve generare un evento di timeline REFINEMENT.</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Leonardo da Vinci`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SCHEDULE_REFINEMENT` esista
+4. viene verificato che l'elemento di timeline `ANALOG_FAILURE_WORKFLOW` esista
+5. la notifica può essere correttamente recuperata da `Leonardo da Vinci`
+6. viene schedulato il perfezionamento per decorrenza termini per il caso `ANALOG_FAILURE_WORKFLOW`
+7. si attende che sia presente il perfezionamento per decorrenza termini
+8. viene verificato che l'elemento di timeline `REFINEMENT` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-WF-INHIBITION-7] Invio notifica con percorso analogico. Notifica visualizzata tra un tentativo e l'altro</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SEND_DIGITAL_FEEDBACK` esista
+4. la notifica può essere correttamente recuperata da `Cristoforo Colombo`
+5. viene verificato che l'elemento di timeline `SEND_ANALOG_FEEDBACK` esista
+6. viene verificato che il numero di elementi di timeline `SEND_ANALOG_DOMICILE` della notifica sia di `1`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/NotificationViewed.feature)
+
+</details>
+
+#### Invio messaggi cortesia E2E
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_1] invio messaggio di cortesia - invio per email</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene generata una nuova notifica con destinatario `Galileo Galilei`
+4. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+5. si verifica la corretta acquisizione della notifica
+6. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_2] invio messaggio di cortesia - invio per SMS</summary>
+
+**Descrizione**
+
+1. viene generata una nuova notifica con destinatario `Louis Armstrong`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_3] invio messaggio di cortesia - invio per AppIO</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Cristoforo Colombo`
+2. la notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED
+3. si verifica la corretta acquisizione della notifica
+4. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. viene generata una nuova notifica con destinatario `Dino Sauro`
+2. la notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` non esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_5_PG] invio messaggio di cortesia - invio notifica per email per ente padre per PG</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene inserita l'email di cortesia `provaemail@test.it` per il comune `default`
+4. viene inserita l'email di cortesia `provaemail@test.it` per il comune `Comune_Root`
+5. viene generata una nuova notifica con destinatario `Lucio Anneo Seneca`
+6. la notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+7. si verifica la corretta acquisizione della notifica
+8. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+9. viene eliminata l'email di cortesia per il comune `default`
+10. viene eliminata l'email di cortesia per il comune `Comune_Root`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_5] invio messaggio di cortesia - invio notifica per email per ente padre</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene inserita l'email di cortesia `provaemail@test.it` per il comune `Comune_Root`
+4. viene generata una nuova notifica con destinatario `Galileo Galilei`
+5. la notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+6. si verifica la corretta acquisizione della notifica
+7. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_6_PG] invio messaggio di cortesia - invio notifica per email per ente figlio per PG</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene inserita l'email di cortesia `provaemail@test.it` per il comune `default`
+4. viene inserita l'email di cortesia `provaemail@test.it` per il comune `Comune_Root`
+5. viene generata una nuova notifica con destinatario `Lucio Anneo Seneca`
+6. la notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+7. si verifica la corretta acquisizione della notifica
+8. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+9. viene eliminata l'email di cortesia per il comune `default`
+10. viene eliminata l'email di cortesia per il comune `Comune_Root`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[E2E-SEND_COURTESY_MESSAGE_6] invio messaggio di cortesia - invio notifica per email per ente figlio</summary>
+
+**Descrizione**
+
+1. si predispone addressbook per l'utente `Galileo Galilei`
+2. viene inserito un recapito legale `example@pecSuccess.it`
+3. viene inserita l'email di cortesia `provaemail@test.it` per il comune `Comune_Root`
+4. viene generata una nuova notifica con destinatario `Galileo Galilei`
+5. la notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+6. si verifica la corretta acquisizione della notifica
+7. viene verificato che l'elemento di timeline `SEND_COURTESY_MESSAGE` esista
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/e2e/SendCourtesyMessage.feature)
+
+</details>
+
 ### Webhook
 
 #### Persona fisica
@@ -12474,6 +19431,22 @@ Dati Destinatario
 
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPF.feature)
 
+</details>
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-STREAM_TIMELINE_24_7878] Invio notifiche digitali e controllo che vengano letti 50 eventi nel webhook</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Gherkin`
+2. Si predispone `1` nuovo stream denominato `stream-test` con eventType `TIMELINE`
+3. Si crea il nuovo stream per il `Comune_1`
+4. La notifica viene inviata tramite api b2b senza preload allegato dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+5. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+6. La notifica viene inviata tramite api b2b senza preload allegato dal `Comune_1` e si attende che lo stato diventi `ACCEPTED`
+7. vengono letti gli eventi fino all'elemento di timeline della notifica `DIGITAL_FAILURE_WORKFLOW`
+8. vengono letti gli eventi dello stream che contenga `50` eventi
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/workflowNotifica/webhook/pf/AvanzamentoNotificheWebhookB2bPF.feature)
 </details>
 
 ##### Avanzamento notifiche webhook b2b multi
@@ -12837,6 +19810,34 @@ Dati Destinatario
 
 </details>
 
+## Address Validation
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_ADDRESS_VALIDATION] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo</summary>
+
+**Descrizione**
+
+      | denomination 				| <denomination> |
+      |    taxId     				| CLMCST42R12D969Z |
+      | physicalAddress_address 		| <address> |
+      | at 					| <at> |
+      | physicalAddress_addressDetails 		| <addressDetails> |
+      | physicalAddress_zip 			| <zip> |
+      | physicalAddress_municipality 		| <municipality> |
+      | physicalAddress_municipalityDetails 	| <municipalityDetails> |
+      | physicalAddress_province 		| <province> |
+      | physicalAddress_State 			| <foreignState> |
+
+1. Viene generata una nuova notifica con destinatario `CLMCST42R12D969Z`
+2. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi `<notificationValidationStatus>`
+3. Si verifica che la notifica non viene accettata causa `ALLEGATO`
+4. Then vengono letti gli eventi dello stream del `Comune_2` con la verifica di Allegato non trovato
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/AddressValidation.feature)
+
+</details>
+
+
 ## Allegati
 
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12847,7 +19848,7 @@ Dati Destinatario
 1. viene effettuato il pre-caricamento di un documento
 2. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE` precaricato
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12858,7 +19859,7 @@ Dati Destinatario
 1. viene effettuato il pre-caricamento di un documento
 2. viene effettuato un controllo sulla durata della retention di `PAGOPA` precaricato
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12871,7 +19872,7 @@ Dati Destinatario
 3. si verifica la corretta acquisizione della notifica
 4. viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12884,7 +19885,7 @@ Dati Destinatario
 3. si verifica la corretta acquisizione della notifica
 4. viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12897,7 +19898,7 @@ Dati Destinatario
 3. Si verifica la corretta acquisizione della notifica
 4. Viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12910,7 +19911,7 @@ Dati Destinatario
 3. Si verifica la corretta acquisizione della notifica
 4. Viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12923,7 +19924,7 @@ Dati Destinatario
 3. Si verifica la corretta acquisizione della notifica
 4. Viene effettuato un controllo sulla durata della retention di `ATTO OPPONIBILE`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12936,9 +19937,62 @@ Dati Destinatario
 3. Si verifica la corretta acquisizione della notifica
 4. Viene effettuato un controllo sulla durata della retention di `PAGOPA`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_PN8120_1] Analizzando una notifica digitale perfezionata, verificare che la retention degli allegati non venga modificata anche post visualizzazione</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+4. viene verificato che l'elemento di timeline `REFINEMENT` esista
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+6. la notifica può essere correttamente recuperata da `Mario Cucumber`
+7. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+8. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_PN8120_2] Analizzando una notifica analogica perfezionata, verificare che la retention degli allegati non venga modificata anche post visualizzazione</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. vengono letti gli eventi fino all'elemento di timeline della notifica `REFINEMENT`
+4. viene verificato che l'elemento di timeline `REFINEMENT` esista
+5. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REFINEMENT`
+6. la notifica può essere correttamente recuperata da `Mario Cucumber`
+7. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+8. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/Allegati.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B_PN8120_3] Visualizzazione da parte del destinatario della notifica non perfezionata e verifica che la retenion dell'allegato non cambi</summary>
+
+**Descrizione**
+
+1. Viene generata una nuova notifica con destinatario `Mario Cucumber`
+2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+3. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `REQUEST_ACCEPTED`
+4. la notifica può essere correttamente recuperata da `Mario Cucumber`
+5. viene verificato che l'elemento di timeline `NOTIFICATION_VIEWED` esista
+6. viene effettuato un controllo sulla durata della retention di `ATTACHMENTS` per l'elemento di timeline `NOTIFICATION_VIEWED`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
+
+</details>
+
 
 ## Api Key Manager
 
@@ -12950,7 +20004,7 @@ Dati Destinatario
 1. vengono lette le apiKey esistenti
 2. la lettura è avvenuta correttamente
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12966,7 +20020,7 @@ Dati Destinatario
 6. vengono lette le apiKey esistenti
 7. l'apiKey non è più presente
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12982,7 +20036,7 @@ Dati Destinatario
 6. viene modificato lo stato dell'apiKey in `BLOCK`
 7. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -12998,7 +20052,7 @@ Dati Destinatario
 6. si verifica lo stato dell'apikey `BLOCKED`
 7. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13013,7 +20067,7 @@ Dati Destinatario
 5. viene modificato lo stato dell'apiKey in `BLOCK`
 6. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13030,7 +20084,7 @@ Dati Destinatario
 7. viene modificato lo stato dell'apiKey in `BLOCK`
 8. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13051,7 +20105,7 @@ Dati Destinatario
 11. viene modificato lo stato dell'apiKey in `BLOCK`
 12. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13071,7 +20125,7 @@ Dati Destinatario
 10. viene modificato lo stato dell'apiKey in `BLOCK`
 11. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13090,7 +20144,7 @@ Dati Destinatario
 9. l'invio della notifica ha sollevato un errore di autenticazione `403`
 10. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13106,7 +20160,7 @@ Dati Destinatario
 6. vengono lette le apiKey esistenti
 7. l'apiKey non è più presente
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13124,7 +20178,7 @@ Dati Destinatario
 8. viene modificato lo stato dell'apiKey in `BLOCK`
 9. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13143,7 +20197,7 @@ Dati Destinatario
 9. viene modificato lo stato dell'apiKey in `BLOCK`
 10. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13161,7 +20215,7 @@ Dati Destinatario
 8. viene modificato lo stato dell'apiKey in `BLOCK`
 9. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13180,7 +20234,7 @@ Dati Destinatario
 9. viene modificato lo stato dell'apiKey in `BLOCK`
 10. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13199,7 +20253,7 @@ Dati Destinatario
 9. viene modificato lo stato dell'apiKey in `BLOCK`
 10. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13223,7 +20277,7 @@ Dati Destinatario
 14. viene modificato lo stato dell'apiKey in `BLOCK`
 15. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13248,7 +20302,7 @@ Dati Destinatario
 15. viene modificato lo stato dell'apiKey in `BLOCK`
 16. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13271,7 +20325,7 @@ Dati Destinatario
 13. viene modificato lo stato dell'apiKey in `BLOCK`
 14. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13295,7 +20349,7 @@ Dati Destinatario
 14. viene modificato lo stato dell'apiKey in `BLOCK`
 15. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13319,7 +20373,7 @@ Dati Destinatario
 14. viene modificato lo stato dell'apiKey in `BLOCK`
 15. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13327,10 +20381,12 @@ Dati Destinatario
 
 **Descrizione**
 
+:warning: _Ignored_
+
 1. Viene generata una nuova apiKey con il gruppo `AAAAAAAAAA`
 2. l'operazione ha sollevato un errore con status code `400`
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13348,7 +20404,7 @@ Dati Destinatario
 8. viene modificato lo stato dell'apiKey in `BLOCK`
 9. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13367,7 +20423,7 @@ Dati Destinatario
 9. viene modificato lo stato dell'apiKey in `BLOCK`
 10. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
 
 </details>
 <details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
@@ -13391,7 +20447,332 @@ Dati Destinatario
 14. viene modificato lo stato dell'apiKey in `BLOCK`
 15. l'apiKey viene cancellata
 
-[Feature link](src/test/resources/it/pagopa/pn/cucumber)
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-KEY_25] generazione senza gruppo e mancata presenza nel ente padre</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova apiKey per il comune `Comune_Root` senza gruppo
+2. viene impostata l'apikey appena generata
+3. Si cambia al comune `Comune_Son`
+4. vengono lette le apiKey esistenti
+5. l'apiKey non è più presente
+6. Si cambia al comune `Comune_Root`
+7. viene modificato lo stato dell'apiKey in `BLOCK`
+8. l'apiKey viene cancellata
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[API-KEY_26] generazione senza gruppo e mancata presenza nel ente figlio</summary>
+
+**Descrizione**
+
+1. Viene creata una nuova apiKey per il comune `Comune_Son` senza gruppo
+2. viene impostata l'apikey appena generata
+3. Si cambia al comune `Comune_Root`
+4. vengono lette le apiKey esistenti
+5. l'apiKey non è più presente
+6. Si cambia al comune `Comune_Son`
+7. viene modificato lo stato dell'apiKey in `BLOCK`
+8. l'apiKey viene cancellata
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/ApikeyManager.feature)
+
+</details>
+
+## Audit Log OpenSearch
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[AUDIT_OPEN_SEARCH_1] verifica solo presenza audit log 10y</summary>
+
+**Descrizione**
+
+1. viene verificato che esiste un audit log `<audit-log>` in `10y`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/auditLogOpenSearch.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[AUDIT_OPEN_SEARCH_2] verifica presenza nel giusto indice e data di scrittura audit log 10y</summary>
+
+**Descrizione**
+
+1. viene verificato che esiste un audit log `<audit-log>` in `10y` non più vecchio di 10` giorni
+2. viene verificato che non esiste un audit log `<audit-log>` in `5y`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/auditLogOpenSearch.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[AUDIT_OPEN_SEARCH_3] verifica solo presenza audit log 5y</summary>
+
+**Descrizione**
+
+1. viene verificato che esiste un audit log `<audit-log>` in `5y`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/auditLogOpenSearch.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[AUDIT_OPEN_SEARCH_4] verifica presenza nel giusto indice e data di scrittura audit log 5y</summary>
+
+**Descrizione**
+
+1. viene verificato che esiste un audit log `<audit-log>` in `5y` non più vecchio di 10` giorni
+2. viene verificato che non esiste un audit log `<audit-log>` in `10y`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/auditLogOpenSearch.feature)
+
+</details>
+
+## Deleghe new feature
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_26] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. la notifica può essere correttamente recuperata da `Mario Cucumber`
+8. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PF-ANNULLAMENTO_27] PA mittente: annullamento notifica in cui è presente un delegato e verifica dell’annullamento sia da parte del destinatario che del delegato</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+8. la notifica può essere correttamente recuperata da `Mario Cucumber`
+9. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_32] Invio notifica digitale mono destinatario e recupero documento notificato_scenario negativo</summary>
+
+**Descrizione**
+
+:warning: _Ignored_
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. vengono letti gli eventi fino allo stato della notifica `CANCELLED`
+8. la notifica può essere correttamente letta da `Mario Gherkin` con delega restituendo un errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MANDATE_17] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber` per comune `Comune_Root`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+6. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MANDATE_18] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber` per comune `Comune_Root`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+6. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MANDATE_20] Invio notifica da parte di ente padre e lettura da delegato</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber` per comune `Comune_Root`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+6. la notifica può essere correttamente letta da `Mario Gherkin` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PF-MANDATE_21] Invio notifica digitale altro destinatario e recupero_scenario positivo</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber` per comune `Comune_Son`
+3. l'operazione ha generato un errore con status code `422`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-ANNULLAMENTO_33] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario negativo</summary>
+
+**Descrizione**
+
+1. `Mario Gherkin` rifiuta se presente la delega ricevuta `Mario Cucumber`
+2. `Mario Gherkin` viene delegato da `Mario Cucumber`
+3. `Mario Gherkin` accetta la delega `Mario Cucumber`
+4. Viene generata nuova notifica con destinatario `Mario Cucumber`
+5. La notifica viene inviata tramite api b2b dal `Comune_1` e si attende che lo stato diventi ACCEPTED e successivamente annullata
+6. Vengono letti gli eventi fino all'elemento di timeline della notifica `NOTIFICATION_CANCELLATION_REQUEST`
+7. la notifica può essere correttamente letta da `Mario Gherkin` con delega restituendo un errore `404`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PG-MANDATE_19] Invio notifica digitale altro destinatario e recupero_scenario positivo da parte di ente radice</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl` per comune `Comune_Root`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Root` e si attende che lo stato diventi ACCEPTED
+6. la notifica può essere correttamente letta da `CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PG-MANDATE_20] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl` per comune `Comune_Root`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+6. l'allegato `PAGOPA` può essere correttamente recuperato da`CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PG-MANDATE_21] Invio notifica digitale altro destinatario e recupero AAR e Attestazione Opponibile positivo da parte di ente radice</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl` per comune `Comune_Root`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+6. l'allegato `F24` può essere correttamente recuperato da`CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[WEB-PG-MANDATE_22] Invio notifica digitale altro destinatario per ente figlio e fallimento invio</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Son` e si attende che lo stato diventi ACCEPTED
+6. la notifica può essere correttamente letta da`CucumberSpa` con delega
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_69] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA e F24</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl` per comune `Comune_Root`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+6. l'allegato `PAGOPA` può essere correttamente recuperato da `CucumberSpa` con delega
+7. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+8. il download non ha prodotto errori
+9. l'allegato `F24` può essere correttamente recuperato da `CucumberSpa` con delega
+10. `GherkinSrl` tenta il recupero dell'allegato `F24`
+11. la notifica può essere correttamente letta da `CucumberSpa` con delega
+12. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[B2B-PA-PAY_MULTI_PG_70] Notifica con delega e presenza contemporanea di avviso pagoPA e F24: Delegante e Delegato scaricano correttamenta l'avviso pagoPA</summary>
+
+**Descrizione**
+
+1. `CucumberSpa` rifiuta se presente la delega ricevuta `GherkinSrl`
+2. `CucumberSpa` viene delegato da `GherkinSrl` per comune `Comune_Root`
+3. `CucumberSpa` accetta la delega `GherkinSrl`
+4. Viene generata nuova notifica con destinatario `GherkinSrl`
+5. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi ACCEPTED
+6. l'allegato `PAGOPA` può essere correttamente recuperato da `CucumberSpa` con delega
+7. `GherkinSrl` tenta il recupero dell'allegato `PAGOPA`
+8. il download non ha prodotto errori
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/DelegheTestNewFeature.feature)
 
 </details>
 
@@ -13555,6 +20936,85 @@ Dati Destinatario
 [Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
 
 </details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_10] inserimento email di cortesia per ente figlio</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_10_PG] inserimento email di cortesia a PG ente figlio</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_11] inserimento numero di telefono ente figlio</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_11_PG] inserimento numero di telefono a PG per ente figlio- fallimento</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_12] inserimento recapito legale per ente figlio- fallimento</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Mario Cucumber`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
+<details style="border:1px solid; border-radius: 5px; padding: 10px; margin-bottom: 20px">
+  <summary>[USER-ATTR_12_PG] inserimento recapito legale a PG per ente figlio- fallimento</summary>
+
+**Descrizione**
+
+1. Si predispone addressbook per l'utente `Lucio Anneo Seneca`
+2. viene richiesto l'inserimento del email di cortesia `provaemail@test.it` per il comune `Comune_Son`
+3. L'inserimento ha prodotto un errore con status code `400`
+
+[Feature link](src/test/resources/it/pagopa/pn/cucumber/UserAttributes.feature)
+
+</details>
+
 
 ## Test di integrazione della pubblica amministrazione
 
@@ -13817,4 +21277,5 @@ Dati Destinatario
 
 [Feature link](src/test/resources/PaIntegration/PaIntegrationTest.feature)
 
+</details>
 </details>

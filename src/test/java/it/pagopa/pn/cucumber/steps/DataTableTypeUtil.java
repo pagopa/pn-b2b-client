@@ -243,12 +243,30 @@ public class DataTableTypeUtil {
                                         .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
                                         .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                         .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_4.key))));
+                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_NO_VALID_ANAG_5.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_NO_VALID_ANAG_5.key))));
                     } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD.key), "SI")) {
                         addPaymentsItem.f24(
                                 new F24Payment()
                                         .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
                                         .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                         .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD.key))));
+                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_PG.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_PG.key))));
+                    } else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_EXCISE_PG.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_EXCISE_PG.key))));
                     }else if (Objects.equals(getValue(data, PAYMENT_F24_FLAT.key), "SI")) {
                         addPaymentsItem.f24(
                                         new F24Payment()
@@ -261,6 +279,12 @@ public class DataTableTypeUtil {
                                                 .title(getValue(data, TITLE_PAYMENT.key))
                                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED.key))));
+                    } else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_PG.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_SIMPLIFIED_PG.key))));
                     }else if (Objects.equals(getValue(data, PAYMENT_F24_SIMPLIFIED_1.key), "SI")) {
                         addPaymentsItem.f24(
                                 new F24Payment()
@@ -313,6 +337,12 @@ public class DataTableTypeUtil {
                                                 .title(getValue(data, TITLE_PAYMENT.key))
                                                 .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                                 .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_LOCAL.key))));
+                    }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_LOCAL_TARI.key), "SI")) {
+                        addPaymentsItem.f24(
+                                new F24Payment()
+                                        .title(getValue(data, TITLE_PAYMENT.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                        .metadataAttachment(utils.newMetadataAttachment(getDefaultValue(PAYMENT_F24_STANDARD_LOCAL_TARI.key))));
                     }else if (Objects.equals(getValue(data, PAYMENT_F24_STANDARD_TREASURY.key), "SI")) {
                         addPaymentsItem.f24(
                                         new F24Payment()
