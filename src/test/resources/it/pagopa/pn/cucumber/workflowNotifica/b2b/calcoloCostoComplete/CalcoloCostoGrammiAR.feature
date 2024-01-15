@@ -1106,7 +1106,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @CostoCartaceoComplete
-  Scenario: [CALCOLO-COSTO_AR-50GR-F24_54]Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr e con un f24
+  Scenario: [CALCOLO-COSTO_AR-50GR-F24_54] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr e con un f24
     Given viene generata una nuova notifica
       | subject               | notifica analogica ZONA 1 |
       | senderDenomination    | Comune di palermo         |
