@@ -3326,44 +3326,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
 
-  #Al momento non in Produzione
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Only one type of tax payer is allowed. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm   | NULL                                 |
-      | apply_cost_pagopa    | NULL                                 |
-      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_5 |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO            |
-      | apply_cost_f24       | SI                                   |
-      | payment_multy_number | 1                                    |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-
-  #Al momento non in Produzione
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 STANDARD LOCAL VALID (Lunghezza e formato TEFA-TEFN-TEFZ)  e controllo coerenza dei dati del modello F24 TARI (Costi di notifica  inclusi).-PN-9143
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm               | NULL                                     |
-      | apply_cost_pagopa                | NULL                                     |
-      #F24 local-------------------------------
-      | payment_f24                      | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
-      #-------------------------------------------
-      | title_payment                    | F24_STANDARD_LOCAL_TARI                  |
-      | apply_cost_f24                   | SI                                       |
-      | payment_multy_number             | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 

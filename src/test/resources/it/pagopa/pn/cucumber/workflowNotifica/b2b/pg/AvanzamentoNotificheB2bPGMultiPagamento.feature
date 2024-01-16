@@ -1925,68 +1925,6 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-      #Al momento non in Produzione
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_95] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e  Visualizzazione anagrafica completa F24 con intestazione a persone giuridiche. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination         | Convivio Spa                |
-      | recipientType        | PG                          |
-      | taxId                | 27957814470                 |
-      | payment_pagoPaForm   | NULL                        |
-      | payment_f24          | PAYMENT_F24_STANDARD_PG     |
-      | title_payment        | F24_STANDARD_PG_27957814470 |
-      | apply_cost_pagopa    | NO                          |
-      | apply_cost_f24       | SI                          |
-      | payment_multy_number | 1                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-      #Al momento non in Produzione
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_96] PA - inserimento notifica mono destinatario con un solo avviso F24 semplificato e costi di notifica  inclusi e  che contenga nelle informazioni del contribuente l'oggetto "company" valorizzato.. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination         | Convivio Spa                             |
-      | recipientType        | PG                                       |
-      | taxId                | 27957814470                              |
-      | payment_pagoPaForm   | NULL                                     |
-      | payment_f24          | PAYMENT_F24_SIMPLIFIED_PG                |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO_PG_27957814470 |
-      | apply_cost_pagopa    | NO                                       |
-      | apply_cost_f24       | SI                                       |
-      | payment_multy_number | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  #Al momento non in Produzione
-  @pagamentiMultipli @f24 @ignore
-  Scenario: [B2B-PA-PAY_MULTI_PG_97] PA - inserimento notifica mono destinatario con un solo avviso F24 semplificato e costi di notifica  inclusi e  he contenga nelle informazioni del contribuente l'oggetto "company" e "company.taxAddress" valorizzato. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination         | Convivio Spa                       |
-      | recipientType        | PG                                 |
-      | taxId                | 27957814470                        |
-      | payment_pagoPaForm   | NULL                               |
-      | payment_f24          | PAYMENT_F24_STANDARD_EXCISE_PG     |
-      | title_payment        | F24_STANDARD_EXCISE_PG_27957814470 |
-      | apply_cost_pagopa    | NO                                 |
-      | apply_cost_f24       | SI                                 |
-      | payment_multy_number | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 
