@@ -13,8 +13,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | apply_cost_f24       | NO           |
       | payment_multy_number | 1            |
@@ -34,8 +33,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -54,8 +52,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
@@ -76,8 +73,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -87,8 +83,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -109,8 +104,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -128,8 +122,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata dal "Comune_Multi"
@@ -149,8 +142,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -169,8 +161,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -191,8 +182,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -212,8 +202,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 3            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -231,8 +220,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 4            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -250,8 +238,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -274,8 +261,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 2                        |
@@ -296,8 +282,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -316,8 +301,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -337,8 +321,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -359,8 +342,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And destinatario
@@ -368,8 +350,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -388,8 +369,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And destinatario
@@ -397,8 +377,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -419,8 +398,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -429,8 +407,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -449,8 +426,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -459,8 +435,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -481,8 +456,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     And destinatario
@@ -490,8 +464,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -514,8 +487,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -524,8 +496,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -547,8 +518,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
@@ -570,8 +540,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
@@ -581,8 +550,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
@@ -609,8 +577,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -638,8 +605,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     And destinatario
@@ -647,8 +613,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -670,8 +635,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination         | Convivio Spa             |
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -679,8 +643,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination         | DivinaCommedia Srl       |
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -710,8 +673,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NO           |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -733,8 +695,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NO           |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -755,8 +716,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NO           |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -779,8 +739,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
@@ -803,8 +762,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
@@ -824,8 +782,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_pagopa    | NO                        |
       | apply_cost_f24       | SI                        |
@@ -845,8 +802,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -868,8 +824,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And destinatario
@@ -877,8 +832,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -899,8 +853,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     And destinatario
@@ -908,8 +861,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -930,8 +882,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -941,8 +892,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -967,8 +917,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And destinatario
@@ -976,8 +925,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1003,8 +951,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
       | payment_pagoPaForm_1 | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     And destinatario
@@ -1013,8 +960,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
       | payment_pagoPaForm_1 | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1034,8 +980,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
@@ -1045,8 +990,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
@@ -1071,8 +1015,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1093,8 +1036,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1114,8 +1056,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | SI                       |
-      | payment_f24standard  | NULL                     |
+      | payment_f24          | PAYMENT_F24_FLAT         |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -1137,8 +1078,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -1160,8 +1100,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | SI                       |
-      | payment_f24standard  | NULL                     |
+      | payment_f24          | PAYMENT_F24_FLAT         |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
@@ -1185,8 +1124,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     And destinatario
@@ -1194,8 +1132,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1218,8 +1155,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
       | payment_multy_number | 1            |
     And destinatario
@@ -1227,8 +1163,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1251,8 +1186,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | SI                       |
-      | payment_f24standard  | NULL                     |
+      | payment_f24          | PAYMENT_F24_FLAT         |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -1261,8 +1195,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | SI                       |
-      | payment_f24standard  | NULL                     |
+      | payment_f24          | PAYMENT_F24_FLAT         |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -1283,8 +1216,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_27957814470 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -1293,8 +1225,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -1315,8 +1246,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
       | payment_multy_number | 1            |
     And destinatario
@@ -1324,8 +1254,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | NULL                     |
-      | payment_f24flatRate  | SI                       |
-      | payment_f24standard  | NULL                     |
+      | payment_f24          | PAYMENT_F24_FLAT         |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -1361,8 +1290,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 27957814470        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 2                  |
       | payment_noticeCode   | 302011697026785044 |
@@ -1381,8 +1309,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 27957814470        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | payment_noticeCode   | 302011697026785045 |
@@ -1391,8 +1318,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 70412331207        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | payment_noticeCode   | 302011697026785045 |
@@ -1424,8 +1350,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 27957814470              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
@@ -1435,8 +1360,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                       |
       | taxId                | 70412331207              |
       | payment_pagoPaForm   | SI                       |
-      | payment_f24flatRate  | NULL                     |
-      | payment_f24standard  | SI                       |
+      | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
@@ -1460,8 +1384,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 2            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1496,8 +1419,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG                 |
       | taxId                | 27957814470        |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | notice_code          | 302011697026785045 |
@@ -1525,8 +1447,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1546,8 +1467,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | recipientType        | PG           |
       | taxId                | 27957814470  |
       | payment_pagoPaForm   | SI           |
-      | payment_f24flatRate  | NULL         |
-      | payment_f24standard  | NULL         |
+      | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
       | payment_multy_number | 1            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1579,8 +1499,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1611,8 +1530,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1632,8 +1550,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1656,8 +1573,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_F24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1681,8 +1597,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_f24       | NO   |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
@@ -1701,8 +1616,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1720,8 +1634,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1739,8 +1652,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario GherkinSrl e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1760,14 +1672,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario GherkinSrl e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1787,15 +1697,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario CucumberSpa e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_CUCUMBER_SRL |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
     And destinatario GherkinSrl e:
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_STANDARD_GHERKING_SPA |
       | apply_cost_f24       | SI                        |
       | payment_multy_number | 1                         |
@@ -1817,8 +1725,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NUL  |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1837,12 +1744,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Cucumber srl e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1864,8 +1770,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                   | 27957814470              |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
-      | payment_f24flatRate     | NULL                     |
-      | payment_f24standard     | SI                       |
+      | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_27957814470 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
@@ -1886,8 +1791,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                   | 27957814470              |
       | digitalDomicile_address | pectest@pec.pagopa.it    |
       | payment_pagoPaForm      | NULL                     |
-      | payment_f24flatRate     | NULL                     |
-      | payment_f24standard     | SI                       |
+      | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_27957814470 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
@@ -1908,8 +1812,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                   | 27957814470              |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
-      | payment_f24flatRate     | NULL                     |
-      | payment_f24standard     | SI                       |
+      | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_27957814470 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
@@ -1930,8 +1833,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | taxId                   | 27957814470              |
       | digitalDomicile_address | pectest@pec.pagopa.it    |
       | payment_pagoPaForm      | NULL                     |
-      | payment_f24flatRate     | NULL                     |
-      | payment_f24standard     | SI                       |
+      | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_27957814470 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
@@ -1953,8 +1855,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | digitalDomicile_address | test@pecOk.it        |
       | title_payment           | F24_FLAT_27957814470 |
       | payment_pagoPaForm      | NULL                 |
-      | payment_f24flatRate     | SI                   |
-      | payment_f24standard     | NULL                 |
+      | payment_f24             | PAYMENT_F24_FLAT     |
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | NO                   |
       | payment_multy_number    | 1                    |
@@ -1975,8 +1876,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | digitalDomicile_address | pectest@pec.pagopa.it |
       | title_payment           | F24_FLAT_27957814470  |
       | payment_pagoPaForm      | NULL                  |
-      | payment_f24flatRate     | SI                    |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | PAYMENT_F24_FLAT      |
       | apply_cost_pagopa       | NO                    |
       | apply_cost_f24          | NO                    |
       | payment_multy_number    | 1                     |
@@ -1997,8 +1897,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | digitalDomicile_address | test@ok.it           |
       | title_payment           | F24_FLAT_27957814470 |
       | payment_pagoPaForm      | NULL                 |
-      | payment_f24flatRate     | SI                   |
-      | payment_f24standard     | NULL                 |
+      | payment_f24             | PAYMENT_F24_FLAT     |
       | apply_cost_pagopa       | NO                   |
       | apply_cost_f24          | NO                   |
       | payment_multy_number    | 1                    |
@@ -2019,77 +1918,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | digitalDomicile_address | pectest@pec.pagopa.it |
       | title_payment           | F24_FLAT_27957814470  |
       | payment_pagoPaForm      | NULL                  |
-      | payment_f24flatRate     | SI                    |
-      | payment_f24standard     | NULL                  |
+      | payment_f24             | PAYMENT_F24_FLAT      |
       | apply_cost_pagopa       | NO                    |
       | apply_cost_f24          | NO                    |
       | payment_multy_number    | 1                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_95] PA - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi e  Visualizzazione anagrafica completa F24 con intestazione a persone giuridiche. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination           | Convivio Spa                |
-      | recipientType          | PG                          |
-      | taxId                  | 27957814470                 |
-      | payment_pagoPaForm     | NULL                        |
-      | payment_f24flatRate    | NULL                        |
-      | payment_f24standard_pg | SI                          |
-      | title_payment          | F24_STANDARD_PG_27957814470 |
-      | apply_cost_pagopa      | NO                          |
-      | apply_cost_f24         | SI                          |
-      | payment_multy_number   | 1                           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_96] PA - inserimento notifica mono destinatario con un solo avviso F24 semplificato e costi di notifica  inclusi e  che contenga nelle informazioni del contribuente l'oggetto "company" valorizzato.. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination              | Convivio Spa                             |
-      | recipientType             | PG                                       |
-      | taxId                     | 27957814470                              |
-      | payment_pagoPaForm        | NULL                                     |
-      | payment_f24flatRate       | NULL                                     |
-      | payment_f24_simplified_pg | SI                                       |
-      | title_payment             | F24_STANDARD_SEMPLIFICATO_PG_27957814470 |
-      | apply_cost_pagopa         | NO                                       |
-      | apply_cost_f24            | SI                                       |
-      | payment_multy_number      | 1                                        |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-
-  @pagamentiMultipli
-  Scenario: [B2B-PA-PAY_MULTI_PG_97] PA - inserimento notifica mono destinatario con un solo avviso F24 semplificato e costi di notifica  inclusi e  he contenga nelle informazioni del contribuente l'oggetto "company" e "company.taxAddress" valorizzato. - PN-9070
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario
-      | denomination                   | Convivio Spa                       |
-      | recipientType                  | PG                                 |
-      | taxId                          | 27957814470                        |
-      | payment_pagoPaForm             | NULL                               |
-      | payment_f24flatRate            | NULL                               |
-      | payment_f24_standard_excise_pg | SI                                 |
-      | title_payment                  | F24_STANDARD_EXCISE_PG_27957814470 |
-      | apply_cost_pagopa              | NO                                 |
-      | apply_cost_f24                 | SI                                 |
-      | payment_multy_number           | 1                                  |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
 

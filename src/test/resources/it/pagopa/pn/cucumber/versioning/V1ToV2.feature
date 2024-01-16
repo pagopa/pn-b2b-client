@@ -3,21 +3,20 @@ Feature: verifica compatibilità tra v1 a v2
   @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_1] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
     Given viene generata una nuova notifica V2
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
 
-
   @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_2] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V1.1 positivo
     Given viene generata una nuova notifica V2
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
@@ -25,8 +24,8 @@ Feature: verifica compatibilità tra v1 a v2
   @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_3] Invio notifica digitale mono destinatario V2 e recupero tramite codice IUN V1 (p.fisica)_scenario positivo
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber V2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then si verifica la corretta acquisizione della notifica V2
@@ -43,8 +42,8 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_5] Invio notifica digitale mono destinatario V2 e controllo che V1 non abbia l'evento "NOTIFICATION_CANCELLED"
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber V2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata V2
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED" V2
@@ -65,14 +64,14 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_7] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 a V1.1
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario V2
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | apply_cost_pagopa | SI |
+      | denomination       | Ada              |
+      | taxId              | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI               |
+      | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V1
     And si attende il corretto pagamento della notifica V1
@@ -80,14 +79,14 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_8] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V1.1 a V2.0
     Given viene generata una nuova notifica V1
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario V1
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
-      | payment_pagoPaForm | SI |
-      | apply_cost_pagopa | SI |
+      | denomination       | Ada              |
+      | taxId              | LVLDAA85T50G702B |
+      | payment_pagoPaForm | SI               |
+      | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V2
     And si attende il corretto pagamento della notifica V2
@@ -96,9 +95,9 @@ Feature: verifica compatibilità tra v1 a v2
   @version @ignore
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_9]  Invio notifica digitale mono destinatario e mono pagamento V2.0 e fallimento visualizzazione notifica
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then si verifica la corretta acquisizione della notifica V2
@@ -109,9 +108,9 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_10]  Invio notifica digitale mono destinatario e mono pagamento V1.1 e fallimento visualizzazione notifica
     Given viene generata una nuova notifica V1
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V1
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then si verifica la corretta acquisizione della notifica V1
@@ -121,27 +120,25 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_11] Invio notifica da V1.1 e recupero con V2 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_12] Invio e visualizzazione notifica e verifica amount e effectiveDate da  V2.0 senza pagoPaIntMode PN-8843
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
-      | pagoPaIntMode | NULL |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | NULL                        |
     And destinatario Mario Gherkin V2 e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI   |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V2"
 
@@ -155,8 +152,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
-      | payment_f24flatRate        | NULL |
-      | payment_f24standard        | NULL |
+      | payment_f24                | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
     And  la notifica a 2 avvisi di pagamento con OpenApi V1
 
@@ -186,21 +182,19 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
-      | payment_f24flatRate        | NULL |
-      | payment_f24standard        | NULL |
+      | payment_f24                | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     And  la notifica a 2 avvisi di pagamento con OpenApi V2
 
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_15] Invio notifica da V1.1 e tentato download allegato pagoPa con V2.1 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V1
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
     And viene richiesto il download del documento "PAGOPA"
@@ -209,13 +203,12 @@ Feature: verifica compatibilità tra v1 a v2
   @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_16] Invio notifica da V1.1 e recupero con V2 senza payment_pagoPaForm PN-8842
     Given viene generata una nuova notifica V2
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-      | feePolicy | DELIVERY_MODE |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | NULL |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
     And viene richiesto il download del documento "PAGOPA"

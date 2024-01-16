@@ -144,8 +144,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -164,8 +163,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -184,8 +182,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -204,8 +201,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_4_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -222,9 +218,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | paFee              | 0                           |
       | document           | DOC_4_PG                    |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NOALLEGATO                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_pagoPaForm   | NOALLEGATO                    |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
