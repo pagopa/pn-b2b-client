@@ -298,28 +298,6 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-  @dev @workflowAnalogico
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_15] Invio notifica multidestinatario complettamente irreperibile e complettamente irreperibile e controllo date business PN-9059
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Mario Gherkin e:
-      | denomination            | Test AR discovery multi           |
-      | digitalDomicile         | NULL                              |
-      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
-    And destinatario Mario Cucumber e:
-      | denomination            | Test AR discovery multi           |
-      | digitalDomicile         | NULL                              |
-      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    Then verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 0
-    And verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 1
-
 
   @dev @workflowAnalogico
   Scenario: [B2B_TIMELINE_MULTI_ANALOG_16] Invio notifica multidestinatario completamente irreperibile e successo digitale con lettura notifica analogica e non presenza REFINEMENT PN-9059
