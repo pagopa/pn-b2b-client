@@ -103,7 +103,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | denomination       | Ada              |
       | taxId              | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI               |
-      | payment_f24        | PAYMENT_F24_FLAT |
+      | payment_f24        | NULL             |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     #Questa API è a disposizione della Pubblica Amministrazione per inviare eventi di chiusura di una o più posizioni debitorie di tipo PagoPA.

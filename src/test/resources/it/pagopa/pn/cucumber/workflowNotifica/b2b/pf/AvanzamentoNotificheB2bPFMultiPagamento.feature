@@ -3443,7 +3443,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
   @pagamentiMultipli @cartaceoF24
-  Scenario: [B2B-PA-PAY_MULTI_101] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
+  Scenario: [B2B-PA-PAY_MULTI_102] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
