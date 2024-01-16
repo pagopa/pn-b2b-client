@@ -1083,7 +1083,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | senderDenomination    | Comune di palermo    |
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
-      | document              | DOC_8_PG;DOC_7_PG;   |
+      | document              | DOC_8_PG;DOC_5_PG;   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                              |
       | physicalAddress_address      | Via@ok_AR                         |
@@ -1091,8 +1091,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_province     | <PROVINCE>                        |
       | physicalAddress_zip          | <CAP>                             |
       | payment_pagoPaForm           | NOALLEGATO                        |
-      | payment_f24flatRate          | NULL                              |
-      | payment_f24_simplified       | SI                                |
+      | payment_f24                  | PAYMENT_F24_SIMPLIFIED            |
       | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24               | SI                                |
       | payment_multy_number         | 1                                 |
@@ -1112,15 +1111,14 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | senderDenomination    | Comune di palermo         |
       | physicalCommunication | AR_REGISTERED_LETTER      |
       | feePolicy             | DELIVERY_MODE             |
-      | document              | DOC_8_PG;DOC_7_PG;        |
+      | document              | DOC_8_PG;DOC_5_PG;        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_State   | ALBANIA                           |
       | physicalAddress_zip     | ZONE_1                            |
       | physicalAddress_address | Via@ok_RIR                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
-      | payment_f24flatRate     | NULL                              |
-      | payment_f24_simplified  | SI                                |
+      | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                                |
       | payment_multy_number    | 1                                 |
