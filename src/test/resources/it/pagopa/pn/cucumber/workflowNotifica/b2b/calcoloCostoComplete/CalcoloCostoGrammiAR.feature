@@ -1083,7 +1083,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | senderDenomination    | Comune di palermo    |
       | physicalCommunication | AR_REGISTERED_LETTER |
       | feePolicy             | DELIVERY_MODE        |
-      | document              | DOC_8_PG;DOC_6_PG;   |
+      | document              | DOC_8_PG;DOC_7_PG;   |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                              |
       | physicalAddress_address      | Via@ok_AR                         |
@@ -1112,7 +1112,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | senderDenomination    | Comune di palermo         |
       | physicalCommunication | AR_REGISTERED_LETTER      |
       | feePolicy             | DELIVERY_MODE             |
-      | document              | DOC_8_PG;DOC_6_PG;        |
+      | document              | DOC_8_PG;DOC_7_PG;        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                              |
       | physicalAddress_State   | ALBANIA                           |
