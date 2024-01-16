@@ -3326,8 +3326,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
 
-
-  @pagamentiMultipli @f24
+  #Al momento non in Produzione
+  @pagamentiMultipli @f24 @ignore
   Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Only one type of tax payer is allowed. - PN-9070
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3344,8 +3344,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-
-  @pagamentiMultipli @f24
+  #Al momento non in Produzione
+  @pagamentiMultipli @f24 @ignore
   Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 STANDARD LOCAL VALID (Lunghezza e formato TEFA-TEFN-TEFZ)  e controllo coerenza dei dati del modello F24 TARI (Costi di notifica  inclusi).-PN-9143
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
