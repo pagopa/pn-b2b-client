@@ -3364,4 +3364,22 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-
+  @pagamentiMultipli @f24
+  Scenario: [B2B-PA-PAY_MULTI_99] Invio notifica ZONE_1 con 10 f24
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica ZONA 1 |
+      | senderDenomination    | Comune di palermo         |
+      | physicalCommunication | AR_REGISTERED_LETTER      |
+      | feePolicy             | DELIVERY_MODE             |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_State   | ALBANIA                           |
+      | physicalAddress_zip     | ZONE_1                            |
+      | physicalAddress_address | Via@ok_RIR                        |
+      | payment_pagoPaForm      | NOALLEGATO                        |
+      | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
+      | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                                |
+      | payment_multy_number    | 10                                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
