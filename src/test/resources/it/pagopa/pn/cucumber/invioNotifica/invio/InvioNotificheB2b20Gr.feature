@@ -219,8 +219,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_4_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED        |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -228,5 +228,101 @@ Feature: invio notifiche b2b con analisi documenti allegati
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_17] da PA non elencata in abilitazione - con avviso PagoPA    senza allegato di pagamento e un documento di 3 pagine (Esito: refined) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_3_PG                    |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_18] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e un documento di 4 pagine (Esito: refined) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_4_PG                    |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_19] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e 2 documenti di 2 pagine ciascuno (Esito: refined) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_2_PG;DOC_2_PG           |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_20] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e un documento di 5 pagine (Esito: refused) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_5_PG                    |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
+
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_21] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e 2 documenti uno di 2 pagine e uno di 3 pagine (Esito: refused) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_2_PG;DOC_3_PG           |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
+
+
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_22] da PA non elencata in abilitazione -  senza allegato di pagamento e F24 e un documento di 2 pagine (Esito: refined) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+      | document           | DOC_2_PG                    |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO                    |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED        |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
+      | apply_cost_pagopa    | SI                            |
+      | apply_cost_f24       | SI                            |
+      | payment_multy_number | 1                             |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then si verifica la corretta acquisizione della notifica
+    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+
+
+    
 
 
