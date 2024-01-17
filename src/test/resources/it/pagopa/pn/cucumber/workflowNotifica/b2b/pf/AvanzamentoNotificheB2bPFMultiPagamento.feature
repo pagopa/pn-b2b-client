@@ -2269,7 +2269,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
+      | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -3361,21 +3361,50 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-
-
-
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_99] Invio notifica ZONE_1 con 10 f24
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_99] Invio notifica cartacea con 6 f24
     Given viene generata una nuova notifica
-      | subject               | notifica analogica ZONA 1 |
-      | senderDenomination    | Comune di palermo         |
-      | physicalCommunication | AR_REGISTERED_LETTER      |
-      | feePolicy             | DELIVERY_MODE             |
+      | subject            | notifica analogica ZONA 1 |
+      | senderDenomination | Comune di palermo         |
+      | feePolicy          | DELIVERY_MODE             |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                              |
-      | physicalAddress_State   | ALBANIA                           |
-      | physicalAddress_zip     | ZONE_1                            |
-      | physicalAddress_address | Via@ok_RIR                        |
+      | physicalAddress_address | Via@ok_890                        |
+      | payment_pagoPaForm      | NOALLEGATO                        |
+      | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
+      | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                                |
+      | payment_multy_number    | 6                                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_100] Invio notifica cartacea con 9 f24
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica ZONA 1 |
+      | senderDenomination | Comune di palermo         |
+      | feePolicy          | DELIVERY_MODE             |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_address | Via@ok_890                        |
+      | payment_pagoPaForm      | NOALLEGATO                        |
+      | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
+      | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                                |
+      | payment_multy_number    | 9                                 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+
+
+  @pagamentiMultipli @cartaceoF24
+  Scenario: [B2B-PA-PAY_MULTI_101] Invio notifica cartacea con 10 f24
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica ZONA 1 |
+      | senderDenomination | Comune di palermo         |
+      | feePolicy          | DELIVERY_MODE             |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                              |
+      | physicalAddress_address | Via@ok_890                        |
       | payment_pagoPaForm      | NOALLEGATO                        |
       | payment_f24             | PAYMENT_F24_SIMPLIFIED            |
       | title_payment           | F24_SEMPLIFICATO_CLMCST42R12D969Z |
