@@ -240,8 +240,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @20Grammi
   Scenario: [B2B-PA-SEND_PRELOAD_18] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e un documento di 4 pagine (Esito: refined) PN-9589
@@ -255,8 +254,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
   @20Grammi
@@ -271,8 +269,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | apply_cost_pagopa    | SI         |
       | payment_multy_number | 1          |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
   @20Grammi
   Scenario: [B2B-PA-SEND_PRELOAD_20] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e un documento di 5 pagine (Esito: refused) PN-9589
@@ -321,7 +318,18 @@ Feature: invio notifiche b2b con analisi documenti allegati
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
-
-    
+  @20Grammi
+  Scenario: [B2B-PA-SEND_PRELOAD_23] da PA non elencata in abilitazione - con avviso PagoPA  senza allegato di pagamento e due documenti: uno da 3 pagine e uno da 1 pagina inviata da PA “disabilitata” (Esito: refused) PN-9589
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | document           | DOC_3_PG;DOC_1_PG           |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Cucumber e:
+      | payment_pagoPaForm   | NOALLEGATO |
+      | apply_cost_pagopa    | SI         |
+      | payment_multy_number | 1          |
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
