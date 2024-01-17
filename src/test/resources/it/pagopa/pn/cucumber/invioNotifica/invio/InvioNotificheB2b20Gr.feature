@@ -144,8 +144,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -163,8 +163,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -182,8 +182,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_8_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | NOALLEGATO                    |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -201,8 +201,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | document           | DOC_4_PG                    |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24          | PAYMENT_F24_STANDARD          |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED          |
+      | title_payment        | F24_SIMPLIFIED_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -227,7 +227,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
     Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
-
+#---------------------------PN-9589--------------------------------
   @20Grammi
   Scenario: [B2B-PA-SEND_PRELOAD_17] da PA non elencata in abilitazione - con avviso PagoPA    senza allegato di pagamento e un documento di 3 pagine (Esito: refined) PN-9589
     Given viene generata una nuova notifica
