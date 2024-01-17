@@ -304,7 +304,7 @@ Feature: invio notifiche b2b con analisi documenti allegati
 
 
   @20Grammi
-  Scenario: [B2B-PA-SEND_PRELOAD_22] da PA non elencata in abilitazione -  senza allegato di pagamento e F24 e un documento di 2 pagine (Esito: refined) PN-9589
+  Scenario: [B2B-PA-SEND_PRELOAD_22] da PA non elencata in abilitazione -  senza allegato di pagamento e F24 e un documento di 2 pagine (Esito: refused) PN-9589
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -318,9 +318,8 @@ Feature: invio notifiche b2b con analisi documenti allegati
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    Then si verifica la corretta acquisizione della notifica
-    And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi REFUSED
+    Then verifica che la notifica inviata tramite api b2b dal "Comune_2" non diventi ACCEPTED
 
 
     
