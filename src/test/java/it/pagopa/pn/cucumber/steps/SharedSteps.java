@@ -1047,8 +1047,8 @@ public class SharedSteps {
         sendNotificationRefusedOverSizeAllegato();
     }
 
-    @When("la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal {string} e si attende che lo stato diventi ACCEPTED")
-    public void laNotificaVieneInviataPreloadAllegato50Pagine(String paType) {
+    @When("la notifica viene inviata tramite api b2b con preload allegato da 100 pagine pdf dal {string} e si attende che lo stato diventi ACCEPTED")
+    public void laNotificaVieneInviataPreloadAllegato50Fogli(String paType) {
         selectPA(paType);
         setSenderTaxIdFromProperties();
         sendNotificationSize50Allegato();
