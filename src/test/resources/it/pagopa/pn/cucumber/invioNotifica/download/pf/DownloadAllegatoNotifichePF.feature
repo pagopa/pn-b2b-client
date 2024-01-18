@@ -19,8 +19,7 @@ Feature: Download da persona fisica
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"
@@ -33,8 +32,7 @@ Feature: Download da persona fisica
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI   |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     When viene richiesto il download del documento "PAGOPA"

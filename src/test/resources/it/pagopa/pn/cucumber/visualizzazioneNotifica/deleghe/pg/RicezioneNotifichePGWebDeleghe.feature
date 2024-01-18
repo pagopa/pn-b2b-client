@@ -34,9 +34,8 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
@@ -48,9 +47,8 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
@@ -62,9 +60,8 @@ Feature: Ricezione notifiche destinate al delegante
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrl e:
-      | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | SI   |
+      | payment_pagoPaForm | SI                   |
+      | payment_f24        | PAYMENT_F24_STANDARD |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "F24" può essere correttamente recuperato da "CucumberSpa" con delega
 
@@ -207,7 +204,7 @@ Feature: Ricezione notifiche destinate al delegante
     And "CucumberSpa" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | comune di milano          |
+      | senderDenomination | comune di milano           |
     And destinatario Mario Cucumber
     And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -220,7 +217,7 @@ Feature: Ricezione notifiche destinate al delegante
     And "CucumberSpa" accetta la delega "Mario Cucumber"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
-      | senderDenomination | comune di milano          |
+      | senderDenomination | comune di milano           |
     And destinatario Mario Cucumber
     And destinatario CucumberSpa
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

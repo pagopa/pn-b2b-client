@@ -11,8 +11,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | apply_cost_f24       | NO   |
       | payment_multy_number | 2    |
@@ -28,8 +27,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -44,8 +42,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -63,8 +60,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -73,8 +69,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -93,11 +88,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | SI   |
-      | payment_f24standard  | NULL |
-      | apply_cost_pagopa    | NO   |
-      | payment_multy_number | 1    |
+      | payment_pagoPaForm   | SI               |
+      | payment_f24          | PAYMENT_F24_FLAT |
+      | apply_cost_pagopa    | NO               |
+      | payment_multy_number | 1                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
 
@@ -109,11 +103,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | SI   |
-      | payment_f24standard  | NULL |
-      | apply_cost_pagopa    | SI   |
-      | payment_multy_number | 1    |
+      | payment_pagoPaForm   | SI               |
+      | payment_f24          | PAYMENT_F24_FLAT |
+      | apply_cost_pagopa    | SI               |
+      | payment_multy_number | 1                |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
@@ -126,11 +119,10 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | SI   |
-      | payment_f24standard  | NULL |
-      | apply_cost_pagopa    | NO   |
-      | payment_multy_number | 1    |
+      | payment_pagoPaForm   | SI               |
+      | payment_f24          | PAYMENT_F24_FLAT |
+      | apply_cost_pagopa    | NO               |
+      | payment_multy_number | 1                |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
@@ -145,8 +137,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -162,8 +153,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -181,8 +171,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -197,8 +186,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 3    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -213,8 +201,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 4    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -229,8 +216,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -249,8 +235,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -269,8 +254,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 2                             |
@@ -286,8 +270,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 2                             |
@@ -305,8 +288,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -322,8 +304,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -338,8 +319,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -356,8 +336,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -373,8 +352,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -390,8 +368,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -411,16 +388,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -436,16 +411,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -463,8 +436,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -472,8 +444,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -490,8 +461,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -499,8 +469,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -517,8 +486,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -526,8 +494,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -544,16 +511,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -573,8 +538,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -582,8 +546,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -602,8 +565,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -622,8 +584,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -632,8 +593,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -656,8 +616,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -682,16 +641,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -710,16 +667,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
     And destinatario
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -746,8 +701,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NO   |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -766,8 +720,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NO   |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -783,8 +736,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NO   |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -804,8 +756,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
@@ -825,8 +776,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -846,13 +796,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_pagopa    | NO                 |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_pagopa    | NO                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When si verifica la corretta acquisizione della notifica
     Then l'allegato "F24" può essere correttamente recuperato da "Mario Cucumber"
@@ -868,8 +817,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -888,16 +836,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -915,16 +861,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -942,8 +886,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -952,8 +895,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -975,16 +917,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1007,8 +947,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
       | payment_pagoPaForm_1 | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     And destinatario
@@ -1016,8 +955,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
       | payment_pagoPaForm_1 | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 2                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1034,8 +972,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
@@ -1044,8 +981,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -1067,8 +1003,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1086,8 +1021,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1104,8 +1038,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -1124,8 +1057,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -1144,8 +1076,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | NO                            |
@@ -1166,16 +1097,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1195,16 +1124,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1224,8 +1151,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -1233,8 +1159,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -1252,8 +1177,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -1261,8 +1185,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | SI                            |
       | payment_multy_number | 1                             |
@@ -1280,16 +1203,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | SI                            |
-      | payment_f24standard  | NULL                          |
+      | payment_f24          | PAYMENT_F24_FLAT              |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | NO                            |
       | payment_multy_number | 1                             |
@@ -1322,8 +1243,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 2                  |
       | payment_noticeCode   | 302011697026785044 |
@@ -1339,8 +1259,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | payment_noticeCode   | 302011697026785049 |
@@ -1348,8 +1267,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
       | payment_noticeCode   | 302011697026785049 |
@@ -1366,16 +1284,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
 
@@ -1392,16 +1308,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
       | payment_multy_number | 1                  |
 
@@ -1418,16 +1332,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 4    |
     And destinatario
       | denomination         | Gaio Giulio Cesare |
       | taxId                | CSRGGL44L13H501E   |
       | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | NULL               |
+      | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
       | payment_multy_number | 1                  |
 
@@ -1451,8 +1363,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 2    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1474,8 +1385,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
@@ -1484,8 +1394,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Gaio Giulio Cesare            |
       | taxId                | CSRGGL44L13H501E              |
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CSRGGL44L13H501E |
       | apply_cost_f24       | SI                            |
       | apply_cost_pagopa    | SI                            |
@@ -1563,13 +1472,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_pagopa    | SI                 |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | SI                   |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_pagopa    | SI                   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "Mario Gherkin" con delega
     And "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -1592,8 +1500,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1613,8 +1520,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1631,8 +1537,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1664,13 +1569,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm      | NULL               |
-      | payment_f24flatRate     | NULL               |
-      | payment_f24standard     | SI                 |
-      | digitalDomicile_address | test@pecOk.it      |
-      | title_payment           | F24_STANDARD_MARIO |
-      | apply_cost_f24          | SI                 |
-      | payment_multy_number    | 1                  |
+      | payment_pagoPaForm      | NULL                 |
+      | payment_f24             | PAYMENT_F24_STANDARD |
+      | digitalDomicile_address | test@pecOk.it        |
+      | title_payment           | F24_STANDARD_MARIO   |
+      | apply_cost_f24          | SI                   |
+      | payment_multy_number    | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
@@ -1691,8 +1595,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm      | NULL                  |
-      | payment_f24flatRate     | NULL                  |
-      | payment_f24standard     | SI                    |
+      | payment_f24             | PAYMENT_F24_STANDARD  |
       | digitalDomicile_address | pectest@pec.pagopa.it |
       | title_payment           | F24_STANDARD_MARIO    |
       | apply_cost_f24          | SI                    |
@@ -1723,12 +1626,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And viene effettuato un controllo sulla durata della retention di "F24"
@@ -1744,12 +1646,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     #Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
@@ -1768,12 +1669,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
    # Then si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento "F24"
@@ -1794,8 +1694,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_f24       | NO   |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
@@ -1812,13 +1711,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | SI                 |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | apply_cost_pagopa    | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | SI                   |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | apply_cost_pagopa    | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     Then il documento di pagamento "F24" può essere recuperata tramite AppIO da "Mario Cucumber"
@@ -1834,8 +1732,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1852,12 +1749,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1874,14 +1770,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NULL |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1900,16 +1794,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                 |
-      | payment_f24flatRate  | NULL                 |
-      | payment_f24standard  | SI                   |
+      | payment_f24          | PAYMENT_F24_STANDARD |
       | title_payment        | F24_STANDARD_GHERKIN |
       | apply_cost_f24       | SI                   |
       | payment_multy_number | 1                    |
@@ -1931,8 +1823,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm   | SI   |
-      | payment_f24flatRate  | NULL |
-      | payment_f24standard  | NUL  |
+      | payment_f24          | NULL |
       | apply_cost_pagopa    | SI   |
       | payment_multy_number | 1    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1951,12 +1842,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario Mario Cucumber e:
-      | payment_pagoPaForm   | NULL               |
-      | payment_f24flatRate  | NULL               |
-      | payment_f24standard  | SI                 |
-      | title_payment        | F24_STANDARD_MARIO |
-      | apply_cost_f24       | SI                 |
-      | payment_multy_number | 1                  |
+      | payment_pagoPaForm   | NULL                 |
+      | payment_f24          | PAYMENT_F24_STANDARD |
+      | title_payment        | F24_STANDARD_MARIO   |
+      | apply_cost_f24       | SI                   |
+      | payment_multy_number | 1                    |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
@@ -1981,8 +1871,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
@@ -2001,8 +1890,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it    |
       | physicalAddress_address | Via@ok-Retry_RS |
       | payment_pagoPaForm      | SI              |
-      | payment_f24flatRate     | NULL            |
-      | payment_f24standard     | NULL            |
+      | payment_f24             | NULL            |
       | apply_cost_pagopa       | SI              |
       | apply_cost_f24          | NO              |
       | payment_multy_number    | 1               |
@@ -2021,8 +1909,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | SI           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
@@ -2041,8 +1928,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via Roma     |
       | payment_pagoPaForm      | SI           |
-      | payment_f24flatRate     | NULL         |
-      | payment_f24standard     | NULL         |
+      | payment_f24             | NULL         |
       | apply_cost_pagopa       | NO           |
       | apply_cost_f24          | NO           |
       | payment_multy_number    | 1            |
@@ -2061,8 +1947,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2082,8 +1967,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2103,8 +1987,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via@ok-Retry_RS               |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2124,8 +2007,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2145,8 +2027,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2166,8 +2047,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
-      | payment_f24flatRate     | NULL      |
-      | payment_f24standard     | NULL      |
+      | payment_f24             | NULL      |
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
@@ -2185,8 +2065,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
-      | payment_f24flatRate     | NULL      |
-      | payment_f24standard     | NULL      |
+      | payment_f24             | NULL      |
       | apply_cost_pagopa       | SI        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
@@ -2204,8 +2083,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
       | payment_pagoPaForm      | SI        |
-      | payment_f24flatRate     | NULL      |
-      | payment_f24standard     | NULL      |
+      | payment_f24             | NULL      |
       | apply_cost_pagopa       | NO        |
       | apply_cost_f24          | NO        |
       | payment_multy_number    | 1         |
@@ -2223,8 +2101,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2243,8 +2120,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2264,8 +2140,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2284,8 +2159,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2305,8 +2179,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2327,8 +2200,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2350,8 +2222,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2372,8 +2243,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2395,8 +2265,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | via@fail-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2417,8 +2286,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
-      | payment_f24flatRate     | NULL       |
-      | payment_f24standard     | NULL       |
+      | payment_f24             | NULL       |
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
@@ -2436,8 +2304,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
-      | payment_f24flatRate     | NULL       |
-      | payment_f24standard     | NULL       |
+      | payment_f24             | NULL       |
       | apply_cost_pagopa       | SI         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
@@ -2455,8 +2322,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
       | payment_pagoPaForm      | SI         |
-      | payment_f24flatRate     | NULL       |
-      | payment_f24standard     | NULL       |
+      | payment_f24             | NULL       |
       | apply_cost_pagopa       | NO         |
       | apply_cost_f24          | NO         |
       | payment_multy_number    | 1          |
@@ -2474,8 +2340,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2494,8 +2359,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -2515,8 +2379,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_890                |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2535,8 +2398,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_890                |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
@@ -2554,29 +2416,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                       |
-      | apply_cost_pagopa                 | NULL                                       |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                       |
-      | payment_f24standard               | NULL                                       |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | SI                                         |
-      | payment_f24standard_inps          | NULL                                       |
-      | payment_f24standard_local         | NULL                                       |
-      | payment_f24standard_region        | NULL                                       |
-      | payment_f24standard_treasury      | NULL                                       |
-      | payment_f24standard_social        | NULL                                       |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                       |
-      | payment_f24standard_inps_flat     | NULL                                       |
-      | payment_f24standard_local_flat    | NULL                                       |
-      | payment_f24standard_region_flat   | NULL                                       |
-      | payment_f24standard_treasury_flat | NULL                                       |
-      | payment_f24standard_social_flat   | NULL                                       |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                         |
-      | payment_multy_number              | 1                                          |
+      | payment_pagoPaForm   | NULL                                       |
+      | apply_cost_pagopa    | NULL                                       |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED                     |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                         |
+      | payment_multy_number | 1                                          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2589,29 +2434,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                       |
-      | apply_cost_pagopa                 | NULL                                       |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                       |
-      | payment_f24standard               | NULL                                       |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | SI                                         |
-      | payment_f24standard_inps          | NULL                                       |
-      | payment_f24standard_local         | NULL                                       |
-      | payment_f24standard_region        | NULL                                       |
-      | payment_f24standard_treasury      | NULL                                       |
-      | payment_f24standard_social        | NULL                                       |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                       |
-      | payment_f24standard_inps_flat     | NULL                                       |
-      | payment_f24standard_local_flat    | NULL                                       |
-      | payment_f24standard_region_flat   | NULL                                       |
-      | payment_f24standard_treasury_flat | NULL                                       |
-      | payment_f24standard_social_flat   | NULL                                       |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                         |
-      | payment_multy_number              | 1                                          |
+      | payment_pagoPaForm   | NULL                                       |
+      | apply_cost_pagopa    | NULL                                       |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED                     |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                         |
+      | payment_multy_number | 1                                          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2624,29 +2452,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                            |
-      | apply_cost_pagopa                 | NULL                                            |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                            |
-      | payment_f24standard               | NULL                                            |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                            |
-      | payment_f24standard_inps          | NULL                                            |
-      | payment_f24standard_local         | NULL                                            |
-      | payment_f24standard_region        | NULL                                            |
-      | payment_f24standard_treasury      | NULL                                            |
-      | payment_f24standard_social        | NULL                                            |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | SI                                              |
-      | payment_f24standard_inps_flat     | NULL                                            |
-      | payment_f24standard_local_flat    | NULL                                            |
-      | payment_f24standard_region_flat   | NULL                                            |
-      | payment_f24standard_treasury_flat | NULL                                            |
-      | payment_f24standard_social_flat   | NULL                                            |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SEMPLIFICATO_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                              |
-      | payment_multy_number              | 1                                               |
+      | payment_pagoPaForm   | NULL                                            |
+      | apply_cost_pagopa    | NULL                                            |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_FLAT                     |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                              |
+      | payment_multy_number | 1                                               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2659,14 +2470,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm       | NULL                      |
-      | apply_cost_pagopa        | NULL                      |
+      | payment_pagoPaForm   | NULL                      |
+      | apply_cost_pagopa    | NULL                      |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified_1 | SI                        |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_1  |
       #-------------------------------------------
-      | title_payment            | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24           | SI                        |
-      | payment_multy_number     | 1                         |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO |
+      | apply_cost_f24       | SI                        |
+      | payment_multy_number | 1                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2679,14 +2490,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm          | NULL                      |
-      | apply_cost_pagopa           | NULL                      |
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified_err1 | SI                        |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR1 |
       #-------------------------------------------
-      | title_payment               | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24              | SI                        |
-      | payment_multy_number        | 1                         |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -2698,14 +2509,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm          | NULL                      |
-      | apply_cost_pagopa           | NULL                      |
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified_err2 | SI                        |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR2 |
       #-------------------------------------------
-      | title_payment               | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24              | SI                        |
-      | payment_multy_number        | 1                         |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -2717,14 +2528,14 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm          | NULL                      |
-      | apply_cost_pagopa           | NULL                      |
+      | payment_pagoPaForm   | NULL                        |
+      | apply_cost_pagopa    | NULL                        |
       #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified_err3 | SI                        |
+      | payment_f24          | PAYMENT_F24_SIMPLIFIED_ERR3 |
       #-------------------------------------------
-      | title_payment               | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24              | SI                        |
-      | payment_multy_number        | 1                         |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO   |
+      | apply_cost_f24       | SI                          |
+      | payment_multy_number | 1                           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2738,29 +2549,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                               |
-      | apply_cost_pagopa                 | NULL                               |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                               |
-      | payment_f24standard               | NULL                               |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                               |
-      | payment_f24standard_inps          | SI                                 |
-      | payment_f24standard_local         | NULL                               |
-      | payment_f24standard_region        | NULL                               |
-      | payment_f24standard_treasury      | NULL                               |
-      | payment_f24standard_social        | NULL                               |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                               |
-      | payment_f24standard_inps_flat     | NULL                               |
-      | payment_f24standard_local_flat    | NULL                               |
-      | payment_f24standard_region_flat   | NULL                               |
-      | payment_f24standard_treasury_flat | NULL                               |
-      | payment_f24standard_social_flat   | NULL                               |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_INPS_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                 |
-      | payment_multy_number              | 1                                  |
+      | payment_pagoPaForm   | NULL                               |
+      | apply_cost_pagopa    | NULL                               |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS          |
+      | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                 |
+      | payment_multy_number | 1                                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2774,29 +2568,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                    |
-      | apply_cost_pagopa                 | NULL                                    |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                    |
-      | payment_f24standard               | NULL                                    |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                    |
-      | payment_f24standard_inps          | NULL                                    |
-      | payment_f24standard_local         | NULL                                    |
-      | payment_f24standard_region        | NULL                                    |
-      | payment_f24standard_treasury      | NULL                                    |
-      | payment_f24standard_social        | NULL                                    |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                    |
-      | payment_f24standard_inps_flat     | SI                                      |
-      | payment_f24standard_local_flat    | NULL                                    |
-      | payment_f24standard_region_flat   | NULL                                    |
-      | payment_f24standard_treasury_flat | NULL                                    |
-      | payment_f24standard_social_flat   | NULL                                    |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_INPS_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                      |
-      | payment_multy_number              | 1                                       |
+      | payment_pagoPaForm   | NULL                                    |
+      | apply_cost_pagopa    | NULL                                    |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_FLAT          |
+      | title_payment        | F24_STANDARD_INPS_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                      |
+      | payment_multy_number | 1                                       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2809,30 +2586,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                   |
-      | apply_cost_pagopa                 | NULL                                   |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                   |
-      | payment_f24standard               | NULL                                   |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                   |
-      | payment_f24standard_inps          | NULL                                   |
-      | payment_f24standard_inps_err      | SI                                     |
-      | payment_f24standard_local         | NULL                                   |
-      | payment_f24standard_region        | NULL                                   |
-      | payment_f24standard_treasury      | NULL                                   |
-      | payment_f24standard_social        | NULL                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                   |
-      | payment_f24standard_inps_flat     | NULL                                   |
-      | payment_f24standard_local_flat    | NULL                                   |
-      | payment_f24standard_region_flat   | NULL                                   |
-      | payment_f24standard_treasury_flat | NULL                                   |
-      | payment_f24standard_social_flat   | NULL                                   |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_INPS_ERR_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                     |
-      | payment_multy_number              | 1                                      |
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_ERR          |
+      | title_payment        | F24_STANDARD_INPS_ERR_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -2844,31 +2603,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                    |
-      | apply_cost_pagopa                 | NULL                                    |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                    |
-      | payment_f24standard               | NULL                                    |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                    |
-      | payment_f24standard_inps          | NULL                                    |
-      | payment_f24standard_inps_err      | NULL                                    |
-      | payment_f24standard_inps_err1     | SI                                      |
-      | payment_f24standard_local         | NULL                                    |
-      | payment_f24standard_region        | NULL                                    |
-      | payment_f24standard_treasury      | NULL                                    |
-      | payment_f24standard_social        | NULL                                    |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                    |
-      | payment_f24standard_inps_flat     | NULL                                    |
-      | payment_f24standard_local_flat    | NULL                                    |
-      | payment_f24standard_region_flat   | NULL                                    |
-      | payment_f24standard_treasury_flat | NULL                                    |
-      | payment_f24standard_social_flat   | NULL                                    |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_INPS_ERR1_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                      |
-      | payment_multy_number              | 1                                       |
+      | payment_pagoPaForm   | NULL                                    |
+      | apply_cost_pagopa    | NULL                                    |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_ERR_1         |
+      | title_payment        | F24_STANDARD_INPS_ERR1_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                      |
+      | payment_multy_number | 1                                       |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
@@ -2881,29 +2621,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                |
-      | apply_cost_pagopa                 | NULL                                |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                |
-      | payment_f24standard               | NULL                                |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                |
-      | payment_f24standard_inps          | NULL                                |
-      | payment_f24standard_local         | SI                                  |
-      | payment_f24standard_region        | NULL                                |
-      | payment_f24standard_treasury      | NULL                                |
-      | payment_f24standard_social        | NULL                                |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                |
-      | payment_f24standard_inps_flat     | NULL                                |
-      | payment_f24standard_local_flat    | NULL                                |
-      | payment_f24standard_region_flat   | NULL                                |
-      | payment_f24standard_treasury_flat | NULL                                |
-      | payment_f24standard_social_flat   | NULL                                |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                  |
-      | payment_multy_number              | 1                                   |
+      | payment_pagoPaForm   | NULL                                |
+      | apply_cost_pagopa    | NULL                                |
+      | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
+      | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                  |
+      | payment_multy_number | 1                                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2916,29 +2639,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                |
-      | apply_cost_pagopa                 | NULL                                |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                |
-      | payment_f24standard               | NULL                                |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                |
-      | payment_f24standard_inps          | NULL                                |
-      | payment_f24standard_local         | SI                                  |
-      | payment_f24standard_region        | NULL                                |
-      | payment_f24standard_treasury      | NULL                                |
-      | payment_f24standard_social        | NULL                                |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                |
-      | payment_f24standard_inps_flat     | NULL                                |
-      | payment_f24standard_local_flat    | NULL                                |
-      | payment_f24standard_region_flat   | NULL                                |
-      | payment_f24standard_treasury_flat | NULL                                |
-      | payment_f24standard_social_flat   | NULL                                |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                  |
-      | payment_multy_number              | 1                                   |
+      | payment_pagoPaForm   | NULL                                |
+      | apply_cost_pagopa    | NULL                                |
+      | payment_f24          | PAYMENT_F24_STANDARD_LOCAL          |
+      | title_payment        | F24_STANDARD_LOCAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                  |
+      | payment_multy_number | 1                                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2951,29 +2657,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                     |
-      | apply_cost_pagopa                 | NULL                                     |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                     |
-      | payment_f24standard               | NULL                                     |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                     |
-      | payment_f24standard_inps          | NULL                                     |
-      | payment_f24standard_local         | NULL                                     |
-      | payment_f24standard_region        | NULL                                     |
-      | payment_f24standard_treasury      | NULL                                     |
-      | payment_f24standard_social        | NULL                                     |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                     |
-      | payment_f24standard_inps_flat     | NULL                                     |
-      | payment_f24standard_local_flat    | SI                                       |
-      | payment_f24standard_region_flat   | NULL                                     |
-      | payment_f24standard_treasury_flat | NULL                                     |
-      | payment_f24standard_social_flat   | NULL                                     |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_LOCAL_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                       |
-      | payment_multy_number              | 1                                        |
+      | payment_pagoPaForm   | NULL                                     |
+      | apply_cost_pagopa    | NULL                                     |
+      | payment_f24          | PAYMENT_F24_STANDARD_LOCAL_FLAT          |
+      | title_payment        | F24_STANDARD_LOCAL_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                       |
+      | payment_multy_number | 1                                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -2986,29 +2675,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                 |
-      | apply_cost_pagopa                 | NULL                                 |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                 |
-      | payment_f24standard               | NULL                                 |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                 |
-      | payment_f24standard_inps          | NULL                                 |
-      | payment_f24standard_local         | NULL                                 |
-      | payment_f24standard_region        | SI                                   |
-      | payment_f24standard_treasury      | NULL                                 |
-      | payment_f24standard_social        | NULL                                 |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                 |
-      | payment_f24standard_inps_flat     | NULL                                 |
-      | payment_f24standard_local_flat    | NULL                                 |
-      | payment_f24standard_region_flat   | NULL                                 |
-      | payment_f24standard_treasury_flat | NULL                                 |
-      | payment_f24standard_social_flat   | NULL                                 |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_REGION_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                   |
-      | payment_multy_number              | 1                                    |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_REGION          |
+      | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3021,29 +2693,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                 |
-      | apply_cost_pagopa                 | NULL                                 |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                 |
-      | payment_f24standard               | NULL                                 |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                 |
-      | payment_f24standard_inps          | NULL                                 |
-      | payment_f24standard_local         | NULL                                 |
-      | payment_f24standard_region        | SI                                   |
-      | payment_f24standard_treasury      | NULL                                 |
-      | payment_f24standard_social        | NULL                                 |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                 |
-      | payment_f24standard_inps_flat     | NULL                                 |
-      | payment_f24standard_local_flat    | NULL                                 |
-      | payment_f24standard_region_flat   | NULL                                 |
-      | payment_f24standard_treasury_flat | NULL                                 |
-      | payment_f24standard_social_flat   | NULL                                 |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_REGION_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                   |
-      | payment_multy_number              | 1                                    |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_REGION          |
+      | title_payment        | F24_STANDARD_REGION_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3056,29 +2711,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                      |
-      | apply_cost_pagopa                 | NULL                                      |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                      |
-      | payment_f24standard               | NULL                                      |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                      |
-      | payment_f24standard_inps          | NULL                                      |
-      | payment_f24standard_local         | NULL                                      |
-      | payment_f24standard_region        | NULL                                      |
-      | payment_f24standard_treasury      | NULL                                      |
-      | payment_f24standard_social        | NULL                                      |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                      |
-      | payment_f24standard_inps_flat     | NULL                                      |
-      | payment_f24standard_local_flat    | NULL                                      |
-      | payment_f24standard_region_flat   | SI                                        |
-      | payment_f24standard_treasury_flat | NULL                                      |
-      | payment_f24standard_social_flat   | NULL                                      |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_REGION_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                        |
-      | payment_multy_number              | 1                                         |
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_REGION_FLAT          |
+      | title_payment        | F24_STANDARD_REGION_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                        |
+      | payment_multy_number | 1                                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3094,31 +2732,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                 |
-      | apply_cost_pagopa                 | NULL                                 |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                 |
-      | payment_f24standard               | NULL                                 |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                 |
-      | payment_f24standard_inps          | NULL                                 |
-      | payment_f24standard_local         | NULL                                 |
-      | payment_f24standard_region        | NULL                                 |
-      | payment_f24standard_treasury      | NULL                                 |
-      | payment_f24standard_social        | SI                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                 |
-      | payment_f24standard_inps_flat     | NULL                                 |
-      | payment_f24standard_local_flat    | NULL                                 |
-      | payment_f24standard_region_flat   | NULL                                 |
-      | payment_f24standard_treasury_flat | NULL                                 |
-      | payment_f24standard_social_flat   | NULL                                 |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                   |
-      | payment_multy_number              | 1                                    |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
+      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+#--------------------------------------TEST VERIFICA SCRITTURA F24-------------------------
+
 
   @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_87_1] PA - inserimento notifica mono destinatario con un solo F24 SOCIAL DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ).
@@ -3129,29 +2753,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                 |
-      | apply_cost_pagopa                 | NULL                                 |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                 |
-      | payment_f24standard               | NULL                                 |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                 |
-      | payment_f24standard_inps          | NULL                                 |
-      | payment_f24standard_local         | NULL                                 |
-      | payment_f24standard_region        | NULL                                 |
-      | payment_f24standard_treasury      | NULL                                 |
-      | payment_f24standard_social        | SI                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                 |
-      | payment_f24standard_inps_flat     | NULL                                 |
-      | payment_f24standard_local_flat    | NULL                                 |
-      | payment_f24standard_region_flat   | NULL                                 |
-      | payment_f24standard_treasury_flat | NULL                                 |
-      | payment_f24standard_social_flat   | NULL                                 |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                   |
-      | payment_multy_number              | 1                                    |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL          |
+      | title_payment        | F24_STANDARD_SOCIAL_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3164,29 +2771,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                      |
-      | apply_cost_pagopa                 | NULL                                      |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                      |
-      | payment_f24standard               | NULL                                      |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                      |
-      | payment_f24standard_inps          | NULL                                      |
-      | payment_f24standard_local         | NULL                                      |
-      | payment_f24standard_region        | NULL                                      |
-      | payment_f24standard_treasury      | NULL                                      |
-      | payment_f24standard_social        | NULL                                      |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                      |
-      | payment_f24standard_inps_flat     | NULL                                      |
-      | payment_f24standard_local_flat    | NULL                                      |
-      | payment_f24standard_region_flat   | NULL                                      |
-      | payment_f24standard_treasury_flat | NULL                                      |
-      | payment_f24standard_social_flat   | SI                                        |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                        |
-      | payment_multy_number              | 1                                         |
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_SOCIAL_FLAT          |
+      | title_payment        | F24_STANDARD_SOCIAL_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                        |
+      | payment_multy_number | 1                                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3200,29 +2790,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                   |
-      | apply_cost_pagopa                 | NULL                                   |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                   |
-      | payment_f24standard               | NULL                                   |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                   |
-      | payment_f24standard_inps          | NULL                                   |
-      | payment_f24standard_local         | NULL                                   |
-      | payment_f24standard_region        | NULL                                   |
-      | payment_f24standard_treasury      | SI                                     |
-      | payment_f24standard_social        | NULL                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                   |
-      | payment_f24standard_inps_flat     | NULL                                   |
-      | payment_f24standard_local_flat    | NULL                                   |
-      | payment_f24standard_region_flat   | NULL                                   |
-      | payment_f24standard_treasury_flat | NULL                                   |
-      | payment_f24standard_social_flat   | NULL                                   |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                     |
-      | payment_multy_number              | 1                                      |
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY          |
+      | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3235,31 +2808,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                   |
-      | apply_cost_pagopa                 | NULL                                   |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                   |
-      | payment_f24standard               | NULL                                   |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                   |
-      | payment_f24standard_inps          | NULL                                   |
-      | payment_f24standard_local         | NULL                                   |
-      | payment_f24standard_region        | NULL                                   |
-      | payment_f24standard_treasury      | SI                                     |
-      | payment_f24standard_social        | NULL                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                   |
-      | payment_f24standard_inps_flat     | NULL                                   |
-      | payment_f24standard_local_flat    | NULL                                   |
-      | payment_f24standard_region_flat   | NULL                                   |
-      | payment_f24standard_treasury_flat | NULL                                   |
-      | payment_f24standard_social_flat   | NULL                                   |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                     |
-      | payment_multy_number              | 1                                      |
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY          |
+      | title_payment        | F24_STANDARD_TREASURY_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 
   @pagamentiMultipli @f24
   Scenario: [B2B-PA-PAY_MULTI_88_2] PA - inserimento notifica mono destinatario con un solo F24 TREASURY DELIVERY_FLAT  e controllo coerenza dei dati del modello F24 (Costi di notifica non inclusi).
@@ -3270,29 +2827,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                        |
-      | apply_cost_pagopa                 | NULL                                        |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                        |
-      | payment_f24standard               | NULL                                        |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                                        |
-      | payment_f24standard_inps          | NULL                                        |
-      | payment_f24standard_local         | NULL                                        |
-      | payment_f24standard_region        | NULL                                        |
-      | payment_f24standard_treasury      | NULL                                        |
-      | payment_f24standard_social        | NULL                                        |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                                        |
-      | payment_f24standard_inps_flat     | NULL                                        |
-      | payment_f24standard_local_flat    | NULL                                        |
-      | payment_f24standard_region_flat   | NULL                                        |
-      | payment_f24standard_treasury_flat | SI                                          |
-      | payment_f24standard_social_flat   | NULL                                        |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_TREASURY_FLAT_CLMCST42R12D969Z |
-      | apply_cost_f24                    | NO                                          |
-      | payment_multy_number              | 1                                           |
+      | payment_pagoPaForm   | NULL                                        |
+      | apply_cost_pagopa    | NULL                                        |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_FLAT          |
+      | title_payment        | F24_STANDARD_TREASURY_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                          |
+      | payment_multy_number | 1                                           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3305,17 +2845,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                                      |
-      | apply_cost_pagopa                 | NULL                                      |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                                      |
-      | payment_f24standard               | NULL                                      |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | f24_delivery_standard_treasury_ae | SI                                        |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                        |
-      | payment_multy_number              | 1                                         |
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE          |
+      | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                        |
+      | payment_multy_number | 1                                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3328,17 +2863,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                     | NULL                                      |
-      | apply_cost_pagopa                      | NULL                                      |
-      #F24 completo-------------------------------
-      | payment_f24flatRate                    | NULL                                      |
-      | payment_f24standard                    | NULL                                      |
-      #F24 completo a sezioni modalità Delivery - costi non inclusi--
-      | f24_delivery_standard_treasury_ae_flat | SI                                        |
-      #-------------------------------------------
-      | title_payment                          | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
-      | apply_cost_f24                         | NO                                        |
-      | payment_multy_number                   | 1                                         |
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE_FLAT     |
+      | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                        |
+      | payment_multy_number | 1                                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3351,17 +2881,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                         | NULL                                      |
-      | apply_cost_pagopa                          | NULL                                      |
-      #F24 completo-------------------------------
-      | payment_f24flatRate                        | NULL                                      |
-      | payment_f24standard                        | NULL                                      |
-      #F24 completo a sezioni modalità Delivery - costi non inclusi--
-      | f24_delivery_standard_treasury_ae_err_flat | SI                                        |
-      #-------------------------------------------
-      | title_payment                              | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
-      | apply_cost_f24                             | NO                                        |
-      | payment_multy_number                       | 1                                         |
+      | payment_pagoPaForm   | NULL                                      |
+      | apply_cost_pagopa    | NULL                                      |
+      | payment_f24          | PAYMENT_F24_STANDARD_TREASURY_AE_ERR_FLAT |
+      | title_payment        | F24_STANDARD_TREASURY_AE_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                                        |
+      | payment_multy_number | 1                                         |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
@@ -3376,8 +2901,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Matteo Rossi                  |
       | taxId                | AAAAAA00A00A000C              |
       | payment_pagoPaForm   | SI                            |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_AAAAAA00A00A000C |
       | apply_cost_pagopa    | SI                            |
       | apply_cost_f24       | SI                            |
@@ -3397,8 +2921,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | denomination         | Matteo Rossi              |
       | taxId                | AAAAAA00A00A000C          |
       | payment_pagoPaForm   | NULL                      |
-      | payment_f24flatRate  | NULL                      |
-      | payment_f24standard  | SI                        |
+      | payment_f24          | PAYMENT_F24_STANDARD      |
       | title_payment        | F24_TARI_AAAAAA00A00A000C |
       | apply_cost_pagopa    | SI                        |
       | apply_cost_f24       | SI                        |
@@ -3417,29 +2940,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL                               |
-      | apply_cost_pagopa                 | NULL                               |
-      #F24 completo-------------------------------
-      | payment_f24flatRate               | NULL                               |
-      | payment_f24standard               | NULL                               |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified            | NULL                               |
-      | payment_f24standard_inps          | SI                                 |
-      | payment_f24standard_local         | NULL                               |
-      | payment_f24standard_region        | NULL                               |
-      | payment_f24standard_treasury      | NULL                               |
-      | payment_f24standard_social        | NULL                               |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat       | NULL                               |
-      | payment_f24standard_inps_flat     | NULL                               |
-      | payment_f24standard_local_flat    | NULL                               |
-      | payment_f24standard_region_flat   | NULL                               |
-      | payment_f24standard_treasury_flat | NULL                               |
-      | payment_f24standard_social_flat   | NULL                               |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_INPS_CLMCST42R12D969Z |
-      | apply_cost_f24                    | SI                                 |
-      | payment_multy_number              | 1                                  |
+      | payment_pagoPaForm   | NULL                               |
+      | apply_cost_pagopa    | NULL                               |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS          |
+      | title_payment        | F24_STANDARD_INPS_CLMCST42R12D969Z |
+      | apply_cost_f24       | SI                                 |
+      | payment_multy_number | 1                                  |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3452,31 +2958,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                      | NULL                                  |
-      | apply_cost_pagopa                       | NULL                                  |
-      #F24 completo-------------------------------
-      | payment_f24flatRate                     | NULL                                  |
-      | payment_f24standard                     | NULL                                  |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified                  | NULL                                  |
-      | payment_f24standard_inps                | NULL                                  |
-      | payment_f24standard_inps_debit_credit   | SI                                    |
-      | payment_f24standard_inps_debit_credit_1 | NULL                                  |
-      | payment_f24standard_local               | NULL                                  |
-      | payment_f24standard_region              | NULL                                  |
-      | payment_f24standard_treasury            | NULL                                  |
-      | payment_f24standard_social              | NULL                                  |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat             | NULL                                  |
-      | payment_f24standard_inps_flat           | NULL                                  |
-      | payment_f24standard_local_flat          | NULL                                  |
-      | payment_f24standard_region_flat         | NULL                                  |
-      | payment_f24standard_treasury_flat       | NULL                                  |
-      | payment_f24standard_social_flat         | NULL                                  |
-      #-------------------------------------------
-      | title_payment                           | F24_STANDARD_INPS_DC_CLMCST42R12D969Z |
-      | apply_cost_f24                          | SI                                    |
-      | payment_multy_number                    | 1                                     |
+      | payment_pagoPaForm   | NULL                                   |
+      | apply_cost_pagopa    | NULL                                   |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT |
+      | title_payment        | F24_STANDARD_INPS_DC_CLMCST42R12D969Z  |
+      | apply_cost_f24       | SI                                     |
+      | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3489,31 +2976,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                      | NULL                                   |
-      | apply_cost_pagopa                       | NULL                                   |
-      #F24 completo-------------------------------
-      | payment_f24flatRate                     | NULL                                   |
-      | payment_f24standard                     | NULL                                   |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24_simplified                  | NULL                                   |
-      | payment_f24standard_inps                | NULL                                   |
-      | payment_f24standard_inps_debit_credit   | NULL                                   |
-      | payment_f24standard_inps_debit_credit_1 | SI                                     |
-      | payment_f24standard_local               | NULL                                   |
-      | payment_f24standard_region              | NULL                                   |
-      | payment_f24standard_treasury            | NULL                                   |
-      | payment_f24standard_social              | NULL                                   |
-      #F24 completo a sezioni modalità Flat------ costi non inclusi--
-      | payment_f24_simplified_flat             | NULL                                   |
-      | payment_f24standard_inps_flat           | NULL                                   |
-      | payment_f24standard_local_flat          | NULL                                   |
-      | payment_f24standard_region_flat         | NULL                                   |
-      | payment_f24standard_treasury_flat       | NULL                                   |
-      | payment_f24standard_social_flat         | NULL                                   |
-      #-------------------------------------------
-      | title_payment                           | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z |
-      | apply_cost_f24                          | SI                                     |
-      | payment_multy_number                    | 1                                      |
+      | payment_pagoPaForm   | NULL                                     |
+      | apply_cost_pagopa    | NULL                                     |
+      | payment_f24          | PAYMENT_F24_STANDARD_INPS_DEBIT_CREDIT_1 |
+      | title_payment        | F24_STANDARD_INPS_DC1_CLMCST42R12D969Z   |
+      | apply_cost_f24       | SI                                       |
+      | payment_multy_number | 1                                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3529,8 +2997,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it                 |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -3549,8 +3016,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | pectest@pec.pagopa.it         |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -3569,8 +3035,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@pecOk.it                 |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -3589,8 +3054,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | pectest@pec.pagopa.it         |
       | payment_pagoPaForm      | NULL                          |
-      | payment_f24flatRate     | NULL                          |
-      | payment_f24standard     | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
@@ -3609,8 +3073,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | digitalDomicile_address | test@pecOk.it             |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
@@ -3628,8 +3091,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | digitalDomicile_address | pectest@pec.pagopa.it     |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
@@ -3647,8 +3109,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | test@pecOk.it             |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
@@ -3666,8 +3127,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | digitalDomicile_address | pectest@pec.pagopa.it     |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | payment_pagoPaForm      | NULL                      |
-      | payment_f24flatRate     | SI                        |
-      | payment_f24standard     | NULL                      |
+      | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
       | apply_cost_f24          | NO                        |
       | payment_multy_number    | 1                         |
@@ -3683,8 +3143,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NOALLEGATO |
-      | payment_f24flatRate  | NULL       |
-      | payment_f24standard  | NULL       |
+      | payment_f24          | NULL       |
       | apply_cost_pagopa    | SI         |
       | apply_cost_f24       | NO         |
       | payment_multy_number | 1          |
@@ -3701,8 +3160,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NOALLEGATO |
-      | payment_f24flatRate  | NULL       |
-      | payment_f24standard  | NULL       |
+      | payment_f24          | NULL       |
       | apply_cost_pagopa    | SI         |
       | apply_cost_f24       | NO         |
       | payment_multy_number | 1          |
@@ -3718,14 +3176,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm             | NULL            |
-      | apply_cost_pagopa              | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_valid_anag | SI              |
-      #-------------------------------------------
-      | title_payment                  | F24_STANDARD_AE |
-      | apply_cost_f24                 | SI              |
-      | payment_multy_number           | 1               |
+      | payment_pagoPaForm   | NULL                            |
+      | apply_cost_pagopa    | NULL                            |
+      | payment_f24          | PAYMENT_F24_STANDARD_VALID_ANAG |
+      | title_payment        | F24_STANDARD_AE                 |
+      | apply_cost_f24       | SI                              |
+      | payment_multy_number | 1                               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
@@ -3738,14 +3194,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                | NULL            |
-      | apply_cost_pagopa                 | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_anag | SI              |
-      #-------------------------------------------
-      | title_payment                     | F24_STANDARD_AE |
-      | apply_cost_f24                    | SI              |
-      | payment_multy_number              | 1               |
+      | payment_pagoPaForm   | NULL                               |
+      | apply_cost_pagopa    | NULL                               |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG |
+      | title_payment        | F24_STANDARD_AE                    |
+      | apply_cost_f24       | SI                                 |
+      | payment_multy_number | 1                                  |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3757,14 +3211,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL            |
-      | apply_cost_pagopa                   | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_anag_1 | SI              |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_AE |
-      | apply_cost_f24                      | SI              |
-      | payment_multy_number                | 1               |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_1 |
+      | title_payment        | F24_STANDARD_AE                      |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3776,14 +3228,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL            |
-      | apply_cost_pagopa                   | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_anag_2 | SI              |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_AE |
-      | apply_cost_f24                      | SI              |
-      | payment_multy_number                | 1               |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_2 |
+      | title_payment        | F24_STANDARD_AE                      |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3795,14 +3245,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL            |
-      | apply_cost_pagopa                   | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_anag_3 | SI              |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_AE |
-      | apply_cost_f24                      | SI              |
-      | payment_multy_number                | 1               |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_3 |
+      | title_payment        | F24_STANDARD_AE                      |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3814,14 +3262,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL            |
-      | apply_cost_pagopa                   | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_anag_4 | SI              |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_AE |
-      | apply_cost_f24                      | SI              |
-      | payment_multy_number                | 1               |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_4 |
+      | title_payment        | F24_STANDARD_AE                      |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3833,14 +3279,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL            |
-      | apply_cost_pagopa                   | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_format | SI              |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_AE |
-      | apply_cost_f24                      | SI              |
-      | payment_multy_number                | 1               |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_FORMAT |
+      | title_payment        | F24_STANDARD_AE                      |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
   @pagamentiMultipli @f24
@@ -3852,14 +3296,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                 | NULL            |
-      | apply_cost_pagopa                  | NULL            |
-      #F24 completo-------------------------------
-      | payment_f24standard_no_valid_lengh | SI              |
-      #-------------------------------------------
-      | title_payment                      | F24_STANDARD_AE |
-      | apply_cost_f24                     | SI              |
-      | payment_multy_number               | 1               |
+      | payment_pagoPaForm   | NULL                                |
+      | apply_cost_pagopa    | NULL                                |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_LENGH |
+      | title_payment        | F24_STANDARD_AE                     |
+      | apply_cost_f24       | SI                                  |
+      | payment_multy_number | 1                                   |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
@@ -3870,12 +3312,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | NULL                        |
-    And destinatario
-      | denomination         | Ada                           |
-      | taxId                | LVLDAA85T50G702B              |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
-      | payment_f24flatRate  | NULL                          |
-      | payment_f24standard  | SI                            |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa    | NO                            |
       | apply_cost_f24       | SI                            |
@@ -3885,8 +3324,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then viene richiesto il download del documento "F24"
     And il download non ha prodotto errori
 
-
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @dev
   Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Only one type of tax payer is allowed. - PN-9070
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3895,18 +3333,15 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm                  | NULL                      |
-      | apply_cost_pagopa                   | NULL                      |
-      #F24 completo a sezioni modalità Delivery - costi inclusi--
-      | payment_f24standard_no_valid_anag_5 | SI                        |
-      #-------------------------------------------
-      | title_payment                       | F24_STANDARD_SEMPLIFICATO |
-      | apply_cost_f24                      | SI                        |
-      | payment_multy_number                | 1                         |
+      | payment_pagoPaForm   | NULL                                 |
+      | apply_cost_pagopa    | NULL                                 |
+      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_5 |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO            |
+      | apply_cost_f24       | SI                                   |
+      | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @dev
   Scenario: [B2B-PA-PAY_MULTI_98] PA - inserimento notifica mono destinatario con un solo F24 STANDARD LOCAL VALID (Lunghezza e formato TEFA-TEFN-TEFZ)  e controllo coerenza dei dati del modello F24 TARI (Costi di notifica  inclusi).-PN-9143
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3915,16 +3350,17 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm               | NULL                    |
-      | apply_cost_pagopa                | NULL                    |
+      | payment_pagoPaForm               | NULL                                     |
+      | apply_cost_pagopa                | NULL                                     |
       #F24 local-------------------------------
-      | f24_delivery_standard_local_tefa | SI                      |
+      | payment_f24                      | PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA |
       #-------------------------------------------
-      | title_payment                    | F24_STANDARD_LOCAL_TARI |
-      | apply_cost_f24                   | SI                      |
-      | payment_multy_number             | 1                       |
+      | title_payment                    | F24_STANDARD_LOCAL_TARI                  |
+      | apply_cost_f24                   | SI                                       |
+      | payment_multy_number             | 1                                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 
 
 

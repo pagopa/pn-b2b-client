@@ -117,7 +117,7 @@ Feature: annullamento notifiche b2b
       | denomination     | Ada  |
       | taxId | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI |
-      | payment_f24standard | SI |
+      | payment_f24          | PAYMENT_F24_STANDARD          |
       | apply_cost_f24      | SI |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
@@ -388,8 +388,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -402,8 +401,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -416,8 +414,7 @@ Feature: annullamento notifiche b2b
       | senderDenomination | comune di milano            |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     When "Mario Cucumber" tenta il recupero dell'allegato "PAGOPA"
@@ -797,8 +794,7 @@ Feature: annullamento notifiche b2b
       | feePolicy | DELIVERY_MODE |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
-      | payment_f24flatRate | NULL |
-      | payment_f24standard | NULL |
+      | payment_f24          | NULL              |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
     When la notifica può essere annullata dal sistema tramite codice IUN
@@ -831,12 +827,10 @@ Feature: annullamento notifiche b2b
       | senderDenomination | comune di palermo            |
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm  | SI   |
-      | payment_f24flatRate | SI   |
-      | payment_f24standard | NULL |
+      | payment_f24          | PAYMENT_F24_FLAT              |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
