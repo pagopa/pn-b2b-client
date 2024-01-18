@@ -30,7 +30,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 470   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 399   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 420   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
-
+      | 00012 | 410   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 460   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 487   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -59,7 +61,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 478   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 389   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 410   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
-
+      | 00012 | 484   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 449   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 478   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-50GR_3] Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
@@ -88,6 +92,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 493   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 404   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 425   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 499   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 464   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 493   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
 
   @CostoCartaceoComplete
@@ -117,7 +124,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 526   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 437   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 458   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
-
+      | 00012 | 539   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 505   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 533   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-100GR_5] Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
@@ -146,7 +155,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 553   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 464   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 485   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
-
+      | 00012 | 566   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 532   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 560   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -175,6 +186,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 589   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 500   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 521   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 611   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 576   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 605   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-250GR_7] Invio notifica e verifica calcolo del costo su raccomandata con peso = 250gr
@@ -203,6 +218,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 676   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 587   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 608   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 698   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 663   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 692   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
@@ -231,6 +250,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 705   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 617   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 641   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 734   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 699   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 732   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-350GR_9] Invio notifica e verifica calcolo del costo su raccomandata con peso = 350gr
@@ -259,6 +282,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 762   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 674   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 698   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 791   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 756   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 789   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
@@ -287,6 +314,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 825   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 737   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 757   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 869   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 834   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 862   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-1000GR_11] Invio notifica e verifica calcolo del costo su raccomandata con peso = 1000gr
@@ -315,6 +346,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 1212  | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 1124  | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 1144  | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 1256   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 1221   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 1249   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-1001GR_12] Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
@@ -343,6 +378,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 1286  | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 1197  | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 1218  | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 1347   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 1312   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 1341   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-2000GR_13] Invio notifica e verifica calcolo del costo su raccomandata con peso = 2000gr
@@ -371,6 +410,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80013 | 1883  | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 1794  | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 1815  | AVELLINO     | AV       | notifica analogica RECAPITISTA |
+      | 00012 | 1944   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 1906   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 04100 | 1938   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
 
   @CostoCartaceoComplete
   Scenario: [CALCOLO-COSTO_AR-20GR_14] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
