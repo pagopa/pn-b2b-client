@@ -1,0 +1,20 @@
+{
+  "f24Elid": {
+    "taxPayer": {
+      "taxCode": "RSSMLB80A01A200D",
+      "isNotTaxYear": true,
+      "company": {
+        "name": "PagoPa S.P.A",
+        "taxAddress": {
+        }
+      }
+    },
+    "treasury": {
+      "records": [
+        {
+          "applyCost": true
+        }
+      ]
+    }
+  }
+}

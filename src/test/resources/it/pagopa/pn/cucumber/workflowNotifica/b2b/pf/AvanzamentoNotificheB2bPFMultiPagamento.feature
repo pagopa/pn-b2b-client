@@ -3361,6 +3361,87 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+  @pagamentiMultipli @f24 @dev
+  Scenario: [B2B-PA-PAY_MULTI_99] PA - inserimento notifica mono destinatario con un solo F24 STANDARD  VALID MINIMAL e controllo coerenza dei dati del modello F24 (Costi di notifica  inclusi).-PN-9330
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                        |
+      | apply_cost_pagopa    | NULL                                        |
+      #F24 local-------------------------------
+      | payment_f24          | METADATO_CORRETTO_STAND_MINIMAL             |
+      #-------------------------------------------
+      | title_payment        | PAYMENT_F24_METADATO_CORRETTO_STAND_MINIMAL |
+      | apply_cost_f24       | SI                                          |
+      | payment_multy_number | 1                                           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24 @dev
+  Scenario: [B2B-PA-PAY_MULTI_100] PA - inserimento notifica mono destinatario con un solo F24 SIMPLIFIED  VALID MINIMAL e controllo coerenza dei dati del modello F24 (Costi di notifica  inclusi).-PN-9330
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                        |
+      | apply_cost_pagopa    | NULL                                        |
+      #F24 local-------------------------------
+      | payment_f24          | METADATO_CORRETTO_SIMPL_MINIMAL             |
+      #-------------------------------------------
+      | title_payment        | PAYMENT_F24_METADATO_CORRETTO_SIMPL_MINIMAL |
+      | apply_cost_f24       | SI                                          |
+      | payment_multy_number | 1                                           |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+  @pagamentiMultipli @f24 @dev
+  Scenario: [B2B-PA-PAY_MULTI_101] PA - inserimento notifica mono destinatario con un solo F24 EXCISE  VALID MINIMAL e controllo coerenza dei dati del modello F24 (Costi di notifica  inclusi).-PN-9330
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                         |
+      | apply_cost_pagopa    | NULL                                         |
+      #F24 local-------------------------------
+      | payment_f24          | METADATO_CORRETTO_EXCISE_MINIMAL             |
+      #-------------------------------------------
+      | title_payment        | PAYMENT_F24_METADATO_CORRETTO_EXCISE_MINIMAL |
+      | apply_cost_f24       | SI                                           |
+      | payment_multy_number | 1                                            |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
+
+  @pagamentiMultipli @f24 @dev
+  Scenario: [B2B-PA-PAY_MULTI_102] PA - inserimento notifica mono destinatario con un solo F24 ELID  VALID MINIMAL e controllo coerenza dei dati del modello F24 (Costi di notifica  inclusi).-PN-9330
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | paFee              | 0                           |
+    And destinatario Mario Gherkin e:
+      #Sezione PagoPA-----------------------------
+      | payment_pagoPaForm   | NULL                                       |
+      | apply_cost_pagopa    | NULL                                       |
+      #F24 local-------------------------------
+      | payment_f24          | METADATO_CORRETTO_ELID_MINIMAL             |
+      #-------------------------------------------
+      | title_payment        | PAYMENT_F24_METADATO_CORRETTO_ELID_MINIMAL |
+      | apply_cost_f24       | SI                                         |
+      | payment_multy_number | 1                                          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+
 
 
 

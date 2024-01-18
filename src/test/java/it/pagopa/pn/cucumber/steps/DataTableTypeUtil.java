@@ -337,6 +337,10 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_STANDARD_INPS_ERR" -> metadati = "classpath:/f24_delivery_standard_inps_err.json";
             case "PAYMENT_F24_STANDARD_INPS_ERR_1" -> metadati = "classpath:/f24_delivery_standard_inps_err1.json";
             case "PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA" -> metadati = "classpath:/f24_delivery_standard_local_tefa.json";
+            case "METADATO_CORRETTO_STAND_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_STAND_MINIMAL.json";
+            case "METADATO_CORRETTO_SIMPL_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_SIMPL_MINIMAL.json";
+            case "METADATO_CORRETTO_EXCISE_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_EXCISE_MINIMAL.json";
+            case "METADATO_CORRETTO_ELID_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_ELID_MINIMAL.json";
 
 
             default ->  metadati = getDefaultValue(PAYMENT_F24.key);
