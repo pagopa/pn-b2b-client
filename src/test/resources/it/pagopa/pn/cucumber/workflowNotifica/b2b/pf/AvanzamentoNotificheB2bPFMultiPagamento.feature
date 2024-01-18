@@ -2039,10 +2039,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -2057,10 +2058,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_1] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -2075,10 +2077,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_2] PA - Invio AR FLAT_RATE - inserimento notifica  mono destinatario con un solo avviso pagoPA e costi di notifica non inclusi modalità FLAT_RATE (scenario positivo)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | FLAT_RATE                   |
+      | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
@@ -2093,10 +2096,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_3] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
@@ -2112,10 +2116,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_4] PA - Invio AR DELIVERY_MODE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica  inclusi
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 100                         |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_AR                     |
@@ -2132,10 +2137,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_5] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non inclusi
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | FLAT_RATE                   |
+      | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
@@ -2151,10 +2157,11 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_81_6] PA - Invio AR FLAT_RATE - inserimento notifica mono destinatario con un solo avviso F24 e costi di notifica non  inclusi più paFee
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 100                         |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | FLAT_RATE                   |
+      | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
@@ -3470,10 +3477,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_104] FR02 - Notifica Analogica mono destinatario con 1 tentativo FLAT_RATE
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | FLAT_RATE                   |
+      | paFee                 | 0                           |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@ok_AR                 |
@@ -3494,6 +3503,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 100                         |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
@@ -3515,32 +3525,34 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
       | document           | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | test@fail.it                     |
-      | payment_pagoPaForm      | NULL                             |
-      | apply_cost_pagopa       | NULL                             |
-      | payment_f24_x           | PAYMENT_F24_STANDARD             |
-      | title_payment           | PAYMENT_F24_PAYMENT_F24_STANDARD |
-      | apply_cost_f24          | SI                               |
-      | payment_multy_number    | 3                                |
+      | digitalDomicile_address | test@fail.it                  |
+      | payment_pagoPaForm      | NULL                          |
+      | apply_cost_pagopa       | NULL                          |
+      | payment_f24_x           | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_107] DM02 - Notifica Analogica mono destinatario con 1 tentativo DELIVERY_MODE
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | Via@ok_AR                 |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24_x           | PAYMENT_F24_STANDARD      |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | SI                        |
-      | payment_multy_number    | 3                         |
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via@ok_AR                     |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24_x           | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
@@ -3553,6 +3565,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalCommunication | AR_REGISTERED_LETTER        |
       | feePolicy             | FLAT_RATE                   |
       | paFee                 | 100                         |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@fail-Discovery_AR     |
@@ -3569,26 +3582,28 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_109] MD01 -Notifica Multi destinatario FLAT_RATE Destinatario 1 - Invio digitale  e Destinatario 2 - Invio analogico con 2° tentativo (cap differente tra i 2 tentativi)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | FLAT_RATE                   |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | FLAT_RATE                   |
+      | paFee                 | 0                           |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm   | NULL                          |
-      | payment_f24_x        | PAYMENT_F24_FLAT              |
-      | title_payment        | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_f24       | NO                            |
-      | payment_multy_number | 3                             |
+      | payment_pagoPaForm   | NULL                      |
+      | payment_f24_x        | PAYMENT_F24_FLAT          |
+      | title_payment        | F24_FLAT_CLMCST42R12D969Z |
+      | apply_cost_f24       | NO                        |
+      | payment_multy_number | 3                         |
     And destinatario
-      | denomination            | Leonardo Da Vinci             |
-      | taxId                   | DVNLRD52D15M059P              |
-      | digitalDomicile         | NULL                          |
-      | physicalAddress_address | Via@FAIL-Discovery_AR         |
-      | payment_pagoPaForm      | NULL                          |
-      | payment_f24_x           | PAYMENT_F24_FLAT              |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_f24          | NO                            |
-      | payment_multy_number    | 3                             |
+      | denomination            | Leonardo Da Vinci         |
+      | taxId                   | DVNLRD52D15M059P          |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Discovery_AR     |
+      | payment_pagoPaForm      | NULL                      |
+      | payment_f24_x           | PAYMENT_F24_FLAT          |
+      | title_payment           | F24_FLAT_DVNLRD52D15M059P |
+      | apply_cost_f24          | NO                        |
+      | payment_multy_number    | 3                         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
@@ -3597,10 +3612,12 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_110] MD02 -Notifica Multi destinatario DELIVERY_MODE Destinatario 1 - Invio digitale Destinatario 2 - Invio analogico con 2° tentativo (cap differente tra i 2 tentativi)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
       | payment_pagoPaForm   | NULL                          |
       | payment_f24_x        | PAYMENT_F24_STANDARD          |
@@ -3614,7 +3631,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalAddress_address | Via@FAIL-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24_x           | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -3625,22 +3642,24 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
   @pagamentiMultipli @cartaceoF24
   Scenario: [B2B-PA-PAY_MULTI_111] MD03 -Notifica Multi destinatario DELIVERY_MODE Destinatario 1 - Invio analogico con 1° tentativo - Destinatario 2 - Invio analogico con 2° tentativo - Tutti e 3 gli invii analogici devono avere CAP differenti
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di Palermo           |
+      | physicalCommunication | AR_REGISTERED_LETTER        |
+      | feePolicy             | DELIVERY_MODE               |
+      | paFee                 | 0                           |
+      | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                      |
-      | physicalAddress_address      | Via@ok_AR                 |
-      | payment_pagoPaForm           | NULL                      |
-      | physicalAddress_municipality | MASSAQUANO                |
-      | physicalAddress_province     | NA                        |
-      | physicalAddress_zip          | 80060                     |
-      | payment_f24_x                | PAYMENT_F24_STANDARD      |
-      | title_payment                | F24_FLAT_CLMCST42R12D969Z |
-      | apply_cost_pagopa            | NO                        |
-      | apply_cost_f24               | SI                        |
-      | payment_multy_number         | 3                         |
+      | digitalDomicile              | NULL                          |
+      | physicalAddress_address      | Via@ok_AR                     |
+      | payment_pagoPaForm           | NULL                          |
+      | physicalAddress_municipality | MASSAQUANO                    |
+      | physicalAddress_province     | NA                            |
+      | physicalAddress_zip          | 80060                         |
+      | payment_f24_x                | PAYMENT_F24_STANDARD          |
+      | title_payment                | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa            | NO                            |
+      | apply_cost_f24               | SI                            |
+      | payment_multy_number         | 3                             |
     And destinatario
       | denomination            | Leonardo Da Vinci             |
       | taxId                   | DVNLRD52D15M059P              |
@@ -3648,7 +3667,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | physicalAddress_address | Via@FAIL-Discovery_AR         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24_x           | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | title_payment           | F24_STANDARD_DVNLRD52D15M059P |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
