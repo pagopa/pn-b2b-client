@@ -3368,6 +3368,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
+
+    #------------------PN-9330------------------
   @pagamentiMultipli @f24 @dev
   Scenario: [B2B-PA-PAY_MULTI_99] PA - inserimento notifica mono destinatario con un solo F24 STANDARD  VALID MINIMAL e controllo coerenza dei dati del modello F24 (Costi di notifica  inclusi).-PN-9330
     Given viene generata una nuova notifica
