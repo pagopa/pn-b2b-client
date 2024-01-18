@@ -27,7 +27,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | 00123 | 315   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 00018 | 404   | CRETONE      | RM       | notifica analogica RECAPITISTA |
       | 70124 | 275   | BARI         | BA       | notifica analogica RECAPITISTA |
-      | 60020 | 346   | SIROLO       | AN       | notifica analogica RECAPITISTA |
+      | 60012 | 346   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60126 | 296   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 80022 | 346   | ARZANO       | NA       | notifica analogica RECAPITISTA |
       | 84124 | 296   | SALERNO      | SA       | notifica analogica RECAPITISTA |
