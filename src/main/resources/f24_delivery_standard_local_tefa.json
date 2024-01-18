@@ -1,0 +1,70 @@
+{
+  "f24Standard": {
+    "taxPayer": {
+      "taxCode": "RSSMRA80A01F205X",
+      "isNotTaxYear": true,
+      "person": {
+        "personalData": {
+          "surname": "ROSSI",
+          "name": "MARIO",
+          "birthDate": "01-01-1980",
+          "sex": "M",
+          "birthPlace": "MILANO",
+          "birthProvince": "MI"
+        },
+        "taxAddress": {
+          "municipality": "MILANO",
+          "province": "MI",
+          "address": "VIA LARGA 21"
+        }
+      },
+      "id": "9W"
+    },
+    "localTax": {
+      "records": [
+        {
+          "applyCost": true,
+          "municipality": "99YZ",
+          "reconsideration": true,
+          "propertiesChanges": true,
+          "advancePayment": true,
+          "fullPayment": true,
+          "numberOfProperties": "433",
+          "taxType": "TEFA",
+          "installment": "43CV",
+          "year": "2432",
+          "debit": "6002916",
+          "credit": "0"
+        },
+        {
+          "applyCost": false,
+          "municipality": "99YZ",
+          "reconsideration": true,
+          "propertiesChanges": true,
+          "advancePayment": true,
+          "fullPayment": true,
+          "numberOfProperties": "433",
+          "taxType": "TEFN",
+          "installment": "43CV",
+          "year": "2432",
+          "debit": "6002916",
+          "credit": "0"
+        },
+        {
+          "applyCost": false,
+          "municipality": "99YZ",
+          "reconsideration": true,
+          "propertiesChanges": true,
+          "advancePayment": true,
+          "fullPayment": true,
+          "numberOfProperties": "433",
+          "taxType": "TEFZ",
+          "installment": "43CV",
+          "year": "2432",
+          "debit": "6002916",
+          "credit": "0"
+        }
+      ]
+    }
+  }
+}
