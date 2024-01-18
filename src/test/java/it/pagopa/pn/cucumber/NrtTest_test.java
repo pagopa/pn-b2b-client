@@ -17,8 +17,8 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 })
 @ExcludeTags({"ignore","uat","appIo"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli",
-            "costoAnalogico","Async", "version","AOO_UO", "Annullamento",
+            "Async", "version","AOO_UO", "Annullamento",
             "RetentionAllegati", "apiKeyManager", "downtimeLogs",
-            "legalFact", "letturaDestinatario","radd","20Grammi"})
+            "legalFact", "letturaDestinatario","radd"})
 public class NrtTest_test {
 }
