@@ -175,48 +175,6 @@ public class PnPaB2bUtils {
     }
 
 
-    public NewNotificationResponse uploadNotification50size( NewNotificationRequestV21 request) throws IOException {
-        //PRELOAD DOCUMENTI NOTIFICA
-        NotificationDocument notificationDocument = newDocument("classpath:/AllegatoServiceDesk_100pag.pdf");
-
-        List<NotificationDocument> newdocs = new ArrayList<>();
-        newdocs.add(this.preloadDocument(notificationDocument));
-        request.setDocuments(newdocs);
-
-        //PRELOAD DOCUMENTI DI PAGAMENTO
-        for (NotificationRecipientV21 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
-                for (NotificationPaymentItem paymentInfo: paymentList) {
-
-                    if (paymentInfo.getPagoPa()!= null) {
-                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    }
-                    if (paymentInfo.getF24()!= null) {
-                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-                    }
-
-                }
-
-                // paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
-            }
-        }
-
-        log.info("New Notification Request {}", request);
-        NewNotificationResponse response = client.sendNewNotification( request );
-        log.info("New Notification Request response {}", response);
-        if (response != null)
-        {
-            try {
-                log.info("New Notification\n IUN {}", new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
-            } catch (Exception e) {
-            }
-        }
-        return response;
-    }
-
     public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequestV21 request, boolean noUpload) throws IOException {
 //TODO Modificare.............
         List<NotificationDocument> newdocs = new ArrayList<>();

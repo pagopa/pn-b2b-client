@@ -981,12 +981,13 @@ Feature: Api Service Desk
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
       | physicalCommunication |  AR_REGISTERED_LETTER |
+      | document              | DOC_100_PG                      |
     And destinatario
       | denomination | Test AR Fail 2 |
       | taxId | TMTTMS92M57G793P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b con preload allegato da 100 pagine pdf dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
   @dpCallCenterEvoluto
@@ -995,10 +996,11 @@ Feature: Api Service Desk
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
+      | document              | DOC_100_PG                      |
     And destinatario
       | denomination | Test AR Fail 2 |
       | taxId | TMTTMS92M57G793P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b con preload allegato da 100 pagine pdf dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
