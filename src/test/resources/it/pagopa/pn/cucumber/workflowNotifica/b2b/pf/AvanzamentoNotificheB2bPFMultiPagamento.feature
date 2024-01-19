@@ -3565,18 +3565,18 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di Palermo           |
       | physicalCommunication | AR_REGISTERED_LETTER        |
-      | feePolicy             | FLAT_RATE                   |
+      | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
       | document              | DOC_8_PG;DOC_5_PG           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                      |
-      | physicalAddress_address | via@fail-Discovery_AR     |
-      | payment_pagoPaForm      | NULL                      |
-      | payment_f24_x           | PAYMENT_F24_FLAT          |
-      | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                        |
-      | apply_cost_f24          | NO                        |
-      | payment_multy_number    | 3                         |
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | via@fail-Discovery_AR         |
+      | payment_pagoPaForm      | NULL                          |
+      | payment_f24_x           | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | NO                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 3                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
