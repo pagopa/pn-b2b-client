@@ -298,31 +298,9 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
-  @dev @workflowAnalogico
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_15] Invio notifica multidestinatario complettamente irreperibile e complettamente irreperibile e controllo date business PN-9059
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Mario Gherkin e:
-      | denomination            | Test AR discovery multi           |
-      | digitalDomicile         | NULL                              |
-      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
-    And destinatario Mario Cucumber e:
-      | denomination            | Test AR discovery multi           |
-      | digitalDomicile         | NULL                              |
-      | physicalAddress_address | Via@FAIL-DiscoveryIrreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 0
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    Then verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 0
-    And verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 1
-
 
   @dev @workflowAnalogico
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_16] Invio notifica multidestinatario completamente irreperibile e successo digitale con lettura notifica analogica e non presenza REFINEMENT PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_15] Invio notifica multidestinatario completamente irreperibile e successo digitale con lettura notifica analogica e non presenza REFINEMENT PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -334,9 +312,9 @@ Feature: avanzamento b2b notifica multi destinatario analogico
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And destinatario Cucumber Society
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then "Leonardo Da Vinci" legge la notifica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
-    Then "Leonardo Da Vinci" legge la notifica
     And viene verificato che l'elemento di timeline "REFINEMENT" non esista
       | details          | NOT_NULL |
       | details_recIndex | 0        |
@@ -344,7 +322,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
   @dev @workflowAnalogico
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_17] Invio notifica multidestinatario completamente irreperibile e fallimento digitale e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_16] Invio notifica multidestinatario completamente irreperibile e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -366,7 +344,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
   @dev @workflowAnalogico
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_18] Invio notifica multidestinatario 1 tentativo analogico e 1 tentativo analogico e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_17] Invio notifica multidestinatario 1 tentativo analogico e 1 tentativo analogico e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -387,7 +365,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_19] Invio notifica multidestinatario ritardo analogico e 1 tentativo analogico e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_18] Invio notifica multidestinatario ritardo analogico e 1 tentativo analogico e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -408,7 +386,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_20] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e successo digitale e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_19] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e successo digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -435,7 +413,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_21] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e fallimento digitale e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_20] Invio notifica multidestinatario ritardo analogico ,2 tentativi analogici e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -463,7 +441,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22] Invio notifica multidestinatario ritardo analogico e fallimento digitale e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_21] Invio notifica multidestinatario ritardo analogico e fallimento digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -482,7 +460,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_23] Invio notifica multidestinatario ritardo analogico e successo digitale e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_22] Invio notifica multidestinatario ritardo analogico e successo digitale e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -501,7 +479,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
 
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_24] Invio notifica multidestinatario ritardo analogico e fallimento analogico e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_23] Invio notifica multidestinatario ritardo analogico e fallimento analogico e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -523,7 +501,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_25] Invio notifica multidestinatario ritardo analogico ,2 tentativi e controllo date business PN-9059
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_24] Invio notifica multidestinatario ritardo analogico ,2 tentativi e controllo date business PN-9059
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -549,7 +527,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 2
 
 
-  Scenario: [B2B_TIMELINE_MULTI_ANALOG_26] Invio notifica multidestinatario ritardo analogicoe controllo notificationCost non settato PN-9488
+  Scenario: [B2B_TIMELINE_MULTI_ANALOG_25] Invio notifica multidestinatario ritardo analogicoe controllo notificationCost non settato PN-9488
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
