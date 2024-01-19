@@ -232,6 +232,8 @@ public class DataTableTypeUtil {
                 if (getValue(data,PAYMENT_F24.key)!= null  && !getValue(data,PAYMENT_F24.key).isEmpty()) {
                     setMetadatiF24(data, addPaymentsItem, i);
 
+                } else if (getValue(data,PAYMENT_F24_X.key)!= null  && !getValue(data,PAYMENT_F24_X.key).isEmpty()) {
+                    setMetadatiF24(data, addPaymentsItem, i);
                 }
 
                 listPayment.add(addPaymentsItem);
@@ -291,6 +293,19 @@ public class DataTableTypeUtil {
                             .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                             .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
 
+        } else if (!Objects.equals(getValue(data, PAYMENT_F24_X.key), null)) {
+            boolean applyCost = true;
+            if (i==2 && getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")){
+                applyCost = false;
+            }
+            if(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("NO")){
+                applyCost = false;
+            }
+            addPaymentsItem.f24(
+                    new F24Payment()
+                            .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                            .applyCost(applyCost)
+                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24_X.key)+"_"+i)));
         }
 
     }
@@ -337,7 +352,16 @@ public class DataTableTypeUtil {
             case "PAYMENT_F24_STANDARD_INPS_ERR" -> metadati = "classpath:/f24_delivery_standard_inps_err.json";
             case "PAYMENT_F24_STANDARD_INPS_ERR_1" -> metadati = "classpath:/f24_delivery_standard_inps_err1.json";
             case "PAYMENT_F24_DELIVERY_STANDARD_LOCAL_TEFA" -> metadati = "classpath:/f24_delivery_standard_local_tefa.json";
-
+            case "METADATO_CORRETTO_STAND_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_STAND_MINIMAL.json";
+            case "METADATO_CORRETTO_SIMPL_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_SIMPL_MINIMAL.json";
+            case "METADATO_CORRETTO_EXCISE_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_EXCISE_MINIMAL.json";
+            case "METADATO_CORRETTO_ELID_MINIMAL" -> metadati = "classpath:/METADATO_CORRETTO_ELID_MINIMAL.json";
+            case "PAYMENT_F24_STANDARD_0" -> metadati = "classpath:/METADATA_CORRETTO_0.json";
+            case "PAYMENT_F24_STANDARD_1" -> metadati = "classpath:/METADATA_CORRETTO_1.json";
+            case "PAYMENT_F24_STANDARD_2" -> metadati = "classpath:/METADATA_CORRETTO_2.json";
+            case "PAYMENT_F24_FLAT_0" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_0.json";
+            case "PAYMENT_F24_FLAT_1" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_1.json";
+            case "PAYMENT_F24_FLAT_2" -> metadati = "classpath:/METADATA_CORRETTO_FLAT_2.json";
 
             default ->  metadati = getDefaultValue(PAYMENT_F24.key);
         }

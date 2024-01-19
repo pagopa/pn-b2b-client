@@ -1,0 +1,24 @@
+{
+	"f24Simplified": {
+		"taxPayer": {
+			"taxCode": "RSSMRA80A01F205X",
+			"personalData": {
+				"surname": "ROSSI",
+				"name": "MARIO",
+				"birthDate": "01-01-1980",
+				"sex": "M"
+			}
+		},
+		"payments": {
+			"records": [
+				{
+					"applyCost": true,
+					"section": "ER",
+					"taxType": "TSC1",
+					"municipality": "1211"
+				}
+				
+			]
+		}
+	}
+}

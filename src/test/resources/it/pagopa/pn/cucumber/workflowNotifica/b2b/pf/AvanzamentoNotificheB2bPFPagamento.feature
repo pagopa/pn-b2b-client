@@ -109,3 +109,4 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
     #Questa API è a disposizione della Pubblica Amministrazione per inviare eventi di chiusura di una o più posizioni debitorie di tipo PagoPA.
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
+
