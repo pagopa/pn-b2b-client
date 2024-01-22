@@ -36,6 +36,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
     private final String dinoBearerToken;
+    private final String userBearerTokenScaduto;
 
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
@@ -51,6 +52,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
             @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
             @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
             @Value("${pn.bearer-token.user5}") String dinoBearerToken,
+            @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
             @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
             @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
             @Value("${pn.webapi.external.user-agent}")String userAgent
@@ -62,6 +64,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
         this.dinoBearerToken = dinoBearerToken;
+        this.userBearerTokenScaduto= userBearerTokenScaduto;
 
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
@@ -140,6 +143,15 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
                 this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
+                beenSet = true;
+                break;
+            case USER_SCADUTO:
+                this.recipientReadApi.setApiClient(newApiClient( restTemplate, basePath, userBearerTokenScaduto,userAgent));
+                this.recipientReadApiV1.setApiClient(newApiClient( restTemplate, basePath, userBearerTokenScaduto,userAgent));
+                this.recipientReadApiV2.setApiClient(newApiClient( restTemplate, basePath, userBearerTokenScaduto,userAgent));
+                this.legalFactsApi.setApiClient(newApiClient( restTemplate, basePath, userBearerTokenScaduto,userAgent));
+                this.documentsWebApi.setApiClient(newApiClient( restTemplate, basePath, userBearerTokenScaduto,userAgent));
+                this.bearerTokenSetted = BearerTokenType.USER_SCADUTO;
                 beenSet = true;
                 break;
         }

@@ -2323,6 +2323,22 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("{string} tenta di leggere la notifica ricevuta")
+    public void userReadReceivedNotificationWithError(String recipient) {
+        sharedSteps.selectUser(recipient);
+
+        String iun =sharedSteps.getIunVersionamento();
+
+        try {
+                webRecipientClient.getReceivedNotification(iun, null);
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                sharedSteps.setNotificationError((HttpStatusCodeException) e);
+            }
+        }
+
+    }
+
     @And("{string} legge la notifica ricevuta")
     public void userReadReceivedNotification(String recipient) {
         sharedSteps.selectUser(recipient);

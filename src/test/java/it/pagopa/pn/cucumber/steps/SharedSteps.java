@@ -1047,12 +1047,6 @@ public class SharedSteps {
         sendNotificationRefusedOverSizeAllegato();
     }
 
-    @When("la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal {string} e si attende che lo stato diventi ACCEPTED")
-    public void laNotificaVieneInviataPreloadAllegato50Pagine(String paType) {
-        selectPA(paType);
-        setSenderTaxIdFromProperties();
-        sendNotificationSize50Allegato();
-    }
 
     @When("la notifica viene inviata tramite api b2b injection preload allegato dal {string} e si attende che lo stato diventi REFUSED")
     public void laNotificaVieneInviataPreloadAllegatoInjection(String paType) {
@@ -1515,36 +1509,6 @@ public class SharedSteps {
         }
     }
 
-    private void sendNotificationSize50Allegato()  {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponse = b2bUtils.uploadNotification50size(notificationRequest);
-
-                try {
-                    Thread.sleep(getWorkFlowWait());
-                } catch (InterruptedException e) {
-                    logger.error("Thread.sleep error retry");
-                    throw new RuntimeException(e);
-                }
-
-                notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
-            });
-
-            try {
-                Thread.sleep(getWorkFlowWait());
-            } catch (InterruptedException e) {
-                logger.error("Thread.sleep error retry");
-                throw new RuntimeException(e);
-            }
-            Assertions.assertNotNull(notificationResponseComplete);
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
 
     private void sendNotificationRefusedInjectionAllegato() {
         try {
@@ -1844,6 +1808,10 @@ public class SharedSteps {
             case "dino sauro":
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                break;
+            case "mario cucumber con credenziali non valide":
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 break;
             default:
                 throw new IllegalArgumentException();

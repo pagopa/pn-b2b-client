@@ -287,5 +287,13 @@ Feature: avanzamento notifiche b2b persona fisica
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
 
 
+  Scenario: [B2B_TIMELINE_27] Invio notifica digitale e lettura notifica da un utente con token scaduto PN-9110
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And "Mario Cucumber con credenziali non valide" tenta di leggere la notifica ricevuta
+    Then l'operazione ha prodotto un errore con status code "403"
 
 
