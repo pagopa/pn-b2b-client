@@ -2237,7 +2237,7 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
                         if (price != null) {
                             logger.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
-                            Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
+                            Assertions.assertEquals(Integer.parseInt(price),notificationPrice.getAmount());
                         }
                         if (date != null) {
                             Assertions.assertNotNull(notificationPrice.getRefinementDate());
