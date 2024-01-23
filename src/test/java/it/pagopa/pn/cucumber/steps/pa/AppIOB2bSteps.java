@@ -2,12 +2,11 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyAttachment;
 import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.ThirdPartyMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.client.b2b.pa.service.IPnAppIOB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;

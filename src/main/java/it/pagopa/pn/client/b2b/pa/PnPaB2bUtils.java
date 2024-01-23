@@ -1,12 +1,10 @@
 package it.pagopa.pn.client.b2b.pa;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -21,7 +19,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -58,10 +55,10 @@ public class PnPaB2bUtils {
 
     private IPnPaB2bClient client;
 
-    private final IPnRaddFsuClientImpl raddFsuClient;
+    private final IPnRaddFsuClient raddFsuClient;
 
     @Autowired
-    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClientImpl raddFsuClient) {
+    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient) {
         this.restTemplate = restTemplate;
         this.ctx = ctx;
         this.client = client;

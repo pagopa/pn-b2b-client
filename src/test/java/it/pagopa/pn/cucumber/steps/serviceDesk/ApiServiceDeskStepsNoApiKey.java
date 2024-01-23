@@ -6,41 +6,24 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImplNoApiKey;
-import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.PnServiceDeskClientImplNoApiKey;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImplNoApiKey;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
-import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class ApiServiceDeskStepsNoApiKey {

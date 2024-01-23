@@ -5,14 +5,13 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
@@ -27,7 +26,7 @@ import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber
 @Slf4j
 public class RaddFsuSteps {
 
-    private final IPnRaddFsuClientImpl raddFsuClient;
+    private final IPnRaddFsuClient raddFsuClient;
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils pnPaB2bUtils;
@@ -53,7 +52,7 @@ public class RaddFsuSteps {
 
 
     @Autowired
-    public RaddFsuSteps(IPnRaddFsuClientImpl raddFsuClient,PnExternalServiceClientImpl externalServiceClient,
+    public RaddFsuSteps(IPnRaddFsuClient raddFsuClient, PnExternalServiceClientImpl externalServiceClient,
                         PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps) {
         this.raddFsuClient = raddFsuClient;
         this.externalServiceClient = externalServiceClient;

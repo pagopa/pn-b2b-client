@@ -7,11 +7,10 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImplNoApiKey;
-import it.pagopa.pn.client.b2b.pa.testclient.IPServiceDeskClientImplWrongApiKey;
-import it.pagopa.pn.client.b2b.pa.testclient.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImplWrongApiKey;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.junit.jupiter.api.Assertions;
@@ -25,11 +24,6 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.time.temporal.ChronoUnit;
 
 
 public class ApiServiceDeskStepsWrongApiKey {

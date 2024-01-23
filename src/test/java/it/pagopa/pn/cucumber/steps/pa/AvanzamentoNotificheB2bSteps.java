@@ -4,8 +4,9 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
@@ -20,20 +21,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
-import static org.awaitility.Awaitility.with;
 
 public class AvanzamentoNotificheB2bSteps {
 
@@ -44,14 +42,14 @@ public class AvanzamentoNotificheB2bSteps {
     private final IPnWebRecipientClient webRecipientClient;
     private final PnExternalServiceClientImpl externalClient;
     private final IPnWebUserAttributesClient webUserAttributesClient;
-    private final IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient;
-    private final IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient;
+    private final IPnIoUserAttributerExternaClient ioUserAttributerExternaClient;
+    private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private HttpStatusCodeException notificationError;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient,
-                                        IPnWebUserAttributesClient webUserAttributesClient, IPnIoUserAttributerExternaClientImpl ioUserAttributerExternaClient, IPnPrivateDeliveryPushExternalClientImpl pnPrivateDeliveryPushExternalClient) {
+                                        IPnWebUserAttributesClient webUserAttributesClient, IPnIoUserAttributerExternaClient ioUserAttributerExternaClient, IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
         this.sharedSteps = sharedSteps;
         this.appIOB2bClient = appIOB2bClient;
         this.b2bClient = sharedSteps.getB2bClient();

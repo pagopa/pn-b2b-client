@@ -2,14 +2,13 @@ package it.pagopa.pn;
 
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bInternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -37,9 +35,9 @@ import java.util.List;
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
-        PnIoUserAttributerExternaClientImpl.class,
+        PnIoUserAttributerExternaClient.class,
         PnWebPaClientImpl.class,
-        PnPrivateDeliveryPushExternalClientImpl.class,
+        PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
         PnServiceDeskClientImplNoApiKey.class,

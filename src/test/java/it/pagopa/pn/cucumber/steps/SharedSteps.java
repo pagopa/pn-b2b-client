@@ -12,18 +12,19 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationPaymentInfo;
-import it.pagopa.pn.client.b2b.appIo.generated.openapi.clients.externalAppIO.model.NotificationRecipient;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.NotificationRequest;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.cucumber.utils.*;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
@@ -37,7 +38,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
@@ -46,7 +46,6 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.COMPLETELY_UNREACHABLE;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
@@ -58,7 +57,7 @@ public class SharedSteps {
     private final IPnPaB2bClient b2bClient;
     private final IPnWebPaClient webClient;
     private final PnGPDClientImpl pnGPDClientImpl;
-    private final PnPaymentInfoClientImpl pnPaymentInfoClient;
+    private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
 
     //private  String iuvGPD;
 
@@ -220,7 +219,7 @@ public class SharedSteps {
                        PnExternalServiceClientImpl pnExternalServiceClient,
                        IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
                        PnServiceDeskClientImpl serviceDeskClient, PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey,
-                       PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey,PnGPDClientImpl pnGPDClientImpl, PnPaymentInfoClientImpl pnPaymentInfoClient) {
+                       PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey, PnGPDClientImpl pnGPDClientImpl, PnPaymentInfoClientImpl pnPaymentInfoClientImpl) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -232,7 +231,7 @@ public class SharedSteps {
         this.serviceDeskClientImplNoApiKey=serviceDeskClientImplNoApiKey;
         this.serviceDeskClientImplWrongApiKey=serviceDeskClientImplWrongApiKey;
         this.pnGPDClientImpl=pnGPDClientImpl;
-        this.pnPaymentInfoClient=pnPaymentInfoClient;
+        this.pnPaymentInfoClientImpl = pnPaymentInfoClientImpl;
         this.iuvGPD=new ArrayList<String>();
     }
 
@@ -1831,7 +1830,7 @@ public class SharedSteps {
     }
 
     public PnPaymentInfoClientImpl getPnPaymentInfoClientImpl() {
-        return pnPaymentInfoClient;
+        return pnPaymentInfoClientImpl;
     }
 
     public PnPaB2bUtils getB2bUtils() {
