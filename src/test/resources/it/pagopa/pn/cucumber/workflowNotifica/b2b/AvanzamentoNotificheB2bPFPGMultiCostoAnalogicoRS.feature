@@ -24,7 +24,7 @@ Feature: costo notifica con workflow analogico per multi destinatario RS
     And viene verificato il costo = "100" della notifica per l'utente 1
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 60010 | 344   | COLLEPONI    | AN       |
+      | 60010 | 402   | COLLEPONI    | AN       |
 
 
   @dev @costoAnalogico

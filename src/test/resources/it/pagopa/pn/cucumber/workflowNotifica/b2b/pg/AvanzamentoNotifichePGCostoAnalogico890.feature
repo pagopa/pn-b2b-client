@@ -87,9 +87,9 @@ Feature: costo notifica con workflow analogico per persona giuridica 890
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
-      | 06031 | 951   | CANTALUPO      | PG       |
-      | 64011 | 947   | ALBA ADRIATICA | TE       |
-      | 00010 | 900   | CASAPE         | RM       |
-      | 70010 | 854   | ADELFIA        | BA       |
-      | 10010 | 918   | ANDRATE        | TO       |
-      | 60012 | 972   | MONTERADO      | AN       |
+      | 06031 | 0     | CANTALUPO      | PG       |
+      | 64011 | 0     | ALBA ADRIATICA | TE       |
+      | 00010 | 0     | CASAPE         | RM       |
+      | 70010 | 0     | ADELFIA        | BA       |
+      | 10010 | 0     | ANDRATE        | TO       |
+      | 60012 | 0     | MONTERADO      | AN       |

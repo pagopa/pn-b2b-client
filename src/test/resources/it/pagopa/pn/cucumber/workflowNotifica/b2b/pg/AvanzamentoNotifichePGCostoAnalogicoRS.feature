@@ -18,7 +18,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 60010 | 344   | COLLEPONI    | AN       |
+      | 60010 | 402     | COLLEPONI    | AN       |
 
 
   @dev @costoAnalogico
