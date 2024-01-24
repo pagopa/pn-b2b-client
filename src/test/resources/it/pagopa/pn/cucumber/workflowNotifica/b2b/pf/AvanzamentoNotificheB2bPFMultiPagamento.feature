@@ -3680,7 +3680,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_112] Invio notifica cartacea con 6 f24
     Given viene generata una nuova notifica
       | subject            | notifica analogica |
@@ -3697,7 +3697,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_113] Invio notifica cartacea con 9 f24
     Given viene generata una nuova notifica
       | subject            | notifica analogica |
