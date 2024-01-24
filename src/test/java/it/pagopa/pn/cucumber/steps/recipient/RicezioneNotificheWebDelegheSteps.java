@@ -402,7 +402,7 @@ public class RicezioneNotificheWebDelegheSteps {
             gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
-
+        Assertions.assertNotNull(gruppoAttivo);
         Assertions.assertTrue(gruppoAttivo.equals(gruppoAssegnato));
 
     }
