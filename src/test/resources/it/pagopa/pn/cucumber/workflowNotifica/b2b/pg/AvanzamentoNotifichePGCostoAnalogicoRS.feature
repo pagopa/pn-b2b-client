@@ -18,7 +18,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 60040 | 404   | COLLEPONI    | AN       |
+      | 60010 | 344   | COLLEPONI    | AN       |
 
 
   @dev @costoAnalogico
@@ -40,7 +40,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 60040 | 0     | COLLEPONI    | AN       |
+      | 60010 | 0     | COLLEPONI    | AN       |
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_3] Invio notifica verifica costo con ZONE_1 + @OK_RIS + DELIVERY_MODE positivo
@@ -58,7 +58,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | payment_pagoPaForm           | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo = "742" della notifica
+    And viene verificato il costo = "737" della notifica
 
 
   @dev @costoAnalogico
@@ -98,13 +98,16 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
-      | 00119 | 315   | ROMA           | RM       |
-      | 60122 | 296   | ANCONA         | AN       |
-      | 60012 | 346   | MONTERADO      | AN       |
-      | 70122 | 275   | BARI           | BA       |
-      | 03100 | 342   | FROSINONE      | FR       |
-      | 00013 | 404   | CASTELCHIODATO | RM       |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 04100 | 340   | LE FERRIERE  | LT       |
+      | 00123 | 313   | ROMA         | RM       |
+      | 00018 | 402   | CRETONE      | RM       |
+      | 70124 | 274   | BARI         | BA       |
+      | 60012 | 344   | MONTERADO    | AN       |
+      | 60126 | 294   | ANCONA       | AN       |
+      | 80022 | 344   | ARZANO       | NA       |
+      | 84124 | 294   | SALERNO      | SA       |
+      | 80129 | 274   | NAPOLI       | NA       |
 
 
   @dev @costoAnalogico
@@ -124,13 +127,16 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
-      | 00119 | 0     | ROMA           | RM       |
-      | 60122 | 0     | ANCONA         | AN       |
-      | 60012 | 0     | MONTERADO      | AN       |
-      | 70122 | 0     | BARI           | BA       |
-      | 03100 | 0     | FROSINONE      | FR       |
-      | 00013 | 0     | CASTELCHIODATO | RM       |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 04100 | 0     | LE FERRIERE  | LT       |
+      | 00123 | 0     | ROMA         | RM       |
+      | 00018 | 0     | CRETONE      | RM       |
+      | 70124 | 0     | BARI         | BA       |
+      | 60012 | 0     | MONTERADO    | AN       |
+      | 60126 | 0     | ANCONA       | AN       |
+      | 80022 | 0     | ARZANO       | NA       |
+      | 84124 | 0     | SALERNO      | SA       |
+      | 80129 | 0     | NAPOLI       | NA       |
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_7] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + DELIVERY_MODE positivo
@@ -148,7 +154,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | payment_pagoPaForm           | SI           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo = "858" della notifica
+    And viene verificato il costo = "852" della notifica
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_8] Invio notifica e verifica costo con ZONA_2 + @OK_RIS + FLAT_RATE positivo
@@ -184,7 +190,7 @@ Feature: costo notifica con workflow analogico per persona giuridica RS
       | payment_pagoPaForm           | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo = "915" della notifica
+    And viene verificato il costo = "909" della notifica
 
   @dev @costoAnalogico
   Scenario: [B2B_COSTO_ANALOG_PG_RIS_10] Invio notifica e verifica costo con ZONA_3 + @OK_RIS + FLAT_RATE positivo
