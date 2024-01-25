@@ -23,7 +23,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 546   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 546   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 452   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 409   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 376   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -54,7 +54,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 619   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 619   | MASSAQUANO   | NA       | notifica analogica FSU         |
       | 60012 | 454   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 395   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 360   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -63,7 +63,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 83100 | 408   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 558   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 447   | ROMA         | RM       | notifica analogica RECAPITISTA |
-      | 04100 | 475     | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+      | 04100 | 475   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @CostoCartaceoComplete
   Scenario Outline: [CALCOLO-COSTO_AR-50GR_3] Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
@@ -85,7 +85,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 634   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 634   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 469   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 410   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 375   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -117,7 +117,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 674   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 674   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 500   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 441   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 404   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -148,7 +148,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 701   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 701   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 527   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 468   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 431   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -179,7 +179,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 745   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 745   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 561   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 503   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 464   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -211,7 +211,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 832   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 832   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 648   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 590   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 551   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -243,7 +243,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 869   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 869   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 675   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 621   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 577   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -275,7 +275,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 926   | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 926   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 732   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 678   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 634   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -307,7 +307,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1002  | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 1002  | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 791   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 734   | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 690   | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -339,7 +339,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1389  | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 1389  | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 1178  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1121  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1077  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -371,7 +371,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 1479  | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 1479  | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 1246  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1191  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1142  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -403,7 +403,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                        |
-      | 80060 | 2076  | Vico Equense | NA       | notifica analogica FSU         |
+      | 80060 | 2076  | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 1843  | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 1788  | ANCONA       | AN       | notifica analogica RECAPITISTA |
       | 70123 | 1739  | BARI         | BA       | notifica analogica RECAPITISTA |
@@ -1143,7 +1143,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | 634   | Vico Equense | NA       | notifica analogica FSU |
+      | 80060 | 634   | MASSAQUANO | NA       | notifica analogica FSU |
 
 
 
@@ -1192,4 +1192,4 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "<COSTO>" della notifica
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | 1164  | Vico Equense | NA       | notifica analogica FSU |
+      | 80060 | 1164  | MASSAQUANO | NA       | notifica analogica FSU |
