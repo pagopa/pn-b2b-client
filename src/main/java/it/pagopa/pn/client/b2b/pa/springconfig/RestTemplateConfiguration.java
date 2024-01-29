@@ -15,7 +15,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,17 +27,12 @@ public class RestTemplateConfiguration {
     public RestTemplate restTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-        requestFactory.setConnectTimeout(990_000);
-        requestFactory.setReadTimeout(990_000);
-        requestFactory.setConnectionRequestTimeout(990_000);
-        requestFactory.setBufferRequestBody(false);
+        requestFactory.setConnectTimeout(990000);
+        requestFactory.setReadTimeout(990000);
+        requestFactory.setConnectionRequestTimeout(990000);
         restTemplate.setRequestFactory(requestFactory);
 
         List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        if( interceptors == null ) {
-            interceptors = new ArrayList<>();
-            restTemplate.setInterceptors( interceptors );
-        }
         interceptors.add(new RequestAndTraceIdInterceptor());
 
         return restTemplate;
