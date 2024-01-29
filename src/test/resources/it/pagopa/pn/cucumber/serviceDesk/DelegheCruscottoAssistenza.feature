@@ -18,21 +18,21 @@ Feature: Deleghe Cruscotto Assitenza
 
 
 
-  #@deleghe2  @cruscottoAssistenza
-  #Scenario: [API-SERVICE-PG-CA_CE02.9_64] Invocazione del servizio e verifica risposta
-    #Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
-    #And "CucumberSpa" viene delegato da "GherkinSrl"
-    #And "CucumberSpa" accetta la delega "GherkinSrl"
-   # When viene generata una nuova notifica
-     # | subject            | invio notifica con cucumber |
-     # | senderDenomination | comune di milano            |
-    #And destinatario GherkinSrl
-   # And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    #Then la notifica può essere correttamente letta da "CucumberSpa" con delega
-    #And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "CucumberSpa" e recipientType  "PG"
-    #And Il servizio risponde correttamente
-    #Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "GherkinSrl" recipientType  "PG" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NO_SET"
-    #And Il servizio risponde correttamente
+  @deleghe2  @cruscottoAssistenza
+  Scenario: [API-SERVICE-PG-CA_CE02.9_64] Invocazione del servizio e verifica risposta
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario GherkinSrl
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente letta da "CucumberSpa" con delega
+    And come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "CucumberSpa" e recipientType  "PG"
+    And Il servizio risponde correttamente
+    Then come operatore devo accedere alla lista delle Notifiche per le quali l’utente risulta destinatario come "delegato" di una persona fisica o di una persona giuridica con taxId "GherkinSrl" recipientType  "PG" e con searchPageSize "1" searchNextPagesKey "NULL" startDate "NULL" endDate "NULL" searchMandateId "NO_SET" searchInternalId "NO_SET"
+    And Il servizio risponde correttamente
 
 
 
