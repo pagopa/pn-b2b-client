@@ -182,6 +182,7 @@ public class RicezioneNotificheWebDelegheSteps {
         try {
             webMandateClient.createMandate(mandate);
         } catch (HttpStatusCodeException e) {
+            logger.error("CREATE MANDATE FAIL");
             this.notificationError = e;
         }
     }
@@ -264,11 +265,13 @@ public class RicezioneNotificheWebDelegheSteps {
             }
         }
         if (mandateDto != null) {
-            try{
-                webMandateClient.rejectMandate(mandateDto.getMandateId());
-            }catch(Exception exp){
-                System.out.println("REJECT FALLITA");
-            }
+            MandateDto finalMandateDto = mandateDto;
+            Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
+//            try{
+//                webMandateClient.rejectMandate(mandateDto.getMandateId());
+//            }catch(Exception exp){
+//                System.out.println("REJECT FALLITA");
+//            }
 
         }
     }
@@ -282,21 +285,16 @@ public class RicezioneNotificheWebDelegheSteps {
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: "+mandateList);
-        MandateDto mandateDto = null;
-        for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
-                mandateDto = mandate;
-                break;
-            }
-        }
+        MandateDto mandateDto = mandateList.stream().filter(mandate -> mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
+        Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
         this.mandateToSearch = mandateDto;
-        try{
-            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
-        }catch(Exception e){
-            System.out.println("ACCEPT DELEGA ERROR");
-        }
+//        try{
+//            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
+//        }catch(Exception e){
+//            System.out.println("ACCEPT DELEGA ERROR");
+//        }
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")

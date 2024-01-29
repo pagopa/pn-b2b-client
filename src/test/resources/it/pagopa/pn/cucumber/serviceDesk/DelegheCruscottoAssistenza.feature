@@ -1,11 +1,9 @@
 Feature: Deleghe Cruscotto Assitenza
-  Background:
-    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
-
 
   @deleghe1  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.9_64] Invocazione del servizio e verifica risposta
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -20,7 +18,8 @@ Feature: Deleghe Cruscotto Assitenza
 
   @deleghe1  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.9_65] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica ma senza searchMandateId
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -35,7 +34,8 @@ Feature: Deleghe Cruscotto Assitenza
 
   @deleghe1  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.9_66] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, con searchMandateId ma senza searchDelegateInternalId
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -51,7 +51,8 @@ Feature: Deleghe Cruscotto Assitenza
    #TODO Verificare il comportamento corretto...
   @deleghe1  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.9_67] Invocazione del servizio con IUN esistente, recipientType corretto, recipientTaxId corrispondente al destinatario della notifica, ma con searchMandateId non coerente con il searchDelegateInternalId
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -70,7 +71,8 @@ Feature: Deleghe Cruscotto Assitenza
 
   @deleghe1  @cruscottoAssistenza
   Scenario: [API-SERVICE-CA_CE02.10_74] Invocazione del servizio e verifica risposta
-    Given "Mario Gherkin" viene delegato da "Mario Cucumber"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "Mario Gherkin" viene delegato da "Mario Cucumber"
     And "Mario Gherkin" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
