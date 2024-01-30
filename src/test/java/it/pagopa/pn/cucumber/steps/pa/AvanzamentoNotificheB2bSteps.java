@@ -2195,6 +2195,20 @@ public class AvanzamentoNotificheB2bSteps {
         priceVerification(price, null, 0);
     }
 
+    @Then("viene verificato il costo totale della notifica con iva inclusa sia = {string}")
+    public void notificationPriceVerificationIvaIncluded(String price) {
+        try {
+            Thread.sleep(sharedSteps.getWait() * 2);
+        } catch (InterruptedException interruptedException) {
+            interruptedException.printStackTrace();
+        }
+
+        priceVerificationV23(price, null, 0);
+    }
+
+
+
+
     @And("viene verificato il costo = {string} della notifica con un errore {string}")
     public void attachmentRetrievedError(String price, String errorCode) {
         try {
@@ -2287,6 +2301,39 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    public List<NotificationPriceResponseV23> priceVerificationV23(String price, String date, Integer destinatario) {
+
+        if(sharedSteps.getSentNotification()!=null) {
+            List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
+            List<NotificationPriceResponseV23> listNotificationPriceV23 = new ArrayList<>();
+
+
+            if (listNotificationPaymentItem != null){
+                for (NotificationPaymentItem notificationPaymentItem: listNotificationPaymentItem) {
+                    NotificationPriceResponseV23 notificationPriceV23 = this.b2bClient.getNotificationPriceV23(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
+
+                    try {
+                        Assertions.assertEquals(notificationPriceV23.getIun(), sharedSteps.getSentNotification().getIun());
+                        if (price != null) {
+                            logger.info("Costo notifica: {} destinatario: {}", notificationPriceV23.getTotalPrice(), destinatario);
+                            Assertions.assertEquals(Integer.parseInt(price), notificationPriceV23.getTotalPrice());
+                        }
+                        if (date != null) {
+                            Assertions.assertNotNull(notificationPriceV23.getRefinementDate());
+                            listNotificationPriceV23.add(notificationPriceV23);
+                        }
+
+                    } catch (AssertionFailedError assertionFailedError) {
+                        sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                    }
+                }
+                return listNotificationPriceV23;
+            }
+    }
+
+        return null;
     }
 
     @Then("viene calcolato il costo = {string} della notifica per l'utente {int}")
