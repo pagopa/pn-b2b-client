@@ -37,7 +37,7 @@ Feature: Validazione campi per feature partitaIva
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-      | vat                | null                        |
+      | vat                | NULL                        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
@@ -49,7 +49,7 @@ Feature: Validazione campi per feature partitaIva
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-      | paFee              | null                        |
+      | paFee              | NULL                        |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
