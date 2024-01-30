@@ -26,6 +26,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
     private final NotificationPriceApi notificationPriceApi;
+    private final NotificationPriceV23Api notificationPriceV23Api;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v1.SenderReadB2BApi senderReadB2BApiV1;
 
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.SenderReadB2BApi senderReadB2BApiV2;
@@ -53,6 +54,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v1.SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
         this.senderReadB2BApiV2 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
         this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
+        this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, deliveryPushBasePath));
     }
 
     private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internaldeliveryPushb2bpa.ApiClient
@@ -124,6 +126,14 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
                 notificationPrice = this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
 
         return deepCopy( notificationPrice, NotificationPriceResponse.class );
+    }
+
+    @Override
+    public NotificationPriceResponseV23 getNotificationPriceV23(String paTaxId, String noticeCode) throws RestClientException {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponseV23
+                notificationPrice = this.notificationPriceV23Api.getNotificationPriceV23(paTaxId,noticeCode);
+
+        return deepCopy( notificationPrice, NotificationPriceResponseV23.class );
     }
 
     @Override
