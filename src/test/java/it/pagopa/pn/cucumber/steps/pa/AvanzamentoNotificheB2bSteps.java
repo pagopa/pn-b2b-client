@@ -18,6 +18,7 @@ import org.opentest4j.AssertionFailedError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 
@@ -46,6 +47,8 @@ public class AvanzamentoNotificheB2bSteps {
     private final IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient;
     private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private HttpStatusCodeException notificationError;
+    @Value("${pn.external.costo_base_notifica}")
+    private Integer costoBaseNotifica;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps, IPnAppIOB2bClient appIOB2bClient,
@@ -3974,31 +3977,45 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("viene verificato il costo {string} della notifica del utente {string}")
-    public void notificationPriceVerificationIvaIncluded(String tipoCosto,String user) {
+    @Then("viene verificato il costo {string} della notifica del utente {string} di una notifica {string}")
+    public void notificationPriceVerificationIvaIncluded(String tipoCosto, String user, String tipoNotifica) {
 
-        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost()!=null).toList();
-                Integer priceParzial=null;
-                Integer priceTotal=null;
-                TimelineElementV20 analogFirstAttempt= listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_"+user)).findAny().orElse(null);
-                TimelineElementV20 analogSecondAttempt= listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_"+user)).findAny().orElse(null);
+        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost() != null).toList();
+        Integer pricePartial = null;
+        Integer priceTotal = null;
 
-                Integer analogCostFirstAttempt= analogFirstAttempt.getDetails().getAnalogCost();
-                Integer analogCostSecondAttempt= analogSecondAttempt!=null && analogSecondAttempt.getDetails()!=null? analogSecondAttempt.getDetails().getAnalogCost():0  ;
-                Integer paFee=sharedSteps.getSentNotification().getPaFee();
+        Integer paFee = sharedSteps.getSentNotification().getPaFee();
+        switch (tipoNotifica.toLowerCase()) {
+            case "890", "ar", "rir":
 
+                TimelineElementV20 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                TimelineElementV20 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
 
-                    priceParzial= paFee + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round(analogCostFirstAttempt + analogCostSecondAttempt * 22/100);
-                    priceTotal= null;
+                Integer analogCostFirstAttempt = analogFirstAttempt.getDetails().getAnalogCost();
+                Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
 
+                pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
+                priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * sharedSteps.getSentNotification().getVat()) / 100);
 
+                break;
+            case "rs", "ris":
+                TimelineElementV20 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                Integer analogCost = analogNotification.getDetails().getAnalogCost();
 
-        switch (tipoCosto.toLowerCase()){
+                pricePartial = costoBaseNotifica + analogCost;
+                priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * sharedSteps.getSentNotification().getVat() / 100) * 100);
+
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        switch (tipoCosto.toLowerCase()) {
             case "parziale":
-                priceVerificationV23(priceParzial, null, 0,tipoCosto);
+                priceVerificationV23(pricePartial, null, 0, tipoCosto);
                 break;
             case "totale":
-                priceVerificationV23(priceTotal, null, 0,tipoCosto);
+                priceVerificationV23(priceTotal, null, 0, tipoCosto);
                 break;
             default:
                 throw new IllegalArgumentException();
