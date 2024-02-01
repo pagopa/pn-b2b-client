@@ -12,10 +12,29 @@ Feature: controllo costo notifiche con IVA
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo totale della notifica con iva inclusa sia = "100"
+    And viene verificato il costo "totale" della notifica del utente "0"
 
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_2] Invio notifica 890 con iva inclusa controllo costo
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_2] Invio notifica RIS con iva inclusa controllo costo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | vat                | 10                          |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State        | FRANCIA      |
+      | physicalAddress_municipality | Parigi       |
+      | physicalAddress_zip          | ZONE_1       |
+      | physicalAddress_province     | Paris        |
+      | digitalDomicile_address      | test@fail.it |
+      | physicalAddress_address      | Via@ok_RIS   |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    And viene verificato il costo "totale" della notifica del utente "0"
+
+
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_3] Invio notifica 890 con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -27,7 +46,22 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo totale della notifica con iva inclusa sia = "100"
+    And viene verificato il costo "totale" della notifica del utente "0"
+
+
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_4] Invio notifica AR con iva inclusa controllo costo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | vat                | 10                          |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo "totale" della notifica del utente "0"
 
 
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_3] Invio notifica 890 ASYNC con iva inclusa controllo costo
