@@ -2195,16 +2195,7 @@ public class AvanzamentoNotificheB2bSteps {
         priceVerification(price, null, 0);
     }
 
-    @Then("viene verificato il costo totale della notifica con iva inclusa sia = {string}")
-    public void notificationPriceVerificationIvaIncluded(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
 
-        priceVerificationV23(price, null, 0);
-    }
 
 
 
@@ -2303,7 +2294,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    public List<NotificationPriceResponseV23> priceVerificationV23(String price, String date, Integer destinatario) {
+    public List<NotificationPriceResponseV23> priceVerificationV23(Integer price, String date, Integer destinatario,String tipologiaCosto) {
 
         if(sharedSteps.getSentNotification()!=null) {
             List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
@@ -2318,7 +2309,12 @@ public class AvanzamentoNotificheB2bSteps {
                         Assertions.assertEquals(notificationPriceV23.getIun(), sharedSteps.getSentNotification().getIun());
                         if (price != null) {
                             logger.info("Costo notifica: {} destinatario: {}", notificationPriceV23.getTotalPrice(), destinatario);
-                            Assertions.assertEquals(Integer.parseInt(price), notificationPriceV23.getTotalPrice());
+                            switch (tipologiaCosto.toLowerCase()) {
+                                case "parziale" :
+                                    Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
+                                case "totale" :
+                                    Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
+                            }
                         }
                         if (date != null) {
                             Assertions.assertNotNull(notificationPriceV23.getRefinementDate());
@@ -3978,5 +3974,36 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @Then("viene verificato il costo {string} della notifica del utente {string}")
+    public void notificationPriceVerificationIvaIncluded(String tipoCosto,String user) {
+
+        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost()!=null).toList();
+                Integer priceParzial=null;
+                Integer priceTotal=null;
+                TimelineElementV20 analogFirstAttempt= listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_"+user)).findAny().orElse(null);
+                TimelineElementV20 analogSecondAttempt= listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_"+user)).findAny().orElse(null);
+
+                Integer analogCostFirstAttempt= analogFirstAttempt.getDetails().getAnalogCost();
+                Integer analogCostSecondAttempt= analogSecondAttempt!=null && analogSecondAttempt.getDetails()!=null? analogSecondAttempt.getDetails().getAnalogCost():0  ;
+                Integer paFee=sharedSteps.getSentNotification().getPaFee();
+
+
+                    priceParzial= paFee + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round(analogCostFirstAttempt + analogCostSecondAttempt * 22/100);
+                    priceTotal= null;
+
+
+
+        switch (tipoCosto.toLowerCase()){
+            case "parziale":
+                priceVerificationV23(priceParzial, null, 0,tipoCosto);
+                break;
+            case "totale":
+                priceVerificationV23(priceTotal, null, 0,tipoCosto);
+                break;
+            default:
+                throw new IllegalArgumentException();
+
+        }
+    }
 
 }
