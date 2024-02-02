@@ -167,7 +167,6 @@ Feature: verifica compatibilità tra v1 a v2
       | payment_noticeCodeOptional | NO   |
       | payment_f24flatRate        | NULL |
       | payment_f24standard        | NULL |
-      | payment_noticeCode | 315992228092491924 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
     And  la notifica a 1 avvisi di pagamento con OpenApi V1
 

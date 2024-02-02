@@ -1,12 +1,10 @@
 package it.pagopa.pn.client.b2b.pa;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.impl.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnRaddFsuClientImpl;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
-import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -21,7 +19,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.util.LinkedMultiValueMap;
@@ -58,10 +55,10 @@ public class PnPaB2bUtils {
 
     private IPnPaB2bClient client;
 
-    private final IPnRaddFsuClientImpl raddFsuClient;
+    private final IPnRaddFsuClient raddFsuClient;
 
     @Autowired
-    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClientImpl raddFsuClient) {
+    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient) {
         this.restTemplate = restTemplate;
         this.ctx = ctx;
         this.client = client;
@@ -174,48 +171,6 @@ public class PnPaB2bUtils {
         return response;
     }
 
-
-    public NewNotificationResponse uploadNotification50size( NewNotificationRequestV21 request) throws IOException {
-        //PRELOAD DOCUMENTI NOTIFICA
-        NotificationDocument notificationDocument = newDocument("classpath:/AllegatoServiceDesk_50pag.pdf");
-
-        List<NotificationDocument> newdocs = new ArrayList<>();
-        newdocs.add(this.preloadDocument(notificationDocument));
-        request.setDocuments(newdocs);
-
-        //PRELOAD DOCUMENTI DI PAGAMENTO
-        for (NotificationRecipientV21 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
-                for (NotificationPaymentItem paymentInfo: paymentList) {
-
-                    if (paymentInfo.getPagoPa()!= null) {
-                        paymentInfo.getPagoPa().setAttachment(preloadAttachment(paymentInfo.getPagoPa().getAttachment()));
-                    }
-                    if (paymentInfo.getF24()!= null) {
-                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
-                    }
-
-                }
-
-                // paymentInfo.setPagoPaForm(preloadAttachment(paymentInfo.getPagoPaForm()));
-//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
-            }
-        }
-
-        log.info("New Notification Request {}", request);
-        NewNotificationResponse response = client.sendNewNotification( request );
-        log.info("New Notification Request response {}", response);
-        if (response != null)
-        {
-            try {
-                log.info("New Notification\n IUN {}", new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
-            } catch (Exception e) {
-            }
-        }
-        return response;
-    }
 
     public NewNotificationResponse uploadNotificationNotFindAllegato( NewNotificationRequestV21 request, boolean noUpload) throws IOException {
 //TODO Modificare.............

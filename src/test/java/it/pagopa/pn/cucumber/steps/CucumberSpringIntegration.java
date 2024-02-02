@@ -2,12 +2,12 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
-import it.pagopa.pn.client.b2b.pa.testclient.*;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -28,9 +28,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnAppIOB2bExternalClientImpl.class,
         PnApiKeyManagerExternalClientImpl.class,
         PnDowntimeLogsExternalClientImpl.class,
-        PnIoUserAttributerExternaClientImpl.class,
+        PnIoUserAttributerExternaClient.class,
         PnWebPaClientImpl.class,
-        PnPrivateDeliveryPushExternalClientImpl.class,
+        PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
         PnServiceDeskClientImplNoApiKey.class,

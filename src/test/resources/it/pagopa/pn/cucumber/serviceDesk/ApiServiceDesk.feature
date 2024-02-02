@@ -981,25 +981,26 @@ Feature: Api Service Desk
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
       | physicalCommunication |  AR_REGISTERED_LETTER |
+      | document              | DOC_100_PG                      |
     And destinatario
       | denomination | Test AR Fail 2 |
       | taxId | TMTTMS92M57G793P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
   @dpCallCenterEvoluto
   Scenario: [DP_API-SLIPT_SPEDIZIONE_57_2] Creazione notifica con allegato di 26 pagine
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-      | document | classpath:/AllegatoServiceDesk_26pag.pdf |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+      | document              | DOC_100_PG                      |
     And destinatario
       | denomination | Test AR Fail 2 |
       | taxId | TMTTMS92M57G793P |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b con preload allegato da 25 pagine dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"

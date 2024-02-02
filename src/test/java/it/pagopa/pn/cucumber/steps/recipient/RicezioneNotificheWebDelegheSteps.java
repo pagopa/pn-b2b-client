@@ -6,9 +6,9 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebMandateClient;
-import it.pagopa.pn.client.b2b.pa.testclient.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.testclient.SettableBearerToken;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV21;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
@@ -264,11 +264,13 @@ public class RicezioneNotificheWebDelegheSteps {
             }
         }
         if (mandateDto != null) {
-            try{
-                webMandateClient.rejectMandate(mandateDto.getMandateId());
-            }catch(Exception exp){
-                System.out.println("REJECT FALLITA");
-            }
+            MandateDto finalMandateDto = mandateDto;
+            Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
+//            try{
+//                webMandateClient.rejectMandate(mandateDto.getMandateId());
+//            }catch(Exception exp){
+//                System.out.println("REJECT FALLITA");
+//            }
 
         }
     }
@@ -282,21 +284,16 @@ public class RicezioneNotificheWebDelegheSteps {
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: "+mandateList);
-        MandateDto mandateDto = null;
-        for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
-                mandateDto = mandate;
-                break;
-            }
-        }
+        MandateDto mandateDto = mandateList.stream().filter(mandate -> mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
-        try{
-            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
-        }catch(Exception e){
-            System.out.println("ACCEPT DELEGA ERROR");
-        }
+        Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
+//        try{
+//            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
+//        }catch(Exception e){
+//            System.out.println("ACCEPT DELEGA ERROR");
+//        }
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
@@ -402,7 +399,7 @@ public class RicezioneNotificheWebDelegheSteps {
             gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
-
+        Assertions.assertNotNull(gruppoAttivo);
         Assertions.assertTrue(gruppoAttivo.equals(gruppoAssegnato));
 
     }
