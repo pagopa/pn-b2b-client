@@ -31,7 +31,6 @@
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
         <open.api.version.delivery.push_v2>v2.1.0-RC.5</open.api.version.delivery.push_v2>
-        <open.api.version.delivery_v21>PN-9708-Aggiornamento-Timeline-e-integrazione-con-RADD-e-IVA</open.api.version.delivery_v21>
         <open.api.version.user.attributes>${open.api.version}</open.api.version.user.attributes>
         <open.api.version.mandate>${open.api.version}</open.api.version.mandate>
         <open.api.version.apikey.manager>${open.api.version}</open.api.version.apikey.manager>
@@ -496,35 +495,6 @@
                     </execution>
 
 
-                    <execution>
-                        <id>generate-external-client-b2b-pa_V21</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/feature/PN-9708-Aggiornamento-Timeline-e-integrazione-con-RADD-e-IVA/docs/openapi/api-external-b2b-pa-bundle.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>resttemplate</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <configOptions>
-                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_V21</apiPackage>
-                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_V21</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_V21</apiPackage>
-                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_V21</modelPackage>
-                        </configuration>
-                    </execution>
 
 
                     <execution>
