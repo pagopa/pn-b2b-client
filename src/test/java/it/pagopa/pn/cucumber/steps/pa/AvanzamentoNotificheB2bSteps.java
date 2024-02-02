@@ -3980,37 +3980,12 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica ,String user ) {
 
-        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost() != null).toList();
         Integer pricePartial = null;
         Integer priceTotal = null;
 
-        Integer paFee = sharedSteps.getSentNotification().getPaFee();
         if(sharedSteps.getSentNotification().getNotificationFeePolicy().equals( NotificationFeePolicy.DELIVERY_MODE)) {
-            switch (tipoNotifica.toLowerCase()) {
-                case "890", "ar", "rir":
-
-                    TimelineElementV20 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                    TimelineElementV20 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-
-                    Integer analogCostFirstAttempt = analogFirstAttempt.getDetails().getAnalogCost();
-                    Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
-
-                    pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
-                    priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * sharedSteps.getSentNotification().getVat()) / 100);
-
-                    break;
-                case "rs", "ris":
-                    TimelineElementV20 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                    Integer analogCost = analogNotification.getDetails().getAnalogCost();
-
-                    pricePartial = costoBaseNotifica + analogCost;
-                    priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * sharedSteps.getSentNotification().getVat() / 100) * 100);
-
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
-
+            pricePartial = calcoloPrezzo(tipoNotifica, tipoCosto, user);
+            priceTotal = calcoloPrezzo(tipoNotifica, tipoCosto, user);
         }else if(sharedSteps.getSentNotification().getNotificationFeePolicy().equals( NotificationFeePolicy.FLAT_RATE)){
             pricePartial = 0;
             priceTotal = 0;
@@ -4023,6 +3998,65 @@ public class AvanzamentoNotificheB2bSteps {
             case "totale" -> priceVerificationV23(priceTotal, null, 0, tipoCosto);
             default -> throw new IllegalArgumentException();
         }
+    }
+
+
+    @Then("viene verificato che il campo {string} sia valorizzato a {int}")
+    public void notificationPriceVerificationValueResponse(String toValidate, Integer valueToValidate) {
+        try {
+            switch (toValidate.toLowerCase()) {
+                case "vat" -> Assertions.assertEquals(valueToValidate, sharedSteps.getSentNotification().getVat());
+                case "paFee" -> Assertions.assertEquals(valueToValidate, sharedSteps.getSentNotification().getPaFee());
+            }
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    public Integer calcoloPrezzo(String tipoNotifica,String tipoCosto,String user){
+
+        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost() != null).toList();
+        Integer pricePartial = null;
+        Integer priceTotal = null;
+
+        Integer paFee = sharedSteps.getSentNotification().getPaFee();
+
+        switch (tipoNotifica.toLowerCase()) {
+            case "890", "ar", "rir":
+
+                TimelineElementV20 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                TimelineElementV20 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+
+                Integer analogCostFirstAttempt = analogFirstAttempt.getDetails().getAnalogCost();
+                Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
+
+                pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
+                priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * sharedSteps.getSentNotification().getVat()) / 100);
+
+                break;
+            case "rs", "ris":
+                TimelineElementV20 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                Integer analogCost = analogNotification.getDetails().getAnalogCost();
+
+                pricePartial = costoBaseNotifica + analogCost;
+                priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * sharedSteps.getSentNotification().getVat() / 100) * 100);
+
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+
+        switch (tipoCosto.toLowerCase()) {
+            case "parziale":
+                return pricePartial;
+            case "totale":
+                return priceTotal;
+            default:
+                return null;
+        }
+
+
     }
 
 }
