@@ -4055,7 +4055,32 @@ public class AvanzamentoNotificheB2bSteps {
             default:
                 return null;
         }
+    }
 
+
+    @Then("viene verificato che tutti i campi per il calcolo del iva per il destinatario {int} siano valorizzati")
+    public void notificationPriceVerificationResponse(Integer destinatario) {
+        List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
+
+        for(NotificationPaymentItem pagamento : listNotificationPaymentItem){
+            NotificationPriceResponseV23 notificationPriceV23 = this.b2bClient.getNotificationPriceV23(pagamento.getPagoPa().getCreditorTaxId(), pagamento.getPagoPa().getNoticeCode());
+
+            try {
+                Assertions.assertNotNull(notificationPriceV23.getTotalPrice());
+                Assertions.assertNotNull(notificationPriceV23.getPartialPrice());
+                Assertions.assertNotNull(notificationPriceV23.getIun());
+                Assertions.assertNotNull(notificationPriceV23.getAnalogCost());
+                Assertions.assertNotNull(notificationPriceV23.getRefinementDate());
+                Assertions.assertNotNull(notificationPriceV23.getNotificationViewDate());
+                Assertions.assertNotNull(notificationPriceV23.getSendBaseCost());
+                Assertions.assertNotNull(notificationPriceV23.getPaFee());
+                Assertions.assertNotNull(notificationPriceV23.getVat());
+                logger.info("notification price v23: {}",notificationPriceV23);
+            }catch(AssertionFailedError assertionFailedError){
+                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            }
+
+        }
 
     }
 

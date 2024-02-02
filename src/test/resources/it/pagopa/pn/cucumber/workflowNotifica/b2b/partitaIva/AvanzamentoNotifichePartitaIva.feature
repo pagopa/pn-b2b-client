@@ -280,8 +280,8 @@ Feature: controllo costo notifiche con IVA
       | vat                   | 10                          |
       | paFee                 | 10                          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
@@ -299,13 +299,13 @@ Feature: controllo costo notifiche con IVA
       | vat                | 10                          |
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24             | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@FAIL-Discovery_890 |
+      | payment_creditorTaxId   | 77777777777            |
+      | payment_pagoPaForm      | SI                     |
+      | payment_f24             | NULL                   |
+      | apply_cost_pagopa       | SI                     |
+      | payment_multy_number    | 1                      |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
@@ -325,7 +325,7 @@ Feature: controllo costo notifiche con IVA
       | paFee                 | 10                          |
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
-      | physicalAddress_address | Via@FAIL-Discovery_AR         |
+      | physicalAddress_address | Via@FAIL-Discovery_890        |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
@@ -335,3 +335,21 @@ Feature: controllo costo notifiche con IVA
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
+
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_18] Invio notifica 890 SYNC e lettura dopo REFINEMENT controllo presenza di ogni campo valorizzato della response
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | Comune di milano            |
+      | feePolicy             | DELIVERY_MODE               |
+      | physicalCommunication | REGISTERED_LETTER_890       |
+      | vat                   | 10                          |
+      | paFee                 | 10                          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@FAIL-Discovery_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then "Mario Gherkin" legge la notifica ricevuta
+    Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
+    And viene verificato che tutti i campi per il calcolo del iva per il destinatario 0 siano valorizzati
