@@ -3934,7 +3934,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
-      | payment_pagoPaForm      | NOALLEGATO                    |
+      | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
@@ -3954,7 +3954,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via Roma                      |
-      | payment_pagoPaForm      | NOALLEGATO                    |
+      | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
@@ -3974,7 +3974,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it                  |
       | physicalAddress_address | Via@ok-Retry_RS               |
-      | payment_pagoPaForm      | NOALLEGATO                    |
+      | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                            |
@@ -3994,7 +3994,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
-      | payment_pagoPaForm      | NOALLEGATO                |
+      | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
@@ -4014,7 +4014,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it              |
       | physicalAddress_address | Via Roma                  |
-      | payment_pagoPaForm      | NOALLEGATO                |
+      | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | apply_cost_pagopa       | NO                        |
