@@ -81,7 +81,7 @@ public class InvioNotificheB2bSteps {
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
             if (sharedSteps.getSentNotification()!= null) {
 
@@ -211,7 +211,7 @@ public class InvioNotificheB2bSteps {
 
             List<NotificationSearchRow> ricercaNotifiche= notificationByIun.get().getResultsPage();
 
-            FullSentNotificationV21 notifica120 = null;
+            FullSentNotificationV23 notifica120 = null;
 
             for(NotificationSearchRow notifiche :ricercaNotifiche){
 
@@ -288,7 +288,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
             notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException e) {
@@ -387,7 +387,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
@@ -402,7 +402,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
@@ -417,7 +417,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
@@ -435,7 +435,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV21 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV23 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -833,7 +833,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        NewNotificationRequestStatusResponseV21 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());

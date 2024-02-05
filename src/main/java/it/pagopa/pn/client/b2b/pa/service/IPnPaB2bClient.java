@@ -12,26 +12,26 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest);
 
-    NewNotificationResponse sendNewNotification(NewNotificationRequestV21 newNotificationRequest);
+    NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse sendNewNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest newNotificationRequest);
 
-    FullSentNotificationV21 getSentNotification(String iun);
+    FullSentNotificationV23 getSentNotification(String iun);
 
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 getSentNotificationV2(String iun);
 
-    NewNotificationRequestStatusResponseV21 getNotificationRequestStatus(String notificationRequestId);
+    NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequestStatusResponse getNotificationRequestStatusV2(String notificationRequestId);
 
-    NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
+    NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParam(String notificationRequestId,String paProtocolNumber, String idempotenceToken);
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx) ;
 

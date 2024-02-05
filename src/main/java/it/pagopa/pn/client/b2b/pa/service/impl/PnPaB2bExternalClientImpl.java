@@ -280,9 +280,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.presignedUploadRequest( preLoadRequest );
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequestV21 newNotificationRequest) {
+    public NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
-        return newNotificationApi.sendNewNotificationV21( newNotificationRequest );
+        return newNotificationApi.sendNewNotificationV23( newNotificationRequest );
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
@@ -296,9 +296,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV21 getSentNotification(String iun) {
+    public FullSentNotificationV23 getSentNotification(String iun) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationV21( iun );
+        return senderReadB2BApi.retrieveSentNotificationV23( iun );
     }
 
     @Override
@@ -314,9 +314,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV21 getNotificationRequestStatus(String notificationRequestId) {
+    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatusV21( notificationRequestId, null, null );
+        return senderReadB2BApi.retrieveNotificationRequestStatusV23( notificationRequestId, null, null );
     }
 
     @Override
@@ -332,9 +332,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NewNotificationRequestStatusResponseV21 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
+    public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveNotificationRequestStatusV21(notificationRequestId,paProtocolNumber,idempotenceToken);
+        return senderReadB2BApi.retrieveNotificationRequestStatusV23(notificationRequestId,paProtocolNumber,idempotenceToken);
     }
 
     @Override
