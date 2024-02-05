@@ -994,7 +994,7 @@ public class SharedSteps {
         setSenderTaxIdFromProperties();
         sendNotificationWithError();
         Assertions.assertNotNull(this.notificationError);
-        Assertions.assertEquals(this.notificationError.getStatusCode().value(),400);
+        Assertions.assertEquals(400, this.notificationError.getStatusCode().value());
     }
 
     @When("la notifica viene inviata tramite api b2b senza preload allegato dal {string} e si attende che lo stato diventi REFUSED")
