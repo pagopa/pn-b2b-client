@@ -25,16 +25,16 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>${open.api.version}</open.api.version.delivery>
-        <open.api.version.delivery.push>${open.api.version}</open.api.version.delivery.push>
+        <open.api.version.delivery>v2.3.0</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.3.2</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
         <open.api.version.delivery.push_v2>v2.1.0-RC.5</open.api.version.delivery.push_v2>
-        <open.api.version.user.attributes>${open.api.version}</open.api.version.user.attributes>
-        <open.api.version.mandate>${open.api.version}</open.api.version.mandate>
-        <open.api.version.apikey.manager>${open.api.version}</open.api.version.apikey.manager>
-        <open.api.version.downtime.logs>${open.api.version}</open.api.version.downtime.logs>
+        <open.api.version.user.attributes>v2.3.0</open.api.version.user.attributes>
+        <open.api.version.mandate>v2.2.0</open.api.version.mandate>
+        <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
+        <open.api.version.downtime.logs>v2.2.0</open.api.version.downtime.logs>
         <open.api.version.radd>v2.1.3</open.api.version.radd>
     </properties>
 

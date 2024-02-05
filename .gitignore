@@ -12,6 +12,9 @@ config/bearer-token.properties
 ### Node ###
 **/node_modules/
 
+### MAC ###
+**/.DS_Store
+
 ### STS ###
 .apt_generated
 .classpath
