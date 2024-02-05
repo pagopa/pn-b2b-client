@@ -4021,6 +4021,8 @@ public class AvanzamentoNotificheB2bSteps {
         Integer priceTotal = null;
 
         Integer paFee = sharedSteps.getSentNotification().getPaFee();
+        Integer vat = sharedSteps.getSentNotification().getVat();
+
 
         switch (tipoNotifica.toLowerCase()) {
             case "890", "ar", "rir":
@@ -4032,7 +4034,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
 
                 pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
-                priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * sharedSteps.getSentNotification().getVat()) / 100);
+                priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * (vat/ 100)));
 
                 break;
             case "rs", "ris":
@@ -4040,7 +4042,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Integer analogCost = analogNotification.getDetails().getAnalogCost();
 
                 pricePartial = costoBaseNotifica + analogCost;
-                priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * sharedSteps.getSentNotification().getVat() / 100) * 100);
+                priceTotal = paFee + costoBaseNotifica + analogCost + Math.round(((float) (analogCost) * vat / 100));
 
                 break;
             default:
