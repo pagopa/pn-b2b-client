@@ -4016,7 +4016,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     public Integer calcoloPrezzo(String tipoNotifica,String tipoCosto,String user){
 
-        List<TimelineElementV20> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost() != null).toList();
+        List<TimelineElementV23> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value -> value.getDetails().getAnalogCost() != null).toList();
         Integer pricePartial = null;
         Integer priceTotal = null;
 
@@ -4027,8 +4027,8 @@ public class AvanzamentoNotificheB2bSteps {
         switch (tipoNotifica.toLowerCase()) {
             case "890", "ar", "rir":
 
-                TimelineElementV20 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
-                TimelineElementV20 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                TimelineElementV23 analogFirstAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_0") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                TimelineElementV23 analogSecondAttempt = listaNotifica.stream().filter(value -> value.getElementId().contains("ATTEMPT_1") && value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
 
                 Integer analogCostFirstAttempt = analogFirstAttempt.getDetails().getAnalogCost();
                 Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
@@ -4038,7 +4038,7 @@ public class AvanzamentoNotificheB2bSteps {
 
                 break;
             case "rs", "ris":
-                TimelineElementV20 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
+                TimelineElementV23 analogNotification = listaNotifica.stream().filter(value -> value.getElementId().contains("RECINDEX_" + user)).findAny().orElse(null);
                 Integer analogCost = analogNotification.getDetails().getAnalogCost();
 
                 pricePartial = costoBaseNotifica + analogCost;
@@ -4074,7 +4074,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(notificationPriceV23.getAnalogCost());
                 Assertions.assertNotNull(notificationPriceV23.getRefinementDate());
                 Assertions.assertNotNull(notificationPriceV23.getNotificationViewDate());
-                Assertions.assertNotNull(notificationPriceV23.getSendBaseCost());
+                Assertions.assertNotNull(notificationPriceV23.getSendFee());
                 Assertions.assertNotNull(notificationPriceV23.getPaFee());
                 Assertions.assertNotNull(notificationPriceV23.getVat());
                 logger.info("notification price v23: {}",notificationPriceV23);

@@ -335,7 +335,7 @@ public class AsyncSteps {
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int}")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory,Integer user) {
 
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,null);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,null);
 
         amountNotifica.set(user,amountNotifica.get(user) + timelineElement.getDetails().getAnalogCost());
 
@@ -356,7 +356,7 @@ public class AsyncSteps {
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,@Transpose DataTest dataFromTest ) {
 
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,dataFromTest);
 
         amountNotifica.set(user,amountNotifica.get(user) + timelineElement.getDetails().getAnalogCost());
 
@@ -397,9 +397,9 @@ public class AsyncSteps {
     //se riufiutata amount_gpd
     @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
     public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
-        FullSentNotificationV21 sentNotification = sharedSteps.getSentNotification();
+        FullSentNotificationV23 sentNotification = sharedSteps.getSentNotification();
         Integer analogCost = 0;
-        for(TimelineElementV20 timelineElem: sentNotification.getTimeline()){
+        for(TimelineElementV23 timelineElem: sentNotification.getTimeline()){
             Integer currentCost = timelineElem.getDetails() == null ? Integer.valueOf(0) : timelineElem.getDetails().getAnalogCost();
             if(currentCost!= null && currentCost > 0)analogCost+=currentCost;
         }
