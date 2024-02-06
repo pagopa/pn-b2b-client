@@ -473,7 +473,7 @@ public class AsyncSteps {
 
         try {
             logger.info("Amount GPD: "+amountGPD);
-
+            amountGPD= amountGPD- Integer.parseInt(String.valueOf(paymentPositionModel.get(0).getPaymentOption().get(0).getAmount()));
             avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD,null,0,"totale");
 
         } catch (AssertionFailedError assertionFailedError) {

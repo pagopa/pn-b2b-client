@@ -2315,8 +2315,10 @@ public class AvanzamentoNotificheB2bSteps {
                             switch (tipologiaCosto.toLowerCase()) {
                                 case "parziale" :
                                     Assertions.assertEquals(price, notificationPriceV23.getPartialPrice());
+                                    break;
                                 case "totale" :
                                     Assertions.assertEquals(price, notificationPriceV23.getTotalPrice());
+                                    break;
                             }
                         }
                         if (date != null) {
@@ -4008,7 +4010,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             switch (toValidate.toLowerCase()) {
                 case "vat" -> Assertions.assertEquals(valueToValidate, sharedSteps.getSentNotification().getVat());
-                case "paFee" -> Assertions.assertEquals(valueToValidate, sharedSteps.getSentNotification().getPaFee());
+                case "pafee" -> Assertions.assertEquals(valueToValidate, sharedSteps.getSentNotification().getPaFee());
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -4037,7 +4039,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Integer analogCostSecondAttempt = analogSecondAttempt != null && analogSecondAttempt.getDetails() != null ? analogSecondAttempt.getDetails().getAnalogCost() : 0;
 
                 pricePartial = costoBaseNotifica + analogCostFirstAttempt + analogCostSecondAttempt;
-                priceTotal = paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + Math.round((float) ((analogCostFirstAttempt + analogCostSecondAttempt) * vat)/ 100);
+                priceTotal =  Math.round(paFee + costoBaseNotifica + (analogCostFirstAttempt + analogCostSecondAttempt) + (float) ((analogCostFirstAttempt + analogCostSecondAttempt) * vat) / 100);
 
                 break;
             case "rs", "ris":

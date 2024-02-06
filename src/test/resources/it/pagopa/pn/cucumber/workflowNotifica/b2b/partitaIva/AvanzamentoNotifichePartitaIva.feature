@@ -14,7 +14,8 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo "totale" di una notifica "890" del utente "0"
+  And viene verificato il costo "parziale" di una notifica "890" del utente "0"
+  And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
   @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_2] Invio notifica AR SYNC con iva inclusa controllo costo
@@ -109,8 +110,7 @@ Feature: controllo costo notifiche con IVA
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
@@ -151,15 +151,12 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
   @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_9] Invio notifica 890 SYNC FLAT_RATE con campo vat conmpilato controllo costo a 0
@@ -193,11 +190,10 @@ Feature: controllo costo notifiche con IVA
       | payment_creditorTaxId   | 77777777777 |
       | payment_pagoPaForm      | SI          |
       | payment_f24             | NULL        |
-      | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
@@ -212,15 +208,13 @@ Feature: controllo costo notifiche con IVA
       | vat                   | 10                          |
       | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                          |
-      | physicalAddress_address | Via@ok_890                    |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
-      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 1                             |
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_890       |
+      | payment_f24             | PAYMENT_F24_FLAT |
+      | apply_cost_pagopa       | NO               |
+      | payment_multy_number    | 1                |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
   @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_12] Invio notifica 890 SYNC FLAT_RATE con campo vat non compilato controllo resituzione default

@@ -11,7 +11,8 @@ Feature: Validazione campi per feature partitaIva
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
 Examples:
   | vat  | paFee |
   | NULL | 10    |
@@ -37,7 +38,8 @@ Examples:
       | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
     Examples:
       | vat  | paFee |
@@ -56,15 +58,12 @@ Examples:
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
-      | apply_cost_pagopa       | NO                            |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo "totale" di una notifica "890" del utente "0"
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | vat  | paFee |
       | NULL | 10    |
@@ -80,14 +79,15 @@ Examples:
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | iva |
       | -10 |
       | 101 |
 
   @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_5] Invio notifica 890 con controllo max e min campo paFee
+  Scenario Outline: [PARTITA-IVA_VALIDATION_5] Invio notifica 890 DELIVERY_MODE SYNC con controllo max e min campo paFee
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -96,7 +96,8 @@ Examples:
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | paFee |
       | -10   |
