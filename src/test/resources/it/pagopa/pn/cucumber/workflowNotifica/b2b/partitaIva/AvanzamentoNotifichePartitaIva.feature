@@ -1,6 +1,6 @@
 Feature: controllo costo notifiche con IVA
 
-
+@partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_1] Invio notifica 890 SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -16,7 +16,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_2] Invio notifica AR SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -33,6 +33,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "parziale" di una notifica "AR" del utente "0"
     And viene verificato il costo "totale" di una notifica "AR" del utente "0"
 
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_3] Invio notifica RIR SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -53,6 +54,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "parziale" di una notifica "RIR" del utente "0"
     And viene verificato il costo "totale" di una notifica "RIR" del utente "0"
 
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_4] Invio notifica RS SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -67,6 +69,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "totale" di una notifica "RS" del utente "0"
 
 
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_5] Invio notifica RIS SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -85,6 +88,7 @@ Feature: controllo costo notifiche con IVA
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo "totale" di una notifica "RIS" del utente "0"
 
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_6] Invio notifica 890 ASYNC con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -111,7 +115,7 @@ Feature: controllo costo notifiche con IVA
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_7] Invio notifica RS ASYNC con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -135,7 +139,7 @@ Feature: controllo costo notifiche con IVA
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_8] Invio notifica 890 SYNC con 1 F24 iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -157,7 +161,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_9] Invio notifica 890 SYNC FLAT_RATE con campo vat conmpilato controllo costo a 0
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -173,7 +177,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_10] Invio notifica 890 ASYNC FLAT_RATE con campo vat conmpilato controllo costo a 0
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -198,7 +202,7 @@ Feature: controllo costo notifiche con IVA
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_11] Invio notifica 890 SYNC FLAT_RATE con 1 F24 con campo vat conmpilato controllo costo a 0
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -218,7 +222,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_12] Invio notifica 890 SYNC FLAT_RATE con campo vat non compilato controllo resituzione default
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -235,7 +239,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_13] Invio notifica 890 SYNC FLAT_RATE con campo paFee non compilato controllo resituzione default
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -252,7 +256,7 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_14] Invio notifica 890 SYNC con due tentativi con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -270,7 +274,7 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_15] Invio notifica 890 ASYNC con due tentativi con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -296,7 +300,7 @@ Feature: controllo costo notifiche con IVA
     And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_16] Invio notifica 890 SYNC con 1 F24 con due tentativi con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -318,6 +322,7 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_17] Invio notifica 890 SYNC e lettura dopo REFINEMENT controllo presenza di ogni campo valorizzato della response
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
