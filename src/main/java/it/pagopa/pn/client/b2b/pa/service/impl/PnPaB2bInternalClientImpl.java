@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.NotificationPriceApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
@@ -122,7 +123,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NotificationPriceResponse
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model_v2.NotificationPriceResponse
                 notificationPrice = this.notificationPriceApi.getNotificationPrice(paTaxId,noticeCode);
 
         return deepCopy( notificationPrice, NotificationPriceResponse.class );

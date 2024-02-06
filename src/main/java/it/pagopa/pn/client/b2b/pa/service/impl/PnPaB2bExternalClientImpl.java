@@ -272,7 +272,8 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, notificationFeePolicy, applyCost, paFee);
+        //TODO Aggiungere parametro iva
+        return this.notificationProcessCostApi.notificationProcessCost(iun, recipientIndex, notificationFeePolicy, applyCost, paFee, null);
     }
 
     public List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest) {
