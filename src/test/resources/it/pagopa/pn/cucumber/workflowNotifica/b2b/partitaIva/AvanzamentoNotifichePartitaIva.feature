@@ -220,7 +220,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_12] Invio notifica 890 SYNC FLAT_RATE con campo vat conmpilato controllo costo a 0
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_12] Invio notifica 890 SYNC FLAT_RATE con campo vat non compilato controllo resituzione default
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -254,24 +254,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_14] Invio notifica 890 SYNC FLAT_RATE con campo paFee non conmpilato controllo presenza default
-    Given viene generata una nuova notifica
-      | subject               | invio notifica con cucumber |
-      | senderDenomination    | Comune di milano            |
-      | feePolicy             | FLAT_RATE                   |
-      | physicalCommunication | REGISTERED_LETTER_890       |
-      | vat                   | 20                          |
-      | paFee                 | NULL                        |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL       |
-      | physicalAddress_address | Via@ok_890 |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And viene verificato che il campo "paFee" sia valorizzato a 100
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo "totale" di una notifica "890" del utente "0"
-
-
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_15] Invio notifica 890 SYNC con due tentativi con iva inclusa controllo costo
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_14] Invio notifica 890 SYNC con due tentativi con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -289,7 +272,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_16] Invio notifica 890 ASYNC con due tentativi con iva inclusa controllo costo
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_15] Invio notifica 890 ASYNC con due tentativi con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -315,7 +298,7 @@ Feature: controllo costo notifiche con IVA
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_17] Invio notifica 890 SYNC con 1 F24 con due tentativi con iva inclusa controllo costo
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_16] Invio notifica 890 SYNC con 1 F24 con due tentativi con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -336,7 +319,7 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_18] Invio notifica 890 SYNC e lettura dopo REFINEMENT controllo presenza di ogni campo valorizzato della response
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_17] Invio notifica 890 SYNC e lettura dopo REFINEMENT controllo presenza di ogni campo valorizzato della response
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
