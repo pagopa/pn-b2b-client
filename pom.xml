@@ -24,7 +24,7 @@
         <java.version>17</java.version>
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
-        <open.api.version>develop</open.api.version>
+        <open.api.version>main</open.api.version>
         <open.api.version.delivery>${open.api.version}</open.api.version.delivery>
         <open.api.version.delivery.push>${open.api.version}</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
