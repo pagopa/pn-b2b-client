@@ -20,10 +20,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Base64Utils;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.util.StreamUtils;
+import org.springframework.util.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import java.io.ByteArrayInputStream;
@@ -160,13 +157,34 @@ public class PnPaB2bUtils {
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPaymentInfo paymentInfo = recipient.getPayment();
             if(paymentInfo != null){
                 paymentInfo.setPagoPaForm(preloadAttachmentV2(paymentInfo.getPagoPaForm()));
-//                paymentInfo.setF24flatRate(preloadAttachment(paymentInfo.getF24flatRate()));
-//                paymentInfo.setF24standard(preloadAttachment(paymentInfo.getF24standard()));
             }
         }
 
         log.info("New Notification Request {}", request);
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse response = client.sendNewNotificationV2( request );
+        log.info("New Notification Request response {}", response);
+        return response;
+    }
+
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse uploadNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 request) throws IOException {
+
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument> newdocs = new ArrayList<>();
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument doc : request.getDocuments()) {
+            newdocs.add(this.preloadDocumentV21(doc));
+        }
+        request.setDocuments(newdocs);
+
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient : request.getRecipients()) {
+
+             for(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem paymentItem : Objects.requireNonNull(recipient.getPayments()))
+            if(paymentItem.getPagoPa() != null){
+                paymentItem.getPagoPa().setAttachment(preloadAttachmentV21(paymentItem.getPagoPa().getAttachment()));
+            }
+
+        }
+
+        log.info("New Notification Request {}", request);
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse response = client.sendNewNotificationV21( request );
         log.info("New Notification Request response {}", response);
         return response;
     }
@@ -696,6 +714,33 @@ public class PnPaB2bUtils {
         return iun == null? null : client.getSentNotificationV2(iun);
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 waitForRequestAcceptationV21( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse response) {
+
+        log.info("Request status for " + response.getNotificationRequestId() );
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 status = null;
+        long startTime = System.currentTimeMillis();
+        for( int i = 0; i < 10; i++ ) {
+
+            try {
+                Thread.sleep( getAcceptedWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException( exc );
+            }
+
+            status = client.getNotificationRequestStatusV21( response.getNotificationRequestId() );
+
+            log.info("New Notification Request status {}", status.getNotificationRequestStatus());
+            if ( "ACCEPTED".equals( status.getNotificationRequestStatus() )) {
+                break;
+            }
+        }
+        long endTime = System.currentTimeMillis();
+        log.info("Execution time {}ms",(endTime - startTime));
+        String iun = status.getIun();
+
+        return iun == null? null : client.getSentNotificationV21(iun);
+    }
+
 
     public String waitForRequestRefused( NewNotificationResponse response) {
 
@@ -1075,6 +1120,26 @@ public class PnPaB2bUtils {
         return document;
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument preloadDocumentV21( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument document) throws IOException {
+
+        String resourceName = document.getRef().getKey();
+        String sha256 = computeSha256( resourceName );
+        PreLoadResponse preloadResp = getPreLoadResponse(sha256);
+        String key = preloadResp.getKey();
+        String secret = preloadResp.getSecret();
+        String url = preloadResp.getUrl();
+
+        log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                resourceName, sha256, secret, url));
+        loadToPresigned( url, secret, sha256, resourceName );
+
+        document.getRef().setKey( key );
+        document.getRef().setVersionToken("v1");
+        document.digests( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationAttachmentDigests().sha256( sha256 ));
+
+        return document;
+    }
+
 
     public NotificationDocument preloadDocumentWithoutUpload( NotificationDocument document) throws IOException {
         String resourceName = document.getRef().getKey();
@@ -1171,6 +1236,34 @@ public class PnPaB2bUtils {
             attachment.getRef().setKey( key );
             attachment.getRef().setVersionToken("v1");
             attachment.digests( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentDigests().sha256( sha256 ));
+
+            return attachment;
+        }
+        else {
+            return null;
+        }
+
+    }
+
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentAttachment preloadAttachmentV21( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentAttachment attachment) throws IOException {
+        if( attachment != null ) {
+            String resourceName = attachment.getRef().getKey();
+
+            String sha256 = computeSha256( resourceName );
+
+            PreLoadResponse preloadResp = getPreLoadResponse( sha256 );
+            String key = preloadResp.getKey();
+            String secret = preloadResp.getSecret();
+            String url = preloadResp.getUrl();
+
+            log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                    resourceName, sha256, secret, url));
+
+            loadToPresigned( url, secret, sha256, resourceName );
+
+            attachment.getRef().setKey( key );
+            attachment.getRef().setVersionToken("v1");
+            attachment.digests( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationAttachmentDigests().sha256( sha256 ));
 
             return attachment;
         }
@@ -1373,6 +1466,12 @@ public class PnPaB2bUtils {
                 .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument newDocumentV21(String resourcePath ) {
+        return new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDocument()
+                .contentType("application/pdf")
+                .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
     public NotificationPaymentAttachment newAttachment(String resourcePath ) {
         return new NotificationPaymentAttachment()
                 .contentType("application/pdf")
@@ -1390,12 +1489,23 @@ public class PnPaB2bUtils {
                 .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentAttachment newAttachmentV21(String resourcePath ) {
+        return new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentAttachment()
+                .contentType("application/pdf")
+                .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationAttachmentBodyRef().key( resourcePath ));
+    }
+
     public NotificationMetadataAttachment newMetadataAttachment(String resourcePath ) {
         return new NotificationMetadataAttachment()
                 .contentType("application/json")
                 .ref( new NotificationAttachmentBodyRef().key( resourcePath ));
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationMetadataAttachment newMetadataAttachmentV21(String resourcePath ) {
+        return new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationMetadataAttachment()
+                .contentType("application/json")
+                .ref( new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationAttachmentBodyRef().key( resourcePath ));
+    }
 
 
     private Integer getWorkFlowWait() {

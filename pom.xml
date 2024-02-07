@@ -31,7 +31,7 @@
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
         <open.api.version.delivery.push_v2>v2.1.0-RC.5</open.api.version.delivery.push_v2>
-        <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
+        <open.api.version.delivery_v21>aggiornamento-api-old</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
         <open.api.version.user.attributes>${open.api.version}</open.api.version.user.attributes>
         <open.api.version.mandate>${open.api.version}</open.api.version.mandate>
@@ -523,6 +523,36 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2</modelPackage>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>generate-external-client-b2b-pa_v21</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v21}/docs/openapi/api-external-b2b-pa-merged.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21</modelPackage>
                         </configuration>
                     </execution>
 

@@ -3984,12 +3984,15 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica ,String user ) {
 
+        FullSentNotificationV23 notificaV23= sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getIunVersionamento());
+        Assertions.assertNotNull(notificaV23);
+
         Integer pricePartial = null;
         Integer priceTotal = null;
 
         if(sharedSteps.getSentNotification().getNotificationFeePolicy().equals( NotificationFeePolicy.DELIVERY_MODE)) {
-            pricePartial = calcoloPrezzo(tipoNotifica, tipoCosto, user);
-            priceTotal = calcoloPrezzo(tipoNotifica, tipoCosto, user);
+            pricePartial = calcoloPrezzo(tipoNotifica, tipoCosto, user, notificaV23);
+            priceTotal = calcoloPrezzo(tipoNotifica, tipoCosto, user, notificaV23);
         }else if(sharedSteps.getSentNotification().getNotificationFeePolicy().equals( NotificationFeePolicy.FLAT_RATE)){
             pricePartial = 0;
             priceTotal = 0;
@@ -4018,15 +4021,15 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
 
-    public Integer calcoloPrezzo(String tipoNotifica,String tipoCosto,String user){
+    public Integer calcoloPrezzo(String tipoNotifica,String tipoCosto,String user,FullSentNotificationV23 notificaV23){
 
-        List<TimelineElementV23> listaNotifica = sharedSteps.getSentNotification().getTimeline().stream().filter(value ->  value.getDetails() != null && value.getDetails().getAnalogCost() != null).toList();
+        List<TimelineElementV23> listaNotifica = notificaV23.getTimeline().stream().filter(value ->  value.getDetails() != null && value.getDetails().getAnalogCost() != null).toList();
 
         Integer pricePartial = null;
         Integer priceTotal = null;
 
-        Integer paFee = sharedSteps.getSentNotification().getPaFee();
-        Integer vat = sharedSteps.getSentNotification().getVat();
+        Integer paFee = notificaV23.getPaFee();
+        Integer vat = notificaV23.getVat();
 
 
         switch (tipoNotifica.toLowerCase()) {
