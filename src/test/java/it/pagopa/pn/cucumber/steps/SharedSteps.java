@@ -2317,6 +2317,8 @@ public class SharedSteps {
             return getSentNotificationV1().getIun();
         }else if (getSentNotificationV2()!= null){
             return getSentNotificationV2().getIun();
+        }else if (getSentNotificationV21()!= null) {
+            return getSentNotificationV21().getIun();
         }else if (getSentNotification()!= null) {
             return getSentNotification().getIun();
         }else {
