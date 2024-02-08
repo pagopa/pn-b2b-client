@@ -1,6 +1,6 @@
 Feature: Radd fsu
 
-  @radd
+  @radd @testSuiteDiProvaTemporanea
   Scenario: [B2B_RADD_DOC-UP-1] verifica document upload senza aver passato bundleId
     Given vengono caricati i documento di identità del cittadino senza "bundleId"
     Then il caricamente ha prodotto une errore http 400
