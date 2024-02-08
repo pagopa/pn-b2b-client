@@ -930,11 +930,11 @@ public class SharedSteps {
         }
     }
 
-    @And("viene effettuato recupero stato della notifica con la {string} dal comune {string}")
+    @And("viene effettuato recupero stato della notifica con la V1 dal comune {string}")
     public void retriveStateNotification(String version,String paType) {
         selectPA(paType);
         this.notificationRequestV1= new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest();
-        setSenderTaxIdFromPropertiesV1(version);
+        setSenderTaxIdFromPropertiesV1("V1");
         searchNotificationV1(Base64Utils.encodeToString(getSentNotification().getIun().getBytes()));
     }
 
@@ -1116,6 +1116,8 @@ public class SharedSteps {
             setSenderTaxIdFromPropertiesV1(versione);
         }else if(versione.equalsIgnoreCase("V2")){
             setSenderTaxIdFromPropertiesV2(versione);
+        }else if(versione.equalsIgnoreCase("V21")){
+            setSenderTaxIdFromPropertiesV21(versione);
         }
         sendNotificationWithError();
     }
@@ -1386,6 +1388,7 @@ public class SharedSteps {
 
     private void sendNotificationWithError() {
         try {
+
             notificationCreationDate = OffsetDateTime.now();
             if(notificationRequest!= null) {
                 this.newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
@@ -1393,7 +1396,10 @@ public class SharedSteps {
                 this.newNotificationResponseV1 = b2bUtils.uploadNotificationV1(notificationRequestV1);
             }else if(notificationRequestV2!= null){
                 this.newNotificationResponseV2 = b2bUtils.uploadNotificationV2(notificationRequestV2);
+            }else if(notificationRequestV21!= null){
+                this.newNotificationResponseV21 = b2bUtils.uploadNotificationV21(notificationRequestV21);
             }
+
         } catch (HttpStatusCodeException | IOException e) {
             if (e instanceof HttpStatusCodeException) {
                 this.notificationError = (HttpStatusCodeException) e;
@@ -1816,6 +1822,9 @@ public class SharedSteps {
         return notificationResponseCompleteV2;
     }
 
+    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 getSentNotificationV21() {
+        return notificationResponseCompleteV21;
+    }
 
 
     public OffsetDateTime getNotificationCreationDate() {
@@ -1838,6 +1847,10 @@ public class SharedSteps {
 
     public void setSentNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2) {
         this.notificationResponseCompleteV2 = notificationResponseCompleteV2;
+    }
+
+    public void setSentNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21) {
+        this.notificationResponseCompleteV21 = notificationResponseCompleteV21;
     }
 
     public void selectPA(String apiKey) {
@@ -2280,8 +2293,11 @@ public class SharedSteps {
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
     public void destinatarioAddIuvGPD(String denominazione,Integer posizione) {
-
-        this.notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(posizione).getPagoPa().setNoticeCode(getIuvGPD(posizione));
+        if (this.notificationRequest != null) {
+            this.notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments().get(posizione).getPagoPa().setNoticeCode(getIuvGPD(posizione));
+        } else if (this.notificationRequestV21 != null) {
+            this.notificationRequestV21.getRecipients().get(0).denomination(denominazione).getPayments().get(posizione).getPagoPa().setNoticeCode(getIuvGPD(posizione));
+        }
     }
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
     public void destinatarioAddIuvGPDperUtente(String denominazione,Integer posizioneDebitoria,Integer pagamento) {

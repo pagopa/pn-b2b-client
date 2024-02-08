@@ -39,7 +39,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.SenderReadB2BApi senderReadB2BApiV2;
     private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.SenderReadB2BApi senderReadB2BApiV21;
     private final LegalFactsApi legalFactsApi;
-    private final NotificationPriceApi notificationPriceApi;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.NotificationPriceApi notificationPriceApiV21;
     private final NotificationPriceV23Api notificationPriceV23Api;
     private final NotificationProcessCostApi notificationProcessCostApi;
     private final NotificationCancellationApi  notificationCancellationApi;
@@ -95,7 +95,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApiV2 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v2.SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.senderReadB2BApiV21 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.SenderReadB2BApi( newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.legalFactsApi = new LegalFactsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
-        this.notificationPriceApi = new NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
+        this.notificationPriceApiV21 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api_v21.NotificationPriceApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.notificationPriceV23Api= new NotificationPriceV23Api(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this. notificationProcessCostApi = new NotificationProcessCostApi(newApiClientPriv( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.paymentEventsApi = new PaymentEventsApi(newApiClient( restTemplate, basePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
@@ -125,7 +125,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
                 this.senderReadB2BApiV2.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 this.senderReadB2BApiV21.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 this.legalFactsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
-                this.notificationPriceApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
+                this.notificationPriceApiV21.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 this.notificationPriceV23Api.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 this.notificationProcessCostApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
                 this.paymentEventsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + bearerTokenInterop);
@@ -217,7 +217,7 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         this.senderReadB2BApiV2.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.senderReadB2BApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.legalFactsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
-        this.notificationPriceApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
+        this.notificationPriceApiV21.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.notificationProcessCostApi.setApiClient(newApiClientPriv(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.paymentEventsApi.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
         this.paymentEventsApiV1.setApiClient(newApiClient(restTemplate, basePath, apiKey, bearerTokenInterop,enableInterop));
@@ -280,9 +280,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.notificationPriceApi.retrieveNotificationPrice(paTaxId,noticeCode);
+        return this.notificationPriceApiV21.retrieveNotificationPrice(paTaxId,noticeCode);
     }
 
     public NotificationPriceResponseV23 getNotificationPriceV23(String paTaxId, String noticeCode) throws RestClientException {

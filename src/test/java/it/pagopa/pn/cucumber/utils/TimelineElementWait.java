@@ -8,6 +8,7 @@ public class TimelineElementWait {
     private TimelineElementCategoryV23 timelineElementCategory;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElementCategory timelineElementCategoryV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementCategoryV20 timelineElementCategoryV2;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementCategoryV20 timelineElementCategoryV21;
     private Integer numCheck;
     private Integer waiting;
 
@@ -25,6 +26,12 @@ public class TimelineElementWait {
 
     public TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.TimelineElementCategoryV20 timelineElementCategoryV2, Integer numCheck, Integer waiting) {
         this.timelineElementCategoryV2 = timelineElementCategoryV2;
+        this.numCheck = numCheck;
+        this.waiting = waiting;
+    }
+
+    public TimelineElementWait(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementCategoryV20 timelineElementCategoryV21, Integer numCheck, Integer waiting) {
+        this.timelineElementCategoryV21 = timelineElementCategoryV21;
         this.numCheck = numCheck;
         this.waiting = waiting;
     }

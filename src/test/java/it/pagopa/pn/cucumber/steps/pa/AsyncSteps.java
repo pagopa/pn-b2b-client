@@ -468,13 +468,15 @@ public class AsyncSteps {
     }
 
 
-    @And("viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa")
-    public void vieneEffettuatoIlControlloDelAmountDiGPDConCostoTotaleConIva( ) {
+    @And("viene effettuato il controllo del amount di GPD con il costo {string} della notifica con iva inclusa")
+    public void vieneEffettuatoIlControlloDelAmountDiGPDConCostoTotaleConIva(String tipoCosto ) {
 
         try {
             logger.info("Amount GPD: "+amountGPD);
-            amountGPD= amountGPD- Integer.parseInt(String.valueOf(paymentPositionModel.get(0).getPaymentOption().get(0).getAmount()));
-            avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD,null,0,"totale");
+            amountGPD= amountGPD - Integer.parseInt(String.valueOf(paymentPositionModel.get(0).getPaymentOption().get(0).getAmount()));
+
+                    avanzamentoNotificheB2bSteps.priceVerificationV23(amountGPD,null,0,tipoCosto);
+
 
         } catch (AssertionFailedError assertionFailedError) {
 
