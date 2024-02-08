@@ -2321,5 +2321,27 @@ public class SharedSteps {
         }
     }
 
+    public List<String> getDatiPagamentoVersionamento(Integer destinatario,Integer pagamento){
+        List<String> DatiPagamento = null;
+        if (getSentNotificationV1()!= null) {
+            DatiPagamento.add(getSentNotificationV1().getRecipients().get(destinatario).getPayment().getCreditorTaxId());
+            DatiPagamento.add(getSentNotificationV1().getRecipients().get(destinatario).getPayment().getNoticeCode());
+        }else if (getSentNotificationV2()!= null){
+            DatiPagamento.add(getSentNotificationV2().getRecipients().get(destinatario).getPayment().getCreditorTaxId());
+            DatiPagamento.add(getSentNotificationV2().getRecipients().get(destinatario).getPayment().getNoticeCode());
+        }else if (getSentNotificationV21()!= null) {
+            DatiPagamento.add(getSentNotificationV21().getRecipients().get(destinatario).getPayments().get(pagamento).getPagoPa().getCreditorTaxId());
+            DatiPagamento.add(getSentNotificationV21().getRecipients().get(destinatario).getPayments().get(pagamento).getPagoPa().getNoticeCode());
+        }else if (getSentNotification()!= null) {
+            DatiPagamento.add(getSentNotification().getRecipients().get(destinatario).getPayments().get(pagamento).getPagoPa().getCreditorTaxId());
+            DatiPagamento.add(getSentNotification().getRecipients().get(destinatario).getPayments().get(pagamento).getPagoPa().getNoticeCode());
+        }
+
+        return DatiPagamento;
+
+    }
+
+
+
 
 }

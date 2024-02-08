@@ -868,7 +868,7 @@ public class InvioNotificheB2bSteps {
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
+        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
                 sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
 
         PaymentRequest paymentRequest= new PaymentRequest();
@@ -876,7 +876,7 @@ public class InvioNotificheB2bSteps {
         paymentNotice.noticeNumber( sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
         paymentNotice.fiscalCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
         paymentNotice.companyName("Test Automation");
-        paymentNotice.amount(100);
+        paymentNotice.amount(notificationPrice.getTotalPrice());
         paymentNotice.description("Test Automation Desk");
         paymentRequest.paymentNotice(paymentNotice);
         paymentRequest.returnUrl("https://api.uat.platform.pagopa.it");

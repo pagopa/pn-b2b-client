@@ -31,7 +31,6 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
       | payment_pagoPaForm      | SI          |
-      | payment_f24             | NULL        |
       | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -77,7 +76,6 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
       | payment_pagoPaForm      | SI          |
-      | payment_f24             | NULL        |
       | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
@@ -119,7 +117,6 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890  |
       | payment_creditorTaxId   | 77777777777 |
       | payment_pagoPaForm      | SI          |
-      | payment_f24             | NULL        |
       | apply_cost_pagopa       | SI          |
       | payment_multy_number    | 1           |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
