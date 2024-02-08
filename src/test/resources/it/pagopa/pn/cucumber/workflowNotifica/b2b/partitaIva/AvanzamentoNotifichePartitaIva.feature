@@ -112,7 +112,7 @@ Feature: controllo costo notifiche con IVA
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
+    And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @partitaIva
@@ -136,7 +136,7 @@ Feature: controllo costo notifiche con IVA
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
+    And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @partitaIva
@@ -195,7 +195,7 @@ Feature: controllo costo notifiche con IVA
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
+    And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @partitaIva
@@ -291,7 +291,7 @@ Feature: controllo costo notifiche con IVA
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo del amount di GPD con il costo totale della notifica con iva inclusa
+    And viene effettuato il controllo del amount di GPD con il costo "totale" della notifica con iva inclusa
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @partitaIva
