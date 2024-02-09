@@ -151,12 +151,14 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | payment_f24             | PAYMENT_F24_STANDARD_0        |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
+
 
   @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_9] Invio notifica 890 SYNC FLAT_RATE con campo vat conmpilato controllo costo a 0
@@ -268,6 +270,7 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
+    #messo in ignore fino a rilascio fix arrotondamento costi async
   @partitaIva @ignore
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_15] Invio notifica 890 ASYNC con due tentativi con iva inclusa controllo costo
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -306,7 +309,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@FAIL-Discovery_890        |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | payment_f24             | PAYMENT_F24_STANDARD_0        |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
@@ -334,3 +337,67 @@ Feature: controllo costo notifiche con IVA
     Then "Mario Gherkin" legge la notifica ricevuta
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato che tutti i campi per il calcolo del iva per il destinatario 0 siano valorizzati
+
+
+  Scenario Outline: [PARTITA-IVA_CONTROLLO-COSTO_18] Invio notifica 890 SYNC e controllo arrotondamento
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | REGISTERED_LETTER_890           |
+      | feePolicy             | DELIVERY_MODE                   |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via@ok_890     |
+      | physicalAddress_municipality | <MUNICIPALITY> |
+      | physicalAddress_province     | <PROVINCE>     |
+      | physicalAddress_zip          | <CAP>          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    Then viene verificato il costo = "<COSTO>" della notifica
+    Examples:
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
+      | 05010 | 1105  | COLLELUNGO   | TR       |
+
+
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_19] Invio notifica 890 SYNC con due pagamenti pagoPa controllo costi con iva
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | vat                | 10                          |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | apply_cost_pagopa       | SI         |
+      | payment_multy_number    | 2          |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
+
+  Scenario: [PARTITA-IVA_CONTROLLO-COSTO_20] Invio notifica 890 SYNC multidestinatario e controllo costi con iva destinatari
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+      | vat                | 10                          |
+      | paFee              | 100                         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | apply_cost_pagopa       | SI         |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@FAIL-Discovery_890 |
+      | payment_pagoPaForm      | SI                     |
+      | apply_cost_pagopa       | SI                     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" per l'utente 0
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" per l'utente 1
+    Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
+    Then viene verificato il costo "parziale" di una notifica "890" del utente "1"
+    And viene verificato il costo "totale" di una notifica "890" del utente "1"
