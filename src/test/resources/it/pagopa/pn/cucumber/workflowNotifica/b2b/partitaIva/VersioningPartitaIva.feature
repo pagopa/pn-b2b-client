@@ -20,8 +20,7 @@ Feature: controllo costo notifiche con IVA
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
 
-  #messo in ignore fino a rilascio fix arrotondamento costi async
-  @partitaIva @ignore
+  @partitaIva
   Scenario: [PARTITA-IVA_V21-V23_2] Invio notifica 890 ASYNC DELIVERY_MODE con la V21 con iva inclusa controllo costo con V23
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica V21
