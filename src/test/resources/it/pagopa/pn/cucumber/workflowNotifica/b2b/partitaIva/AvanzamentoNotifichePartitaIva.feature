@@ -1,6 +1,6 @@
 Feature: controllo costo notifiche con IVA
 
-@partitaIva
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_1] Invio notifica 890 SYNC con iva inclusa controllo costo
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -14,8 +14,8 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-  And viene verificato il costo "parziale" di una notifica "890" del utente "0"
-  And viene verificato il costo "totale" di una notifica "890" del utente "0"
+    And viene verificato il costo "parziale" di una notifica "890" del utente "0"
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
   @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_2] Invio notifica AR SYNC con iva inclusa controllo costo
@@ -345,6 +345,8 @@ Feature: controllo costo notifiche con IVA
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
+      | vat                   | 10                              |
+      | paFee                 | 100                             |
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL           |
       | physicalAddress_address      | Via@ok_890     |
@@ -353,10 +355,12 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_zip          | <CAP>          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    Then viene verificato il costo = "<COSTO>" della notifica
+    Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
     Examples:
-      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 05010 | 1105  | COLLELUNGO   | TR       |
+      | CAP   | MUNICIPALITY | PROVINCE |
+      | 00010 | CASAPE       | RM       |
+      | 10010 | ANDRATE      | TO       |
 
 
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_19] Invio notifica 890 SYNC con due pagamenti pagoPa controllo costi con iva
