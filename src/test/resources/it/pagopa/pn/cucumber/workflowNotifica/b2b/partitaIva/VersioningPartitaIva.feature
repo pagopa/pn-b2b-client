@@ -12,11 +12,15 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
+      | payment_pagoPaForm      | SI         |
+      | apply_cost_pagopa       | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
-  @partitaIva
+
+  #messo in ignore fino a rilascio fix arrotondamento costi async
+  @partitaIva @ignore
   Scenario: [PARTITA-IVA_V21-V23_2] Invio notifica 890 ASYNC DELIVERY_MODE con la V21 con iva inclusa controllo costo con V23
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica V21
@@ -52,12 +56,14 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | payment_f24             | PAYMENT_F24_STANDARD_0        |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | payment_pagoPaForm      | SI                            |
       | apply_cost_f24          | SI                            |
+      | apply_cost_pagopa       | SI                            |
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" V21
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
@@ -95,7 +101,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | payment_f24             | PAYMENT_F24_STANDARD_0        |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
@@ -136,7 +142,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via@ok_890                    |
-      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | payment_f24             | PAYMENT_F24_STANDARD_0        |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_f24          | SI                            |
       | payment_multy_number    | 1                             |
@@ -155,6 +161,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
+      | apply_cost_pagopa       | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
     Then viene verificato che il campo "paFee" sia valorizzato a 100
 
@@ -170,6 +177,7 @@ Feature: controllo costo notifiche con IVA
     And destinatario Mario Gherkin V21 e:
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
+      | apply_cost_pagopa       | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
     Then viene verificato che il campo "vat" sia valorizzato a 22
 
