@@ -2302,13 +2302,13 @@ public class AvanzamentoNotificheB2bSteps {
 
 
     private void priceVerificationV2(String price, String date, Integer destinatario) {
-        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(sharedSteps.getSentNotificationV2().getRecipients().get(destinatario).getPayment().getCreditorTaxId(),
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotificationV2().getRecipients().get(destinatario).getPayment().getCreditorTaxId(),
                 sharedSteps.getSentNotificationV2().getRecipients().get(destinatario).getPayment().getNoticeCode());
         try {
             Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotificationV2().getIun());
             if (price != null) {
-                logger.info("Costo notifica: {} destinatario: {}", notificationPrice.getPartialPrice(), destinatario);
-                Assertions.assertEquals(notificationPrice.getPartialPrice(), Integer.parseInt(price));
+                logger.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
+                Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
             }
             if (date != null) {
                 Assertions.assertNotNull(notificationPrice.getRefinementDate());
@@ -4022,9 +4022,15 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
         switch (tipoCosto.toLowerCase()) {
-            case "parziale"-> priceVerificationV23(pricePartial, null, 0, tipoCosto);
-            case "totale" -> priceVerificationV23(priceTotal, null, 0, tipoCosto);
-            default -> throw new IllegalArgumentException();
+            case "parziale":
+                priceVerificationV1(String.valueOf(pricePartial), null, 0);
+                priceVerificationV23(pricePartial, null, 0, tipoCosto);
+                break;
+            case "totale":
+                priceVerificationV23(priceTotal, null, 0, tipoCosto);
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
