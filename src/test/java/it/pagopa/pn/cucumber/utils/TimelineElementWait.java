@@ -48,6 +48,10 @@ public class TimelineElementWait {
         return timelineElementCategoryV2;
     }
 
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementCategoryV20 getTimelineElementCategoryV21() {
+        return timelineElementCategoryV21;
+    }
+
     public void setTimelineElementCategory(TimelineElementCategoryV23 timelineElementCategory) {
         this.timelineElementCategory = timelineElementCategory;
     }

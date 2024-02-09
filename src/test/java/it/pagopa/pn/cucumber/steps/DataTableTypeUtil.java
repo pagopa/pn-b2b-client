@@ -597,12 +597,12 @@ public class DataTableTypeUtil {
                                     .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
                                     .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
 
-                } else if (getValue(data,PAYMENT_F24.key)!= null && getValue(data,PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD")) {
+                } else if (getValue(data,PAYMENT_F24.key)!= null && getValue(data,PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD_0")) {
                     addPaymentsItem.f24(
                             new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
                                     .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
                                     .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
+                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_0.json")));
 
                 }
 

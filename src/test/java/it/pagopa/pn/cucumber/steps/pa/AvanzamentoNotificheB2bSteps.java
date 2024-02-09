@@ -988,17 +988,8 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new RuntimeException(exc);
             }
 
-            if (sharedSteps.getSentNotification()!= null) {
-                iun = sharedSteps.getSentNotification().getIun();
 
-            } else if (sharedSteps.getSentNotificationV1()!= null) {
-                iun = sharedSteps.getSentNotificationV1().getIun();
-
-            } else if (sharedSteps.getSentNotificationV2()!= null) {
-                iun = sharedSteps.getSentNotificationV2().getIun();
-            }
-
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+            sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getIunVersionamento()));
             logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
             timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategory())).findAny().orElse(null);
