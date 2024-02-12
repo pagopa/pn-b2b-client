@@ -1081,7 +1081,7 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.setSentNotificationV21(b2bClient.getSentNotificationV21(sharedSteps.getIunVersionamento()));
             logger.info("NOTIFICATION_TIMELINE V21: " + sharedSteps.getSentNotificationV21().getTimeline());
 
-            timelineElement = sharedSteps.getSentNotificationV21().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategoryV2())).findAny().orElse(null);
+            timelineElement = sharedSteps.getSentNotificationV21().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementWait.getTimelineElementCategoryV21())).findAny().orElse(null);
 
             if (timelineElement != null) {
                 break;
@@ -4005,7 +4005,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica ,String user ) {
 
-        FullSentNotificationV23 notificaV23= sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getIunVersionamento());
+       sharedSteps.setSentNotification(sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getIunVersionamento()));
+
+        FullSentNotificationV23 notificaV23= sharedSteps.getSentNotification();
         Assertions.assertNotNull(notificaV23);
 
         Integer pricePartial = null;
