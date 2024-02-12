@@ -118,10 +118,12 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin e:
-      | payment_pagoPaForm | SI   |
-      | payment_f24        | NULL |
-      | apply_cost_pagopa  | SI   |
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@fail-Discovery_890 |
+      | payment_pagoPaForm      | SI                     |
+      | payment_f24             | NULL                   |
+      | apply_cost_pagopa       | SI                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Gherkin" legge la notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED_CREATION_REQUEST"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene verificato data corretta del destinatario 0
