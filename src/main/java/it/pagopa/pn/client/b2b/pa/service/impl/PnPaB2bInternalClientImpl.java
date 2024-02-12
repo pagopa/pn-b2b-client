@@ -128,6 +128,11 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public NotificationPriceResponseV23 getNotificationPriceV23(String paTaxId, String noticeCode) throws RestClientException {
+        return null;
+    }
+
+    @Override
     public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException,UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }

@@ -46,6 +46,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
     LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId) ;
 
     NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException;
+    NotificationPriceResponseV23 getNotificationPriceV23(String paTaxId, String noticeCode) throws RestClientException;
 
     NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee) throws RestClientException ;
 
