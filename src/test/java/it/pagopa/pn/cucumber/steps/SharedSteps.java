@@ -77,11 +77,11 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
-    private NewNotificationRequestV21 notificationRequest;
+    private NewNotificationRequestV23 notificationRequest;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
-    private FullSentNotificationV21 notificationResponseComplete;
+    private FullSentNotificationV23 notificationResponseComplete;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
 
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
@@ -242,7 +242,7 @@ public class SharedSteps {
     }
 
     @Given("viene generata una nuova notifica")
-    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV21 notificationRequest) {
+    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV23 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
@@ -259,8 +259,8 @@ public class SharedSteps {
 
     @And("destinatario")
     public void destinatario(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
-        addRecipientToNotification(this.notificationRequest, notificationRecipientV21 ,data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
+        addRecipientToNotification(this.notificationRequest, notificationRecipientV23 ,data);
         //this.notificationRequest.addRecipientsItem(recipient);
     }
 
@@ -289,37 +289,37 @@ public class SharedSteps {
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void vengonoInviateNotifichePerLUtenteSignorCasualeConIlESiAspettaFinoAlloStatoCOMPLETELY_UNREACHABLE(int numberOfNotification, String pa) {
-        List<NewNotificationRequestV21> notificationRequests = new LinkedList<>();
+        List<NewNotificationRequestV23> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
         for(int i = 0; i < numberOfNotification; i++){
-            NewNotificationRequestV21 newNotificationRequestV21 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
+            NewNotificationRequestV23 newNotificationRequestV23 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
                     .subject("notifica analogica con cucumber")
                     .senderDenomination("Comune di palermo")
-                    .physicalCommunicationType(NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
+                    .physicalCommunicationType(NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
 
             HashMap<String, String> notificationRecipientMap = new HashMap<>();
             notificationRecipientMap.put("digitalDomicile","NULL");
             notificationRecipientMap.put("physicalAddress_address","Via NationalRegistries @fail-Irreperibile_AR");
-            NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(notificationRecipientMap);
-            addRecipientToNotification(newNotificationRequestV21,
-                    (notificationRecipientV21
+            NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(notificationRecipientMap);
+            addRecipientToNotification(newNotificationRequestV23,
+                    (notificationRecipientV23
                             .denomination("signor RaddCasuale")
                             .taxId(generatedFiscalCode)
-                            .recipientType(NotificationRecipientV21.RecipientTypeEnum.PF)),
+                            .recipientType(NotificationRecipientV23.RecipientTypeEnum.PF)),
                     notificationRecipientMap);
 
 
-            this.notificationRequest = newNotificationRequestV21;
+            this.notificationRequest = newNotificationRequestV23;
             selectPA(pa);
             setSenderTaxIdFromProperties();
 
-            notificationRequests.add(newNotificationRequestV21);
+            notificationRequests.add(newNotificationRequestV23);
         }//for
 
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV21> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV23> sentNotifications = new ConcurrentLinkedQueue<>();
 
-        for(NewNotificationRequestV21 notification: notificationRequests){
+        for(NewNotificationRequestV23 notification: notificationRequests){
 
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
@@ -330,26 +330,26 @@ public class SharedSteps {
                     logger.error("Thread.sleep error retry");
                     throw new RuntimeException(e);
                 }
-                FullSentNotificationV21 fullSentNotificationV21 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
-                Assertions.assertNotNull(fullSentNotificationV21);
+                FullSentNotificationV23 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
+                Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV20 timelineElementV20 = null;
+                TimelineElementV23 timelineElementV23 = null;
                 for (int i = 0; i < 33; i++) {
                     try {
                         Thread.sleep(getWorkFlowWait());
                     } catch (InterruptedException exc) {
                         throw new RuntimeException(exc);
                     }
-                    fullSentNotificationV21 = b2bClient.getSentNotification(fullSentNotificationV21.getIun());
-                    logger.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV21.getTimeline());
-                    timelineElementV20 = fullSentNotificationV21.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
-                    if (timelineElementV20 != null) {
+                    fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
+                    logger.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV23.getTimeline());
+                    timelineElementV23 = fullSentNotificationV23.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    if (timelineElementV23 != null) {
                         break;
                     }
                 }
-                Assertions.assertNotNull(timelineElementV20);
-                sentNotifications.add(fullSentNotificationV21);
+                Assertions.assertNotNull(timelineElementV23);
+                sentNotifications.add(fullSentNotificationV23);
             });
 
             threadList.add(t);
@@ -378,8 +378,8 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(),numberOfNotification);
         logger.debug("NOTIFICATION LIST: {}",sentNotifications);
         logger.debug("IUN: ");
-        for(FullSentNotificationV21 notificationV21: sentNotifications){
-            logger.info(notificationV21.getIun());
+        for(FullSentNotificationV23 notificationV23: sentNotifications){
+            logger.info(notificationV23.getIun());
         }
         logger.debug("End IUN list");
         //la prima notifica viene inserita
@@ -434,9 +434,9 @@ public class SharedSteps {
 
     @And("destinatario Mario Cucumber e:")
     public void destinatarioMarioCucumberParam(Map<String, String> data) { // @Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                 .denomination("Mario Cucumber")
                 .taxId(marioCucumberTaxID))
                 ,data);
@@ -449,7 +449,7 @@ public class SharedSteps {
          */
     }
 
-    private void addRecipientToNotification(NewNotificationRequestV21 notificationRequest, NotificationRecipientV21 notificationRecipient , Map<String, String> recipientData){
+    private void addRecipientToNotification(NewNotificationRequestV23 notificationRequest, NotificationRecipientV23 notificationRecipient , Map<String, String> recipientData){
         //logger.info("NEW NOTIFICATION REQUEST: {}",notificationRequest);
         //logger.info("NEW NOTIFICATION RECIPIENT: {}",notificationRecipient);
         if(notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
@@ -494,9 +494,9 @@ public class SharedSteps {
 
     @And("destinatario Mario Gherkin e:")
     public void destinatarioMarioGherkinParam(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21.denomination("Mario Gherkin")
+                (notificationRecipientV23.denomination("Mario Gherkin")
                 .taxId(marioGherkinTaxID)),
                 data);
     }
@@ -509,7 +509,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("Gherkin_spa")
                         .taxId(gherkinSpaTaxID)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -531,7 +531,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("GherkinSrl")
                         .taxId(gherkinSrltaxId)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -549,11 +549,11 @@ public class SharedSteps {
 
     @And("destinatario GherkinSrl e:")
     public void destinatarioPg1param(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("GherkinSrl")
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .taxId(gherkinSrltaxId)),
                 data);
         /*
@@ -568,11 +568,11 @@ public class SharedSteps {
 
     @And("destinatario CucumberSpa e:")
     public void destinatarioPg2param(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("CucumberSpa")
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .taxId(cucumberSpataxId)),
                 data);
         /*
@@ -591,7 +591,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("CucumberSpa")
                         .taxId(cucumberSpataxId)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -611,11 +611,11 @@ public class SharedSteps {
 
     @And("destinatario Gherkin spa e:")
     public void destinatarioGherkinSpaParam(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("GherkinSpa")
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .taxId(gherkinSpaTaxID)),
                 data);
         /*
@@ -634,7 +634,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("CucumberSrl")
                         .taxId(cucumberSrlTaxID)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -653,11 +653,11 @@ public class SharedSteps {
 
     @And("destinatario Cucumber srl e:")
     public void destinatarioCucumberSrlParam(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("CucumberSrl")
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .taxId(cucumberSrlTaxID)),
                 data);
         /*
@@ -676,7 +676,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("Cucumber_Society")
                         .taxId(cucumberSocietyTaxID)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -695,12 +695,12 @@ public class SharedSteps {
 
     @And("destinatario Cucumber Society e:")
     public void destinatarioCucumberSocietyParam(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("Cucumber_Society")
                         .taxId(cucumberSocietyTaxID)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)),
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)),
                 data);
         /*
         this.notificationRequest.addRecipientsItem(
@@ -714,12 +714,12 @@ public class SharedSteps {
 
     @And("destinatario Signor casuale e:")
     public void destinatarioSignorCasualeMap(Map<String, String> data) {
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("signor RaddCasuale")
                         .taxId(generateCF(System.currentTimeMillis()))
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PF)),
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PF)),
                 data);
     }
 
@@ -729,7 +729,7 @@ public class SharedSteps {
                 (dataTableTypeUtil.convertNotificationRecipient(new HashMap<>())
                         .denomination("signor RaddCasuale")
                         .taxId(generateCF(System.currentTimeMillis()))
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PF)
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PF)
                         .digitalDomicile(new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))), new HashMap<>());
@@ -737,21 +737,21 @@ public class SharedSteps {
 
     @And("destinatario Gherkin Analogic e:")
     public void destinatarioGherkinAnalogicParam(Map<String, String> data) {//@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("Gherkin Analogic")
                         .taxId(gherkinAnalogicTaxID)
-                        .recipientType(NotificationRecipientV21.RecipientTypeEnum.PG)),
+                        .recipientType(NotificationRecipientV23.RecipientTypeEnum.PG)),
                 data);
 
     }
 
     @And("destinatario Cucumber Analogic e:")
     public void destinatarioCucumberAnalogicParam(Map<String, String> data) {//@Transpose NotificationRecipientV21 recipient
-        NotificationRecipientV21 notificationRecipientV21 = dataTableTypeUtil.convertNotificationRecipient(data);
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
-                (notificationRecipientV21
+                (notificationRecipientV23
                         .denomination("Cucumber Analogic")
                         .taxId(cucumberAnalogicTaxID)),
                 data);
@@ -793,7 +793,7 @@ public class SharedSteps {
     }
 
     @And("destinatario {string} con uguale codice avviso del destinario numero {int}")
-    public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(String recipientName, int recipientNumber, @Transpose NotificationRecipientV21 recipient) {
+    public void destinatarioConUgualeCodiceAvvisoDelDestinarioN(String recipientName, int recipientNumber, @Transpose NotificationRecipientV23 recipient) {
         Assertions.assertDoesNotThrow(() -> notificationRequest.getRecipients().get(recipientNumber - 1).getPayments().get(0));
         String noticeCode = notificationRequest.getRecipients().get(recipientNumber - 1).getPayments().get(0).getPagoPa().getNoticeCode();
 
@@ -1578,7 +1578,7 @@ public class SharedSteps {
         return newNotificationResponse;
     }
 
-    public NewNotificationRequestV21 getNotificationRequest() {
+    public NewNotificationRequestV23 getNotificationRequest() {
         return notificationRequest;
     }
 
@@ -1722,7 +1722,7 @@ public class SharedSteps {
     }
 
 
-    public FullSentNotificationV21 getSentNotification() {
+    public FullSentNotificationV23 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -1742,11 +1742,11 @@ public class SharedSteps {
 
 
 
-    public void setNotificationRequest(NewNotificationRequestV21 notificationRequest) {
+    public void setNotificationRequest(NewNotificationRequestV23 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
-    public void setSentNotification(FullSentNotificationV21 notificationResponseComplete) {
+    public void setSentNotification(FullSentNotificationV23 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -2071,8 +2071,8 @@ public class SharedSteps {
     }
 
     public String getTimelineEventId(String timelineEventCategory, String iun, DataTest dataFromTest) {
-        TimelineElementV20 timelineElement = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV20 timelineElementDetails = timelineElement.getDetails();
+        TimelineElementV23 timelineElement = dataFromTest.getTimelineElement();
+        TimelineElementDetailsV23 timelineElementDetails = timelineElement.getDetails();
         DigitalAddress digitalAddress = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddress();
         DigitalAddressSource digitalAddressSource = timelineElementDetails == null ? null : timelineElementDetails.getDigitalAddressSource();
 
@@ -2139,8 +2139,8 @@ public class SharedSteps {
         return null;
     }
 
-    public TimelineElementV20 getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV20> timelineElementList = notificationResponseComplete.getTimeline();
+    public TimelineElementV23 getTimelineElementByEventId (String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV23> timelineElementList = notificationResponseComplete.getTimeline();
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategoryV20.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
@@ -2154,8 +2154,8 @@ public class SharedSteps {
             // get timeline event id
             String timelineEventId = getTimelineEventId(timelineEventCategory, iun, dataFromTest);
             if (timelineEventCategory.equals(TimelineElementCategoryV20.SEND_ANALOG_PROGRESS.getValue()) || timelineEventCategory.equals(TimelineElementCategoryV20.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.getValue())) {
-                TimelineElementV20 timelineElementFromTest = dataFromTest.getTimelineElement();
-                TimelineElementDetailsV20 timelineElementDetails = timelineElementFromTest.getDetails();
+                TimelineElementV23 timelineElementFromTest = dataFromTest.getTimelineElement();
+                TimelineElementDetailsV23 timelineElementDetails = timelineElementFromTest.getDetails();
                 return timelineElementList.stream().filter(elem -> elem.getElementId().startsWith(timelineEventId) && elem.getDetails().getDeliveryDetailCode().equals(timelineElementDetails.getDeliveryDetailCode())).findAny().orElse(null);
             }
             return timelineElementList.stream().filter(elem -> elem.getElementId().equals(timelineEventId)).findAny().orElse(null);
@@ -2204,7 +2204,7 @@ public class SharedSteps {
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} per la posizione debitoria {int} del pagamento {int}")
     public void destinatarioAddIuvGPDperUtente(String denominazione,Integer posizioneDebitoria,Integer pagamento) {
 
-        for(NotificationRecipientV21 recipient : this.notificationRequest.getRecipients()){
+        for(NotificationRecipientV23 recipient : this.notificationRequest.getRecipients()){
             if(recipient.getDenomination().equalsIgnoreCase(denominazione)){
                 recipient.getPayments().get(pagamento).getPagoPa().setNoticeCode(getIuvGPD(posizioneDebitoria));
             }

@@ -85,7 +85,7 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        FullReceivedNotificationV21 fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        FullReceivedNotificationV23 fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         Assertions.assertNull(fullNotification);
 
     }
@@ -129,8 +129,8 @@ public class RicezioneNotificheWebSteps {
 
 
         try {
-            OffsetDateTime scheduleDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
-            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            OffsetDateTime scheduleDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
             logger.info("scheduleDate : {}", scheduleDate);
             logger.info("refinementDate : {}", refinementDate);
 
@@ -255,10 +255,10 @@ public class RicezioneNotificheWebSteps {
             throw new RuntimeException(exc);
         }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20.AAR_GENERATION;
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement = null;
 
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
             if (element.getCategory().equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
@@ -696,12 +696,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 timelineElement =
+         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
                  sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20 newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(timelineElement.getLegalFactsIds().size(), newTimelineElement.getLegalFactsIds().size());

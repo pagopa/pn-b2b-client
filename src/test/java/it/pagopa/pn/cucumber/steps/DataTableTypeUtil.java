@@ -18,8 +18,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data){
-        NewNotificationRequestV21 notificationRequest = (new NewNotificationRequestV21()
+    public synchronized NewNotificationRequestV23 convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -39,15 +39,15 @@ public class DataTableTypeUtil {
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
 
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .pagoPaIntMode(
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
-                                NewNotificationRequestV21.PagoPaIntModeEnum.SYNC :
+                                NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC:null
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:null
                                 ))));
 
         notificationRequest = addDocument(notificationRequest,data);
@@ -60,7 +60,7 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-    private NewNotificationRequestV21 addDocument(NewNotificationRequestV21 notificationRequest, Map<String, String> data) {
+    private NewNotificationRequestV23 addDocument(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
         String documentsToAdd = getValue(data,DOCUMENT.key);
         if( documentsToAdd == null){
             return notificationRequest.addDocumentsItem(null);
@@ -178,11 +178,11 @@ public class DataTableTypeUtil {
 
 
     @DataTableType
-    public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data) {
+    public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
 
         List<NotificationPaymentItem> listPayment = new ArrayList<NotificationPaymentItem>();;
 
-        NotificationRecipientV21 notificationRecipient =  (new NotificationRecipientV21()
+        NotificationRecipientV23 notificationRecipient =  (new NotificationRecipientV23()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
@@ -203,8 +203,8 @@ public class DataTableTypeUtil {
                 )
                 .recipientType((getValue(data,RECIPIENT_TYPE.key) == null? null :
                         (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
-                                NotificationRecipientV21.RecipientTypeEnum.PF :
-                                NotificationRecipientV21.RecipientTypeEnum.PG)))
+                                NotificationRecipientV23.RecipientTypeEnum.PF :
+                                NotificationRecipientV23.RecipientTypeEnum.PG)))
 
                 //GESTIONE ISTANZE DI PAGAMENTI
 
@@ -510,12 +510,12 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-        TimelineElementV20 timelineElement = new TimelineElementV20()
+        TimelineElementV23 timelineElement = new TimelineElementV23()
                 .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV23()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV20.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV23.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)

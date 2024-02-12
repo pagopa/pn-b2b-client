@@ -46,7 +46,7 @@ import java.util.List;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=dev2"})
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class NewNotificationTest {
 
     @Autowired
@@ -65,21 +65,24 @@ public class NewNotificationTest {
         // modificare se si vuole inviare un f24. invia i metadati in base al delivery_mode
         boolean enableF24Attachment = true;
         // modifica pure i parametri a piacimento
-        NewNotificationRequestV21 request = new NewNotificationRequestV21()
+        NewNotificationRequestV23 request = new NewNotificationRequestV23()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sapppada")
-                //.senderTaxId("01199250158")
+                .pagoPaIntMode(NewNotificationRequestV23.PagoPaIntModeEnum.SYNC)
+                .taxonomyCode("010202N")
                 .paFee(100)
+                .vat(22)
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( policy )
-                .physicalCommunicationType( NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
-                .addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
+                .addRecipientsItem( newRecipient( 
+                        policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
                          enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                        RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
                 //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
                 //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
@@ -89,7 +92,7 @@ public class NewNotificationTest {
         Assertions.assertDoesNotThrow(() -> {
 
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV21 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
@@ -102,14 +105,14 @@ public class NewNotificationTest {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        NewNotificationRequestV21 request = new NewNotificationRequestV21()
+        NewNotificationRequestV23 request = new NewNotificationRequestV23()
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sapppada")
                 //.senderTaxId("01199250158")
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( NotificationFeePolicy.FLAT_RATE )
-                .physicalCommunicationType( NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( false,"Leo ", "CNCGPP80A01H501J","classpath:/sample.pdf","classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
@@ -118,7 +121,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV21 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
@@ -154,11 +157,11 @@ public class NewNotificationTest {
         ANALOG_OK, ANALOG_KO
     }
 
-    private NotificationRecipientV21 newRecipient(boolean withapplycost, String prefix, String taxId, String resourcePath, String resourcePathf24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog ) {
+    private NotificationRecipientV23 newRecipient(boolean withapplycost, String prefix, String taxId, String resourcePath, String resourcePathf24, RECIPIENT_TYPE_DIGITAL recipientTypeDigital, RECIPIENT_TYPE_ANALOG recipientTypeAnalog ) {
 
         long epochMillis = System.currentTimeMillis();
 
-        NotificationRecipientV21 recipient = new NotificationRecipientV21()
+        NotificationRecipientV23 recipient = new NotificationRecipientV23()
                 .denomination( prefix + " denomination")
                 .taxId( taxId )
                 .digitalDomicile(recipientTypeDigital==RECIPIENT_TYPE_DIGITAL.NO_DIGITAL?null:
@@ -185,7 +188,7 @@ public class NewNotificationTest {
                                 .foreignState("ITALIA")
                                 .zip("00028")
                 )
-                .recipientType( NotificationRecipientV21.RecipientTypeEnum.PF )
+                .recipientType( NotificationRecipientV23.RecipientTypeEnum.PF )
                 .payments(List.of( new NotificationPaymentItem()
                                         .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                                 .noticeCode( String.format("30201%13d", epochMillis ) )
@@ -196,7 +199,7 @@ public class NewNotificationTest {
                                         .noticeCode( String.format("30202%13d", epochMillis ) )
                                         .applyCost(false)
                                         .attachment ( newAttachment( resourcePath ))),
-                        resourcePathf24==null?
+                        resourcePathf24 == null ?
                         new NotificationPaymentItem()
                                 .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                         .noticeCode( String.format("30203%13d", epochMillis ) )
