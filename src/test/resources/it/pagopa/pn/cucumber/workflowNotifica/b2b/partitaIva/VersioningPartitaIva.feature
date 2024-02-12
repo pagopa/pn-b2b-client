@@ -209,7 +209,7 @@ Feature: controllo costo notifiche con IVA
       | digitalDomicile         | NULL       |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
-    Then viene verificato che il campo "vat" sia valorizzato a 22
+    Then viene verificato che il campo "paFee" sia valorizzato a 100
 
   @partitaIva
   Scenario: [PARTITA-IVA_V1-V23_1] Invio notifica 890 SYNC DELIVERY_MODE con la V23 controllo costo con la V1
