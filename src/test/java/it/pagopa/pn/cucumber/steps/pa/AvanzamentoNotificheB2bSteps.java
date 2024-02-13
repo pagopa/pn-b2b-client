@@ -4025,11 +4025,11 @@ public class AvanzamentoNotificheB2bSteps {
 
         switch (tipoCosto.toLowerCase()) {
             case "parziale":
-                priceVerificationV1(String.valueOf(pricePartial), null, 0);
-                priceVerificationV23(pricePartial, null, 0, tipoCosto);
+                priceVerificationV1(String.valueOf(pricePartial), null, Integer.parseInt(user));
+                priceVerificationV23(pricePartial, null, Integer.parseInt(user), tipoCosto);
                 break;
             case "totale":
-                priceVerificationV23(priceTotal, null, 0, tipoCosto);
+                priceVerificationV23(priceTotal, null, Integer.parseInt(user), tipoCosto);
                 break;
             default:
                 throw new IllegalArgumentException();
