@@ -337,7 +337,7 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato che tutti i campi per il calcolo del iva per il destinatario 0 siano valorizzati
 
-
+  @partitaIva
   Scenario Outline: [PARTITA-IVA_CONTROLLO-COSTO_18] Invio notifica 890 SYNC e controllo arrotondamento
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
@@ -361,7 +361,7 @@ Feature: controllo costo notifiche con IVA
       | 00010 | CASAPE       | RM       |
       | 10010 | ANDRATE      | TO       |
 
-
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_19] Invio notifica 890 SYNC con due pagamenti pagoPa controllo costi con iva
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -380,6 +380,8 @@ Feature: controllo costo notifiche con IVA
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
+
+  @partitaIva
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_20] Invio notifica 890 SYNC multidestinatario e controllo costi con iva destinatari
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
