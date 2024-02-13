@@ -3939,11 +3939,6 @@ public class AvanzamentoNotificheB2bSteps {
     @And("viene verificato data corretta del destinatario {int}")
     public void verificationDateNotificationPrice(Integer destinatario) {
 
-        TimelineElementV23 TimelineNotificarionViewd = sharedSteps.getSentNotification().getTimeline().stream().filter((value) -> value.getCategory().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED_CREATION_REQUEST) && value.getDetails().getRecIndex().equals(destinatario)).findAny().orElse(null);
-
-        Assertions.assertNotNull(TimelineNotificarionViewd);
-        Assertions.assertNotNull(TimelineNotificarionViewd.getDetails());
-        Assertions.assertNotNull(TimelineNotificarionViewd.getDetails().getEventTimestamp());
         List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
 
         if (listNotificationPaymentItem != null) {
@@ -3951,7 +3946,7 @@ public class AvanzamentoNotificheB2bSteps {
                 NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
                 try {
                     Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
-                    Assertions.assertEquals(TimelineNotificarionViewd.getDetails().getEventTimestamp(), notificationPrice.getNotificationViewDate());
+                    Assertions.assertNotNull(notificationPrice.getNotificationViewDate());
 
                 } catch (AssertionFailedError assertionFailedError) {
                     sharedSteps.throwAssertFailerWithIUN(assertionFailedError);

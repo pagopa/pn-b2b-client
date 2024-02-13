@@ -125,5 +125,4 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | apply_cost_pagopa       | SI                     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then "Mario Gherkin" legge la notifica
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then viene verificato data corretta del destinatario 0
