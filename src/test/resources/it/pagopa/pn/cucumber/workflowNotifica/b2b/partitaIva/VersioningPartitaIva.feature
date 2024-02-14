@@ -225,7 +225,7 @@ Feature: controllo costo notifiche con IVA
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    Then vengono verificati costo = "963" e data di perfezionamento della notifica "V1"
+    Then vengono verificati costo = "957" e data di perfezionamento della notifica "V1"
 
   @partitaIva
   Scenario: [PARTITA-IVA_V1-V23_2] Invio notifica 890 SYNC FLAT_RATE con la V1 controllo costo a 0 con la V23
