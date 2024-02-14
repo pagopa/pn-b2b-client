@@ -948,13 +948,13 @@ public class SharedSteps {
        switch (version.toLowerCase()){
            case "v1":
                setSenderTaxIdFromPropertiesV1(version);
-               sendNotificationV2();
+               sendNotificationV1();
            case "v2":
                setSenderTaxIdFromPropertiesV2(version);
                sendNotificationV2();
            case "v21":
                setSenderTaxIdFromPropertiesV21(version);
-               sendNotificationV2();
+               sendNotificationV21();
        }
 
     }

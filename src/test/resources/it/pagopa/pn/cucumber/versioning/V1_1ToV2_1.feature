@@ -10,7 +10,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | digitalDomicile         | NULL      |
       | physicalAddress_address | Via@ok_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED "V1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" V1
 
 
@@ -24,7 +24,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | denomination       | Ada              |
       | taxId              | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V1
     And si attende il corretto pagamento della notifica V1
 
@@ -35,7 +35,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber V1
-    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     When la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
@@ -49,7 +49,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
 
   @version
@@ -59,7 +59,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
   @version
@@ -72,7 +72,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | denomination       | Ada              |
       | taxId              | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
     And si attende il corretto pagamento della notifica
 
@@ -94,7 +94,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then si verifica la corretta acquisizione della notifica V1
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
@@ -130,7 +130,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then si verifica la corretta acquisizione della notifica V1
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
@@ -186,7 +186,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V1"
 
 
@@ -216,7 +216,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V1"
 
 
@@ -229,7 +229,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
   @version
@@ -241,7 +241,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 

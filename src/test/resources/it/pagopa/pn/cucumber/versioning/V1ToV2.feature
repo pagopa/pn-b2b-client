@@ -7,7 +7,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V2
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
 
@@ -18,7 +18,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination    | Comune di palermo               |
       | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Mario Cucumber V2
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
 
   @version @ignore
@@ -27,7 +27,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber V2
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then si verifica la corretta acquisizione della notifica V2
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
@@ -57,7 +57,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination | Comune di palermo               |
       | feePolicy          | DELIVERY_MODE                   |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED "V1"
     And vengono letti gli eventi fino allo stato della notifica "ACCEPTED" V1
 
 
@@ -72,7 +72,7 @@ Feature: verifica compatibilità tra v1 a v2
       | taxId              | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V1
     And si attende il corretto pagamento della notifica V1
 
@@ -87,7 +87,7 @@ Feature: verifica compatibilità tra v1 a v2
       | taxId              | LVLDAA85T50G702B |
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V2
     And si attende il corretto pagamento della notifica V2
 
@@ -99,7 +99,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V2
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then si verifica la corretta acquisizione della notifica V2
     And "Mario Cucumber" legge la notifica ricevuta "V2"
     Then l'operazione ha prodotto un errore con status code "403"
@@ -112,7 +112,7 @@ Feature: verifica compatibilità tra v1 a v2
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then si verifica la corretta acquisizione della notifica V1
     And "Mario Cucumber" legge la notifica ricevuta "V1"
     Then l'operazione ha prodotto un errore con status code "403"
@@ -126,7 +126,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
   @version
@@ -139,7 +139,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V2"
 
 
@@ -153,7 +153,7 @@ Feature: verifica compatibilità tra v1 a v2
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
       | payment_f24                | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED "V1"
     And  la notifica a 2 avvisi di pagamento con OpenApi V1
 
   @version
@@ -167,7 +167,7 @@ Feature: verifica compatibilità tra v1 a v2
       | payment_noticeCodeOptional | NO   |
       | payment_f24flatRate        | NULL |
       | payment_f24standard        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED "V1"
     And  la notifica a 1 avvisi di pagamento con OpenApi V1
 
 
@@ -182,7 +182,7 @@ Feature: verifica compatibilità tra v1 a v2
       | payment_pagoPaForm         | SI   |
       | payment_noticeCodeOptional | SI   |
       | payment_f24                | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     And  la notifica a 2 avvisi di pagamento con OpenApi V2
 
   @version
@@ -194,7 +194,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
     And viene richiesto il download del documento "PAGOPA"
     And l'operazione ha prodotto un errore con status code "404"
@@ -208,7 +208,7 @@ Feature: verifica compatibilità tra v1 a v2
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
     And viene richiesto il download del documento "PAGOPA"
     And l'operazione ha prodotto un errore con status code "404"
