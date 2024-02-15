@@ -696,6 +696,32 @@ public class PnPaB2bUtils {
         return iun == null? null : client.getSentNotificationV2(iun);
     }
 
+    public boolean waitForRequestNotRefused( NewNotificationResponse response) {
+
+        log.info("Request status for " + response.getNotificationRequestId() );
+        NewNotificationRequestStatusResponseV23 status = null;
+        long startTime = System.currentTimeMillis();
+        boolean rifiutata = false;
+        for( int i = 0; i < 8; i++ ) {
+
+            try {
+                Thread.sleep( getWorkFlowWait());
+            } catch (InterruptedException exc) {
+                throw new RuntimeException( exc );
+            }
+
+            status = client.getNotificationRequestStatus( response.getNotificationRequestId() );
+
+            log.info("New Notification Request status {}", status.getNotificationRequestStatus());
+            if ( "REFUSED".equals( status.getNotificationRequestStatus() )) {
+                rifiutata = true;
+                break;
+            }
+        }
+
+        return rifiutata;
+    }
+
 
     public String waitForRequestRefused( NewNotificationResponse response) {
 

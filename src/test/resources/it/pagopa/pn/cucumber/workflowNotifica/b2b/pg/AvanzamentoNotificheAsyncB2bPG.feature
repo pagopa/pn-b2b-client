@@ -7,7 +7,7 @@ Feature: avanzamento notifiche asincrone b2b PG - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | SYNC                        |
-      | paFee              | NULL                        |
+      | paFee              | 10                          |
     And destinatario Cucumber Society e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |

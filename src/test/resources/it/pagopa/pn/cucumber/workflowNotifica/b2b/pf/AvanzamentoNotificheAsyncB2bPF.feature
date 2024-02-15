@@ -7,7 +7,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | SYNC                        |
-      | paFee              | NULL                        |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
@@ -23,7 +23,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | FLAT_RATE                   |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | NULL                        |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |

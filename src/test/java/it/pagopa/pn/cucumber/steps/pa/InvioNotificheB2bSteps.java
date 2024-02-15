@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -461,6 +462,15 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @When("si tenta il recupero della notifica dal sistema")
+    public void retrievalAttemptedIUN() {
+        try {
+            b2bUtils.getNotificationByIun(new String(Base64Utils.decodeFromString(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
     @When("si tenta il recupero della notifica dal sistema tramite codice IUN {string} con la V1")
     public void retrievalAttemptedIUNConV1(String IUN) {
         try {
@@ -853,9 +863,14 @@ public class InvioNotificheB2bSteps {
     }
 
 
-
-
-
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN")
+    public void notificationCaNotBeCanceledWithIUN() {
+        try {
+            sharedSteps.getB2bClient().notificationCancellation(new String(Base64Utils.decodeFromString(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
 
     //Annullamento Notifica
     @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
