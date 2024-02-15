@@ -138,6 +138,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( notificationPrice, NotificationPriceResponseV23.class );
     }
 
+
     @Override
     public void paymentEventsRequestPagoPa(PaymentEventsRequestPagoPa paymentEventsRequestPagoPa) throws RestClientException,UnsupportedOperationException {
         throw new UnsupportedOperationException();

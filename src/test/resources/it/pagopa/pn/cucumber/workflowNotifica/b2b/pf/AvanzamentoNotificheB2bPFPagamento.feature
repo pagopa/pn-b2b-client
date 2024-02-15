@@ -110,3 +110,19 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
 
+
+  @workflowDigitale
+  Scenario: [B2B-PA-PAY_9] Verifica restituzione data di visualizzazione a quella del NOTIFICATION_VIEWED_CREATION_REQUEST per la chiamata retrieveNotificationPrice - 8970
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                   |
+      | physicalAddress_address | Via@fail-Discovery_890 |
+      | payment_pagoPaForm      | SI                     |
+      | payment_f24             | NULL                   |
+      | apply_cost_pagopa       | SI                     |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then "Mario Gherkin" legge la notifica
+    Then viene verificato data corretta del destinatario 0

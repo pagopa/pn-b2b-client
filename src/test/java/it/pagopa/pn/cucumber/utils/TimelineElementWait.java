@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.utils;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 
 public class TimelineElementWait {
 
@@ -35,6 +36,7 @@ public class TimelineElementWait {
         this.numCheck = numCheck;
         this.waiting = waiting;
     }
+
 
     public TimelineElementCategoryV23 getTimelineElementCategory() {
         return timelineElementCategory;

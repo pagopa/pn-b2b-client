@@ -25,7 +25,7 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "100" della notifica per l'utente 1
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 05010 | 1105  | COLLELUNGO   | TR       |
+      | 05010 | 1097  | COLLELUNGO   | TR       |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_890_MULTI_2] Invio notifica e verifica costo con FSU + @OK_890 + FLAT_RATE positivo
@@ -73,13 +73,13 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "<COSTO>" della notifica per l'utente 0
     And viene verificato il costo = "100" della notifica per l'utente 1
     Examples:
-      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 70010 | 861   | VALENZANO    | BA       |
-      | 00010 | 906   | CASAPE       | RM       |
-      | 60010 | 979   | CASINE       | AN       |
-      | 64010 | 954   | ANCARANO     | TE       |
-      | 06031 | 957   | BEVAGNA      | PG       |
-      | 10012 | 925   | BOLLENGO     | TO       |
+      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
+      | 06031 | 951   | CANTALUPO      | PG       |
+      | 64011 | 947   | ALBA ADRIATICA | TE       |
+      | 00010 | 900   | CASAPE         | RM       |
+      | 70010 | 854   | ADELFIA        | BA       |
+      | 10010 | 918   | ANDRATE        | TO       |
+      | 60012 | 972   | MONTERADO      | AN       |
 
   @dev @costoAnalogico
   Scenario Outline: [B2B_COSTO_ANALOG_890_MULTI_4] Invio notifica e verifica costo con RECAPITISTA + @OK_890 + FLAT_RATE positivo
@@ -102,10 +102,10 @@ Feature: costo notifica con workflow analogico per multi destinatario 890
     And viene verificato il costo = "<COSTO>" della notifica per l'utente 0
     And viene verificato il costo = "0" della notifica per l'utente 1
     Examples:
-      | CAP   | COSTO | MUNICIPALITY | PROVINCE |
-      | 70010 | 0     | VALENZANO    | BA       |
-      | 00010 | 0     | CASAPE       | RM       |
-      | 60010 | 0     | CASINE       | AN       |
-      | 64010 | 0     | ANCARANO     | TE       |
-      | 06031 | 0     | BEVAGNA      | PG       |
-      | 10012 | 0     | BOLLENGO     | TO       |
+      | CAP   | COSTO | MUNICIPALITY   | PROVINCE |
+      | 06031 | 0     | CANTALUPO      | PG       |
+      | 64011 | 0     | ALBA ADRIATICA | TE       |
+      | 00010 | 0     | CASAPE         | RM       |
+      | 70010 | 0     | ADELFIA        | BA       |
+      | 10010 | 0     | ANDRATE        | TO       |
+      | 60012 | 0     | MONTERADO      | AN       |

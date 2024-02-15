@@ -46,7 +46,7 @@ import java.util.List;
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class
 })
-@TestPropertySource(properties = {"spring.profiles.active=dev2"})
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class NewNotificationTest {
 
     @Autowired
@@ -70,17 +70,19 @@ public class NewNotificationTest {
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sapppada")
-                //.senderTaxId("01199250158")
+                .pagoPaIntMode(NewNotificationRequestV23.PagoPaIntModeEnum.SYNC)
+                .taxonomyCode("010202N")
                 .paFee(100)
-                .vat(0)
+                .vat(22)
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( policy )
                 .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
-                .addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
+                .addRecipientsItem( newRecipient( 
+                        policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
                          enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                        RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
                 //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
                 //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
@@ -197,7 +199,7 @@ public class NewNotificationTest {
                                         .noticeCode( String.format("30202%13d", epochMillis ) )
                                         .applyCost(false)
                                         .attachment ( newAttachment( resourcePath ))),
-                        resourcePathf24==null?
+                        resourcePathf24 == null ?
                         new NotificationPaymentItem()
                                 .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
                                         .noticeCode( String.format("30203%13d", epochMillis ) )

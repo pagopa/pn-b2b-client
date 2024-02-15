@@ -3456,7 +3456,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
     #-----------------------ADD TEST F24--------------------------
-  @pagamentiMultipli @f24 @dev
+  @pagamentiMultipli @f24 @dev @integration
   Scenario: [B2B-PA-PAY_MULTI_103] FR01 - Notifica Digitale mono destinatario con fallimento di invio PEC FLAT_RATE
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3476,7 +3476,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_104] FR02 - Notifica Analogica mono destinatario con 1 tentativo FLAT_RATE
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3497,7 +3497,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_105] FR03 - Notifica Analogica mono destinatario con 2° tentativo (cap differente tra i 2 tentativi) FLAT_RATE
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3518,7 +3518,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @f24 @dev
+  @pagamentiMultipli @f24 @dev @integration
   Scenario: [B2B-PA-PAY_MULTI_106] DM01 - Notifica Digitale mono destinatario con fallimento di invio PEC DELIVERY_MODE
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3537,7 +3537,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_107] DM02 - Notifica Analogica mono destinatario con 1 tentativo DELIVERY_MODE
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3559,7 +3559,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_108] DM03 -Notifica Analogica mono destinatario  con 2° tentativo DELIVERY_MODE
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3581,7 +3581,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_109] MD01 -Notifica Multi destinatario FLAT_RATE Destinatario 1 - Invio digitale  e Destinatario 2 - Invio analogico con 2° tentativo (cap differente tra i 2 tentativi)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3611,7 +3611,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_110] MD02 -Notifica Multi destinatario DELIVERY_MODE Destinatario 1 - Invio digitale Destinatario 2 - Invio analogico con 2° tentativo (cap differente tra i 2 tentativi)
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3641,7 +3641,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_111] MD03 -Notifica Multi destinatario DELIVERY_MODE Destinatario 1 - Invio analogico con 1° tentativo - Destinatario 2 - Invio analogico con 2° tentativo - Tutti e 3 gli invii analogici devono avere CAP differenti
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3680,7 +3680,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
 
 
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_112] Invio notifica cartacea con 6 f24
     Given viene generata una nuova notifica
       | subject            | notifica analogica |
@@ -3697,7 +3697,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
 
-  @pagamentiMultipli @cartaceoF24
+  @pagamentiMultipli @cartaceoF24 @integration
   Scenario: [B2B-PA-PAY_MULTI_113] Invio notifica cartacea con 9 f24
     Given viene generata una nuova notifica
       | subject            | notifica analogica |
