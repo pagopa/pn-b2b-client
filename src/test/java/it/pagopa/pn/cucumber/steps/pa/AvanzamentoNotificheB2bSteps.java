@@ -3,6 +3,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.*;
@@ -4168,4 +4169,127 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
 }
+
+    @Then("l'ente {string} richiede l'attestazione opponibile {string}")
+    public void paRequiresLegalFact(String ente,String legalFactCategory) {
+        sharedSteps.selectPA(ente);
+        try{
+            takeLegalFact(legalFactCategory, null);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+    @Then("l'ente {string} richiede l'attestazione opponibile {string} con deliveryDetailCode {string}")
+    public void paRequiresLegalFactConDeliveryDetailCode(String ente,String legalFactCategory, String deliveryDetailCode) {
+        sharedSteps.selectPA(ente);
+        try{
+            takeLegalFact(legalFactCategory, deliveryDetailCode);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+
+    public String getKeyLegalFact(String key) {
+        if (key.contains("PN_LEGAL_FACTS")) {
+            return key.substring(key.indexOf("PN_LEGAL_FACTS"));
+        } else if (key.contains("PN_NOTIFICATION_ATTACHMENTS")) {
+            return key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
+        } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
+            return key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
+        } else if (key.contains("PN_F24")) {
+            return key.substring(key.indexOf("PN_F24"));
+        }
+        return null;
+    }
+
+
+    public PnPaB2bUtils.Pair<TimelineElementCategoryV23, LegalFactCategory> getTimelineCategoryAndLegalFactCategory(String legalFactCategory, String deliveryDetailCode) {
+
+
+        TimelineElementCategoryV23 timelineElementInternalCategory;
+        LegalFactCategory category= null;
+        switch (legalFactCategory) {
+            case "SENDER_ACK" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.REQUEST_ACCEPTED;
+                category = LegalFactCategory.SENDER_ACK;
+            }
+            case "RECIPIENT_ACCESS" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.NOTIFICATION_VIEWED;
+                category = LegalFactCategory.RECIPIENT_ACCESS;
+            }
+            case "PEC_RECEIPT" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_DIGITAL_PROGRESS;
+                category = LegalFactCategory.PEC_RECEIPT;
+            }
+            case "DIGITAL_DELIVERY" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_SUCCESS_WORKFLOW;
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+            }
+            case "DIGITAL_DELIVERY_FAILURE" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_FAILURE_WORKFLOW;
+                category = LegalFactCategory.DIGITAL_DELIVERY;
+            }
+            case "SEND_ANALOG_PROGRESS" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_ANALOG_PROGRESS;
+                category = LegalFactCategory.ANALOG_DELIVERY;
+            }
+            case "COMPLETELY_UNREACHABLE" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
+                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
+            }
+            default -> throw new IllegalArgumentException();
+        }
+
+        return new PnPaB2bUtils.Pair<>(timelineElementInternalCategory, category);
+    }
+
+
+    private LegalFactDownloadMetadataResponse takeLegalFact(String legalFactCategory, String deliveryDetailCode) {
+        try {
+            Thread.sleep(sharedSteps.getWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+
+        PnPaB2bUtils.Pair<TimelineElementCategoryV23, LegalFactCategory> category = getTimelineCategoryAndLegalFactCategory(legalFactCategory, deliveryDetailCode);
+
+        TimelineElementCategoryV23 timelineElementInternalCategory= category.getValue1();
+        LegalFactCategory legalCategory = category.getValue2();
+
+
+        TimelineElementV23 timelineElement = null;
+
+        for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
+
+            if (element.getCategory().equals(timelineElementInternalCategory)) {
+                if (deliveryDetailCode == null) {
+                    timelineElement = element;
+                    break;
+                } else if (deliveryDetailCode != null && element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
+                    timelineElement = element;
+                    break;
+                }
+            }
+        }
+
+        System.out.println("ELEMENT: " + timelineElement);
+        Assertions.assertNotNull(timelineElement);
+
+        Assertions.assertNotNull(timelineElement.getLegalFactsIds());
+        Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
+        Assertions.assertEquals(legalCategory, timelineElement.getLegalFactsIds().get(0).getCategory());
+        LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+        String key = timelineElement.getLegalFactsIds().get(0).getKey();
+        String keySearch = getKeyLegalFact(key);
+
+
+        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, keySearch);
+
+        Assertions.assertNotNull(legalFactDownloadMetadataResponse);
+
+        return legalFactDownloadMetadataResponse;
+    }
+    
 }

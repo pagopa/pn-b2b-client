@@ -147,3 +147,47 @@ Feature: Download legalFact analogico
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003B"
+
+
+  @legalFact
+  Scenario: [B2B_PA_ANALOGICO_LEGALFACT_13] Invio notifica con @fail_RS e richiesta atto opponibile DIGITAL_FAILURE_WORKFLOW con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile_address | test@fail.it |
+      | physicalAddress_address | Via@fail_RS  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    Then l'ente "Comune_1" richiede l'attestazione opponibile "DIGITAL_DELIVERY_FAILURE"
+    And l'operazione ha prodotto un errore con status code "404"
+
+
+  @legalFact
+  Scenario: [B2B_PA_ANALOGICO_LEGALFACT_14] Invio notifica con @ok_890 e richiesta atto opponibile SEND_ANALOG_PROGRESS con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile         | NULL       |
+      | physicalAddress_address | Via@ok_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    Then l'ente "Comune_1" richiede l'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B"
+    And l'operazione ha prodotto un errore con status code "404"
+
+
+  Scenario: [B2B_PA_ANALOGICO_LEGALFACT_15] Invio notifica e richiesta atto opponibile COMPLETELY_UNREACHABLE con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | DVNLRD52D15M059P |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR|
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    Then l'ente "Comune_1" richiede l'attestazione opponibile "COMPLETELY_UNREACHABLE"
+    And l'operazione ha prodotto un errore con status code "404"
