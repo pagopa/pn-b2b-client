@@ -636,15 +636,15 @@ public class RaddAltSteps {
                     }
                 }else if(ambiente.equalsIgnoreCase("test")){
                     if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("JEKU-RVGP-RZVJ-202402-A-1",destinatario);
+                        vieneRichiestoIlCodiceQRPerLoIUN("PLHW-VZJN-LTVW-202309-H-1",destinatario);
                     } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("ZHDG-DYJZ-HLGL-202402-T-1",destinatario);
+                        vieneRichiestoIlCodiceQRPerLoIUN("WKAG-WMDX-WNQR-202310-V-1",destinatario);
                     }
                 }else if(ambiente.equalsIgnoreCase("uat")){
                     if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("QWRJ-AQWJ-AYXQ-202310-E-1",destinatario);
+                        vieneRichiestoIlCodiceQRPerLoIUN("VZJA-EJGA-WXLN-202309-K-1",destinatario);
                     } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("EUYX-VKYV-JTEY-202310-G-1",destinatario);
+                        vieneRichiestoIlCodiceQRPerLoIUN("MRML-YMEV-WEMY-202309-P-1",destinatario);
                     }
                 }else if(ambiente.equalsIgnoreCase("hotfix")){
                     if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
