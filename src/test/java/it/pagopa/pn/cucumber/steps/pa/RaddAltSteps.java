@@ -53,8 +53,12 @@ public class RaddAltSteps {
     private String currentUserCf;
     private String recipientType;
 
-    @Value("${spring.profiles.active}")
-    private String ambiente;
+    @Value("${pn.iun.120gg.fieramosca}")
+    private String iunFieramosca120gg;
+    ;
+
+    @Value("${pn.iun.120gg.lucio}")
+    private String iunLucio120gg;
     private String operationid;
     private StartTransactionResponse startTransactionResponse;
     private StartTransactionResponse aorStartTransactionResponse;
@@ -628,33 +632,13 @@ public class RaddAltSteps {
                 vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun(), destinatario);
             }
             case "dopo 120gg" -> {
-                if(ambiente.equalsIgnoreCase("dev")){
                     if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("KMNG-VHZH-QEMZ-202310-M-1",destinatario);
-                    } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("PYRW-NMEZ-TGPZ-202310-Z-1",destinatario);
+                        vieneRichiestoIlCodiceQRPerLoIUN(this.iunFieramosca120gg, destinatario);
+                    }else if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getCucumberSpataxId())) {
+                        vieneRichiestoIlCodiceQRPerLoIUN(this.iunLucio120gg, destinatario);
+                    }else{
+                        throw new IllegalArgumentException();
                     }
-                }else if(ambiente.equalsIgnoreCase("test")){
-                    if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("PLHW-VZJN-LTVW-202309-H-1",destinatario);
-                    } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("WKAG-WMDX-WNQR-202310-V-1",destinatario);
-                    }
-                }else if(ambiente.equalsIgnoreCase("uat")){
-                    if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("VZJA-EJGA-WXLN-202309-K-1",destinatario);
-                    } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("MRML-YMEV-WEMY-202309-P-1",destinatario);
-                    }
-                }else if(ambiente.equalsIgnoreCase("hotfix")){
-                    if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getMarioCucumberTaxID())) {
-                        vieneRichiestoIlCodiceQRPerLoIUN("ALRA-XJDQ-TGKY-202311-U-1",destinatario);
-                    } else {
-                        vieneRichiestoIlCodiceQRPerLoIUN("RNAR-LXTN-AVZU-202310-L-1",destinatario);
-                    }
-                }else{
-                    throw new IllegalArgumentException();
-                }
 
             }
             default -> throw new IllegalArgumentException();
