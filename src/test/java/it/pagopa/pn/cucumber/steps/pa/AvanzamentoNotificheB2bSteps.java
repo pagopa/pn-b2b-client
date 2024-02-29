@@ -1903,41 +1903,12 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
 
-        TimelineElementCategoryV23 timelineElementInternalCategory;
+        PnPaB2bUtils.Pair<TimelineElementCategoryV23, LegalFactCategory> category = getTimelineCategoryAndLegalFactCategory(legalFactCategory, deliveryDetailCode);
+
+        TimelineElementCategoryV23 timelineElementInternalCategory= category.getValue1();
+        LegalFactCategory legalCategory = category.getValue2();
+
         TimelineElementV23 timelineElement = null;
-        LegalFactCategory category;
-        switch (legalFactCategory) {
-            case "SENDER_ACK":
-                timelineElementInternalCategory = TimelineElementCategoryV23.REQUEST_ACCEPTED;
-                category = LegalFactCategory.SENDER_ACK;
-                break;
-            case "RECIPIENT_ACCESS":
-                timelineElementInternalCategory = TimelineElementCategoryV23.NOTIFICATION_VIEWED;
-                category = LegalFactCategory.RECIPIENT_ACCESS;
-                break;
-            case "PEC_RECEIPT":
-                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_DIGITAL_PROGRESS;
-                category = LegalFactCategory.PEC_RECEIPT;
-                break;
-            case "DIGITAL_DELIVERY":
-                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_SUCCESS_WORKFLOW;
-                category = LegalFactCategory.DIGITAL_DELIVERY;
-                break;
-            case "DIGITAL_DELIVERY_FAILURE":
-                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_FAILURE_WORKFLOW;
-                category = LegalFactCategory.DIGITAL_DELIVERY;
-                break;
-            case "SEND_ANALOG_PROGRESS":
-                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_ANALOG_PROGRESS;
-                category = LegalFactCategory.ANALOG_DELIVERY;
-                break;
-            case "COMPLETELY_UNREACHABLE":
-                timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
-                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
 
         for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
 
@@ -1958,25 +1929,11 @@ public class AvanzamentoNotificheB2bSteps {
 
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
-            Assertions.assertEquals(category, timelineElement.getLegalFactsIds().get(0).getCategory());
+            Assertions.assertEquals(legalCategory, timelineElement.getLegalFactsIds().get(0).getCategory());
             LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
-            String keySearch = null;
-            //TODO Verificare....
-            if (key.contains("PN_LEGAL_FACTS")) {
-                keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
-            } else if (key.contains("PN_NOTIFICATION_ATTACHMENTS")) {
-                keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
-            } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
-                keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
-            } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
-                keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
-            } else if (key.contains("PN_F24")) {
-                keySearch = key.substring(key.indexOf("PN_F24"));
-            }
+            String finalKeySearch = getKeyLegalFact(key);
 
-
-            String finalKeySearch = keySearch;
             if (pa) {
 
                 Assertions.assertDoesNotThrow(() ->  this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
@@ -2089,45 +2046,16 @@ public class AvanzamentoNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        TimelineElementCategoryV23 timelineElementInternalCategory;
+        PnPaB2bUtils.Pair<TimelineElementCategoryV23, LegalFactCategory> category = getTimelineCategoryAndLegalFactCategory(legalFactCategory, deliveryDetailCode);
+
+        TimelineElementCategoryV23 timelineElementInternalCategory= category.getValue1();
+        LegalFactCategory legalCategory = category.getValue2();
+
+
         TimelineElementV23 timelineElement = null;
-        LegalFactCategory category;
-        switch (legalFactCategory) {
-            case "SENDER_ACK":
-                timelineElementInternalCategory = TimelineElementCategoryV23.REQUEST_ACCEPTED;
-                category = LegalFactCategory.SENDER_ACK;
-                break;
-            case "RECIPIENT_ACCESS":
-                timelineElementInternalCategory = TimelineElementCategoryV23.NOTIFICATION_VIEWED;
-                category = LegalFactCategory.RECIPIENT_ACCESS;
-                break;
-            case "PEC_RECEIPT":
-                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_DIGITAL_PROGRESS;
-                category = LegalFactCategory.PEC_RECEIPT;
-                break;
-            case "DIGITAL_DELIVERY":
-                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_SUCCESS_WORKFLOW;
-                category = LegalFactCategory.DIGITAL_DELIVERY;
-                break;
-            case "DIGITAL_DELIVERY_FAILURE":
-                timelineElementInternalCategory = TimelineElementCategoryV23.DIGITAL_FAILURE_WORKFLOW;
-                category = LegalFactCategory.DIGITAL_DELIVERY;
-                break;
-            case "SEND_ANALOG_PROGRESS":
-                timelineElementInternalCategory = TimelineElementCategoryV23.SEND_ANALOG_PROGRESS;
-                category = LegalFactCategory.ANALOG_DELIVERY;
-                break;
-            case "COMPLETELY_UNREACHABLE":
-                timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
-
-                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
-
 
         for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
+
             if (element.getCategory().equals(timelineElementInternalCategory)) {
                 if (deliveryDetailCode == null) {
                     timelineElement = element;
@@ -2143,18 +2071,11 @@ public class AvanzamentoNotificheB2bSteps {
             System.out.println("ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
-            Assertions.assertEquals(category, timelineElement.getLegalFactsIds().get(0).getCategory());
+            Assertions.assertEquals(legalCategory, timelineElement.getLegalFactsIds().get(0).getCategory());
             LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
-            String keySearch = null;
-            if (key.contains("PN_LEGAL_FACTS")) {
-                keySearch = key.substring(key.indexOf("PN_LEGAL_FACTS"));
-            } else if (key.contains("PN_NOTIFICATION_ATTACHMENTS")) {
-                keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
-            } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
-                keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
-            }
-            String finalKeySearch = keySearch;
+            String finalKeySearch = getKeyLegalFact(key);
+
             if (pa) {
                 Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(),  finalKeySearch));
             }
