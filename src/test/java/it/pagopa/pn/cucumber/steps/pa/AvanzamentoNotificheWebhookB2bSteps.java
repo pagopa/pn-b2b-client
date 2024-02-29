@@ -904,8 +904,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
+    @Then("non ci sono nuovi eventi nello stream  del {string} di timeline {string} con versione V23 e apiKey aggiornata con position {int}")
+    public void noyReadStreamTimelineElementNotFoundV23(String pa,String timelineEventCategory,Integer position)  {
+        readStreamTimelineElementV23(pa,timelineEventCategory, position,false);
+    }
+
     @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con versione V23 e apiKey aggiornata con position {int}")
-    public void readStreamTimelineElementV23(String pa,String timelineEventCategory,Integer position) {
+    public void readStreamTimelineElementFoundV23(String pa,String timelineEventCategory,Integer position) {
+        readStreamTimelineElementV23(pa,timelineEventCategory, position,true);
+    }
+
+
+    private void readStreamTimelineElementV23(String pa,String timelineEventCategory,Integer position, boolean found) {
         updateApiKeyForStream();
         setPaWebhook(pa);
 
@@ -926,8 +936,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
             sleepTest();
         }
-        try{
-            Assertions.assertNotNull(progressResponseElement);
+        try {
+            if (found){
+                Assertions.assertNotNull(progressResponseElement);
             progressResponseElementResultV23 = progressResponseElement;
             //TODO Verificare...
             Assertions.assertEquals(progressResponseElement.getElement().getTimestamp().truncatedTo(ChronoUnit.SECONDS),
@@ -935,6 +946,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                             .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().get().getTimestamp().truncatedTo(ChronoUnit.SECONDS));
             log.info("EventProgress: " + progressResponseElement);
             sharedSteps.setProgressResponseElementV23(progressResponseElement);
+            }else {
+                Assertions.assertNull(progressResponseElement);
+            }
             //sharedSteps.getTimelineElementV23().getDetails();
         }catch(AssertionFailedError assertionFailedError){
             String message = assertionFailedError.getMessage()+
@@ -943,10 +957,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    @Then("non ci sono nuovi eventi nello stream")
-    public void noyReadStreamTimelineElementV23() {
-        Assertions.assertNull(progressResponseElementResultV23);
-    }
 
 
 

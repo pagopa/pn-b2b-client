@@ -114,7 +114,7 @@ Feature: avanzamento notifiche webhook b2b V23
   Scenario: [B2B-STREAM_ES1.3_125_1] Consumo di uno stream notifica disabilitato senza gruppo, con eventType "STATUS"  utilizzando un apikey master (caso errato).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Verono            |
+      | senderDenomination | Comune di Verona            |
     And destinatario Mario Gherkin
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_2" senza gruppo
@@ -124,10 +124,14 @@ Feature: avanzamento notifiche webhook b2b V23
     And si disabilita lo stream V23 creato per il comune "Comune_2"
     And l'operazione non ha prodotto errori
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
-    When vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V23
-    Then non ci sono nuovi eventi nello stream
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then non ci sono nuovi eventi nello stream  del "Comune_2" di timeline "REQUEST_ACCEPTED" con versione V23 e apiKey aggiornata con position 0
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+
+
+
+
 
 
   @webhookV23 @cleanWebhook @webhook3
