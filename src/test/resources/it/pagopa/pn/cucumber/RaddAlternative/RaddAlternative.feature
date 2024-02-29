@@ -4,8 +4,8 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-1] PF - Scansione QR code esistente associato al CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -28,7 +28,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-3] PF - Scansione QR code inesistente
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -42,8 +42,8 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-4] PF - Scansione QR code esistente associato al CF sbagliato
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -56,8 +56,8 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-5] PF - Scansione documenti e creazione file zip
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
@@ -70,7 +70,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-6] PF - Stampa documenti disponibili associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -87,7 +87,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-7] PF - Consegna documenti al cittadino successivi alla stampa
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -106,7 +106,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-8] PF - Visualizzazione in timeline nuovo evento di avvenuta consegna documenti tramite RADD (NOTIFICATION_RADD_RETRIEVED)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -127,7 +127,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-9] PF - Restituzione errore - Documenti già stampati
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -148,7 +148,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-10] PF - Notifica annullata - Restituzione errore al tentativo di recupero documenti di notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -163,7 +163,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-11] PF - Restituzione errore - Documento non stampabile tra quelli disponibili nella lista dei documenti associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -180,7 +180,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-12] PG - Scansione QR code esistente associato al CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -203,7 +203,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-14] PG - Scansione QR code inesistente
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -216,7 +216,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-15] PG - Scansione QR code esistente associato al CF sbagliato
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -229,7 +229,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-16] PG - Scansione documenti e creazione file zip
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -241,7 +241,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-17] PG - Stampa documenti disponibili associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -257,7 +257,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-18] PG - Consegna documenti al cittadino successivi alla stampa
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -274,7 +274,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-19] PG - Visualizzazione in timeline nuovo evento di avvenuta consegna documenti tramite RADD (NOTIFICATION_RADD_RETRIEVED)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -295,7 +295,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-20] PG - Restituzione errore - Documenti già stampati
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -314,7 +314,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-21] PG - Notifica annullata - Restituzione errore al tentativo di recupero documenti di notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -329,7 +329,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-22] PG - Restituzione errore - Documento non stampabile tra quelli disponibili nella lista dei documenti associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -447,7 +447,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-29] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di milano            |
     And destinatario Signor casuale e:
       | digitalDomicile         | NULL                                         |
@@ -559,7 +559,7 @@ Feature: Radd Alternative
   @raddAltManuale @zip
   Scenario: [RADD-ALT_AOR-36] PG - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione stampa documenti associati alla notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di milano            |
     And destinatario Gherkin Irreperibile e:
       | digitalDomicile         | NULL                                         |
@@ -580,7 +580,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-37] PA - Visualizzazione in timeline nuovo evento di avvenuta consegna documenti tramite RADD (NOTIFICATION_RADD_RETRIEVED)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -599,7 +599,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-38] PA - Verifica notifiche visualizzate tramite RADD: stato Avvenuto Accesso non presente in timeline
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -621,7 +621,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-39] PF - Verifica notifiche visualizzate tramite RADD: stato Avvenuto Accesso non presente in timeline
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Gherkin
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -641,7 +641,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-40] PG - Verifica notifiche visualizzate tramite RADD: stato Avvenuto Accesso non presente in timeline
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -686,7 +686,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-48] PF - Recupero notifica con codice IUN esistente associato al CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -710,7 +710,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-50] PF -  Recupero notifica con codice IUN esistente associato a CF sbagliato
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -729,7 +729,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-52] PG - Recupero notifica con codice IUN esistente associato al CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -748,7 +748,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-54] PG -  Recupero notifica con codice IUN esistente associato a CF sbagliato
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -761,7 +761,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-55] PF - Scansione QR code esistente, associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -788,7 +788,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-56] PF - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -818,7 +818,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-57] PF -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -845,7 +845,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-58] PF - Recupero notifica con allegati di pagamento (due o più Avvisi PagoPA e due o più F24) con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -874,7 +874,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-59] PF/PG - Scansione QR code esistente, associato al CF corretto, per una notifica multi destinatario con allegati di pagamento (Avvisi PagoPA e F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -918,7 +918,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-60] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegati di pagamento (Avviso PagoPA e F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -946,7 +946,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-61] PG - Scansione QR code esistente, associato al CF corretto, per una notifica con allegato di pagamento (solo F24)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -974,7 +974,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-62] PG -  Recupero notifica con allegato di pagamento (solo Avviso PagoPA)  con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1000,7 +1000,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_ACT-63] PG - Recupero notifica con allegati di pagamento (due o più Avvisi PagoPA e due o più F24) con codice IUN esistente associato a CF corretto
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1027,7 +1027,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-64] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1054,7 +1054,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-65] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1081,7 +1081,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-66] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato un Avviso PagoPA
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1107,7 +1107,7 @@ Feature: Radd Alternative
   @raddAlt
   Scenario: [RADD-ALT_AOR-67] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegati due o più Avvisi PagoPA e due o più F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1134,7 +1134,7 @@ Feature: Radd Alternative
   @raddAltManuale
   Scenario: [RADD-ALT_AOR-68] PG - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1161,7 +1161,7 @@ Feature: Radd Alternative
   @raddAltManuale
   Scenario: [RADD-ALT_AOR-69] PG - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1187,7 +1187,7 @@ Feature: Radd Alternative
   @raddAltManuale
   Scenario: [RADD-ALT_AOR-70] PG - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato un Avviso PagoPA
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1213,7 +1213,7 @@ Feature: Radd Alternative
   @raddAltManuale
   Scenario: [RADD-ALT_AOR-71] PG - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegati due o più Avvisi PagoPA e due o più F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1239,7 +1239,7 @@ Feature: Radd Alternative
   @raddAltManuale @zip
   Scenario: [RADD-ALT_AOR-72] PF/PG - Notifica multi destinatario disponibile associata al CF corretto fornito dal destinatario (irreperibile totale) con allegati Avvisi PagoPA e F24
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
@@ -1282,7 +1282,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-73] PF -  Start di una ACT transaction con stesso operationId - ricezione Errore
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1339,7 +1339,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-75] PF -  Start di una ACT transaction con stesso operationId da cxId diversi - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1358,7 +1358,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-76] PF -  Start di una AOR transaction con stesso operationId da cxId diversi - ricezione OK
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Signor casuale e:
       | digitalDomicile         | NULL                                         |
@@ -1383,7 +1383,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-78] PF - Verifica restituzione al cittadino del documento Frontespizio (nome e cognome del destinatario) come primo documento del plico
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Signor casuale e:
       | digitalDomicile         | NULL                                         |
@@ -1402,7 +1402,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-79] PG - Verifica restituzione al cittadino del documento Frontespizio (ragione sociale dell'impresa destinataria) come primo documento del plico
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1543,7 +1543,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-86] PF - Stampa documenti disponibili associati a QR code esistente con CF corretto la cui notifica è in stato avvenuto accesso
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1563,7 +1563,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-87] PG - Stampa documenti disponibili associati a QR code esistente con CF corretto la cui notifica è in stato avvenuto accesso
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1584,7 +1584,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-88] PF - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1610,7 +1610,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-89] PG - Interruzione processo recupero atti e avvio nuovo processo su stessa notifica
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1637,7 +1637,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-90] PF - Recupero documenti allegati alla notifica: verifica presenza attributi (url, needAuth, categoria file)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario Mario Cucumber
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1657,7 +1657,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-91] PG - Recupero documenti allegati alla notifica: verifica presenza attributi (url, needAuth, categoria file)
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
     And destinatario CucumberSpa
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1676,7 +1676,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-92] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, ma inibizione 2 volte
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di milano            |
     And destinatario Signor casuale e:
       | digitalDomicile         | NULL                                         |
@@ -1696,7 +1696,7 @@ Feature: Radd Alternative
   @raddAlt @zip
   Scenario: [RADD-ALT_AOR-93] PF - Visualizzazione AAR di notifiche i cui documenti sono già stati stampati, inibizione poi complete
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
+      | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di milano            |
     And destinatario Signor casuale e:
       | digitalDomicile         | NULL                                         |
