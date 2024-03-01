@@ -2524,16 +2524,4 @@ public class SharedSteps {
     }
 
 
-    public void stampaPdfTramiteByte(byte[] file,String path){
-
-        try {
-            // Create file
-            OutputStream out = new FileOutputStream(path);
-            out.write(file);
-            out.close();
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-    }
-
 }

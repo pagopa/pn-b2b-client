@@ -669,7 +669,7 @@ public class RaddAltSteps {
 
     Assertions.assertNotNull(download);
 
-    sharedSteps.stampaPdfTramiteByte(download,"target/classes/frontespizio"+this.recipientType+".pdf");
+        pnPaB2bUtils.stampaPdfTramiteByte(download,"target/classes/frontespizio"+this.recipientType+".pdf");
     }
 
 
