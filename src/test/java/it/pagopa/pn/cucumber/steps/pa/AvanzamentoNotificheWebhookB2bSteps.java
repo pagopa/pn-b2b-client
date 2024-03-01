@@ -1734,33 +1734,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     }
 
-    private void createStreamInternalV23(UUID streamId, List<String> filteredValues,List<String> listGroups, boolean replaceId, String pa, StreamVersion streamVersion){
-        if (this.eventStreamListV23 == null) this.eventStreamListV23 = new LinkedList<>();
-
-        StreamCreationRequestV23 request = new StreamCreationRequestV23();
-        if (filteredValues != null && !filteredValues.isEmpty()) {
-            request.setFilterValues(filteredValues);
-        }
-        if (listGroups != null) {
-            request.setGroups(listGroups);
-        }
-
-        if (replaceId) {
-            request.setReplacedStreamId(sharedSteps.getEventStream().getStreamId());
-        }
-        try {
-            StreamMetadataResponseV23 eventStream = webhookB2bClient.createEventStreamV23(request);
-
-            if (replaceId) {
-                auditLogCreateStreamReplaced(streamId);
-            }
-            this.eventStreamListV23.add(eventStream);
-            addStreamId(pa, eventStream.getStreamId(), streamVersion);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-            sharedSteps.setNotificationError(e);
-        }
-    }
 
     private void auditLogCreateStreamReplaced (UUID streamId){
         StreamMetadataResponseV23 eventStreamV23 = Assertions.assertDoesNotThrow(() ->
