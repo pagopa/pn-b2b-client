@@ -1182,14 +1182,14 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | physicalAddress_municipality | <MUNICIPALITY>                    |
       | physicalAddress_province     | <PROVINCE>                        |
       | physicalAddress_zip          | <CAP>                             |
-      | payment_pagoPaForm           | NULL                              |
-      | apply_cost_pagopa            | NULL                                |
+      | payment_pagoPaForm           | NOALLEGATO                        |
       | payment_f24                  | PAYMENT_F24_SIMPLIFIED            |
       | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
       | apply_cost_f24               | SI                                |
       | payment_multy_number         | 120                               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    And viene verificato il costo = "<COSTO>" della notifica
     Examples:
-      | CAP   | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | MASSAQUANO   | NA       | notifica analogica FSU |
+      | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                |
+      | 80060 | 1164  | MASSAQUANO | NA       | notifica analogica FSU |
