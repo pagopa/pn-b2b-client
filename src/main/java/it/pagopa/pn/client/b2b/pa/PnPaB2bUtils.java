@@ -1697,6 +1697,7 @@ public class PnPaB2bUtils {
     }
 
 
+    //metodo per stampa pdf per verifiche manuali
     public void stampaPdfTramiteByte(byte[] file,String path){
 
         try {
