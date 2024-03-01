@@ -598,10 +598,6 @@ public class RaddAltSteps {
                 this.currentUserCf = sharedSteps.getGherkinIrreperibileTaxId();
                 this.recipientType="PG";
             }
-            case "DINO" -> {
-                this.currentUserCf = "DSRDNI00A01A225I";
-                this.recipientType="PF";
-            }
             default -> this.currentUserCf = cf;
         }
     }
