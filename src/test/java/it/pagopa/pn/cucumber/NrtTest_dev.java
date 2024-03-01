@@ -19,6 +19,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli",
             "costoAnalogico","Async", "f24", "version","AOO_UO", "Annullamento",
             "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
-            "legalFact", "letturaDestinatario","radd"})
+            "legalFact", "letturaDestinatario","partitaIva"})
 public class NrtTest_dev {
 }

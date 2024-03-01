@@ -15,6 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @IncludeTags({"workflowDigitale"})
-@ExcludeTags({"mockPec","mockNR","realNR"})
+@ExcludeTags({"mockPec","mockNR"})
 public class WorkflowDigitaleNoMockTest {
 }
