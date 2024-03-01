@@ -41,7 +41,6 @@ public class DataTableTypeUtil {
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
                                         NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
                                         NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
                 .pagoPaIntMode(
