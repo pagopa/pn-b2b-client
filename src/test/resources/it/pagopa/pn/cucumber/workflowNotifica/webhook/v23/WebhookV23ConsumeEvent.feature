@@ -37,6 +37,19 @@ Feature: avanzamento notifiche webhook b2b V23
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REFINEMENT" con versione V23 e apiKey aggiornata con position 0
     And Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23
+    #VERIFICA CHE EVENTID DI UNO STREAM CREATO CON REPLACEDID ABBIA UNO START COUNTER MAGGIORE O UGUALE A 1000
+    And si crea il nuovo stream V23 per il "Comune_1" con replaceId con un gruppo disponibile "NO_GROUPS"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Cucumber Analogic e:
+      | digitalDomicile_address | test@fail.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V23
+    Then viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23 maggiore 1000
+
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
