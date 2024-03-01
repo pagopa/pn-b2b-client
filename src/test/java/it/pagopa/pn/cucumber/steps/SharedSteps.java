@@ -42,9 +42,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.invoke.MethodHandles;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -2522,6 +2520,4 @@ public class SharedSteps {
     public void setProgressResponseElementV23(ProgressResponseElementV23 progressResponseElement) {
         this.progressResponseElementV23 = progressResponseElement;
     }
-
-
 }
