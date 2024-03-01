@@ -43,8 +43,8 @@ Feature: avanzamento notifiche webhook b2b V23
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
-    And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
+    And destinatario
+      | taxId | GLLGLL64B15G702I |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED" con la versione V23
