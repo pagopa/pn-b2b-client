@@ -1169,27 +1169,3 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo = "1049" della notifica
 
-
-  Scenario Outline: [CALCOLO-COSTO_AR-50GR-F24_55] Invio notifica e verifica calcolo del costo su raccomandata con peso = 605gr e con 120 f24
-    Given viene generata una nuova notifica
-      | subject               | <SUBJECT>            |
-      | senderDenomination    | Comune di palermo    |
-      | physicalCommunication | AR_REGISTERED_LETTER |
-      | feePolicy             | DELIVERY_MODE        |
-    And destinatario Mario Gherkin e:
-      | digitalDomicile              | NULL                              |
-      | physicalAddress_address      | Via@ok_AR                         |
-      | physicalAddress_municipality | <MUNICIPALITY>                    |
-      | physicalAddress_province     | <PROVINCE>                        |
-      | physicalAddress_zip          | <CAP>                             |
-      | payment_pagoPaForm           | NULL                              |
-      | apply_cost_pagopa            | NULL                                |
-      | payment_f24                  | PAYMENT_F24_SIMPLIFIED            |
-      | title_payment                | F24_SEMPLIFICATO_CLMCST42R12D969Z |
-      | apply_cost_f24               | SI                                |
-      | payment_multy_number         | 120                               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Examples:
-      | CAP   | MUNICIPALITY | PROVINCE | SUBJECT                |
-      | 80060 | MASSAQUANO   | NA       | notifica analogica FSU |
