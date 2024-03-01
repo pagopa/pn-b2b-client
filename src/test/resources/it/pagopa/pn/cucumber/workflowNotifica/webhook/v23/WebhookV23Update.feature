@@ -112,7 +112,7 @@ Feature: aggiornamento stream
     And l'apiKey viene cancellata
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
-    When si "stesso" un gruppo allo stream creato con versione "V23" per il comune "Comune_Multi" e apiKey aggiornata
+    When aggiornamento stream creato con versione "V23" per il comune "Comune_Multi" con apiKey master
     Then l'operazione non ha prodotto errori
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata

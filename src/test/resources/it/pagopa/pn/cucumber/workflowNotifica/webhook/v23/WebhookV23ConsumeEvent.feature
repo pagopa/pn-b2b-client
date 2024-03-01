@@ -7,7 +7,8 @@ Feature: avanzamento notifiche webhook b2b V23
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-    And destinatario Mario Gherkin
+    And destinatario
+      | taxId | GLLGLL64B15G702I |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_1" senza gruppo
     And viene impostata l'apikey appena generata
@@ -84,7 +85,8 @@ Feature: avanzamento notifiche webhook b2b V23
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Verono            |
-    And destinatario Mario Gherkin e:
+    And destinatario
+      | taxId | GLLGLL64B15G702I |
       | payment | NULL |
     And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_2" con il primo gruppo disponibile
