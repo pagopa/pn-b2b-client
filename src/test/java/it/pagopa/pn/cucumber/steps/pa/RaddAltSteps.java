@@ -55,7 +55,6 @@ public class RaddAltSteps {
 
     @Value("${pn.iun.120gg.fieramosca}")
     private String iunFieramosca120gg;
-    ;
 
     @Value("${pn.iun.120gg.lucio}")
     private String iunLucio120gg;
@@ -599,10 +598,6 @@ public class RaddAltSteps {
                 this.currentUserCf = sharedSteps.getGherkinIrreperibileTaxId();
                 this.recipientType="PG";
             }
-            case "DINO" -> {
-                this.currentUserCf = "DSRDNI00A01A225I";
-                this.recipientType="PF";
-            }
             default -> this.currentUserCf = cf;
         }
     }
@@ -669,6 +664,8 @@ public class RaddAltSteps {
 
 
     Assertions.assertNotNull(download);
+
+        pnPaB2bUtils.stampaPdfTramiteByte(download,"target/classes/frontespizio"+generateRandomNumber()+".pdf");
     }
 
 

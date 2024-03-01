@@ -24,9 +24,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -1694,6 +1693,20 @@ public class PnPaB2bUtils {
                         !fsn.getNotificationStatus().equals( NotificationStatus.CANCELLED )
         ) {
             throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
+        }
+    }
+
+
+    //metodo per stampa pdf per verifiche manuali
+    public void stampaPdfTramiteByte(byte[] file,String path){
+
+        try {
+            // Create file
+            OutputStream out = new FileOutputStream(path);
+            out.write(file);
+            out.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 
