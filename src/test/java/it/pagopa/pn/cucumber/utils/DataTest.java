@@ -2,9 +2,10 @@ package it.pagopa.pn.cucumber.utils;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 
 public class DataTest {
-    TimelineElementV20 timelineElement;
+    TimelineElementV23 timelineElement;
     boolean isFirstSendRetry;
     Integer progressIndex;
     Integer pollingTime;
@@ -19,11 +20,11 @@ public class DataTest {
         isFirstSendRetry = firstSendRetry;
     }
 
-    public TimelineElementV20 getTimelineElement() {
+    public TimelineElementV23 getTimelineElement() {
         return timelineElement;
     }
 
-    public void setTimelineElement(TimelineElementV20 timelineElement) {
+    public void setTimelineElement(TimelineElementV23 timelineElement) {
         this.timelineElement = timelineElement;
     }
 

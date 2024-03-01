@@ -7,7 +7,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
       | pagoPaIntMode      | SYNC                        |
-      | paFee              | NULL                        |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
@@ -23,7 +23,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | senderDenomination | Comune di milano            |
       | feePolicy          | FLAT_RATE                   |
       | pagoPaIntMode      | ASYNC                       |
-      | paFee              | NULL                        |
+      | paFee              | 10                          |
     And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
       | payment_pagoPaForm    | SI          |
@@ -101,7 +101,8 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_f24           | NULL        |
       | apply_cost_pagopa     | SI          |
       | payment_multy_number  | 1           |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
 
 
   @Async
@@ -524,7 +525,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario Mario Cucumber V1
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V1
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then si verifica lo scarto dell' acquisizione della notifica V1
 
   @version @Async

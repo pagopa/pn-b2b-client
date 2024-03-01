@@ -23,7 +23,6 @@ public class ApikeyManagerSteps {
 
     private final IPnApiKeyManagerClient apiKeyManagerClient;
     private final SharedSteps sharedSteps;
-    private final PnApiKeyManagerExternalClientImpl apiKeyManagerClientImpl;
     private ApiKeysResponse apiKeys;
     private RequestNewApiKey requestNewApiKey;
     private ResponseNewApiKey responseNewApiKey;
@@ -40,10 +39,9 @@ public class ApikeyManagerSteps {
     private String env;
 
     @Autowired
-    public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps,PnApiKeyManagerExternalClientImpl apiKeyManagerClientImpl) {
+    public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
         this.apiKeyManagerClient = apiKeyManagerClient;
-        this.apiKeyManagerClientImpl=apiKeyManagerClientImpl;
     }
 
     @Given("vengono lette le apiKey esistenti")
@@ -174,6 +172,8 @@ public class ApikeyManagerSteps {
     public void vieneImpostataLApikeyAppenaGenerataPerIl() {
         sharedSteps.getB2bClient().setApiKey(responseNewApiKey.getApiKey());
         sharedSteps.getB2bUtils().setClient(sharedSteps.getB2bClient());
+        sharedSteps.setRequestNewApiKey(requestNewApiKey);
+        sharedSteps.setResponseNewApiKey(responseNewApiKey);
     }
 
     @Then("l'invio della notifica non ha prodotto errori")
@@ -202,6 +202,7 @@ public class ApikeyManagerSteps {
         requestNewApiKey.setGroups(List.of(group));
         try {
             this.apiKeyManagerClient.newApiKey(requestNewApiKey);
+            sharedSteps.setRequestNewApiKey(requestNewApiKey);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             this.httpStatusCodeException = httpStatusCodeException;
         }
@@ -209,19 +210,24 @@ public class ApikeyManagerSteps {
 
     @Given("Viene creata una nuova apiKey per il comune {string} con il primo gruppo disponibile")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_il_primo_gruppo_disponibile(String settedPa) {
+        setBearerToken(settedPa);
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
 
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.FIRST);
-
         requestNewApiKey.setGroups(List.of(firstGroupUsed));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
+        sharedSteps.setRequestNewApiKey(requestNewApiKey);
+        sharedSteps.setResponseNewApiKey(responseNewApiKey);
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
+
+
     @Given("Viene creata una nuova apiKey per il comune {string} con due gruppi")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_due_gruppi(String settedPa) {
+        setBearerToken(settedPa);
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
 
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
@@ -231,28 +237,42 @@ public class ApikeyManagerSteps {
         requestNewApiKey.setGroups(List.of(firstGroupUsed,lastGroupUsed));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
+        sharedSteps.setRequestNewApiKey(requestNewApiKey);
+        sharedSteps.setResponseNewApiKey(responseNewApiKey);
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
     @Given("Viene creata una nuova apiKey per il comune {string} senza gruppo")
     public void viene_creata_una_nuova_api_key_per_il_comune_senza_gruppo(String settedPa) {
-        switch (settedPa) {
-            case "Comune_1":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
-                break;
-            case "Comune_Son":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.SON);
-                break;
-            case "Comune_Root":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
-                break;
-        }
+        setBearerToken(settedPa);
 
         requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
-        Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClientImpl.newApiKey(requestNewApiKey));
+        Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
+        sharedSteps.setRequestNewApiKey(requestNewApiKey);
+        sharedSteps.setResponseNewApiKey(responseNewApiKey);
         System.out.println("New ApiKey: " + responseNewApiKey);
+    }
+
+    private void setBearerToken(String settedPa){
+        switch (settedPa) {
+            case "Comune_1":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
+                break;
+            case "Comune_2":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
+                break;
+            case "Comune_Multi":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
+                break;
+            case "Comune_Son":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
+                break;
+            case "Comune_Root":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
+                break;
+        }
     }
 
     @Given("viene settato il gruppo della notifica con quello dell'apikey")
@@ -265,22 +285,33 @@ public class ApikeyManagerSteps {
         this.sharedSteps.getNotificationRequest().setSenderTaxId(this.responseNewApiKeyTaxId);
     }
 
+    @When("viene modificato lo stato dell'apiKey in {string} per il {string}")
+    public void vieneModificatoLoStatoDellApiKeyIn(String state, String settedPa) {
+        setBearerToken(settedPa);
+        RequestApiKeyStatus requestApiKeyStatus = getRequestApiKeyStatus(state);
+        Assertions.assertDoesNotThrow(() ->
+                apiKeyManagerClient.changeStatusApiKey(responseNewApiKey.getId(), requestApiKeyStatus));
+    }
+
     @Given("viene settato per la notifica corrente il primo gruppo valido del comune {string}")
     public void vieneSettatoIlPrimoGruppoValidoPerIlComune(String settedPa) {
+        setBearerToken(settedPa);
         firstGroupUsed = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.FIRST);
         this.sharedSteps.getNotificationRequest().setGroup(firstGroupUsed);
     }
 
     @Given("viene settato un gruppo differente da quello utilizzato nell'apikey per il comune {string}")
     public void vieneSettatoUnGruppoDifferenteDaQuelloUtilizzatoNellApikey(String settedPa) {
+        setBearerToken(settedPa);
         String group = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.LAST);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertTrue(!firstGroupUsed.equals(group));
         this.sharedSteps.getNotificationRequest().setGroup(group);
     }
 
-    @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente del invio notifica")
+    @Given("Viene creata una nuova apiKey per il comune {string} con gruppo differente (del invio notifica)(dallo stream)")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_differente_del_invio_notifica(String settedPa) {
+        setBearerToken(settedPa);
         String group = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.LAST);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertTrue(!firstGroupUsed.equals(group));
@@ -291,11 +322,16 @@ public class ApikeyManagerSteps {
         requestNewApiKey.setGroups(List.of(group));
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
+        sharedSteps.setRequestNewApiKey(requestNewApiKey);
+        sharedSteps.setResponseNewApiKey(responseNewApiKey);
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
+
+
     @Given("Viene creata una nuova apiKey per il comune {string} con gruppo uguale del invio notifica")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_gruppo_uguale_del_invio_notifica(String settedPa) {
+        setBearerToken(settedPa);
         String group = this.sharedSteps.getGroupIdByPa(settedPa, GroupPosition.FIRST);
         Assertions.assertNotNull(firstGroupUsed);
         Assertions.assertTrue(firstGroupUsed.equals(group));
@@ -332,13 +368,19 @@ public class ApikeyManagerSteps {
         sharedSteps.selectPA(settedPa);
         switch (settedPa){
             case "Comune_1":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
+                break;
+            case "Comune_2":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
+                break;
+            case "Comune_Multi":
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
                 break;
             case "Comune_Son":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.SON);
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.SON);
                 break;
             case "Comune_Root":
-                apiKeyManagerClientImpl.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
+                apiKeyManagerClient.setApiKeys(SettableApiKey.ApiKeyType.ROOT);
                 break;
         }
 

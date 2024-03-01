@@ -598,6 +598,17 @@ Feature: Api Service Cruscotto Assitenza
     And invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "Mario Cucumber" e iun "NO_SET" per il  destinatario 1
     And Il servizio risponde correttamente
 
+  @cruscottoAssistenza
+  Scenario: [API-SERVICE-CA_CE02.7_56_1] Invocazione del servizio con IUN (notifica mono destinatario) corretto e verifica risposta PN-9995
+    Given viene generata una nuova notifica
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
+    Then verifica IsMultiRecipients nel dettaglio notifica
+
+
     #Ogni Destinatario vede la sua Timeline...
 
     #CE02.8 Come operatore devo effettuare un check sulla disponibilità (nel momento della verifica), validità e dimensione degli allegati. (cancellazione a 120 gg)

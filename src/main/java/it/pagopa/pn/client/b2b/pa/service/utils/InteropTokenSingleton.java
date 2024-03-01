@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -15,10 +17,12 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_SINGLETON)
 @Slf4j
 public class InteropTokenSingleton implements InteropTokenRefresh{
 
@@ -53,26 +57,23 @@ public class InteropTokenSingleton implements InteropTokenRefresh{
         this.enableInterop = enableInterop;
     }
 
-    @Synchronized
+
     public String getTokenInterop(){
+        if(tokenInterop == null){
+           generateToken();
+        }
+        return tokenInterop;
+    }
+
+    @Synchronized
+    private void generateToken(){
         if(tokenInterop == null){
             tokenInterop = getBearerToken();
             tokenCreationDate = OffsetDateTime.now();
         }
-        return tokenInterop;
-        /*
-        if(tokenInterop != null && (Duration.between(tokenCreationDate, OffsetDateTime.now()).getSeconds() <= (60*8)) ){
-            return tokenInterop;
-        }else{
-            log.info("refresh interop token");
-            tokenInterop = getBearerToken();
-            tokenCreationDate = OffsetDateTime.now();
-            return tokenInterop;
-        }
-         */
     }
 
-    @Scheduled(cron = "0 0/01 * * * ?")
+    @Scheduled(cron = "0 0/03 * * * ?")
     public void refreshTokenInteropClient() {
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             log.info("refresh interop token");

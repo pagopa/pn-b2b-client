@@ -18,8 +18,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequestV21 convertNotificationRequest(Map<String, String> data){
-        NewNotificationRequestV21 notificationRequest = (new NewNotificationRequestV21()
+    public synchronized NewNotificationRequestV23 convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -39,15 +39,16 @@ public class DataTableTypeUtil {
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
 
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
                 .pagoPaIntMode(
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
-                                NewNotificationRequestV21.PagoPaIntModeEnum.SYNC :
+                                NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC:null
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:null
                                 ))));
 
         notificationRequest = addDocument(notificationRequest,data);
@@ -60,7 +61,7 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-    private NewNotificationRequestV21 addDocument(NewNotificationRequestV21 notificationRequest, Map<String, String> data) {
+    private NewNotificationRequestV23 addDocument(NewNotificationRequestV23 notificationRequest, Map<String, String> data) {
         String documentsToAdd = getValue(data,DOCUMENT.key);
         if( documentsToAdd == null){
             return notificationRequest.addDocumentsItem(null);
@@ -92,6 +93,7 @@ public class DataTableTypeUtil {
             case "DOC_8_PG" -> document = "classpath:/sample_8pg.pdf";
             case "DOC_50_PG" -> document = "classpath:/sample_50pg.pdf";
             case "DOC_100_PG" -> document = "classpath:/sample_100pg.pdf";
+            case "DOC_300_PG" -> document = "classpath:/sample_300pg.pdf";
             default ->  document = getDefaultValue(DOCUMENT.key);
         }
 
@@ -176,13 +178,59 @@ public class DataTableTypeUtil {
         return notificationRequestV2;
     }
 
+    @DataTableType
+    public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 convertNotificationRequestV21(Map<String, String> data){
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequest = (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21()
+                .subject(getValue(data,SUBJECT.key))
+                .cancelledIun(getValue(data,CANCELLED_IUN.key))
+                .group(getValue(data,GROUP.key))
+                .idempotenceToken(getValue(data,IDEMPOTENCE_TOKEN.key))
+                ._abstract(getValue(data,ABSTRACT.key))
+                .senderDenomination(getValue(data,SENDER_DENOMINATION.key))
+                .senderTaxId(getValue(data,SENDER_TAX_ID.key))
+                .paProtocolNumber(getValue(data,PA_PROTOCOL_NUMBER.key))
+                .taxonomyCode(getValue(data,TAXONOMY_CODE.key))
+                .amount(getValue(data, AMOUNT.key) == null ?  null : Integer.parseInt(getValue(data, AMOUNT.key)))
+                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ? null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
+                .notificationFeePolicy(
+                        (getValue(data,NOTIFICATION_FEE_POLICY.key) == null? null :
+                                (getValue(data,NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE")?
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationFeePolicy.FLAT_RATE :
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationFeePolicy.DELIVERY_MODE)))
+                .physicalCommunicationType(
+                        (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
+                                (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+
+                .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
+                .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
+                .addDocumentsItem( getValue(data,DOCUMENT.key) == null ? null : utils.newDocumentV21(getDefaultValue(DOCUMENT.key)))
+                .pagoPaIntMode(
+                        (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
+                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21.PagoPaIntModeEnum.SYNC :
+                                (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
+                                        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21.PagoPaIntModeEnum.ASYNC:null
+                                ))));
+
+        //.vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
+
+
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRequest;
+    }
+
 
     @DataTableType
-    public synchronized NotificationRecipientV21 convertNotificationRecipient(Map<String, String> data) {
+    public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
 
         List<NotificationPaymentItem> listPayment = new ArrayList<NotificationPaymentItem>();;
 
-        NotificationRecipientV21 notificationRecipient =  (new NotificationRecipientV21()
+        NotificationRecipientV23 notificationRecipient =  (new NotificationRecipientV23()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
@@ -203,8 +251,8 @@ public class DataTableTypeUtil {
                 )
                 .recipientType((getValue(data,RECIPIENT_TYPE.key) == null? null :
                         (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
-                                NotificationRecipientV21.RecipientTypeEnum.PF :
-                                NotificationRecipientV21.RecipientTypeEnum.PG)))
+                                NotificationRecipientV23.RecipientTypeEnum.PF :
+                                NotificationRecipientV23.RecipientTypeEnum.PG)))
 
                 //GESTIONE ISTANZE DI PAGAMENTI
 
@@ -491,6 +539,89 @@ public class DataTableTypeUtil {
     }
 
     @DataTableType
+    public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 convertNotificationRecipientV21(Map<String, String> data) {
+
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> listPayment = new ArrayList<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem>();
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 notificationRecipient =  (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21()
+                .denomination(getValue(data,DENOMINATION.key))
+                .taxId(getValue(data,TAX_ID.key))
+                //.internalId(getValue(data,INTERNAL_ID.key))
+                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress()
+                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                                null : it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress.TypeEnum.PEC ))
+                        .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
+                )
+                .physicalAddress(getValue(data,PHYSICAL_ADDRES.key) == null? null: new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPhysicalAddress()
+                        .address(getValue(data,PHYSICAL_ADDRESS_ADDRESS.key))
+                        .addressDetails(getValue(data,PHYSICAL_ADDRESS_DETAILS.key))
+                        .municipality(getValue(data,PHYSICAL_ADDRESS_MUNICIPALITY.key))
+                        .at(getValue(data,PHYSICAL_ADDRESS_AT.key))
+                        .municipalityDetails(getValue(data, PHYSICAL_ADDRESS_MUNICIPALITYDETAILS.key))
+                        .province(getValue(data,PHYSICAL_ADDRESS_PROVINCE.key))
+                        .foreignState(getValue(data,PHYSICAL_ADDRESS_STATE.key))
+                        .zip(getValue(data,PHYSICAL_ADDRESS_ZIP.key))
+                )
+                .recipientType((getValue(data,RECIPIENT_TYPE.key) == null? null :
+                        (getValue(data,RECIPIENT_TYPE.key).equalsIgnoreCase("PF")?
+                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum.PF :
+                                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum.PG)))
+
+                //GESTIONE ISTANZE DI PAGAMENTI
+
+        );
+
+        //N PAGAMENTI
+        if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
+            listPayment = new ArrayList<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem>();
+            for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
+                try {
+                    Thread.sleep(1000);
+                }
+                catch (InterruptedException exc) {
+                    throw new RuntimeException(exc);
+                }
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem addPaymentsItem = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem();
+                addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
+                        (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
+                                null :
+                                new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.PagoPaPayment()
+                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                        .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachmentV21(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
+
+                //LOAD METADATI F24
+                if (getValue(data,PAYMENT_F24.key)!= null && getValue(data,PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_FLAT")) {
+                    addPaymentsItem.f24(
+                            new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
+                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
+
+                } else if (getValue(data,PAYMENT_F24.key)!= null && getValue(data,PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD_0")) {
+                    addPaymentsItem.f24(
+                            new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
+                                    .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
+                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                    .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_0.json")));
+
+                }
+
+                listPayment.add(addPaymentsItem);
+            }
+            notificationRecipient.setPayments(listPayment);
+        }
+
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return notificationRecipient;
+    }
+
+    @DataTableType
     public synchronized DataTest convertTimelineElement(Map<String, String> data) throws JsonProcessingException {
         String recIndex = getValue(data, DETAILS_REC_INDEX.key);
         String sentAttemptMade = getValue(data, DETAILS_SENT_ATTEMPT_MADE.key);
@@ -510,12 +641,12 @@ public class DataTableTypeUtil {
         }
 
         DataTest dataTest = new DataTest();
-        TimelineElementV20 timelineElement = new TimelineElementV20()
+        TimelineElementV23 timelineElement = new TimelineElementV23()
                 .legalFactsIds(getListValue(LegalFactsId.class, data, LEGAL_FACT_IDS.key))
-                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV20()
+                .details(getValue(data, DETAILS.key) == null ? null : new TimelineElementDetailsV23()
                         .recIndex(recIndex != null ? Integer.parseInt(recIndex) : null)
                         .digitalAddress(getObjValue(DigitalAddress.class, data, DETAILS_DIGITAL_ADDRESS.key))
-                        .refusalReasons(getListValue(NotificationRefusedErrorV20.class, data, DETAILS_REFUSAL_REASONS.key))
+                        .refusalReasons(getListValue(NotificationRefusedErrorV23.class, data, DETAILS_REFUSAL_REASONS.key))
                         .generatedAarUrl(getValue(data, DETAILS_GENERATED_AAR_URL.key))
                         .responseStatus(responseStatus != null ? ResponseStatus.valueOf(responseStatus) : null)
                         .digitalAddressSource(digitalAddressSource != null ? DigitalAddressSource.valueOf(digitalAddressSource) : null)

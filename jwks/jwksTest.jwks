@@ -1,0 +1,12 @@
+{
+  "keys": [
+    {
+      "kty": "RSA",
+      "n": "zbDFFA-2PKJam996uolU93bHJf3pU_jh4nvp2RSiAybFld5tv7Ds6MxQRyZha7td7J2ol01HkNKrYqpsuvZSrKFuy1P7Pexky13gzoqmJfbXfci_a3eLpzOCY8Jj9N2a_86vxoaGBbRX12-_DIoTtt7F-9ylw9S6Zsv39HHUirz4XehNwKpCEeDHj0Z8KeUtPRMoYoqbCWi5d2bvYUiatP5CFMIO7nVO28Lxy01Yxs7qg4hP4DOVxzKH6BB0UEtakK_SzfBweakWMtzK_x2XUxh5JpGs9BvvPPvBolFz09yK_2qvdCTwI0fT_-YxyLqlPOUjQ_CaMLfYpPxstxg--xbV2FBGKGcxx3SuvahYJOLT6AHOGO0ozb4WOJLl77hxoKauyUEQnxdJGj-zsqZ3NDv4jwb3LFmXJ234AUhl-_M4AoEtf64NfqMq2SMyVO0mD0M6iuLhuxKA7aaiPYHds-P8nsjSFT3i5x1CGnwHOmuHmb0WTJ35s7ZZmPAdBJmZk2NEAMT42MJzI5XGjinrcIKVBTq0VT3Z3qKz0ydQfzV7yLCHxbbAXecoxdxig74v9Mol1rsuAApH8wdfexMqZf2WZ_2GSpCqTPV2ObVe71XV2LA2NkWuiOwMyhvp1t9JvGSSL4I9QM4t3UmDGmPyMeKlXizq5vBP50H7jOLq-s8",
+      "e": "AQAB",
+      "kid": "TA-kid",
+      "alg": "RS256",
+      "use": "sig"
+    }
+  ]
+}

@@ -1358,6 +1358,21 @@ public class ApiServiceDeskSteps {
         }
     }
 
+    @And("verifica IsMultiRecipients nel dettaglio notifica")
+    public void recuperoVerifyIsMultiRecipientsDettaglioNotifica() {
+        try {
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(notificationDetailResponse);
+            Assertions.assertFalse(notificationDetailResponse.getIsMultiRecipients());
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
+
     @And("invocazione servizio per recupero dettaglio timeline notifica con taxId {string} e iun {string}")
     public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String taxid, String iun) {
         try {

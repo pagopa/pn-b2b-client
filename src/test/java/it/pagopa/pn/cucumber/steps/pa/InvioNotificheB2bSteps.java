@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -47,26 +48,16 @@ public class InvioNotificheB2bSteps {
     @Value("${pn.retention.time.load}")
     private Integer retentionTimeLoad;
 
-    @Value("${pn.external.costo_base_notifica}")
-    private Integer costoBaseNotifica;
+
 
     private final PnPaB2bUtils b2bUtils;
     private final IPnWebPaClient webPaClient;
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl safeStorageClient;
     private final SharedSteps sharedSteps;
-    private final PnGPDClientImpl pnGPDClientImpl;
-
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
-    private List<PaymentPositionModel> paymentPositionModel;
-
     private PaymentResponse paymentResponse;
-    private PaymentPositionModelBaseResponse paymentPositionModelBaseResponse;
     private List<PaymentInfoV21> paymentInfoResponse;
-    private PaymentInfo paymentInfo;
-    private String DeleteGDPresponse;
-    private Integer amountGPD;
-    private List<Integer> amountNotifica;
     private NotificationDocument notificationDocumentPreload;
     private NotificationPaymentAttachment notificationPaymentAttachmentPreload;
     private NotificationMetadataAttachment notificationMetadataAttachment;
@@ -85,16 +76,13 @@ public class InvioNotificheB2bSteps {
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webPaClient = sharedSteps.getWebPaClient();
-        this.pnGPDClientImpl = sharedSteps.getPnGPDClientImpl();
         this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
-        this.paymentPositionModel=new ArrayList<PaymentPositionModel>();
-        this.amountNotifica=new ArrayList<Integer>();
     }
 
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
     public void notificationCanBeRetrievedWithIUN() {
-        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
             if (sharedSteps.getSentNotification()!= null) {
 
@@ -224,7 +212,7 @@ public class InvioNotificheB2bSteps {
 
             List<NotificationSearchRow> ricercaNotifiche= notificationByIun.get().getResultsPage();
 
-            FullSentNotificationV21 notifica120 = null;
+            FullSentNotificationV23 notifica120 = null;
 
             for(NotificationSearchRow notifiche :ricercaNotifiche){
 
@@ -301,7 +289,7 @@ public class InvioNotificheB2bSteps {
 
     @Then("la notifica viene recuperata dal sistema tramite codice IUN")
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
-        AtomicReference<FullSentNotificationV21> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
             notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
         } catch (HttpStatusCodeException e) {
@@ -400,7 +388,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElement(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getDocuments().size(); i++) {
@@ -415,7 +403,7 @@ public class InvioNotificheB2bSteps {
 
     @And("viene effettuato un controllo sulla durata della retention del F24 di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
@@ -428,9 +416,23 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @And("viene effettuato un controllo sul type zip attachment di {string} per l'elemento di timeline {string} con DOC {string}")
+    public void attachmentCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, String doc, @Transpose DataTest dataFromTest) throws InterruptedException {
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        switch (documentType) {
+            case "ATTACHMENTS":
+                Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
+                Assertions.assertTrue(doc.equalsIgnoreCase(timelineElement.getDetails().getAttachments().get(0).getDocumentType()));
+                Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getUrl().contains(".zip"));
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
     @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         switch (documentType) {
             case "ATTACHMENTS":
                 for (int i = 0; i < sharedSteps.getSentNotification().getRecipients().get(0).getPayments().size(); i++) {
@@ -448,7 +450,7 @@ public class InvioNotificheB2bSteps {
     @Given("viene letta la notifica {string} dal {string}")
     public void vieneLettaLaNotificaDal(String IUN, String pa) {
         sharedSteps.selectPA(pa);
-        FullSentNotificationV21 notificationByIun = b2bUtils.getNotificationByIun(IUN);
+        FullSentNotificationV23 notificationByIun = b2bUtils.getNotificationByIun(IUN);
         sharedSteps.setSentNotification(notificationByIun);
     }
 
@@ -456,6 +458,15 @@ public class InvioNotificheB2bSteps {
     public void retrievalAttemptedIUN(String IUN) {
         try {
             b2bUtils.getNotificationByIun(IUN);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @When("si tenta il recupero della notifica dal sistema")
+    public void retrievalAttemptedIUN() {
+        try {
+            b2bUtils.getNotificationByIun(new String(Base64Utils.decodeFromString(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -708,6 +719,12 @@ public class InvioNotificheB2bSteps {
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
+    @Then("l'operazione non ha prodotto errori")
+    public void operationProducedNotAnError() {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertNull(httpStatusCodeException);
+    }
+
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void correctAcquisitionNotification() {
@@ -846,16 +863,21 @@ public class InvioNotificheB2bSteps {
     }
 
     private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        NewNotificationRequestStatusResponseV21 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         logger.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());
     }
 
 
-
-
-
+    @And("la notifica non può essere annullata dal sistema tramite codice IUN")
+    public void notificationCaNotBeCanceledWithIUN() {
+        try {
+            sharedSteps.getB2bClient().notificationCancellation(new String(Base64Utils.decodeFromString(this.sharedSteps.getNewNotificationResponse().getNotificationRequestId())));
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
 
     //Annullamento Notifica
     @And("la notifica non può essere annullata dal sistema tramite codice IUN più volte")
@@ -877,398 +899,11 @@ public class InvioNotificheB2bSteps {
         //Assertions.assertNull(assertionFailedError);
     }
 
-    private String generateRandomIuv(){
-        int randomSleepToRandomize = new Random().nextInt(100);
-        try {
-            Thread.sleep(randomSleepToRandomize);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        String threadNumber = (Thread.currentThread().getId()+"");
-        String numberOfThread = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
-        String timeNano = System.nanoTime()+"";
-        String iuv = String.format("47%13s44", (numberOfThread+timeNano).substring(0,13));
-        logger.info("Iuv generato: " + iuv);
-        return iuv;
-    }
-
-    @And("viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore {string} e amount {string} per {string} con (CF)(Piva) {string}")
-    public void vieneCreataUnaPosizioneDebitoria(String organitationCode,String amount,String name,String taxId) {
-        String iuv = generateRandomIuv();
-        logger.info("IUPD generate: " + organitationCode +"-64c8e41bfec846e04"+ iuv, System.currentTimeMillis());
-        sharedSteps.addIuvGPD(iuv);
-
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
-        PaymentPositionModel paymentPositionModelSend = new PaymentPositionModel()
-                .iupd(String.format(organitationCode+"-64c8e41bfec846e04"+  iuv, System.currentTimeMillis()))
-                .type(PaymentPositionModel.TypeEnum.F)
-                .companyName("Automation")
-                .fullName(name)
-                .fiscalCode(taxId)
-                .addPaymentOptionItem(new PaymentOptionModel()
-                        .iuv(iuv)
-                        .amount(Long.parseLong(amount))
-                        .description("Test Automation")
-                        .isPartialPayment(false)
-                        .dueDate(new StringBuilder(dateTimeFormatter.format(OffsetDateTime.now().plusDays(2))))
-                        .retentionDate(new StringBuilder(dateTimeFormatter.format(OffsetDateTime.now().plusDays(2))))
-                        .addTransferItem(new TransferModel()
-                                .idTransfer(TransferModel.IdTransferEnum._1)
-                                .organizationFiscalCode(organitationCode)
-                                .amount(Long.parseLong(amount))
-                                .remittanceInformation("Test Automation")
-                                .category("9/0301100TS/")
-                                .iban("IT30N0103076271000001823603")));
-
-        logger.info("Request: " + paymentPositionModelSend.toString());
-        amountNotifica.add(Integer.parseInt(amount));
-        try {
-
-            Assertions.assertDoesNotThrow(() -> {
-                paymentPositionModel.add(pnGPDClientImpl.createPosition(organitationCode, paymentPositionModelSend, null, true));
-            });
-
-            Assertions.assertNotNull(paymentPositionModel);
-            Assertions.assertNotNull(amountNotifica);
-            logger.info("Request: " + paymentPositionModel);
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModel == null ? "NULL" : paymentPositionModel.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @And("lettura amount posizione debitoria per la notifica corrente di {string}")
-    public void letturaAmountPosizioneDebitoria(String user) {
-        PaymentPositionModel postionUser = new PaymentPositionModel();
-        for(PaymentPositionModel position: paymentPositionModel){
-            if(position.getFullName().equalsIgnoreCase(user)){
-                postionUser=position;
-            }
-        }
-
-        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
-
-        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-                .creditorTaxId(postionUser.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode())
-                .noticeCode("3"+postionUser.getPaymentOption().get(0).getIuv());
-
-        paymentInfoRequestList.add(paymentInfoRequest);
-
-        logger.info("User: " + postionUser);
-        logger.info("Messaggio json da allegare: " + paymentInfoRequest);
-        for(int i=0; i< NUM_CHECK_PAYMENT_INFO ;i++) {
-            try {
-                Assertions.assertDoesNotThrow(() -> {
-                    paymentInfoResponse = pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                    logger.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
-                });
-                Assertions.assertNotNull(paymentInfoResponse);
-                if(amountGPD != paymentInfoResponse.get(0).getAmount()){
-                    amountGPD = paymentInfoResponse.get(0).getAmount();
-                    break;
-                }
-                try {
-                    Thread.sleep(WAITING_PAYMENT_INFO);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-            } catch (AssertionFailedError assertionFailedError) {
-                String message = assertionFailedError.getMessage() +
-                        "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-            }
-        }
-    }
-
-    @And("lettura amount posizione debitoria per pagamento {int}")
-    public void letturaAmountPosizioneDebitoria(Integer pagamento) {
-
-        PaymentPositionModel postionUser = paymentPositionModel.get(pagamento);
-
-
-        List<PaymentInfoRequest> paymentInfoRequestList= new ArrayList<PaymentInfoRequest>();
-
-        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-                .creditorTaxId(postionUser.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode())
-                .noticeCode("3"+postionUser.getPaymentOption().get(0).getIuv());
-
-        paymentInfoRequestList.add(paymentInfoRequest);
-
-        logger.info("User: " + postionUser);
-        logger.info("Messaggio json da allegare: " + paymentInfoRequest);
-
-
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                paymentInfoResponse= pnPaymentInfoClientImpl.getPaymentInfoV21(paymentInfoRequestList);
-                logger.info("Risposta recupero posizione debitoria: " + paymentInfoResponse.toString());
-            });
-            Assertions.assertNotNull(paymentInfoResponse);
-
-            amountGPD=paymentInfoResponse.get(0).getAmount();
-            Assertions.assertNotNull(amountGPD);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-
-    @And("viene cancellata la posizione debitoria di {string}")
-    public void vieneCancellataLaPosizioneDebitoria(String user) {
-
-
-        try {
-
-            for(PaymentPositionModel position: paymentPositionModel){
-                if(position.getFullName().equalsIgnoreCase(user)){
-                    Assertions.assertDoesNotThrow(() -> {
-                        DeleteGDPresponse = pnGPDClientImpl.deletePosition(position.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), position.getIupd(), null);
-                    });
-                }
-
-            }
-
-            Assertions.assertNotNull(DeleteGDPresponse);
-            logger.info("Risposta evento cancellazione: " + DeleteGDPresponse);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (DeleteGDPresponse == null ? "NULL" : DeleteGDPresponse) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-
-    @And("viene cancellata la posizione debitoria del pagamento {int}")
-    public void vieneCancellataLaPosizioneDebitoriaDelPagamento(Integer pagamento) {
-
-
-        try {
-
-            Assertions.assertDoesNotThrow(() -> {
-                DeleteGDPresponse = pnGPDClientImpl.deletePosition(paymentPositionModel.get(pagamento).getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), paymentPositionModel.get(pagamento).getIupd(), null);
-            });
-
-
-            Assertions.assertNotNull(DeleteGDPresponse);
-            logger.info("Risposta evento cancellazione: " + DeleteGDPresponse);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (DeleteGDPresponse == null ? "NULL" : DeleteGDPresponse) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @And("vengono cancellate le posizioni debitorie")
-    public void vengonoCancellateLaPosizioniDebitorie() {
-
-
-        try {
-
-            for(PaymentPositionModel paymentPositionModelUser :paymentPositionModel) {
-                Assertions.assertDoesNotThrow(() -> {
-                    DeleteGDPresponse = pnGPDClientImpl.deletePosition(paymentPositionModelUser.getPaymentOption().get(0).getTransfer().get(0).getOrganizationFiscalCode(), paymentPositionModelUser.getIupd(), null);
-                });
-            }
-
-            Assertions.assertNotNull(DeleteGDPresponse);
-            logger.info("Risposta evento cancellazione: " + DeleteGDPresponse);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (DeleteGDPresponse == null ? "NULL" : DeleteGDPresponse) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-
-
-    @And("viene effettuato il controllo del amount di GPD = {string}")
-    public void vieneEffettuatoIlControlloDelAmountDiGPD(String amount) {
-
-        try {
-            logger.info("Amount GPD: "+amountGPD);
-            Assertions.assertEquals(amountGPD,Integer.parseInt(amount));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-
-    @And("viene effettuato il controllo del amount di GPD con amount notifica del (utente)(pagamento) {int}")
-    public void vieneEffettuatoIlControlloDelAmountDiGPDConAmountNotifica(Integer user) {
-
-        try {
-
-            Assertions.assertEquals(amountGPD,amountNotifica.get(user));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int}")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory,Integer user) {
-
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,null);
-
-        amountNotifica.set(user,amountNotifica.get(user) + timelineElement.getDetails().getAnalogCost());
-
-
-        try {
-
-            Assertions.assertEquals(amountGPD,amountNotifica.get(user));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,@Transpose DataTest dataFromTest ) {
-
-        TimelineElementV20 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory,dataFromTest);
-
-        amountNotifica.set(user,amountNotifica.get(user) + timelineElement.getDetails().getAnalogCost());
-
-
-        try {
-
-            Assertions.assertEquals(amountGPD,amountNotifica.get(user));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @Then("viene effettuato il controllo dell'aggiornamento del costo totale del utente {int}")
-    public void vieneEffettuatoIlControlloDelCambiamentoDelCostoTotale(Integer user) {
-        try {
-            logger.info("Costo base presente su Notifica"+amountNotifica.get(user));
-            logger.info("Costo base presente su GPD"+amountGPD);
-
-            Assertions.assertEquals(amountGPD,amountNotifica.get(user));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-
-    //dopo accettato amount_gpd + 100 (costo base) + pafee
-    //Ogni elemento di timeline analogico ha un analog cost per ogni elemento va verificato che aumenti di  + analog_cost.
-    //se riufiutata amount_gpd
-    @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
-    public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
-        FullSentNotificationV21 sentNotification = sharedSteps.getSentNotification();
-        Integer analogCost = 0;
-        for(TimelineElementV20 timelineElem: sentNotification.getTimeline()){
-            Integer currentCost = timelineElem.getDetails() == null ? Integer.valueOf(0) : timelineElem.getDetails().getAnalogCost();
-            if(currentCost!= null && currentCost > 0)analogCost+=currentCost;
-        }
-        Integer paFee = sentNotification.getPaFee();
-        Integer costoBaseSend = this.costoBaseNotifica;
-        Integer amountGpd = amountNotifica.get(0);
-
-        Integer costoTotale = amountGpd + costoBaseSend + (paFee == null ? 0 : paFee) + analogCost;
-
-        String creditorTaxId = Assertions.assertDoesNotThrow(()->sentNotification.getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
-        String noticeCode = Assertions.assertDoesNotThrow(()->sentNotification.getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
-        Assertions.assertNotNull(creditorTaxId);
-        Assertions.assertNotNull(noticeCode);
-
-        PaymentInfoRequest paymentInfoRequest = new PaymentInfoRequest()
-                .creditorTaxId(creditorTaxId)
-                .noticeCode(noticeCode);
-
-        paymentInfoResponse = Assertions.assertDoesNotThrow(() -> pnPaymentInfoClientImpl.getPaymentInfoV21(Collections.singletonList(paymentInfoRequest)));
-        Assertions.assertNotNull(paymentInfoResponse);
-        System.out.println("Costo totale previsto: {}"+costoTotale);
-        System.out.println("Costo attuale su gpd: {}"+paymentInfoResponse.get(0).getAmount());
-        Assertions.assertEquals(costoTotale,paymentInfoResponse.get(0).getAmount());
-    }
-
-    @And("viene aggiunto il costo della notifica totale del utente {int}")
-    public void vieneAggiuntoIlCostoDellaNotificaTotaleAlUtente(Integer user) {
-
-        try {
-
-            for(int i=0;i<amountNotifica.size();i++) {
-                Assertions.assertDoesNotThrow(() -> {
-                    amountNotifica.set(user, sharedSteps.getSentNotification().getAmount() + sharedSteps.getSentNotification().getPaFee());
-                });
-            }
-            Assertions.assertNotNull(amountNotifica.get(user));
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
-
-    @And("viene aggiunto il costo della notifica totale")
-    public void vieneAggiuntoIlCostoDellaNotificaTotale() {
-        try {
-            for(int i=0;i<amountNotifica.size();i++) {
-                int costototale = costoBaseNotifica+ sharedSteps.getSentNotification().getPaFee();
-                logger.info("Amount+costo base:"+costototale);
-                amountNotifica.set(i, amountNotifica.get(i) + costototale);
-            }
-            Assertions.assertNotNull(amountNotifica);
-
-        } catch (AssertionFailedError assertionFailedError) {
-
-            String message = assertionFailedError.getMessage() +
-                    "{la posizione debitoria " + (paymentPositionModelBaseResponse == null ? "NULL" : paymentPositionModelBaseResponse.toString()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-
-        }
-    }
 
 
     @And("l'avviso pagopa viene pagato correttamente su checkout")
     public void laNotificaVienePagatasuCheckout() {
-        NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
+        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
                 sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
 
         PaymentRequest paymentRequest= new PaymentRequest();
@@ -1276,7 +911,7 @@ public class InvioNotificheB2bSteps {
         paymentNotice.noticeNumber( sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
         paymentNotice.fiscalCode(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
         paymentNotice.companyName("Test Automation");
-        paymentNotice.amount(100);
+        paymentNotice.amount(notificationPrice.getTotalPrice());
         paymentNotice.description("Test Automation Desk");
         paymentRequest.paymentNotice(paymentNotice);
         paymentRequest.returnUrl("https://api.uat.platform.pagopa.it");

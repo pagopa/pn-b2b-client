@@ -47,7 +47,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then si verifica la corretta acquisizione della notifica V2
 
 
@@ -60,7 +60,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
   @version @ignore
@@ -72,7 +72,7 @@ Feature: verifica compatibilità tra v2 a v2.1
     And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | NULL |
       | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
@@ -98,7 +98,7 @@ Feature: verifica compatibilità tra v2 a v2.1
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Cucumber V2
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED V2
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then si verifica la corretta acquisizione della notifica V2
     And "Mario Cucumber" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica

@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.utils.WebhookSynchronizer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -37,7 +38,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnServiceDeskClientImplWrongApiKey.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
-        PnRaddFsuClientImpl.class
+        PnRaddFsuClientImpl.class,
+        PnRaddAlternativeClientImpl.class
 })
 @EnableScheduling
 public class CucumberSpringIntegration {

@@ -166,8 +166,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
 
 
-    public FullReceivedNotificationV21 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationV21(iun, mandateId);
+    public FullReceivedNotificationV23 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return recipientReadApi.getReceivedNotificationV23(iun, mandateId);
     }
 
 
