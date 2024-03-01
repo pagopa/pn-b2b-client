@@ -147,10 +147,6 @@ Feature: avanzamento notifiche webhook b2b V23
     And l'apiKey viene cancellata
 
 
-
-
-
-
   @webhookV23 @cleanWebhook @webhook3
   Scenario: [B2B-STREAM_ES1.2_124] Verifica corretta scrittura degli eventi di una notifica creata con un apikey master, dove l’evento stesso deve essere salvato solo negli stream senza gruppi.
     Given viene generata una nuova notifica
