@@ -55,7 +55,6 @@ public class RaddAltSteps {
 
     @Value("${pn.iun.120gg.fieramosca}")
     private String iunFieramosca120gg;
-    ;
 
     @Value("${pn.iun.120gg.lucio}")
     private String iunLucio120gg;
@@ -669,6 +668,8 @@ public class RaddAltSteps {
 
 
     Assertions.assertNotNull(download);
+
+    sharedSteps.stampaPdfTramiteByte(download,"target/classes/frontespizio"+this.recipientType+".pdf");
     }
 
 
