@@ -1201,9 +1201,6 @@ public class SharedSteps {
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
-                //TODO Eliminare
-                notificationRequest.setPaFee(0);
-                notificationRequest.setVat(22);
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
                 try {
