@@ -3,6 +3,7 @@ Feature: verifica creazione stream
   Scenario: [ONLY_FOR_DEBUG] Cancellazione stream notifica
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23" - ONLY FOR DEBUG
     Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V23" - ONLY FOR DEBUG
+    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V23" - ONLY FOR DEBUG
 
   #--------------CREAZIONE DI UNO STREAM--------------------
   @webhookV23 @cleanWebhook @webhook2
