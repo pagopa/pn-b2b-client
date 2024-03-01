@@ -440,7 +440,14 @@ Feature: Radd Alternative
 
   @raddAlt
   Scenario: [RADD-ALT_AOR-28] PF - Restituzione errore - nessuna Notifica disponibile in stato Irreperibile associata al CF corretto
-    When la persona fisica "DINO" chiede di verificare la presenza di notifiche
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative  |
+      | senderDenomination | Comune di milano            |
+    And destinatario Signor casuale
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When la persona fisica "Signor Casuale" chiede di verificare la presenza di notifiche
     Then La verifica della presenza di notifiche in stato irreperibile genera un errore "Non ci sono notifiche non consegnate per questo codice fiscale" con codice 99 su radd alternative
 
 

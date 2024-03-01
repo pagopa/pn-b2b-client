@@ -193,7 +193,8 @@ Feature: replace streamID webhook
 #CONTROLLARE IL CORRETTO COMPORTAMENTO
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_117]  Creazione per una PA di 10 nuovi stream notifica con eventType TIMELINE e senza gruppo, disabilitazione di uno stream e creazione di un nuovo stream.
-    Given si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
+    And si predispone 10 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
