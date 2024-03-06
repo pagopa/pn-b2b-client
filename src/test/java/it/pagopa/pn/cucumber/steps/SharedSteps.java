@@ -13,6 +13,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -21,7 +22,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
@@ -140,43 +141,7 @@ public class SharedSteps {
 
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
-
-    @Value("${pn.configuration.workflow.wait.millis:31000}")
-    private Integer workFlowWait;
-
-    @Value("${pn.configuration.wait.millis:10000}")
-    private Integer wait;
-
-    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
-    private Duration schedulingDaysSuccessDigitalRefinement;
-
-    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
-    private Duration schedulingDaysFailureDigitalRefinement;
-
-    @Value("${pn.configuration.scheduling.days.success.analog.refinement:2m}")
-    private Duration schedulingDaysSuccessAnalogRefinement;
-
-    @Value("${pn.configuration.scheduling.days.failure.analog.refinement:2m}")
-    private Duration schedulingDaysFailureAnalogRefinement;
-
-    @Value("${pn.configuration.second.notification.workflow.waiting.time:6m}")
-    private Duration secondNotificationWorkflowWaitingTime;
-
-    @Value("${pn.configuration.non.visibility.time:10m}")
-    private Duration timeToAddInNonVisibilityTimeCase;
-
-    @Value("${pn.configuration.waiting.for.read.courtesy.message:5m}")
-    private Duration waitingForReadCourtesyMessage;
-
-    @Value("${pn.configuration.scheduling.days.success.digital.refinement:6m}")
-    private String schedulingDaysSuccessDigitalRefinementString;
-
-    @Value("${pn.configuration.scheduling.days.failure.digital.refinement:6m}")
-    private String schedulingDaysFailureDigitalRefinementString;
-
-    @Value("${pn.configuration.scheduling.delta.millis.pagopa:100}")
-    private String schedulingDelta;
-
+    private final PnB2bClientTimingConfigs timingConfigs;
     private String schedulingDeltaDefault = "500";
 
     private final Integer workFlowWaitDefault = 31000;
@@ -241,7 +206,8 @@ public class SharedSteps {
                        PnExternalServiceClientImpl pnExternalServiceClient,
                        IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webClient,
                        PnServiceDeskClientImpl serviceDeskClient, PnServiceDeskClientImplNoApiKey serviceDeskClientImplNoApiKey,
-                       PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey, PnGPDClientImpl pnGPDClientImpl, PnPaymentInfoClientImpl pnPaymentInfoClientImpl) {
+                       PnServiceDeskClientImplWrongApiKey serviceDeskClientImplWrongApiKey, PnGPDClientImpl pnGPDClientImpl,
+                       PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs) {
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webClient = webClient;
@@ -255,6 +221,8 @@ public class SharedSteps {
         this.pnGPDClientImpl = pnGPDClientImpl;
         this.pnPaymentInfoClientImpl = pnPaymentInfoClientImpl;
         this.iuvGPD = new ArrayList<String>();
+
+        this.timingConfigs = timingConfigs;
     }
 
     @BeforeAll
@@ -2079,13 +2047,13 @@ public class SharedSteps {
 
 
     public Integer getWorkFlowWait() {
-        if (workFlowWait == null) return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
-        return workFlowWait + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
+        if (timingConfigs.getWorkflowWaitMillis() == null) return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
+        return timingConfigs.getWorkflowWaitMillis() + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
     }
 
     public Integer getWait() {
-        if (wait == null) return waitDefault + secureRandom.nextInt(WAIT_UPPER_BOUND);
-        return wait + secureRandom.nextInt(WAIT_UPPER_BOUND);
+        if (timingConfigs.getWaitMillis() == null) return waitDefault + secureRandom.nextInt(WAIT_UPPER_BOUND);
+        return timingConfigs.getWaitMillis() + secureRandom.nextInt(WAIT_UPPER_BOUND);
     }
 
     public String getDigitalAddressValue() {
@@ -2095,38 +2063,38 @@ public class SharedSteps {
     }
 
     public Duration getSchedulingDaysSuccessDigitalRefinement() {
-        if (schedulingDaysSuccessDigitalRefinement == null) return schedulingDaysSuccessDigitalRefinementDefault;
-        return schedulingDaysSuccessDigitalRefinement;
+        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null) return schedulingDaysSuccessDigitalRefinementDefault;
+        return timingConfigs.getSchedulingDaysSuccessDigitalRefinement();
     }
 
     public Duration getSchedulingDaysFailureDigitalRefinement() {
-        if (schedulingDaysFailureDigitalRefinement == null) return schedulingDaysFailureDigitalRefinementDefault;
-        return schedulingDaysFailureDigitalRefinement;
+        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null) return schedulingDaysFailureDigitalRefinementDefault;
+        return timingConfigs.getSchedulingDaysFailureDigitalRefinement();
     }
 
     public Duration getSchedulingDaysSuccessAnalogRefinement() {
-        if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysSuccessAnalogRefinementDefault;
-        return schedulingDaysSuccessAnalogRefinement;
+        if (timingConfigs.getSchedulingDaysSuccessAnalogRefinement() == null) return schedulingDaysSuccessAnalogRefinementDefault;
+        return timingConfigs.getSchedulingDaysSuccessAnalogRefinement();
     }
 
     public Duration getSchedulingDaysFailureAnalogRefinement() {
-        if (schedulingDaysSuccessAnalogRefinement == null) return schedulingDaysFailureAnalogRefinementDefault;
-        return schedulingDaysFailureAnalogRefinement;
+        if (timingConfigs.getSchedulingDaysFailureAnalogRefinement() == null) return schedulingDaysFailureAnalogRefinementDefault;
+        return timingConfigs.getSchedulingDaysFailureAnalogRefinement();
     }
 
     public Duration getTimeToAddInNonVisibilityTimeCase() {
-        if (schedulingDaysSuccessDigitalRefinement == null) return timeToAddInNonVisibilityTimeCaseDefault;
-        return timeToAddInNonVisibilityTimeCase;
+        if (timingConfigs.getNonVisibilityTime() == null) return timeToAddInNonVisibilityTimeCaseDefault;
+        return timingConfigs.getNonVisibilityTime();
     }
 
     public Duration getSecondNotificationWorkflowWaitingTime() {
-        if (secondNotificationWorkflowWaitingTime == null) return secondNotificationWorkflowWaitingTimeDefault;
-        return secondNotificationWorkflowWaitingTime;
+        if (timingConfigs.getSecondNotificationWorkflowWaitingTime() == null) return secondNotificationWorkflowWaitingTimeDefault;
+        return timingConfigs.getSecondNotificationWorkflowWaitingTime();
     }
 
     public Duration getWaitingForReadCourtesyMessage() {
-        if (waitingForReadCourtesyMessage == null) return waitingForReadCourtesyMessageDefault;
-        return waitingForReadCourtesyMessage;
+        if (timingConfigs.getWaitingForReadCourtesyMessage() == null) return waitingForReadCourtesyMessageDefault;
+        return timingConfigs.getWaitingForReadCourtesyMessage();
     }
 
     @Before("@integrationTest")
@@ -2381,21 +2349,21 @@ public class SharedSteps {
     }
 
     public String getSchedulingDaysFailureDigitalRefinementString() {
-        if (schedulingDaysFailureDigitalRefinementString == null) {
+        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null) {
             return schedulingDaysFailureDigitalRefinementDefaultString;
         }
-        return schedulingDaysFailureDigitalRefinementString;
+        return String.valueOf(timingConfigs.getSchedulingDaysFailureDigitalRefinement());
     }
 
     public String getSchedulingDaysSuccessDigitalRefinementString() {
-        if (schedulingDaysSuccessDigitalRefinementString == null)
+        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null)
             return schedulingDaysSuccessDigitalRefinementDefaultString;
-        return schedulingDaysSuccessDigitalRefinementString;
+        return String.valueOf(timingConfigs.getSchedulingDaysSuccessDigitalRefinement());
     }
 
     public String getSchedulingDelta() {
-        if (schedulingDelta == null) return schedulingDeltaDefault;
-        return schedulingDelta;
+        if (timingConfigs.getSchedulingDeltaMillis() == null) return schedulingDeltaDefault;
+        return String.valueOf(timingConfigs.getSchedulingDeltaMillis());
     }
 
     public void addIuvGPD(String iuvGPD) {

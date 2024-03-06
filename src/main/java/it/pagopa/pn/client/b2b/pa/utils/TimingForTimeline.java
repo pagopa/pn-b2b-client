@@ -1,6 +1,6 @@
-package it.pagopa.pn.cucumber.steps;
+package it.pagopa.pn.client.b2b.pa.utils;
 
-import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -9,20 +9,22 @@ import org.springframework.stereotype.Component;
 
 //TODO: Usare ovunque è necessario il timing e verificare se parametrizzare da propertiesFile
 
+@Component
 public class TimingForTimeline {
 
-    private final SharedSteps sharedSteps;
+    private final PnB2bClientTimingConfigs timingConfigs;
     public record TimingResult(int numCheck,int waiting) { }
 
-    public TimingForTimeline(SharedSteps sharedSteps){
-        this.sharedSteps = sharedSteps;
+    @Autowired
+    public TimingForTimeline(PnB2bClientTimingConfigs timingConfigs){
+        this.timingConfigs = timingConfigs;
     }
 
 
     public TimingResult getTimingForElement(String element){
         element = element.trim().toUpperCase();
         Element findedElement = Element.valueOf(element);
-        int waiting = sharedSteps.getWorkFlowWait();
+        int waiting = timingConfigs.getWorkflowWaitMillis();
         int waitingMultiplier = findedElement.getWaitingMultiplier();
         if( waitingMultiplier > 0){
             waiting = waiting * waitingMultiplier;

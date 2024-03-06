@@ -1,5 +1,6 @@
 package it.pagopa.pn.client.b2b.pa;
 
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
@@ -40,14 +41,9 @@ public class PnPaB2bUtils {
 
     private static Logger log = LoggerFactory.getLogger(PnPaB2bUtils.class);
 
-    @Value("${pn.configuration.workflow.wait.millis:31000}")
-    private Integer workFlowWait;
-
-    @Value("${pn.configuration.workflow.wait.accepted.millis:91000}")
-    private Integer workFlowAcceptedWait;
-
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
+    private final PnB2bClientTimingConfigs timingConfigs;
 
     private IPnPaB2bClient client;
 
@@ -56,12 +52,14 @@ public class PnPaB2bUtils {
 
 
     @Autowired
-    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient, IPnRaddAlternativeClient raddAltClient) {
+    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient,
+                        IPnRaddAlternativeClient raddAltClient, PnB2bClientTimingConfigs timingConfigs) {
         this.restTemplate = restTemplate;
         this.ctx = ctx;
         this.client = client;
         this.raddFsuClient = raddFsuClient;
         this.raddAltClient = raddAltClient;
+        this.timingConfigs = timingConfigs;
     }
 
 
@@ -1631,13 +1629,11 @@ public class PnPaB2bUtils {
 
 
     private Integer getWorkFlowWait() {
-        if(workFlowWait == null)return 31000;
-        return workFlowWait;
+     return timingConfigs.getWorkflowWaitMillis();
     }
 
     private Integer getAcceptedWait() {
-        if(workFlowAcceptedWait == null)return 91000;
-        return workFlowAcceptedWait;
+       return timingConfigs.getWorkflowWaitAcceptedMillis();
     }
 
     public void verifyCanceledNotification(FullSentNotificationV23 fsn) throws IOException, IllegalStateException {

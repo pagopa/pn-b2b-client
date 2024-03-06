@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
+//TODO: EXPERIMENTAL
 public enum WebhookSynchronizer {
     WEBHOOKSYNCHRONIZER;
 

@@ -2,13 +2,15 @@ package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
-import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
-import it.pagopa.pn.client.b2b.pa.utils.WebhookSynchronizer;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.utils.TimingForTimeline;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
@@ -39,8 +41,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,
-        PnRaddAlternativeClientImpl.class
+        PnRaddAlternativeClientImpl.class,
+        TimingForTimeline.class,
+        PnB2bClientTimingConfigs.class,
 })
 @EnableScheduling
+@EnableConfigurationProperties
 public class CucumberSpringIntegration {
 }

@@ -5,6 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -77,7 +78,7 @@ public class ApiServiceDeskStepsWrongApiKey {
 
     private final Integer delay=420000;
 
-    @Value("${pn.configuration.workflow.wait.millis:31000}")
+
     private Integer workFlowWait;
 
     @Value("${pn.retention.videotime.preload}")
@@ -95,7 +96,8 @@ public class ApiServiceDeskStepsWrongApiKey {
 
 
     @Autowired
-    public ApiServiceDeskStepsWrongApiKey(SharedSteps sharedSteps, IPServiceDeskClientImpl ipServiceDeskClient, ApplicationContext ctx, PnExternalServiceClientImpl safeStorageClient) {
+    public ApiServiceDeskStepsWrongApiKey(SharedSteps sharedSteps, IPServiceDeskClientImpl ipServiceDeskClient, ApplicationContext ctx,
+                                          PnExternalServiceClientImpl safeStorageClient, PnB2bClientTimingConfigs timingConfigs) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
@@ -107,6 +109,8 @@ public class ApiServiceDeskStepsWrongApiKey {
         this.videoUploadRequest=new VideoUploadRequest();
         this.searchNotificationRequest=new SearchNotificationRequest();
         this.ctx=ctx;
+
+        this.workFlowWait = timingConfigs.getWorkflowWaitMillis();
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string} con API Key errata")
