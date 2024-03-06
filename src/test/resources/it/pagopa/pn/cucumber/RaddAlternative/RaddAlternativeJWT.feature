@@ -31,9 +31,9 @@ Feature: Radd Alternative jwt verification
     And l'operazione ha prodotto un errore con status code "500"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-4] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con dati errati
+  Scenario: [RADD_ALT-JWT-4] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer intended usage errato
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_dati_errati"
-    And l'operazione ha prodotto un errore con status code "500"
+    And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
   Scenario: [RADD_ALT-JWT-5] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con aud errata
