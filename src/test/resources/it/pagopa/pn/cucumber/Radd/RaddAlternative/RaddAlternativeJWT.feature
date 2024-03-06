@@ -21,12 +21,12 @@ Feature: Radd Alternative jwt verification
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-2] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer non censito
+  Scenario: [RADD_ALT-JWT-2] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer non censito (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_non_censito"
     And l'operazione ha prodotto un errore con status code "500"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-3] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer scaduto
+  Scenario: [RADD_ALT-JWT-3] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer scaduto (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_scaduto"
     And l'operazione ha prodotto un errore con status code "500"
 
@@ -36,16 +36,16 @@ Feature: Radd Alternative jwt verification
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-5] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con aud errata
+  Scenario: [RADD_ALT-JWT-5] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con aud errata (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_aud_errata"
     And l'operazione ha prodotto un errore con status code "500"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-6] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con private key diverso dalla JWKS
+  Scenario: [RADD_ALT-JWT-6] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con private key diverso dalla JWKS (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_private_diverso"
     And l'operazione ha prodotto un errore con status code "500"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-7] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con kid diverso dalla JWKS
+  Scenario: [RADD_ALT-JWT-7] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con kid diverso dalla JWKS (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_kid_diverso"
     And l'operazione ha prodotto un errore con status code "500"
