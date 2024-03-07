@@ -31,6 +31,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -3862,7 +3863,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica data schedulingDate per il destinatario {int} rispetto ell'evento in timeline {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithVerifySchedulingDate(String timelineEventCategory, int destinatario, String evento) {
-        int delay = 0;
+        long delay = 0;
         TimelineElementWait timelineElementWait = getTimelineElementCategory(timelineEventCategory);
         TimelineElementV23 timelineElement = null;
         OffsetDateTime digitalDeliveryCreationRequestDate = null;
@@ -3893,12 +3894,12 @@ public class AvanzamentoNotificheB2bSteps {
             for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
                 if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
-                    delay = Integer.parseInt(sharedSteps.getSchedulingDaysFailureDigitalRefinementString().replaceAll("[^0-9]",""));
+                    delay = Long.parseLong(sharedSteps.getSchedulingDaysFailureDigitalRefinementString().replaceAll("[^0-9]",""));
                     break;
                 } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
                     if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
                         digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
-                        delay = Integer.parseInt(sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().replaceAll("[^0-9]",""));
+                        delay = Long.parseLong(sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().replaceAll("[^0-9]",""));
                         break;
                     }
                 }
@@ -3914,7 +3915,7 @@ public class AvanzamentoNotificheB2bSteps {
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
             Long digitalDeliveryCreationMillis = digitalDeliveryCreationRequestDate.toInstant().toEpochMilli();
             Long diff = schedulingDateMillis - digitalDeliveryCreationMillis;
-            Long delayMillis = ((Long.valueOf(delay)*60)*1000); //TODO: refactor
+            Long delayMillis = (TimeUnit.MINUTES.toMillis(delay)); //TODO: refactor
             Long delta = Long.valueOf(sharedSteps.getSchedulingDelta());
             logger.info("PRE-ASSERTION: schedulingDateMillis {}, digitalDeliveryCreationMillis {}, diff {}, delayMillis {}, delta {}",
                     schedulingDateMillis,digitalDeliveryCreationMillis,diff,delayMillis,delta);
