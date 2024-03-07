@@ -2348,19 +2348,6 @@ public class SharedSteps {
         this.progressResponseElements = progressResponseElements;
     }
 
-    public String getSchedulingDaysFailureDigitalRefinementString() {
-        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null) {
-            return schedulingDaysFailureDigitalRefinementDefaultString;
-        }
-        return String.valueOf(timingConfigs.getSchedulingDaysFailureDigitalRefinement());
-    }
-
-    public String getSchedulingDaysSuccessDigitalRefinementString() {
-        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null)
-            return schedulingDaysSuccessDigitalRefinementDefaultString;
-        return String.valueOf(timingConfigs.getSchedulingDaysSuccessDigitalRefinement());
-    }
-
     public String getSchedulingDelta() {
         if (timingConfigs.getSchedulingDeltaMillis() == null) return schedulingDeltaDefault;
         return String.valueOf(timingConfigs.getSchedulingDeltaMillis());
