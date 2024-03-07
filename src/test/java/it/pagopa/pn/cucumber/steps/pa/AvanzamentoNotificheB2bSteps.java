@@ -3915,7 +3915,7 @@ public class AvanzamentoNotificheB2bSteps {
             Long schedulingDateMillis = timelineElement.getDetails().getSchedulingDate().toInstant().toEpochMilli();
             Long digitalDeliveryCreationMillis = digitalDeliveryCreationRequestDate.toInstant().toEpochMilli();
             Long diff = schedulingDateMillis - digitalDeliveryCreationMillis;
-            Long delayMillis = (TimeUnit.MINUTES.toMillis(delay)); //TODO: refactor
+            Long delayMillis = (TimeUnit.MINUTES.toMillis(delay));
             Long delta = Long.valueOf(sharedSteps.getSchedulingDelta());
             logger.info("PRE-ASSERTION: schedulingDateMillis {}, digitalDeliveryCreationMillis {}, diff {}, delayMillis {}, delta {}",
                     schedulingDateMillis,digitalDeliveryCreationMillis,diff,delayMillis,delta);
