@@ -3893,12 +3893,12 @@ public class AvanzamentoNotificheB2bSteps {
             for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
                 if (element.getCategory().getValue().equals("DIGITAL_DELIVERY_CREATION_REQUEST") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("DIGITAL_DELIVERY_CREATION_REQUEST")) {
                     digitalDeliveryCreationRequestDate = element.getTimestamp();
-                    delay = Integer.parseInt(sharedSteps.getSchedulingDaysFailureDigitalRefinementString().replace("m",""));
+                    delay = Integer.parseInt(sharedSteps.getSchedulingDaysFailureDigitalRefinementString().replaceAll("[^0-9]",""));
                     break;
                 } else if (element.getCategory().getValue().equals("SEND_DIGITAL_FEEDBACK") && element.getDetails().getRecIndex().equals(destinatario) && evento.equalsIgnoreCase("SEND_DIGITAL_FEEDBACK")) {
                     if ("OK".equalsIgnoreCase(element.getDetails().getResponseStatus().getValue())) {
                         digitalDeliveryCreationRequestDate = element.getDetails().getNotificationDate();
-                        delay = Integer.parseInt(sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().replace("m",""));
+                        delay = Integer.parseInt(sharedSteps.getSchedulingDaysSuccessDigitalRefinementString().replaceAll("[^0-9]",""));
                         break;
                     }
                 }
