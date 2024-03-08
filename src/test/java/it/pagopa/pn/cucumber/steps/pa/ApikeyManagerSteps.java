@@ -31,13 +31,6 @@ public class ApikeyManagerSteps {
     private String firstGroupUsed;
     private String responseNewApiKeyTaxId;
 
-    //TODO: trovare punto migliore
-    @Value("${pn.interop.enable}")
-    private boolean isInteropEnabled;
-
-    @Value("${spring.profiles.active}")
-    private String env;
-
     @Autowired
     public ApikeyManagerSteps(IPnApiKeyManagerClient apiKeyManagerClient, SharedSteps sharedSteps) {
         this.sharedSteps = sharedSteps;
@@ -48,25 +41,6 @@ public class ApikeyManagerSteps {
     public void vengonoLetteLeApiKeyPrecedentementeGenerate() {
         Assertions.assertDoesNotThrow(() ->
                 apiKeys = this.apiKeyManagerClient.getApiKeys(null, null, null, true));
-    }
-
-    //TODO: Centralizzare
-    @Before("@precondition")
-    public void setup(){
-        Assumptions.assumeTrue(preconditionForTest());
-    }
-
-    //TODO: Centralizzare
-    private boolean preconditionForTest(){
-        System.out.println("ENV: "+env+" isInteropEnabled: "+isInteropEnabled);
-       switch (env){
-           case "test":
-               return !isInteropEnabled;
-           case "uat":
-               return isInteropEnabled;
-           default:
-               return false;
-       }
     }
 
 
