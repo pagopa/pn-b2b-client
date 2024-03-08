@@ -1467,7 +1467,7 @@ Feature: Radd Alternative
       | details_deliveryDetailCode | RECAG001B |
 
 
-  @raddAlt
+  @raddAlt @uatEnvCondition
   Scenario: [RADD-ALT_ACT-82] Inserimento notifica indirizzata a PG con sequence OK_890_ZIP  - verifica presenza elemento di timeline contenente la ricevuta di postalizzazione in formato zip
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -1528,7 +1528,7 @@ Feature: Radd Alternative
       | details_deliveryDetailCode | RECRN001B |
 
 
-  @raddAlt @zip
+  @raddAlt @zip @uatEnvCondition
   Scenario: [RADD-ALT_ACT-85] Inserimento notifica indirizzata a PG con sequence OK_AR_ZIP  - verifica presenza elemento di timeline contenente la ricevuta di postalizzazione in formato zip
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
