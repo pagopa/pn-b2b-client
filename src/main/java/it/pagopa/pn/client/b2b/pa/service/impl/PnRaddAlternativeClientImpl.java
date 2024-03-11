@@ -31,6 +31,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private final String RaddistaAudErrato;
     private final String RaddistaJwtKidDiverso;
     private final String RaddistaJwtPrivateDiverso;
+    private final String RaddistaJwtOltreAnno;
 
     private AuthTokenRaddType IssuerTokenSetted = AuthTokenRaddType.ISSUER_1;
 
@@ -48,7 +49,8 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
                                        @Value("${pn.external.bearer-token-radd-jwt-scaduto}") String RaddistaJwtScaduto,
                                        @Value("${pn.external.bearer-token-radd-aud-erratto}") String RaddistaAudErrato,
                                        @Value("${pn.external.bearer-token-radd-kid-diverso}") String RaddistaJwtKidDiverso,
-                                       @Value("${pn.external.bearer-token-radd-privateKey-diverso}") String RaddistaJwtPrivateDiverso) {
+                                       @Value("${pn.external.bearer-token-radd-privateKey-diverso}") String RaddistaJwtPrivateDiverso,
+                                       @Value("${pn.external.bearer-token-radd-oltre-anno}") String RaddistaJwtOltreAnno) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = basePath;
@@ -60,7 +62,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         this.RaddistaAudErrato=RaddistaAudErrato;
         this.RaddistaJwtKidDiverso=RaddistaJwtKidDiverso;
         this.RaddistaJwtPrivateDiverso=RaddistaJwtPrivateDiverso;
-
+        this.RaddistaJwtOltreAnno=RaddistaJwtOltreAnno;
 
         this.actOperationsApi = new ActOperationsApi(newApiClientExternal(restTemplate,basePath, Raddista1));
         this.aorOperationsApi = new AorOperationsApi(newApiClientExternal(restTemplate,basePath, Raddista1));
@@ -198,6 +200,10 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
             }
             case PRIVATE_DIVERSO -> {
                 selectRaddista(this.RaddistaJwtPrivateDiverso);
+                beenSet=true;
+            }
+            case OLTRE_ANNO -> {
+                selectRaddista(this.RaddistaJwtOltreAnno);
                 beenSet=true;
             }
         }
