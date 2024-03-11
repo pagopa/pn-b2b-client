@@ -826,11 +826,17 @@ public class InvioNotificheB2bSteps {
         logger.info("retentionUntil: " + retentionUntil);
         OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
         OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
-        Integer timelineEventDateMinutes = timelineEventDate.getMinute();
-        Integer retentionUntilMinutes = retentionUntil.getMinute();
+
         long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
+
+        LocalTime timelineEventDateLocalTime = timelineEventDate.toLocalTime();
+        LocalTime retentionUntilLocalTime = retentionUntil.toLocalTime();
+        Duration diff = Duration.between(timelineEventDateLocalTime, retentionUntilLocalTime);
+        long diffInMinutes = diff.toMinutes();
+
         logger.info("Difference: " + between);
-        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 10;
+        logger.info("diffInMinutes: " + diffInMinutes);
+        return retentionTime == between && Math.abs(diffInMinutes) <= 10;
     }
 
     @And("l'importo della notifica è {int}")
