@@ -51,6 +51,6 @@ Feature: Radd Alternative jwt verification
     And l'operazione ha prodotto un errore con status code "403"
 
   @raddAlt
-  Scenario: [RADD_ALT-JWT-8] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con data di scadenza oltre 1 anno PN-10224
+  Scenario: [RADD_ALT-JWT-8] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con data di scadenza oltre 1 anno PN-10224 (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_oltre_anno"
     And l'operazione ha prodotto un errore con status code "403"
