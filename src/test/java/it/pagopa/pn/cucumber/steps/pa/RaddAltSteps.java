@@ -738,7 +738,6 @@ public class RaddAltSteps {
             case "issuer_aud_errata" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.AUD_ERRATA);
             case "issuer_kid_diverso" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.KID_DIVERSO);
             case "issuer_private_diverso" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.PRIVATE_DIVERSO);
-            case "issuer_oltre_anno" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.OLTRE_ANNO);
             default -> throw new IllegalArgumentException();
         }
     }
