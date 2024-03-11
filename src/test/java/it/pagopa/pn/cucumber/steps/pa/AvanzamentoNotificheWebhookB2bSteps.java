@@ -387,7 +387,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     StreamCreationRequest streamCreationRequest = new StreamCreationRequest();
                     streamCreationRequest.setTitle("Stream Update V10");
                     streamCreationRequest.setEventType(StreamCreationRequest.EventTypeEnum.TIMELINE);
-                    webhookB2bClient.updateEventStream(eventStream.getStreamId(),null);
+                    webhookB2bClient.updateEventStream(eventStream.getStreamId(),streamCreationRequest);
                 }
                 break;
             case "V23":
