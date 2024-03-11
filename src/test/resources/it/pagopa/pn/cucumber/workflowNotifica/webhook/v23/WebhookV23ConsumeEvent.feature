@@ -247,6 +247,21 @@ Feature: avanzamento notifiche webhook b2b V23
     And l'apiKey viene cancellata
 
 
+  @webhookV23 @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.3_162] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V10 utilizzando un apikey con gruppi. -PN-10218.
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo |
+    And destinatario Mario Gherkin
+    And si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
+    And si crea il nuovo stream per il "Comune_Multi" con versione "V10"
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    And viene aggiornata la apiKey utilizzata per gli stream
+    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "REQUEST_ACCEPTED"
+
+
 
  #--------------LETTURA NUOVO EVENTO DI TIMELINE DI UNO STREAM------------DA ATTIVARE
 
