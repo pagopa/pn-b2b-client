@@ -93,5 +93,5 @@ Feature: address validation feature
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRI003C"
     Examples:
       | address            | at     | addressDetails | zip    | municipality | municipalityDetails | province | foreignState |
-      | VIA DELLA POSTA    | 0_CHAR | NULL           | 0_CHAR | VATICANO     | NULL                | NULL     | ITALIA       |
+      | VIA DELLA POSTA    | 0_CHAR | NULL           | 0_CHAR | VATICANO     | NULL                | RM       | ITALIA       |
       | OTTAVA GUALDARIA 1 | NULL   | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
