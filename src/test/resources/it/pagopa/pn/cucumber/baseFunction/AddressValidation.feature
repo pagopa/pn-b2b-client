@@ -70,3 +70,28 @@ Feature: address validation feature
       | TEST_NORMALIZZATORE_48 | NULL         | VIA MOLINI 2                                        | NULL            | 37062   | VILLAFRANCA                   | NULL                | NULL      | NULL          | HTTP_ERROR                    |
       | TEST_NORMALIZZATORE_49 | NULL         | VIA MOLINI 2                                        | NULL            | 37062   | DOSSOBUONO                    | NULL                | NULL      | NULL          | HTTP_ERROR                    |
       | TEST_NORMALIZZATORE_50 | NULL         | VIA EURIALO N^47 IN.6                               | NULL            | 00100   | ROMA                          | NULL                | RM        | italia        | ACCEPTED                      |
+
+
+
+
+  @testNormalizzatore
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_2] invio notifiche controllo arrivo RIR - PN-10273
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address             | NULL                  |
+      | physicalAddress_address             | <address>             |
+      | at                                  | <at>                  |
+      | physicalAddress_addressDetails      | <addressDetails>      |
+      | physicalAddress_zip                 | <zip>                 |
+      | physicalAddress_municipality        | <municipality>        |
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+      | physicalAddress_province            | <province>            |
+      | physicalAddress_State               | <foreignState>        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRI003C"
+    Examples:
+      | address            | at     | addressDetails | zip    | municipality | municipalityDetails | province | foreignState |
+      | VIA DELLA POSTA    | 0_CHAR | NULL           | 0_CHAR | VATICANO     | NULL                | NULL     | ITALIA       |
+      | OTTAVA GUALDARIA 1 | NULL   | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
