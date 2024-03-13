@@ -80,7 +80,7 @@ Feature: address validation feature
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address             | NULL                  |
+      | digitalDomicile                     | NULL                  |
       | physicalAddress_address             | <address>             |
       | at                                  | <at>                  |
       | physicalAddress_addressDetails      | <addressDetails>      |
