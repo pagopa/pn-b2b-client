@@ -1403,7 +1403,8 @@ Feature: Radd Alternative
     Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica su radd alternative
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     And L'operatore esegue il download del frontespizio del operazione "aor"
-    Then viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And viene chiusa la transazione per il recupero degli aar su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
   @raddAlt @zip
