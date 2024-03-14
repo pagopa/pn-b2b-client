@@ -78,40 +78,41 @@ Feature: address validation feature
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
-    And destinatario Mario Gherkin e:
-      | physicalAddress_address | <address> |
-      | at | <at> |
-      | physicalAddress_addressDetails | <addressDetails> |
-      | physicalAddress_zip | <zip> |
-      | physicalAddress_municipality | <municipality> |
+    And destinatario
+      | denomination                        | <denomination>        |
+      | taxId                               | CLMCST42R12D969Z      |
+      | digitalDomicile                     | NULL                  |
+      | physicalAddress_address             | <address>             |
+      | at                                  | <at>                  |
+      | physicalAddress_addressDetails      | <addressDetails>      |
+      | physicalAddress_zip                 | <zip>                 |
+      | physicalAddress_municipality        | <municipality>        |
       | physicalAddress_municipalityDetails | <municipalityDetails> |
-      | physicalAddress_province | <province> |
-      | physicalAddress_State | <foreignState> |
-    When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+      | physicalAddress_province            | <province>            |
+      | physicalAddress_State               | <foreignState>        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
     Examples:
-      | at     | address                                                      | addressDetails | zip                                                                  | municipality                                        | municipalityDetails          | province                                    | foreignState |
-      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
-      | 0_CHAR | 1 RUE HENRY BARBUSSE - BAT 1 ENT 2 LOGT 1979                 | 0_CHAR         | 13090                                                                | AIX EN PROVENCE                                     | 0_CHAR                       | FRA                                         | FRANCIA      |
-      | 0_CHAR | 1 36 MOO.9, BAAN IM AMPOND, TAWEEWATTANA RD., SALATHAMMASOP, | 0_CHAR         | 10700                                                                | BANGKOK                                             | 0_CHAR                       | 0_CHAR                                      | THAILANDIA   |
-      | 0_CHAR | CALLE MARIA MARROQUI 28 INT. 310, COL. CENTRO                | 0_CHAR         | 06050                                                                | CITTA' DEL MESSICO                                  | 0_CHAR                       | 0_CHAR                                      | MESSICO      |
-      | 0_CHAR | CALLE CADETE SISA C/NACUNDAY - ZONA NORTE 350                | 0_CHAR         | 2300                                                                 | FERNANDO DE LA MORA                                 | 0_CHAR                       | PRY                                         | PARAGUAY     |
-      | 0_CHAR | VIA SANDRO PERTINI GIA' VLE A. MORO TRAV.II NICOLO 22        | 0_CHAR         | 0_CHAR                                                               | REGGIO DI CALABRIA                                  | 0_CHAR                       | RC                                          | ITALIA       |
-      | 0_CHAR | TRAVERSA AL N 58 STRADA DETTA DELLA MARINA 26                | 0_CHAR         | 70126                                                                | BARI                                                | TORRE A MARE                 | BA                                          | ITALIA       |
-      | 0_CHAR | STRADA STATALE N.7 TER  LECCE - CAMPI SALENTINA 1C.P.        | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
-      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | LE                                          | FRANCIA      |
-      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | S}~T~R~ADæA }~æ} N.7 pæaæris                | FRANCIA      |
-      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | LECCE                                               | S}~T~R~ADæA }~æ} N.7 pæaæris | LE                                          | FRANCIA      |
-      | 0_CHAR | STRADA }~æ} N.7 TER  LECCE - CAMPI SALENTINA 1C.P.           | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
-      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA prova provincia lungaaaaaaaaaaaaa | FRANCIA      |
-      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN prova comune lunghissimoooooooooooooooooooo | 0_CHAR                       | MA                                          | FRANCIA      |
-      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310000000000000000000000000000000000000000000000000000000000000000 | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
-
-
+      | denomination        | address                                                      | addressDetails | zip                                                                  | municipality                                        | municipalityDetails          | province                                    | foreignState |
+      | TEST_VALIDAZIONE_01 | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
+      | TEST_VALIDAZIONE_02 | 1 RUE HENRY BARBUSSE - BAT 1 ENT 2 LOGT 1979                 | 0_CHAR         | 13090                                                                | AIX EN PROVENCE                                     | 0_CHAR                       | FRA                                         | FRANCIA      |
+      | TEST_VALIDAZIONE_03 | 1 36 MOO.9, BAAN IM AMPOND, TAWEEWATTANA RD., SALATHAMMASOP, | 0_CHAR         | 10700                                                                | BANGKOK                                             | 0_CHAR                       | 0_CHAR                                      | THAILANDIA   |
+      | TEST_VALIDAZIONE_04 | CALLE MARIA MARROQUI 28 INT. 310, COL. CENTRO                | 0_CHAR         | 06050                                                                | CITTA' DEL MESSICO                                  | 0_CHAR                       | 0_CHAR                                      | MESSICO      |
+      | TEST_VALIDAZIONE_05 | CALLE CADETE SISA C/NACUNDAY - ZONA NORTE 350                | 0_CHAR         | 2300                                                                 | FERNANDO DE LA MORA                                 | 0_CHAR                       | PRY                                         | PARAGUAY     |
+      | TEST_VALIDAZIONE_06 | VIA SANDRO PERTINI GIA' VLE A. MORO TRAV.II NICOLO 22        | 0_CHAR         | 0_CHAR                                                               | REGGIO DI CALABRIA                                  | 0_CHAR                       | RC                                          | ITALIA       |
+      | TEST_VALIDAZIONE_07 | TRAVERSA AL N 58 STRADA DETTA DELLA MARINA 26                | 0_CHAR         | 70126                                                                | BARI                                                | TORRE A MARE                 | BA                                          | ITALIA       |
+      | TEST_VALIDAZIONE_08 | STRADA STATALE N.7 TER  LECCE - CAMPI SALENTINA 1C.P.        | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
+      | TEST_VALIDAZIONE_09 | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | LE                                          | FRANCIA      |
+      | TEST_VALIDAZIONE_10 | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | S}~T~R~ADæA }~æ} N.7 pæaæris                | FRANCIA      |
+      | TEST_VALIDAZIONE_11 | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | LECCE                                               | S}~T~R~ADæA }~æ} N.7 pæaæris | LE                                          | FRANCIA      |
+      | TEST_VALIDAZIONE_12 | STRADA }~æ} N.7 TER  LECCE - CAMPI SALENTINA 1C.P.           | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
+      | TEST_VALIDAZIONE_13 | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA prova provincia lungaaaaaaaaaaaaa | FRANCIA      |
+      | TEST_VALIDAZIONE_14 | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN prova comune lunghissimoooooooooooooooooooo | 0_CHAR                       | MA                                          | FRANCIA      |
+      | TEST_VALIDAZIONE_15 | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310000000000000000000000000000000000000000000000000000000000000000 | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
 
 
   @testNormalizzatore
-  Scenario Outline: [B2B_ADDRESS_VALIDATION_2] invio notifiche controllo arrivo RIR - PN-10273
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_3] invio notifiche controllo arrivo RIR - PN-10273
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -128,7 +129,7 @@ Feature: address validation feature
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRI003C"
     Examples:
-      | address            | at     | addressDetails | zip    | municipality | municipalityDetails | province | foreignState |
-      | VIA DELLA POSTA    | 0_CHAR | NULL           | 0_CHAR | VATICANO     | NULL                | RM       | ITALIA       |
-      | OTTAVA GUALDARIA 1 | NULL   | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
+      | address            | at   | addressDetails | zip    | municipality | municipalityDetails | province | foreignState |
+      | VIA DELLA POSTA    | NULL | NULL           | 0_CHAR | VATICANO     | NULL                | RM       | ITALIA       |
+      | OTTAVA GUALDARIA 1 | NULL | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
 
