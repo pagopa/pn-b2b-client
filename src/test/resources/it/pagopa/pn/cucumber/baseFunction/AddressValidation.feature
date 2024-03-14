@@ -73,6 +73,42 @@ Feature: address validation feature
 
 
 
+  @testNormalizzatore
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_2] Controllo physicalAddress con caratteri ISOLatin1 e limite a 44 - PN-10272
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | <address> |
+      | at | <at> |
+      | physicalAddress_addressDetails | <addressDetails> |
+      | physicalAddress_zip | <zip> |
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+      | physicalAddress_province | <province> |
+      | physicalAddress_State | <foreignState> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | at     | address                                                      | addressDetails | zip                                                                  | municipality                                        | municipalityDetails          | province                                    | foreignState |
+      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
+      | 0_CHAR | 1 RUE HENRY BARBUSSE - BAT 1 ENT 2 LOGT 1979                 | 0_CHAR         | 13090                                                                | AIX EN PROVENCE                                     | 0_CHAR                       | FRA                                         | FRANCIA      |
+      | 0_CHAR | 1 36 MOO.9, BAAN IM AMPOND, TAWEEWATTANA RD., SALATHAMMASOP, | 0_CHAR         | 10700                                                                | BANGKOK                                             | 0_CHAR                       | 0_CHAR                                      | THAILANDIA   |
+      | 0_CHAR | CALLE MARIA MARROQUI 28 INT. 310, COL. CENTRO                | 0_CHAR         | 06050                                                                | CITTA' DEL MESSICO                                  | 0_CHAR                       | 0_CHAR                                      | MESSICO      |
+      | 0_CHAR | CALLE CADETE SISA C/NACUNDAY - ZONA NORTE 350                | 0_CHAR         | 2300                                                                 | FERNANDO DE LA MORA                                 | 0_CHAR                       | PRY                                         | PARAGUAY     |
+      | 0_CHAR | VIA SANDRO PERTINI GIA' VLE A. MORO TRAV.II NICOLO 22        | 0_CHAR         | 0_CHAR                                                               | REGGIO DI CALABRIA                                  | 0_CHAR                       | RC                                          | ITALIA       |
+      | 0_CHAR | TRAVERSA AL N 58 STRADA DETTA DELLA MARINA 26                | 0_CHAR         | 70126                                                                | BARI                                                | TORRE A MARE                 | BA                                          | ITALIA       |
+      | 0_CHAR | STRADA STATALE N.7 TER  LECCE - CAMPI SALENTINA 1C.P.        | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
+      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | LE                                          | FRANCIA      |
+      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | S}~T~R~ADæA }~æ} N.7 pæaæris                | FRANCIA      |
+      | 0_CHAR | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100                                                                | LECCE                                               | S}~T~R~ADæA }~æ} N.7 pæaæris | LE                                          | FRANCIA      |
+      | 0_CHAR | STRADA }~æ} N.7 TER  LECCE - CAMPI SALENTINA 1C.P.           | 0_CHAR         | 73100                                                                | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       |
+      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA prova provincia lungaaaaaaaaaaaaa | FRANCIA      |
+      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN prova comune lunghissimoooooooooooooooooooo | 0_CHAR                       | MA                                          | FRANCIA      |
+      | 0_CHAR | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310000000000000000000000000000000000000000000000000000000000000000 | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |
+
+
+
 
   @testNormalizzatore
   Scenario Outline: [B2B_ADDRESS_VALIDATION_2] invio notifiche controllo arrivo RIR - PN-10273
@@ -95,3 +131,4 @@ Feature: address validation feature
       | address            | at     | addressDetails | zip    | municipality | municipalityDetails | province | foreignState |
       | VIA DELLA POSTA    | 0_CHAR | NULL           | 0_CHAR | VATICANO     | NULL                | RM       | ITALIA       |
       | OTTAVA GUALDARIA 1 | NULL   | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
+
