@@ -23,6 +23,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
@@ -95,6 +96,13 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
     private HttpStatusCodeException notificationError;
     private OffsetDateTime notificationCreationDate;
+
+
+
+    private ProgressResponseElement progressResponseElement;
+
+
+
     public static final String DEFAULT_PA = "Comune_1";
     private String settedPa = "Comune_1";
     private final ObjectMapper objMapper = JsonMapper.builder()
@@ -2471,5 +2479,13 @@ public class SharedSteps {
 
     public void setProgressResponseElementV23(ProgressResponseElementV23 progressResponseElement) {
         this.progressResponseElementV23 = progressResponseElement;
+    }
+
+    public ProgressResponseElement getProgressResponseElement() {
+        return progressResponseElement;
+    }
+
+    public void setProgressResponseElement(ProgressResponseElement progressResponseElement) {
+        this.progressResponseElement = progressResponseElement;
     }
 }
