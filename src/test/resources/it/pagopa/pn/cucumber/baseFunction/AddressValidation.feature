@@ -91,7 +91,7 @@ Feature: address validation feature
       | physicalAddress_province            | <province>            |
       | physicalAddress_State               | <foreignState>        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK"
+    Then si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1 è abbia un massimo di 44 caratteri
     Examples:
       | denomination        | at   | address                                                      | addressDetails | zip                                                                  | municipality                                        | municipalityDetails          | province                                    | foreignState |
       | TEST_VALIDAZIONE_01 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310                                                                | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      |

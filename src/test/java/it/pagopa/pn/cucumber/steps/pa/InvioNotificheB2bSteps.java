@@ -1164,4 +1164,32 @@ public class InvioNotificheB2bSteps {
 
     }
 
+
+
+    @Then("si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1 è abbia un massimo di {int} caratteri")
+    public void controlloCampiAddressNormalizzatore(Integer caratteri){
+
+       FullSentNotificationV23 timeline= sharedSteps.getSentNotification();
+
+       TimelineElementV23 timelineNormalizer= timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
+       PhysicalAddress address= timelineNormalizer.getDetails().getNormalizedAddress();
+        PhysicalAddress oldAddress= timelineNormalizer.getDetails().getOldAddress();
+try {
+        Assertions.assertNotNull(address);
+        Assertions.assertNotNull(oldAddress);
+        logger.info("old addres: {}", oldAddress);
+        logger.info("normalized addres: {}", address);
+
+        Assertions.assertTrue(address.getAddress().equals("") || (address.getAddress().matches("[^{-~¡-ÿ]+") && address.getAddress().length() <= caratteri));
+        Assertions.assertTrue(address.getMunicipality().equals("") || (address.getMunicipality().matches("[^{-~¡-ÿ]+") && address.getMunicipality().length() <= caratteri));
+        Assertions.assertTrue(address.getMunicipalityDetails().equals("") || (address.getMunicipalityDetails().matches("[^{-~¡-ÿ]+") && address.getMunicipalityDetails().length() <= caratteri));
+        Assertions.assertTrue(address.getProvince().equals("") || (address.getProvince().matches("[^{-~¡-ÿ]+") && address.getProvince().length() <= caratteri));
+        Assertions.assertTrue(address.getZip().equals("") || (address.getZip().matches("[^{-~¡-ÿ]+") && address.getAddress().length() <= caratteri));
+
+}catch(AssertionFailedError error){
+    sharedSteps.throwAssertFailerWithIUN(error);
+}
+
+    }
+
 }
