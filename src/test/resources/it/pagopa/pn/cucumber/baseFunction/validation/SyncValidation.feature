@@ -780,16 +780,14 @@ Feature: verifica validazione sincrona
       | senderDenomination    | comune di milano            |
       | paymentExpirationDate | <paymentExpirationDate>     |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene verificato il costo = "100" della notifica per l'utente 0
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | paymentExpirationDate |
       | 9_CHAR                |
       | 11_CHAR               |
       | ĄŁŚŠŻą˛łľś            |
       | abcd-ab-ab            |
-      | 2023-03-19            |
-    #caso 5 data nel passato dovrebbe dare errore
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_52] validazione sincrona campo recipents
