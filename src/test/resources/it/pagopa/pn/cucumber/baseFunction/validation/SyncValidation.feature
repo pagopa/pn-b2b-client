@@ -55,14 +55,20 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400"
 
 
-  Scenario: [B2B-PA-SYNC_VALIDATION_4] verifica validazione assenza taxonomyCode
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_4] verifica validazione sync taxonomyCode
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-      | taxonomyCode       | NULL                        |
+      | taxonomyCode       | <taxonomyCode>                        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    And l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | taxonomyCode |
+      | NULL         |
+      | 6_CHAR       |
+      | 8_CHAR       |
+      | ĄŁŚŠŻą˛łľś   |
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_5] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
@@ -227,19 +233,10 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | denomination    |
-      | Nicolò Rossi    |
-      | Raffaella Carrà |
-      | Ilaria D`Amico  |
-      | Salvator Dalì   |
-      | Bruno Nicolè    |
-      | dudù            |
-      #| Ilaria D’Amico  |
-      | Ilaria D'Amico  |
-      | Cristoforo Colombo            |
-      | Cristoforo Colombo 0123456789 |
-      | SALVATOR DALI                 |
-      | Ilaria-D'Amico/.@_            |
+      | denomination                     |
+      | ãsåéØaìnò dæonà ñ'di pi`aève     |
+      | SALVAtor DALI Colombo 0123456789 |
+      | Ilaria-D'Amico/.@_               |
 
 
   @testLite
@@ -251,15 +248,8 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | name             |
-      | irrinunciabilità |
-      | trentatré        |
-      | altresì          |
-      | bistrò           |
-      | più              |
-      | dall'atto        |
-      | dall’atto        |
-      | dall`atto        |
+      | name                         |
+      | ãsåéØaìnò dæonà ñ'di pi`aève |
 
 
   @validation
@@ -274,21 +264,12 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | comune           |
-      #| san donà di piave  |
-      | Canneto sull'Oglio |
-      #| Erbè               |
-      #| Forlì              |
-      #| Nardò              |
-      #| Canneto sull’Oglio |
-      #| Canneto sull`Oglio |
-      #| Fær Øer            |
-      #| São Tomé           |
-      #| Hagåtña            |
-      | Milano '-/.@_      |
-      | MILANO             |
-      | MILANO 01234 56789 |
-    #TODO: indagare fallimenti
+      | comune                       |
+      | ãsåéØaìnò dæonà ñ'di pi`aève |
+      | Milano '-/.@_                |
+      | MILANO                       |
+      | MILANO 01234 56789           |
+
 
   @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_19] validazione sincrona campo physicalAddress_municipalityDetails
@@ -300,21 +281,11 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | localita           |
-      #| san donà di piave  |
-      | Canneto sull'Oglio |
-      #| Erbè               |
-      #| Forlì              |
-      #| Nardò              |
-      #| Canneto sull’Oglio |
-      #| Canneto sull`Oglio |
-      #| Fær Øer            |
-      #| São Tomé           |
-      #| Hagåtña            |
-      | Milano '-/.@_      |
-      | PARIGI             |
-      | MILANO 01234 56789 |
-       #TODO: indagare fallimenti
+      | localita                     |
+      | ãsåéØaìnò dæonà ñ'di pi`aève |
+      | Milano '-/.@_                |
+      | PARIGI                       |
+      | MILANO 01234 56789           |
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_20] validazione sincrona campo taxId
@@ -326,9 +297,9 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | taxId            |
-      | FRMTTR76F06B715E |
-      | FRRTTR76M0MB715H |
+      | taxId             |
+      | FRMTTR76F06B715E  |
+      | FRRTTR76M0MB715H  |
       | 1000000000        |
       | 17000000000000000 |
       | FRMTTR76M06B715   |
@@ -336,6 +307,7 @@ Feature: verifica validazione sincrona
       | FRMTTR76M0YB715E  |
       | FRMTTR76M06B7W5E  |
       | 20517460320       |
+      | NULL              |
       #1-2) codice fiscale malformato
       #3) 10 numeri (min 11)
       #4) 17 numeri (max 16)
@@ -344,6 +316,7 @@ Feature: verifica validazione sincrona
       #7) Lettera omocodia non contemplata (seconda serie di 2 numeri)
       #8) Lettera omocodia non contemplata (serie di 3 numeri finale)
       #9) CF solo numerico
+      #10) CF non presente
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_21] validazione sincrona campo payment_creditorTaxId
@@ -370,13 +343,14 @@ Feature: verifica validazione sincrona
       | senderDenomination | comune di milano            |
       | senderTaxId        | <senderTaxId>               |
     And destinatario Mario Cucumber
-    When la notifica viene inviata tramite api b2b
+    When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | senderTaxId  |
       | 1000000000   |
       | 120000000000 |
       | 11_CHAR      |
+      | é*ç°.,@#˝ž[  |
       #1) 10 numeri (min 11)
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
@@ -391,7 +365,10 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | subject  |
-      | 135_CHARRRR |
+      | 135_CHAR |
+      | \n       |
+      | NULL     |
+
 
   @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_24] validazione sincrona campo physicalAddress_State
@@ -403,12 +380,12 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | stato              |
-      | COSTA D'AVORIO     |
-      | spagna             |
-      | Italia '-/.@_      |
-      | FRANCIA            |
-      | ITALIA 01234 56789 |
+      | stato                       |
+      | COSTA D'AVORIO              |
+      | spagna                      |
+      | Italia '-/.@_ ãåéØò æàñ'`aè |
+      | FRANCIA                     |
+      | ITALIA 01234 56789          |
 
     #AGGIUNGERE STATI E VERIFICARE COPERTURA TEST
 
@@ -422,14 +399,8 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | indirizzo      |
-      | via dà         |
-      | via dell'adige |
-      | via sull’adige |
-      | via sull`adige |
-      | via è          |
-      | via ì          |
-      | via ò          |
+      | indirizzo                    |
+      | ãsåéØaìnò dæonà ñ'di pi`aève |
 
 
 
@@ -443,8 +414,10 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
       | denomination |
+      | NULL         |
       | 0_CHAR       |
       | 81_CHAR      |
+      | \n           |
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_27] validazione sincrona campo abstract
@@ -458,6 +431,7 @@ Feature: verifica validazione sincrona
     Examples:
       | abstract  |
       | 1025_CHAR |
+      | \n        |
 
 
 
@@ -474,10 +448,10 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      |    state    | zip_code |
-      |   FRANCIA   | 06000    |
-      |   FRANCIA   | 06200    |
-      |   IRAN      | 13       |
+      | state   | zip_code |
+      | FRANCIA | 06000    |
+      | FRANCIA | 06200    |
+      | IRAN    | 13       |
 
 
 
@@ -494,7 +468,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | zip_code |
+      | zip_code         |
       | 7500777500779987 |
     #1) 15 max Length
 
@@ -509,9 +483,10 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | province  |
-      | NULL      |
-      | 0_CHAR    |
+      | province |
+      | NULL     |
+      | 0_CHAR   |
+
     #1) 15 max Length
 
   Scenario: [B2B-PA-SYNC_VALIDATION_31] invio notifiche digitali mono destinatario con provincia non presente e Stato Estero scenario positivo
@@ -536,8 +511,8 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
     Examples:
-      | denomination                                                 |
-      | Nicolò Rossi Raffaella Carrà Salvator Dalì Bruno Nicolè dudù |
+      | denomination          |
+      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝ |
 
 
   @validation #Possibile mergiarlo con altri test
@@ -690,3 +665,242 @@ Feature: verifica validazione sincrona
     Examples:
       | province                                                     |
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_43]  validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_at
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | at | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_44] validazione sincrona campo idempotenceToken
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | idempotenceToken   | <idempotenceToken>          |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | idempotenceToken |
+      | 257_CHAR         |
+      | \n               |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_45] validazione sincrona campo paProtocolNumber
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | paProtocolNumber   | <paProtocolNumber>          |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | paProtocolNumber |
+      | 257_CHAR         |
+      | \n               |
+      | NULL             |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_46] validazione sincrona campo notificationFeePolicy
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | feePolicy          | <notificationFeePolicy>     |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | notificationFeePolicy |
+      | NULL                  |
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_47] validazione sincrona campo cancelledIun
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | cancelledIun       | <cancelledIun>              |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | cancelledIun              |
+      | 24_CHAR                   |
+      | 26_CHAR                   |
+      | 12A4-1234-1234-abcdef-1-a |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_48] validazione sincrona campo physicalCommunicationType
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | comune di milano            |
+      | physicalCommunication | <physicalCommunication>     |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | physicalCommunication |
+      | NULL                  |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_49] validazione sincrona campo senderDenomination
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | <senderDenomination>        |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | senderDenomination |
+      | NULL               |
+      | 0_CHAR             |
+      | 81_CHAR            |
+      | \n                 |
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_50] validazione sincrona campo group
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | group              | <group>                     |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | group                                                    |
+      | 1025_CHAR                                                |
+      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_51] validazione sincrona campo paymentExpirationDate
+    Given viene generata una nuova notifica
+      | subject               | invio notifica con cucumber |
+      | senderDenomination    | comune di milano            |
+      | paymentExpirationDate | <paymentExpirationDate>     |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And viene verificato il costo = "100" della notifica per l'utente 0
+    Examples:
+      | paymentExpirationDate |
+      | 9_CHAR                |
+      | 11_CHAR               |
+      | ĄŁŚŠŻą˛łľś            |
+      | abcd-ab-ab            |
+      | 2023-03-19            |
+    #caso 5 data nel passato dovrebbe dare errore
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_52] validazione sincrona campo recipents
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    #restituisce un 500 verificare se è corretto
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_53] validazione sincrona campo documents
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+      | document           | NULL                        |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_54] validazione sincrona campo recipientType
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber e:
+      | recipientType | NULL |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_55] validazione sincrona campo taxId
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | taxId | <taxId> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | taxId            |
+      | NULL             |
+      | 10_CHAR          |
+      | 17_CHAR          |
+      | 16_CHAR          |
+      | 123456_:1+[1?^'1 |
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_56] validazione sincrona campo digitalDomicile_type
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_type | NULL |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_57] validazione sincrona campo digitalDomicile_address
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | <digitalDomicileAddress> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | digitalDomicileAddress |
+      | NULL                   |
+      | 321_CHAR               |
+      | %&£"(=.*é°@é.ç°é*"žżŔ  |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_58] validazione sincrona campo at del physicalAddress
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | at | <at> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | at       |
+      | 257_CHAR |
+      | \n       |
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_59] validazione sincrona campo  physicalAddress_address
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_address | <address> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | address |
+      | NULL                   |
+      | 1_CHAR                 |
+      | 1025_CHAR              |
+      | \n  a                  |
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_60] validazione sincrona campo  physicalAddress_addressDetails
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_addressDetails | <addressDetails> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+    Examples:
+      | addressDetails |
+      | 1025_CHAR      |
+      | \n  a          |
