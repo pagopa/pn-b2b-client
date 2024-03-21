@@ -1168,25 +1168,42 @@ public class InvioNotificheB2bSteps {
 
     @Then("si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1 è abbia un massimo di {int} caratteri")
     public void controlloCampiAddressNormalizzatore(Integer caratteri){
+        String regex= "[{-~¡-ÿ]*";
 
        FullSentNotificationV23 timeline= sharedSteps.getSentNotification();
 
        TimelineElementV23 timelineNormalizer= timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
-       PhysicalAddress address= timelineNormalizer.getDetails().getNormalizedAddress();
         PhysicalAddress oldAddress= timelineNormalizer.getDetails().getOldAddress();
+        PhysicalAddress normalizedAddress= timelineNormalizer.getDetails().getNormalizedAddress();
 try {
-        Assertions.assertNotNull(address);
-        Assertions.assertNotNull(oldAddress);
-        logger.info("old addres: {}", oldAddress);
-        logger.info("normalized addres: {}", address);
+    Assertions.assertNotNull(normalizedAddress);
+    Assertions.assertNotNull(oldAddress);
 
-        Assertions.assertTrue(address.getAddress().equals("") || (address.getAddress().matches("[^{-~¡-ÿ]+") && address.getAddress().length() <= caratteri));
-        Assertions.assertTrue(address.getMunicipality().equals("") || (address.getMunicipality().matches("[^{-~¡-ÿ]+") && address.getMunicipality().length() <= caratteri));
-        Assertions.assertTrue(address.getMunicipalityDetails().equals("") || (address.getMunicipalityDetails().matches("[^{-~¡-ÿ]+") && address.getMunicipalityDetails().length() <= caratteri));
-        Assertions.assertTrue(address.getProvince().equals("") || (address.getProvince().matches("[^{-~¡-ÿ]+") && address.getProvince().length() <= caratteri));
-        Assertions.assertTrue(address.getZip().equals("") || (address.getZip().matches("[^{-~¡-ÿ]+") && address.getAddress().length() <= caratteri));
+    logger.info("old addres: {}", oldAddress);
+    logger.info("normalized addres: {}", normalizedAddress);
 
-}catch(AssertionFailedError error){
+    PhysicalAddress newAddress= new PhysicalAddress()
+            .address(oldAddress.getAddress().length()>caratteri?  oldAddress.getAddress().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+            oldAddress.getAddress().replaceAll(regex,"").toUpperCase())
+            .municipality(oldAddress.getMunicipality().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getMunicipality().replaceAll(regex,"").toUpperCase())
+            .municipalityDetails(oldAddress.getMunicipalityDetails().length()>caratteri?  oldAddress.getMunicipalityDetails().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getMunicipalityDetails().replaceAll(regex,"").toUpperCase())
+            .province(oldAddress.getProvince().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getProvince().replaceAll(regex,"").toUpperCase())
+            .zip(oldAddress.getZip().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getZip().replaceAll(regex,"").toUpperCase());
+
+    logger.info(" newAddress: {}",newAddress);
+
+    Assertions.assertEquals(newAddress.getAddress().toUpperCase(),normalizedAddress.getAddress());
+    Assertions.assertEquals(newAddress.getMunicipality(),normalizedAddress.getMunicipality());
+    Assertions.assertEquals(newAddress.getMunicipalityDetails(),normalizedAddress.getMunicipalityDetails());
+    Assertions.assertEquals(newAddress.getProvince(),normalizedAddress.getProvince());
+    Assertions.assertEquals(newAddress.getZip(),normalizedAddress.getZip());
+
+
+   }catch(AssertionFailedError error){
     sharedSteps.throwAssertFailerWithIUN(error);
 }
 
