@@ -3,17 +3,14 @@ package it.pagopa.pn.client.b2b.pa.utils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 //TODO: Usare ovunque è necessario il timing e verificare se parametrizzare da propertiesFile
 
 @Component
 public class TimingForTimeline {
-
     private final PnB2bClientTimingConfigs timingConfigs;
-    public record TimingResult(int numCheck,int waiting) { }
+    public record TimingResult(int numCheck, int waiting) { }
 
     @Autowired
     public TimingForTimeline(PnB2bClientTimingConfigs timingConfigs){
@@ -21,17 +18,25 @@ public class TimingForTimeline {
     }
 
 
-    public TimingResult getTimingForElement(String element){
+    public TimingResult getTimingForElement(String element, boolean isSlow){
         element = element.trim().toUpperCase();
         Element findedElement = Element.valueOf(element);
         int waiting = timingConfigs.getWorkflowWaitMillis();
         int waitingMultiplier = findedElement.getWaitingMultiplier();
-        if( waitingMultiplier > 0){
+
+        if(waitingMultiplier > 0){
             waiting = waiting * waitingMultiplier;
-        }else if(waitingMultiplier < 0){
-            waiting = waiting / waitingMultiplier;
         }
-        return new TimingResult(findedElement.getNumCheck(),waiting);
+        //CASO WAITING MULTIPLIER NEGATIVO DA GESTIRE IN FUTURO
+
+        if(isSlow) {
+            return new TimingResult(findedElement.getNumCheck(), waiting * timingConfigs.getWaitingTimingSlowMultiplier());
+        }
+        return new TimingResult(findedElement.getNumCheck(), waiting);
+    }
+
+    public TimingResult getTimingForElement(String element){
+        return getTimingForElement(element, false);
     }
 
     @Getter
@@ -100,6 +105,4 @@ public class TimingForTimeline {
             this.waitingMultiplier = waitingMultiplier;
         }
     }
-
-
 }
