@@ -14,10 +14,10 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.pn.cucumber.steps"),
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
-@ExcludeTags({"ignore","uat","appIo","realNormalizzatore","realNR"})
+@ExcludeTags({"ignore","uat","appIo","realNormalizzatore","integration","realNR"})
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli",
         "Async", "f24", "version","AOO_UO", "Annullamento",
         "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
-        "legalFact", "letturaDestinatario","20Grammi","partitaIva"})
+        "legalFact", "letturaDestinatario","20Grammi"})
 public class NrtTest_hotfix {
 }

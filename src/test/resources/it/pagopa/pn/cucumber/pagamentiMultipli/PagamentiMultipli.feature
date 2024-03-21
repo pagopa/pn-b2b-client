@@ -3736,7 +3736,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_115] PA - Invio AR DELIVERY_MODE  -  Invio notifica cartacea ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi con 120 F24 PN-9576
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3757,7 +3757,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_116] PA - Invio 890 DELIVERY_MODE  -  Invio notifica cartacea ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi con 120 F24 PN-9576
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3779,7 +3779,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_117] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3797,7 +3797,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_118] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3816,7 +3816,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @f24 @120F24
+  @f24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_119] PA - inserimento notifica digitale mono destinatario con 120 F24 STANDARD DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi + paFee ) PN-9576.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3835,7 +3835,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_120] PA - Invio AR DELIVERY_MODE  -  Invio notifica cartacea ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi con 120 F24 STANDARD PN-9576
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3856,7 +3856,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_121] PA - Invio 890 DELIVERY_MODE  -  Invio notifica cartacea ad indirizzo fisico fallimento al primo tentativo e successo al secondo tentativo e costi di notifica inclusi con 120 F24 STANDARD PN-9576
     And viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -3878,7 +3878,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_122] PA - Invio AR DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 STANDARD e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3896,7 +3896,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_123] PA - Invio 890 DELIVERY_MODE - inserimento notifica  mono destinatario con 120 F24 STANDARD e costi di notifica  inclusi modalità DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3915,7 +3915,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @cartaceoF24 @120F24
+  @cartaceoF24 @120F24
   Scenario: [B2B-PA-PAY_MULTI_125] Invio notifica cartacea con 11 f24 DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | notifica analogica |
@@ -3933,7 +3933,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
 
 
-  @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat @120F24
+  @cartaceoF24 @mockPec @failPecUat @120F24
   Scenario: [B2B-PA-PAY_MULTI_126] PA - Invio RS DELIVERY_MODE - inserimento notifica mono destinatario con 120 avviso F24 e costi di notifica  inclusi DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3953,7 +3953,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
-  @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat @120F24
+  @cartaceoF24 @mockPec @failPecUat @120F24
   Scenario: [B2B-PA-PAY_MULTI_127] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con 120 avviso F24 e costi di notifica  inclusi più paFee DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3973,7 +3973,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
-  @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat @120F24
+  @cartaceoF24 @mockPec @failPecUat @120F24
   Scenario: [B2B-PA-PAY_MULTI_128] PA - Invio RS DELIVERY_MODE Costi inclusi - inserimento notifica mono destinatario con 120 avviso F24 e costi di notifica  inclusi DELIVERY_MODE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -3993,7 +3993,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
-  @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat @120F24
+  @cartaceoF24 @mockPec @failPecUat @120F24
   Scenario: [B2B-PA-PAY_MULTI_129] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario con 120 avviso F24 e costi di notifica non inclusi FLAT_RATE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -4013,7 +4013,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
 
-  @pagamentiMultipli @cartaceoF24 @mockPec @failPecUat @120F24
+  @cartaceoF24 @mockPec @failPecUat @120F24
   Scenario: [B2B-PA-PAY_MULTI_130] PA - Invio RS FLAT_RATE - inserimento notifica mono destinatario 120 solo avviso F24 e costi di notifica non  inclusi più paFee FLAT_RATE (scenario positivo) PN-9576
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
