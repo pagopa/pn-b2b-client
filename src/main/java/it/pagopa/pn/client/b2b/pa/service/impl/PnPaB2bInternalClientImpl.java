@@ -301,7 +301,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy( resp, NewNotificationRequestStatusResponseV23.class );
     }
 
-    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee) throws RestClientException {
+    public NotificationProcessCostResponse getNotificationProcessCost(String iun, Integer recipientIndex, it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationFeePolicy notificationFeePolicy, Boolean applyCost, Integer paFee,Integer vat) throws RestClientException {
         throw new UnsupportedOperationException();
     }
 

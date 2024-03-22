@@ -1,7 +1,9 @@
 package it.pagopa.pn.client.b2b.pa;
 
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
@@ -23,9 +25,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.*;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+
+import java.io.*;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -40,26 +41,25 @@ public class PnPaB2bUtils {
 
     private static Logger log = LoggerFactory.getLogger(PnPaB2bUtils.class);
 
-    @Value("${pn.configuration.workflow.wait.millis:31000}")
-    private Integer workFlowWait;
-
-    @Value("${pn.configuration.workflow.wait.accepted.millis:91000}")
-    private Integer workFlowAcceptedWait;
-
-
     private final RestTemplate restTemplate;
     private final ApplicationContext ctx;
+    private final PnB2bClientTimingConfigs timingConfigs;
 
     private IPnPaB2bClient client;
 
     private final IPnRaddFsuClient raddFsuClient;
+    private final IPnRaddAlternativeClient raddAltClient;
+
 
     @Autowired
-    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient) {
+    public PnPaB2bUtils(ApplicationContext ctx, IPnPaB2bClient client,RestTemplate restTemplate, IPnRaddFsuClient raddFsuClient,
+                        IPnRaddAlternativeClient raddAltClient, PnB2bClientTimingConfigs timingConfigs) {
         this.restTemplate = restTemplate;
         this.ctx = ctx;
         this.client = client;
         this.raddFsuClient = raddFsuClient;
+        this.raddAltClient = raddAltClient;
+        this.timingConfigs = timingConfigs;
     }
 
 
@@ -1104,6 +1104,29 @@ public class PnPaB2bUtils {
         return new Pair<>(key, sha256);
     }
 
+    public Pair<String,String> preloadRaddAlternativeDocument( String resourcePath, boolean usePresignedUrl,String operationId) throws IOException {
+
+        String sha256 = computeSha256( resourcePath );
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse documentUploadResponse = getPreLoadRaddAlternativeResponse(sha256, operationId);
+
+        String key = documentUploadResponse.getFileKey();
+        String secret = documentUploadResponse.getSecret();
+        String url = documentUploadResponse.getUrl();
+
+        log.info(String.format("Attachment resourceKey=%s sha256=%s secret=%s presignedUrl=%s\n",
+                resourcePath, sha256, secret, url));
+
+        if(usePresignedUrl){
+            loadToPresignedZip( url, secret, sha256, resourcePath );
+            log.info("UPLOAD RADD COMPLETE");
+        }else{
+            log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
+        }
+
+        return new Pair<>(key, sha256);
+    }
+
+
     private DocumentUploadResponse getPreLoadRaddResponse(String sha256) {
         String id = sha256 + System.nanoTime();
         DocumentUploadRequest documentUploadRequest = new DocumentUploadRequest()
@@ -1113,6 +1136,15 @@ public class PnPaB2bUtils {
                 .contentType("application/pdf");
 
         DocumentUploadResponse documentUploadResponse = raddFsuClient.documentUpload("1234556", documentUploadRequest);
+        return documentUploadResponse;
+    }
+
+    private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse getPreLoadRaddAlternativeResponse(String sha256,String operationid) {
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadRequest documentUploadRequest = new it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadRequest()
+                .operationId(operationid)
+                .checksum(sha256);
+
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse documentUploadResponse = raddAltClient.documentUpload("1234556", documentUploadRequest);
         return documentUploadResponse;
     }
 
@@ -1425,6 +1457,9 @@ public class PnPaB2bUtils {
         loadToPresigned(url,secret,sha256,resource,"application/json",0);
     }
 
+    private void loadToPresignedZip( String url, String secret, String sha256, String resource ) {
+        loadToPresigned(url,secret,sha256,resource,"application/zip",0);
+    }
 
     private void loadToPresigned( String url, String secret, String sha256, String resource,String resourceType, int depth ) {
         try{
@@ -1594,13 +1629,11 @@ public class PnPaB2bUtils {
 
 
     private Integer getWorkFlowWait() {
-        if(workFlowWait == null)return 31000;
-        return workFlowWait;
+     return timingConfigs.getWorkflowWaitMillis();
     }
 
     private Integer getAcceptedWait() {
-        if(workFlowAcceptedWait == null)return 91000;
-        return workFlowAcceptedWait;
+       return timingConfigs.getWorkflowWaitAcceptedMillis();
     }
 
     public void verifyCanceledNotification(FullSentNotificationV23 fsn) throws IOException, IllegalStateException {
@@ -1656,6 +1689,20 @@ public class PnPaB2bUtils {
                         !fsn.getNotificationStatus().equals( NotificationStatus.CANCELLED )
         ) {
             throw new IllegalStateException("WRONG STATUS: " + fsn.getNotificationStatus() );
+        }
+    }
+
+
+    //metodo per stampa pdf per verifiche manuali
+    public void stampaPdfTramiteByte(byte[] file,String path){
+
+        try {
+            // Create file
+            OutputStream out = new FileOutputStream(path);
+            out.write(file);
+            out.close();
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
         }
     }
 

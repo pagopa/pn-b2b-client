@@ -4,10 +4,10 @@ import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
-import it.pagopa.pn.client.b2b.pa.springconfig.ApiKeysConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.BearerTokenConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.springconfig.TimingConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -44,7 +44,8 @@ import java.util.List;
         PnServiceDeskClientImplWrongApiKey.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
-        PnRaddFsuClientImpl.class
+        PnRaddFsuClientImpl.class,
+        PnRaddAlternativeClientImpl.class
 })
 @TestPropertySource(properties = {"spring.profiles.active=dev"})
 public class NewNotificationTest {

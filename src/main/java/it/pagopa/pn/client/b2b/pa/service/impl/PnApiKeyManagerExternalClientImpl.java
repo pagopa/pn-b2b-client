@@ -25,44 +25,43 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private final RestTemplate restTemplate;
     private final ApiKeysApi apiKeysApi;
     private final String basePath;
-    private final String bearerToken;
+    private final String bearerTokenCom1;
+    private final String bearerTokenCom2;
     private final String bearerTokenSON;
     private final String bearerTokenROOT;
+    private final String bearerTokenGA;
+
+
     private final String userAgent;
-    private final String apiKeyMvp1;
-    private final String apiKeyMvp2;
-    private final String apiKeyGa;
-    private final String apiKeySon;
-    private final String apiKeyRoot;
     private ApiKeyType apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
 
     public PnApiKeyManagerExternalClientImpl(
             ApplicationContext ctx,
             RestTemplate restTemplate,
             @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.api-key}") String apiKeyMvp1,
-            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.external.api-key-SON}") String apiKeySon,
-            @Value("${pn.external.api-key-ROOT}") String apiKeyRoot,
-            @Value("${pn.external.bearer-token-pa-1}") String bearerToken,
+            @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
+            @Value("${pn.external.bearer-token-pa-2}") String bearerTokenCom2,
             @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
             @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
+            @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
             @Value("${pn.webapi.external.user-agent}")String userAgent
     ) {
         this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.basePath = basePath;
-        this.bearerToken = bearerToken;
+
+        this.bearerTokenCom1 = bearerTokenCom1;
+        this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;
         this.bearerTokenROOT = bearerTokenROOT;
+        this.bearerTokenGA = bearerTokenGA;
+
         this.userAgent = userAgent;
-        this.apiKeyMvp1 = apiKeyMvp1;
-        this.apiKeyMvp2 = apiKeyMvp2;
-        this.apiKeyGa = apiKeyGa;
-        this.apiKeySon = apiKeySon;
-        this.apiKeyRoot = apiKeyRoot;
-        this.apiKeysApi = new ApiKeysApi( newApiClient( restTemplate, basePath, bearerToken,userAgent) );
+        this.apiKeysApi = new ApiKeysApi( newApiClient( restTemplate, basePath, bearerTokenCom1, userAgent) );
+    }
+
+    public void setApiKey(String bearerToken) {
+        this.apiKeysApi.setApiClient(newApiClient( restTemplate, basePath, bearerToken, userAgent));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken,String userAgent ) {
@@ -97,51 +96,47 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     //TODO: indagare l'utilizzo di questo metodo
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        boolean beenSet = false;
-        switch(apiKey){
-            case MVP_1:
-                if(this.apiKeySetted != ApiKeyType.MVP_1){
-                    setApiKey(bearerToken);
+        return switch (apiKey) {
+            case MVP_1 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_1) {
+                    setApiKey(bearerTokenCom1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
-                beenSet = true;
-                break;
-            case MVP_2:
-                if(this.apiKeySetted != ApiKeyType.MVP_2) {
-                    setApiKey(apiKeyMvp2);
+                yield true;
+            }
+            case MVP_2 -> {
+                if (this.apiKeySetted != ApiKeyType.MVP_2) {
+                    setApiKey(bearerTokenCom2);
                     this.apiKeySetted = ApiKeyType.MVP_2;
                 }
-                beenSet = true;
-                break;
-            case GA:
-                if(this.apiKeySetted != ApiKeyType.GA) {
-                    setApiKey(apiKeyGa);
+                yield true;
+            }
+            case GA -> {
+                if (this.apiKeySetted != ApiKeyType.GA) {
+                    setApiKey(bearerTokenGA);
                     this.apiKeySetted = ApiKeyType.GA;
                 }
-                beenSet = true;
-                break;
-            case SON:
-                if(this.apiKeySetted != ApiKeyType.SON) {
+                yield true;
+            }
+            case SON -> {
+                if (this.apiKeySetted != ApiKeyType.SON) {
                     setApiKey(bearerTokenSON);
                     this.apiKeySetted = ApiKeyType.SON;
                 }
-                beenSet = true;
-                break;
-            case ROOT:
-                if(this.apiKeySetted != ApiKeyType.ROOT) {
+                yield true;
+            }
+            case ROOT -> {
+                if (this.apiKeySetted != ApiKeyType.ROOT) {
                     setApiKey(bearerTokenROOT);
                     this.apiKeySetted = ApiKeyType.ROOT;
                 }
-                beenSet = true;
-                break;
-        }
-        return beenSet;
+                yield true;
+            }
+            default -> false;
+        };
     }
 
 
-    public void setApiKey(String apiKey) {
-        this.apiKeysApi.setApiClient(newApiClient( restTemplate, basePath, apiKey,userAgent));
-    }
 
     @Override
     public ApiKeyType getApiKeySetted() {return this.apiKeySetted; }

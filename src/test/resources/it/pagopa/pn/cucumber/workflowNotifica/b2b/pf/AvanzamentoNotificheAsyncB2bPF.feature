@@ -723,7 +723,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And  viene effettuato il controllo del amount di GPD = "100"
     Then vengono cancellate le posizioni debitorie
 
-  @Async
+  @Async @mockNR
   Scenario: [B2B_ASYNC_5_MULTI] Notifica multi PF/PG-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"

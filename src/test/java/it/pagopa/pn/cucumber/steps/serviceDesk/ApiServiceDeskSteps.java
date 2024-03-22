@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.serviceDesk;
 
 
 import io.cucumber.java.en.And;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.RecipientType;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDeskIntegration.model.TimelineElement;
@@ -98,7 +99,7 @@ public class ApiServiceDeskSteps {
 
     private final Integer delay = 420000;
 
-    @Value("${pn.configuration.workflow.wait.millis:31000}")
+
     private Integer workFlowWait;
 
     @Value("${pn.retention.videotime.preload}")
@@ -128,7 +129,8 @@ public class ApiServiceDeskSteps {
     private ResponseApiKeys responseApiKeys;
 
     @Autowired
-    public ApiServiceDeskSteps(SharedSteps sharedSteps, RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient, ApplicationContext ctx, PnExternalServiceClientImpl safeStorageClient) {
+    public ApiServiceDeskSteps(SharedSteps sharedSteps, RestTemplate restTemplate, IPServiceDeskClientImpl ipServiceDeskClient, ApplicationContext ctx,
+                               PnExternalServiceClientImpl safeStorageClient, PnB2bClientTimingConfigs timingConfigs) {
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
         this.b2bClient = sharedSteps.getB2bClient();
@@ -142,6 +144,8 @@ public class ApiServiceDeskSteps {
         this.videoUploadRequest = new VideoUploadRequest();
         this.searchNotificationRequest = new SearchNotificationRequest();
         this.ctx = ctx;
+
+        this.workFlowWait = timingConfigs.getWorkflowWaitMillis();
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
@@ -1357,6 +1361,21 @@ public class ApiServiceDeskSteps {
             }
         }
     }
+
+    @And("verifica IsMultiRecipients nel dettaglio notifica")
+    public void recuperoVerifyIsMultiRecipientsDettaglioNotifica() {
+        try {
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(notificationDetailResponse);
+            Assertions.assertFalse(notificationDetailResponse.getIsMultiRecipients());
+        } catch (HttpStatusCodeException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
+        }
+    }
+
+
 
     @And("invocazione servizio per recupero dettaglio timeline notifica con taxId {string} e iun {string}")
     public void invocazioneServizioPerRecuperoDettaglioTimelineNotifica(String taxid, String iun) {

@@ -229,3 +229,48 @@ Feature: Download legalFact
     Then la PA richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS" senza legalFactType
 
 
+  @legalFact
+  Scenario: [B2B_PA_LEGALFACT_9] Invio notifica e richiesta atto opponibile PEC_RECEIPT con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then l'ente "Comune_Multi" richiede l'attestazione opponibile "PEC_RECEIPT"
+    And l'operazione ha prodotto un errore con status code "404"
+
+
+  Scenario: [B2B_PA_LEGALFACT_10] Invio notifica e richiesta atto opponibile RECIPIENT_ACCESS con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And "Mario Gherkin" legge la notifica ricevuta
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then l'ente "Comune_Multi" richiede l'attestazione opponibile "RECIPIENT_ACCESS"
+    And l'operazione ha prodotto un errore con status code "404"
+
+
+  @legalFact
+  Scenario: [B2B_PA_LEGALFACT_11] Invio notifica e richiesta atto opponibile DIGITAL_DELIVERY con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    Then l'ente "Comune_Multi" richiede l'attestazione opponibile "DIGITAL_DELIVERY"
+    And l'operazione ha prodotto un errore con status code "404"
+
+
+  Scenario: [B2B_PA_LEGALFACT_12] Invio notifica e richiesta atto opponibile SENDER_ACK con ente diverso dalla notifica - PN-8702
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    Then l'ente "Comune_Multi" richiede l'attestazione opponibile "SENDER_ACK"
+    And l'operazione ha prodotto un errore con status code "404"

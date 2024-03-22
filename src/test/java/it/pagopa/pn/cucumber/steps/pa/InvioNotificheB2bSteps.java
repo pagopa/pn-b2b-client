@@ -416,6 +416,20 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+    @And("viene effettuato un controllo sul type zip attachment di {string} per l'elemento di timeline {string} con DOC {string}")
+    public void attachmentCheckLoadForTimelineElementF24(String documentType, String timelineEventCategory, String doc, @Transpose DataTest dataFromTest) throws InterruptedException {
+        TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        switch (documentType) {
+            case "ATTACHMENTS":
+                Assertions.assertNotNull(timelineElement.getDetails().getAttachments());
+                Assertions.assertTrue(doc.equalsIgnoreCase(timelineElement.getDetails().getAttachments().get(0).getDocumentType()));
+                Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getUrl().contains(".zip"));
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
+    }
+
     @And("viene effettuato un controllo sulla durata della retention del PAGOPA di {string} per l'elemento di timeline {string}")
     public void retentionCheckLoadForTimelineElementPAGOPA(String documentType, String timelineEventCategory, @Transpose DataTest dataFromTest) throws InterruptedException {
         TimelineElementV23 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
@@ -705,6 +719,12 @@ public class InvioNotificheB2bSteps {
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
+    @Then("l'operazione non ha prodotto errori")
+    public void operationProducedNotAnError() {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertNull(httpStatusCodeException);
+    }
+
 
     @Then("si verifica la corretta acquisizione della notifica")
     public void correctAcquisitionNotification() {
@@ -806,11 +826,17 @@ public class InvioNotificheB2bSteps {
         logger.info("retentionUntil: " + retentionUntil);
         OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
         OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
-        Integer timelineEventDateMinutes = timelineEventDate.getMinute();
-        Integer retentionUntilMinutes = retentionUntil.getMinute();
+
         long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
+
+        LocalTime timelineEventDateLocalTime = timelineEventDate.toLocalTime();
+        LocalTime retentionUntilLocalTime = retentionUntil.toLocalTime();
+        Duration diff = Duration.between(timelineEventDateLocalTime, retentionUntilLocalTime);
+        long diffInMinutes = diff.toMinutes();
+
         logger.info("Difference: " + between);
-        return retentionTime == between && Math.abs(timelineEventDateMinutes - retentionUntilMinutes) <= 10;
+        logger.info("diffInMinutes: " + diffInMinutes);
+        return retentionTime == between && Math.abs(diffInMinutes) <= 10;
     }
 
     @And("l'importo della notifica è {int}")
@@ -1135,6 +1161,51 @@ public class InvioNotificheB2bSteps {
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
 
         }
+
+    }
+
+
+
+    @Then("si verifica che il phyicalAddress sia stato normalizzato correttamente con rimozione caratteri isoLatin1 è abbia un massimo di {int} caratteri")
+    public void controlloCampiAddressNormalizzatore(Integer caratteri){
+        String regex= "[{-~¡-ÿ]*";
+
+       FullSentNotificationV23 timeline= sharedSteps.getSentNotification();
+
+       TimelineElementV23 timelineNormalizer= timeline.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NORMALIZED_ADDRESS)).findAny().orElse(null);
+        PhysicalAddress oldAddress= timelineNormalizer.getDetails().getOldAddress();
+        PhysicalAddress normalizedAddress= timelineNormalizer.getDetails().getNormalizedAddress();
+try {
+    Assertions.assertNotNull(normalizedAddress);
+    Assertions.assertNotNull(oldAddress);
+
+    logger.info("old address: {}", oldAddress);
+    logger.info("normalized address: {}", normalizedAddress);
+
+    PhysicalAddress newAddress= new PhysicalAddress()
+            .address(oldAddress.getAddress().length()>caratteri?  oldAddress.getAddress().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+            oldAddress.getAddress().replaceAll(regex,"").toUpperCase())
+            .municipality(oldAddress.getMunicipality().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getMunicipality().replaceAll(regex,"").toUpperCase())
+            .municipalityDetails(oldAddress.getMunicipalityDetails().length()>caratteri?  oldAddress.getMunicipalityDetails().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getMunicipalityDetails().replaceAll(regex,"").toUpperCase())
+            .province(oldAddress.getProvince().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getProvince().replaceAll(regex,"").toUpperCase())
+            .zip(oldAddress.getZip().length()>caratteri?  oldAddress.getMunicipality().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
+                    oldAddress.getZip().replaceAll(regex,"").toUpperCase());
+
+    logger.info(" newAddress: {}",newAddress);
+
+    Assertions.assertEquals(newAddress.getAddress().toUpperCase(),normalizedAddress.getAddress());
+    Assertions.assertEquals(newAddress.getMunicipality(),normalizedAddress.getMunicipality());
+    Assertions.assertEquals(newAddress.getMunicipalityDetails(),normalizedAddress.getMunicipalityDetails());
+    Assertions.assertEquals(newAddress.getProvince(),normalizedAddress.getProvince());
+    Assertions.assertEquals(newAddress.getZip(),normalizedAddress.getZip());
+
+
+   }catch(AssertionFailedError error){
+    sharedSteps.throwAssertFailerWithIUN(error);
+}
 
     }
 
