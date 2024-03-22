@@ -1179,8 +1179,8 @@ try {
     Assertions.assertNotNull(normalizedAddress);
     Assertions.assertNotNull(oldAddress);
 
-    logger.info("old addres: {}", oldAddress);
-    logger.info("normalized addres: {}", normalizedAddress);
+    logger.info("old address: {}", oldAddress);
+    logger.info("normalized address: {}", normalizedAddress);
 
     PhysicalAddress newAddress= new PhysicalAddress()
             .address(oldAddress.getAddress().length()>caratteri?  oldAddress.getAddress().substring(0,caratteri).replaceAll(regex,"").toUpperCase():
