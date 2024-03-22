@@ -470,6 +470,8 @@ Feature: verifica validazione sincrona
     Examples:
       | zip_code         |
       | 7500777500779987 |
+      | 1                |
+      | []!=+àèùòì'^*+   |
     #1) 15 max Length
 
 
@@ -684,11 +686,11 @@ Feature: verifica validazione sincrona
       | idempotenceToken   | <idempotenceToken>          |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | idempotenceToken |
-      | 257_CHAR         |
-      | \n               |
+      | idempotenceToken | error          |
+      | 257_CHAR         | too long       |
+      | \n               | ECMA 262 regex |
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_45] validazione sincrona campo paProtocolNumber
@@ -698,25 +700,24 @@ Feature: verifica validazione sincrona
       | paProtocolNumber   | <paProtocolNumber>          |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | paProtocolNumber |
-      | 257_CHAR         |
-      | \n               |
-      | NULL             |
+      | paProtocolNumber | error                                                          |
+      | 257_CHAR         | too long                                                       |
+      | \n               | ECMA 262 regex                                                 |
+      | NULL             | instance type (null) does not match any allowed primitive type |
 
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_46] validazione sincrona campo notificationFeePolicy
+  Scenario: [B2B-PA-SYNC_VALIDATION_46] validazione sincrona campo notificationFeePolicy
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-      | feePolicy          | <notificationFeePolicy>     |
+      | feePolicy          | NULL                            |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | notificationFeePolicy |
-      | NULL                  |
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
+
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_47] validazione sincrona campo cancelledIun
     Given viene generata una nuova notifica
@@ -725,25 +726,23 @@ Feature: verifica validazione sincrona
       | cancelledIun       | <cancelledIun>              |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | cancelledIun              |
-      | 24_CHAR                   |
-      | 26_CHAR                   |
-      | 12A4-1234-1234-abcdef-1-a |
+      | cancelledIun              | error          |
+      | 24_CHAR                   | too short      |
+      | 26_CHAR                   | too long       |
+      | 12A4-1234-1234-abcdef-1-a | ECMA 262 regex |
 
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_48] validazione sincrona campo physicalCommunicationType
+  Scenario: [B2B-PA-SYNC_VALIDATION_48] validazione sincrona campo physicalCommunicationType
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | comune di milano            |
-      | physicalCommunication | <physicalCommunication>     |
+      | physicalCommunication | NULL    |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | physicalCommunication |
-      | NULL                  |
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_49] validazione sincrona campo senderDenomination
@@ -752,13 +751,14 @@ Feature: verifica validazione sincrona
       | senderDenomination | <senderDenomination>        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | senderDenomination |
-      | NULL               |
-      | 0_CHAR             |
-      | 81_CHAR            |
-      | \n                 |
+      | senderDenomination | error                                                          |
+      | NULL               | instance type (null) does not match any allowed primitive type |
+      | 0_CHAR             | too short                                                      |
+      | 81_CHAR            | too long                                                       |
+      | \n                 | ECMA 262 regex                                                 |
+
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_50] validazione sincrona campo group
     Given viene generata una nuova notifica
@@ -767,11 +767,12 @@ Feature: verifica validazione sincrona
       | group              | <group>                     |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | group                                                    |
-      | 1025_CHAR                                                |
-      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
+      | group                                                    | error          |
+      | 1025_CHAR                                                | too long       |
+      | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ | ECMA 262 regex |
+
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_51] validazione sincrona campo paymentExpirationDate
@@ -781,13 +782,13 @@ Feature: verifica validazione sincrona
       | paymentExpirationDate | <paymentExpirationDate>     |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | paymentExpirationDate |
-      | 9_CHAR                |
-      | 11_CHAR               |
-      | ĄŁŚŠŻą˛łľś            |
-      | abcd-ab-ab            |
+      | paymentExpirationDate | error          |
+      | 9_CHAR                | too short      |
+      | 11_CHAR               | too long       |
+      | ĄŁŚŠŻą˛łľś            | ECMA 262 regex |
+      | abcd-ab-ab            | ECMA 262 regex |
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_52] validazione sincrona campo recipents
@@ -796,7 +797,7 @@ Feature: verifica validazione sincrona
       | senderDenomination | comune di milano            |
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
-    #restituisce un 500 verificare se è corretto
+    #bug associato 10407
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_53] validazione sincrona campo documents
@@ -806,7 +807,7 @@ Feature: verifica validazione sincrona
       | document           | NULL                        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
 
@@ -817,88 +818,210 @@ Feature: verifica validazione sincrona
     And destinatario Mario Cucumber e:
       | recipientType | NULL |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_55] validazione sincrona campo taxId
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | comune di milano            |
-    And destinatario
-      | taxId | <taxId> |
-    When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
-    Examples:
-      | taxId            |
-      | NULL             |
-      | 10_CHAR          |
-      | 17_CHAR          |
-      | 16_CHAR          |
-      | 123456_:1+[1?^'1 |
 
-
-  Scenario: [B2B-PA-SYNC_VALIDATION_56] validazione sincrona campo digitalDomicile_type
+  Scenario: [B2B-PA-SYNC_VALIDATION_55] validazione sincrona campo digitalDomicile_type
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin e:
       | digitalDomicile_type | NULL |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_57] validazione sincrona campo digitalDomicile_address
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_56] validazione sincrona campo digitalDomicile_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | <digitalDomicileAddress> |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | digitalDomicileAddress |
-      | NULL                   |
-      | 321_CHAR               |
-      | %&£"(=.*é°@é.ç°é*"žżŔ  |
+      | digitalDomicileAddress | error                                                          |
+      | NULL                   | instance type (null) does not match any allowed primitive type |
+      | 321_CHAR               | too long                                                       |
+      | %&£"(=.*é°@é.ç°é*"žżŔ  | ECMA 262 regex                                                 |
 
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_58] validazione sincrona campo at del physicalAddress
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_57] validazione sincrona campo at del physicalAddress
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin e:
       | at | <at> |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | at       |
-      | 257_CHAR |
-      | \n       |
+      | at       | error          |
+      | 257_CHAR | too long       |
+      | \n       | ECMA 262 regex |
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_59] validazione sincrona campo  physicalAddress_address
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_58] validazione sincrona campo physicalAddress_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin e:
       | physicalAddress_address | <address> |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | address |
-      | NULL                   |
-      | 1_CHAR                 |
-      | 1025_CHAR              |
-      | \n  a                  |
+      | address   | error                                                          |
+      | NULL      | instance type (null) does not match any allowed primitive type |
+      | 1_CHAR    | too short                                                      |
+      | 1025_CHAR | too long                                                       |
+      | \n  a     | ECMA 262 regex                                                 |
 
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_60] validazione sincrona campo  physicalAddress_addressDetails
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_59] validazione sincrona campo physicalAddress_addressDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario Mario Gherkin e:
       | physicalAddress_addressDetails | <addressDetails> |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | addressDetails |
-      | 1025_CHAR      |
-      | \n  a          |
+      | addressDetails | error                    |
+      | 1025_CHAR      | too long                 |
+      | \n  a          | ECMA 262 regex too short |
+
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_60] validazione sincrona campo physicalAddress_municipality
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipality | <municipality> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | municipality | error                                                          |
+      | NULL         | instance type (null) does not match any allowed primitive type |
+      | 1_CHAR       | too short                                                      |
+      | 257_CHAR     | too long                                                       |
+      | \n  a        | ECMA 262 regex                                                 |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_61] validazione sincrona campo physicalAddress_municipalityDetails
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | municipalityDetails | error          |
+      | 257_CHAR            | too long       |
+      | \n                  | ECMA 262 regex |
+
+  @validation
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_62] validazione sincrona campo physicalAddress_province
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_province | <province> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | province | error          |
+      | 257_CHAR | too long       |
+      | \n       | ECMA 262 regex |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_63] validazione sincrona campo physicalAddress_State
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_State | <state> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | state    | error          |
+      | 257_CHAR | too long       |
+      | \n       | ECMA 262 regex |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_64] validazione sincrona campo noticeCode
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | payment_noticeCode | <noticeCode> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | noticeCode          | error                                                          |
+      | NULL                | instance type (null) does not match any allowed primitive type |
+      | 12345678912345678   | too short                                                      |
+      | 1234567891234567891 | too long                                                       |
+      | #@è^?é*arasc(+*é?A  | ECMA 262 regex                                                 |
+
+
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_65] validazione sincrona campo creditorTaxId
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | payment_creditorTaxId | <creditorTaxId> |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
+    Examples:
+      | creditorTaxId | error                                                          |
+      | NULL          | instance type (null) does not match any allowed primitive type |
+      | 1234567891    | too short                                                      |
+      | 123456789123  | too long                                                       |
+      | #@è^?asc(?A   | ECMA 262 regex                                                 |
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_66] validazione sincrona campo applyCost pagamento pagoPa
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | apply_cost_pagopa | NULL |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_67] validazione sincrona campo title pagamento F24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | payment_f24        | PAYMENT_F24_FLAT |
+      | title_payment      | NULL             |
+      | apply_cost_f24     | NO               |
+      | payment_pagoPaForm | NO               |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_68] validazione sincrona campo applyCost pagamento F24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | payment_f24    | PAYMENT_F24_FLAT |
+      | apply_cost_f24 | NULL             |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_69] validazione sincrona campo metadataAttachment pagamento F24
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Gherkin e:
+      | payment_f24 | NO_METADATA_ATTACHMENT |
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
+
