@@ -272,11 +272,12 @@ public class DataTableTypeUtil {
                         (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
                                 null :
                                 new PagoPaPayment()
-                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
-                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                        .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key)== null? null: getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
+                                        .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key)== null? null: getValue(data, PAYMENT_NOTICE_CODE.key))
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key) == null ? null:
+                                                getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
                                         .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
-                //.attachment(utils.newAttachment(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
+
                 //LOAD METADATI F24
                 if (getValue(data,PAYMENT_F24.key)!= null  && !getValue(data,PAYMENT_F24.key).isEmpty()) {
                     setMetadatiF24(data, addPaymentsItem, i);
@@ -338,9 +339,10 @@ public class DataTableTypeUtil {
         if(!Objects.equals(getValue(data, PAYMENT_F24.key), null)) {
             addPaymentsItem.f24(
                     new F24Payment()
-                            .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
-                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
+                            .title(getValue(data, TITLE_PAYMENT.key)!=null? getValue(data, TITLE_PAYMENT.key) + "_" + i : null)
+                            .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key)==null? null: getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
+                            .metadataAttachment(getValue(data, PAYMENT_F24.key).equalsIgnoreCase("NO_METADATA_ATTACHMENT")? null:
+                                    getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
 
         } else if (!Objects.equals(getValue(data, PAYMENT_F24_X.key), null)) {
             boolean applyCost = true;
