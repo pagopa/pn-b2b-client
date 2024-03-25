@@ -592,7 +592,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008C"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
 
-  @workflowAnalogico @realNR @uatEnvCondition
+  @workflowAnalogico @realNR
   Scenario: [B2B_TIMELINE_ANALOG_77] PA mittente: invio notifica analogica FAIL-Irreperibile_AR
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
