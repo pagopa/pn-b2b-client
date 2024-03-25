@@ -52,7 +52,7 @@ Feature: verifica validazione sincrona
     And destinatario Mario Cucumber e:
       | physicalAddress | NULL |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null)"
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_4] verifica validazione sync taxonomyCode
@@ -62,13 +62,13 @@ Feature: verifica validazione sincrona
       | taxonomyCode       | <taxonomyCode>                        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | taxonomyCode |
-      | NULL         |
-      | 6_CHAR       |
-      | 8_CHAR       |
-      | ĄŁŚŠŻą˛łľś   |
+      | taxonomyCode | error                |
+      | NULL         | instance type (null) |
+      | 6_CHAR       | too short            |
+      | 8_CHAR       | too long             |
+      | ĄŁŚŠŻą˛łľś   | ECMA 262 regex       |
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_5] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
@@ -92,7 +92,7 @@ Feature: verifica validazione sincrona
     And destinatario
       | taxId | LNALNI80A01H501X |
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Invalid taxId"
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_7] Invio notifica mono destinatario con max numero allegati scenario negativo
@@ -102,7 +102,7 @@ Feature: verifica validazione sincrona
     And destinatario Mario Cucumber
     And aggiungo 16 numero allegati
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max attachment count reached"
 
   @SmokeTest @testLite
   Scenario: [B2B-PA-SYNC_VALIDATION_8] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata
@@ -139,7 +139,7 @@ Feature: verifica validazione sincrona
     And destinatario "Mario Cucumber" con uguale codice avviso del destinario numero 1
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'invio ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated iuv"
 
 
   Scenario: [B2B-PA-SYNC_VALIDATION_11] Invio notifica multi destinatario destinatario duplicato_scenario negativo
@@ -149,7 +149,7 @@ Feature: verifica validazione sincrona
     And destinatario Mario Gherkin
     And destinatario Mario Gherkin
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'invio ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated recipient taxId"
 
   Scenario: [B2B-PA-SYNC_VALIDATION_12] Invion notifica multidestinatario max recipient_scenario negativo
     Given viene generata una nuova notifica
@@ -188,7 +188,8 @@ Feature: verifica validazione sincrona
     And destinatario
       | taxId        | DSRDNI00A01A225I |
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'invio ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max recipient count reached"
+
 
   Scenario: [B2B-PA-SYNC_VALIDATION_13] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
     Given viene generata una nuova notifica
@@ -210,7 +211,7 @@ Feature: verifica validazione sincrona
       | taxId         | GLLGLL64B15G702I  |
       |recipientType  | PG                |
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'invio ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "SEND accepts only numerical taxId for PG"
 
   Scenario: [B2B-PA-SYNC_VALIDATION_15] Invio notifica  mono destinatario con Piva errata
     Given viene generata una nuova notifica
@@ -220,7 +221,7 @@ Feature: verifica validazione sincrona
       | recipientType    | PG                  |
       | taxId            | 1266681029H    |
     When la notifica viene inviata dal "Comune_Multi"
-    Then l'invio della notifica ha sollevato un errore "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "ECMA 262 regex"
 
   @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_16] validazione sincrona campo denomination
@@ -295,19 +296,19 @@ Feature: verifica validazione sincrona
     And destinatario
       | taxId | <taxId> |
     When la notifica viene inviata dal "Comune_1"
-    Then l'operazione ha prodotto un errore con status code "400"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | taxId             |
-      | FRMTTR76F06B715E  |
-      | FRRTTR76M0MB715H  |
-      | 1000000000        |
-      | 17000000000000000 |
-      | FRMTTR76M06B715   |
-      | FRMTTRZ6M06B715E  |
-      | FRMTTR76M0YB715E  |
-      | FRMTTR76M06B7W5E  |
-      | 20517460320       |
-      | NULL              |
+      | taxId             | error                |
+      | FRMTTR76F06B715E  | Invalid taxId        |
+      | FRRTTR76M0MB715H  | Invalid taxId        |
+      | 1000000000        | too short            |
+      | 17000000000000000 | too long             |
+      | FRMTTR76M06B715   | ECMA 262 regex       |
+      | FRMTTRZ6M06B715E  | ECMA 262 regex       |
+      | FRMTTR76M0YB715E  | ECMA 262 regex       |
+      | FRMTTR76M06B7W5E  | ECMA 262 regex       |
+      | 20517460320       | Invalid taxId        |
+      | NULL              | instance type (null) |
       #1-2) codice fiscale malformato
       #3) 10 numeri (min 11)
       #4) 17 numeri (max 16)
@@ -935,7 +936,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR | too long       |
       | \n       | ECMA 262 regex |
 
-
+  @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_63] validazione sincrona campo physicalAddress_State
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -949,7 +950,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR | too long       |
       | \n       | ECMA 262 regex |
 
-
+  @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_64] validazione sincrona campo noticeCode
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -965,7 +966,7 @@ Feature: verifica validazione sincrona
       | 1234567891234567891 | too long                                                       |
       | #@è^?é*arasc(+*é?A  | ECMA 262 regex                                                 |
 
-
+  @validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_65] validazione sincrona campo creditorTaxId
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -981,7 +982,7 @@ Feature: verifica validazione sincrona
       | 123456789123  | too long                                                       |
       | #@è^?asc(?A   | ECMA 262 regex                                                 |
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_66] validazione sincrona campo applyCost pagamento pagoPa
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -991,7 +992,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_67] validazione sincrona campo title pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1004,7 +1005,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_68] validazione sincrona campo applyCost pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1015,7 +1016,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-
+  @validation
   Scenario: [B2B-PA-SYNC_VALIDATION_69] validazione sincrona campo metadataAttachment pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
