@@ -10,22 +10,22 @@ import static org.awaitility.Awaitility.await;
 
 
 public abstract class PnPollingTemplate<T extends PnPollingResponse> implements IPnPollingService<T> {
-    public T waitForEvent(String iun, String value) {
+    public T waitForEvent(String id, String value) {
         try {
             return await()
                     .atMost(getAtMost(value), MILLISECONDS)
                     .with()
                     .pollInterval(getPollInterval(value), MILLISECONDS)
                     .ignoreExceptions()
-                    .until(getPollingResponse(iun, value), checkCondition(iun, value));
+                    .until(getPollingResponse(id, value), checkCondition(id, value));
         } catch (ConditionTimeoutException conditionTimeoutException) {
             //Eseguo il catch nel caso in cui checkCondition() non ritornerà mai true
             return getException(conditionTimeoutException);
         }
     }
 
-    protected abstract Callable<T> getPollingResponse(String iun, String value);
-    protected abstract Predicate<T> checkCondition(String iun, String value);
+    protected abstract Callable<T> getPollingResponse(String id, String value);
+    protected abstract Predicate<T> checkCondition(String id, String value);
     protected abstract T getException(Exception exception);
     protected abstract Integer getPollInterval(String value);
     protected abstract Integer getAtMost(String value);

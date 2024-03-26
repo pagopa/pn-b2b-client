@@ -207,7 +207,7 @@ public class SharedSteps {
 
     private String defaultDigitalAddress = "testpagopa3@pec.pagopa.it";
 
-
+    private SettableApiKey.ApiKeyType apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
@@ -1185,7 +1185,7 @@ public class SharedSteps {
                     logger.error("Thread.sleep error retry");
                     throw new RuntimeException(e);
                 }
-
+                b2bUtils.setClient(b2bClient);
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
 
@@ -1248,7 +1248,7 @@ public class SharedSteps {
                     logger.error("Thread.sleep error retry");
                     throw new RuntimeException(e);
                 }
-
+                b2bUtils.setClient(b2bClient);
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
             });
 
@@ -1730,28 +1730,36 @@ public class SharedSteps {
         this.notificationError = notificationError;
     }
 
+    public SettableApiKey.ApiKeyType getApiKeyTypeSetted() {
+        return apiKeyTypeSetted;
+    }
 
     public void setSenderTaxIdFromProperties() {
         switch (settedPa) {
             case "Comune_1":
                 this.notificationRequest.setSenderTaxId(this.senderTaxId);
                 setGrup(SettableApiKey.ApiKeyType.MVP_1);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
                 break;
             case "Comune_2":
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdTwo);
                 setGrup(SettableApiKey.ApiKeyType.MVP_2);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_2;
                 break;
             case "Comune_Multi":
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdGa);
                 setGrup(SettableApiKey.ApiKeyType.GA);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.GA;
                 break;
             case "Comune_Son":
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdSON);
                 setGrup(SettableApiKey.ApiKeyType.SON);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.SON;
                 break;
             case "Comune_Root":
                 this.notificationRequest.setSenderTaxId(this.senderTaxIdROOT);
                 setGrup(SettableApiKey.ApiKeyType.ROOT);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.ROOT;
                 break;
         }
 
@@ -1762,14 +1770,17 @@ public class SharedSteps {
             case "Comune_1":
                 this.notificationRequestV1.setSenderTaxId(this.senderTaxId);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_1,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
                 break;
             case "Comune_2":
                 this.notificationRequestV1.setSenderTaxId(this.senderTaxIdTwo);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_2,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_2;
                 break;
             case "Comune_Multi":
                 this.notificationRequestV1.setSenderTaxId(this.senderTaxIdGa);
                 setGrupVersioning(SettableApiKey.ApiKeyType.GA,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.GA;
                 break;
         }
 
@@ -1780,14 +1791,17 @@ public class SharedSteps {
             case "Comune_1":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxId);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_1,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
                 break;
             case "Comune_2":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxIdTwo);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_2,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_2;
                 break;
             case "Comune_Multi":
                 this.notificationRequestV2.setSenderTaxId(this.senderTaxIdGa);
                 setGrupVersioning(SettableApiKey.ApiKeyType.GA,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.GA;
                 break;
         }
 
@@ -1798,14 +1812,17 @@ public class SharedSteps {
             case "Comune_1":
                 this.notificationRequestV21.setSenderTaxId(this.senderTaxId);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_1,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
                 break;
             case "Comune_2":
                 this.notificationRequestV21.setSenderTaxId(this.senderTaxIdTwo);
                 setGrupVersioning(SettableApiKey.ApiKeyType.MVP_2,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_2;
                 break;
             case "Comune_Multi":
                 this.notificationRequestV21.setSenderTaxId(this.senderTaxIdGa);
                 setGrupVersioning(SettableApiKey.ApiKeyType.GA,version);
+                apiKeyTypeSetted = SettableApiKey.ApiKeyType.GA;
                 break;
         }
 

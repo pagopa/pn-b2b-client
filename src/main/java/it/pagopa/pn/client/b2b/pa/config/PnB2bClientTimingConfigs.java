@@ -23,6 +23,7 @@ public class PnB2bClientTimingConfigs {
     private Duration waitingForReadCourtesyMessage;
     private Integer schedulingDeltaMillis;
     private Integer waitingTimingSlowMultiplier;
+    private Integer waitMillisShort;
 
 
 }

@@ -39,6 +39,18 @@ public class TimingForTimeline {
         return getTimingForElement(element, false);
     }
 
+    public TimingResult getTimingForStatusValidation(String element){
+        element = element.trim().toUpperCase();
+        Element findedElement = Element.valueOf(element);
+        int waiting = timingConfigs.getWorkflowWaitAcceptedMillis();
+
+        if (element.equalsIgnoreCase(Element.ACCEPTED_SHORT_VALIDATION.toString())){
+            waiting = timingConfigs.getWaitMillisShort();
+        }
+
+        return new TimingResult(findedElement.getNumCheck(), waiting);
+    }
+
     @Getter
     private enum Element{
         //TIMELINE ELEMENT UPDATE TO V2.3
@@ -89,6 +101,10 @@ public class TimingForTimeline {
         IN_VALIDATION(2,0),
         ACCEPTED(2,0),
         REFUSED(10,0),
+        ACCEPTED_VALIDATION(16,0),
+        NO_ACCEPTED_VALIDATION(8,0),
+        ACCEPTED_SHORT_VALIDATION(230,0),
+        REFUSED_VALIDATION(10,0),
         DELIVERING(2,4),
         DELIVERED(3,4),
         VIEWED(5,0),
