@@ -15,8 +15,6 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -32,8 +30,6 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -47,8 +43,6 @@ Feature: tentativo consumo stream
     And l'operazione non ha prodotto errori
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione non ha prodotto errori
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -64,8 +58,6 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
     #Verificare se corretto che restituisce un 400 invece di un 403
   @webhookV23 @cleanWebhook @webhook2
@@ -77,8 +69,7 @@ Feature: tentativo consumo stream
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     When vengono letti gli eventi di timeline dello stream con versione "V10" -Cross Versioning
     Then l'operazione ha prodotto un errore con status code "400"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
+
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.5_141] Creazione di uno stream senza gruppo con la V10 e  lettura Eventi di timeline o di cambio di stato con la versione V23 utilzzando un apikey abilitata.
@@ -88,8 +79,7 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi di timeline dello stream con versione "V23" -Cross Versioning
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
+
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -105,8 +95,7 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
+
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -123,5 +112,9 @@ Feature: tentativo consumo stream
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream versione V23
     Then l'operazione ha prodotto un errore con status code "403"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
+
+
+
+
+
+

@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import java.io.File;
+import java.net.URI;
 import java.util.List;
 
 public class ApikeyManagerSteps {
@@ -76,6 +79,9 @@ public class ApikeyManagerSteps {
                 apiKeys.getItems().stream()
                         .filter(elem -> elem.getId().equals(responseNewApiKey.getId())).findAny().orElse(null));
     }
+
+
+
 
     @When("viene modificato lo stato dell'apiKey in {string}")
     public void vieneModificatoLoStatoDellApiKeyIn(String state) {
@@ -220,7 +226,7 @@ public class ApikeyManagerSteps {
     public void viene_creata_una_nuova_api_key_per_il_comune_senza_gruppo(String settedPa) {
         setBearerToken(settedPa);
 
-        requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST");
+        requestNewApiKey = new RequestNewApiKey().name("CUCUMBER GROUP TEST TA");
         responseNewApiKeyTaxId = this.sharedSteps.getSenderTaxIdFromProperties(settedPa);
         Assertions.assertDoesNotThrow(() -> responseNewApiKey = this.apiKeyManagerClient.newApiKey(requestNewApiKey));
         Assertions.assertNotNull(responseNewApiKey);
@@ -359,5 +365,14 @@ public class ApikeyManagerSteps {
         }
 
         }
+
+
+    @After("@webhookV23")
+    public void deleteApiKey() {
+        RequestApiKeyStatus requestApiKeyStatus = getRequestApiKeyStatus("BLOCK");
+        Assertions.assertDoesNotThrow(() ->
+                apiKeyManagerClient.changeStatusApiKey(responseNewApiKey.getId(), requestApiKeyStatus));
+        Assertions.assertDoesNotThrow(() -> apiKeyManagerClient.deleteApiKeys(responseNewApiKey.getId()));
+    }
 
 }

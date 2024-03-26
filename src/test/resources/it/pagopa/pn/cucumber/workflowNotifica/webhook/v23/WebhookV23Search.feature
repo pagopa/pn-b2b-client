@@ -15,8 +15,6 @@ Feature: ricerca di uno stream
     When viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_28] Lettura di uno stream notifica con gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo diverso..
@@ -31,8 +29,6 @@ Feature: ricerca di uno stream
     When Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     And viene impostata l'apikey appena generata
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -43,8 +39,6 @@ Feature: ricerca di uno stream
     And viene aggiornata la apiKey utilizzata per gli stream
     And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "FIRST"
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -60,8 +54,6 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     When viene impostata l'apikey appena generata
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -77,8 +69,6 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con gruppo differente dallo stream
     When viene impostata l'apikey appena generata
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_34] Lettura di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
@@ -90,8 +80,6 @@ Feature: ricerca di uno stream
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -104,8 +92,6 @@ Feature: ricerca di uno stream
     And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_37] Lettura di uno stream notifica senza gruppo, con eventType "STATUS"  utilizzando un apikey con gruppo.
@@ -120,8 +106,6 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     When viene impostata l'apikey appena generata
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
 
   @webhookV23 @cleanWebhook @webhook2
@@ -134,8 +118,6 @@ Feature: ricerca di uno stream
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_40] Lettura di uno stream notifica senza gruppo, con eventType "TIMELINE"  utilizzando un apikey con gruppo.
@@ -150,8 +132,6 @@ Feature: ricerca di uno stream
     And Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     When viene impostata l'apikey appena generata
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_122] Lettura per una PA di uno stream che non esiste per la stessa PA
@@ -164,8 +144,6 @@ Feature: ricerca di uno stream
     When si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     When si legge lo stream che non esiste e apiKey aggiornata
     Then l'operazione ha prodotto un errore con status code "400"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_156] Lettura di uno stream notifica con gruppi appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
@@ -177,8 +155,6 @@ Feature: ricerca di uno stream
     Then lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
     And si cancella lo stream creato per il "Comune_Multi" con versione "V23"
     And viene verificata la corretta cancellazione con versione "V23"
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_157] Lettura di uno stream notifica con gruppi non appartenenti ad un sottinsieme dei gruppi dell'apikey utilizzata.
@@ -193,8 +169,6 @@ Feature: ricerca di uno stream
     And viene impostata l'apikey appena generata
     When lo stream viene recuperato dal sistema tramite stream id con versione "V23" e apiKey aggiornata
     Then l'operazione non ha prodotto errori
-    And viene modificato lo stato dell'apiKey in "BLOCK"
-    And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
   Scenario: [B2B-STREAM_ES1.1_163] Creazione di uno stream senza gruppo con la V10 e recupero metadati utilizzando un apikey con gruppi. -PN-10218.
