@@ -839,7 +839,7 @@ Feature: annullamento notifiche b2b
     And "Mario Gherkin" tenta il recupero dell'allegato "PAGOPA"
     And il download ha prodotto un errore con status code "404"
 
-  @Annullamento @webhook1 @clean
+  @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_24] Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLATION_REQUEST stream v2_scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
@@ -852,7 +852,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLATION_REQUEST"
 
-  @Annullamento @webhook1 @clean
+  @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_24_1]Invio notifica digitale ed attesa Timeline NOTIFICATION_CANCELLED stream v2_scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
@@ -865,7 +865,7 @@ Feature: annullamento notifiche b2b
     When la notifica può essere annullata dal sistema tramite codice IUN
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_CANCELLED"
 
-  @Annullamento @webhook1 @clean
+  @Annullamento @webhook1 @cleanWebhook
   Scenario: [B2B-STREAM_TIMELINE_25] Invio notifica digitale ed attesa stato CANCELLED stream v2_scenario positivo
     #Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
     Given viene generata una nuova notifica
