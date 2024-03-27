@@ -719,7 +719,7 @@ Feature: annullamento notifiche b2b
     When vengono letti gli eventi fino all'elemento di timeline della notifica annullata "NOTIFICATION_CANCELLATION_REQUEST"
     Then viene controllato che l'elemento di timeline della notifica "SEND_COURTESY_MESSAGE" non esiste
 
-  @Annullamento  @platformDependent
+  @Annullamento  @addressBook1
   Scenario:  [B2B-PA-ANNULLAMENTO_28] PA mittente: annullamento notifica durante invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"
@@ -744,7 +744,7 @@ Feature: annullamento notifiche b2b
   #Configurare il timing riducendo il tempo di wait nel seguente modo:
   # pn.configuration.workflow.wait.accepted.millis.pagopa=21000
   # pn.configuration.workflow.wait.millis.pagopa=11000
-  @Annullamento @mockPec @platformDependent
+  @Annullamento @mockPec @addressBook1
   Scenario:  [B2B-PA-ANNULLAMENTO_28_1] PA mittente: annullamento notifica inibizione invio mail di cortesia
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@sequence.90s-C000.90s-C001.90s-C005.90s-C003"
