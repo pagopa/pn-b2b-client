@@ -1,34 +1,34 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.TimelineElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForTimeline;
 import org.springframework.stereotype.Service;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_RAPID_OLD_VERSION)
-public class PnPollingServiceTimelineRapidOldVersion extends PnPollingTemplate<PnPollingResponseV1> {
-    private final TimingForTimeline timingForTimeline;
-    private final PnPaB2bExternalClientImpl pnPaB2bExternalClient;
+@Service(PnPollingStrategy.STATUS_RAPID_V1)
+public class PnPollingServiceStatusRapidV1 extends PnPollingTemplate<PnPollingResponseV1> {
+    protected final TimingForTimeline timingForTimeline;
+    private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotification notificationV1;
 
 
-    public PnPollingServiceTimelineRapidOldVersion(TimingForTimeline timingForTimeline, PnPaB2bExternalClientImpl pnPaB2bExternalClient) {
+    public PnPollingServiceStatusRapidV1(TimingForTimeline timingForTimeline, IPnPaB2bClient pnPaB2bClient) {
         this.timingForTimeline = timingForTimeline;
-        this.pnPaB2bExternalClient = pnPaB2bExternalClient;
+        this.pnPaB2bClient = pnPaB2bClient;
     }
 
     @Override
     protected Callable<PnPollingResponseV1> getPollingResponse(String iun, String value) {
         return () -> {
             PnPollingResponseV1 pnPollingResponse = new PnPollingResponseV1();
-            FullSentNotification fullSentNotification = pnPaB2bExternalClient.getSentNotificationV1(iun);
+            FullSentNotification fullSentNotification = pnPaB2bClient.getSentNotificationV1(iun);
             pnPollingResponse.setNotification(fullSentNotification);
             this.notificationV1 = fullSentNotification;
             return pnPollingResponse;
@@ -37,15 +37,13 @@ public class PnPollingServiceTimelineRapidOldVersion extends PnPollingTemplate<P
 
     @Override
     protected Predicate<PnPollingResponseV1> checkCondition(String iun, String value) {
-        //Example use v1 for check
         return (pnPollingResponse) -> {
             if(pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
 
-            if(pnPollingResponse.getNotification().getTimeline().isEmpty() ||
-                    !isPresentCategory(pnPollingResponse, value)) {
+            if(!isEqualState(pnPollingResponse, value)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -76,30 +74,28 @@ public class PnPollingServiceTimelineRapidOldVersion extends PnPollingTemplate<P
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.pnPaB2bExternalClient.setApiKeys(apiKey);
+        return this.pnPaB2bClient.setApiKeys(apiKey);
     }
 
     @Override
     public void setApiKey(String apiKeyString) {
-        this.pnPaB2bExternalClient.setApiKey(apiKeyString);
+        this.pnPaB2bClient.setApiKey(apiKeyString);
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return this.pnPaB2bExternalClient.getApiKeySetted();
+        return this.pnPaB2bClient.getApiKeySetted();
     }
 
-    private boolean isPresentCategory(PnPollingResponseV1 pnPollingResponse, String value) {
-        TimelineElement timelineElementV1 = pnPollingResponse
-                .getNotification()
-                .getTimeline()
+    private boolean isEqualState(PnPollingResponseV1 pnPollingResponse, String value) {
+        NotificationStatusHistoryElement notificationStatusHistoryElement = pnPollingResponse.getNotification()
+                .getNotificationStatusHistory()
                 .stream()
-                .filter(timelineElement -> timelineElement
-                        .getCategory()
+                .filter(notification -> notification
+                        .getStatus()
                         .getValue().equals(value))
                 .findAny()
                 .orElse(null);
-
-        return timelineElementV1 != null;
+        return notificationStatusHistoryElement != null;
     }
 }

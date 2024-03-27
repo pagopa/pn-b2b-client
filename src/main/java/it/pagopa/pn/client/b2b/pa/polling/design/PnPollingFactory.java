@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.design;
 
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponse;
-import it.pagopa.pn.client.b2b.pa.service.IPnPollingService;
+import it.pagopa.pn.client.b2b.pa.polling.IPnPollingService;
 import org.springframework.stereotype.Component;
 import java.util.Map;
 

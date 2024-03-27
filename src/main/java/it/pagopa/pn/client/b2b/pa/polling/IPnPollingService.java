@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.service;
+package it.pagopa.pn.client.b2b.pa.polling;
 
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponse;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
