@@ -624,7 +624,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 
 
-  @workflowAnalogico
+  @workflowAnalogico @uatEnvCondition
   Scenario: [B2B_TIMELINE_ANALOG_78]  PA mittente: invio notifica analogica FAIL-DiscoveryIrreperibileBadCAP_890 - PN-10146
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

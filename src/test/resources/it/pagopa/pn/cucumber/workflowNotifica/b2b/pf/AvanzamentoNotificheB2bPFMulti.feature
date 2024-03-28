@@ -1,6 +1,7 @@
 Feature: avanzamento notifiche b2b
 
-  @workflowDigitale
+  #Test in ignore per il discorso che a volte arriva prima EFFECTIVE_DATE di un destinario rispetto al'altro destinatario (Caso di test comunque coperto da altri test mono destinatario)
+  @workflowDigitale @ignore
   Scenario: [B2B-TIMELINE_MULTI_1] Invio notifica e download atto opponibile DIGITAL_DELIVERY_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
