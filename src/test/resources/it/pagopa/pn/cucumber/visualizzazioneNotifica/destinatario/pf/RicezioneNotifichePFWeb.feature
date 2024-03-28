@@ -1,6 +1,6 @@
 Feature: Ricezione notifiche api web con invio tramite api B2B
 
-  @SmokeTest @letturaDestinatario
+  @SmokeTest @letturaDestinatario @authFleet
   Scenario: [WEB-PF-RECIPIENT_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

@@ -20,8 +20,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | NULL             |
       | apply_cost_pagopa  | SI               |
@@ -44,9 +43,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -99,9 +96,7 @@ Feature: avanzamento notifiche b2b persona fisica pagamento
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di Palermo           |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | NULL             |
       | apply_cost_pagopa  | SI               |

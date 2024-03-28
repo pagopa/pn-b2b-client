@@ -186,9 +186,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario Mario Gherkin e:
       | denomination | OK-Giacenza-gt10_890 |
-      | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-Giacenza-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -200,9 +199,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario Mario Gherkin e:
       | denomination | OK-GiacenzaDelegato-gt10_890 |
-      | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-GiacenzaDelegato-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -213,9 +211,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario Mario Gherkin e:
       | denomination | FAIL-Giacenza-gt10_890 |
-      | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@FAIL-Giacenza-gt10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -226,9 +223,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
+    And destinatario Mario Gherkin e:
       | denomination | OK-CompiutaGiacenza_890 |
-      | taxId | LVLDAA85T50G702B |
       | digitalDomicile | NULL |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

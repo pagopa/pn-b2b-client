@@ -20,9 +20,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario V1
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0 V1
@@ -68,9 +66,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario V1
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -196,9 +192,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
