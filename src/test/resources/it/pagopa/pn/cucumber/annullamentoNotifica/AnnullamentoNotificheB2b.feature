@@ -98,8 +98,7 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And viene verificato il costo = "100" della notifica
@@ -113,9 +112,7 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI |
       | payment_f24          | PAYMENT_F24_STANDARD          |
       | apply_cost_f24      | SI |
@@ -131,8 +128,7 @@ Feature: annullamento notifiche b2b
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
       | feePolicy | DELIVERY_MODE |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin e:
       | payment_creditorTaxId | 77777777777 |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     When la notifica può essere annullata dal sistema tramite codice IUN
