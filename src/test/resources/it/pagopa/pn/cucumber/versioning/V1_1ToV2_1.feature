@@ -192,7 +192,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin
+    And destinatario Mario Gherkin e:
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
