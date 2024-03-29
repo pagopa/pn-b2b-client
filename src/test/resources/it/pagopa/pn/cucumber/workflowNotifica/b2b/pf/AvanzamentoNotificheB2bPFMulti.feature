@@ -96,7 +96,8 @@ Feature: avanzamento notifiche b2b
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | performance@certificata.notifichedigitali.it |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
