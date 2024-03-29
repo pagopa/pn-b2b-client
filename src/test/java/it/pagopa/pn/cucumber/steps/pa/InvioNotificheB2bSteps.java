@@ -824,8 +824,8 @@ public class InvioNotificheB2bSteps {
         OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
         logger.info("now: " + timelineEventDate);
         logger.info("retentionUntil: " + retentionUntil);
-        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
-        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.DAYS);
 
         long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
 

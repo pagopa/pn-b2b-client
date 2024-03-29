@@ -10,6 +10,7 @@ Feature: verifica funzionamento api rest
     Then viene verificato lo stato di accettazione con requestID
 
 
+  @authFleet
   Scenario: [REST_VALIDATION_2] Invio notifica digitale mono destinatario e recupero tramite codice IUN_scenario negativo
     Given si tenta il recupero della notifica dal sistema tramite codice IUN "UGYD-XHEZ-KLRM-202208-X-0"
     Then l'operazione ha prodotto un errore con status code "404"

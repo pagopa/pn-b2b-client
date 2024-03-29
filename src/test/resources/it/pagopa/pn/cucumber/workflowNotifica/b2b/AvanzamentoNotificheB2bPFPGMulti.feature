@@ -52,8 +52,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -69,8 +68,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 0
@@ -83,8 +81,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -97,8 +94,7 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
-    And destinatario
-      | taxId | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente dall'utente 1
@@ -112,8 +108,8 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
       | digitalDomicile | NULL |
       | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_AR |
@@ -135,8 +131,8 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario
-      | denomination     | Ada  |
-      | taxId | LVLDAA85T50G702B |
+      | denomination     | Giulio Cesare  |
+      | taxId | CSRGGL44L13H501E |
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
       | physicalAddress_zip     | 16121       |

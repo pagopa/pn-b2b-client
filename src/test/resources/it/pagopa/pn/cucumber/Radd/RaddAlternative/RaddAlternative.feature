@@ -1,7 +1,7 @@
 Feature: Radd Alternative
 
 
-  @raddAlt
+  @raddAlt @authFleet
   Scenario: [RADD-ALT_ACT-1] PF - Scansione QR code esistente associato al CF corretto
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
@@ -1031,7 +1031,7 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
 
 
-  @raddAlt
+  @raddAlt @authFleet
   Scenario: [RADD-ALT_AOR-64] PF - Notifiche Disponibili associate al CF corretto fornito dal destinatario (irreperibile totale) con allegato Avviso PagoPA e F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative  |

@@ -1,6 +1,6 @@
 Feature: verifica validazione sincrona
 
-  @OldMemory
+  @OldMemory @authFleet
   Scenario: [B2B-PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -290,7 +290,7 @@ Feature: verifica validazione sincrona
       | MILANO 01234 56789 |
     #TODO: indagare fallimenti
 
-  @validation
+  @validation @authFleet
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_19] validazione sincrona campo physicalAddress_municipalityDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -411,6 +411,7 @@ Feature: verifica validazione sincrona
       | ITALIA 01234 56789 |
 
     #AGGIUNGERE STATI E VERIFICARE COPERTURA TEST
+
 
 
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_25] validazione sincrona campo physicalAddress_address
