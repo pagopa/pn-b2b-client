@@ -233,7 +233,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 1
-   # And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 1 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
@@ -251,7 +251,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 1
-    #And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 1 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
