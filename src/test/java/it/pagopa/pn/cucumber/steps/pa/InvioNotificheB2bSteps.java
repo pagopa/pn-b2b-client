@@ -30,7 +30,10 @@ import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
+import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -719,6 +722,18 @@ public class InvioNotificheB2bSteps {
                 (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
     }
 
+    @Then("l'operazione ha prodotto un errore con status code {string} con messaggio di errore {string}")
+    public void operationProducedAnErrorWithMessage(String statusCode, String errore) {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+
+        byte[] responseBody = httpStatusCodeException.getResponseBodyAsByteArray();
+        String responseBodyText = new String(responseBody, StandardCharsets.UTF_8);
+
+        Assertions.assertTrue(responseBodyText.contains(errore)) ;
+    }
+
     @Then("l'operazione non ha prodotto errori")
     public void operationProducedNotAnError() {
         HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
@@ -824,8 +839,8 @@ public class InvioNotificheB2bSteps {
         OffsetDateTime retentionUntil = OffsetDateTime.parse(safeStorageResponse.getRetentionUntil());
         logger.info("now: " + timelineEventDate);
         logger.info("retentionUntil: " + retentionUntil);
-        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.HOURS);
-        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.HOURS);
+        OffsetDateTime timelineEventDateDays = timelineEventDate.truncatedTo(ChronoUnit.DAYS);
+        OffsetDateTime retentionUntilDays = retentionUntil.truncatedTo(ChronoUnit.DAYS);
 
         long between = ChronoUnit.DAYS.between(timelineEventDateDays, retentionUntilDays);
 

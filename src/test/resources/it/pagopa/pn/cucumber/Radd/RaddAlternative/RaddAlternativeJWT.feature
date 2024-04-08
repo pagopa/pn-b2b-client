@@ -25,7 +25,7 @@ Feature: Radd Alternative jwt verification
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_non_censito"
     And l'operazione ha prodotto un errore con status code "403"
 
-  @raddAlt
+  @raddAlt @authFleet
   Scenario: [RADD_ALT-JWT-3] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer scaduto (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_scaduto"
     And l'operazione ha prodotto un errore con status code "403"
@@ -45,7 +45,7 @@ Feature: Radd Alternative jwt verification
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_private_diverso"
     And l'operazione ha prodotto un errore con status code "403"
 
-  @raddAlt
+  @raddAlt @authFleet
   Scenario: [RADD_ALT-JWT-7] PF -  Recupero notifica con codice IUN esistente associato e JWT di un issuer con kid diverso dalla JWKS (verifica manuale errore dai log)
     Then L'operatore usa lo IUN "errato" per recuperare gli atti di "Mario Cucumber" da issuer "issuer_kid_diverso"
     And l'operazione ha prodotto un errore con status code "403"

@@ -50,7 +50,7 @@ Feature: verifica compatibilità tra v1 a v2
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
     And vengono letti gli eventi della timeline e si controlla che l'evento di timeline "NOTIFICATION_CANCELLED" non esista con la V1
 
-  @version
+  @version @authFleet
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_6] Controlle se presente lo stato ACCEPTED nella versione V1
     Given viene generata una nuova notifica V1
       | subject            | notifica analogica con cucumber |
@@ -67,9 +67,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario V2
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin V2 e:
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
@@ -82,9 +80,7 @@ Feature: verifica compatibilità tra v1 a v2
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
       | feePolicy          | DELIVERY_MODE               |
-    And destinatario V1
-      | denomination       | Ada              |
-      | taxId              | LVLDAA85T50G702B |
+    And destinatario Mario Gherkin V1 e:
       | payment_pagoPaForm | SI               |
       | apply_cost_pagopa  | SI               |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"

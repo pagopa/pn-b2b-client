@@ -1,11 +1,11 @@
 Feature: apiKey manager
 
-  @apiKeyManager
+  @apiKeyManager @authFleet
   Scenario: [API-KEY_1] Lettura apiKey generate_scenario positivo
     Given vengono lette le apiKey esistenti
     Then la lettura è avvenuta correttamente
 
-  @apiKeyManager
+  @apiKeyManager @authFleet
   Scenario: [API-KEY_2] generazione e cancellazione ApiKey_scenario positivo
     Given Viene creata una nuova apiKey
     And vengono lette le apiKey esistenti

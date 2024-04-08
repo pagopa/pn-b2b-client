@@ -1,6 +1,6 @@
 Feature: downtime logs test
 
-  @downtimeLogs
+  @downtimeLogs @authFleet
   Scenario: [DOWNTIME-LOGS_1] lettura downtime-logs
     Given vengono letti gli eventi di disservizio degli ultimi 30 giorni relativi alla "creazione notifiche"
     When viene individuato se presente l'evento più recente
