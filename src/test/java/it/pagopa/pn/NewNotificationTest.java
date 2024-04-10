@@ -93,7 +93,7 @@ public class NewNotificationTest {
         Assertions.assertDoesNotThrow(() -> {
 
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest);
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
@@ -122,7 +122,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest );
+            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest);
             Thread.sleep( 10 * 1000);
             utils.verifyNotification( newNotification );
         });
