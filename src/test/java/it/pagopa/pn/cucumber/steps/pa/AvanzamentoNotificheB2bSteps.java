@@ -694,7 +694,7 @@ public class AvanzamentoNotificheB2bSteps {
                         .value(timelineEventCategory)
                         .build());
 
-        logger.info("NOTIFICATION_TIMELINE V2 : " + sharedSteps.getSentNotificationV2().getTimeline());
+        logger.info("NOTIFICATION_TIMELINE V2 : " + pnPollingResponseV20.getNotification().getTimeline());
         Assertions.assertTrue(pnPollingResponseV20.getResult());
         Assertions.assertNotNull(pnPollingResponseV20.getTimelineElement());
         sharedSteps.setSentNotificationV2(pnPollingResponseV20.getNotification());
