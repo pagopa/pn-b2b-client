@@ -152,7 +152,7 @@ Feature: address validation feature
       | physicalAddress_municipalityDetails | <municipalityDetails> |
       | physicalAddress_province | <province> |
       | physicalAddress_State | <foreignState> |
-    #When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS" con indirizzo normalizzato:
       | physicalAddress_address | <address_res> |
       | at | <at_res> |
