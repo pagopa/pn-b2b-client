@@ -133,3 +133,38 @@ Feature: address validation feature
       | VIA DELLA POSTA    | NULL | NULL           | 0_CHAR | VATICANO     | NULL                | RM       | ITALIA       |
       | OTTAVA GUALDARIA 1 | NULL | NULL           | NULL   | DOMAGNANO    | NULL                | NULL     | SAN MARINO   |
 
+
+
+
+  @testNormalizzatore
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifiche controllo arrivo RIR - PN-10273
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | denomination | <denomination> |
+      |    taxId     | CLMCST42R12D969Z |
+      | physicalAddress_address | <address> |
+      | at | <at> |
+      | physicalAddress_addressDetails | <addressDetails> |
+      | physicalAddress_zip | <zip> |
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+      | physicalAddress_province | <province> |
+      | physicalAddress_State | <foreignState> |
+    #When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS" con indirizzo normalizzato:
+      | physicalAddress_address | <address_res> |
+      | at | <at_res> |
+      | physicalAddress_addressDetails | <addressDetails_res> |
+      | physicalAddress_zip | <zip_res> |
+      | physicalAddress_municipality | <municipality_res> |
+      | physicalAddress_municipalityDetails | <municipalityDetails_res> |
+      | physicalAddress_province | <province_res> |
+      | physicalAddress_State | <foreignState_res> |
+    Examples:
+      | denomination           | at           | address                    | addressDetails  | zip     | municipality                  | municipalityDetails | province  | foreignState  |
+      | TEST_NORMALIZZATORE_01 | NULL         | VIA DON DINO BIANCARDI,60  | NULL            | 46030   | SUSTINENTE                    | NULL                | RM        | NULL          |
+    Examples:
+      | at_res            | address_res                     | addressDetails_res   | zip_res      | municipality_res         | municipalityDetails_res  | province_res   | foreignState_res   |
+      | NULL              | VIA DON DINO BIANCARDI,61       | NULL                 | 46030        | SUSTINENTE               | NULL                     | RM             | NULL               |

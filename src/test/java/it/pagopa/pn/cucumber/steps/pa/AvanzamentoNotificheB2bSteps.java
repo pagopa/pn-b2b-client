@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -2925,6 +2926,17 @@ public class AvanzamentoNotificheB2bSteps {
 
     }
 
+
+    @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con indirizzo normalizzato:")
+    public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConIndirizzoNormalizzato(String timelineEventCategory, DataTable table) {
+        TimelineElementV23 timelineElementV23 = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
+
+        System.out.println(table);
+        System.out.println(table.asMap().get("physicalAddress_address"));
+        //FARE CHECK RISULTATO
+        System.out.println(timelineElementV23.getDetails().getNormalizedAddress());
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con failureCause {string}")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConfailureCause(String timelineEventCategory, String failureCause) {
         PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
@@ -3311,4 +3323,6 @@ public class AvanzamentoNotificheB2bSteps {
         );
         return pnPollingPredicate;
     }
+
+
 }
