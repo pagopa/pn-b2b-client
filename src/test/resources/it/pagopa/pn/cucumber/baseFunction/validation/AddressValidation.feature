@@ -137,34 +137,79 @@ Feature: address validation feature
 
 
   @testNormalizzatore
-  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifiche controllo arrivo RIR - PN-10273
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifiche controllo campi normalizzati
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario
-      | denomination | <denomination> |
-      |    taxId     | CLMCST42R12D969Z |
-      | physicalAddress_address | <address> |
-      | at | <at> |
-      | physicalAddress_addressDetails | <addressDetails> |
-      | physicalAddress_zip | <zip> |
-      | physicalAddress_municipality | <municipality> |
+      | denomination                        | <denomination>        |
+      | taxId                               | CLMCST42R12D969Z      |
+      | physicalAddress_address             | <address>             |
+      | at                                  | <at>                  |
+      | physicalAddress_addressDetails      | <addressDetails>      |
+      | physicalAddress_zip                 | <zip>                 |
+      | physicalAddress_municipality        | <municipality>        |
       | physicalAddress_municipalityDetails | <municipalityDetails> |
-      | physicalAddress_province | <province> |
-      | physicalAddress_State | <foreignState> |
+      | physicalAddress_province            | <province>            |
+      | physicalAddress_State               | <foreignState>        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NORMALIZED_ADDRESS" con indirizzo normalizzato:
-      | physicalAddress_address | <address_res> |
-      | at | <at_res> |
-      | physicalAddress_addressDetails | <addressDetails_res> |
-      | physicalAddress_zip | <zip_res> |
-      | physicalAddress_municipality | <municipality_res> |
+      | physicalAddress_address             | <address_res>             |
+      | at                                  | <at_res>                  |
+      | physicalAddress_addressDetails      | <addressDetails_res>      |
+      | physicalAddress_zip                 | <zip_res>                 |
+      | physicalAddress_municipality        | <municipality_res>        |
       | physicalAddress_municipalityDetails | <municipalityDetails_res> |
-      | physicalAddress_province | <province_res> |
-      | physicalAddress_State | <foreignState_res> |
+      | physicalAddress_province            | <province_res>            |
+      | physicalAddress_State               | <foreignState_res>        |
     Examples:
-      | denomination           | at           | address                    | addressDetails  | zip     | municipality                  | municipalityDetails | province  | foreignState  |
-      | TEST_NORMALIZZATORE_01 | NULL         | VIA DON DINO BIANCARDI,60  | NULL            | 46030   | SUSTINENTE                    | NULL                | RM        | NULL          |
+      | denomination        | at   | address                                                      | addressDetails | zip             | municipality                                        | municipalityDetails          | province                                    | foreignState | at_res | address_res                                                  | addressDetails_res | zip_res | municipality_res                                    | municipalityDetails_res          | province_res                                | foreignState_res |
+      | TEST_VALIDAZIONE_01 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310           | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      | NULL   | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | NULL               | 83310   | COGOLIN                                             | NULL                             | MARSIGLIA                                   | FRANCIA          |
+      | TEST_VALIDAZIONE_02 | NULL | 1 RUE HENRY BARBUSSE - BAT 1 ENT 2 LOGT 1979                 | 0_CHAR         | 13090           | AIX EN PROVENCE                                     | 0_CHAR                       | FRA                                         | FRANCIA      | NULL   | 1 RUE HENRY BARBUSSE - BAT 1 ENT 2 LOGT 1979                 | NULL               | 13090   | AIX EN PROVENCE                                     | NULL                             | FRA                                         | FRANCIA          |
+      | TEST_VALIDAZIONE_03 | NULL | 1 36 MOO.9, BAAN IM AMPOND, TAWEEWATTANA RD., SALATHAMMASOP, | 0_CHAR         | 10700           | BANGKOK                                             | 0_CHAR                       | 0_CHAR                                      | THAILANDIA   | NULL   | 1 36 MOO.9, BAAN IM AMPOND, TAWEEWATTANA RD., SALATHAMMASOP, | NULL               | 10700   | NULL                                                | NULL                             | NULL                                        | THAILANDIA       |
+      | TEST_VALIDAZIONE_04 | NULL | CALLE MARIA MARROQUI 28 INT. 310, COL. CENTRO                | 0_CHAR         | 06050           | CITTA' DEL MESSICO                                  | 0_CHAR                       | 0_CHAR                                      | MESSICO      | NULL   | CALLE MARIA MARROQUI 28 INT. 310, COL. CENTRO                | NULL               | 06050   | CITTA' DEL MESSICO                                  | NULL                             | NULL                                        | MESSICO          |
+      | TEST_VALIDAZIONE_05 | NULL | CALLE CADETE SISA C/NACUNDAY - ZONA NORTE 350                | 0_CHAR         | 2300            | FERNANDO DE LA MORA                                 | 0_CHAR                       | PRY                                         | PARAGUAY     | NULL   | CALLE CADETE SISA C/NACUNDAY - ZONA NORTE 350                | NULL               | 2300    | FERNANDO DE LA MORA                                 | NULL                             | PRY                                         | PARAGUAY         |
+      | TEST_VALIDAZIONE_06 | NULL | VIA SANDRO PERTINI GIA' VLE A. MORO TRAV.II NICOLO 22        | 0_CHAR         | 0_CHAR          | REGGIO DI CALABRIA                                  | 0_CHAR                       | RC                                          | ITALIA       | NULL   | VIA SANDRO PERTINI GIA' VLE A. MORO TRAV.II NICOLO 22        | NULL               | NULL    | REGGIO DI CALABRIA                                  | NULL                             | RC                                          | ITALIA           |
+      | TEST_VALIDAZIONE_07 | NULL | TRAVERSA AL N 58 STRADA DETTA DELLA MARINA 26                | 0_CHAR         | 70126           | BARI                                                |                              | BA                                          | ITALIA       | NULL   | TRAVERSA AL N 58 STRADA DETTA DELLA MARINA 26                | NULL               | 70126   | BARI                                                | TORRE A MARE                     | BA                                          | ITALIA           |
+      | TEST_VALIDAZIONE_08 | NULL | STRADA STATALE N.7 TER  LECCE - CAMPI SALENTINA 1C.P.        | 0_CHAR         | 73100           | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       | NULL   | STRADA STATALE N.7 TER  LECCE - CAMPI SALENTINA 1C.P.        | NULL               | 73100   | LECCE                                               | NULL                             | LE                                          | ITALIA           |
+      | TEST_VALIDAZIONE_09 | NULL | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100           | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | LE                                          | FRANCIA      | NULL   | S  T R ADA A   A   N.7 PA AA RIS                             | NULL               | 73100   | S  T R ADA A   A   N.7 PA AA RIS                    | NULL                             | LE                                          | FRANCIA          |
+      | TEST_VALIDAZIONE_10 | NULL | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100           | S}~T~R~ADæA }~æ} N.7 pæaæris                        | 0_CHAR                       | S}~T~R~ADæA }~æ} N.7 pæaæris                | FRANCIA      | NULL   | S  T R ADA A   A   N.7 PA AA RIS                             | NULL               | 73100   | S  T R ADA A   A   N.7 PA AA RIS                    | NULL                             | S  T R ADA A   A   N.7 PA AA RIS            | FRANCIA          |
+      | TEST_VALIDAZIONE_11 | NULL | S}~T~R~ADæA }~æ} N.7 pæaæris                                 | 0_CHAR         | 73100           | LECCE                                               | S}~T~R~ADæA }~æ} N.7 pæaæris | LE                                          | FRANCIA      | NULL   | S  T R ADA A   A   N.7 PA AA RIS                             | NULL               | 73100   | LECCE                                               | S  T R ADA A   A   N.7 PA AA RIS | LE                                          | FRANCIA          |
+      | TEST_VALIDAZIONE_12 | NULL | STRADA }~æ} N.7 TER  LECCE - CAMPI SALENTINA 1C.P.           | 0_CHAR         | 73100           | LECCE                                               | 0_CHAR                       | LE                                          | ITALIA       | NULL   | STRADA   A   N.7 TER  LECCE - CAMPI SALENTINA 1C.P.          | NULL               | 73100   | LECCE                                               | NULL                             | LE                                          | ITALIA           |
+      | TEST_VALIDAZIONE_13 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310           | COGOLIN                                             | 0_CHAR                       | MARSIGLIA prova provincia lungaaaaaaaaaaaaa | FRANCIA      | NULL   | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | NULL               | 83310   | COGOLIN                                             | NULL                             | MARSIGLIA PROVA PROVINCIA LUNGAAAAAAAAAAAAA | FRANCIA          |
+      | TEST_VALIDAZIONE_14 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 83310           | COGOLIN prova comune lunghissimoooooooooooooooooooo | 0_CHAR                       | MA                                          | FRANCIA      | NULL   | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | NULL               | 83310   | COGOLIN PROVA COMUNE LUNGHISSIMOOOOOOOOOOOOOOOOOOOO | NULL                             | MA                                          | FRANCIA          |
+      | TEST_VALIDAZIONE_15 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA       | 0_CHAR         | 833100000000000 | COGOLIN                                             | 0_CHAR                       | MARSIGLIA                                   | FRANCIA      | NULL   |                                                              | NULL               |         |                                                     | NULL                             | MARSIGLIA                                   | FRANCIA          |
+      | TEST_VALIDAZIONE_16 | NULL | RUE DE LA []                                                 | NULL           | 00000           | PARIS                                               | NULL                         | FR                                          | FRANCIA      | NULL   | RUE DE LA []                                                 | NULL               | 00000   | PARIS                                               | NULL                             | FR                                          | FRANCIA          |
+      | TEST_VALIDAZIONE_17 | NULL | RUE DE LA ()                                                 | NULL           | 00000           | PARIS                                               | NULL                         | FR                                          | FRANCIA      | null   | RUE DE LA                                                    | NULL               | 00000   | PARIS                                               | NULL                             | FR                                          | FRANCIA          |
+      | TEST_SAN_MARINO_1   | NULL | NULL                                                         | NULL           | DOMAGNANO       | NULL                                                | NULL                         | SAN MARINO                                  |
+
+  @testNormalizzatore
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifiche controllo campi normalizzati
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
+    And destinatario
+      | denomination                        | <denomination>        |
+      | taxId                               | CLMCST42R12D969Z      |
+      | physicalAddress_address             | <address>             |
+      | at                                  | <at>                  |
+      | physicalAddress_addressDetails      | <addressDetails>      |
+      | physicalAddress_zip                 | <zip>                 |
+      | physicalAddress_municipality        | <municipality>        |
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+      | physicalAddress_province            | <province>            |
+      | physicalAddress_State               | <foreignState>        |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi <notificationValidationStatus>
     Examples:
-      | at_res            | address_res                     | addressDetails_res   | zip_res      | municipality_res         | municipalityDetails_res  | province_res   | foreignState_res   |
-      | NULL              | VIA DON DINO BIANCARDI,61       | NULL                 | 46030        | SUSTINENTE               | NULL                     | RM             | NULL               |
+      | denomination        | at   | address                                                | addressDetails | zip                                                                  | municipality        | municipalityDetails | province  | foreignState | notificationValidationStatus |
+      | TEST_SAN_MARINO_01  | NULL | OTTAVA GUALDARIA 1                                     | NULL           | 47895                                                                | DOMAGNANO           | NULL                | NULL      | ITALIA       | HTTP_ERROR                   |
+      | TEST_SAN_MARINO_02  | NULL | OTTAVA GUALDARIA 1                                     | NULL           | 47895                                                                | DOMAGNANO           | NULL                | NULL      | NULL         | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_01 | NULL | RUE DE LA Aâ™€Bâ˜¼CÂ·                                  | NULL           | 00000                                                                | PARIS               | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_02 | NULL | RUE DE LA 12/5                                         | NULL           | 00000                                                                | PARIS               | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_03 | NULL | RUE DE LA 12/5                                         | NULL           | 00000                                                                | PAâ™€Râ€¼I[U+007C]S | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_04 | NULL | RUE DE LA 12/5                                         | NULL           | 0Â®0000                                                              | PARÃš[U+007C]S      | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_05 | NULL | RUE DE LA ()                                           | NULL           | 00000                                                                | PARIS               | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_06 | NULL | RUE DE LA 12/5                                         | NULL           | 0Â®0000                                                              | PARÃš[U+007C]S      | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_07 | NULL | RUE DE LA 12\5                                         | NULL           | 0Â®0000                                                              | PARIS-BERCY         | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_08 | NULL | RUE DE LA 12\5                                         | NULL           | 0Â®0000                                                              | PARIS_BERCY         | NULL                | FR        | FRANCIA      | HTTP_ERROR                   |
+      | TEST_VALIDAZIONE_09 | NULL | 10, RUE DES CANNIERS-QUARTIER ANCHES BT. C02 MARSIGLIA | 0_CHAR         | 83310000000000000000000000000000000000000000000000000000000000000000 | COGOLIN             | 0_CHAR              | MARSIGLIA | FRANCIA      | HTTP_ERROR                   |
