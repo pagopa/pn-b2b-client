@@ -2932,9 +2932,9 @@ public class AvanzamentoNotificheB2bSteps {
         TimelineElementV23 timelineElementV23 = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
 
         System.out.println(table);
-        System.out.println(table.asMap().get("physicalAddress_address"));
+        logger.info("indirizzo: {}", timelineElementV23.getDetails().getOldAddress());
         //FARE CHECK RISULTATO
-        System.out.println(timelineElementV23.getDetails().getNormalizedAddress());
+        logger.info("indirizzo Normalizzato: {}", timelineElementV23.getDetails().getNormalizedAddress());
 try{
     Assertions.assertEquals(mapValueFromTable(table,"physicalAddress_address"),timelineElementV23.getDetails().getNormalizedAddress().getAddress());
     Assertions.assertEquals(mapValueFromTable(table,"at"),timelineElementV23.getDetails().getNormalizedAddress().getAt());
