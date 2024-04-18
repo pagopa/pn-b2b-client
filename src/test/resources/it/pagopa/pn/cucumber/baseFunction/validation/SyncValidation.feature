@@ -1027,3 +1027,21 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
+  @validation
+  Scenario: [B2B-PA-SYNC_VALIDATION_70] Invio notifica con allegato uguale al allegato di pagamento - PN-10162
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale al allegato di pagamento
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
+
+
+  Scenario: [B2B-PA-SYNC_VALIDATION_71] Invio notifica multidestinatario con allegato uguale al allegato di pagamento - PN-10162
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario Mario Gherkin
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale al allegato di pagamento
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"

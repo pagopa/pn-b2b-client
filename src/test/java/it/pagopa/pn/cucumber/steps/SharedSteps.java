@@ -920,6 +920,13 @@ public class SharedSteps {
         sendNotification();
     }
 
+    @When("la notifica viene inviata tramite api b2b dal {string} con allegato uguale al allegato di pagamento")
+    public void laNotificaVieneInviataAllegatiUgualeAlPagamento(String paType) {
+        selectPA(paType);
+        setSenderTaxIdFromProperties();
+        sendNotificationWithErrorAllegatiUgualiPayment();
+    }
+
     @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED")
     public void laNotificaVieneInviataNoAccept(String paType) {
         selectPA(paType);
@@ -1554,6 +1561,17 @@ public class SharedSteps {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    private void sendNotificationWithErrorAllegatiUgualiPayment() {
+        try {
+                       newNotificationResponse = b2bUtils.uploadNotificationAllegatiUgualiPagamento(notificationRequest);
+        } catch (HttpStatusCodeException | IOException e) {
+            if (e instanceof HttpStatusCodeException) {
+                this.notificationError = (HttpStatusCodeException) e;
+            }
         }
     }
 

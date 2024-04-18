@@ -290,6 +290,45 @@ public class PnPaB2bUtils {
         return response;
     }
 
+    public NewNotificationResponse uploadNotificationAllegatiUgualiPagamento( NewNotificationRequestV23 request) throws IOException {
+        List<NotificationDocument> newdocs = new ArrayList<>();
+        for (NotificationDocument doc : request.getDocuments()) {
+                newdocs.add(this.preloadDocument(doc));
+        }
+        request.setDocuments(newdocs);
+
+
+        for (NotificationRecipientV23 recipient : request.getRecipients()) {
+            List<NotificationPaymentItem> paymentList = recipient.getPayments();
+            if(paymentList != null){
+                for (NotificationPaymentItem paymentInfo: paymentList) {
+                    if(paymentInfo.getPagoPa()!= null) {
+                        paymentInfo.getPagoPa().setAttachment(new NotificationPaymentAttachment()
+                                .ref(request.getDocuments().get(0).getRef())
+                                .digests(request.getDocuments().get(0).getDigests())
+                                .contentType(request.getDocuments().get(0).getContentType()));
+                    }
+                    if(paymentInfo.getF24()!= null) {
+                        paymentInfo.getF24().setMetadataAttachment(preloadMetadataAttachment(paymentInfo.getF24().getMetadataAttachment()));
+                    }
+                }
+
+            }
+        }
+
+        log.info("New Notification Request {}", request);
+        NewNotificationResponse response = client.sendNewNotification( request );
+        log.info("New Notification Request response {}", response);
+        if (response != null)
+        {
+            try {
+                log.info("New Notification\n IUN {}", new String(Base64Utils.decodeFromString(response.getNotificationRequestId())));
+            } catch (Exception e) {
+            }
+        }
+        return response;
+    }
+
     public NewNotificationResponse uploadNotificationNotFindAllegatoJson( NewNotificationRequestV23 request, boolean noUpload) throws IOException {
 //TODO Modificare.............
         List<NotificationDocument> newdocs = new ArrayList<>();
