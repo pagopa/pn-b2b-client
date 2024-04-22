@@ -134,7 +134,7 @@ Feature: address validation feature
 
 
   @testNormalizzatore
-  Scenario Outline: [B2B_ADDRESS_VALIDATION_4] invio notifiche controllo campi normalizzati
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_4] invio notifica con indirizzo postalizzabile (status accepted)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
@@ -224,7 +224,7 @@ Feature: address validation feature
 
 
   @testNormalizzatore
-  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifiche controllo campi normalizzati che vanno in refused o con 400
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_5] invio notifica con indirizzo non postalizzabile (400 o refused)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
