@@ -49,7 +49,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -261,7 +261,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
 
-  @e2e
+  @e2e @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -309,7 +309,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e @ignore
+  @e2e @ignore @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-8] Invio notifica con percorso analogico. Successo giacenza gt 890 (OK-Giacenza-gt10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -358,7 +358,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e @giacenza890Complex
   Scenario: [E2E-WF-ANALOG-9] Invio notifica con percorso analogico. Successo giacenza 890 gt 23L(OK-Giacenza-gt10-23L_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

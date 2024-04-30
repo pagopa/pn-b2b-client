@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -39,11 +40,10 @@ import java.util.*;
 
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
 
-
+@Slf4j
 @Component
 public class PnExternalServiceClientImpl {
 
-    private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
 
     private final String apiKeyMvp1;
@@ -73,7 +73,6 @@ public class PnExternalServiceClientImpl {
     private final InteropTokenSingleton interopTokenSingleton;
 
     public PnExternalServiceClientImpl(
-            ApplicationContext ctx,
             RestTemplate restTemplate,
             InteropTokenSingleton interopTokenSingleton,
             @Value("${pn.safeStorage.base-url}") String safeStorageBasePath,
@@ -94,7 +93,6 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.OpenSearch.username}") String openSearchUsername,
             @Value("${pn.OpenSearch.password}") String openSearchPassword
     ) {
-        this.ctx = ctx;
         this.restTemplate = restTemplate;
         this.safeStorageBasePath = safeStorageBasePath;
         this.extChannelsBasePath = extChannelsBasePath;
@@ -155,24 +153,22 @@ public class PnExternalServiceClientImpl {
         this.restTemplate.setRequestFactory(requestFactory);
     }
 
-    public openSearchResponse openSearchGetAudit(String audRetentionType,String auditLogType, int numberOfResult){
+    public OpenSearchResponse openSearchGetAudit(String audRetentionType,String auditLogType, int numberOfResult){
         return openSearchGetAuditWithHttpInfo(audRetentionType, auditLogType, numberOfResult).getBody();
     }
-    private ResponseEntity<openSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType,String auditLogType, int numberOfResult) throws RestClientException {
+    private ResponseEntity<OpenSearchResponse> openSearchGetAuditWithHttpInfo(String audRetentionType,String auditLogType, int numberOfResult) throws RestClientException {
 
         try {
             restTemplateAvoidSSlCertificate();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
             throw new RuntimeException(e);
         }
 
         String postBody = "{\"query\":{\"bool\":{\"must\":{\"match\":{\"aud_type\":\""+auditLogType+"\"}}}},\"size\":"+numberOfResult+",\"sort\":[{\"@timestamp\": \"desc\"}]}";
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         //queryParams.add("format", "json");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -186,7 +182,7 @@ public class PnExternalServiceClientImpl {
         final List<MediaType> localVarAccept = MediaType.parseMediaTypes(StringUtils.arrayToCommaDelimitedString(localVarAccepts));
         final MediaType localVarContentType = MediaType.APPLICATION_JSON;
 
-        ParameterizedTypeReference<openSearchResponse> returnType = new ParameterizedTypeReference<>() {};
+        ParameterizedTypeReference<OpenSearchResponse> returnType = new ParameterizedTypeReference<>() {};
         return invokeAPI(openSearchBaseUrl, "/pn-logs"+audRetentionType+"/_search", HttpMethod.POST, uriVariables, queryParams, postBody, headerParams, localVarAccept, localVarContentType, returnType);
     }
 
@@ -198,10 +194,10 @@ public class PnExternalServiceClientImpl {
     private ResponseEntity<HashMap<String, String>> getQuickAccessLinkWithHttpInfo(String iun) {
         Object postBody = null;
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("iun", iun);
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -256,9 +252,9 @@ public class PnExternalServiceClientImpl {
     private ResponseEntity<List<HashMap<String, String>>> pgGroupInfoWithHttpInfo(String bearerToken) throws RestClientException {
         Object postBody = null;
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -283,9 +279,9 @@ public class PnExternalServiceClientImpl {
         Object postBody = null;
 
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -309,10 +305,10 @@ public class PnExternalServiceClientImpl {
     private ResponseEntity<String> getVerificationCodeWithHttpInfo(String digitalAddress) {
         Object postBody = null;
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("digitalAddress", digitalAddress);
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -331,10 +327,10 @@ public class PnExternalServiceClientImpl {
     private ResponseEntity<String> getInternalIdFromTaxIdWithHttpInfo(String recipientType, String taxId) {
         String postBody = taxId;
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("recipientType", recipientType);
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -492,10 +488,10 @@ public class PnExternalServiceClientImpl {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'fileKey' when calling consumeEventStream");
         }
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("fileKey", fileKey);
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -521,10 +517,10 @@ public class PnExternalServiceClientImpl {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Missing the required parameter 'fileKey' when calling consumeEventStream");
         }
 
-        final Map<String, Object> uriVariables = new HashMap<String, Object>();
+        final Map<String, Object> uriVariables = new HashMap<>();
         uriVariables.put("fileKey", fileKey);
 
-        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<String, String>();
+        final MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("metadataOnly", "true");
 
         final HttpHeaders headerParams = new HttpHeaders();
@@ -622,65 +618,27 @@ public class PnExternalServiceClientImpl {
                     }
                 }
             } catch (UnsupportedEncodingException e) {
-
+                log.error(e.getMessage());
             }
         });
         return queryBuilder.toString();
 
     }
-
-
     //OPEN SEARCH RESPONSE
-    public static class openSearchResponse {
-       Integer took;
-       Boolean timed_out;
-       Shards _shards;
+    @Getter
+    @Setter
+    @ToString
+    public static class OpenSearchResponse {
+        Integer took;
+        Boolean timed_out;
+        Shards _shards;
+        OuterHits hits;
 
-       OuterHits hits;
-
-        public Integer getTook() {
-            return took;
-        }
-
-        public void setTook(Integer took) {
-            this.took = took;
-        }
-
-        public Boolean getTimed_out() {
-            return timed_out;
-        }
-
-        public void setTimed_out(Boolean timed_out) {
-            this.timed_out = timed_out;
-        }
-
-        public Shards get_shards() {
-            return _shards;
-        }
-
-        public void set_shards(Shards _shards) {
-            this._shards = _shards;
-        }
-
-        public OuterHits getHits() {
-            return hits;
-        }
-
-        public void setHits(OuterHits hits) {
-            this.hits = hits;
-        }
-
-        @Override
-        public String toString() {
-            return "openSearchResponse{" +
-                    "took=" + took +
-                    ", timed_out=" + timed_out +
-                    ", _shards=" + _shards +
-                    ", hits=" + hits +
-                    '}';
-        }
     }
 
+    @Getter
+    @Setter
+    @ToString
     public static class Shards{
         public Shards() {}
         private Integer total;
@@ -689,49 +647,11 @@ public class PnExternalServiceClientImpl {
 
         private Integer failed;
 
-        public Integer getTotal() {
-            return total;
-        }
-
-        public void setTotal(Integer total) {
-            this.total = total;
-        }
-
-        public Integer getSuccessful() {
-            return successful;
-        }
-
-        public void setSuccessful(Integer successful) {
-            this.successful = successful;
-        }
-
-        public Integer getSkipped() {
-            return skipped;
-        }
-
-        public void setSkipped(Integer skipped) {
-            this.skipped = skipped;
-        }
-
-        public Integer getFailed() {
-            return failed;
-        }
-
-        public void setFailed(Integer failed) {
-            this.failed = failed;
-        }
-
-        @Override
-        public String toString() {
-            return "Shards{" +
-                    "total=" + total +
-                    ", successful=" + successful +
-                    ", skipped=" + skipped +
-                    ", failed=" + failed +
-                    '}';
-        }
     }
 
+    @Getter
+    @Setter
+    @ToString
     public static class OuterHits{
         public OuterHits() {
         }
@@ -740,40 +660,11 @@ public class PnExternalServiceClientImpl {
         private Total total;
         private LinkedList<InnerHits> hits;
 
-        public Double getMax_score() {
-            return max_score;
-        }
-
-        public void setMax_score(Double max_score) {
-            this.max_score = max_score;
-        }
-
-        public Total getTotal() {
-            return total;
-        }
-
-        public void setTotal(Total total) {
-            this.total = total;
-        }
-
-        public LinkedList<InnerHits> getHits() {
-            return hits;
-        }
-
-        public void setHits(LinkedList<InnerHits> hits) {
-            this.hits = hits;
-        }
-
-        @Override
-        public String toString() {
-            return "OuterHits{" +
-                    "max_score=" + max_score +
-                    ", total=" + total +
-                    ", hits=" + hits +
-                    '}';
-        }
     }
 
+    @Getter
+    @Setter
+    @ToString
     public static class InnerHits{
         public InnerHits() {
         }
@@ -784,45 +675,7 @@ public class PnExternalServiceClientImpl {
         private Double _score;
         private Source _source;
 
-        public String get_index() {
-            return _index;
-        }
 
-        public void set_index(String _index) {
-            this._index = _index;
-        }
-
-        public String get_type() {
-            return _type;
-        }
-
-        public void set_type(String _type) {
-            this._type = _type;
-        }
-
-        public String get_id() {
-            return _id;
-        }
-
-        public void set_id(String _id) {
-            this._id = _id;
-        }
-
-        public Double get_score() {
-            return _score;
-        }
-
-        public void set_score(Double _score) {
-            this._score = _score;
-        }
-
-        public Source get_source() {
-            return _source;
-        }
-
-        public void set_source(Source _source) {
-            this._source = _source;
-        }
 
         public class Source{
             @Override
@@ -1032,35 +885,16 @@ public class PnExternalServiceClientImpl {
         }
     }
 
+    @Getter
+    @Setter
+    @ToString
     public static class Total{
         public Total() {
         }
         private Integer value;
         private String relation;
 
-        public Integer getValue() {
-            return value;
-        }
-
-        public void setValue(Integer value) {
-            this.value = value;
-        }
-
-        public String getRelation() {
-            return relation;
-        }
-
-        public void setRelation(String relation) {
-            this.relation = relation;
-        }
-
-        @Override
-        public String toString() {
-            return "Total{" +
-                    "value=" + value +
-                    ", relation='" + relation + '\'' +
-                    '}';
-        }
     }
+
 
 }

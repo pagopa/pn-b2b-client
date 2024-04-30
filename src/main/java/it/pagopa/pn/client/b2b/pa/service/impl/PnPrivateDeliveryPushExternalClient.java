@@ -7,38 +7,28 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.OffsetDateTime;
 import java.util.List;
 
+
 @Component
 public class PnPrivateDeliveryPushExternalClient implements IPnPrivateDeliveryPushExternalClient {
-    private final ApplicationContext ctx;
-    private final RestTemplate restTemplate;
     private final TimelineAndStatusApi timelineAndStatusApi;
     private final PaperNotificationFailedApi paperNotificationFailedApi;
-    private final String basePath;
 
-    public PnPrivateDeliveryPushExternalClient(
-            ApplicationContext ctx,
-            RestTemplate restTemplate,
-            @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath
-    ) {
-        this.ctx = ctx;
-        this.restTemplate = restTemplate;
-        this.basePath = deliveryPushBasePath;
-        this.timelineAndStatusApi = new TimelineAndStatusApi( newApiClient( restTemplate, basePath ) );
-        this.paperNotificationFailedApi = new PaperNotificationFailedApi(newApiClient( restTemplate, basePath));
+
+    public PnPrivateDeliveryPushExternalClient(RestTemplate restTemplate,
+                                               @Value("${pn.internal.delivery-push-base-url}") String deliveryPushBasePath) {
+        this.timelineAndStatusApi = new TimelineAndStatusApi( newApiClient( restTemplate, deliveryPushBasePath ) );
+        this.paperNotificationFailedApi = new PaperNotificationFailedApi(newApiClient( restTemplate, deliveryPushBasePath));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
         ApiClient newApiClient = new ApiClient( restTemplate );
         newApiClient.setBasePath( basePath );
-        // newApiClient.addDefaultHeader("x-api-key", apiKey );
         return newApiClient;
     }
 

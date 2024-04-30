@@ -205,7 +205,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And viene aggiunto il costo della notifica totale
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     Then viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del pagamento 0
     And viene cancellata la posizione debitoria del pagamento 0
@@ -346,7 +346,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And viene aggiunto il costo della notifica totale
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
     Then viene cancellata la posizione debitoria di "Mario Gherkin"

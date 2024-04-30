@@ -2,6 +2,7 @@ package it.pagopa.pn.client.b2b.pa.polling.design;
 
 
 public class PnPollingStrategy {
+    private PnPollingStrategy () {}
     public static final String TIMELINE_RAPID_V23 = "TIMELINE_RAPID_V23";
     public static final String TIMELINE_RAPID_V21 = "TIMELINE_RAPID_V21";
     public static final String TIMELINE_RAPID_V20 = "TIMELINE_RAPID_V20";
@@ -24,5 +25,6 @@ public class PnPollingStrategy {
     public static final String VALIDATION_STATUS_V23 = "VALIDATION_STATUS_V23";
     public static final String VALIDATION_STATUS_ACCEPTATION_SHORT_V23 = "VALIDATION_STATUS_ACCEPTATION_SHORT_V23";
     public static final String VALIDATION_STATUS_NO_ACCEPTATION_V23 = "VALIDATION_STATUS_NO_ACCEPTATION_V23";
-
+    public static final String WEBHOOK_V23 = "WEBHOOK_V23";
+    public static final String WEBHOOK_V20 = "WEBHOOK_V20";
 }

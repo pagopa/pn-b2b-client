@@ -11,12 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
 
 public class UserAttributesSteps {
-
     private final IPnWebUserAttributesClient webUserAttributesClient;
-
     private Consent consent;
     private HttpStatusCodeException consentError;
-
 
 
     @Autowired
@@ -53,10 +50,8 @@ public class UserAttributesSteps {
 
     @And("Il consenso è accettato")
     public void ilConsensoAccettato() {
-        Assertions.assertTrue(consent.getAccepted());
+        Assertions.assertEquals(Boolean.TRUE, consent.getAccepted());
     }
-
- 
 
     @Given("viene testato l'otp")
     public void vieneTestatoLOtp() {

@@ -1,6 +1,6 @@
 Feature: Analog send e2e
 
-  @e2e
+  @e2e @giacenza890Complex
   Scenario: [B2B_ANALOG_SEND_1] Invio ad indirizzo fisico successo al primo tentativo
     And viene generata una nuova notifica
       | subject | invio notifica con cucumber |

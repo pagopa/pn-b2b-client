@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.NotificationPriceApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
@@ -26,12 +26,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     private final NewNotificationApi newNotificationApi;
     private final SenderReadB2BApi senderReadB2BApi;
-    private final NotificationPriceApi notificationPriceApi;
     private final NotificationPriceV23Api notificationPriceV23Api;
-    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v1.SenderReadB2BApi senderReadB2BApiV1;
-
-    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.SenderReadB2BApi senderReadB2BApiV2;
-
     private final String paId;
     private final String operatorId;
 
@@ -52,9 +47,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
         this.newNotificationApi = new NewNotificationApi( newApiClient( restTemplate, deliveryBasePath) );
         this.senderReadB2BApi = new SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
-        this.senderReadB2BApiV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v1.SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
-        this.senderReadB2BApiV2 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api_v2.SenderReadB2BApi( newApiClient( restTemplate, deliveryBasePath) );
-        this.notificationPriceApi = new NotificationPriceApi(newApiClient(restTemplate, deliveryPushBasePath));
         this.notificationPriceV23Api = new NotificationPriceV23Api(newApiClient(restTemplate, deliveryPushBasePath));
     }
 
@@ -309,8 +301,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         try {
             String json = objMapper.writeValueAsString( obj );
             return objMapper.readValue( json, toClass );
-        } catch (JsonProcessingException exc ) {
-            throw new RuntimeException( exc );
+        } catch (JsonProcessingException exc) {
+            throw new PnB2bException(exc.getMessage());
         }
     }
 

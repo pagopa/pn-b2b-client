@@ -5,7 +5,6 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.Ap
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.api.*;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -13,12 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
-
-    private final ApplicationContext ctx;
-    private final RestTemplate restTemplate;
-
-    private final String basePath;
-
     private final ActDocumentInquiryApi actDocumentInquiryApi;
     private final ActTransactionManagementApi actTransactionManagementApi;
     private final AorDocumentInquiryApi aorDocumentInquiryApi;
@@ -27,18 +20,14 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
     private final NotificationInquiryApi notificationInquiryApi;
 
 
-    public PnRaddFsuClientImpl(ApplicationContext ctx, RestTemplate restTemplate, @Value("${pn.radd.base-url}") String basePath) {
-        this.ctx = ctx;
-        this.restTemplate = restTemplate;
-        this.basePath = basePath;
-
+    public PnRaddFsuClientImpl(RestTemplate restTemplate,
+                               @Value("${pn.radd.base-url}") String basePath) {
         this.actDocumentInquiryApi = new ActDocumentInquiryApi(newApiClient(restTemplate,basePath));
         this.actTransactionManagementApi = new ActTransactionManagementApi(newApiClient(restTemplate,basePath));
         this.aorDocumentInquiryApi = new AorDocumentInquiryApi(newApiClient(restTemplate,basePath));
         this.aorTransactionManagementApi = new AorTransactionManagementApi(newApiClient(restTemplate,basePath));
         this.documentUploadApi = new DocumentUploadApi(newApiClient(restTemplate,basePath));
         this.notificationInquiryApi = new NotificationInquiryApi(newApiClient(restTemplate,basePath));
-
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath ) {
@@ -46,7 +35,6 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
         newApiClient.setBasePath( basePath );
         return newApiClient;
     }
-
 
     public ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode) throws RestClientException {
         return this.actDocumentInquiryApi.actInquiryWithHttpInfo(uid, recipientTaxId, recipientType, qrCode).getBody();
@@ -56,11 +44,9 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
         return this.actTransactionManagementApi.abortActTransactionWithHttpInfo(uid, abortTransactionRequest).getBody();
     }
 
-
     public CompleteTransactionResponse completeActTransaction(String uid, CompleteTransactionRequest completeTransactionRequest) throws RestClientException {
         return this.actTransactionManagementApi.completeActTransactionWithHttpInfo(uid, completeTransactionRequest).getBody();
     }
-
 
     public StartTransactionResponse startActTransaction(String uid, ActStartTransactionRequest actStartTransactionRequest) throws RestClientException {
         return this.actTransactionManagementApi.startActTransactionWithHttpInfo(uid, actStartTransactionRequest).getBody();
@@ -70,21 +56,17 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
         return this.aorDocumentInquiryApi.aorInquiryWithHttpInfo(uid, recipientTaxId, recipientType).getBody();
     }
 
-
     public AbortTransactionResponse abortAorTransaction(String uid, AbortTransactionRequest abortTransactionRequest) throws RestClientException {
         return this.aorTransactionManagementApi.abortAorTransactionWithHttpInfo(uid, abortTransactionRequest).getBody();
     }
-
 
     public CompleteTransactionResponse completeAorTransaction(String uid, CompleteTransactionRequest completeTransactionRequest) throws RestClientException {
         return this.aorTransactionManagementApi.completeAorTransactionWithHttpInfo(uid, completeTransactionRequest).getBody();
     }
 
-
     public StartTransactionResponse startAorTransaction(String uid, AorStartTransactionRequest aorStartTransactionRequest) throws RestClientException {
         return this.aorTransactionManagementApi.startAorTransactionWithHttpInfo(uid, aorStartTransactionRequest).getBody();
     }
-
 
     public DocumentUploadResponse documentUpload(String uid, DocumentUploadRequest documentUploadRequest) throws RestClientException {
         return this.documentUploadApi.documentUploadWithHttpInfo(uid, documentUploadRequest).getBody();
@@ -113,5 +95,4 @@ public class PnRaddFsuClientImpl implements IPnRaddFsuClient {
     public OperationAorResponse getAorTransactionByOperationId(String operationId) throws RestClientException {
         return this.notificationInquiryApi.getAorTransactionByOperationIdWithHttpInfo(operationId).getBody();
     }
-
 }

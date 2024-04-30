@@ -8,7 +8,8 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.utils.TimingForTimeline;
+import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,16 +23,15 @@ import java.util.function.Predicate;
 
 @Service(PnPollingStrategy.TIMELINE_RAPID_V1)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Slf4j
 public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPollingResponseV1> {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    protected final TimingForTimeline timingForTimeline;
+    protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotification notificationV1;
-    private TimelineElement timelineElementV1;
 
 
-    public PnPollingServiceTimelineRapidV1(TimingForTimeline timingForTimeline, IPnPaB2bClient pnPaB2bClient) {
-        this.timingForTimeline = timingForTimeline;
+    public PnPollingServiceTimelineRapidV1(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+        this.timingForPolling = timingForPolling;
         this.pnPaB2bClient = pnPaB2bClient;
     }
 
@@ -43,7 +43,7 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
             try {
                 fullSentNotificationV1 = pnPaB2bClient.getSentNotificationV1(iun);
             } catch (Exception exception) {
-                logger.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
             pnPollingResponse.setNotification(fullSentNotificationV1);
@@ -54,7 +54,7 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
 
     @Override
     protected Predicate<PnPollingResponseV1> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
-        return (pnPollingResponse) -> {
+        return pnPollingResponse -> {
             if(pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
@@ -66,8 +66,6 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
                 return false;
             }
 
-            pnPollingResponse.setResult(true);
-            pnPollingResponse.setTimelineElement(timelineElementV1);
             return true;
         };
     }
@@ -82,13 +80,13 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForTimeline.TimingResult timingResult = timingForTimeline.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForTimeline.TimingResult timingResult = timingForTimeline.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
         return timingResult.waiting() * timingResult.numCheck();
     }
 
@@ -124,7 +122,8 @@ public class PnPollingServiceTimelineRapidV1 extends PnPollingTemplate<PnPolling
                     .orElse(null);
 
         if(timelineElementV1 != null) {
-            this.timelineElementV1 = timelineElementV1;
+            pnPollingResponse.setTimelineElement(timelineElementV1);
+            pnPollingResponse.setResult(true);
             return true;
         }
         return false;

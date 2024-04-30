@@ -3,8 +3,8 @@ package it.pagopa.pn.client.b2b.pa.service;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
 import org.springframework.web.client.RestClientException;
 
-public interface IPnRaddFsuClient {
 
+public interface IPnRaddFsuClient {
     ActInquiryResponse actInquiry(String uid, String recipientTaxId, String recipientType, String qrCode) throws RestClientException;
     AbortTransactionResponse abortActTransaction(String uid, AbortTransactionRequest abortTransactionRequest) throws RestClientException;
     CompleteTransactionResponse completeActTransaction(String uid, CompleteTransactionRequest completeTransactionRequest) throws RestClientException;
@@ -20,5 +20,4 @@ public interface IPnRaddFsuClient {
     OperationsAorDetailsResponse getAorPracticesByInternalId(String internalId, FilterRequest filterRequest) throws RestClientException;
     OperationsResponse getAorPracticesByIun(String iun) throws RestClientException;
     OperationAorResponse getAorTransactionByOperationId(String operationId) throws RestClientException;
-
 }

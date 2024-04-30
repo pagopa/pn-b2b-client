@@ -5,28 +5,30 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+
 //TODO: Usare ovunque è necessario il timing e verificare se parametrizzare da propertiesFile
 
 @Component
-public class TimingForTimeline {
+public class TimingForPolling {
     private final PnB2bClientTimingConfigs timingConfigs;
     public record TimingResult(int numCheck, int waiting) { }
 
+
     @Autowired
-    public TimingForTimeline(PnB2bClientTimingConfigs timingConfigs){
+    public TimingForPolling(PnB2bClientTimingConfigs timingConfigs){
         this.timingConfigs = timingConfigs;
     }
 
-
-    public TimingResult getTimingForElement(String element, boolean isSlow){
+    public TimingResult getTimingForElement(String element, boolean isSlow, boolean isWebhook){
         element = element.trim().toUpperCase();
         Element findedElement = Element.valueOf(element);
         int waiting = timingConfigs.getWorkflowWaitMillis();
         int waitingMultiplier = findedElement.getWaitingMultiplier();
 
-        if(waitingMultiplier > 1){
+        if(!isWebhook && waitingMultiplier > 1) {
             waiting = waiting * waitingMultiplier;
         }
+
         //CASO WAITING MULTIPLIER NEGATIVO DA GESTIRE IN FUTURO
 
         if(isSlow) {
@@ -36,7 +38,11 @@ public class TimingForTimeline {
     }
 
     public TimingResult getTimingForElement(String element){
-        return getTimingForElement(element, false);
+        return getTimingForElement(element, false, false);
+    }
+
+    public TimingResult getTimingForElement(String element, boolean isWebhook){
+        return getTimingForElement(element, false, isWebhook);
     }
 
     public TimingResult getTimingForStatusValidation(String element){
@@ -52,7 +58,7 @@ public class TimingForTimeline {
     }
 
     @Getter
-    private enum Element{
+    private enum Element {
         //TIMELINE ELEMENT UPDATE TO V2.3
         SENDER_ACK_CREATION_REQUEST(2,1),
         VALIDATE_NORMALIZE_ADDRESSES_REQUEST(2,1),
@@ -71,7 +77,7 @@ public class TimingForTimeline {
         REFINEMENT(15,1),
         SCHEDULE_REFINEMENT(15,1),
         DIGITAL_DELIVERY_CREATION_REQUEST(15,1),
-        DIGITAL_SUCCESS_WORKFLOW(2,3),
+        DIGITAL_SUCCESS_WORKFLOW(3,3),
         DIGITAL_FAILURE_WORKFLOW(9,1),
         ANALOG_SUCCESS_WORKFLOW(14,1),
         ANALOG_FAILURE_WORKFLOW(14,1),
@@ -111,10 +117,13 @@ public class TimingForTimeline {
         EFFECTIVE_DATE(11,1),
         PAID(5,1),
         UNREACHABLE(11,1),
-        CANCELLED(11,1);
+        CANCELLED(11,1),
 
+        //TIMING FOR WEBHOOK
+        WEBHOOK(150000, 500);
 
-        private int numCheck,waitingMultiplier;
+        private final int numCheck;
+        private final int waitingMultiplier;
 
         Element(int numCheck, int waitingMultiplier){
             this.numCheck = numCheck;

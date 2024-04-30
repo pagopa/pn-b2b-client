@@ -6,7 +6,7 @@ Feature: avanzamento notifiche webhook b2b
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10" - ONLY FOR DEBUG
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_STATUS_1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "STATUS" con versione "V10"
     When si crea il nuovo stream per il "Comune_1" con versione "V10"
@@ -15,7 +15,7 @@ Feature: avanzamento notifiche webhook b2b
     And viene verificata la corretta cancellazione con versione "V10"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_1] Creazione stream notifica
     Given si predispone 1 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V10"
     When si crea il nuovo stream per il "Comune_1" con versione "V10"
@@ -23,7 +23,7 @@ Feature: avanzamento notifiche webhook b2b
     And si cancella lo stream creato per il "Comune_1" con versione "V10"
     And viene verificata la corretta cancellazione con versione "V10"
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_2] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -34,7 +34,7 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "ACCEPTED"
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_3] Invio notifica digitale ed attesa elemento di timeline REQUEST_ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -46,7 +46,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "REQUEST_ACCEPTED"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_4] Invio notifica digitale ed attesa elemento di timeline AAR_GENERATION positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -57,7 +57,7 @@ Feature: avanzamento notifiche webhook b2b
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "AAR_GENERATION"
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_6] Invio notifica digitale ed attesa elemento di timeline GET_ADDRESS_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -69,7 +69,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "GET_ADDRESS"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_7] Invio notifica digitale ed attesa stato DELIVERING_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -81,7 +81,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino allo stato "DELIVERING"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_8] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_DOMICILE_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -93,7 +93,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_9] Invio notifica digitale ed attesa stato DELIVERING-VIEWED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -120,7 +120,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "NOTIFICATION_VIEWED"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_11] Invio notifica digitale ed attesa stato DELIVERED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -287,7 +287,7 @@ Feature: avanzamento notifiche webhook b2b
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "PAYMENT"
 
 
-  @oldWebhookTest @cleanWebhook
+  @oldWebhookTest @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_TIMELINE_26] Invio notifica digitale ed attesa elemento di timeline REFINEMENT e verifica corretteza data PN-9059
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

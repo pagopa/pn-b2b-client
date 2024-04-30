@@ -14,7 +14,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo verifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
+  @giacenza890Complex
   Scenario: [B2B_ANALOG_VERIFICA_3] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -25,7 +25,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo verifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
+  @giacenza890Complex
   Scenario: [B2B_ANALOG_VERIFICA_4] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

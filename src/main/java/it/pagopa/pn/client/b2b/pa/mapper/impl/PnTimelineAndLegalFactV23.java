@@ -2,11 +2,11 @@ package it.pagopa.pn.client.b2b.pa.mapper.impl;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.mapper.design.PnTimelineAndLegalfactTemplate;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
+import it.pagopa.pn.client.b2b.pa.service.IPnTimelineLegalFactService;
 
 
-public class PnTimelineAndLegalFactV23 extends PnTimelineAndLegalfactTemplate<PnTimelineLegalFactV23> {
+public class PnTimelineAndLegalFactV23 implements IPnTimelineLegalFactService<PnTimelineLegalFactV23> {
 
     public PnTimelineLegalFactV23 getCategory(String legalFactCategory) {
         TimelineElementCategoryV23 timelineElementInternalCategory;

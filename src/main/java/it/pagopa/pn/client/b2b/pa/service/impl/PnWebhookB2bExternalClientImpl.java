@@ -5,7 +5,6 @@ import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.ApiClient;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2.EventsApi;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2.StreamsApi;
-
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement;
@@ -17,84 +16,56 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
+
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
-
-    private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final EventsApi eventsApi;
     private final StreamsApi streamsApi;
-
     private final it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.EventsApi eventsApiV23;
     private final it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.StreamsApi streamsApiV23;
-
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
-    private ApiKeyType apiKeySetted = ApiKeyType.MVP_1;
+    private ApiKeyType apiKeySetted;
     private final String devBasePath;
     private String bearerTokenInterop;
-
-    private final String paId;
-    private final String operatorId;
-
-    private final List<String> groups;
-
     private final String enableInterop;
-
     private final InteropTokenSingleton interopTokenSingleton;
 
-    public PnWebhookB2bExternalClientImpl(
-            ApplicationContext ctx,
-            RestTemplate restTemplate,
-            InteropTokenSingleton interopTokenSingleton,
-            @Value("${pn.external.base-url}") String devBasePath,
-            @Value("${pn.external.api-key}") String apiKeyMvp1,
-            @Value("${pn.external.api-key-2}") String apiKeyMvp2,
-            @Value("${pn.external.api-key-GA}") String apiKeyGa,
-            @Value("${pn.internal.pa-id}") String paId,
-            @Value("${pn.interop.enable}") String enableInterop
-    ) {
-        this.ctx = ctx;
+
+    public PnWebhookB2bExternalClientImpl(RestTemplate restTemplate, InteropTokenSingleton interopTokenSingleton,
+                                          @Value("${pn.external.base-url}") String devBasePath,
+                                          @Value("${pn.external.api-key}") String apiKeyMvp1,
+                                          @Value("${pn.external.api-key-2}") String apiKeyMvp2,
+                                          @Value("${pn.external.api-key-GA}") String apiKeyGa,
+                                          @Value("${pn.interop.enable}") String enableInterop) {
         this.restTemplate = restTemplate;
         this.apiKeyMvp1 = apiKeyMvp1;
         this.apiKeyMvp2 = apiKeyMvp2;
         this.apiKeyGa = apiKeyGa;
-
-        this.paId = paId;
-        this.operatorId = "TestMv";
-        this.groups = Collections.emptyList();
-
         this.enableInterop = enableInterop;
-
         if (ENEBLED_INTEROP.equalsIgnoreCase(enableInterop)) {
             this.bearerTokenInterop = interopTokenSingleton.getTokenInterop();
         }
         this.interopTokenSingleton = interopTokenSingleton;
-
         this.devBasePath = devBasePath;
-
         this.eventsApi = new EventsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.streamsApi = new StreamsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
-
         this.eventsApiV23 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.EventsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
         this.streamsApiV23 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.StreamsApi( newApiClient( restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop) );
+        this.apiKeySetted = ApiKeyType.MVP_1;
     }
-
 
     //@Scheduled(cron = "* * * * * ?")
     public void refreshAndSetTokenInteropClient(){
@@ -120,7 +91,6 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         }
         return newApiClient;
     }
-
 
     public StreamMetadataResponse createEventStream(StreamCreationRequest streamCreationRequest){
         refreshAndSetTokenInteropClient();
@@ -159,7 +129,6 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     //Versione 2_3
-
     public StreamMetadataResponseV23 createEventStreamV23(StreamCreationRequestV23 streamCreationRequest){
         refreshAndSetTokenInteropClient();
         return this.streamsApiV23.createEventStreamV23(streamCreationRequest);
@@ -200,7 +169,6 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         refreshAndSetTokenInteropClient();
         return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId,lastEventId);
     }
-
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {

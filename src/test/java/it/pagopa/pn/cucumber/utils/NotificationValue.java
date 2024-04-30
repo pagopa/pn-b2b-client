@@ -1,14 +1,13 @@
 package it.pagopa.pn.cucumber.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+
 
 public enum NotificationValue {
 
@@ -54,7 +53,6 @@ public enum NotificationValue {
     PAYMENT_CREDITOR_TAX_ID("payment_creditorTaxId","77777777777",false),
     PAYMENT_NOTICE_CODE("payment_noticeCode","",true),
     PAYMENT_NOTICE_CODE_OPTIONAL("payment_noticeCodeOptional","",true),
-
     PAYMENT_PAGOPA_FORM("payment_pagoPaForm","classpath:/AvvisoPagoPA.pdf",false),
     PAYMENT_PAGOPA_FORM_1("payment_pagoPaForm_1","classpath:/AvvisoPagoPA.pdf",false),
     PAYMENT_PAGOPA_NOTICE_DUPLICATE("notice_duplicate",null,false),
@@ -100,22 +98,16 @@ public enum NotificationValue {
     private static final ObjectMapper mapper = new ObjectMapper();
 
 
-
     NotificationValue(String key, String defaultValue, boolean addCurrentTime){
         this.key = key;
         this.defaultValue = defaultValue;
         this.addCurrentTime = addCurrentTime;
     }
 
-
-
     public static String getDefaultValue(String key) {
         NotificationValue notificationValue =
                 Arrays.stream(NotificationValue.values()).filter(value -> value.key.equals(key)).findFirst().orElse(null);
-
-
         return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + generateRandomNumber() ) : notificationValue.defaultValue));
-
         /*
         String number = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
         return (notificationValue == null ? null : (notificationValue.addCurrentTime? (notificationValue.defaultValue + (""+String.format("302"+number+"%13d",System.currentTimeMillis()))) : notificationValue.defaultValue));
@@ -155,10 +147,8 @@ public enum NotificationValue {
 
     public static String getCharSeq(String request){
         StringBuilder result = new StringBuilder();
-        Integer number = Integer.parseInt(request.substring(0,request.indexOf("_")));
-        for(int i = 0; i < number; i++){
-            result.append("a");
-        }
+        int number = Integer.parseInt(request.substring(0,request.indexOf("_")));
+        result.append("a".repeat(Math.max(0, number)));
         return result.toString();
     }
 
@@ -186,5 +176,4 @@ public enum NotificationValue {
             return getCastedDefaultValue(key);
         }
     }
-
 }

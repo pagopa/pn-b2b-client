@@ -4,13 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV20;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV20;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -19,42 +13,32 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.utils.TimelineElementWait;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
-
 import org.opentest4j.AssertionFailedError;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-
 import java.io.ByteArrayInputStream;
-
-import java.lang.invoke.MethodHandles;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 
+@Slf4j
 public class RicezioneNotificheWebDelegheSteps {
-
     private final IPnWebMandateClient webMandateClient;
     private final IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
-
     private MandateDto mandateToSearch;
     private final SettableBearerToken.BearerTokenType baseUser = SettableBearerToken.BearerTokenType.USER_2;
     private final String verificationCode = "24411";
     private HttpStatusCodeException notificationError;
-
     private final String marioCucumberTaxID;
     private final String marioGherkinTaxID;
-
     private final String gherkinSrltaxId;
     private final String cucumberSpataxId;
     @Value("${pn.external.senderId}")
@@ -67,7 +51,7 @@ public class RicezioneNotificheWebDelegheSteps {
     private String senderIdSON;
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
 
     @Autowired
     public RicezioneNotificheWebDelegheSteps(IPnWebMandateClient webMandateClient, SharedSteps sharedSteps) {
@@ -75,10 +59,8 @@ public class RicezioneNotificheWebDelegheSteps {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
-
         this.marioCucumberTaxID = sharedSteps.getMarioCucumberTaxID();
         this.marioGherkinTaxID = sharedSteps.getMarioGherkinTaxID();
-
         this.gherkinSrltaxId = sharedSteps.getGherkinSrltaxId();
         this.cucumberSpataxId = sharedSteps.getCucumberSpataxId();
     }
@@ -264,8 +246,8 @@ public class RicezioneNotificheWebDelegheSteps {
         //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            logger.debug("MANDATE-LIST: {}", mandateList);
-            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+            log.debug("MANDATE-LIST: {}", mandateList);
+            if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
@@ -288,11 +270,11 @@ public class RicezioneNotificheWebDelegheSteps {
             throw new IllegalArgumentException();
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
-        ;
+
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: " + mandateList);
-        MandateDto mandateDto = mandateList.stream().filter(mandate -> mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
+        MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
@@ -351,18 +333,18 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         //TODO Gruppi Disponibili della PG Admin
-        List<String> xPagopaPnCxGroups = null;
+        List<String> xPagopaPnCxGroups;
 
         //TODO Recuperare la Lista dei gruppi della delega;
         List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
 
-        List<String> listGruppi = new ArrayList<>();
-        if (gruppiDelega != null) {
-            xPagopaPnCxGroups = new ArrayList<>();
-            for (GroupDto gruppo : gruppiDelega) {
-                xPagopaPnCxGroups.add(gruppo.getName());
-            }
-        }
+//        List<String> listGruppi = new ArrayList<>();
+//        if (gruppiDelega != null) {
+//            xPagopaPnCxGroups = new ArrayList<>();
+//            for (GroupDto gruppo : gruppiDelega) {
+//                xPagopaPnCxGroups.add(gruppo.getName());
+//            }
+//        }
 
         String xPagopaPnCxRole = "ADMIN";
         //TODO capire dove recuperare il dato
@@ -397,18 +379,18 @@ public class RicezioneNotificheWebDelegheSteps {
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            if (mandate.getMandateId().equalsIgnoreCase(mandateToSearch.getMandateId())) {
+            if (Objects.requireNonNull(mandate.getMandateId()).equalsIgnoreCase(mandateToSearch.getMandateId())) {
                 mandateDto = mandate;
                 break;
             }
         }
         String gruppoAssegnato = "";
-        if (mandateDto != null && mandateDto.getGroups() != null && mandateDto.getGroups().size() > 0) {
+        if (mandateDto != null && mandateDto.getGroups() != null && !mandateDto.getGroups().isEmpty()) {
             gruppoAssegnato = mandateDto.getGroups().get(0).getId();
         }
 
         Assertions.assertNotNull(gruppoAttivo);
-        Assertions.assertTrue(gruppoAttivo.equals(gruppoAssegnato));
+        Assertions.assertEquals(gruppoAttivo, gruppoAssegnato);
 
     }
 
@@ -417,8 +399,8 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                 sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
-                UUID.fromString(mandateToSearch.getMandateId())
+                Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
+                UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
         );
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
@@ -437,19 +419,18 @@ public class RicezioneNotificheWebDelegheSteps {
             Assertions.assertDoesNotThrow(() -> {
                 NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
                         sharedSteps.getSentNotification().getIun(),
-                        Integer.parseInt(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx()),
-                        UUID.fromString(mandateToSearch.getMandateId())
+                        Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
+                        UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
                 );
             });
         } catch (AssertionFailedError assertionFailedError) {
             //sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             System.out.println(assertionFailedError.getCause().toString());
-            System.out.println(assertionFailedError.getCause().getMessage().toString());
-            System.out.println(assertionFailedError.getCause().getMessage().toString().substring(0, 3).equals(statusCode));
+            System.out.println(assertionFailedError.getCause().getMessage());
+            System.out.println(assertionFailedError.getCause().getMessage().substring(0, 3).equals(statusCode));
         }
 
     }
-
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
     public void attachmentCanBeCorrectlyRetrievedFromWithMandate(String attachmentName, String recipient) {
@@ -458,11 +439,11 @@ public class RicezioneNotificheWebDelegheSteps {
         NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                 sharedSteps.getSentNotification().getIun(),
                 attachmentName,
-                UUID.fromString(mandateToSearch.getMandateId()), 0);
+                UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId())), 0);
 
         if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
             try {
-                Thread.sleep(downloadResponse.getRetryAfter() * 3);
+                Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                         sharedSteps.getSentNotification().getIun(),
                         attachmentName,
@@ -476,10 +457,10 @@ public class RicezioneNotificheWebDelegheSteps {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
                 byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                        b2bUtils.downloadFile(finalDownloadResponse.getUrl()));
+                        b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
                 Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
-            Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+            Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         }
     }
 
@@ -493,8 +474,8 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE LIST: " + mandateList);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegate().getLastName() != null &&
-                    mandate.getDelegate().getDisplayName().toLowerCase().equalsIgnoreCase(delegate.toLowerCase())) {
+            if (Objects.requireNonNull(mandate.getDelegate()).getLastName() != null &&
+                    Objects.requireNonNull(mandate.getDelegate().getDisplayName()).equalsIgnoreCase(delegate)) {
                 mandateDto = mandate;
                 break;
             }
@@ -516,7 +497,7 @@ public class RicezioneNotificheWebDelegheSteps {
         //  List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            if (mandate.getDelegator().getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
+            if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
@@ -563,9 +544,9 @@ public class RicezioneNotificheWebDelegheSteps {
 
         try {
             FullReceivedNotificationV23 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+            log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result.getTimeline().stream().filter(elem -> elem.getCategory().equals(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED)).findAny().orElse(null);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED)).findAny().orElse(null);
 
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -581,19 +562,21 @@ public class RicezioneNotificheWebDelegheSteps {
 
         try {
             FullReceivedNotificationV23 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-            logger.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+            log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
 
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result.getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED.name())).findAny().orElse(null);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result
+                    .getTimeline()
+                    .stream()
+                    .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED.getValue()))
+                    .findAny()
+                    .orElse(null);
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-
         webRecipientClient.setBearerToken(baseUser);
     }
-
-
 
     @And("la notifica può essere correttamente letta da {string} per comune {string}")
     public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa) {
@@ -613,7 +596,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -632,14 +615,13 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
 
-        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
-
 
     //for debug
     @And("{string} visualizza le deleghe")
@@ -655,8 +637,5 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);
         System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
         System.out.println("MANDATE-LIST-DELEGATOR (user: +" + user + ") : " + mandateDtos);
-
     }
-
-
 }

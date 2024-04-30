@@ -1,6 +1,5 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.ApiClient;
@@ -11,17 +10,15 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.m
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient {
-
-    private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final ApiKeysApi apiKeysApi;
     private final String basePath;
@@ -30,34 +27,28 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
     private final String bearerTokenSON;
     private final String bearerTokenROOT;
     private final String bearerTokenGA;
-
-
     private final String userAgent;
-    private ApiKeyType apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
+    private ApiKeyType apiKeySetted;
 
-    public PnApiKeyManagerExternalClientImpl(
-            ApplicationContext ctx,
-            RestTemplate restTemplate,
-            @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
-            @Value("${pn.external.bearer-token-pa-2}") String bearerTokenCom2,
-            @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
-            @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
-            @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
-            @Value("${pn.webapi.external.user-agent}")String userAgent
-    ) {
-        this.ctx = ctx;
+
+    public PnApiKeyManagerExternalClientImpl(RestTemplate restTemplate,
+                                             @Value("${pn.webapi.external.base-url}") String basePath,
+                                             @Value("${pn.external.bearer-token-pa-1}") String bearerTokenCom1,
+                                             @Value("${pn.external.bearer-token-pa-2}") String bearerTokenCom2,
+                                             @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
+                                             @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
+                                             @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
+                                             @Value("${pn.webapi.external.user-agent}")String userAgent) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
-
         this.bearerTokenCom1 = bearerTokenCom1;
         this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;
         this.bearerTokenROOT = bearerTokenROOT;
         this.bearerTokenGA = bearerTokenGA;
-
         this.userAgent = userAgent;
         this.apiKeysApi = new ApiKeysApi( newApiClient( restTemplate, basePath, bearerTokenCom1, userAgent) );
+        this.apiKeySetted = SettableApiKey.ApiKeyType.MVP_1;
     }
 
     public void setApiKey(String bearerToken) {
@@ -72,26 +63,21 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
         return newApiClient;
     }
 
-
     public void changeStatusApiKey(String id, RequestApiKeyStatus requestApiKeyStatus) throws RestClientException {
         apiKeysApi.changeStatusApiKey(id, requestApiKeyStatus);
     }
-
 
     public void deleteApiKeys(String id) throws RestClientException {
         apiKeysApi.deleteApiKeys(id);
     }
 
-
     public ApiKeysResponse getApiKeys(Integer limit, String lastKey, String lastUpdate, Boolean showVirtualKey) throws RestClientException {
         return apiKeysApi.getApiKeys(limit, lastKey, lastUpdate, showVirtualKey);
     }
 
-
     public ResponseNewApiKey newApiKey(RequestNewApiKey requestNewApiKey) throws RestClientException {
         return apiKeysApi.newApiKey(requestNewApiKey);
     }
-
 
     //TODO: indagare l'utilizzo di questo metodo
     @Override
@@ -135,8 +121,6 @@ public class PnApiKeyManagerExternalClientImpl implements IPnApiKeyManagerClient
             default -> false;
         };
     }
-
-
 
     @Override
     public ApiKeyType getApiKeySetted() {return this.apiKeySetted; }

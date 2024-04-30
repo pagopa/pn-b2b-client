@@ -10,10 +10,13 @@ import java.util.UUID;
 @Builder
 @Setter
 public class PnPollingParameter {
-    private int user = 0;
+    private int user;
+    private int deepCount;
     private UUID streamId;
+    private String value;
+    private String lastEventId;
     private PollingType pollingType;
     public enum PollingType {SLOW, RAPID, SHORT}
-    private String value;
     private PnPollingPredicate pnPollingPredicate;
+    private PnPollingWebhook pnPollingWebhook;
 }

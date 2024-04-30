@@ -8,7 +8,7 @@ Feature: verifica validazione asincrona
     Then la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @validation @realNormalizzatore
+  @validation
   Scenario Outline: [B2B-PA-ASYNC_VALIDATION_2] invio notifiche digitali mono destinatario con  con physicalAddress_zip, physicalAddress_municipality e physicalAddress_province errati scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

@@ -6,60 +6,46 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.api.Man
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
+
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
-
-    private final ApplicationContext ctx;
     private final RestTemplate restTemplate;
     private final MandateServiceApi mandateServiceApi;
-
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
     private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-    private BearerTokenType bearerTokenSetted = BearerTokenType.USER_1;
+    private BearerTokenType bearerTokenSetted;
     private final String userAgent;
     private final String basePath;
 
-    private final String idOrganizationGherkinSrl;
 
-    private final String idOrganizationCucumberSpa;
-
-    public PnWebMandateExternalClientImpl(
-            ApplicationContext ctx,
-            RestTemplate restTemplate,
-            @Value("${pn.webapi.external.base-url}") String basePath,
-            @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-            @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-            @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
-            @Value("${pn.external.bearer-token-pg1.id}") String idOrganizationGherkinSrl,
-            @Value("${pn.external.bearer-token-pg2.id}") String idOrganizationCucumberSpa,
-            @Value("${pn.webapi.external.user-agent}")String userAgent
-    ) {
-        this.ctx = ctx;
+    public PnWebMandateExternalClientImpl(RestTemplate restTemplate,
+                                          @Value("${pn.webapi.external.base-url}") String basePath,
+                                          @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+                                          @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
+                                          @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
+                                          @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                          @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+                                          @Value("${pn.webapi.external.user-agent}")String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
-        this.idOrganizationGherkinSrl = idOrganizationGherkinSrl;
-        this.idOrganizationCucumberSpa = idOrganizationCucumberSpa;
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent) );
+        this.bearerTokenSetted = BearerTokenType.USER_1;
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
@@ -73,32 +59,33 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
-        switch (bearerToken){
-            case USER_1:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioCucumberBearerToken,userAgent));
+        switch (bearerToken) {
+            case USER_1 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 beenSet = true;
-                break;
-            case USER_2:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, marioGherkinBearerToken,userAgent));
+            }
+            case USER_2 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
-                break;
-            case USER_3:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, leonardoBearerToken,userAgent));
+            }
+            case USER_3 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 beenSet = true;
-                break;
-            case PG_1:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken,userAgent));
+            }
+            case PG_1 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 beenSet = true;
-                break;
-            case PG_2:
-                this.mandateServiceApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken,userAgent));
+            }
+            case PG_2 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 beenSet = true;
-                break;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
         return beenSet;
     }

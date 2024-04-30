@@ -298,7 +298,7 @@ Feature: avanzamento notifiche b2b persona fisica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
 
-  @mockPec
+  @mockPec @giacenza890Complex
   Scenario: [TEST_PAPER_NEW_2]
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

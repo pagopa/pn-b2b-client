@@ -1,7 +1,9 @@
 package it.pagopa.pn.client.b2b.pa.polling.exception;
 
+import lombok.Getter;
 
-public class PnPollingException extends RuntimeException {
+@Getter
+public class PnPollingException extends IllegalStateException {
     private final String message;
 
     public PnPollingException(String message) {

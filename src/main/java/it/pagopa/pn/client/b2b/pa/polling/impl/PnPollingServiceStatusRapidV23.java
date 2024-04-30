@@ -8,7 +8,8 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.utils.TimingForTimeline;
+import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -21,16 +22,16 @@ import java.util.function.Predicate;
 
 @Service(PnPollingStrategy.STATUS_RAPID_V23)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@Slf4j
 public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingResponseV23> {
-    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-    protected final TimingForTimeline timingForTimeline;
+
+    protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotificationV23 notificationV23;
-    private NotificationStatusHistoryElement notificationStatusHistoryElement;
 
 
-    public PnPollingServiceStatusRapidV23(TimingForTimeline timingForTimeline, IPnPaB2bClient pnPaB2bClient) {
-        this.timingForTimeline = timingForTimeline;
+    public PnPollingServiceStatusRapidV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+        this.timingForPolling = timingForPolling;
         this.pnPaB2bClient = pnPaB2bClient;
     }
 
@@ -42,7 +43,7 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
             try {
                 fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
             } catch (Exception exception) {
-                logger.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
             pnPollingResponse.setNotification(fullSentNotificationV23);
@@ -53,7 +54,7 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
 
     @Override
     protected Predicate<PnPollingResponseV23> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
-        return (pnPollingResponse) -> {
+        return pnPollingResponse -> {
             if(pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
@@ -64,8 +65,6 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
                 return false;
             }
 
-            pnPollingResponse.setResult(true);
-            pnPollingResponse.setNotificationStatusHistoryElement(notificationStatusHistoryElement);
             return true;
         };
     }
@@ -80,13 +79,13 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForTimeline.TimingResult timingResult = timingForTimeline.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForTimeline.TimingResult timingResult = timingForTimeline.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
         return timingResult.waiting() * timingResult.numCheck();
     }
 
@@ -119,7 +118,8 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
                 .findAny()
                 .orElse(null);
         if(notificationStatusHistoryElement != null) {
-            this.notificationStatusHistoryElement = notificationStatusHistoryElement;
+            pnPollingResponse.setNotificationStatusHistoryElement(notificationStatusHistoryElement);
+            pnPollingResponse.setResult(true);
             return true;
         }
         return false;

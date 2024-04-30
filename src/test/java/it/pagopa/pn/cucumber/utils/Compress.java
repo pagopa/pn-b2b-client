@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.utils;
 
-import org.springframework.core.io.InputStreamSource;
 
 import java.io.*;
 import java.util.zip.ZipEntry;

@@ -7,20 +7,18 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
-import it.pagopa.pn.cucumber.steps.SharedSteps;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 public class DowntimeLogsSteps {
 
-    private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
     private final IPnDowntimeLogsClient downtimeLogsClient;
 
@@ -28,13 +26,11 @@ public class DowntimeLogsSteps {
     private PnDowntimeEntry pnDowntimeEntry;
     private String sha256;
     private LegalFactDownloadMetadataResponse legalFact;
-    private static final Logger logger = LoggerFactory.getLogger(DowntimeLogsSteps.class);
 
     @Autowired
-    public DowntimeLogsSteps(IPnDowntimeLogsClient downtimeLogsClient, SharedSteps sharedSteps) {
+    public DowntimeLogsSteps(IPnDowntimeLogsClient downtimeLogsClient, PnPaB2bUtils b2bUtils) {
         this.downtimeLogsClient = downtimeLogsClient;
-        this.sharedSteps = sharedSteps;
-        this.b2bUtils = sharedSteps.getB2bUtils();
+        this.b2bUtils = b2bUtils;
     }
 
 
@@ -53,7 +49,7 @@ public class DowntimeLogsSteps {
                 pnFunctionality = PnFunctionality.NOTIFICATION_WORKFLOW;
                 break;
         }
-        List<PnFunctionality> pnFunctionalities = Arrays.asList(pnFunctionality);
+        List<PnFunctionality> pnFunctionalities = Collections.singletonList(pnFunctionality);
 
         this.pnDowntimeHistoryResponse = downtimeLogsClient.statusHistory(OffsetDateTime.now().minusDays(time), OffsetDateTime.now(),
                 pnFunctionalities, "0", "50");
@@ -62,12 +58,12 @@ public class DowntimeLogsSteps {
 
     @When("viene individuato se presente l'evento più recente")
     public void vieneIndividuatoSePresenteLEventoPiùRecente() {
-        logger.info("Elenco eventi {}",pnDowntimeHistoryResponse);
+        log.info("Elenco eventi {}",pnDowntimeHistoryResponse);
 
         Assertions.assertNotNull(pnDowntimeHistoryResponse);
         PnDowntimeEntry value = null;
         for(PnDowntimeEntry entry: pnDowntimeHistoryResponse.getResult()){
-            if(value == null && entry.getFileAvailable()){
+            if(value == null && Boolean.TRUE.equals(entry.getFileAvailable())){
                 value = entry;
             }
             boolean valueNotNull = value != null && value.getEndDate() != null;
@@ -77,7 +73,7 @@ public class DowntimeLogsSteps {
             }
         }
         this.pnDowntimeEntry = value;
-        logger.info("evento {}",value);
+        log.info("evento {}",value);
     }
 
 

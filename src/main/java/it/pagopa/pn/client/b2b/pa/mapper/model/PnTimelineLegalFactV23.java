@@ -8,6 +8,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PnTimelineLegalFactV23 extends PnTimelineLegalFact {
-    public LegalFactCategory legalFactCategory;
-    public TimelineElementCategoryV23 timelineElementInternalCategory;
+    protected LegalFactCategory legalFactCategory;
+    protected TimelineElementCategoryV23 timelineElementInternalCategory;
 }

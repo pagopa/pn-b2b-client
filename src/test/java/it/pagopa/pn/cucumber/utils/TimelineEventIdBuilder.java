@@ -117,19 +117,17 @@ public class TimelineEventIdBuilder {
      */
 
     public String build() {
-        return new StringBuilder()
-                .append(category)
-                .append(iun)
-                .append(recIndex)
-                .append(courtesyAddressType)
-                .append(source)
-                .append(deliveryMode)
-                .append(contactPhase)
-                .append(isFirstSendRetry)
-                .append(sentAttemptMade)
-                .append(progressIndex)
-                .append(correlationId)
-                .append(paymentCode)
-                .toString();
+        return category +
+                iun +
+                recIndex +
+                courtesyAddressType +
+                source +
+                deliveryMode +
+                contactPhase +
+                isFirstSendRetry +
+                sentAttemptMade +
+                progressIndex +
+                correlationId +
+                paymentCode;
     }
 }

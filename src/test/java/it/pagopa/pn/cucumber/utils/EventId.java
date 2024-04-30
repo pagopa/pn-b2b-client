@@ -1,5 +1,11 @@
 package it.pagopa.pn.cucumber.utils;
 
+import lombok.Getter;
+import lombok.Setter;
+
+
+@Getter
+@Setter
 public class EventId {
     private String iun;
     private Integer recIndex;
@@ -20,59 +26,4 @@ public class EventId {
 
     private String relatedTimelineId;
      */
-    public String getIun() {
-        return iun;
-    }
-
-    public void setIun(String iun) {
-        this.iun = iun;
-    }
-
-    public Integer getRecIndex() {
-        return recIndex;
-    }
-
-    public void setRecIndex(Integer recIndex) {
-        this.recIndex = recIndex;
-    }
-
-    public String getCourtesyAddressType() {
-        return courtesyAddressType;
-    }
-
-    public void setCourtesyAddressType(String courtesyAddressType) {
-        this.courtesyAddressType = courtesyAddressType;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public Boolean getIsFirstSendRetry() {
-        return isFirstSendRetry;
-    }
-
-    public void setIsFirstSendRetry(Boolean firstSendRetry) {
-        isFirstSendRetry = firstSendRetry;
-    }
-
-    public Integer getSentAttemptMade() {
-        return sentAttemptMade;
-    }
-
-    public void setSentAttemptMade(Integer sentAttemptMade) {
-        this.sentAttemptMade = sentAttemptMade;
-    }
-
-    public Integer getProgressIndex() {
-        return progressIndex;
-    }
-
-    public void setProgressIndex(Integer progressIndex) {
-        this.progressIndex = progressIndex;
-    }
 }
