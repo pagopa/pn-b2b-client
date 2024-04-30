@@ -1368,6 +1368,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.serviceDeskIntegration.model</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>generate-external-radd-import-anagrafica-csv</id>
                         <goals>
@@ -1397,6 +1398,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>generate-external-raddAlt-import-anagrafica-crud</id>
                         <goals>
