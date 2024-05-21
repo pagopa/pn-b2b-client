@@ -24,7 +24,7 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
     public PnExternalChannelsServiceClientImpl(
             RestTemplate restTemplate,
             @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
-            @Value("${pn.dataVault.base-url.pagopa}") String dataVaultBasePath
+            @Value("${pn.dataVault.base-url}") String dataVaultBasePath
     )
     {
         this.restTemplate = restTemplate;
