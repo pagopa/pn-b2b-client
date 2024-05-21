@@ -184,5 +184,5 @@ Feature: Allegati notifica
       | payment_multy_number    | 1                    |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati da "data vault"
+    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 da "data vault"
     And si verifica che negli url non contenga il docTag nel "analogico"

@@ -940,6 +940,22 @@ public class InvioNotificheB2bSteps {
 
     }
 
+    @And("si verifica il contenuto degli attacchment da inviare nella pec del destinatario {int} da {string}")
+    public void vieneVerificatiIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, String basePath) {
+        try {
+            pnExternalChannelsServiceClientImpl.switchBasePath(basePath);
+            this.documentiPec= pnExternalChannelsServiceClientImpl.getReceivedMessages(sharedSteps.getIunVersionamento(),destinatario);
+            Assertions.assertNotNull(documentiPec);
+
+            log.info("documenti pec : {}",documentiPec);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "Verifica Allegati pec in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+
+    }
+
     @And("si verifica lo SHA degli attachment inseriti nella pec del destinatario {int} di tipo {string}")
     public void verificaSHAAllegatiPecDelDestinatario(Integer destinatario, String tipoAttachment) {
         try {

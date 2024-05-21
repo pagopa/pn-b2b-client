@@ -29,7 +29,7 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
     {
         this.restTemplate = restTemplate;
         this.extChannelsBasePath = extChannelsBasePath;
-        this.dataVaultBasePath=dataVaultBasePath;
+        this.dataVaultBasePath = dataVaultBasePath;
         this.mockReceivedMessagesApi = new MockReceivedMessagesApi( newApiClient( restTemplate, extChannelsBasePath) );
     }
 
