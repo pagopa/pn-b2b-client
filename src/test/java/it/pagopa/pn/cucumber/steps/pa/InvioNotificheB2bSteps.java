@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
@@ -921,9 +922,10 @@ public class InvioNotificheB2bSteps {
     }
 
 
-    @And("si verifica il contenuto degli attacchment da inviare nella pec del destinatario {int} con {int} allegati")
-    public void vieneVerificatiIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, Integer allegati) {
+    @And("si verifica il contenuto degli attacchment da inviare nella pec del destinatario {int} con {int} allegati da {string}")
+    public void vieneVerificatiIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, Integer allegati, String basePath) {
         try {
+            pnExternalChannelsServiceClientImpl.switchBasePath(basePath);
             this.documentiPec= pnExternalChannelsServiceClientImpl.getReceivedMessages(sharedSteps.getIunVersionamento(),destinatario);
             Assertions.assertNotNull(documentiPec);
 
@@ -1000,5 +1002,40 @@ public class InvioNotificheB2bSteps {
         }
     }
 
+
+    @And("si verifica che negli url non contenga il docTag nel {string}")
+    public void verificaNonPresenzaDocType(String type) {
+
+        boolean contieneDocTag=false;
+
+        for (String attachmentUrl : getAttachemtListForTypeOfNotification(type)) {
+            if(attachmentUrl.contains("docTag")){
+                contieneDocTag=true;
+            }
+        }
+
+        try {
+
+            Assertions.assertFalse(contieneDocTag);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "Verifica Allegati pec in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
+    public List<String> getAttachemtListForTypeOfNotification(String type){
+        List<String> attchmentNotification=new ArrayList<>();
+        switch (type.toLowerCase()){
+            case "analogico" -> {
+                for (PaperEngageRequestAttachments attahment : documentiPec.get(0).getPaperEngageRequest().getAttachments()) {
+                    attchmentNotification.add(attahment.getUri());
+                }
+            }
+            case "digitale" -> attchmentNotification= documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
+        }
+        return attchmentNotification;
+    }
 
 }

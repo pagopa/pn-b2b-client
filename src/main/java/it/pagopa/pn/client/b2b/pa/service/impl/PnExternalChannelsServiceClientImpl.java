@@ -18,15 +18,18 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
 
     private final RestTemplate restTemplate;
     private final String extChannelsBasePath;
+    private final String dataVaultBasePath;
     private final MockReceivedMessagesApi mockReceivedMessagesApi;
 
     public PnExternalChannelsServiceClientImpl(
             RestTemplate restTemplate,
-            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath
+            @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
+            @Value("${pn.dataVault.base-url.pagopa}") String dataVaultBasePath
     )
     {
         this.restTemplate = restTemplate;
         this.extChannelsBasePath = extChannelsBasePath;
+        this.dataVaultBasePath=dataVaultBasePath;
         this.mockReceivedMessagesApi = new MockReceivedMessagesApi( newApiClient( restTemplate, extChannelsBasePath) );
     }
 
@@ -42,6 +45,14 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
 
     public List<ReceivedMessage> getReceivedMessages(String iun, Integer recipientIndex) throws RestClientException {
         return this.mockReceivedMessagesApi.getReceivedMessages(iun, recipientIndex);
+    }
+
+    public void switchBasePath(String basePath){
+        switch (basePath.toLowerCase()){
+            case "data vault" ->this.mockReceivedMessagesApi.setApiClient(newApiClient( restTemplate, dataVaultBasePath) );
+            case "external channel" ->this.mockReceivedMessagesApi.setApiClient(newApiClient( restTemplate, extChannelsBasePath) );
+
+        }
     }
 
 
