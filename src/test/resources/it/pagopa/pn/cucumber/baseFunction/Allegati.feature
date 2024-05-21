@@ -167,7 +167,7 @@ Feature: Allegati notifica
       | details_recIndex | 0        |
 
 
-
+  @hotfix-11281
   Scenario: [ALLEGATI-PEC_HOTFIX_1] si verifica che la notifica analogica non contenga nel url degli allegati docTag - PN-11281
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
