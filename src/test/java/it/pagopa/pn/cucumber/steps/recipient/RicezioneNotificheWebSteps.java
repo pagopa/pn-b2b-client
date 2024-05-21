@@ -33,7 +33,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.awaitility.Awaitility.await;
 
 
 @Slf4j
@@ -88,11 +91,7 @@ public class RicezioneNotificheWebSteps {
     @Then("il documento notificato può essere correttamente recuperato da {string}")
     public void theDocumentCanBeProperlyRetrievedBy(String recipient) {
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getDocuments()).get(0).getDocIdx())),
-                null
-        );
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = getRecivedNotificationDocument();
         AtomicReference<String> Sha256 = new AtomicReference<>("");
         Assertions.assertDoesNotThrow(() -> {
             byte[] bytes = Assertions.assertDoesNotThrow(() ->
@@ -106,14 +105,19 @@ public class RicezioneNotificheWebSteps {
     public void theDocumentCanNotBeProperlyRetrievedBy(String recipient) {
         try {
             sharedSteps.selectUser(recipient);
-            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                    sharedSteps.getSentNotification().getIun(),
-                    Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getDocuments()).get(0).getDocIdx())),
-                    null
-            );
+            getRecivedNotificationDocument();
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
+    }
+
+    private NotificationAttachmentDownloadMetadataResponse getRecivedNotificationDocument() {
+
+        return webRecipientClient.getReceivedNotificationDocument(
+                sharedSteps.getSentNotification().getIun(),
+                Integer.parseInt(Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getDocuments()).get(0).getDocIdx())),
+                null
+        );
     }
 
     @Then("l'utente {string} controlla che la data di refinement sia corretta")
@@ -140,20 +144,15 @@ public class RicezioneNotificheWebSteps {
     public void attachmentCanBeCorrectlyRetrievedBy(String attachmentName, String recipient) {
         //TODO Modificare
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                sharedSteps.getSentNotification().getIun(),
-                attachmentName,
-                null,0);
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 
         if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
             try {
-                Thread.sleep(downloadResponse.getRetryAfter()* 3L);
-                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                        sharedSteps.getSentNotification().getIun(),
-                        attachmentName,
-                        null,0);
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
+                await().atMost(downloadResponse.getRetryAfter()* 3L, TimeUnit.MILLISECONDS);
+                 downloadResponse = getReceivedNotificationAttachment(attachmentName);
+            } catch (RuntimeException exc) {
+                log.error("Await error exception: {}", exc.getMessage());
+                throw exc;
             }
         }
 
@@ -168,59 +167,45 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         }else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
-            Assertions.assertDoesNotThrow(() -> {
-                byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-            });
+
         }
+    }
+
+    private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String attachmentName) {
+
+        return webRecipientClient.getReceivedNotificationAttachment(
+                sharedSteps.getSentNotification().getIun(),
+                attachmentName,
+                null,0);
     }
 
     @And("{string} tenta il recupero dell'allegato {string}")
     public void attachmentRetrievedError(String recipient, String attachmentName) {
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
-        try {
-            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                    sharedSteps.getSentNotification().getIun(),
-                    attachmentName,
-                    null, 0);
-
-
-            if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
-                try {
-                    Thread.sleep(downloadResponse.getRetryAfter()* 3L);
-                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                            sharedSteps.getSentNotification().getIun(),
-                            attachmentName,
-                            null,0);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
-            }
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
+        retriveAttachement(attachmentName);
     }
 
     @And("{string} tenta il recupero dell'attestazione {string}")
     public void attachmentAttestazioneRetrievedError(String recipient, String attachmentName) {
         this.notificationError = null;
         sharedSteps.selectUser(recipient);
+        retriveAttachement(attachmentName);
+    }
+
+    private void retriveAttachement(String attachmentName) {
         try {
-            NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                    sharedSteps.getSentNotification().getIun(),
-                    attachmentName,
-                    null, 0);
+            NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 
             if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
                 try {
-                    Thread.sleep(downloadResponse.getRetryAfter()* 3L);
-                    downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
-                            sharedSteps.getSentNotification().getIun(),
-                            attachmentName,
-                            null,0);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
+                    await().atMost(downloadResponse.getRetryAfter()* 3L, TimeUnit.MILLISECONDS);
+                    getReceivedNotificationAttachment(attachmentName);
+                } catch (RuntimeException exc) {
+                    log.error("Await error exception: {}", exc.getMessage());
+                    throw exc;
                 }
             }
         } catch (HttpStatusCodeException e) {
@@ -245,9 +230,10 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(recipient);
         this.notificationError = null;
         try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
+            await().atMost(sharedSteps.getWait(), TimeUnit.MILLISECONDS);
+        } catch (RuntimeException exc) {
+            log.error("Await error exception: {}", exc.getMessage());
+            throw exc;
         }
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
@@ -312,30 +298,10 @@ public class RicezioneNotificheWebSteps {
     public NotificationSearchParam convertNotificationSearchParam(Map<String, String> data) {
         NotificationSearchParam searchParam = new NotificationSearchParam();
 
-        Calendar now = Calendar.getInstance();
-        int month = now.get(Calendar.MONTH);
-        String monthString = (((month + "").length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1))) + "";
-        int day = now.get(Calendar.DAY_OF_MONTH);
-        String dayString = (day + "").length() == 2 ? (day + "") : ("0" + day);
-        String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
-        String end = data.getOrDefault("endDate", null);
+        PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates =  getStartDateAndEndDate(data);
 
-        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
-        LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-        OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
-
-        OffsetDateTime endDate;
-        if (end != null) {
-            LocalDateTime localDateEnd = LocalDate.parse(end, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
-            endDate = OffsetDateTime.of(localDateEnd, sentAt.getOffset());
-        } else {
-            endDate = sentAt;
-        }
-
-        searchParam.startDate = startDate;
-        searchParam.endDate = endDate;
-        //searchParam.mandateId = data.getOrDefault("mandateId",null);
-        //searchParam.senderId = data.getOrDefault("senderId",null);
+        searchParam.startDate = dates.getValue1();
+        searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
         searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
@@ -347,6 +313,19 @@ public class RicezioneNotificheWebSteps {
     public NotificationSearchParamWebPA convertNotificationSearchParamWebPA(Map<String, String> data) {
         NotificationSearchParamWebPA searchParam = new NotificationSearchParamWebPA();
 
+        PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> dates =  getStartDateAndEndDate(data);
+
+        searchParam.startDate = dates.getValue1();
+        searchParam.endDate = dates.getValue2();
+        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
+        String iun = data.getOrDefault("iunMatch", null);
+        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
+        return searchParam;
+    }
+
+    private PnPaB2bUtils.Pair<OffsetDateTime, OffsetDateTime> getStartDateAndEndDate (Map<String, String> data){
+
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
         String monthString = (((month + "").length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1))) + "";
@@ -367,15 +346,7 @@ public class RicezioneNotificheWebSteps {
             endDate = sentAt;
         }
 
-        searchParam.startDate = startDate;
-        searchParam.endDate = endDate;
-        //searchParam.mandateId = data.getOrDefault("mandateId",null);
-        //searchParam.senderId = data.getOrDefault("senderId",null);
-        searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
-        String iun = data.getOrDefault("iunMatch", null);
-        searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
-        searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
-        return searchParam;
+        return new PnPaB2bUtils.Pair<>(startDate, endDate);
     }
 
     private boolean searchNotification(NotificationSearchParam searchParam) {
@@ -404,6 +375,7 @@ public class RicezioneNotificheWebSteps {
         }//search cycle
         return beenFound;
     }
+
 
     private boolean searchNotificationWebPA(NotificationSearchParamWebPA searchParam) {
         boolean beenFound;
@@ -435,205 +407,87 @@ public class RicezioneNotificheWebSteps {
     @When("si predispone addressbook per l'utente {string}")
     public void siPredisponeAddressbook(String user) {
         switch (user) {
-            case "Mario Cucumber":
-                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-                break;
-            case "Mario Gherkin":
-                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-                break;
-            case "Galileo Galilei":
-                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-                break;
-            case "Lucio Anneo Seneca":
-                this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-                break;
-            default:
-                throw new IllegalArgumentException();
+            case "Mario Cucumber" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case "Mario Gherkin" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case "Galileo Galilei" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+            case "Lucio Anneo Seneca" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            default -> throw new IllegalArgumentException();
         }
     }
 
     @And("viene inserito un recapito legale {string}")
     public void nuovoRecapitoLegale(String pec) {
-        // inserimento
-        this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec)));
-        // validazione
-        String verificationCode = this.externalClient.getVerificationCode(pec);
-        this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode(verificationCode)));
+        postRecipientLegalAddress("default", pec, null, true);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
     public void perLUtenteVieneSettatoLaPec(String pec) {
-        try {
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode("00000")));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        postRecipientLegalAddress("default", pec, "00000", false);
     }
 
     @When("viene richiesto l'inserimento del numero di telefono {string}")
     public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
-        try {
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.SMS, (new AddressVerification().value(phone).verificationCode("00000")));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        postRecipientCourtesyAddress ("default", phone, CourtesyChannelType.SMS, "00000", false);
     }
 
     @When("viene richiesto l'inserimento del email di cortesia {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
-        try {
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress("default", CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        postRecipientCourtesyAddress("default", email, CourtesyChannelType.EMAIL, "00000", false);
     }
 
     @And("viene inserito un recapito legale {string} per il comune {string}")
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
-        String senderIdPa="default";
-        switch (pa){
-
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-        }
-
-        // inserimento
-        this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec)));
-        // validazione
-        String verificationCode = this.externalClient.getVerificationCode(pec);
-        this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode(verificationCode)));
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientLegalAddress(senderIdPa, pec, null, true);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
     public void perLUtenteVieneSettatoLaPecPerIlComune(String pec,String pa) {
-        String senderIdPa="default";
-        switch (pa){
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-        }
-
-        try {
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(pec).verificationCode("00000")));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false);
     }
 
     @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
     public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
-        String senderIdPa="default";
-        switch (pa){
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-        }
-
-        try {
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode("00000")));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, "00000", false);
     }
 
     @And("viene inserita l'email di cortesia {string} per il comune {string}")
     public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
-        String senderIdPa;
-        switch (pa){
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-            default:
-                senderIdPa="default";
-        }
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, null, true);
+    }
 
+    @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, phone, CourtesyChannelType.SMS, "00000", false);
+    }
+
+    private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
         try {
-
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email)));
-            // validazione
-            String verificationCode = this.externalClient.getVerificationCode(email);
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL, (new AddressVerification().value(email).verificationCode(verificationCode)));
+            if(inserimento){
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
+                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+            }
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
 
-    @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
-    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
-
-        String senderIdPa=null;
-
-        switch (pa){
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-            default:
-                senderIdPa="default";
-        }
-
+    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
         try {
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.SMS, (new AddressVerification().value(phone).verificationCode("00000")));
+            if (inserimento){
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
+                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+            }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
@@ -641,34 +495,24 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
     public void vieneCancellataEmailDiCortesiaDalComune( String pa) {
-
-        String senderIdPa=null;
-
-        switch (pa){
-            case "Comune_1":
-                senderIdPa=senderId;
-                break;
-            case "Comune_2":
-                senderIdPa=senderId2;
-                break;
-            case "Comune_Multi":
-                senderIdPa=senderIdGA;
-                break;
-            case "Comune_Son":
-                senderIdPa=senderIdSON;
-                break;
-            case "Comune_Root":
-                senderIdPa=senderIdROOT;
-                break;
-            default:
-                senderIdPa="default";
-        }
+        String senderIdPa = getSenderIdPa(pa);
 
         try {
             this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
         }
+    }
+
+    private String getSenderIdPa(String pa) {
+        return switch (pa) {
+            case "Comune_1" -> senderId;
+            case "Comune_2" -> senderId2;
+            case "Comune_Multi" -> senderIdGA;
+            case "Comune_Son" -> senderIdSON;
+            case "Comune_Root" -> senderIdROOT;
+            default -> "default";
+        };
     }
 
     @Then("l'inserimento ha prodotto un errore con status code {string}")

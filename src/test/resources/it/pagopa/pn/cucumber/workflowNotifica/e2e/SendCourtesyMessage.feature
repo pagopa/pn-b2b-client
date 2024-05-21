@@ -1,5 +1,6 @@
 Feature: Invio messaggi cortesia e2e
-    @e2e
+
+    @e2e @addressBook1
     Scenario: [E2E-SEND_COURTESY_MESSAGE_1] invio messaggio di cortesia - invio per email
         Given si predispone addressbook per l'utente "Galileo Galilei"
         And viene inserito un recapito legale "example@pecSuccess.it"
@@ -49,7 +50,7 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "...", "type": "APPIO"} |
             | details_recIndex | 0 |
 
-    @e2e  @ignore
+    @e2e
   Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato
     Given viene generata una nuova notifica
         | subject | invio notifica con cucumber |

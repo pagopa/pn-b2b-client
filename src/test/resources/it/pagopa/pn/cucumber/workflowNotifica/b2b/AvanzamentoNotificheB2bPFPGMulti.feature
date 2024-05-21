@@ -108,8 +108,8 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | denomination     | Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | Cristoforo Colombo  |
+      | taxId | CLMCST42R12D969Z |
       | digitalDomicile | NULL |
       | physicalAddress_zip     | 16121       |
       | physicalAddress_address | Via@ok_AR |
@@ -131,8 +131,8 @@ Feature: avanzamento notifiche b2b multi destinatario con persona fisica e giuri
       | physicalCommunication | REGISTERED_LETTER_890           |
       | feePolicy             | DELIVERY_MODE                   |
     And destinatario
-      | denomination     | Giulio Cesare  |
-      | taxId | CSRGGL44L13H501E |
+      | denomination     | Cristoforo Colombo  |
+      | taxId | CLMCST42R12D969Z |
       | payment_pagoPaForm      | SI         |
       | digitalDomicile         | NULL       |
       | physicalAddress_zip     | 16121       |

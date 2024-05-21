@@ -32,14 +32,14 @@ Feature: avanzamento b2b notifica analogico difgitale
  # 2	monodestinatario PG -> insuccesso e verifica nuovo WF  (con controllo date perfezionamento per decorrenza termini)
   #TODO Repererire una PG per cui fallisce l'invio digitale
 
-  @dev @ignore
+  @dev @mockNR
   Scenario: [B2B_TIMELINE_FIX_7179_2] Notifica mono destinatario con workflow digitale fallito - Destinatario PG
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
     #And destinatario Cucumber Society
-    And destinatario Cucumber Society e:
-      | digitalDomicile | test@fail.it |
+    And destinatario Gherkin Analogic e:
+      | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST"
     And verifica generazione Atto opponibile senza la messa a disposizione in "DIGITAL_DELIVERY_CREATION_REQUEST"

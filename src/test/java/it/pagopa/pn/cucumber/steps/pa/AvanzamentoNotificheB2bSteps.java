@@ -1944,52 +1944,6 @@ public class AvanzamentoNotificheB2bSteps {
         b2bClient.paymentEventsRequestPagoPa(eventsRequestPagoPa);
     }
 
-    @Then("il modello f24 viene pagato correttamente")
-    public void ilModelloF24VienePagatoCorrettamente() {
-        //TODO Modificare.............. valutare se chiamare getNotificationProcessCost
-        PaymentEventsRequestF24 eventsRequestF24 = new PaymentEventsRequestF24();
-
-        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId(),
-                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode());
-
-        PaymentEventF24 paymentEventF24 = new PaymentEventF24();
-        paymentEventF24.setIun(sharedSteps.getSentNotification().getIun());
-        paymentEventF24.setRecipientTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId());
-        paymentEventF24.setRecipientType(sharedSteps.getSentNotification().getRecipients().get(0).getRecipientType().equals(NotificationRecipient.RecipientTypeEnum.PF) ? "PF" : "PG");
-        paymentEventF24.setPaymentDate(now());
-        paymentEventF24.setAmount(notificationPrice.getTotalPrice());
-
-        List<PaymentEventF24> eventF24List = new LinkedList<>();
-        eventF24List.add(paymentEventF24);
-
-        eventsRequestF24.setEvents(eventF24List);
-
-        b2bClient.paymentEventsRequestF24(eventsRequestF24);
-    }
-
-    @Then("il modello f24 viene pagato correttamente dall'utente {int}")
-    public void ilModelloF24VienePagatoCorrettamenteDalUtente(Integer utente) {
-
-        //TODO Modificare.............. valutare se chiamare getNotificationProcessCost
-        PaymentEventsRequestF24 eventsRequestF24 = new PaymentEventsRequestF24();
-
-        NotificationPriceResponseV23 notificationPrice = this.b2bClient.getNotificationPriceV23(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getCreditorTaxId(),
-                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(utente).getPagoPa().getNoticeCode());
-
-        PaymentEventF24 paymentEventF24 = new PaymentEventF24();
-        paymentEventF24.setIun(sharedSteps.getSentNotification().getIun());
-        paymentEventF24.setRecipientTaxId(sharedSteps.getSentNotification().getRecipients().get(utente).getTaxId());
-        paymentEventF24.setRecipientType(sharedSteps.getSentNotification().getRecipients().get(utente).getRecipientType().equals(NotificationRecipient.RecipientTypeEnum.PF) ? "PF" : "PG");
-        paymentEventF24.setPaymentDate(now());
-        paymentEventF24.setAmount(notificationPrice.getTotalPrice());
-
-        List<PaymentEventF24> eventF24List = new LinkedList<>();
-        eventF24List.add(paymentEventF24);
-
-        eventsRequestF24.setEvents(eventF24List);
-
-        b2bClient.paymentEventsRequestF24(eventsRequestF24);
-    }
 
     @Then("sono presenti {int} attestazioni opponibili RECIPIENT_ACCESS")
     public void sonoPresentiAttestazioniOpponibili(int number) {

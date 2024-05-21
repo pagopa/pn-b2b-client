@@ -5,13 +5,13 @@ Feature: Attributi utente
     Then Il recupero del consenso non ha prodotto errori
     And Il consenso è accettato
 
-  @ignore
+
   Scenario: [USER-ATTR_2] inserimento pec errato
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento della pec "test@test@fail.@"
     Then l'inserimento ha prodotto un errore con status code "400"
 
-  @ignore
+
   Scenario: [USER-ATTR_3] inserimento telefono errato
     Given si predispone addressbook per l'utente "Mario Cucumber"
     When viene richiesto l'inserimento del numero di telefono "+0013894516888"

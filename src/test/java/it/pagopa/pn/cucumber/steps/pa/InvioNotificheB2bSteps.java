@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
@@ -63,8 +65,11 @@ public class InvioNotificheB2bSteps {
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
 
+    private final JavaMailSender emailSender;
+
+
     @Autowired
-    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl) {
+    public InvioNotificheB2bSteps(PnExternalServiceClientImpl safeStorageClient, SharedSteps sharedSteps,PnExternalChannelsServiceClientImpl pnExternalChannelsServiceClientImpl, JavaMailSender emailSender) {
         this.safeStorageClient = safeStorageClient;
         this.sharedSteps = sharedSteps;
         this.b2bUtils = sharedSteps.getB2bUtils();
@@ -72,6 +77,8 @@ public class InvioNotificheB2bSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
         this.pnExternalChannelsServiceClientImpl=pnExternalChannelsServiceClientImpl;
+
+        this.emailSender = emailSender;
     }
 
     @And("la notifica può essere correttamente recuperata dal sistema tramite codice IUN")
@@ -438,7 +445,6 @@ public class InvioNotificheB2bSteps {
                         await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                         this.downloadResponse = b2bClient
                                 .getSentNotificationAttachment(iun, destinatario, type, 0);
-
                     } catch (RuntimeException exc) {
                         log.error(exc.getMessage());
                         throw exc;
@@ -520,15 +526,14 @@ public class InvioNotificheB2bSteps {
             }else if (version.equalsIgnoreCase("V23")){
                 b2bUtils.verifyNotification(sharedSteps.getSentNotification());
             }
-        } catch (AssertionFailedError | IOException assertionFailedError) {
-
+        } catch (AssertionFailedError assertionFailedError) {
             log.info("Errore di acquisizione notifica");
         }
     }
 
     @Then("si verifica la corretta acquisizione della notifica con verifica sha256 del allegato di pagamento {string}")
-    public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachname) {
-        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(),attachname));
+    public void correctAcquisitionNotificationVerifySha256AllegatiPagamento(String attachnament) {
+        Assertions.assertDoesNotThrow(() -> b2bUtils.verifyNotificationAndSha256AllegatiPagamento(sharedSteps.getSentNotification(), attachnament));
     }
 
 
@@ -1017,6 +1022,71 @@ public class InvioNotificheB2bSteps {
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
+
+
+
+    @Value("${b2b.sender.mail}")
+    private String senderEmail;
+
+
+
+    private void sendEmail() {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("noreply@testInvio.com");
+        message.setTo(senderEmail);
+        message.setSubject("prova invio");
+        message.setText("Test invio su pec mittente");
+        emailSender.send(message);
+    }
+
+
+    @Given("si invia una email alla pec mittente e si attendono {int} minuti")
+    public void siInviaUnaEmailAllaPecMittenteESiAttendonoMinuti(int wait) {
+        Assertions.assertDoesNotThrow(this::sendEmail);
+        long waiting = ((wait*60)*1000);
+        Assertions.assertDoesNotThrow(() -> Thread.sleep(waiting));
+    }
+
+    @Given("si richiama checkout con dati:")
+    public void siRichiamaCheckoutConDati(Map<String, String> dataCheckout) {
+        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+     try {
+            PaymentResponse responseCheckout = pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
+            Assertions.assertNotNull(responseCheckout);
+            Assertions.assertNotNull(responseCheckout.getCheckoutUrl());
+            log.info("response checkout: {}", responseCheckout);
+        } catch (AssertionFailedError error) {
+            throw error;
+        }
+    }
+
+    @Given("si richiama checkout con restituzione errore")
+    public void siRichiamaCheckoutConDatiConErrore(Map<String, String> dataCheckout) {
+        PaymentRequest requestCheckout = creationPaymentRequest(dataCheckout);
+        try {
+            pnPaymentInfoClientImpl.checkoutCart(requestCheckout);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    public PaymentRequest creationPaymentRequest(Map<String, String> dataCheckout) {
+
+        PaymentRequest requestCheckout = new PaymentRequest()
+                .paymentNotice(new PaymentNotice()
+                        .noticeNumber(dataCheckout.get("noticeCode")!=null? dataCheckout.get("noticeCode"):
+                                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getNoticeCode())
+                        .fiscalCode(dataCheckout.get("fiscalCode")!=null? dataCheckout.get("fiscalCode"):
+                                sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId())
+                        .amount(dataCheckout.get("amount") != null ? Integer.parseInt(dataCheckout.get("amount")) : null)
+                        .description(dataCheckout.get("description"))
+                        .companyName(dataCheckout.get("companyName")))
+                .returnUrl(dataCheckout.get("returnUrl"));
+        log.info("request checkout: {}", requestCheckout);
+        return requestCheckout;
+    }
+
+
 
 
     @And("si verifica che negli url non contenga il docTag nel {string}")

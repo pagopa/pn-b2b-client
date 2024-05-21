@@ -8069,7 +8069,7 @@
 
 **Descrizione**
 
-1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CLMCST42R12D969Z`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. vengono letti gli eventi fino all'elemento di timeline della notifica `REQUEST_ACCEPTED`
 4. viene verificato il costo = `100` della notifica per l'utente `0`
@@ -8319,7 +8319,7 @@
 
 **Descrizione**
 
-1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CSRGGL44L13H501E`
+1. Viene generata una nuova notifica con destinatari `LVLDAA85T50G702B` e `CLMCST42R12D969Z`
 2. La notifica viene inviata tramite api b2b dal `Comune_Multi` e si attende che lo stato diventi `ACCEPTED`
 3. viene verificato il costo = `100` della notifica per l'utente `0`
 4. viene verificato il costo = `100` della notifica per l'utente `1`
@@ -13855,8 +13855,8 @@ Dati destinatario
 
 1. Viene creata una nuova notifica mono destinatario con destinatario
    - **recipientType**: PG
-   - **taxId**: LELPTR04A01C352E
-   - **denomination**: Le Epistolae srl
+   - **taxId**: SCTPTR04A01C352E
+   - **denomination**: Il Secretum srl
 2. Viene inviata tramite api b2b dal `Comune_1` e si aspetta che lo stato passi in `ACCEPTED`
 3. Viene verificato il costo della notifica
 

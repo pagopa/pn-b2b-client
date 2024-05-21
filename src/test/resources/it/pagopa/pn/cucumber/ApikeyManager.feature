@@ -281,7 +281,7 @@ Feature: apiKey manager
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
 
-  @ignore
+
   Scenario: [API-KEY_21] generazione con gruppo non valido ApiKey_scenario negativo
     Given Viene generata una nuova apiKey con il gruppo "AAAAAAAAAA"
     Then l'operazione ha sollevato un errore con status code "400"

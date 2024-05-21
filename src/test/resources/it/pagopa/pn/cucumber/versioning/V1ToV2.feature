@@ -1,6 +1,6 @@
 Feature: verifica compatibilità tra v1 a v2
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_1] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V2 positivo
     Given viene generata una nuova notifica V2
       | subject               | notifica analogica con cucumber |
@@ -11,7 +11,7 @@ Feature: verifica compatibilità tra v1 a v2
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
 
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_2] Invio notifica V2 ed attesa elemento di timeline DIGITAL_SUCCESS_WORKFLOW_scenario V1.1 positivo
     Given viene generata una nuova notifica V2
       | subject               | notifica analogica con cucumber |
@@ -21,7 +21,7 @@ Feature: verifica compatibilità tra v1 a v2
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" V1
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_3] Invio notifica digitale mono destinatario V2 e recupero tramite codice IUN V1 (p.fisica)_scenario positivo
     Given viene generata una nuova notifica V2
       | subject            | invio notifica con cucumber |
@@ -88,7 +88,7 @@ Feature: verifica compatibilità tra v1 a v2
     And si attende il corretto pagamento della notifica V2
 
 
-  @version @ignore
+  @version
   Scenario: [B2B-PA-SEND_VERSION_V1_V2_9]  Invio notifica digitale mono destinatario e mono pagamento V2.0 e fallimento visualizzazione notifica
     Given viene generata una nuova notifica V2
       | subject            | invio notifica con cucumber |
@@ -136,6 +136,7 @@ Feature: verifica compatibilità tra v1 a v2
       | payment_pagoPaForm | SI   |
       | payment_f24        | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
+    Then si verifica la corretta acquisizione della notifica V2
     Then vengono verificati costo = "100" e data di perfezionamento della notifica "V2"
 
 
@@ -195,16 +196,3 @@ Feature: verifica compatibilità tra v1 a v2
     And viene richiesto il download del documento "PAGOPA"
     And l'operazione ha prodotto un errore con status code "404"
 
-  @version
-  Scenario: [B2B-PA-SEND_VERSION_V1_V2_16] Invio notifica da V1.1 e recupero con V2 senza payment_pagoPaForm PN-8842
-    Given viene generata una nuova notifica V2
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-    And destinatario Mario Gherkin V2 e:
-      | payment_pagoPaForm | NULL |
-      | payment_f24        | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V2"
-    Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V20
-    And viene richiesto il download del documento "PAGOPA"
-    And l'operazione ha prodotto un errore con status code "404"
