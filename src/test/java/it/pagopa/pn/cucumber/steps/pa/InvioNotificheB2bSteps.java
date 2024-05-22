@@ -983,8 +983,6 @@ public class InvioNotificheB2bSteps {
                         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(documentPecKey.substring(14, documentPecKey.length()));
                         Assertions.assertNotNull(safeStorageResponse);
                         Assertions.assertNotNull(safeStorageResponse.getChecksum());
-                        System.out.println(safeStorageResponse);
-                        log.info("documenti pec safeStorageResponse : {}",safeStorageResponse);
                         Assertions.assertNotNull(sharedSteps.getMapAllegatiNotificaSha256().get(safeStorageResponse.getKey()));
                         if (!safeStorageResponse.getChecksum().equals(sharedSteps.getMapAllegatiNotificaSha256().get(safeStorageResponse.getKey()))){
                             checkAllegati = false;
