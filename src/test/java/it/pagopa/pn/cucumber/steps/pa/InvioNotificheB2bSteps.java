@@ -928,7 +928,7 @@ public class InvioNotificheB2bSteps {
 
 
     @And("si verifica il contenuto degli attacchment da inviare nella pec del destinatario {int} con {int} allegati")
-    public void vieneVerificatiIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, Integer allegati) {
+    public void vieneVerificatoIDocumentiInviatiDellaPecDelDestinatarioConNumeroDiAllegati(Integer destinatario, Integer allegati) {
         try {
             this.documentiPec= pnExternalChannelsServiceClientImpl.getReceivedMessages(sharedSteps.getIunVersionamento(),destinatario);
             Assertions.assertNotNull(documentiPec);
@@ -945,7 +945,7 @@ public class InvioNotificheB2bSteps {
     }
 
     @And("si verifica il contenuto degli attacchment da inviare nella pec del destinatario {int} da {string}")
-    public void vieneVerificatiIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, String basePath) {
+    public void vieneVerificatoIDocumentiInviatiDellaPecDelDestinatario(Integer destinatario, String basePath) {
         try {
             pnExternalChannelsServiceClientImpl.switchBasePath(basePath);
             this.documentiPec= pnExternalChannelsServiceClientImpl.getReceivedMessages(sharedSteps.getIunVersionamento(),destinatario);
