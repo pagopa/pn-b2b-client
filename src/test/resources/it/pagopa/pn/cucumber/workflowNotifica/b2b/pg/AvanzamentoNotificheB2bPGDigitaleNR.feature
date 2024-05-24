@@ -1,7 +1,7 @@
 Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry (INAD-IPA-INIPEC)
 
 
-  @dev @testLite
+  @dev @testLite @mockNR
   Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -17,7 +17,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-  @dev @testLite
+  @dev @testLite @mockNR
   Scenario: [B2B_TIMELINE_7915_2] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -33,7 +33,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-  @dev @testLite
+  @dev @testLite @mockNR
   Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC KO - INAD OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -49,7 +49,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-  @dev @testLite
+  @dev @testLite @mockNR
   Scenario: [B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso OK
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -64,7 +64,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @dev @testLite
+  @dev @testLite @mockNR
   Scenario: [B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |

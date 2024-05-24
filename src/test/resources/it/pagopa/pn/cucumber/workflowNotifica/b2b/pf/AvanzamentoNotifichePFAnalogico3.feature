@@ -611,7 +611,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_76]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR
+  Scenario: [B2B_TIMELINE_ANALOG_76]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR con restituzione indirizzo fisico italiano da ANPR Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -624,6 +624,67 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
+
+  @workflowAnalogico @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_76_1]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR con restituzione indirizzo fisico italiano da ANPR Real
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | STTSGT90A01H501J |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
+
+  @workflowAnalogico @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_76_2]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR con restituzione indirizzo fisico estero da ANPR Real
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | TTVSGT90A01H501H |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
+
+
+  @workflowAnalogico @mockNR
+  Scenario: [B2B_TIMELINE_ANALOG_76_3]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR con restituzione indirizzo fisico italiano non trovato da ANPR Mock
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | FNTLCU80T25F205R |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @workflowAnalogico @realNR
+  Scenario: [B2B_TIMELINE_ANALOG_76_4]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR con restituzione indirizzo fisico italiano non trovato da ANPR Real
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | NNTNRZ80A01H501D |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
 
 
   @workflowAnalogico @uatEnvCondition
