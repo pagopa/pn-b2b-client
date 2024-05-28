@@ -203,6 +203,21 @@ Feature: avanzamento notifiche b2b persona fisica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And viene verificato che nell'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e' presente il campo Digital Address di piattaforma
     #Serve un CF con indirizzo digitale in piattaforma
+
+
+  @workflowDigitale @mockPec
+  Scenario: [B2B_TIMELINE_20_DEMO] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | taxId | GLLGLL64B15G702I |
+      | digitalDomicile_address | .PECERRATA@PECERRATA.IT |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    And viene verificato che nell'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE" e' presente il campo Digital Address di piattaforma
+    #Serve un CF con indirizzo digitale in piattaforma
+
   
   @dev @ignore
   Scenario: [B2B_TIMELINE_21] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo il campo Digital Address positivo
@@ -603,7 +618,7 @@ Feature: avanzamento notifiche b2b persona fisica
 
 
   @mockNR
-  Scenario: [B2B-TEST_1] PA mittente: annullamento notifica in stato “irreperibile totale” INAD KO
+  Scenario: [B2B-TEST_1] PA mittente: invio notifica in stato “irreperibile totale” INAD KO
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di MILANO |
@@ -617,22 +632,37 @@ Feature: avanzamento notifiche b2b persona fisica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @mockNR
-  Scenario: [B2B-TEST_1_1] PA mittente: annullamento notifica in stato “irreperibile totale” INAD KO
+  @realNR
+  Scenario: [B2B-TEST_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale  INAD Real KO
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di MILANO |
       | physicalCommunication |  AR_REGISTERED_LETTER |
     And destinatario
       | denomination | Test AR Fail 2 |
-      | taxId | FRMTTR76M06B715E |
-      | digitalDomicile_address | FRMTTR76M06B715E@nopec.it |
+      | taxId | NNTNRZ80A01H501D |
+      | digitalDomicile | NULL |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+
+  @mockNR
+  Scenario: [B2B-TEST_1_2] PA mittente: invio notifica in stato “irreperibile totale” PA NON TROVATO INFO CAMERE NON TROVATO INAD NO Mock
+    Given viene generata una nuova notifica
+      | subject | notifica analogica con cucumber |
+      | senderDenomination | Comune di MILANO |
+      | physicalCommunication |  AR_REGISTERED_LETTER |
+    And destinatario
+      | denomination | Test AR Fail 2 |
+      | taxId | 05722930657 |
+      | digitalDomicile | NULL |
+      | recipientType   | PG                 |
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-
-
-
+    
   @workflowDigitale
   Scenario: [B2B_TIMELINE_HOTFIX-BINGQ2.2_1] Invio notifica digitale ed attesa stato DELIVERED con invio mail a pec mittente (bug HOTFIX-BINGQ2.2)
     Given si invia una email alla pec mittente e si attendono 6 minuti

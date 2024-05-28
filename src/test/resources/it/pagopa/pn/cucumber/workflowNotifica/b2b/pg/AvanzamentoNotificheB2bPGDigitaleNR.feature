@@ -2,7 +2,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA OK
+  Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA OK Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -34,7 +34,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC KO - INAD OK
+  Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC KO - INAD OK Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -50,7 +50,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso OK
+  Scenario: [B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese OK Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -65,7 +65,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO
+  Scenario: [B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese non Trovato KO Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -73,6 +73,20 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
       | denomination            | Test digitale ok          |
       | recipientType           | PG                        |
       | taxId                   | 00749900049               |
+      | digitalDomicile         | NULL                      |
+      | physicalAddress_address | Via@FAIL-Irreperibile_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+
+  @dev @testLite @realNR
+  Scenario: [B2B_TIMELINE_7915_5_xxx] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination            | Test digitale ok          |
+      | recipientType           | PG                        |
+      | taxId                   | 18172040182               |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED

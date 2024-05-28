@@ -63,6 +63,21 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
 
 
+  @workflowDigitale @mockNR
+  Scenario: [B2B_TIMELINE_7597_1_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD SCADUTO Mock
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination    | Test digitale ok |
+      | taxId           | TSTGNN80A01F839X |
+      | digitalDomicile | NULL             |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+   # Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
+  #  And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+
+
 
 
 
