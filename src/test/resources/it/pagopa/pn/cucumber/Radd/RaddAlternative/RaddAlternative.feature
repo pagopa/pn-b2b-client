@@ -1719,3 +1719,21 @@ Feature: Radd Alternative
     And la transazione viene abortita per gli "aor"
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar ha generato l'errore "La transazione risulta annullata" con statusCode 2 su radd alternative
+
+
+  @raddAlt @zip
+  Scenario: [RADD-ALT_ACT-94] PF - Verifica restituzione errore al download del documento Frontespizio con attachmentId non esistente - PN-
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    Then L'operatore esegue il download del frontespizio del operazione "act" con attachmentId "nonEsistente"
+    And l'operazione ha prodotto un errore con status code "400"
+

@@ -623,12 +623,25 @@ public class RaddAltSteps {
 
     @Given("L'operatore esegue il download del frontespizio del operazione {string}")
     public void lOperatoreEsegueDownloadFrontespizio(String operationType) {
-        byte[] download = raddAltClient.documentDownload(operationType.toUpperCase(),
-                this.operationid,
-                null);
-        Assertions.assertNotNull(download);
-        pnPaB2bUtils.stampaPdfTramiteByte(download,"target/classes/frontespizio"+generateRandomNumber()+".pdf");
+        downloadFrontespizio(operationType.toUpperCase(),this.operationid,null);
     }
+
+    @Given("L'operatore esegue il download del frontespizio del operazione {string} con attachmentId {string}")
+    public void lOperatoreEsegueDownloadFrontespizioAttachmentIdNonEsistente(String operationType,String attachmentId) {
+        try {
+            downloadFrontespizio(operationType.toUpperCase(), this.operationid, attachmentId);
+        }catch (HttpStatusCodeException exception){
+            sharedSteps.setNotificationError(exception);
+        }
+    }
+
+private void downloadFrontespizio(String operationType,String operationid,String attachmentId) {
+    byte[] download = raddAltClient.documentDownload(operationType,
+            operationid,
+            attachmentId);
+    Assertions.assertNotNull(download);
+    pnPaB2bUtils.stampaPdfTramiteByte(download, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
+}
 
     public void creazioneZip() throws IOException {
         String[] files = {};
