@@ -24,7 +24,7 @@
         <java.version>17</java.version>
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
-        <open.api.version>main</open.api.version>
+        <open.api.version>develop</open.api.version>
         <open.api.version.delivery>v2.5.0</open.api.version.delivery>
         <open.api.version.delivery.push>v2.5.1</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
@@ -41,6 +41,7 @@
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
         <open.api.version.radd.alt>v2.3.0-RC.1</open.api.version.radd.alt>
         <open.api.version.external.channels>feature/PN-11281</open.api.version.external.channels>
+        <open.api.version.external.registries>v2.3.1</open.api.version.external.registries>
     </properties>
 
     <dependencies>
@@ -1322,7 +1323,7 @@
                     </goals>
                     <phase>process-resources</phase>
                     <configuration>
-                        <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/v2.3.1/docs/openapi/pn-payment-info-external-v1.yaml</inputSpec>
+                        <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/${open.api.version.external.registries}/docs/openapi/pn-payment-info-external-v1.yaml</inputSpec>
                         <generatorName>java</generatorName>
                         <library>resttemplate</library>
                         <generateApiTests>false</generateApiTests>
