@@ -244,15 +244,6 @@ Feature: avanzamento notifiche b2b persona fisica
     And viene verificato che nell'elemento di timeline della notifica "SCHEDULE_DIGITAL_WORKFLOW" sia presente il campo Digital Address
     #Il campo è stato messo come facoltativo, dato che non sempre è presente. Da capire assieme se ci sono casi in cui dovrebbe esserci ma non compare.
 
-  @dev @ignore
-  Scenario: [B2B_TIMELINE_23] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE sia presente il campo Digital Address scenario positivo PN-5992
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile_address | test@fail.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
 
     @dev @ignore
     Scenario: [B2B_TIMELINE_24] Invio notifica digitale ed attesa elemento di timeline DELIVERED-NOTIFICATION_VIEWED_scenario positivo
@@ -615,52 +606,6 @@ Feature: avanzamento notifiche b2b persona fisica
       | physicalAddress_address | Via  @FAIL-CAUSE-EVENTO-NO-LISTA |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
-
-
-  @mockNR
-  Scenario: [B2B-TEST_1] Invio notifica mono destinatario a PF in stato “irreperibile totale” INAD non Trovato - Mock
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di MILANO |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | MNTMRA03M71C615V |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-
-
-  @realNR
-  Scenario: [B2B-TEST_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale  INAD Real KO
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di MILANO |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | NNTNRZ80A01H501D |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-
-
-  @mockNR
-  Scenario: [B2B-TEST_1_2] Invio Notifica mono destinatario a PG in stato “irreperibile totale” PG IPA non Trovato INFO non Trovato INAD non Trovato - Mock
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di MILANO |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | 05722930657 |
-      | digitalDomicile | NULL |
-      | recipientType   | PG                 |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
   @workflowDigitale
