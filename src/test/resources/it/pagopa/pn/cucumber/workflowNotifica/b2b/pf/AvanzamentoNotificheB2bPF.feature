@@ -618,7 +618,7 @@ Feature: avanzamento notifiche b2b persona fisica
 
 
   @mockNR
-  Scenario: [B2B-TEST_1] PA mittente: invio notifica in stato “irreperibile totale” INAD KO
+  Scenario: [B2B-TEST_1] Invio notifica mono destinatario a PF in stato “irreperibile totale” INAD non Trovato - Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di MILANO |
@@ -648,7 +648,7 @@ Feature: avanzamento notifiche b2b persona fisica
 
 
   @mockNR
-  Scenario: [B2B-TEST_1_2] PA mittente: invio notifica in stato “irreperibile totale” PA NON TROVATO INFO CAMERE NON TROVATO INAD NO Mock
+  Scenario: [B2B-TEST_1_2] Invio Notifica mono destinatario a PG in stato “irreperibile totale” PG IPA non Trovato INFO non Trovato INAD non Trovato - Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di MILANO |
@@ -662,7 +662,7 @@ Feature: avanzamento notifiche b2b persona fisica
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
-    
+
   @workflowDigitale
   Scenario: [B2B_TIMELINE_HOTFIX-BINGQ2.2_1] Invio notifica digitale ed attesa stato DELIVERED con invio mail a pec mittente (bug HOTFIX-BINGQ2.2)
     Given si invia una email alla pec mittente e si attendono 6 minuti

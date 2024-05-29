@@ -611,7 +611,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_76]  PA mittente: invio notifica analogica  con restituzione indirizzo fisico italiano da ANPR Mock
+  Scenario: [B2B_TIMELINE_ANALOG_76]  Invio notifica  mono destinatario a PF analogica  con restituzione indirizzo fisico italiano da ANPR - Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -658,7 +658,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_76_21]  PA mittente: invio notifica analogica con restituzione indirizzo fisico estero da ANPR Mock
+  Scenario: [B2B_TIMELINE_ANALOG_76_21]  Invio notifica mono destinatario a PF analogica con restituzione indirizzo fisico estero da ANPR - Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |
@@ -674,7 +674,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo
 
 
   @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_76_3]  PA mittente: invio notifica analogica con restituzione indirizzo fisico italiano non trovato da ANPR Mock
+  Scenario: [B2B_TIMELINE_ANALOG_76_3]  Invio notifica mono destinatario a PF analogica con restituzione indirizzo fisico italiano non trovato da ANPR - Mock
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo |

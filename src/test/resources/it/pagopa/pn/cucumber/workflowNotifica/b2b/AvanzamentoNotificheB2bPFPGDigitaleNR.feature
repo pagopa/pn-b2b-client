@@ -33,7 +33,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
   #OK------------>
   @workflowDigitale @mockNR
-  Scenario: [B2B_TIMELINE_7597_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Mock OK
+  Scenario: [B2B_TIMELINE_7597_1_1] Invio Notifica mono destinatario a PF con recupero del domicilio digitale – INAD Trovato - Mock
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -64,7 +64,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
 
   @workflowDigitale @mockNR
-  Scenario: [B2B_TIMELINE_7597_1_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD SCADUTO Mock
+  Scenario: [B2B_TIMELINE_7597_1_3] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Scaduto - Mock
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -194,7 +194,7 @@ Feature: avanzamento b2b notifica  difgitale con chiamata a National Registry (I
 
   #OK------------>
   @workflowDigitale  @mockNR
-  Scenario: [B2B_TIMELINE_7597_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC Mock
+  Scenario: [B2B_TIMELINE_7597_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA risponde lista vuota e parte chiamata INIPEC Trovato - Mock
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |

@@ -2,7 +2,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA OK Mock
+  Scenario: [B2B_TIMELINE_7915_1] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA Trovato - Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -34,7 +34,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA KO - INIPEC KO - INAD OK Mock
+  Scenario: [B2B_TIMELINE_7915_3] Invio Notifica mono destinatario a PG con recupero del domicilio digitale - IPA non Trovato - INIPEC non Trovato - INAD Trovato - Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -50,7 +50,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese OK Mock
+  Scenario: [B2B_TIMELINE_7915_4] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese Trovato - Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
@@ -65,7 +65,7 @@ Feature: avanzamento b2b notifica  digitale PG con chiamata a National Registry 
 
 
   @dev @testLite @mockNR
-  Scenario: [B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese non Trovato KO Mock
+  Scenario: [B2B_TIMELINE_7915_5] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - Registro Imprese non Trovato - Mock
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
