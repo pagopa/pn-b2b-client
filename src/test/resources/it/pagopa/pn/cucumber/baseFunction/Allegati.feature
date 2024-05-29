@@ -165,3 +165,24 @@ Feature: Allegati notifica
     Then viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "NOTIFICATION_VIEWED"
       | details          | NOT_NULL |
       | details_recIndex | 0        |
+
+
+  @hotfix-11281
+  Scenario: [ALLEGATI-PEC_HOTFIX_1] si verifica che la notifica analogica non contenga nel url degli allegati docTag - PN-11281
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo            |
+      | feePolicy          | DELIVERY_MODE               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@ok_AR            |
+      | payment_pagoPaForm      | SI                   |
+      | payment_f24             | PAYMENT_F24_STANDARD |
+      | title_payment           | F24_STANDARD_GHERKIN |
+      | apply_cost_pagopa       | SI                   |
+      | apply_cost_f24          | SI                   |
+      | payment_multy_number    | 1                    |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 da "data vault"
+    And si verifica che negli url non contenga il docTag nel "analogico"

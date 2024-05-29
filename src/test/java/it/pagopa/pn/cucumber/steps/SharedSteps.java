@@ -250,6 +250,16 @@ public class SharedSteps {
     private static final String NOT_VALID_ADDRESS = "NOT_VALID_ADDRESS";
 
 
+    public HashMap<String, String> getMapAllegatiNotificaSha256() {
+        return mapAllegatiNotificaSha256;
+    }
+
+    public void setMapAllegatiNotificaSha256(HashMap<String, String> mapAllegatiNotificaSha256) {
+        this.mapAllegatiNotificaSha256 = mapAllegatiNotificaSha256;
+    }
+
+    private HashMap<String,String> mapAllegatiNotificaSha256 = new HashMap<>();
+
     @Autowired
     public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,

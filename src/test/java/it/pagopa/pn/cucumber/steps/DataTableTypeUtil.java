@@ -47,7 +47,9 @@ public class DataTableTypeUtil {
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
                                 NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:null
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:
+                                        getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("NONE")?
+                                                NewNotificationRequestV23.PagoPaIntModeEnum.NONE: null
                                 ))));
 
         notificationRequest = addDocument(notificationRequest,data);
@@ -95,6 +97,7 @@ public class DataTableTypeUtil {
             case "DOC_300_PG" -> document = "classpath:/sample_300pg.pdf";
             case "DOC_BS" -> document = "classpath:/verbaleBs.pdf";
             case "DOC_BS2" -> document = "classpath:/Atto2BsRadd.pdf";
+            case "DOC_30MB" -> document = "classpath:/allegato_30Mb.pdf";
             default ->  document = getDefaultValue(DOCUMENT.key);
         }
 
