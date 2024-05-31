@@ -30,6 +30,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -151,21 +152,12 @@ public class InvioNotificheB2bSteps {
 
     @And("recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void notification120ggCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
-        try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(140), OffsetDateTime.now().minusDays(130),null,null,null,null,20,null))
-            );
 
-            Assertions.assertNotNull(notificationByIun.get());
-            Assertions.assertNotNull(notificationByIun.get().getResultsPage());
-            Assertions.assertTrue(notificationByIun.get().getResultsPage().size()>0);
-
-            List<NotificationSearchRow> ricercaNotifiche= notificationByIun.get().getResultsPage();
+        List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
 
             FullSentNotificationV23 notifica120 = null;
 
-            for(NotificationSearchRow notifiche :ricercaNotifiche){
+            for(NotificationSearchRow notifiche :serarchedNotification){
 
                 notifica120 = b2bClient.getSentNotification(notifiche.getIun());
 
@@ -184,6 +176,7 @@ public class InvioNotificheB2bSteps {
                 }
             }
 
+        try {
             Assertions.assertNotNull(notifica120);
 
             log.info("notifica dopo 120gg: {}", notifica120);
@@ -193,10 +186,67 @@ public class InvioNotificheB2bSteps {
             sharedSteps.setSentNotification(notifica120);
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            String message = assertionFailedError.getMessage() +
+                    "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
+
+
+
+    @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} in {string}")
+    public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate,String pa, String type, String feePolicy) {
+        sharedSteps.selectPA(pa);
+        LocalDate date = LocalDate.parse(stringDate);
+        OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
+
+        log.info("data : {}",offsetDateTime);
+
+        List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(offsetDateTime);
+            FullSentNotificationV23 notifica = null;
+
+            for(NotificationSearchRow notifiche :serarchedNotification){
+
+                notifica = b2bClient.getSentNotification(notifiche.getIun());
+
+                if(!notifica.getRecipients().get(0).getPayments().isEmpty() && notifica.getRecipients().get(0).getPayments() != null && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica.getTimeline().toString().contains(type) && notifica.getNotificationFeePolicy().toString().equals(feePolicy)){
+                    break;
+                }else{
+                    notifica=null;
+                }
+                    await().atMost(sharedSteps.getWorkFlowWait(), TimeUnit.MILLISECONDS);
+            }
+
+            try{
+            Assertions.assertNotNull(notifica);
+
+            log.info("notifica trovata: {}", notifica);
+
+            sharedSteps.setSentNotification(notifica);
+
+        } catch (AssertionFailedError assertionFailedError) {
+
+                String message = assertionFailedError.getMessage() +
+                        "{notifica : " + (notifica == null ? "NULL" : notifica) + " }";
+                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data){
+    AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+
+          Assertions.assertDoesNotThrow(()->
+          notificationByIun.set(webPaClient.searchSentNotification(data,data.plusDays(20),null,null,null,null,30,null))
+          );
+
+          Assertions.assertNotNull(notificationByIun.get());
+          Assertions.assertNotNull(notificationByIun.get().getResultsPage());
+          Assertions.assertTrue(notificationByIun.get().getResultsPage().size()>0);
+
+          List<NotificationSearchRow> ricercaNotifiche=notificationByIun.get().getResultsPage();
+        return ricercaNotifiche;
+}
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
     public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
