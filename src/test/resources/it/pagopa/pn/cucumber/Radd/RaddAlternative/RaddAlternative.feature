@@ -1719,3 +1719,30 @@ Feature: Radd Alternative
     And la transazione viene abortita per gli "aor"
     And viene chiusa la transazione per il recupero degli aar su radd alternative
     And la chiusura delle transazione per il recupero degli aar ha generato l'errore "La transazione risulta annullata" con statusCode 2 su radd alternative
+
+
+  @raddAlt @zip
+  Scenario: [RADD-ALT_ACT-96] PF - Visualizzazione documenti di notifica con una PF con messaggio di corstesia e molti F24 controllo restituzione statusCode 2 con retry - PN-10916
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 10                            |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    Then la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi
+    And l'operazione di download degli atti genera un errore "documento non disponibile per il download" con codice 2 su radd alternative
+
+

@@ -221,16 +221,21 @@ public class RaddAltSteps {
 
     @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAAR() {
-        startTransactionActRaddAlternative(this.operationid);
+        startTransactionActRaddAlternative(this.operationid,true);
     }
 
     @And("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR con lo stesso operationId dal raddista {string}")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARUtilizzandoIlPrecedenteOperationIdOrganizzazioneDiversa(String raddista ) {
         changeRaddista(raddista);
-        startTransactionActRaddAlternative(this.operationid);
+        startTransactionActRaddAlternative(this.operationid,true);
     }
 
-    private void startTransactionActRaddAlternative(String operationid) {
+    @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi")
+    public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARSenzaRetry() {
+        startTransactionActRaddAlternative(this.operationid,false);
+    }
+
+    private void startTransactionActRaddAlternative(String operationid, boolean retry) {
         ActStartTransactionRequest actStartTransactionRequest =
                 new ActStartTransactionRequest()
                         .qrCode(this.qrCode)
@@ -246,7 +251,7 @@ public class RaddAltSteps {
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
 
-        if(this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2)){
+        if(this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry){
             try {
                 Thread.sleep(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
             } catch (InterruptedException e) {
