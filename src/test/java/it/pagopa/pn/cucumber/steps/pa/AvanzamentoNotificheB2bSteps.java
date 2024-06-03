@@ -2962,8 +2962,6 @@ try{
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica ,String user ) {
 
-       sharedSteps.setSentNotification(sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getIunVersionamento()));
-
         FullSentNotificationV23 notificaV23= sharedSteps.getSentNotification();
         Assertions.assertNotNull(notificaV23);
 

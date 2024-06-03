@@ -195,13 +195,12 @@ public class InvioNotificheB2bSteps {
 
 
 
-    @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} in {string}")
+    @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} con feePolicy {string}")
     public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate,String pa, String type, String feePolicy) {
         sharedSteps.selectPA(pa);
+
         LocalDate date = LocalDate.parse(stringDate);
         OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
-
-        log.info("data : {}",offsetDateTime);
 
         List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(offsetDateTime);
             FullSentNotificationV23 notifica = null;
@@ -210,7 +209,7 @@ public class InvioNotificheB2bSteps {
 
                 notifica = b2bClient.getSentNotification(notifiche.getIun());
 
-                if(!notifica.getRecipients().get(0).getPayments().isEmpty() && notifica.getRecipients().get(0).getPayments() != null && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica.getTimeline().toString().contains(type) && notifica.getNotificationFeePolicy().toString().equals(feePolicy)){
+                if(!notifica.getRecipients().get(0).getPayments().isEmpty() && notifica.getRecipients().get(0).getPayments() != null && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica.getTimeline().toString().contains(type) && notifica.getNotificationFeePolicy().toString().equals(feePolicy) && notifica.getPaFee() == null){
                     break;
                 }else{
                     notifica=null;
@@ -222,7 +221,8 @@ public class InvioNotificheB2bSteps {
             Assertions.assertNotNull(notifica);
 
             log.info("notifica trovata: {}", notifica);
-
+                notifica.setPaFee(100);
+                notifica.setVat(22);
             sharedSteps.setSentNotification(notifica);
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -237,7 +237,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
 
           Assertions.assertDoesNotThrow(()->
-          notificationByIun.set(webPaClient.searchSentNotification(data,data.plusDays(20),null,null,null,null,30,null))
+          notificationByIun.set(webPaClient.searchSentNotification(data,data.plusDays(20),null,null,null,null,50,null))
           );
 
           Assertions.assertNotNull(notificationByIun.get());

@@ -409,8 +409,9 @@ Feature: controllo costo notifiche con IVA
 
 
   Scenario: [PARTITA-IVA_CONTROLLO-COSTO_21] ricerca notifica vecchia prima del introduzione del Iva con pagamento controllo valori di default - PN-10874
-    Given recupero notifica del "2023-12-20" lato web dalla PA "Comune_Multi" e verifica presenza pagamento per notifica che è arrivato fino al elemento "ANALOG_SUCCESS_WORKFLOW" in "DELIVERY_MODE"
+    Given recupero notifica del "2023-12-21" lato web dalla PA "Comune_Multi" e verifica presenza pagamento per notifica che è arrivato fino al elemento "ANALOG_SUCCESS_WORKFLOW" con feePolicy "DELIVERY_MODE"
     And viene verificato che per il calcolo del iva il campo vat sia di 22 e il campo paFee sia di 100 per il destinatario 0
+    And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
 
 
