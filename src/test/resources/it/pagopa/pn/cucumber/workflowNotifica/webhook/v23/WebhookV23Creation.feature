@@ -4,6 +4,9 @@ Feature: verifica creazione stream
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V23"
     Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V23"
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10"
+    Given vengono cancellati tutti gli stream presenti del "Comune_1" con versione "V10"
+    Given vengono cancellati tutti gli stream presenti del "Comune_2" con versione "V10"
 
   #--------------CREAZIONE DI UNO STREAM--------------------
   @webhookV23 @cleanWebhook @webhook2
