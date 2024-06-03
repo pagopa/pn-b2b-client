@@ -15,7 +15,7 @@ Feature: controllo costo notifiche con IVA
       | payment_pagoPaForm      | SI         |
       | apply_cost_pagopa       | SI         |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" V21
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
@@ -63,7 +63,7 @@ Feature: controllo costo notifiche con IVA
       | apply_cost_pagopa       | SI                            |
       | payment_multy_number    | 1                             |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED con la versione "V21"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" V21
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS"
     Then viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
 
