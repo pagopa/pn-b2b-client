@@ -40,6 +40,8 @@
         <open.api.version.downtime.logs>v2.2.0</open.api.version.downtime.logs>
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
         <open.api.version.radd.alt>v2.3.0-RC.1</open.api.version.radd.alt>
+        <open.api.version.external.channels>feature/PN-11281</open.api.version.external.channels>
+        <open.api.version.external.registries>v2.3.1</open.api.version.external.registries>
     </properties>
 
     <dependencies>
@@ -1321,7 +1323,7 @@
                     </goals>
                     <phase>process-resources</phase>
                     <configuration>
-                        <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/develop/docs/openapi/pn-payment-info-external-v1.yaml</inputSpec>
+                        <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/${open.api.version.external.registries}/docs/openapi/pn-payment-info-external-v1.yaml</inputSpec>
                         <generatorName>java</generatorName>
                         <library>resttemplate</library>
                         <generateApiTests>false</generateApiTests>
@@ -1372,6 +1374,7 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.serviceDeskIntegration.model</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>generate-external-radd-import-anagrafica-csv</id>
                         <goals>
@@ -1401,6 +1404,7 @@
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv</modelPackage>
                         </configuration>
                     </execution>
+
                     <execution>
                         <id>generate-external-raddAlt-import-anagrafica-crud</id>
                         <goals>
@@ -1428,6 +1432,37 @@
                             </configOptions>
                             <apiPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD</apiPackage>
                             <modelPackage>it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCRUD</modelPackage>
+                        </configuration>
+                    </execution>
+
+
+                    <execution>
+                        <id>generate-external-channels-mock-pec</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-channels/${open.api.version.external.channels}/docs/openapi/api-mock-received-message-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.api.mock.pec</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.api.mock.pec</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec</modelPackage>
                         </configuration>
                     </execution>
 
