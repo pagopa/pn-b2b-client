@@ -584,58 +584,8 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | details_recIndex | 1        |
     Then vengono cancellate le posizioni debitorie
 
-  @testIntegrazione @ignore
-  Scenario: [B2B_PROVA_INTEGRAZIONE_GPD] Viene creata una posizione debitoria, interrogata e cancellata
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Cucumber_Society" con Piva "20517490320"
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
-    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And lettura amount posizione debitoria per la notifica corrente di "Cucumber_Society"
-    Then vengono cancellate le posizioni debitorie
-
-
-  @testIntegrazione @ignore
-  Scenario: [B2B_PROVA_INTEGRAZIONE_CHECKOUT] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                          |
-    And destinatario Mario Gherkin e:
-      | payment_creditorTaxId | 77777777777 |
-      | payment_pagoPaForm    | SI          |
-      | payment_f24           | NULL        |
-      | apply_cost_pagopa     | SI          |
-      | payment_multy_number  | 1           |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And viene aggiunto il costo della notifica totale
-    And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And l'avviso pagopa viene pagato correttamente su checkout
-    #Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-
-
-  @testIntegrazione @ignore
-  Scenario: [B2B_PROVA_CREAZIONE_PARTITA_DEBITORIA] Notifica mono PF-Rifiuto caso notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi con pagamento già effettuato
-    Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | feePolicy          | DELIVERY_MODE               |
-      | pagoPaIntMode      | ASYNC                       |
-      | paFee              | 10                          |
-    And destinatario Mario Gherkin e:
-      | payment_creditorTaxId | 77777777777 |
-      | payment_pagoPaForm    | SI          |
-      | payment_f24           | NULL        |
-      | apply_cost_pagopa     | SI          |
-      | payment_multy_number  | 1           |
-    And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
 
 
 
-  #Utile per test manuali
-  Scenario: url per il pagamento della notifica su checkout
-    When Si effettua la chiamata su external-reg per ricevere l'url di checkout con noticeCode "347011196700966544" e creditorTaxId "77777777777"
+
+
