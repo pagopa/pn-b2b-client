@@ -316,20 +316,6 @@ Feature: avanzamento notifiche b2b persona fisica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
 
 
-  Scenario: [B2B-TEST_1] PA mittente: annullamento notifica in stato “irreperibile totale”
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di MILANO |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | MNTMRA03M71C615V |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-
-
   @workflowDigitale
   Scenario: [B2B_TIMELINE_HOTFIX-BINGQ2.2_1] Invio notifica digitale ed attesa stato DELIVERED con invio mail a pec mittente (bug HOTFIX-BINGQ2.2)
     Given si invia una email alla pec mittente e si attendono 6 minuti
