@@ -139,7 +139,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And destinatario Mario Gherkin e:
       | payment | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
-    
+
 
   @version @Async
   Scenario: [B2B_ASYNC_2_VERSIONAMENTO] Creazione notifica ASYNC con V2.1 e recupero tramite codice IUN V1 (p.fisica)_scenario negativo

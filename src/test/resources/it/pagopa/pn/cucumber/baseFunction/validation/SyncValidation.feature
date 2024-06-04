@@ -10,7 +10,7 @@ Feature: verifica validazione sincrona
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
-  @B2Btest @testLite
+  @B2Btest @testLite @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_1] verifica validazione paProtocolNumber e idempotenceToken (p.fisica)
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -28,7 +28,7 @@ Feature: verifica validazione sincrona
 
 
 
-  @B2Btest
+  @B2Btest @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_2] verifica validazione codice fiscale del creditore e codice avviso
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -44,7 +44,7 @@ Feature: verifica validazione sincrona
     And la notifica viene inviata dal "Comune_1"
     And l'operazione ha prodotto un errore con status code "409"
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_3] verifica validazione assenza physicalAddress
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -54,7 +54,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null)"
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_4] verifica validazione sync taxonomyCode
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -70,7 +70,7 @@ Feature: verifica validazione sincrona
       | 8_CHAR       | too long             |
       | ĄŁŚŠŻą˛łľś   | ECMA 262 regex       |
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_5] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -85,7 +85,7 @@ Feature: verifica validazione sincrona
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
 
-  @dev
+  @dev @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_6] Invio notifica mono destinatario con taxId non valido scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -94,7 +94,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Invalid taxId"
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_7] Invio notifica mono destinatario con max numero allegati scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -104,7 +104,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max attachment count reached"
 
-  @SmokeTest @testLite
+  @SmokeTest @testLite @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_8] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -116,7 +116,7 @@ Feature: verifica validazione sincrona
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
 
-  @SmokeTest  @testLite
+  @SmokeTest  @testLite @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_9] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -130,7 +130,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_10] Invio notifica multi destinatario uguale codice avviso_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -141,7 +141,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated iuv"
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_11] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -151,12 +151,13 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Duplicated recipient taxId"
 
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_12] Invion notifica multidestinatario max recipient_scenario negativo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di palermo |
     And destinatario
-      | taxId        | CSRGGL44L13H501E |
+      | taxId        | DVNLRD52D15M059P |
     And destinatario
       | taxId        | LNALNI80A01H501T |
     And destinatario
@@ -164,7 +165,7 @@ Feature: verifica validazione sincrona
     And destinatario
       | taxId        | LVLDAA85T50G702B |
     And destinatario
-      | taxId        | BRGLRZ80D58H501Q |
+      | taxId        | FNTLCU80T25F205R |
     And destinatario
       | taxId        | CLMCST42R12D969Z |
     And destinatario
@@ -190,7 +191,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max recipient count reached"
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_13] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -202,6 +203,7 @@ Feature: verifica validazione sincrona
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
 
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_14] verifica errore PG con CF alfanumerico
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -213,6 +215,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "SEND accepts only numerical taxId for PG"
 
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_15] Invio notifica  mono destinatario con Piva errata
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -223,7 +226,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "ECMA 262 regex"
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_16] validazione sincrona campo denomination
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -240,7 +243,7 @@ Feature: verifica validazione sincrona
       | Ilaria-D'Amico/.@_               |
 
 
-  @testLite
+  @testLite @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_17] validazione sincrona campo subject
     Given viene generata una nuova notifica
       | subject            | <name>           |
@@ -253,7 +256,7 @@ Feature: verifica validazione sincrona
       | ãsåéØaìnò dæonà ñ'di pi`aève |
 
 
-  #@validation
+  #@validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_18] validazione sincrona campo physicalAddress_municipality
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -272,7 +275,7 @@ Feature: verifica validazione sincrona
       | MILANO 01234 56789           |
 
 
-  @validation @authFleet
+  @validation @authFleet @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_19] validazione sincrona campo physicalAddress_municipalityDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -288,7 +291,7 @@ Feature: verifica validazione sincrona
       | PARIGI                       |
       | MILANO 01234 56789           |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_20] validazione sincrona campo taxId
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -319,7 +322,7 @@ Feature: verifica validazione sincrona
       #9) CF solo numerico
       #10) CF non presente
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_21] validazione sincrona campo payment_creditorTaxId
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -337,7 +340,7 @@ Feature: verifica validazione sincrona
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_22] validazione sincrona campo senderTaxId
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -356,7 +359,7 @@ Feature: verifica validazione sincrona
       #2) 12 numeri (max 11)
       #3) 11 lettere (ammessi solo numeri)
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_23] validazione sincrona campo subject
     Given viene generata una nuova notifica
       | subject            | <subject>        |
@@ -371,7 +374,7 @@ Feature: verifica validazione sincrona
       | NULL     |
 
 
-  #@validation
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_24] validazione sincrona campo physicalAddress_State
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -391,7 +394,7 @@ Feature: verifica validazione sincrona
     #AGGIUNGERE STATI E VERIFICARE COPERTURA TEST
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_25] validazione sincrona campo physicalAddress_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -405,7 +408,7 @@ Feature: verifica validazione sincrona
       | ãsåéØaìnò dæonà ñ'di pi`aève |
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_26] validazione sincrona campo denomination
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -421,7 +424,7 @@ Feature: verifica validazione sincrona
       | 81_CHAR      |
       | \n           |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_27] validazione sincrona campo abstract
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -436,7 +439,7 @@ Feature: verifica validazione sincrona
       | \n        |
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_28] validazione sincrona campo abstract physicalAddress_zip
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -456,7 +459,7 @@ Feature: verifica validazione sincrona
       | IRAN    | 13       |
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_29] validazione sincrona max length campo abstract physicalAddress_zip
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -476,7 +479,7 @@ Feature: verifica validazione sincrona
       | []!=+àèùòì'^*+   |
     #1) 15 max Length
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_30] invio notifiche digitali mono destinatario con provincia non presente e Stato Italia scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -492,7 +495,7 @@ Feature: verifica validazione sincrona
       | 0_CHAR   |
 
     #1) 15 max Length
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_31] invio notifiche digitali mono destinatario con provincia non presente e Stato Estero scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -504,7 +507,7 @@ Feature: verifica validazione sincrona
     Then l'invio della notifica non ha prodotto errori
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_32] Invio notifica digitale con mono destinatario con denomination errata scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -519,7 +522,7 @@ Feature: verifica validazione sincrona
       | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝ |
 
 
-  @validation #Possibile mergiarlo con altri test
+  @validation @syncValidation #Possibile mergiarlo con altri test
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_33] Invio notifica digitale mono destinatario con physicalAddress_address e physicalAddress_addressDetails  corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -536,7 +539,7 @@ Feature: verifica validazione sincrona
       | via adige 01234 via adige 56789 |
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_34] Invio notifica digitale mono destinatario con physicalAddress_zip corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -557,7 +560,7 @@ Feature: verifica validazione sincrona
       | 20121      | Milano               | MI       | ITALIA  |
       | 87076      | VILLAPIANA LIDO      | CS       | ITALIA  |
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_35] Invio notifica digitale mono destinatario con physicalAddress_province corretto (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -575,7 +578,7 @@ Feature: verifica validazione sincrona
       | MI 01234 56789 |
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_36] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -589,7 +592,7 @@ Feature: verifica validazione sincrona
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_37] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_addressDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -602,7 +605,7 @@ Feature: verifica validazione sincrona
       | indirizzo                                                    |
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_38] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_municipality
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -615,7 +618,7 @@ Feature: verifica validazione sincrona
       | comune                                                       |
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_39] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_municipalityDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -629,7 +632,7 @@ Feature: verifica validazione sincrona
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂ       |
       | via ĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_40] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_State
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -643,7 +646,7 @@ Feature: verifica validazione sincrona
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_41] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_zip
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -657,7 +660,7 @@ Feature: verifica validazione sincrona
       | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
 
-  @validation
+  @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_42] validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_province
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -670,7 +673,7 @@ Feature: verifica validazione sincrona
       | province                                                     |
       | via ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ |
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_43]  validazione errore caratteri NON iso-latin-1 sul campo physicalAddress_at
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -680,7 +683,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_44] validazione sincrona campo idempotenceToken
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -694,7 +697,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR         | too long       |
       | \n               | ECMA 262 regex |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_45] validazione sincrona campo paProtocolNumber
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -709,7 +712,7 @@ Feature: verifica validazione sincrona
       | \n               | ECMA 262 regex                                                 |
       | NULL             | instance type (null) does not match any allowed primitive type |
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_46] validazione sincrona campo notificationFeePolicy
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -720,7 +723,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_47] validazione sincrona campo cancelledIun
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -735,7 +738,7 @@ Feature: verifica validazione sincrona
       | 26_CHAR                   | too long       |
       | 12A4-1234-1234-abcdef-1-a | ECMA 262 regex |
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_48] validazione sincrona campo physicalCommunicationType
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -746,7 +749,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_49] validazione sincrona campo senderDenomination
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -761,7 +764,7 @@ Feature: verifica validazione sincrona
       | 81_CHAR            | too long                                                       |
       | \n                 | ECMA 262 regex                                                 |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_50] validazione sincrona campo group
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -776,7 +779,7 @@ Feature: verifica validazione sincrona
       | ĄŁĽŚŠŞŤŹŽŻą˛łľśˇšşťź˝žżŔĂĹĆČĘĚĎĐŃŇŐŘŮŰŢŕăĺćčęěďđńňőřůűţ˙ | ECMA 262 regex |
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_51] validazione sincrona campo paymentExpirationDate
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
@@ -792,7 +795,7 @@ Feature: verifica validazione sincrona
       | ĄŁŚŠŻą˛łľś            | ECMA 262 regex |
       | abcd-ab-ab            | ECMA 262 regex |
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_52] validazione sincrona campo recipents
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -801,7 +804,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400"
     #bug associato 10407
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_53] validazione sincrona campo documents
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -812,7 +815,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_54] validazione sincrona campo recipientType
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -823,7 +826,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
 
-
+  @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_55] validazione sincrona campo digitalDomicile_type
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -833,7 +836,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_56] validazione sincrona campo digitalDomicile_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -848,7 +851,7 @@ Feature: verifica validazione sincrona
       | 321_CHAR               | too long                                                       |
       | %&£"(=.*é°@é.ç°é*"žżŔ  | ECMA 262 regex                                                 |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_57] validazione sincrona campo at del physicalAddress
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -862,7 +865,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR | too long       |
       | \n       | ECMA 262 regex |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_58] validazione sincrona campo physicalAddress_address
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -878,7 +881,7 @@ Feature: verifica validazione sincrona
       | 1025_CHAR | too long                                                       |
       | \n  a     | ECMA 262 regex                                                 |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_59] validazione sincrona campo physicalAddress_addressDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -893,7 +896,7 @@ Feature: verifica validazione sincrona
       | \n  a          | ECMA 262 regex too short |
 
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_60] validazione sincrona campo physicalAddress_municipality
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -909,7 +912,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR     | too long                                                       |
       | \n  a        | ECMA 262 regex                                                 |
 
-
+  @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_61] validazione sincrona campo physicalAddress_municipalityDetails
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -923,7 +926,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR            | too long       |
       | \n                  | ECMA 262 regex |
 
-  #@validation
+  @syncValidation #@validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_62] validazione sincrona campo physicalAddress_province
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -937,7 +940,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR | too long       |
       | \n       | ECMA 262 regex |
 
-  #@validation
+  @syncValidation #@validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_63] validazione sincrona campo physicalAddress_State
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -951,7 +954,7 @@ Feature: verifica validazione sincrona
       | 257_CHAR | too long       |
       | \n       | ECMA 262 regex |
 
-  #@validation
+  @syncValidation #@validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_64] validazione sincrona campo noticeCode
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -967,7 +970,7 @@ Feature: verifica validazione sincrona
       | 1234567891234567891 | too long                                                       |
       | #@è^?é*arasc(+*é?A  | ECMA 262 regex                                                 |
 
-  #@validation
+  @syncValidation #@validation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_65] validazione sincrona campo creditorTaxId
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -983,7 +986,7 @@ Feature: verifica validazione sincrona
       | 123456789123  | too long                                                       |
       | #@è^?asc(?A   | ECMA 262 regex                                                 |
 
-  #@validation
+  @syncValidation #@validation
   Scenario: [B2B-PA-SYNC_VALIDATION_66] validazione sincrona campo applyCost pagamento pagoPa
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -993,7 +996,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-  #@validation
+  @syncValidation #@validation
   Scenario: [B2B-PA-SYNC_VALIDATION_67] validazione sincrona campo title pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1006,7 +1009,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-  #@validation
+  @syncValidation #@validation
   Scenario: [B2B-PA-SYNC_VALIDATION_68] validazione sincrona campo applyCost pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1017,7 +1020,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
 
-  #@validation
+  @syncValidation #@validation
   Scenario: [B2B-PA-SYNC_VALIDATION_69] validazione sincrona campo metadataAttachment pagamento F24
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1045,3 +1048,25 @@ Feature: verifica validazione sincrona
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" con allegato uguale al allegato di pagamento
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Same attachment compares more then once in the same request"
+
+  @validation
+  Scenario: [B2B-PA-SYNC_VALIDATION_72] validazione sincrona campo denomination contenente pipe
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | Fieramosca pipe\| |
+      | taxId        | FRMTTR76M06B715E |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Field denomination in recipient 0 contains invalid characters."
+
+  @validation
+  Scenario: [B2B-PA-SYNC_VALIDATION_73] validazione sincrona campo denomination non contenente il carattere pipe
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario
+      | denomination | Ettore Fieramosca  |
+      | taxId        | FRMTTR76M06B715E |
+    When la notifica viene inviata dal "Comune_Multi"
+    Then l'invio della notifica non ha prodotto errori

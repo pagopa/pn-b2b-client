@@ -47,7 +47,9 @@ public class DataTableTypeUtil {
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
                                 NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:null
+                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:
+                                        getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("NONE")?
+                                                NewNotificationRequestV23.PagoPaIntModeEnum.NONE: null
                                 ))));
 
         notificationRequest = addDocument(notificationRequest,data);

@@ -63,8 +63,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                  |
       | payment_noticeCode   | 302011697026785049 |
     And destinatario
-      | denomination         | Gaio Giulio Cesare |
-      | taxId                | CSRGGL44L13H501E   |
+      | denomination         | Leonardo Da Vinci  |
+      | taxId                | DVNLRD52D15M059P   |
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
@@ -87,8 +87,8 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | apply_cost_pagopa    | NO   |
       | payment_multy_number | 1    |
     And destinatario
-      | denomination         | Gaio Giulio Cesare |
-      | taxId                | CSRGGL44L13H501E   |
+      | denomination         | Leonardo Da Vinci  |
+      | taxId                | DVNLRD52D15M059P   |
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | SI                 |
@@ -107,13 +107,13 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
-      | recipientType        | PG           |
-      | taxId                | 27957814470  |
-      | payment_pagoPaForm   | SI           |
-      | payment_f24          | NULL         |
-      | apply_cost_pagopa    | SI           |
-      | payment_multy_number | 1            |
+      | denomination         | Vita Nova Sas |
+      | recipientType        | PG            |
+      | taxId                | 12666810299   |
+      | payment_pagoPaForm   | SI            |
+      | payment_f24          | NULL          |
+      | apply_cost_pagopa    | SI            |
+      | payment_multy_number | 1             |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
@@ -128,9 +128,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa       |
+      | denomination         | Vita Nova Sas      |
       | recipientType        | PG                 |
-      | taxId                | 27957814470        |
+      | taxId                | 12666810299        |
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
@@ -147,9 +147,9 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa       |
+      | denomination         | Vita Nova Sas      |
       | recipientType        | PG                 |
-      | taxId                | 27957814470        |
+      | taxId                | 12666810299        |
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |

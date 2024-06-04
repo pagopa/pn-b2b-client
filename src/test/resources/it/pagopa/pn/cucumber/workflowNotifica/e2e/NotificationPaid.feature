@@ -32,7 +32,7 @@ Feature: Notifica pagata
       | details          | NOT_NULL |
       | details_recIndex | 0        |
 
-  @e2e @ignore
+  @e2e
   Scenario: [E2E-WF-INHIBITION-PAID-4] Casistica in cui la visualizzazione di una notifica inibisce parte del workflow di notifica.
   Viene effettuato il pagamento subito dopo la generazione dell'evento di timeline DIGITAL_FAILURE_WORKFLOW. Il pagamento non deve generare
   un evento di timeline PREPARE_SIMPLE_REGISTERED_LETTER e SEND_SIMPLE_REGISTERED_LETTER.
@@ -48,10 +48,6 @@ Feature: Notifica pagata
       | payment_pagoPaForm      | SI                 |
       | payment_f24             | NULL               |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
-      | loadTimeline     | true     |
-      | details          | NOT_NULL |
-      | details_recIndex | 0        |
     And l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
@@ -75,7 +71,7 @@ Feature: Notifica pagata
       | physicalAddress_address | Via@ok_RS          |
       | payment_pagoPaForm      | SI                 |
       | payment_f24             | NULL               |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista

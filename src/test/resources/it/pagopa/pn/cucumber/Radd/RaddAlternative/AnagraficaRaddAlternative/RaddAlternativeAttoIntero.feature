@@ -202,7 +202,7 @@ Feature: Radd Alternative Atto Intero
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
     And viene verificato il costo di 800 e il peso di 10 nei details del'elemento di timeline letto
 
-    
+
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_10] invio notifica AR con 2 tentativi coperto da RADD e controllo diminuzione costi filtro base (eseguire controllo manuale costi del F24)
     Given viene generata una nuova notifica

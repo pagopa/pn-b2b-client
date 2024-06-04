@@ -9,9 +9,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -29,9 +29,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -48,12 +48,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -69,12 +69,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -100,9 +100,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
@@ -120,12 +120,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 7                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -139,12 +139,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -160,9 +160,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -180,9 +180,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -198,9 +198,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -216,12 +216,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 7                        |
@@ -239,12 +239,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 2                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -260,9 +260,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -279,9 +279,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -299,12 +299,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -320,9 +320,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -347,9 +347,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -376,12 +376,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -404,12 +404,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -434,9 +434,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -465,12 +465,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -496,12 +496,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -518,12 +518,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
@@ -555,9 +555,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -583,9 +583,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -614,11 +614,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -651,9 +651,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -673,9 +673,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -694,9 +694,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas |
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -717,12 +717,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
       | payment_multy_number | 1                        |
@@ -740,12 +740,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -802,9 +802,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -831,9 +831,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -860,12 +860,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | SI                       |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 2                        |
@@ -895,9 +895,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -928,9 +928,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_pagoPaForm_1 | SI           |
       | payment_f24          | NULL         |
@@ -958,12 +958,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | apply_cost_pagopa    | SI                       |
       | payment_multy_number | 1                        |
@@ -993,9 +993,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -1014,9 +1014,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
@@ -1034,12 +1034,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_FLAT         |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1056,12 +1056,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
@@ -1078,12 +1078,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_FLAT         |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_pagopa    | NO                       |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
@@ -1102,9 +1102,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -1133,9 +1133,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
@@ -1164,12 +1164,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_FLAT         |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | NO                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -1194,12 +1194,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | NULL                     |
       | payment_f24          | PAYMENT_F24_STANDARD     |
-      | title_payment        | F24_STANDARD_27957814470 |
+      | title_payment        | F24_STANDARD_12666810299 |
       | apply_cost_f24       | SI                       |
       | payment_multy_number | 1                        |
     And destinatario
@@ -1224,9 +1224,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | NO           |
@@ -1276,9 +1276,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa             |
+      | denomination         | Vita Nova Sas            |
       | recipientType        | PG                       |
-      | taxId                | 27957814470              |
+      | taxId                | 12666810299              |
       | payment_pagoPaForm   | SI                       |
       | payment_f24          | PAYMENT_F24_STANDARD     |
       | title_payment        | F24_STANDARD_70412331207 |
@@ -1310,9 +1310,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -1345,9 +1345,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa       |
+      | denomination         | Vita Nova Sas      |
       | recipientType        | PG                 |
-      | taxId                | 27957814470        |
+      | taxId                | 12666810299        |
       | payment_pagoPaForm   | SI                 |
       | payment_f24          | NULL               |
       | apply_cost_pagopa    | NO                 |
@@ -1393,9 +1393,9 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa |
+      | denomination         | Vita Nova Sas|
       | recipientType        | PG           |
-      | taxId                | 27957814470  |
+      | taxId                | 12666810299  |
       | payment_pagoPaForm   | SI           |
       | payment_f24          | NULL         |
       | apply_cost_pagopa    | SI           |
@@ -1695,13 +1695,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination            | Convivio Spa             |
-      | recipientType           | PG                       |
-      | taxId                   | 27957814470              |
+      | denomination         | Vita Nova Sas               |
+      | recipientType        | PG                          |
+      | taxId                | 12666810299                 |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_27957814470 |
+      | title_payment           | F24_STANDARD_12666810299 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
@@ -1716,13 +1716,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination            | Convivio Spa             |
-      | recipientType           | PG                       |
-      | taxId                   | 27957814470              |
+      | denomination         | Vita Nova Sas               |
+      | recipientType        | PG                          |
+      | taxId                | 12666810299                 |
       | digitalDomicile_address | pectest@pec.pagopa.it    |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_27957814470 |
+      | title_payment           | F24_STANDARD_12666810299 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
@@ -1737,13 +1737,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Convivio Spa             |
-      | recipientType           | PG                       |
-      | taxId                   | 27957814470              |
+      | denomination         | Vita Nova Sas               |
+      | recipientType        | PG                          |
+      | taxId                | 12666810299                 |
       | digitalDomicile_address | test@pecOk.it            |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_27957814470 |
+      | title_payment           | F24_STANDARD_12666810299 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
@@ -1758,13 +1758,13 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Convivio Spa             |
+      | denomination            | Vita Nova Sas            |
       | recipientType           | PG                       |
-      | taxId                   | 27957814470              |
+      | taxId                   | 12666810299              |
       | digitalDomicile_address | pectest@pec.pagopa.it    |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
-      | title_payment           | F24_STANDARD_27957814470 |
+      | title_payment           | F24_STANDARD_12666810299 |
       | apply_cost_pagopa       | NO                       |
       | apply_cost_f24          | SI                       |
       | payment_multy_number    | 1                        |
@@ -1779,11 +1779,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination            | Convivio Spa         |
+      | denomination            | Vita Nova Sas        |
       | recipientType           | PG                   |
-      | taxId                   | 27957814470          |
+      | taxId                   | 12666810299          |
       | digitalDomicile_address | test@pecOk.it        |
-      | title_payment           | F24_FLAT_27957814470 |
+      | title_payment           | F24_FLAT_12666810299 |
       | payment_pagoPaForm      | NULL                 |
       | payment_f24             | PAYMENT_F24_FLAT     |
       | apply_cost_pagopa       | NO                   |
@@ -1800,11 +1800,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 0                           |
     And destinatario
-      | denomination            | Convivio Spa          |
+      | denomination            | Vita Nova Sas         |
       | recipientType           | PG                    |
-      | taxId                   | 27957814470           |
+      | taxId                   | 12666810299           |
       | digitalDomicile_address | pectest@pec.pagopa.it |
-      | title_payment           | F24_FLAT_27957814470  |
+      | title_payment           | F24_FLAT_12666810299  |
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_FLAT      |
       | apply_cost_pagopa       | NO                    |
@@ -1821,11 +1821,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Convivio Spa         |
+      | denomination            | Vita Nova Sas        |
       | recipientType           | PG                   |
-      | taxId                   | 27957814470          |
+      | taxId                   | 12666810299          |
       | digitalDomicile_address | test@ok.it           |
-      | title_payment           | F24_FLAT_27957814470 |
+      | title_payment           | F24_FLAT_12666810299 |
       | payment_pagoPaForm      | NULL                 |
       | payment_f24             | PAYMENT_F24_FLAT     |
       | apply_cost_pagopa       | NO                   |
@@ -1842,11 +1842,11 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario
-      | denomination            | Convivio Spa          |
+      | denomination            | Vita Nova Sas         |
       | recipientType           | PG                    |
-      | taxId                   | 27957814470           |
+      | taxId                   | 12666810299           |
       | digitalDomicile_address | pectest@pec.pagopa.it |
-      | title_payment           | F24_FLAT_27957814470  |
+      | title_payment           | F24_FLAT_12666810299  |
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_FLAT      |
       | apply_cost_pagopa       | NO                    |
@@ -1864,12 +1864,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa                |
+      | denomination         | Vita Nova Sas               |
       | recipientType        | PG                          |
-      | taxId                | 27957814470                 |
+      | taxId                | 12666810299                 |
       | payment_pagoPaForm   | NULL                        |
       | payment_f24          | PAYMENT_F24_STANDARD_PG     |
-      | title_payment        | F24_STANDARD_PG_27957814470 |
+      | title_payment        | F24_STANDARD_PG_12666810299 |
       | apply_cost_pagopa    | NO                          |
       | apply_cost_f24       | SI                          |
       | payment_multy_number | 1                           |
@@ -1884,12 +1884,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa                             |
+      | denomination         | Vita Nova Sas                            |
       | recipientType        | PG                                       |
-      | taxId                | 27957814470                              |
+      | taxId                | 12666810299                              |
       | payment_pagoPaForm   | NULL                                     |
       | payment_f24          | PAYMENT_F24_SIMPLIFIED_PG                |
-      | title_payment        | F24_STANDARD_SEMPLIFICATO_PG_27957814470 |
+      | title_payment        | F24_STANDARD_SEMPLIFICATO_PG_12666810299 |
       | apply_cost_pagopa    | NO                                       |
       | apply_cost_f24       | SI                                       |
       | payment_multy_number | 1                                        |
@@ -1904,12 +1904,12 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | feePolicy          | DELIVERY_MODE               |
       | paFee              | 0                           |
     And destinatario
-      | denomination         | Convivio Spa                       |
+      | denomination         | Vita Nova Sas                      |
       | recipientType        | PG                                 |
-      | taxId                | 27957814470                        |
+      | taxId                | 12666810299                        |
       | payment_pagoPaForm   | NULL                               |
       | payment_f24          | PAYMENT_F24_STANDARD_EXCISE_PG     |
-      | title_payment        | F24_STANDARD_EXCISE_PG_27957814470 |
+      | title_payment        | F24_STANDARD_EXCISE_PG_12666810299 |
       | apply_cost_pagopa    | NO                                 |
       | apply_cost_f24       | SI                                 |
       | payment_multy_number | 1                                  |

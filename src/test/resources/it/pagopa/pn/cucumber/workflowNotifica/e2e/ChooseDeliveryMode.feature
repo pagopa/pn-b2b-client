@@ -1,6 +1,6 @@
 Feature: Scelta canale di invio (Digitale o analogico)
 
-  @e2e @platformDependent
+  @e2e @addressBook1
   Scenario: [E2E-CHOOSE-DELIVERY-MODE-1] Invio notifica mono destinatario. L’utente ha configurato l’indirizzo di piattaforma
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And viene inserito un recapito legale "example@pecSuccess.it"

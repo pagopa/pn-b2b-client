@@ -50,8 +50,6 @@ import static org.awaitility.Awaitility.await;
         PnPrivateDeliveryPushExternalClient.class,
         InteropTokenSingleton.class,
         PnServiceDeskClientImpl.class,
-        PnServiceDeskClientImplNoApiKey.class,
-        PnServiceDeskClientImplWrongApiKey.class,
         PnGPDClientImpl.class,
         PnPaymentInfoClientImpl.class,
         PnRaddFsuClientImpl.class,

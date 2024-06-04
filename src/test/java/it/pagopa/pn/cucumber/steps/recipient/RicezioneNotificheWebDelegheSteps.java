@@ -24,7 +24,10 @@ import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static org.awaitility.Awaitility.await;
 
 
 @Slf4j
@@ -66,87 +69,57 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private String getTaxIdByUser(String user) {
-        String userTaxId;
-        switch (user) {
-            case "Mario Cucumber":
-                userTaxId = marioCucumberTaxID;
-                break;
-            case "Mario Gherkin":
-                userTaxId = marioGherkinTaxID;
-                break;
-            case "GherkinSrl":
-                userTaxId = gherkinSrltaxId;
-                break;
-            case "CucumberSpa":
-                userTaxId = cucumberSpataxId;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
 
-        return userTaxId;
+        return switch (user) {
+            case "Mario Cucumber" -> marioCucumberTaxID;
+            case "Mario Gherkin" -> marioGherkinTaxID;
+            case "GherkinSrl" -> gherkinSrltaxId;
+            case "CucumberSpa" -> cucumberSpataxId;
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private UserDto getUserDtoByuser(String user) {
-        UserDto userDto;
-        switch (user.trim().toLowerCase()) {
-            case "mario cucumber":
-                userDto = new UserDto()
-                        .displayName("Mario Cucumber")
-                        .firstName("Mario")
-                        .lastName("Cucumber")
-                        .fiscalCode(marioCucumberTaxID)
-                        .person(true);
-                break;
-            case "mario gherkin":
-                userDto = new UserDto()
-                        .displayName("Mario Gherkin")
-                        .firstName("Mario")
-                        .lastName("Gherkin")
-                        .fiscalCode(marioGherkinTaxID)
-                        .person(true);
-                break;
-            case "gherkinsrl":
-                userDto = new UserDto()
-                        .displayName("gherkinsrl")
-                        .firstName("gherkin")
-                        .lastName("srl")
-                        .fiscalCode(gherkinSrltaxId)
-                        .companyName("gherkinsrl")
-                        .person(false);
-                break;
-            case "cucumberspa":
-                userDto = new UserDto()
-                        .displayName("cucumberspa")
-                        .firstName("cucumber")
-                        .lastName("spa")
-                        .fiscalCode(cucumberSpataxId)
-                        .companyName("cucumberspa")
-                        .person(false);
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
 
-        return userDto;
+        return switch (user.trim().toLowerCase()) {
+            case "mario cucumber" -> new UserDto()
+                    .displayName("Mario Cucumber")
+                    .firstName("Mario")
+                    .lastName("Cucumber")
+                    .fiscalCode(marioCucumberTaxID)
+                    .person(true);
+            case "mario gherkin" -> new UserDto()
+                    .displayName("Mario Gherkin")
+                    .firstName("Mario")
+                    .lastName("Gherkin")
+                    .fiscalCode(marioGherkinTaxID)
+                    .person(true);
+            case "gherkinsrl" -> new UserDto()
+                    .displayName("gherkinsrl")
+                    .firstName("gherkin")
+                    .lastName("srl")
+                    .fiscalCode(gherkinSrltaxId)
+                    .companyName("gherkinsrl")
+                    .person(false);
+            case "cucumberspa" -> new UserDto()
+                    .displayName("cucumberspa")
+                    .firstName("cucumber")
+                    .lastName("spa")
+                    .fiscalCode(cucumberSpataxId)
+                    .companyName("cucumberspa")
+                    .person(false);
+            default -> throw new IllegalArgumentException();
+        };
     }
 
     private boolean setBearerToken(String user) {
-        boolean beenSet = false;
-        switch (user.trim().toLowerCase()) {
-            case "mario cucumber":
-                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-                break;
-            case "mario gherkin":
-                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-                break;
-            case "gherkinsrl":
-                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-                break;
-            case "cucumberspa":
-                beenSet = webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-                break;
-        }
+        boolean beenSet = switch (user.trim().toLowerCase()) {
+            case "mario cucumber" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case "mario gherkin" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case "gherkinsrl" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case "cucumberspa" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            default -> false;
+        };
 
         return !beenSet;
     }
@@ -183,34 +156,23 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
-        switch (comune) {
-            case "Comune_1":
-                organizationIdDto = organizationIdDto
-                        .name("Comune di Milano")
-                        .uniqueIdentifier(senderId);
-                break;
-            case "Comune_2":
-                organizationIdDto = organizationIdDto
-                        .name("Comune di Verona")
-                        .uniqueIdentifier(senderId2);
-                break;
-            case "Comune_Multi":
-                organizationIdDto = organizationIdDto
-                        .name("Comune di Palermo")
-                        .uniqueIdentifier(senderIdGA);
-                break;
-            case "Comune_Son":
-                organizationIdDto = organizationIdDto
-                        .name("Ufficio per la transizione al Digitale")
-                        .uniqueIdentifier(senderIdSON);
-                break;
-            case "Comune_Root":
-                organizationIdDto = organizationIdDto
-                        .name("Comune di Aglientu")
-                        .uniqueIdentifier(senderIdROOT);
-                break;
-            default:
-                throw new IllegalStateException();
+         switch (comune) {
+            case "Comune_1" -> organizationIdDto
+                    .name("Comune di Milano")
+                    .uniqueIdentifier(senderId);
+            case "Comune_2" -> organizationIdDto
+                    .name("Comune di Verona")
+                    .uniqueIdentifier(senderId2);
+            case "Comune_Multi" -> organizationIdDto
+                    .name("Comune di Palermo")
+                    .uniqueIdentifier(senderIdGA);
+            case "Comune_Son" -> organizationIdDto
+                    .name("Ufficio per la transizione al Digitale")
+                    .uniqueIdentifier(senderIdSON);
+            case "Comune_Root" -> organizationIdDto
+                    .name("Comune di Aglientu")
+                    .uniqueIdentifier(senderIdROOT);
+            default -> throw new IllegalStateException();
         }
 
 
@@ -255,11 +217,6 @@ public class RicezioneNotificheWebDelegheSteps {
         if (mandateDto != null) {
             MandateDto finalMandateDto = mandateDto;
             Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
-//            try{
-//                webMandateClient.rejectMandate(mandateDto.getMandateId());
-//            }catch(Exception exp){
-//                System.out.println("REJECT FALLITA");
-//            }
 
         }
     }
@@ -279,11 +236,7 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNotNull(mandateDto);
         this.mandateToSearch = mandateDto;
         Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode)));
-//        try{
-//            webMandateClient.acceptMandate(mandateDto.getMandateId(), new AcceptRequestDto().verificationCode(verificationCode));
-//        }catch(Exception e){
-//            System.out.println("ACCEPT DELEGA ERROR");
-//        }
+
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
@@ -297,28 +250,6 @@ public class RicezioneNotificheWebDelegheSteps {
     @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo per il delegato {string}")
     public void comeAmministratoreDaVoglioModificareUnaDelegaPerAssociarlaAdUnGruppo(String recipient, String delegato) {
         sharedSteps.selectUser(delegato);
-        //  Assertions.assertDoesNotThrow(() -> {
-        // webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
-
-        //      * @param xPagopaPnCxId Customer/Receiver Identifier (required)
-        //      * @param xPagopaPnCxType Customer/Receiver Type (required)
-        //         * @param mandateId  (required)
-        //        * @param xPagopaPnCxGroups Customer Groups (optional)
-        //       * @param xPagopaPnCxRole Ruolo (estratto da token di Self Care) (optional)
-        //       * @param updateRequestDto  (optional)
-        // url --location --request PATCH 'http://localhost:8080/mandate/api/v1/mandate/1748533a-7020-4d47-9e4d-c95f558d8845/update' \
-        // --header 'x-pagopa-pn-cx-id: PG-1748533a-7020-4d47-9e4d-c95f558d8845' \
-        // --header 'x-pagopa-pn-cx-type: PG' \
-        //  --header 'x-pagopa-pn-cx-groups;' \
-        //  --header 'x-pagopa-pn-cx-role: ADMIN' \
-        //   --header 'Content-Type: application/json' \
-        //   --data '{
-        // "groups":[
-        //  "test1",
-        //         "test4"
-        //]
-        // }'
-        //  });
 
         //TODO Recuperare i gruppi della PG come Admin....
         List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
@@ -332,34 +263,15 @@ public class RicezioneNotificheWebDelegheSteps {
             }
         }
 
-        //TODO Gruppi Disponibili della PG Admin
-        List<String> xPagopaPnCxGroups;
-
-        //TODO Recuperare la Lista dei gruppi della delega;
-        List<GroupDto> gruppiDelega = mandateToSearch.getGroups();
-
-//        List<String> listGruppi = new ArrayList<>();
-//        if (gruppiDelega != null) {
-//            xPagopaPnCxGroups = new ArrayList<>();
-//            for (GroupDto gruppo : gruppiDelega) {
-//                xPagopaPnCxGroups.add(gruppo.getName());
-//            }
-//        }
 
         String xPagopaPnCxRole = "ADMIN";
         //TODO capire dove recuperare il dato
         //Questo è l’identificativo della PG, e come gli altri header viene recuperato dal token JWT di autorizzazione
-        String xPagopaPnCxId = null;
-        switch (webRecipientClient.getBearerTokenSetted()) {
-            case PG_1:
-                xPagopaPnCxId = sharedSteps.getIdOrganizationGherkinSrl();
-                //webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
-                break;
-            case PG_2:
-                xPagopaPnCxId = sharedSteps.getIdOrganizationCucumberSpa();
-                //  webMandateClient.setBearerToken(webRecipientClient.getBearerTokenSetted());
-                break;
-        }
+        String xPagopaPnCxId = switch (webRecipientClient.getBearerTokenSetted()) {
+            case PG_1 -> sharedSteps.getIdOrganizationGherkinSrl();
+            case PG_2 -> sharedSteps.getIdOrganizationCucumberSpa();
+            default -> null;
+        };
 
         List<String> gruppi = new ArrayList<>();
         if (gruppoAttivo != null && !gruppoAttivo.isEmpty()) {
@@ -369,13 +281,9 @@ public class RicezioneNotificheWebDelegheSteps {
         UpdateRequestDto updateRequestDto = new UpdateRequestDto();
         updateRequestDto.setGroups(gruppi);
 
-        String finalXPagopaPnCxId = xPagopaPnCxId;
-        Assertions.assertDoesNotThrow(() -> {
-            webMandateClient.updateMandate(finalXPagopaPnCxId, CxTypeAuthFleet.PG, mandateToSearch.getMandateId(), null, xPagopaPnCxRole, updateRequestDto);
-        });
+        Assertions.assertDoesNotThrow(() -> webMandateClient.updateMandate(xPagopaPnCxId, CxTypeAuthFleet.PG, mandateToSearch.getMandateId(), null, xPagopaPnCxRole, updateRequestDto));
 
         String delegatorTaxId = getTaxIdByUser(recipient);
-        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
@@ -397,18 +305,8 @@ public class RicezioneNotificheWebDelegheSteps {
     @Then("il documento notificato può essere correttamente recuperato da {string} con delega")
     public void theDocumentCanBeProperlyRetrievedByWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
-        NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                sharedSteps.getSentNotification().getIun(),
-                Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
-                UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
-        );
-        AtomicReference<String> Sha256 = new AtomicReference<>("");
-        Assertions.assertDoesNotThrow(() -> {
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(downloadResponse.getUrl()));
-            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-        });
-        Assertions.assertEquals(Sha256.get(), downloadResponse.getSha256());
+        NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationDocument();
+        verifySha256(downloadResponse);
     }
 
     @Then("il documento notificato non può essere correttamente recuperato da {string} con delega restituendo un errore {string}")
@@ -417,19 +315,22 @@ public class RicezioneNotificheWebDelegheSteps {
 
         try {
             Assertions.assertDoesNotThrow(() -> {
-                NotificationAttachmentDownloadMetadataResponse downloadResponse = webRecipientClient.getReceivedNotificationDocument(
-                        sharedSteps.getSentNotification().getIun(),
-                        Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
-                        UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
-                );
+                getReceivedNotificationDocument();
             });
         } catch (AssertionFailedError assertionFailedError) {
-            //sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             System.out.println(assertionFailedError.getCause().toString());
             System.out.println(assertionFailedError.getCause().getMessage());
             System.out.println(assertionFailedError.getCause().getMessage().substring(0, 3).equals(statusCode));
         }
 
+    }
+
+    private NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument() {
+        return webRecipientClient.getReceivedNotificationDocument(
+                sharedSteps.getSentNotification().getIun(),
+                Integer.parseInt(Objects.requireNonNull(sharedSteps.getSentNotification().getDocuments().get(0).getDocIdx())),
+                UUID.fromString(Objects.requireNonNull(mandateToSearch.getMandateId()))
+        );
     }
 
     @Then("l'allegato {string} può essere correttamente recuperato da {string} con delega")
@@ -443,25 +344,29 @@ public class RicezioneNotificheWebDelegheSteps {
 
         if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
             try {
-                Thread.sleep(downloadResponse.getRetryAfter() * 3L);
+                await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                 downloadResponse = webRecipientClient.getReceivedNotificationAttachment(
                         sharedSteps.getSentNotification().getIun(),
                         attachmentName,
                         UUID.fromString(mandateToSearch.getMandateId()), 0);
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
+            } catch (RuntimeException exc) {
+                log.error("Await error exception: {}", exc.getMessage());
+                throw exc;
             }
         }
         if (!"F24".equalsIgnoreCase(attachmentName)) {
-            AtomicReference<String> Sha256 = new AtomicReference<>("");
-            NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
-            Assertions.assertDoesNotThrow(() -> {
-                byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                        b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-                Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
-            });
-            Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
+            verifySha256(downloadResponse);
         }
+    }
+
+    private void verifySha256(NotificationAttachmentDownloadMetadataResponse downloadResponse) {
+        AtomicReference<String> Sha256 = new AtomicReference<>("");
+        Assertions.assertDoesNotThrow(() -> {
+            byte[] bytes = Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(Objects.requireNonNull(downloadResponse).getUrl()));
+            Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
+        });
+        Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
     }
 
     @And("{string} revoca la delega a {string}")
@@ -494,7 +399,6 @@ public class RicezioneNotificheWebDelegheSteps {
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
-        //  List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
@@ -513,8 +417,7 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
         HttpClientErrorException httpClientErrorException = null;
         try {
-            FullReceivedNotificationV23 receivedNotification =
-                    webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
+            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         } catch (HttpClientErrorException e) {
             httpClientErrorException = e;
         }
@@ -543,10 +446,9 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            FullReceivedNotificationV23 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-            log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED)).findAny().orElse(null);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
@@ -561,21 +463,29 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(recipient);
 
         try {
-            FullReceivedNotificationV23 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
-            log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
-
-            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = result
-                    .getTimeline()
-                    .stream()
-                    .filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED.getValue()))
-                    .findAny()
-                    .orElse(null);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_VIEWED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
 
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
         webRecipientClient.setBearerToken(baseUser);
+    }
+
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23) {
+
+        FullReceivedNotificationV23 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
+
+        return result
+                .getTimeline()
+                .stream()
+                .filter(elem -> Objects.requireNonNull(elem.getCategory())
+                        .equals(timelineElementCategoryV23))
+                .findAny()
+                .orElse(null);
     }
 
     @And("la notifica può essere correttamente letta da {string} per comune {string}")
@@ -589,14 +499,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        try {
-            Thread.sleep(sharedSteps.getWorkFlowWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV23 timelineElement = getTimelineElementV23();
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -608,19 +511,30 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        try {
-            Thread.sleep(sharedSteps.getWorkFlowWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
-
-        TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED)).findAny().orElse(null);
+        TimelineElementV23 timelineElement = getTimelineElementV23();
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
         Assertions.assertNotNull(timelineElement.getDetails());
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
+    }
+
+    private TimelineElementV23 getTimelineElementV23() {
+        try {
+            await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
+        } catch (RuntimeException exception) {
+            exception.printStackTrace();
+        }
+        sharedSteps.setSentNotification(sharedSteps.getB2bClient().getSentNotification(sharedSteps.getSentNotification().getIun()));
+
+        return sharedSteps
+                .getSentNotification()
+                .getTimeline()
+                .stream()
+                .filter(elem -> Objects.requireNonNull(elem.getCategory())
+                        .equals(TimelineElementCategoryV23.NOTIFICATION_VIEWED))
+                .findAny()
+                .orElse(null);
     }
 
     //for debug

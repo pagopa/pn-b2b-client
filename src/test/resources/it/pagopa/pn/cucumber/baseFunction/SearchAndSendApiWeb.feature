@@ -1,6 +1,6 @@
 Feature: invio notifiche e2e web PA
 
-  @WebPAtest @ignore
+  @WebPAtest
   Scenario: [WEB_PA-SEND_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN web PA_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -11,7 +11,7 @@ Feature: invio notifiche e2e web PA
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN web PA
 
 
-  @WebPAtest  @ignore
+  @WebPAtest
   Scenario: [WEB_PA-SEND_2] Invio notifica digitale senza pagamento e recupero tramite codice IUN web PA_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica GA cucumber |
@@ -22,7 +22,7 @@ Feature: invio notifiche e2e web PA
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla web PA "Comune_Multi"
 
 
-  @WebPAtest  @ignore
+  @WebPAtest
   Scenario: [WEB_PA-SEND_3] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
