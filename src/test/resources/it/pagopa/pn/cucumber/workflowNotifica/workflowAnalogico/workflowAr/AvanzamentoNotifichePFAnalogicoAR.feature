@@ -304,39 +304,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE_FAILURE" con failureCause "D02"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_FAILURE_WORKFLOW"
 
-
-  @workflowAnalogico @realNR
-  Scenario: [B2B_TIMELINE_ANALOG_AR_21] PA mittente: invio notifica analogica FAIL-Irreperibile_AR
-    Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di MILANO                |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Test AR Fail 2           |
-      | taxId                   | STTSGT90A01H501J         |
-      | digitalDomicile         | NULL                     |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
-
-
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_ANALOG_AR_22]  PA mittente: invio notifica analogica FAIL-Irreperibile_AR
-    Given viene generata una nuova notifica
-      | subject               | notifica analogica con cucumber |
-      | senderDenomination    | Comune di palermo               |
-      | physicalCommunication | AR_REGISTERED_LETTER            |
-    And destinatario
-      | denomination            | Test AR Fail 2           |
-      | taxId                   | FRMTTR76M06B715E         |
-      | digitalDomicile         | NULL                     |
-      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
-
-
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_RIR_1] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
     Given viene generata una nuova notifica
