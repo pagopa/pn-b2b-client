@@ -4,13 +4,14 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 
-
+@Slf4j
 public class OpenSearchSteps {
     private final PnExternalServiceClientImpl pnExternalServiceClient;
     private PnExternalServiceClientImpl.OpenSearchResponse openSearchResponse;
@@ -58,6 +59,7 @@ public class OpenSearchSteps {
             if(logAudit.get_source().getMessage().contains(message) && logAudit.get_source().getMessage().contains(auditLogType)){
                 exist= true;
             }
+            log.info("log audit: {}",logAudit);
         }
 
         try {
