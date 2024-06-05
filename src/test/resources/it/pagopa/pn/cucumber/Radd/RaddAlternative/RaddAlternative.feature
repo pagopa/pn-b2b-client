@@ -1722,7 +1722,7 @@ Feature: Radd Alternative
 
 
   @raddAlt @raddAltLog
-  Scenario: [RADD-ALT_AUDIT_LOG-95] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
+  Scenario: [RADD-ALT_AUDIT_LOG-96] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
     When viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" in "10y"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" con messaggio "[AUD_RADD_ACTTRAN] FAILURE"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" senza messaggio con "error null"
