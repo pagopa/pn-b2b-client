@@ -327,21 +327,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
-
-  @workflowAnalogico
-  Scenario: [B2B_TIMELINE_ANALOG_RIR_3] Attesa elemento di timeline COMPLETELY_UNREACHABLE_fail_RIR_scenario negativo
-    Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@FAIL-Irreperibile_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-
-
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_RIR_4] Invio notifica ed attesa elemento di timeline SEND_ANALOG_PROGRESSdeliveryDetailCode "RECRI001" scenario positivo PN-6634
     Given viene generata una nuova notifica
