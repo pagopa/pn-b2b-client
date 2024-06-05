@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.pf;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.Consent;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
@@ -32,7 +34,7 @@ public class UserAttributesSteps {
                 consentType = ConsentType.DATAPRIVACY;
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("agreeType not valid: " + type, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         try {

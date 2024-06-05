@@ -10,6 +10,8 @@ import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.*;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
@@ -944,7 +946,7 @@ public class AvanzamentoNotificheB2bSteps {
                     level = ServiceLevel.REGISTERED_LETTER_890;
                     break;
                 default:
-                    throw new IllegalArgumentException();
+                    throw new PnB2bInternalException("service level not valid: " + value, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
 
             }
             Assertions.assertNotNull(pnPollingResponseV23.getTimelineElement());
@@ -1439,7 +1441,7 @@ public class AvanzamentoNotificheB2bSteps {
         }else if(versione.equalsIgnoreCase("V2")){
             priceVerificationV2(price, null, 0);
         }else{
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("version not valid: " + versione, PnB2bExceptionsCodes.ERROR_CODE_B2B_INVALIDPARAMETER_VERSION_ERROR);
         }
     }
 
@@ -2975,7 +2977,7 @@ try{
             pricePartial = 0;
             priceTotal = 0;
         }else{
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("fee policy not valid: " + sharedSteps.getSentNotification().getNotificationFeePolicy().getValue(), PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         switch (tipoCosto.toLowerCase()) {
@@ -2987,7 +2989,7 @@ try{
                 priceVerificationV23(priceTotal, null, Integer.parseInt(user), tipoCosto);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("tipo costo not valid: " + tipoCosto, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -3040,7 +3042,7 @@ try{
 
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("tipo notifica not valid: " + tipoNotifica, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         switch (tipoCosto.toLowerCase()) {

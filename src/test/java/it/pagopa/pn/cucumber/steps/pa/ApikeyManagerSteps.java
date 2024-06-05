@@ -4,9 +4,11 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnApiKeyManagerClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.*;
+import it.pagopa.pn.commons.exceptions.PnExceptionsCodes;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import org.junit.jupiter.api.Assertions;
@@ -111,7 +113,7 @@ public class ApikeyManagerSteps {
                 apiKeyStatus = ApiKeyStatus.CREATED;
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("state not valid: " + state, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         Assertions.assertNotNull(
                 apiKeys.getItems().stream()
@@ -132,7 +134,7 @@ public class ApikeyManagerSteps {
                 requestApiKeyStatus.setStatus(RequestApiKeyStatus.StatusEnum.ROTATE);
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("state not valid: " + state, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         return requestApiKeyStatus;
     }

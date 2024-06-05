@@ -5,6 +5,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.*;
@@ -100,14 +102,13 @@ public class RaddFsuSteps {
             }
             case "appartenente a terzo" -> {
                 if(this.currentUserCf.equalsIgnoreCase(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId())){
-                    throw new IllegalArgumentException();
                 }
                 vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
             }
             case "corretto" -> {
                 vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun());
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("qrCodeType radd not valid: " + qrCodeType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -128,7 +129,7 @@ public class RaddFsuSteps {
             case 99 -> {
                 return ActInquiryResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode radd not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -149,7 +150,7 @@ public class RaddFsuSteps {
                 Assertions.assertEquals(errorType.toLowerCase(), actInquiryResponse.getStatus().getMessage().toLowerCase());
                 Assertions.assertEquals(error, actInquiryResponse.getStatus().getCode());
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorType radd not valid: " + errorType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -240,7 +241,7 @@ public class RaddFsuSteps {
             case 99 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode radd not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -338,7 +339,7 @@ public class RaddFsuSteps {
                 Assertions.assertNotNull( this.aorInquiryResponse.getStatus());
                 Assertions.assertEquals(error, this.aorInquiryResponse.getStatus().getCode());
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorType radd not valid: " + errorType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         log.info("aorInquiryResponse: {}",this.aorInquiryResponse);
@@ -352,7 +353,7 @@ public class RaddFsuSteps {
             case 99 -> {
                 return ResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode radd not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 

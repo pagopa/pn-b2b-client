@@ -6,6 +6,8 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -75,7 +77,7 @@ public class RicezioneNotificheWebDelegheSteps {
             case "Mario Gherkin" -> marioGherkinTaxID;
             case "GherkinSrl" -> gherkinSrltaxId;
             case "CucumberSpa" -> cucumberSpataxId;
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("user not valid: " + user, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
     }
 
@@ -108,7 +110,7 @@ public class RicezioneNotificheWebDelegheSteps {
                     .fiscalCode(cucumberSpataxId)
                     .companyName("cucumberspa")
                     .person(false);
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("user not valid: " + user, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
     }
 
@@ -127,7 +129,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
         if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegator not valid: " + delegator, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
@@ -152,7 +154,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} viene delegato da {string} per comune {string}")
     public void delegateUser(String delegate, String delegator, String comune) {
         if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegator not valid: " + delegator, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
@@ -199,7 +201,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
         if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegate not valid: " + delegate, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
@@ -224,7 +226,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} accetta la delega {string}")
     public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
         if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegate not valid: " + delegate, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
@@ -372,7 +374,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} revoca la delega a {string}")
     public void userRevokesMandate(String delegator, String delegate) {
         if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegator not valid: " + delegator, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegator1();
@@ -394,7 +396,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} rifiuta la delega ricevuta da {string}")
     public void delegateRefusesMandateReceivedFromDelegator(String delegate, String delegator) {
         if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("delegate not valid: " + delegate, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
@@ -541,7 +543,7 @@ public class RicezioneNotificheWebDelegheSteps {
     @And("{string} visualizza le deleghe")
     public void visualizzaLeDeleghe(String user) {
         if (setBearerToken(user)) {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("user not valid: " + user, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);

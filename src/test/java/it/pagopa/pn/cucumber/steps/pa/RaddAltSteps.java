@@ -7,6 +7,8 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnRaddAlternativeClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableAuthTokenRadd;
@@ -161,7 +163,7 @@ public class RaddAltSteps {
             case 99 -> {
                 return ActInquiryResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode Radd not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -183,7 +185,7 @@ public class RaddAltSteps {
                 Assertions.assertEquals(error, actInquiryResponse.getStatus().getCode());
 
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("error type not valid: " + errorType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -318,7 +320,7 @@ public class RaddAltSteps {
             case 99 -> {
                 return StartTransactionResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -446,7 +448,7 @@ public class RaddAltSteps {
                 Assertions.assertNotNull(this.aorInquiryResponse.getStatus());
                 Assertions.assertEquals(error, this.aorInquiryResponse.getStatus().getCode());
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("error type not valid: " + errorType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         log.info("aorInquiryResponse: {}", this.aorInquiryResponse);
     }
@@ -459,7 +461,7 @@ public class RaddAltSteps {
             case 99 -> {
                 return ResponseStatus.CodeEnum.NUMBER_99;
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("errorCode not valid: " + errorCode, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -528,7 +530,7 @@ public class RaddAltSteps {
                             .operationId(this.operationid)
                             .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
                             .reason("TEST"));
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("tipology not valid: " + tipologia, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -592,7 +594,7 @@ public class RaddAltSteps {
             }
             case "appartenente a terzo" -> {
                 if(this.currentUserCf.equalsIgnoreCase(sharedSteps.getSentNotification().getRecipients().get(0).getTaxId())){
-                    throw new IllegalArgumentException();
+                    throw new PnB2bInternalException("current user not equals: " + currentUserCf, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
                 }
                 vieneRichiestoIlCodiceQRPerLoIUN(sharedSteps.getSentNotification().getIun(), destinatario);
             }
@@ -605,10 +607,10 @@ public class RaddAltSteps {
                     }else if (this.currentUserCf.equalsIgnoreCase(sharedSteps.getCucumberSpataxId())) {
                         vieneRichiestoIlCodiceQRPerLoIUN(this.iunLucio120gg, destinatario);
                     }else{
-                        throw new IllegalArgumentException();
+                        throw new PnB2bInternalException("current user not equals: " + currentUserCf, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
                     }
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("qrCodeType not valid: " + qrCodeType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -718,7 +720,7 @@ private void downloadFrontespizio(String operationType,String operationid,String
             case "issuer_kid_diverso" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.KID_DIVERSO);
             case "issuer_private_diverso" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.PRIVATE_DIVERSO);
             case "issuer_header_errato" -> raddAltClient.setAuthTokenRadd(SettableAuthTokenRadd.AuthTokenRaddType.HEADER_ERRATO);
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("raddista not valid: " + raddista, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 }

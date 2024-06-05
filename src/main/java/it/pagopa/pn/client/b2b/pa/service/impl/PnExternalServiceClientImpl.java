@@ -2,6 +2,8 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -226,7 +228,7 @@ public class PnExternalServiceClientImpl {
             case ROOT:
                 return paGroupInfoWithHttpInfo(apiKeyROOT).getBody();
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("apiKeyType not valid: " + apiKeyType, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -237,7 +239,7 @@ public class PnExternalServiceClientImpl {
             case PG_2:
                 return pgGroupInfoWithHttpInfo(cucumberSpaBearerToken).getBody();
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("settableBearerToken not valid: " + settableBearerToken, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 

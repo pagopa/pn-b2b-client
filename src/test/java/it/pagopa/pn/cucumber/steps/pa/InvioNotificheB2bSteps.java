@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
@@ -18,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
+import it.pagopa.pn.commons.exceptions.PnExceptionsCodes;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +32,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -272,7 +273,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                     it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.EFFECTIVE_DATE;
             case "REFUSED" ->
                     it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus.REFUSED;
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("status not valid: " + status, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
 
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
@@ -336,7 +337,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
             case "ATTO OPPONIBILE" -> this.notificationDocumentPreload.getRef().getKey();
             case "PAGOPA" -> this.notificationPaymentAttachmentPreload.getRef().getKey();
             case "F24" -> this.notificationMetadataAttachment.getRef().getKey();
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("document type not valid: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
         Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
@@ -350,7 +351,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                     sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getAttachment().getRef().getKey();
             case "F24" ->
                     sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getF24().getMetadataAttachment().getRef().getKey();
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("document type not valid: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
         Assertions.assertTrue(checkRetetion(key, retentionTimeLoad));
     }
@@ -364,7 +365,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("document type different to ATTACHMENTS: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -377,7 +378,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("document type different to ATTACHMENTS: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -389,7 +390,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
             Assertions.assertTrue(doc.equalsIgnoreCase(timelineElement.getDetails().getAttachments().get(0).getDocumentType()));
             Assertions.assertTrue(timelineElement.getDetails().getAttachments().get(0).getUrl().contains(".zip"));
         } else {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("document type different to ATTACHMENTS: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -402,7 +403,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                 Assertions.assertTrue(checkRetention(key, retentionTimeLoad, timelineElement.getTimestamp()));
             }
         } else {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("document type different to ATTACHMENTS: " + documentType, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 

@@ -16,6 +16,8 @@ import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bExceptionsCodes;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -780,7 +782,7 @@ public class SharedSteps {
         } else if (recipientName.trim().equalsIgnoreCase("mario gherkin")) {
             recipient = updateNotificationRecipient(recipient, "Mario Gherkin", marioGherkinTaxID, null, null);
         } else {
-            throw new IllegalArgumentException();
+            throw new PnB2bInternalException("recipient not valid: " + recipientName, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         Objects.requireNonNull(Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa()).setNoticeCode(noticeCode);
         this.notificationRequest.addRecipientsItem(recipient);
@@ -1085,7 +1087,7 @@ public class SharedSteps {
                 Assertions.assertTrue(NOT_VALID_ADDRESS.equalsIgnoreCase(errorCode));
                 break;
             default:
-                throw new IllegalArgumentException();
+                throw new PnB2bInternalException("cause not valid: " + causa, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -1572,7 +1574,7 @@ public class SharedSteps {
             case "Comune_Multi" -> this.senderTaxIdGa;
             case "Comune_Son" -> this.senderTaxIdSON;
             case "Comune_Root" -> this.senderTaxIdROOT;
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("PA not valid: " + settedPa, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
     }
 
@@ -1680,7 +1682,7 @@ public class SharedSteps {
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
                 this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("apyKey not valid: " + apiKey, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         this.b2bUtils.setClient(b2bClient, pollingFactory);
         this.settedPa = apiKey;
@@ -1716,7 +1718,7 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             }
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("recipient not valid: " + recipient, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
     }
 
@@ -1842,7 +1844,7 @@ public class SharedSteps {
             case "Comune_Multi" -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.GA);
             case "Comune_Son" -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.SON);
             case "Comune_Root" -> this.pnExternalServiceClient.paGroupInfo(SettableApiKey.ApiKeyType.ROOT);
-            default -> throw new IllegalArgumentException();
+            default -> throw new PnB2bInternalException("PA not valid: " + settedPa, PnB2bExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         };
         Assertions.assertNotNull(hashMapsList);
         Assertions.assertFalse(hashMapsList.isEmpty());

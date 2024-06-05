@@ -3,7 +3,9 @@ package it.pagopa.pn.client.b2b.pa.mapper.impl;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
+import it.pagopa.pn.client.b2b.pa.exception.PnB2bInternalException;
 import it.pagopa.pn.client.b2b.pa.service.IPnTimelineLegalFactService;
+import it.pagopa.pn.commons.exceptions.PnExceptionsCodes;
 
 
 public class PnTimelineAndLegalFactV23 implements IPnTimelineLegalFactService<PnTimelineLegalFactV23> {
@@ -40,7 +42,7 @@ public class PnTimelineAndLegalFactV23 implements IPnTimelineLegalFactService<Pn
                 timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
                 category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
             }
-            default -> throw new IllegalArgumentException();
+            default ->  throw new PnB2bInternalException("legal fact category not valid: " + legalFactCategory, PnExceptionsCodes.ERROR_CODE_PN_GENERIC_INVALIDPARAMETER_REQUIRED);
         }
         PnTimelineLegalFactV23 pnTimelineLegalFactV23 = new PnTimelineLegalFactV23();
         pnTimelineLegalFactV23.setTimelineElementInternalCategory(timelineElementInternalCategory);
