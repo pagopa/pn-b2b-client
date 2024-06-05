@@ -1721,6 +1721,48 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar ha generato l'errore "La transazione risulta annullata" con statusCode 2 su radd alternative
 
 
+  @raddAlt @zip
+  Scenario: [RADD-ALT_ACT-94] PF - Verifica restituzione errore al download del documento Frontespizio con attachmentId non esistente - PN-11259
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    Then L'operatore esegue il download del frontespizio del operazione "act" con attachmentId "nonEsistente"
+    And l'operazione ha prodotto un errore con status code "400"
+
+
+  @raddAlt @zip
+  Scenario: [RADD-ALT_ACT-95] PF - Visualizzazione documenti di notifica con una PF con messaggio di corstesia e molti F24 controllo restituzione statusCode 2 con retry - PN-10916
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+      | feePolicy          | DELIVERY_MODE                                |
+      | paFee              | 0                                            |
+    And destinatario Mario Cucumber e:
+      | digitalDomicile         | NULL                          |
+      | physicalAddress_address | Via @ok_890                   |
+      | payment_pagoPaForm      | SI                            |
+      | payment_f24             | PAYMENT_F24_STANDARD          |
+      | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
+      | apply_cost_pagopa       | SI                            |
+      | apply_cost_f24          | SI                            |
+      | payment_multy_number    | 10                            |
+    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    Then la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi
+    And l'operazione di download degli atti genera un errore "documento non disponibile per il download" con codice 2 su radd alternative
+
+
   @raddAlt @raddAltLog
   Scenario: [RADD-ALT_AUDIT_LOG-96] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
     When viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" in "10y"

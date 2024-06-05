@@ -15,6 +15,7 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.Compress;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -221,16 +222,21 @@ public class RaddAltSteps {
 
     @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAAR() {
-        startTransactionActRaddAlternative(this.operationid);
+        startTransactionActRaddAlternative(this.operationid,true);
     }
 
     @And("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR con lo stesso operationId dal raddista {string}")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARUtilizzandoIlPrecedenteOperationIdOrganizzazioneDiversa(String raddista ) {
         changeRaddista(raddista);
-        startTransactionActRaddAlternative(this.operationid);
+        startTransactionActRaddAlternative(this.operationid,true);
     }
 
-    private void startTransactionActRaddAlternative(String operationid) {
+    @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi")
+    public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARSenzaRetry() {
+        startTransactionActRaddAlternative(this.operationid,false);
+    }
+
+    private void startTransactionActRaddAlternative(String operationid, boolean retry) {
         ActStartTransactionRequest actStartTransactionRequest =
                 new ActStartTransactionRequest()
                         .qrCode(this.qrCode)
@@ -246,7 +252,7 @@ public class RaddAltSteps {
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
 
-        if(this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2)){
+        if(this.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2) && retry){
             try {
                 Thread.sleep(this.startTransactionResponse.getStatus().getRetryAfter().longValue());
             } catch (InterruptedException e) {
@@ -623,12 +629,31 @@ public class RaddAltSteps {
 
     @Given("L'operatore esegue il download del frontespizio del operazione {string}")
     public void lOperatoreEsegueDownloadFrontespizio(String operationType) {
-        byte[] download = raddAltClient.documentDownload(operationType.toUpperCase(),
-                this.operationid,
-                null);
-        Assertions.assertNotNull(download);
-        pnPaB2bUtils.stampaPdfTramiteByte(download,"target/classes/frontespizio"+generateRandomNumber()+".pdf");
+        try {
+        downloadFrontespizio(operationType.toUpperCase(),this.operationid,null);
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    " {OperatiodId: "+this.operationid +" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
     }
+
+    @Given("L'operatore esegue il download del frontespizio del operazione {string} con attachmentId {string}")
+    public void lOperatoreEsegueDownloadFrontespizioAttachmentIdNonEsistente(String operationType,String attachmentId) {
+        try {
+            downloadFrontespizio(operationType.toUpperCase(), this.operationid, attachmentId);
+        }catch (HttpStatusCodeException exception){
+            sharedSteps.setNotificationError(exception);
+        }
+    }
+
+private void downloadFrontespizio(String operationType,String operationid,String attachmentId) {
+    byte[] download = raddAltClient.documentDownload(operationType,
+            operationid,
+            attachmentId);
+    Assertions.assertNotNull(download);
+    pnPaB2bUtils.stampaPdfTramiteByte(download, "target/classes/frontespizio" + generateRandomNumber() + ".pdf");
+}
 
     public void creazioneZip() throws IOException {
         String[] files = {};
