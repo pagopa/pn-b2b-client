@@ -2962,8 +2962,6 @@ try{
     @Then("viene verificato il costo {string} di una notifica {string} del utente {string}")
     public void notificationPriceVerificationIvaIncluded(String tipoCosto, String tipoNotifica ,String user ) {
 
-       sharedSteps.setSentNotification(sharedSteps.getB2bUtils().getNotificationByIun(sharedSteps.getIunVersionamento()));
-
         FullSentNotificationV23 notificaV23= sharedSteps.getSentNotification();
         Assertions.assertNotNull(notificaV23);
 
@@ -3076,9 +3074,31 @@ try{
             }catch(AssertionFailedError assertionFailedError){
                 sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             }
-
         }
+    }
 
+    @Then("viene verificato che per il calcolo del iva il campo vat sia di {int} e il campo paFee sia di {int} per il destinatario {int}")
+    public void notificationPriceVerificationResponse(Integer vat, Integer paFee, Integer destinatario) {
+
+        List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
+
+        for(NotificationPaymentItem pagamento : listNotificationPaymentItem){
+            NotificationPriceResponseV23 notificationPriceV23 = this.b2bClient.getNotificationPriceV23(pagamento.getPagoPa().getCreditorTaxId(), pagamento.getPagoPa().getNoticeCode());
+
+            try {
+                Assertions.assertNotNull(notificationPriceV23.getTotalPrice());
+                Assertions.assertNotNull(notificationPriceV23.getPartialPrice());
+                Assertions.assertNotNull(notificationPriceV23.getIun());
+                Assertions.assertNotNull(notificationPriceV23.getAnalogCost());
+                Assertions.assertNotNull(notificationPriceV23.getPaFee());
+                Assertions.assertNotNull(notificationPriceV23.getVat());
+                Assertions.assertEquals(vat, notificationPriceV23.getVat());
+                Assertions.assertEquals(paFee, notificationPriceV23.getPaFee());
+                log.info("notification price v23: {}",notificationPriceV23);
+            }catch(AssertionFailedError assertionFailedError){
+                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            }
+        }
     }
 
     @And("viene verificato data corretta del destinatario {int}")

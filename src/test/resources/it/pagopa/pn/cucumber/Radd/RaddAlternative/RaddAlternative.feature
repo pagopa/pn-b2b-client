@@ -1722,7 +1722,24 @@ Feature: Radd Alternative
 
 
   @raddAlt @zip
-  Scenario: [RADD-ALT_ACT-96] PF - Visualizzazione documenti di notifica con una PF con messaggio di corstesia e molti F24 controllo restituzione statusCode 2 con retry - PN-10916
+  Scenario: [RADD-ALT_ACT-94] PF - Verifica restituzione errore al download del documento Frontespizio con attachmentId non esistente - PN-11259
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo                            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    And la lettura si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    Then L'operatore esegue il download del frontespizio del operazione "act" con attachmentId "nonEsistente"
+    And l'operazione ha prodotto un errore con status code "400"
+
+
+  @raddAlt @zip
+  Scenario: [RADD-ALT_ACT-95] PF - Visualizzazione documenti di notifica con una PF con messaggio di corstesia e molti F24 controllo restituzione statusCode 2 con retry - PN-10916
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
