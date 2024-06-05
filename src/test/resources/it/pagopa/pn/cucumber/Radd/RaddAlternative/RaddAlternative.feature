@@ -1721,12 +1721,20 @@ Feature: Radd Alternative
     And la chiusura delle transazione per il recupero degli aar ha generato l'errore "La transazione risulta annullata" con statusCode 2 su radd alternative
 
 
-@raddAlt @raddAltLog
+  @raddAlt @raddAltLog
   Scenario: [RADD-ALT_AUDIT_LOG-95] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
     When viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" in "10y"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" con messaggio "[AUD_RADD_ACTTRAN] FAILURE"
     Then viene verificato che esiste un audit log "AUD_RADD_ACTTRAN" senza messaggio con "error null"
 
 
-
+  @raddAlt @raddAltLog
+  Scenario Outline: [RADD-ALT_AUDIT_LOG-97] Scansione QR code o IUN e verifica auditlog AUD_RADD_ACTTRAN
+    When viene verificato che esiste un audit log "<audit-log>" in "10y"
+    Then viene verificato che esiste un audit log "<audit-log>" con messaggio "operationId="
+    Then viene verificato che esiste un audit log "<audit-log>" senza messaggio con "operationId=null"
+    Examples:
+      | audit-log        |
+      | AUD_RADD_ACTTRAN |
+      | AUD_RADD_AORTRAN |
 
