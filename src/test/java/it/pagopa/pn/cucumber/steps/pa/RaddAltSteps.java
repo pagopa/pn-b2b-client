@@ -31,6 +31,8 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 

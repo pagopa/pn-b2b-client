@@ -14,27 +14,30 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.cucumber.utils.*;
-import lombok.extern.slf4j.Slf4j;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
@@ -45,17 +48,17 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
-import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -381,14 +384,14 @@ public class SharedSteps {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
-                threadWait(getWait());
+                threadWaitMilliseconds(getWait());
                 FullSentNotificationV23 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
                 Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
                 TimelineElementV23 timelineElementV23 = null;
                 for (int i = 0; i < 33; i++) {
-                    threadWait(getWorkFlowWait());
+                    threadWaitMilliseconds(getWorkFlowWait());
                     fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV23.getTimeline());
                     timelineElementV23 = fullSentNotificationV23.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
@@ -407,7 +410,7 @@ public class SharedSteps {
         boolean completed = false;
 
         while (attempts < 50) {
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             int counter = 0;
             for (Thread thread : threadList) {
                 if (!thread.isAlive()) counter++;
@@ -691,7 +694,7 @@ public class SharedSteps {
     @And("destinatario Signor casuale e:")
     public void destinatarioSignorCasualeMap(Map<String, String> data) {
 
-        threadWait(new Random().nextInt(500));
+        threadWaitMilliseconds(new Random().nextInt(500));
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(data);
         addRecipientToNotification(this.notificationRequest,
                 updateNotificationRecipient(notificationRecipientV23,
@@ -1107,12 +1110,10 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
-                threadWait(wait);
+                threadWaitMilliseconds(wait);
 
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptation(newNotificationResponse);
             });
-
-            threadWait(wait);
 
             Assertions.assertNotNull(notificationResponseComplete);
         } catch (AssertionFailedError assertionFailedError) {
@@ -1127,12 +1128,10 @@ public class SharedSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
 
-                threadWait(wait);
+                threadWaitMilliseconds(wait);
 
                 notificationResponseComplete = b2bUtils.waitForRequestNoAcceptation(newNotificationResponse);
             });
-
-            threadWait(wait);
 
             Assertions.assertNull(notificationResponseComplete);
         } catch (AssertionFailedError assertionFailedError) {
@@ -1148,13 +1147,10 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
 
-                threadWait(wait);
+                threadWaitMilliseconds(wait);
 
                 notificationResponseComplete = b2bUtils.waitForRequestAcceptationShort(newNotificationResponse);
             });
-
-
-            threadWait(wait);
 
             Assertions.assertNotNull(notificationResponseComplete);
         } catch (AssertionFailedError assertionFailedError) {
@@ -1180,8 +1176,6 @@ public class SharedSteps {
             });
             rifiutata = b2bUtils.waitForRequestNotRefused(newNotificationResponse);
 
-            threadWait(wait);
-
             Assertions.assertFalse(rifiutata);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1206,12 +1200,11 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponseV1 = b2bUtils.uploadNotificationV1(notificationRequestV1);
 
-                threadWait(getWorkFlowWait());
+                threadWaitMilliseconds(getWorkFlowWait());
 
                 notificationResponseCompleteV1 = b2bUtils.waitForRequestAcceptationV1(newNotificationResponseV1);
             });
 
-            threadWait(getWorkFlowWait());
             Assertions.assertNotNull(notificationResponseCompleteV1);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1226,12 +1219,11 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponseV2 = b2bUtils.uploadNotificationV2(notificationRequestV2);
 
-                threadWait(getWorkFlowWait());
+                threadWaitMilliseconds(getWorkFlowWait());
 
                 notificationResponseCompleteV2 = b2bUtils.waitForRequestAcceptationV2(newNotificationResponseV2);
             });
 
-            threadWait(getWorkFlowWait());
             Assertions.assertNotNull(notificationResponseCompleteV2);
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -1247,12 +1239,10 @@ public class SharedSteps {
                 notificationCreationDate = OffsetDateTime.now();
                 newNotificationResponseV21 = b2bUtils.uploadNotificationV21(notificationRequestV21);
 
-                threadWait(getWorkFlowWait());
+                threadWaitMilliseconds(getWorkFlowWait());
 
                 notificationResponseCompleteV21 = b2bUtils.waitForRequestAcceptationV21(newNotificationResponseV21);
             });
-
-            threadWait(getWorkFlowWait());
 
             Assertions.assertNotNull(notificationResponseCompleteV21);
         } catch (AssertionFailedError assertionFailedError) {
@@ -1322,8 +1312,6 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
-
             Assertions.assertNotNull(errorCode);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1340,8 +1328,6 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
-
             Assertions.assertNotNull(errorCode);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1357,8 +1343,6 @@ public class SharedSteps {
                 newNotificationResponse = b2bUtils.uploadNotificationNotEqualSha(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
-
-            threadWait(getWorkFlowWait());
 
             Assertions.assertNotNull(errorCode);
         } catch (AssertionFailedError assertionFailedError) {
@@ -1386,8 +1370,6 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
-
             Assertions.assertFalse(errorCode.isEmpty());
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -1406,8 +1388,6 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
-
             Assertions.assertFalse(errorCode.isEmpty());
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -1425,7 +1405,6 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
             Assertions.assertFalse(errorCode.isEmpty());
 
         } catch (AssertionFailedError assertionFailedError) {
@@ -1442,9 +1421,7 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
             Assertions.assertFalse(errorCode.isEmpty());
-
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1460,9 +1437,7 @@ public class SharedSteps {
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
 
-            threadWait(getWorkFlowWait());
             Assertions.assertFalse(errorCode.isEmpty());
-
 
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1477,8 +1452,6 @@ public class SharedSteps {
                 newNotificationResponse = b2bUtils.uploadNotificationOver15Allegato(notificationRequest);
                 errorCode = b2bUtils.waitForRequestRefused(newNotificationResponse);
             });
-
-            threadWait(getWorkFlowWait());
 
             Assertions.assertFalse(errorCode.isEmpty());
 
@@ -2000,15 +1973,6 @@ public class SharedSteps {
             DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         }
         return DatiPagamento;
-    }
-
-    private static void threadWait(int wait) {
-        try {
-            await().atMost(wait, TimeUnit.MILLISECONDS);
-        } catch (RuntimeException exception) {
-            log.error("await error exeption");
-            throw exception;
-        }
     }
 
     private void configureAndSendNotification(String paType, String version) {

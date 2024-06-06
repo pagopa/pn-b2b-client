@@ -27,6 +27,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.IOException;
 import java.net.URI;
 import java.time.LocalDate;
@@ -38,8 +39,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import static org.awaitility.Awaitility.await;
+
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
 
 
 @Slf4j
@@ -120,7 +121,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertDoesNotThrow(() -> {
                 notificationsUnreachableResponse = ipServiceDeskClient.notification(notificationRequest);
             });
-            threadWait(getWorkFlowWait());
+
             Assertions.assertNotNull(notificationsUnreachableResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -219,7 +220,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertDoesNotThrow(() -> {
                 operationsResponse = ipServiceDeskClient.createOperation(createOperationRequest);
             });
-            threadWait(getWorkFlowWait());
+
             Assertions.assertNotNull(operationsResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -252,7 +253,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertDoesNotThrow(() -> {
                 videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
             });
-            threadWait(getWorkFlowWait());
+
             Assertions.assertNotNull(videoUploadResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -270,7 +271,7 @@ public class ApiServiceDeskSteps {
     public void preUploadVideoResponseOperationIdNull() {
         try {
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(null, videoUploadRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -282,7 +283,7 @@ public class ApiServiceDeskSteps {
         try {
             log.error("Operation id:" + operationsResponse.getOperationId());
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationsResponse.getOperationId(), videoUploadRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -354,7 +355,7 @@ public class ApiServiceDeskSteps {
 
     @When("viene invocato il servizio SEARCH con delay")
     public void searchResponseWithDelay() {
-        threadWait(delay);
+        threadWaitMilliseconds(delay);
         searchResponseSteps();
     }
 
@@ -452,7 +453,7 @@ public class ApiServiceDeskSteps {
     @Then("il video viene caricato su SafeStorage con url scaduta")
     public void loadFileSafeStorageUrlExpired() {
         try {
-            threadWait(3720000);//aspetta 62 minuti
+            threadWaitMilliseconds(3720000);//aspetta 62 minuti
             loadFileSafeStorageSteps();
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -472,7 +473,7 @@ public class ApiServiceDeskSteps {
     public void retentionCheckPreload() {
         String key = notificationDocument.getRef().getKey();
         log.info("Resouce name" + key);
-        threadWait(900000);
+        threadWaitMilliseconds(900000);
         log.info("Fine delay");
         Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
@@ -614,7 +615,7 @@ public class ApiServiceDeskSteps {
             searchNotificationsRequest.setTaxId(CF_corretto);
             searchNotificationsRequest.setRecipientType(null);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(searchNotificationsResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1060,7 +1061,7 @@ public class ApiServiceDeskSteps {
     private void preUploadVideoResponseSteps(String operationId) {
         try {
             videoUploadResponse = ipServiceDeskClient.presignedUrlVideoUpload(operationId, videoUploadRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(videoUploadResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1075,7 +1076,7 @@ public class ApiServiceDeskSteps {
     private void createOperationResponseWithErrorSteps() {
         try {
             operationsResponse = ipServiceDeskClient.createOperation(createOperationRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(notificationsUnreachableResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1085,7 +1086,7 @@ public class ApiServiceDeskSteps {
     private void notificationsUnreachableResponseWithErrorSteps() {
         try {
             notificationsUnreachableResponse = ipServiceDeskClient.notification(notificationRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(notificationsUnreachableResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1095,7 +1096,7 @@ public class ApiServiceDeskSteps {
     private void searchResponseWithErrorSteps() {
         try {
             searchResponse = ipServiceDeskClient.searchOperationsFromTaxId(searchNotificationRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(searchResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1123,7 +1124,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertDoesNotThrow(() -> {
                 searchResponse = ipServiceDeskClient.searchOperationsFromTaxId(searchNotificationRequest);
             });
-            threadWait(getWorkFlowWait());
+
             Assertions.assertNotNull(searchResponse);
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
@@ -1138,7 +1139,7 @@ public class ApiServiceDeskSteps {
             searchNotificationsRequest.setTaxId(cf);
             searchNotificationsRequest.setRecipientType(RecipientType.PF);
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsFromTaxId(10, null, null, null, searchNotificationsRequest);
-            threadWait(getWorkFlowWait());
+            threadWaitMilliseconds(getWorkFlowWait());
             Assertions.assertNotNull(searchNotificationsResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
@@ -1388,14 +1389,5 @@ public class ApiServiceDeskSteps {
             nextPagesKey = searchNextPagesKey;
         }
         return nextPagesKey;
-    }
-
-    private void threadWait(int wait) {
-        try {
-            await().atMost(wait, TimeUnit.MILLISECONDS);
-        } catch (RuntimeException exception) {
-            log.error("Await error exception");
-            throw exception;
-        }
     }
 }

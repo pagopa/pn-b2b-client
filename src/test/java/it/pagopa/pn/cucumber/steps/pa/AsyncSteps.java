@@ -21,6 +21,8 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
+
 
 @Slf4j
 public class AsyncSteps {
@@ -51,11 +53,8 @@ public class AsyncSteps {
 
     private String generateRandomIuv(){
         int randomSleepToRandomize = new Random().nextInt(100);
-        try {
-            Thread.sleep(randomSleepToRandomize);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        threadWaitMilliseconds(randomSleepToRandomize);
+
         String threadNumber = (Thread.currentThread().getId()+"");
         String numberOfThread = threadNumber.length() < 2 ? "0"+threadNumber: threadNumber.substring(0, 2);
         String timeNano = System.nanoTime()+"";
@@ -135,11 +134,9 @@ public class AsyncSteps {
                     amountGPD = paymentInfoResponse.get(0).getAmount();
                     break;
                 }
-                try {
-                    Thread.sleep(WAITING_PAYMENT_INFO);
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
+
+                threadWaitMilliseconds(WAITING_PAYMENT_INFO);
+
             } catch (AssertionFailedError assertionFailedError) {
                 String message = assertionFailedError.getMessage() +
                         "{la posizione debitoria " + (paymentInfoResponse == null ? "NULL" : paymentInfoResponse.toString()) + " }";

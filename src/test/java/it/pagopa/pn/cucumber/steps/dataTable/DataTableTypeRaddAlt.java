@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitSeconds;
 import static it.pagopa.pn.cucumber.utils.RaddAltValue.*;
 
 
@@ -45,11 +46,8 @@ public class DataTableTypeRaddAlt {
                 .externalCode(getValue(data, RADD_EXTERNAL_CODE.key)==null?null:getValue(data, RADD_EXTERNAL_CODE.key))
                 .capacity(getValue(data, RADD_CAPACITY.key)==null?null:getValue(data, RADD_CAPACITY.key));
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return sportelloRadd;
     }
 
@@ -85,12 +83,7 @@ public class DataTableTypeRaddAlt {
 
         }
 
-
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
 
         return listaSportelli;
     }
@@ -102,11 +95,8 @@ public class DataTableTypeRaddAlt {
                 .phoneNumber(getValue(data,RADD_PHONE_NUMBER.key)==null? null:getValue(data,RADD_PHONE_NUMBER.key))
                 .openingTime(getValue(data,RADD_OPENING_TIME.key)==null? null:getValue(data,RADD_OPENING_TIME.key));
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return sportelloAggiornatoRadd;
     }
 

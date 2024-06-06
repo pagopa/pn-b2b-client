@@ -19,6 +19,8 @@ import java.io.ByteArrayInputStream;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
+
 
 @Slf4j
 public class AppIOB2bSteps {
@@ -104,14 +106,11 @@ public class AppIOB2bSteps {
                     iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
             if ((downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0)){
-                try {
-                    System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter()*3);
-                    downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
 
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
+                System.out.println("SECONDO TENTATIVO");
+                threadWaitMilliseconds(downloadResponse.getRetryAfter()*3);
+                downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachment(sharedSteps.getSentNotification().getIun(), typeDocument, selectTaxIdUser(recipient), Integer.parseInt(documents.get(0).getDocIdx()));
+
             }
             System.out.println(downloadResponse.toString());
 
@@ -157,14 +156,11 @@ public class AppIOB2bSteps {
                     iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
 
             if ((downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0)){
-                try {
-                    System.out.println("SECONDO TENTATIVO");
-                    Thread.sleep(downloadResponse.getRetryAfter()*3);
-                    downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
 
-                } catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
+                System.out.println("SECONDO TENTATIVO");
+                threadWaitMilliseconds(downloadResponse.getRetryAfter()*3);
+                downloadResponse = iPnAppIOB2bClient.getReceivedNotificationAttachmentByUrl(url, selectTaxIdUser(recipient));
+
             }
             System.out.println(downloadResponse.toString());
 

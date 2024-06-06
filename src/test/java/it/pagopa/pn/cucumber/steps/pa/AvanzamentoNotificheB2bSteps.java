@@ -32,6 +32,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
@@ -1183,12 +1185,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
 
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
 
@@ -1250,11 +1248,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void downloadLegalFactPecRecipient(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         TimelineElementV23 timelineElement = null;
 
@@ -1324,11 +1318,8 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void downloadLegalFactId(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
 
@@ -1417,22 +1408,15 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
     public void notificationPriceAndDateVerification(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         priceVerification(price, null, 0);
     }
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica {string}")
     public void notificationPriceAndDateVerificationV1(String price,String versione) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         if(versione.equalsIgnoreCase("V1")) {
             priceVerificationV1(price, null, 0);
@@ -1445,33 +1429,22 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica V2")
     public void notificationPriceAndDateVerificationV2(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         priceVerificationV2(price, null, 0);
     }
 
     @Then("viene verificato il costo = {string} della notifica")
     public void notificationPriceVerification(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         priceVerification(price, null, 0);
     }
 
     @And("viene verificato il costo = {string} della notifica con un errore {string}")
     public void attachmentRetrievedError(String price, String errorCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
+
         try {
             priceVerification(price, null, 0);
         } catch (HttpStatusCodeException e) {
@@ -1484,11 +1457,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato il costo = {string} della notifica per l'utente {int}")
     public void notificationPriceVerificationPerDestinatario(String price, Integer destinatario) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         priceVerification(price, null, destinatario);
     }
@@ -1601,11 +1570,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene calcolato il costo = {string} della notifica per l'utente {int}")
     public void notificationPriceProcessPerDestinatario(String price, Integer destinatario) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitMilliseconds(sharedSteps.getWait() * 2);
 
         priceVerificationProcessCost(price, null, destinatario);
     }
@@ -1657,11 +1622,6 @@ public class AvanzamentoNotificheB2bSteps {
                 webRecipientClient.getReceivedNotification(iun, null);
             });
 
-        try {
-            Thread.sleep(sharedSteps.getWorkFlowWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
     }
 
     @And("{string} legge la notifica ricevuta {string}")
@@ -1677,11 +1637,7 @@ public class AvanzamentoNotificheB2bSteps {
                 webRecipientClient.getReceivedNotificationV2(iun, null);
         }
 
-            try {
-                Thread.sleep(sharedSteps.getWorkFlowWait());
-            } catch (InterruptedException exc) {
-                throw new RuntimeException(exc);
-            }
+        threadWaitMilliseconds(sharedSteps.getWorkFlowWait());
 
        }catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
@@ -1694,11 +1650,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
     public void  verifiedThatTheKeyOfTheLegalFactIs(String legalFactCategory, String key) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
         TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())).findAny().orElse(null);
@@ -2496,7 +2449,7 @@ public class AvanzamentoNotificheB2bSteps {
             OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
             long remainingTime = ChronoUnit.MILLIS.between(currentDate, schedulingDate);
             if (remainingTime > 0) {
-                Thread.sleep(remainingTime + 30 * 1000);
+                threadWaitMilliseconds(remainingTime + 30 * 1000);
             }
             // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
@@ -2516,7 +2469,7 @@ public class AvanzamentoNotificheB2bSteps {
             OffsetDateTime currentDate = now().atZoneSameInstant(ZoneId.of("UTC")).toOffsetDateTime();
             Long remainingTime = ChronoUnit.MILLIS.between(currentDate, nextSend);
             if (remainingTime > 0) {
-                Thread.sleep(remainingTime + 30 * 1000);
+                threadWaitMilliseconds(remainingTime + 30 * 1000);
             }
             // get the updated notification
             sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
@@ -2647,11 +2600,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("download attestazione opponibile AAR")
     public void downloadLegalFactIdAAR() {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         TimelineElementCategoryV23 timelineElementInternalCategory= TimelineElementCategoryV23.AAR_GENERATION;
         TimelineElementV23 timelineElement = null;
@@ -3155,11 +3104,7 @@ try{
     }
 
     private LegalFactDownloadMetadataResponse takeLegalFact(String legalFactCategory, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+        threadWaitMilliseconds(sharedSteps.getWait());
 
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
 

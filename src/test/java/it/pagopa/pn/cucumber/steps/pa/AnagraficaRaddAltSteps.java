@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 import static it.pagopa.pn.cucumber.utils.RaddAltValue.*;
 
@@ -133,11 +134,8 @@ public class AnagraficaRaddAltSteps {
                 break;
             }
 
-            try {
-                Thread.sleep(WAITING_STATE_CSV);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            threadWaitMilliseconds(WAITING_STATE_CSV);
+
         }
 
         try {
@@ -250,11 +248,7 @@ public class AnagraficaRaddAltSteps {
 
         for (int i = 0; i < NUM_CHECK_STATE_CSV; i++) {
 
-            try {
-                Thread.sleep(WAITING_STATE_CSV);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            threadWaitMilliseconds(WAITING_STATE_CSV);
 
             it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RequestResponse sportello= raddAltClient.retrieveRequestItems(
                     this.uid
@@ -265,11 +259,8 @@ public class AnagraficaRaddAltSteps {
             dato= sportello.getItems().stream().filter(elem->elem.getRequestId().equalsIgnoreCase(this.requestid) && elem.getStatus().equalsIgnoreCase(status)).findAny().orElse(null);
 
             if(status.equalsIgnoreCase("accepted")){
-                try {
-                    Thread.sleep(20000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                threadWaitMilliseconds(20000);
+
             }
 
             if (dato!=null && dato.getStatus().equalsIgnoreCase(status)) {

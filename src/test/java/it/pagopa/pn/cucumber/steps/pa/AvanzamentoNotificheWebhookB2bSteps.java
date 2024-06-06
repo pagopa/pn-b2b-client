@@ -1499,9 +1499,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private void sleepTest(){
         sleepTest(sharedSteps.getWait());
     }
-    private void sleepTest(int wait){
-       sleepTest(Long.valueOf(wait));
-    }
+
     private void sleepTest(long wait){
         try {
             Thread.sleep(wait);

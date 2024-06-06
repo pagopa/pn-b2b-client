@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitMilliseconds;
+import static it.pagopa.pn.cucumber.steps.utilitySteps.ThreadUtils.threadWaitSeconds;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 
 
@@ -54,11 +56,8 @@ public class DataTableTypeUtil {
 
         notificationRequest = addDocument(notificationRequest,data);
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return notificationRequest;
     }
 
@@ -135,11 +134,9 @@ public class DataTableTypeUtil {
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PagoPaIntModeEnum.SYNC :
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest.PagoPaIntModeEnum.NONE )))
         );
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        threadWaitSeconds(2);
+
         return notificationRequestV1;
     }
 
@@ -174,11 +171,9 @@ public class DataTableTypeUtil {
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.SYNC :
                                         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest.PagoPaIntModeEnum.NONE )))
         );
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        threadWaitSeconds(2);
+
         return notificationRequestV2;
     }
 
@@ -220,11 +215,8 @@ public class DataTableTypeUtil {
         //.vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
 
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return notificationRequest;
     }
 
@@ -266,12 +258,8 @@ public class DataTableTypeUtil {
         if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
             listPayment = new ArrayList<NotificationPaymentItem>();
             for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
+                threadWaitMilliseconds(1000);
+
                 NotificationPaymentItem addPaymentsItem = new NotificationPaymentItem();
                 addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
                         (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
@@ -331,11 +319,8 @@ public class DataTableTypeUtil {
         }
 
          */
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return notificationRecipient;
     }
 
@@ -477,11 +462,8 @@ public class DataTableTypeUtil {
         }
 
          */
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return notificationRecipient;
     }
 
@@ -536,11 +518,9 @@ public class DataTableTypeUtil {
         }
 
          */
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        threadWaitSeconds(2);
+
         return notificationRecipientV2;
     }
 
@@ -581,12 +561,9 @@ public class DataTableTypeUtil {
         if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
             listPayment = new ArrayList<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem>();
             for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
-                try {
-                    Thread.sleep(1000);
-                }
-                catch (InterruptedException exc) {
-                    throw new RuntimeException(exc);
-                }
+
+                threadWaitMilliseconds(1000);
+
                 it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem addPaymentsItem = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem();
                 addPaymentsItem.pagoPa(getValue(data, PAYMENT_PAGOPA_FORM.key) == null ? null :
                         (getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NO") ?
@@ -619,11 +596,8 @@ public class DataTableTypeUtil {
             notificationRecipient.setPayments(listPayment);
         }
 
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        threadWaitSeconds(2);
+
         return notificationRecipient;
     }
 
