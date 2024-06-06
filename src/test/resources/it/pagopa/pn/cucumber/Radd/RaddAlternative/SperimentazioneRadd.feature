@@ -74,7 +74,7 @@ Feature: Sperimentazione Radd wave 1
     And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
 
 
-#Non è uguale al RADD_WAVE_2 o RADD_WAVE_5 ?
+#Da vedere se doppio o da cambiare
 #[RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione
 
 
