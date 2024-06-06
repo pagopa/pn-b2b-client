@@ -15,6 +15,7 @@ public class PnPollingParameter {
     private UUID streamId;
     private String value;
     private String lastEventId;
+    private Boolean isRefusedFileNotFound;
     private PollingType pollingType;
     public enum PollingType {SLOW, RAPID, SHORT}
     private PnPollingPredicate pnPollingPredicate;

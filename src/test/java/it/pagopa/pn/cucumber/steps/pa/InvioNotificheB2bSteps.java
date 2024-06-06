@@ -13,8 +13,10 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalChannelsServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.*;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
@@ -23,6 +25,8 @@ import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -31,6 +35,9 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -39,9 +46,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
-
-import static org.awaitility.Awaitility.await;
-
+import static java.time.OffsetDateTime.now;
 
 @Slf4j
 public class InvioNotificheB2bSteps {
@@ -65,7 +70,6 @@ public class InvioNotificheB2bSteps {
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
-
     private final JavaMailSender emailSender;
 
 
@@ -78,7 +82,6 @@ public class InvioNotificheB2bSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.pnPaymentInfoClientImpl =sharedSteps.getPnPaymentInfoClientImpl();
         this.pnExternalChannelsServiceClientImpl=pnExternalChannelsServiceClientImpl;
-
         this.emailSender = emailSender;
     }
 
@@ -176,10 +179,10 @@ public class InvioNotificheB2bSteps {
 
 
                 try {
-                    await().atMost(sharedSteps.getWorkFlowWait(), TimeUnit.MILLISECONDS);
-                } catch (RuntimeException exc) {
-                    log.error(exc.getMessage());
-                    throw exc;
+                    Thread.sleep(sharedSteps.getWorkFlowWait());
+                } catch (InterruptedException exception) {
+                    log.error(exception.getMessage());
+                    throw new RuntimeException(exception);
                 }
             }
 
@@ -492,12 +495,12 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
 
                 if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
                     try {
-                        await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
+                        Thread.sleep(downloadResponse.getRetryAfter() * 3L);
                         this.downloadResponse = b2bClient
                                 .getSentNotificationAttachment(iun, destinatario, type, 0);
-                    } catch (RuntimeException exc) {
-                        log.error(exc.getMessage());
-                        throw exc;
+                    } catch (InterruptedException exception) {
+                        log.error(exception.getMessage());
+                        throw new RuntimeException(exception);
                     }
                 }
             }
@@ -627,8 +630,8 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         return retentionTime == between;
     }
 
-    private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws RuntimeException {
-        await().atMost(120000, TimeUnit.MILLISECONDS);
+    private boolean checkRetention(String fileKey, Integer retentionTime, OffsetDateTime timelineEventTimestamp) throws InterruptedException {
+        Thread.sleep(2 * 60 * 1000);
         PnExternalServiceClientImpl.SafeStorageResponse safeStorageResponse = safeStorageClient.safeStorageInfo(fileKey);
         System.out.println(safeStorageResponse);
         OffsetDateTime timelineEventDate = timelineEventTimestamp.atZoneSameInstant(ZoneId.of("Z")).toOffsetDateTime();

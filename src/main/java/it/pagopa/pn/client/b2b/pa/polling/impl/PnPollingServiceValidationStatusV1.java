@@ -17,9 +17,9 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
+@Slf4j
 @Service(PnPollingStrategy.VALIDATION_STATUS_V1)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-@Slf4j
 public class PnPollingServiceValidationStatusV1 extends PnPollingTemplate<PnPollingResponseV1> {
     private final IPnPaB2bClient b2bClient;
     private NewNotificationRequestStatusResponse requestStatusResponseV1;

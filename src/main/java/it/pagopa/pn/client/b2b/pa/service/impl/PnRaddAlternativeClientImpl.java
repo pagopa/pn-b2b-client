@@ -18,6 +18,7 @@ import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.api_AnagraficaCRUD.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -27,6 +28,11 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
+
+    private final ApplicationContext ctx;
+    private final RestTemplate restTemplate;
+
+    private final String basePath;
     private final String raddista1;
     private final String raddista2;
     private final String raddistaNonCensito;
@@ -35,7 +41,9 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private final String raddistaAudErrato;
     private final String raddistaJwtKidDiverso;
     private final String raddistaJwtPrivateDiverso;
-    private final AuthTokenRaddType issuerTokenSetted;
+
+    private AuthTokenRaddType issuerTokenSetted = AuthTokenRaddType.ISSUER_1;
+
     private final ActOperationsApi actOperationsApi;
     private final AorOperationsApi aorOperationsApi;
     private final DocumentOperationsApi documentOperationsApi;
@@ -46,8 +54,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
     private final RegistryApi apiAnagraficaCRUD;
 
 
-    public PnRaddAlternativeClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.radd.alt.external.base-url}") String basePath,
+    public PnRaddAlternativeClientImpl(ApplicationContext ctx, RestTemplate restTemplate, @Value("${pn.radd.alt.external.base-url}") String basePath,
                                        @Value("${pn.external.bearer-token-radd-1}") String raddista1,
                                        @Value("${pn.external.bearer-token-radd-2}") String raddista2,
                                        @Value("${pn.external.bearer-token-radd-non-censito}") String raddistaNonCensito,
@@ -56,6 +63,9 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
                                        @Value("${pn.external.bearer-token-radd-aud-erratto}") String raddistaAudErrato,
                                        @Value("${pn.external.bearer-token-radd-kid-diverso}") String raddistaJwtKidDiverso,
                                        @Value("${pn.external.bearer-token-radd-privateKey-diverso}") String raddistaJwtPrivateDiverso) {
+        this.ctx = ctx;
+        this.restTemplate = restTemplate;
+        this.basePath = basePath;
         this.raddista1 = raddista1;
         this.raddista2 = raddista2;
         this.raddistaNonCensito = raddistaNonCensito;
@@ -85,6 +95,7 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + token);
         return newApiClient;
     }
+
 
     public void selectRaddista(String token){
         this.actOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer " + token);
