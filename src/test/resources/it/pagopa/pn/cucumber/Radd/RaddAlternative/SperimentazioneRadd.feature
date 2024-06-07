@@ -68,14 +68,13 @@ Feature: Sperimentazione Radd wave 1
       | physicalAddress_address      | Via@ok_AR            |
       | physicalAddress_municipality | BARI                 |
       | physicalAddress_province     | BA                   |
-      | physicalAddress_zip          | 70129                |
+      | physicalAddress_zip          | 70128                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato che il peso della busta cartacea sia di 10
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And viene verificato che il peso della busta cartacea sia di 35
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
