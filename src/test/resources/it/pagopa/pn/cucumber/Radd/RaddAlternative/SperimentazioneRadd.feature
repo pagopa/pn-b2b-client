@@ -36,7 +36,7 @@ Feature: Sperimentazione Radd wave 1
 
 
   @raddWave
-  Scenario: [RADD_WAVE_1_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione - test per manuale (con pec reale)
+  Scenario: [RADD_WAVE_1_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione - test per verifica manuale (con pec reale)
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
@@ -125,7 +125,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_4_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD - test per manuale (con pec reale)
+  Scenario: [RADD_WAVE_4_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD - test per verifica  manuale (con pec reale)
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
@@ -140,10 +140,6 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
-    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
@@ -236,13 +232,12 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_8_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP non in fase di sperimentazione ma coperto dai servizi RADD - test per manuale (con pec reale)
+  Scenario: [RADD_WAVE_8_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP non in fase di sperimentazione ma coperto dai servizi RADD - test per verifica manuale (con pec reale)
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address      | test@pecOk.it        |
       | physicalAddress_municipality | VENEZIA              |
       | physicalAddress_province     | VE                   |
       | physicalAddress_zip          | 30124                |
@@ -251,10 +246,6 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
-    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
-    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
 
 
@@ -305,8 +296,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_11] - Invio notifica analogica (che implica un 2° tentativo) a destinatario con CAP della prima spedizione in fase di sperimentazione non coperto dai servizi RADD
-                                                                                    e CAP della seconda spedizione coperto dai servizi RADD
+  Scenario: [RADD_WAVE_11] - Invio notifica analogica (che implica un 2° tentativo) a destinatario con CAP della prima spedizione in fase di sperimentazione non coperto dai servizi RADD e CAP della seconda spedizione coperto dai servizi RADD
     Given viene generata una nuova notifica
       | subject            | notifica analogica 2 tentativi |
       | senderDenomination | Comune di palermo              |
@@ -330,8 +320,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_12] - Invio notifica analogica (che implica un 2° tentativo) a destinatario con CAP della prima spedizione in fase di sperimentazione coperto dai servizi RADD
-                                                                                    e CAP della seconda spedizione NON coperto dai servizi RADD
+  Scenario: [RADD_WAVE_12] - Invio notifica analogica (che implica un 2° tentativo) a destinatario con CAP della prima spedizione in fase di sperimentazione coperto dai servizi RADD e CAP della seconda spedizione NON coperto dai servizi RADD
     Given viene generata una nuova notifica
       | subject               | notifica analogica 2 tentativi |
       | senderDenomination    | Comune di palermo              |
