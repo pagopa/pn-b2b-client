@@ -3279,4 +3279,14 @@ try{
         sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+    @And ("viene verificato che il peso della busta cartacea sia di {int}")
+    public void verificaCostoePesoInvioCartaceo(Integer peso){
+        TimelineElementV23 timeline= sharedSteps.getTimelineElementV23();
+        try {
+            Assertions.assertEquals(peso,timeline.getDetails().getEnvelopeWeight());
+        }catch(AssertionFailedError assertionFailedError){
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
 }
