@@ -176,8 +176,7 @@ Feature: Sperimentazione Radd wave 1
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
-    Then download attestazione opponibile AAR
-    Then viene controllato il contenuto del file per verificare se il tipo è "AAR"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
 
   @raddWave @ignore
   Scenario: [RADD_WAVE_10] - Invio notifica analogica a destinatario con stato estero ma CAP coincidente a uno di quelli presenti in sperimentazione

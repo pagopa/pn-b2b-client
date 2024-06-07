@@ -59,7 +59,6 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
-//    private final String PN_AAR = "PN_AAR";
 
 
     @Autowired
@@ -2658,10 +2657,10 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("download attestazione opponibile AAR")
     public void downloadLegalFactIdAAR() {
-        getLegalFactIdAARbyType("PN_AAR");
+        getLegalFactIdAAR("PN_AAR");
     }
 
-    public LegalFactDownloadMetadataResponse getLegalFactIdAARbyType(String aarType) {
+    public LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
         AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
         try {
             Thread.sleep(sharedSteps.getWait());
@@ -2699,27 +2698,9 @@ public class AvanzamentoNotificheB2bSteps {
         return legalFactDownloadMetadataResponse.get();
     }
 
-//    @Then("viene controllato il contenuto del file per verificare se la tipologia coincide con AAR RADD")
-//    public void vieneControllatoIlContenutoDelFilePerVerificareSeLaTipologiaCoincideConAARRADD() {
-//        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType(PN_AAR);
-//        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
-//        Assertions.assertNotNull(source);
-//        boolean isAarRaddType = checkTypeAAR(source, PN_AAR);
-//        Assertions.assertTrue(isAarRaddType);
-//    }
-//
-//    @Then("viene controllato il contenuto del file per verificare se la tipologia coincide con AAR")
-//    public void vieneControllatoIlContenutoDelFilePerVerificareSeLaTipologiaCoincideConAAR() {
-//        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType(PN_AAR);
-//        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
-//        Assertions.assertNotNull(source);
-//        boolean isAarType = checkTypeAAR(source, PN_AAR);
-//        Assertions.assertTrue(isAarType);
-//    }
-
-    @Then("viene controllato il contenuto del file per verificare se il tipo è {string}")
-    public void vieneControllatoIlContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
-        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType("PN_AAR");
+    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
+    public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
+        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
         byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
         Assertions.assertNotNull(source);
         boolean isAarType = checkTypeAAR(source, aarType);
@@ -2741,7 +2722,6 @@ public class AvanzamentoNotificheB2bSteps {
             if(aarType.equals("AAR")) {
                 //check if ' CAF ' pattern exist 0 time
                 regex = "^(?!.*(?<=\\s)CAF(?=\\s)).*$";
-    //              regex = "^\\sCAF\\s$";
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(extractedText);
                 while(matcher.find()) {
