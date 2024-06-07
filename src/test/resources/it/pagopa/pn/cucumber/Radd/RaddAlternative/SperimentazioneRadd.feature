@@ -19,6 +19,7 @@ Feature: Sperimentazione Radd wave 1
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
     And destinatario Mario Gherkin e:
+      | digitalDomicile_address      | test@pecOk.it        |
       | physicalAddress_municipality | BARI                 |
       | physicalAddress_province     | BA                   |
       | physicalAddress_zip          | 70129                |
@@ -31,6 +32,26 @@ Feature: Sperimentazione Radd wave 1
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
     And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
+
+
+  @raddWave
+  Scenario: [RADD_WAVE_1_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione - test per manuale (con pec reale)
+    Given viene generata una nuova notifica
+      | subject            | notifica digitale |
+      | senderDenomination | Comune di palermo |
+      | feePolicy          | DELIVERY_MODE     |
+      | document           | DOC_1_PG;         |
+    And destinatario Mario Gherkin e:
+      | physicalAddress_municipality | BARI                 |
+      | physicalAddress_province     | BA                   |
+      | physicalAddress_zip          | 70129                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
@@ -82,6 +103,30 @@ Feature: Sperimentazione Radd wave 1
 
   @raddWave
 Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD
+    Given viene generata una nuova notifica
+      | subject            | notifica digitale |
+      | senderDenomination | Comune di palermo |
+      | feePolicy          | DELIVERY_MODE     |
+      | document           | DOC_1_PG;         |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address      | test@pecOk.it        |
+      | physicalAddress_municipality | BARI                 |
+      | physicalAddress_province     | BA                   |
+      | physicalAddress_zip          | 70123                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
+
+
+  @raddWave
+  Scenario: [RADD_WAVE_4_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP in fase di sperimentazione ma non coperto dai servizi RADD - test per manuale (con pec reale)
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
@@ -170,6 +215,29 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
   @raddWave
   Scenario: [RADD_WAVE_8] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP non in fase di sperimentazione ma coperto dai servizi RADD
+    Given viene generata una nuova notifica
+      | subject            | notifica digitale |
+      | senderDenomination | Comune di palermo |
+      | feePolicy          | DELIVERY_MODE     |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address      | test@pecOk.it        |
+      | physicalAddress_municipality | VENEZIA              |
+      | physicalAddress_province     | VE                   |
+      | physicalAddress_zip          | 30124                |
+      | payment_f24                  | PAYMENT_F24_STANDARD |
+      | title_payment                | F24_STANDARD_GHERKIN |
+      | apply_cost_f24               | SI                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 4 allegati
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
+    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
+
+
+  @raddWave
+  Scenario: [RADD_WAVE_8_1] - Invio notifica digitale (1° tentativo OK) a destinatario con CAP non in fase di sperimentazione ma coperto dai servizi RADD - test per manuale (con pec reale)
     Given viene generata una nuova notifica
       | subject            | notifica digitale |
       | senderDenomination | Comune di palermo |
