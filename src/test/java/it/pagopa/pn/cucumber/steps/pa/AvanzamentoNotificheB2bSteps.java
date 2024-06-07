@@ -2703,43 +2703,23 @@ public class AvanzamentoNotificheB2bSteps {
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
         byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
         Assertions.assertNotNull(source);
-        boolean isAarType = checkTypeAAR(source, aarType);
-        Assertions.assertTrue(isAarType);
+        Assertions.assertTrue(checkTypeAAR(source, aarType));
     }
 
     private boolean checkTypeAAR(byte[] source, String aarType) {
-        String extractedText = null;
+        Pattern pattern = Pattern.compile("\\s(CAF)\\s");
         try (final PDDocument document = Loader.loadPDF(source)) {
             final PDFTextStripper pdfStripper = new PDFTextStripper();
             pdfStripper.setSortByPosition(true);
-            extractedText = pdfStripper.getText(document);
+            String extractedText = pdfStripper.getText(document);
+            Matcher matcher = pattern.matcher(extractedText);
+            if(aarType.equals("AAR")) {  //if AAR then check ' CAF ' pattern NOT exist
+                return !matcher.find();
+            } else if(aarType.equals("AAR RADD")) { //if AAR RADD then check ' CAF ' pattern exist
+                return matcher.find();
+            }
         } catch (Exception exception) {
             log.error("Error parsing PDF {}", exception);
-        }
-
-        if(extractedText != null) {
-            String regex;
-            if(aarType.equals("AAR")) {
-                //check if ' CAF ' pattern exist 0 time
-                regex = "^(?!.*(?<=\\s)CAF(?=\\s)).*$";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(extractedText);
-                while(matcher.find()) {
-                    if(matcher.groupCount() == 0) {
-                        return true;
-                    }
-                }
-            } else if(aarType.equals("AAR RADD")){
-                //check if ' CAF ' pattern exist exactly one time
-                regex = "(?<=\\s)CAF(?=\\s)";
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(extractedText);
-                while(matcher.find()) {
-                    if(matcher.groupCount() == 1) {
-                        return true;
-                    }
-                }
-            }
         }
         return false;
     }
