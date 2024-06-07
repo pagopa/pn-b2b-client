@@ -4,6 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
@@ -20,6 +21,9 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +36,18 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
+    @Autowired
+    private PnPaB2bUtils utils;
     private final IPnPaB2bClient b2bClient;
     private final SharedSteps sharedSteps;
     private final IPnWebRecipientClient webRecipientClient;
@@ -49,6 +59,7 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
+//    private final String PN_AAR = "PN_AAR";
 
 
     @Autowired
@@ -1379,7 +1390,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void checksNotificationViewedStatus() {
-        String status = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED.getValue();
+        String status = NotificationStatus.VIEWED.getValue();
         PnPollingServiceStatusRapidV23 statusRapidV23 = (PnPollingServiceStatusRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
 
         PnPollingResponseV23 pnPollingResponseV23 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
@@ -1747,7 +1758,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1766,7 +1777,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1805,7 +1816,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(noticeCode);
             paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1844,7 +1855,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(noticeCode);
             paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1869,7 +1880,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1888,7 +1899,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotificationV1().getRecipients().get(0).getPayment().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1912,7 +1923,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(notificationPaymentItem.getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(notificationPaymentItem.getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
             paymentEventPagoPaList.add(paymentEventPagoPa);
         }
@@ -1933,7 +1944,7 @@ public class AvanzamentoNotificheB2bSteps {
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+        paymentEventPagoPa.setPaymentDate(fmt.format(now()));
         paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -2647,6 +2658,11 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("download attestazione opponibile AAR")
     public void downloadLegalFactIdAAR() {
+        getLegalFactIdAARbyType("PN_AAR");
+    }
+
+    public LegalFactDownloadMetadataResponse getLegalFactIdAARbyType(String aarType) {
+        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
@@ -2658,7 +2674,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
 
-            if (element.getCategory().equals(timelineElementInternalCategory)) {
+            if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
             }
@@ -2666,19 +2682,86 @@ public class AvanzamentoNotificheB2bSteps {
 
         Assertions.assertNotNull(timelineElement);
         String keySearch = null;
-        if (timelineElement.getDetails().getGeneratedAarUrl() != null && !timelineElement.getDetails().getGeneratedAarUrl().isEmpty()) {
+        if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
 
-            if (timelineElement.getDetails().getGeneratedAarUrl().contains("PN_AAR")) {
-                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf("PN_AAR"));
+            if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
+                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
             }
 
             String finalKeySearch = keySearch;
             try {
-                Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));
+                Assertions.assertDoesNotThrow(() -> {
+                    legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));});
             } catch (AssertionFailedError assertionFailedError) {
                 sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
             }
         }
+        return legalFactDownloadMetadataResponse.get();
+    }
+
+//    @Then("viene controllato il contenuto del file per verificare se la tipologia coincide con AAR RADD")
+//    public void vieneControllatoIlContenutoDelFilePerVerificareSeLaTipologiaCoincideConAARRADD() {
+//        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType(PN_AAR);
+//        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+//        Assertions.assertNotNull(source);
+//        boolean isAarRaddType = checkTypeAAR(source, PN_AAR);
+//        Assertions.assertTrue(isAarRaddType);
+//    }
+//
+//    @Then("viene controllato il contenuto del file per verificare se la tipologia coincide con AAR")
+//    public void vieneControllatoIlContenutoDelFilePerVerificareSeLaTipologiaCoincideConAAR() {
+//        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType(PN_AAR);
+//        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+//        Assertions.assertNotNull(source);
+//        boolean isAarType = checkTypeAAR(source, PN_AAR);
+//        Assertions.assertTrue(isAarType);
+//    }
+
+    @Then("viene controllato il contenuto del file per verificare se il tipo è {string}")
+    public void vieneControllatoIlContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
+        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAARbyType("PN_AAR");
+        byte[] source = utils.downloadFile(legalFactDownloadMetadataResponse.getUrl());
+        Assertions.assertNotNull(source);
+        boolean isAarType = checkTypeAAR(source, aarType);
+        Assertions.assertTrue(isAarType);
+    }
+
+    private boolean checkTypeAAR(byte[] source, String aarType) {
+        String extractedText = null;
+        try (final PDDocument document = Loader.loadPDF(source)) {
+            final PDFTextStripper pdfStripper = new PDFTextStripper();
+            pdfStripper.setSortByPosition(true);
+            extractedText = pdfStripper.getText(document);
+        } catch (Exception exception) {
+            log.error("Error parsing PDF {}", exception);
+        }
+
+        if(extractedText != null) {
+            String regex;
+            if(aarType.equals("AAR")) {
+                //check if ' CAF ' pattern exist 0 time
+                regex = "^(?!.*(?<=\\s)CAF(?=\\s)).*$";
+    //              regex = "^\\sCAF\\s$";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(extractedText);
+                while(matcher.find()) {
+                    if(matcher.groupCount() == 0) {
+                        return true;
+                    }
+                }
+            } else if(aarType.equals("AAR RADD")){
+                //check if ' CAF ' pattern exist exactly one time
+                regex = "(?<=\\s)CAF(?=\\s)";
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(extractedText);
+                while(matcher.find()) {
+                    if(matcher.groupCount() == 1) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} e verifica indirizzo secondo tentativo {string}")
@@ -3214,8 +3297,6 @@ try{
             Assertions.assertEquals(peso,timeline.getDetails().getEnvelopeWeight());
         }catch(AssertionFailedError assertionFailedError){
         sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
-    }
-
-
 }
