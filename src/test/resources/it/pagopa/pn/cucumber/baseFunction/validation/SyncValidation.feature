@@ -1105,7 +1105,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400"
 
   @syncValidation
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_74] validazione sincrona campo details_digitalAddress -PN-11485
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_77] validazione sincrona campo digitalDomicile_address domicilio digitale speciale -PN-11485
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
@@ -1118,7 +1118,7 @@ Feature: verifica validazione sincrona
 
     #Test utilizzato per verificare l'errore prima della fix
   @syncValidation @ignore
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_75] validazione sincrona campo details_digitalAddress -PN-11485
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_78] validazione sincrona campo digitalDomicile_address domicilio digitale speciale -PN-11485
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
