@@ -611,6 +611,7 @@ public class RaddAltSteps {
         HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
         log.debug("quickAccessLink: {}",quickAccessLink.toString());
         String qrcode = "qrCode = " + quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]) + "\n";
+        Assertions.assertNotNull(qrcode);
         log.debug("qrCode: {}", qrcode);
     }
 
