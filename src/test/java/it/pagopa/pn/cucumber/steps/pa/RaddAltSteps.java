@@ -610,8 +610,8 @@ public class RaddAltSteps {
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
         HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
         log.debug("quickAccessLink: {}",quickAccessLink.toString());
-        this.qrCode = quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]);
-        log.debug("qrCode: {}",qrCode);
+        String qrcode = "qrCode = " + quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]) + "\n";
+        log.debug("qrCode: {}", qrcode);
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
