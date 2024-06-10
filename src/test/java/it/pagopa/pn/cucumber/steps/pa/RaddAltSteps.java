@@ -28,8 +28,11 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
 
@@ -610,9 +613,11 @@ public class RaddAltSteps {
     public void vieneRichiestoIlCodiceQRPerLoIUN(String iun, Integer destinatario) {
         HashMap<String, String> quickAccessLink = externalServiceClient.getQuickAccessLink(iun);
         log.debug("quickAccessLink: {}",quickAccessLink.toString());
-        String qrcode = "qrCode = " + quickAccessLink.get(quickAccessLink.keySet().toArray()[destinatario]) + "\n";
-        Assertions.assertNotNull(qrcode);
-        log.debug("qrCode: {}", qrcode);
+        if(String.valueOf(destinatario).matches("[0-9]")) {
+            String qrcode = "qrCode = " + new ArrayList<>(quickAccessLink.values()).get(destinatario) + "\r\n";
+            Assertions.assertNotNull(qrcode);
+            log.debug("qrCode: {}", qrcode);
+        }
     }
 
     @When("L'operatore scansione il qrCode per recuperare gli atti da radd alternative")
