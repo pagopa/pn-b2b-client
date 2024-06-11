@@ -302,15 +302,17 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | senderDenomination | Comune di palermo              |
       | feePolicy          | DELIVERY_MODE                  |
       | document           | DOC_1_PG;                      |
-    And destinatario Mario Cucumber e:
-      | digitalDomicile              | NULL                   |
-      | physicalAddress_address      | Via@FAIL-Discovery_890 |
-      | physicalAddress_municipality | NAPOLI                 |
-      | physicalAddress_province     | NA                     |
-      | physicalAddress_zip          | 80124                  |
-      | payment_f24                  | PAYMENT_F24_STANDARD   |
-      | title_payment                | F24_STANDARD_GHERKIN   |
-      | apply_cost_f24               | SI                     |
+    And destinatario
+      | denomination                 | Alessandro Manzoni        |
+      | taxId                        | MNZLSN99E05F205J          |
+      | digitalDomicile              | NULL                      |
+      | physicalAddress_address      | Via@FAIL-IRREPERIBILE_890 |
+      | physicalAddress_municipality | NAPOLI                    |
+      | physicalAddress_province     | NA                        |
+      | physicalAddress_zip          | 80124                     |
+      | payment_f24                  | PAYMENT_F24_STANDARD      |
+      | title_payment                | F24_STANDARD_GHERKIN      |
+      | apply_cost_f24               | SI                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
     And viene verificato che il peso della busta cartacea sia di 35
