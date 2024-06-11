@@ -163,7 +163,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_61] - Invio notifica digitale (fallimento invii, quindi RS) a destinatario con CAP in fase di sperimentazione, coperto dai servizi RADD
+  Scenario: [RADD_WAVE_6] - Invio notifica digitale (fallimento invii, quindi RS) a destinatario con CAP in fase di sperimentazione, coperto dai servizi RADD
     Given viene generata una nuova notifica
       | subject            | notifica fallimento digitale |
       | senderDenomination | Comune di palermo            |
