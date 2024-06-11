@@ -30,8 +30,7 @@ Feature: Sperimentazione Radd wave 1
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
@@ -119,8 +118,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR RADD"
 
 
@@ -226,8 +224,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     Then si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati
     And si verifica il contenuto della pec abbia 1 attachment di tipo "AAR"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "NOTIFICATION_ATTACHMENTS"
-    And si verifica il contenuto della pec abbia 1 attachment di tipo "F24"
+    And si verifica il contenuto della pec abbia 2 attachment di tipo "NOTIFICATION_ATTACHMENTS"
     Then download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è "AAR"
 
 
