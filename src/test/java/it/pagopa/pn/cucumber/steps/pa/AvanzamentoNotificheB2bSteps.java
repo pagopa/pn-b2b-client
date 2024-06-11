@@ -2707,7 +2707,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private boolean checkTypeAAR(byte[] source, String aarType) {
-        Pattern pattern = Pattern.compile("\\s(CAF)\\s");
+        Pattern pattern = Pattern.compile("\\((CAF)\\s");
         try (final PDDocument document = Loader.loadPDF(source)) {
             final PDFTextStripper pdfStripper = new PDFTextStripper();
             pdfStripper.setSortByPosition(true);
