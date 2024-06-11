@@ -66,9 +66,9 @@ Feature: Sperimentazione Radd wave 1
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_AR            |
-      | physicalAddress_municipality | BARI                 |
-      | physicalAddress_province     | BA                   |
-      | physicalAddress_zip          | 70128                |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -88,9 +88,9 @@ Feature: Sperimentazione Radd wave 1
     And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
-      | physicalAddress_municipality | BARI                 |
-      | physicalAddress_province     | BA                   |
-      | physicalAddress_zip          | 70121                |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -109,9 +109,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | document           | DOC_1_PG;         |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@pecOk.it        |
-      | physicalAddress_municipality | BARI                 |
-      | physicalAddress_province     | BA                   |
-      | physicalAddress_zip          | 70123                |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -132,9 +132,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | feePolicy          | DELIVERY_MODE     |
       | document           | DOC_1_PG;         |
     And destinatario Mario Gherkin e:
-      | physicalAddress_municipality | BARI                 |
-      | physicalAddress_province     | BA                   |
-      | physicalAddress_zip          | 70123                |
+      | physicalAddress_municipality | NAPOLI               |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80124                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -165,7 +165,7 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
 
 
   @raddWave
-  Scenario: [RADD_WAVE_6] - Invio notifica digitale (fallimento invii, quindi RS) a destinatario con CAP in fase di sperimentazione, coperto dai servizi RADD
+  Scenario: [RADD_WAVE_61] - Invio notifica digitale (fallimento invii, quindi RS) a destinatario con CAP in fase di sperimentazione, coperto dai servizi RADD
     Given viene generata una nuova notifica
       | subject            | notifica fallimento digitale |
       | senderDenomination | Comune di palermo            |
@@ -305,9 +305,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
     And destinatario Mario Cucumber e:
       | digitalDomicile              | NULL                   |
       | physicalAddress_address      | Via@FAIL-Discovery_890 |
-      | physicalAddress_municipality | BARI                   |
-      | physicalAddress_province     | BA                     |
-      | physicalAddress_zip          | 70125                  |
+      | physicalAddress_municipality | NAPOLI                 |
+      | physicalAddress_province     | NA                     |
+      | physicalAddress_zip          | 80124                  |
       | payment_f24                  | PAYMENT_F24_STANDARD   |
       | title_payment                | F24_STANDARD_GHERKIN   |
       | apply_cost_f24               | SI                     |
@@ -332,9 +332,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | taxId                        | DRCGNN12A46A326K      |
       | digitalDomicile              | NULL                  |
       | physicalAddress_address      | Via@FAIL-Discovery_AR |
-      | physicalAddress_municipality | BARI                  |
-      | physicalAddress_province     | BA                    |
-      | physicalAddress_zip          | 70125                 |
+      | physicalAddress_municipality | NAPOLI                |
+      | physicalAddress_province     | NA                    |
+      | physicalAddress_zip          | 80124                 |
       | payment_f24                  | PAYMENT_F24_STANDARD  |
       | title_payment                | F24_STANDARD_GHERKIN  |
       | apply_cost_f24               | SI                    |
