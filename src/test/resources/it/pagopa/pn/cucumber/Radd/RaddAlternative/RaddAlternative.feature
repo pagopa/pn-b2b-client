@@ -1740,8 +1740,6 @@ Feature: Radd Alternative
 
   @raddAlt @zip
   Scenario: [RADD-ALT_ACT-95] PF - Visualizzazione documenti di notifica con una PF con messaggio di corstesia e molti F24 controllo restituzione statusCode 2 con retry - PN-10916
-    Given si predispone addressbook per l'utente "Mario Cucumber"
-    And viene inserito un recapito legale "example@pecSuccess.it"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo                            |
@@ -1763,7 +1761,6 @@ Feature: Radd Alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi
     And l'operazione di download degli atti genera un errore "documento non disponibile per il download" con codice 2 su radd alternative
-    And viene cancellata l'email di cortesia per il comune "default"
 
 
   @raddAlt @raddAltLog
