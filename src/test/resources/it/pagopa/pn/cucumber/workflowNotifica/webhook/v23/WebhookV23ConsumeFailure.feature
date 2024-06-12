@@ -125,3 +125,14 @@ Feature: tentativo consumo stream
     Then l'operazione ha prodotto un errore con status code "403"
     And viene modificato lo stato dell'apiKey in "BLOCK"
     And l'apiKey viene cancellata
+
+  @webhookV23 @cleanWebhook @webhook2
+  Scenario: [B2B-STREAM_ES1.1_161] Cancellazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
+    Given Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
+    And viene impostata l'apikey appena generata
+    When vengono letti gli eventi dello stream non esistente versione V23
+    Then l'operazione ha prodotto un errore con status code "404"
+    And viene modificato lo stato dell'apiKey in "BLOCK"
+    And l'apiKey viene cancellata
+
+
