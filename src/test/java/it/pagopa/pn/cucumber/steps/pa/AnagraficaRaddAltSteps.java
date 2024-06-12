@@ -48,8 +48,8 @@ public class AnagraficaRaddAltSteps {
 
     private String uid = getDefaultValue(RADD_UID.key);
 
-    private static final Integer NUM_CHECK_STATE_CSV = 18;
-    private static final Integer WAITING_STATE_CSV = 10000;
+    private static final Integer NUM_CHECK_STATE_CSV = 20;
+    private static final Integer WAITING_STATE_CSV = 15000;
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnPaB2bUtils pnPaB2bUtils,
