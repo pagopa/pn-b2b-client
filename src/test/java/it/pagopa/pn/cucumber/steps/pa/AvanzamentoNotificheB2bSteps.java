@@ -2657,6 +2657,11 @@ public class AvanzamentoNotificheB2bSteps {
 
     @And("download attestazione opponibile AAR")
     public void downloadLegalFactIdAAR() {
+            getLegalFactIdAAR("PN_AAR");
+        }
+
+    public LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
+        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
@@ -2668,28 +2673,32 @@ public class AvanzamentoNotificheB2bSteps {
 
         for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
 
-            if (element.getCategory().equals(timelineElementInternalCategory)) {
-                timelineElement = element;
-                break;
-            }
-        }
-
-        Assertions.assertNotNull(timelineElement);
-        String keySearch = null;
-        if (timelineElement.getDetails().getGeneratedAarUrl() != null && !timelineElement.getDetails().getGeneratedAarUrl().isEmpty()) {
-
-            if (timelineElement.getDetails().getGeneratedAarUrl().contains("PN_AAR")) {
-                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf("PN_AAR"));
+                if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
+                    timelineElement = element;
+                    break;
+                }
             }
 
-            String finalKeySearch = keySearch;
-            try {
-                Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));
-            } catch (AssertionFailedError assertionFailedError) {
-                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-            }
-        }
-    }
+            Assertions.assertNotNull(timelineElement);
+            String keySearch = null;
+                if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
+
+                    if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
+                            keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
+                        }
+
+                        String finalKeySearch = keySearch;
+                        try {
+                            Assertions.assertDoesNotThrow(() -> {
+                                legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));
+                            });
+                        } catch (AssertionFailedError assertionFailedError) {
+                            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+                        }
+                    }
+                    return legalFactDownloadMetadataResponse.get();
+                }
+
 
     @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il tipo è {string}")
     public void downloadAttestazioneOpponibileAAREControlloDelContenutoDelFilePerVerificareSeIlTipoE(String aarType) {
@@ -3137,7 +3146,6 @@ try{
         }
     }
 
-    }
 
     @And("viene verificato data corretta del destinatario {int}")
     public void verificationDateNotificationPrice(Integer destinatario) {
