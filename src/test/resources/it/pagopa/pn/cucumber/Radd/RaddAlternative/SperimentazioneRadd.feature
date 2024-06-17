@@ -196,9 +196,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
     And destinatario Mario Gherkin e:
       | digitalDomicile              | NULL                 |
       | physicalAddress_address      | Via@ok_890           |
-      | physicalAddress_municipality | VENEZIA              |
-      | physicalAddress_province     | VE                   |
-      | physicalAddress_zip          | 30124                |
+      | physicalAddress_municipality | CARDITELLO           |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80024                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -216,9 +216,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | feePolicy          | DELIVERY_MODE     |
     And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@pecOk.it        |
-      | physicalAddress_municipality | VENEZIA              |
-      | physicalAddress_province     | VE                   |
-      | physicalAddress_zip          | 30124                |
+      | physicalAddress_municipality | CARDITELLO           |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80024                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -238,9 +238,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
       | senderDenomination | Comune di palermo |
       | feePolicy          | DELIVERY_MODE     |
     And destinatario Mario Gherkin e:
-      | physicalAddress_municipality | VENEZIA              |
-      | physicalAddress_province     | VE                   |
-      | physicalAddress_zip          | 30124                |
+      | physicalAddress_municipality | CARDITELLO           |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80024                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
@@ -259,9 +259,9 @@ Scenario: [RADD_WAVE_4] - Invio notifica digitale (1° tentativo OK) a destinata
     And destinatario Mario Gherkin e:
       | digitalDomicile_address      | test@fail.it         |
       | physicalAddress_address      | Via@ok_RS            |
-      | physicalAddress_municipality | VENEZIA              |
-      | physicalAddress_province     | VE                   |
-      | physicalAddress_zip          | 30124                |
+      | physicalAddress_municipality | CARDITELLO           |
+      | physicalAddress_province     | NA                   |
+      | physicalAddress_zip          | 80024                |
       | payment_f24                  | PAYMENT_F24_STANDARD |
       | title_payment                | F24_STANDARD_GHERKIN |
       | apply_cost_f24               | SI                   |
