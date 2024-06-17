@@ -41,7 +41,7 @@
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
         <open.api.version.radd.alt>v2.5.0-RC.4</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
-        <open.api.version.external.registries>v2.3.1</open.api.version.external.registries>
+        <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
     </properties>
 
     <dependencies>
@@ -145,6 +145,11 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <version>3.0.2</version>
         </dependency>
 
     </dependencies>

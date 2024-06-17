@@ -113,6 +113,33 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
+  @Async
+  Scenario: [B2B_ASYNC_22_PF] Notifica analogica mono PF ASYNC senza pagamenti-Verifica stato REFUSED - PN-10875
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                  |
+      | physicalAddress_address | Via@FAIL-Discovery_AR |
+      | payment                 | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+
+  @Async
+  Scenario: [B2B_ASYNC_23_PF] Notifica digitale mono PF ASYNC senza pagamenti-Verifica stato REFUSED - PN-10875
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                          |
+    And destinatario Mario Gherkin e:
+      | payment | NULL |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
 
   @version @Async
   Scenario: [B2B_ASYNC_2_VERSIONAMENTO] Creazione notifica ASYNC con V2.1 e recupero tramite codice IUN V1 (p.fisica)_scenario negativo
