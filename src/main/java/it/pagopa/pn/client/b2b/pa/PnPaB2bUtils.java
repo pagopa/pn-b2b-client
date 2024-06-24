@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
@@ -29,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.*;
 import org.springframework.web.client.RestTemplate;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -1197,5 +1199,21 @@ public class PnPaB2bUtils {
 
     private void attachmentSetDigestsV20(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
         notificationPaymentAttachment.digests(new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    public boolean downloadUrlAndCheckContent(String strUrl, String contentType) {
+
+        try {
+            URL url = new URL(strUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
+                System.out.println(entry.getKey() + ": " + entry.getValue());
+                return StringUtils.equals(connection.getHeaderField("Content-Type"), contentType);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
