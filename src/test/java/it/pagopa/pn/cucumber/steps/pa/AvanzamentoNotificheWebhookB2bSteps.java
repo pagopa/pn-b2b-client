@@ -578,6 +578,18 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @And("vengono letti gli eventi dello stream non esistente versione V23")
+    public void readStreamEventsNotFoundV23() {
+        updateApiKeyForStream();
+        try{
+            List<ProgressResponseElementV23> progressResponseElements = webhookB2bClient.consumeEventStreamV23(UUID.randomUUID(), null);
+            log.info("EventProgress: " + progressResponseElements);
+        }catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
 
     @And("vengono letti gli eventi dello stream del {string} fino allo stato {string}")
     public void readStreamEventsState(String pa,String status) {

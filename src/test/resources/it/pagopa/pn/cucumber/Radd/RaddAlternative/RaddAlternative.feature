@@ -1753,9 +1753,8 @@ Feature: Radd Alternative
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
       | apply_cost_pagopa       | SI                            |
       | apply_cost_f24          | SI                            |
-      | payment_multy_number    | 10                            |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
+      | payment_multy_number    | 15                            |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
     When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
     Then la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative

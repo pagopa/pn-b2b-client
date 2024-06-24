@@ -1070,7 +1070,7 @@ Feature: annullamento notifiche b2b
     Then il tentativo di recupero con appIO ha prodotto un errore con status code "404"
 
 
-  @Annullamento
+  @Annullamento @refused
   Scenario: [B2B-PA-ANNULLAMENTO_41] PA mittente: Annullamento notifica prima di essere rifiutata - PN-9065
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -1094,7 +1094,7 @@ Feature: annullamento notifiche b2b
 
 
 
-  @Annullamento
+  @Annullamento @refused
   Scenario: [B2B-PA-ANNULLAMENTO_42] PA mittente: Annullamento notifica in stato “REFUSED” - PN-9065
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

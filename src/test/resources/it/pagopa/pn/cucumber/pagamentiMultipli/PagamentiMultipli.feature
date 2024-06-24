@@ -2935,7 +2935,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_4] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -2952,7 +2952,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_5] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

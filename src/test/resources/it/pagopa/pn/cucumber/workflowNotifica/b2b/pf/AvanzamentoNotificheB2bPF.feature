@@ -349,3 +349,4 @@ Feature: avanzamento notifiche b2b persona fisica
       | feePolicy          | DELIVERY_MODE               |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+

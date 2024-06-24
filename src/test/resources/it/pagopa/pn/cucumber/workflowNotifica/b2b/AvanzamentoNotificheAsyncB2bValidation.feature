@@ -1,7 +1,7 @@
 Feature: avanzamento notifiche asincrone b2b PF - controllo costi
 
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_3_PF] Notifica mono PF-Rifiuto in caso di notifiche che riportano l’indicazione di modalità asincrona di integrazione al cui interno risultano avvisi non abilitati alla modalità asincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -18,7 +18,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_5_PF] Notifica mono PF-Senza verifica amount GPD per notifica ASYNC e campo paFee non popolato - Refused
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -52,7 +52,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_18_PF] Notifica mono PF-Verifica scarto notifica se applyCostFlag a false
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
@@ -74,7 +74,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     Then vengono cancellate le posizioni debitorie
 
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_19_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato "NOTIFICATION_CANCELLED"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777778" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -111,6 +111,33 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | apply_cost_pagopa       | SI           |
       | payment_multy_number    | 1            |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+  @Async
+  Scenario: [B2B_ASYNC_22_PF] Notifica analogica mono PF ASYNC senza pagamenti-Verifica stato REFUSED - PN-10875
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                  |
+      | physicalAddress_address | Via@FAIL-Discovery_AR |
+      | payment                 | NULL                  |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
+
+
+  @Async
+  Scenario: [B2B_ASYNC_23_PF] Notifica digitale mono PF ASYNC senza pagamenti-Verifica stato REFUSED - PN-10875
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | feePolicy          | DELIVERY_MODE               |
+      | pagoPaIntMode      | ASYNC                       |
+      | paFee              | 10                          |
+    And destinatario Mario Gherkin e:
+      | payment | NULL |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
@@ -163,7 +190,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     Then vengono cancellate le posizioni debitorie
 
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_1_MULTI] Notifica multi PF/PG-Rifiuto di notifiche con modalità asincrona di integrazione al cui interno risultano avvisi non abilitati alla modalità asincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -185,7 +212,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | payment_multy_number  | 1           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_6_MULTI] Notifica mono PF/PG-Verifica scarto notifica se applyCostFlag a false
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
