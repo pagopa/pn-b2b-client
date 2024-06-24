@@ -127,7 +127,7 @@ Feature: tentativo consumo stream
     And l'apiKey viene cancellata
 
   @webhookV23 @cleanWebhook @webhook2
-  Scenario: [B2B-STREAM_ES1.1_161] Cancellazione di uno stream notifica con gruppo, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
+  Scenario: [B2B-STREAM_ES1.1_161] Consume di uno stream notifica con gruppo non esistente, con eventType "TIMELINE"  utilizzando un apikey con stesso gruppo.
     Given Viene creata una nuova apiKey per il comune "Comune_Multi" con il primo gruppo disponibile
     And viene impostata l'apikey appena generata
     When vengono letti gli eventi dello stream non esistente versione V23

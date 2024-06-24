@@ -46,7 +46,8 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
-    
+
+    #Coperto con il test B2B_TIMELINE_7597_2 --- FNIFNA80A01H501G INAD RISPONDE CON UN 403 - Eventualemte MOdificare destinatario.
   @workflowDigitale @mockNR @ignore
   Scenario: [B2B_TIMELINE_7597_1_2] Invio Notifica mono destinatario a PF con recupero del domicilio digitale - INAD Mock KO
     Given viene generata una nuova notifica
@@ -54,7 +55,7 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok |
-      | taxId           | PPPPLT80A01H501V  |
+      | taxId           | PPPPLT80A01H501V |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry

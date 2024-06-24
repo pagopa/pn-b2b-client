@@ -23,7 +23,7 @@ Feature: avanzamento b2b notifica difgitale fallito
           When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
           Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
 
-     @svil @workflowDigitale
+     @svil
      #[B2B_TIMELINE_19]
      Scenario: [B2B_TIMELINE_DIGITAL_FAILURE_3] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
           Given viene generata una nuova notifica
