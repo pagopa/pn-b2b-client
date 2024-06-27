@@ -21,8 +21,9 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.legalfact.LegalFactClient;
 import it.pagopa.pn.cucumber.steps.legalfact.data.LegalFactClientType;
+import it.pagopa.pn.cucumber.steps.utilitySteps.LegalFactClientUtility;
+import it.pagopa.pn.cucumber.steps.utilitySteps.ThreadWaitUtility;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.Loader;
@@ -44,7 +45,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
@@ -65,11 +65,11 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
+    @Autowired
+    private LegalFactClientUtility legalFactClientUtility;
 
     @Autowired
-    private List<LegalFactClient> legalFactClients;
-    @Autowired
-    private Map<LegalFactClientType, LegalFactClient> legalFactClientMap;
+    private ThreadWaitUtility threadWaitUtility;
 
 
     @Autowired
@@ -1130,7 +1130,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
     public void paRequiresDownloadOfLegalFact3(String legalFactCategory) {
-        downloadLegalFactTest(List.of(LegalFactClientType.PA), legalFactCategory, null);
+        downloadLegalFact(List.of(LegalFactClientType.PA), legalFactCategory, null);
     }
 
     @Then("verifica generazione Atto opponibile senza la messa a disposizione in {string}")
@@ -1161,51 +1161,41 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile {string} senza legalFactType")
     public void paRequiresDownloadOfLegalFactId(String legalFactCategory) {
-        downloadLegalFactId(legalFactCategory, true, false, false, null);
+        downloadLegalFactId(legalFactCategory, List.of(LegalFactClientType.PA_DOWNLOAD), null);
     }
 
     @Then("la PA richiede il download dell'attestazione opponibile {string} con deliveryDetailCode {string}")
     public void paRequiresDownloadOfLegalFactWithDeliveryDetailCode(String legalFactCategory, String deliveryDetailCode) {
-        //downloadLegalFact(legalFactCategory, true, false, false, deliveryDetailCode);
-    }
-
-    @Then("la PA richiede il download dell'attestazione opponibile {string} con deliveryDetailCode {string} 2")
-    public void paRequiresDownloadOfLegalFactWithDeliveryDetailCode2(String legalFactCategory, String deliveryDetailCode) {
-        //downloadLegalFactTest(legalFactCategory, false, "PA", deliveryDetailCode);
-    }
-
-    @Then("la PA richiede il download dell'attestazione opponibile {string} con deliveryDetailCode {string} 3")
-    public void paRequiresDownloadOfLegalFactWithDeliveryDetailCode3(String legalFactCategory, String deliveryDetailCode) {
-        downloadLegalFactTest(List.of(LegalFactClientType.PA), legalFactCategory, deliveryDetailCode);
+        downloadLegalFact(List.of(LegalFactClientType.PA), legalFactCategory, deliveryDetailCode);
     }
 
     @Then("viene richiesto tramite appIO il download dell'attestazione opponibile {string}")
     public void appIODownloadLegalFact(String legalFactCategory) {
-        downloadLegalFactTest(List.of(LegalFactClientType.APP_IO), legalFactCategory, null);
+        downloadLegalFact(List.of(LegalFactClientType.APP_IO), legalFactCategory, null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile {string}")
     public void userDownloadLegalFact(String user, String legalFactCategory) {
         sharedSteps.selectUser(user);
-        downloadLegalFactTest(List.of(LegalFactClientType.WEB_RECIPIENT), legalFactCategory, null);
+        downloadLegalFact(List.of(LegalFactClientType.WEB_RECIPIENT), legalFactCategory, null);
     }
 
     @Then("la PA richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void paRequiresDownloadOfLegalFactPecRecipient() {
-        downloadLegalFactPecRecipient("PEC_RECEIPT", List.of(LegalFactClientType.PA), null);
+        downloadLegalFactPecRecipient(List.of(LegalFactClientType.PA), null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile PEC_RECEIPT")
     public void userDownloadLegalFactPecRecipient(String user) {
         sharedSteps.selectUser(user);
-        downloadLegalFactPecRecipient("PEC_RECEIPT", List.of(LegalFactClientType.WEB_RECIPIENT), null);
+        downloadLegalFactPecRecipient(List.of(LegalFactClientType.WEB_RECIPIENT), null);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile {string} con errore {string}")
     public void userDownloadLegalFactError(String user, String legalFactCategory,String statusCode) {
         try {
             sharedSteps.selectUser(user);
-            downloadLegalFactTest(List.of(LegalFactClientType.WEB_RECIPIENT), legalFactCategory, null);
+            downloadLegalFact(List.of(LegalFactClientType.WEB_RECIPIENT), legalFactCategory, null);
         } catch (AssertionFailedError assertionFailedError) {
             // System.out.println(assertionFailedError.getCause().toString());
             // System.out.println(assertionFailedError.getCause().getMessage().toString());
@@ -1213,15 +1203,10 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    private void downloadLegalFactTest(List<LegalFactClientType> legalFactClientTypes, String legalFactCategory, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
+    private void downloadLegalFact(List<LegalFactClientType> legalFactClientTypes, String legalFactCategory, String deliveryDetailCode) {
+        threadWaitUtility.tryWait(sharedSteps);
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
-        TimelineElementV23 timelineElement2 = getTimelineElement(deliveryDetailCode, categoriesV23.getTimelineElementInternalCategory());
+        TimelineElementV23 timelineElement2 = legalFactClientUtility.getTimelineElement(sharedSteps, deliveryDetailCode, categoriesV23.getTimelineElementInternalCategory());
 
         try {
             System.out.println("ELEMENT: " + timelineElement2);
@@ -1233,34 +1218,18 @@ public class AvanzamentoNotificheB2bSteps {
 
             LegalFactCategory categorySearch = timelineElement2.getLegalFactsIds().get(0).getCategory();
             String finalKeySearch = getKeyLegalFact(timelineElement2.getLegalFactsIds().get(0).getKey());
-            //this.legalFactClientMap.get(LegalFactClientType.PA).getLegalFact(legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch);
-
-            this.legalFactClients.forEach(data -> data.getLegalFact(legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch));
+            legalFactClientUtility.getLegalFactResponseList(legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
 
-    private TimelineElementV23 getTimelineElement(String deliveryDetailCode, TimelineElementCategoryV23 timelineElementInternalCategory) {
-        return sharedSteps.getSentNotification().getTimeline().stream()
-                .filter(el -> el.getCategory() != null && el.getCategory().equals(timelineElementInternalCategory))
-                .filter(el -> el.getDetails() != null && el.getDetails().getDeliveryDetailCode() != null &&
-                        (deliveryDetailCode == null || el.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)))
-                .findFirst()
-                .orElse(null);
-    }
-
-    private void downloadLegalFactPecRecipient(String legalFactCategory, List<LegalFactClientType> legalFactClientTypes, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
+    private void downloadLegalFactPecRecipient(List<LegalFactClientType> legalFactClientTypes, String deliveryDetailCode) {
+        threadWaitUtility.tryWait(sharedSteps);
         TimelineElementCategoryV23 timelineElementInternalCategory = TimelineElementCategoryV23.SEND_DIGITAL_PROGRESS;
         LegalFactCategory category = LegalFactCategory.PEC_RECEIPT;
 
-        TimelineElementV23 timelineElement = getTimelineElement(deliveryDetailCode, timelineElementInternalCategory);
+        TimelineElementV23 timelineElement = legalFactClientUtility.getTimelineElement(sharedSteps, deliveryDetailCode, timelineElementInternalCategory);
 
         try {
             System.out.println("ELEMENT: " + timelineElement);
@@ -1285,16 +1254,8 @@ public class AvanzamentoNotificheB2bSteps {
                 keySearch = key.substring(key.indexOf("PN_F24"));
             }
 
-            String finalKeySearch = keySearch;
-            //LegalFactDownloadMetadataResponse response = this.legalFactClientMap.get(LegalFactClientType.PA).getLegalFact(legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch);
-//            Assertions.assertNotNull(response);
-//            Assertions.assertNotNull(response.getFilename());
-//            Assertions.assertTrue(response.getFilename().contains(".eml"));
-
-            List<LegalFactDownloadMetadataResponse> responses = this.legalFactClients.stream()
-                    .map(el -> el.getLegalFact(legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch))
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toUnmodifiableList());
+            List<LegalFactDownloadMetadataResponse> responses = this.legalFactClientUtility.getLegalFactResponseList(
+                    legalFactClientTypes, sharedSteps, categorySearch, keySearch);
 
             Assertions.assertTrue(responses.size() == legalFactClientTypes.size());
             responses.forEach(el -> {
@@ -1307,17 +1268,10 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    private void downloadLegalFactId(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
+    private void downloadLegalFactId(String legalFactCategory, List<LegalFactClientType> legalFactClientTypes, String deliveryDetailCode) {
+        threadWaitUtility.tryWait(sharedSteps);
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
-
-
-        TimelineElementV23 timelineElement = getTimelineElement(deliveryDetailCode, categoriesV23.getTimelineElementInternalCategory());
+        TimelineElementV23 timelineElement = legalFactClientUtility.getTimelineElement(sharedSteps, deliveryDetailCode, categoriesV23.getTimelineElementInternalCategory());
 
         try {
             System.out.println("ELEMENT: " + timelineElement);
@@ -1328,21 +1282,9 @@ public class AvanzamentoNotificheB2bSteps {
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
 
-            if (pa) {
-                Assertions.assertDoesNotThrow(() -> this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(),  finalKeySearch));
-            }
-            if (appIO) {
+            this.legalFactClientUtility.getLegalFactResponseList(
+                    legalFactClientTypes, sharedSteps, categorySearch, finalKeySearch);
 
-                // Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
-                //        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
-            }
-            if (webRecipient) {
-                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-                        finalKeySearch
-                ));
-            }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -1388,23 +1330,13 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica")
     public void notificationPriceAndDateVerification(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         priceVerification(price, null, 0);
     }
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica {string}")
     public void notificationPriceAndDateVerificationV1(String price,String versione) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         if(versione.equalsIgnoreCase("V1")) {
             priceVerificationV1(price, null, 0);
         }else if(versione.equalsIgnoreCase("V2")){
@@ -1416,33 +1348,19 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica V2")
     public void notificationPriceAndDateVerificationV2(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         priceVerificationV2(price, null, 0);
     }
 
     @Then("viene verificato il costo = {string} della notifica")
     public void notificationPriceVerification(String price) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         priceVerification(price, null, 0);
     }
 
     @And("viene verificato il costo = {string} della notifica con un errore {string}")
     public void attachmentRetrievedError(String price, String errorCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
+        threadWaitUtility.tryWait(sharedSteps, 2);
         try {
             priceVerification(price, null, 0);
         } catch (HttpStatusCodeException e) {
@@ -1455,12 +1373,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato il costo = {string} della notifica per l'utente {int}")
     public void notificationPriceVerificationPerDestinatario(String price, Integer destinatario) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         priceVerification(price, null, destinatario);
     }
 
@@ -1572,12 +1485,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene calcolato il costo = {string} della notifica per l'utente {int}")
     public void notificationPriceProcessPerDestinatario(String price, Integer destinatario) {
-        try {
-            Thread.sleep(sharedSteps.getWait() * 2);
-        } catch (InterruptedException interruptedException) {
-            interruptedException.printStackTrace();
-        }
-
+        threadWaitUtility.tryWait(sharedSteps, 2);
         priceVerificationProcessCost(price, null, destinatario);
     }
 
@@ -1656,7 +1564,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         }catch (HttpStatusCodeException e) {
             if (e instanceof HttpStatusCodeException) {
-                sharedSteps.setNotificationError((HttpStatusCodeException) e);
+                sharedSteps.setNotificationError(e);
             }
         }
 
@@ -1665,12 +1573,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificato che la chiave dell'attestazione opponibile {string} è {string}")
     public void  verifiedThatTheKeyOfTheLegalFactIs(String legalFactCategory, String key) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
+        threadWaitUtility.tryWait(sharedSteps);
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
         TimelineElementV23 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())).findAny().orElse(null);
 
@@ -2623,11 +2526,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     public LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
         AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
+        threadWaitUtility.tryWait(sharedSteps);
 
         TimelineElementCategoryV23 timelineElementInternalCategory= TimelineElementCategoryV23.AAR_GENERATION;
         TimelineElementV23 timelineElement = null;
@@ -2985,15 +2884,12 @@ public class AvanzamentoNotificheB2bSteps {
         }
 
         switch (tipoCosto.toLowerCase()) {
-            case "parziale":
+            case "parziale" -> {
                 priceVerificationV1(String.valueOf(pricePartial), null, Integer.parseInt(user));
                 priceVerificationV23(pricePartial, null, Integer.parseInt(user), tipoCosto);
-                break;
-            case "totale":
-                priceVerificationV23(priceTotal, null, Integer.parseInt(user), tipoCosto);
-                break;
-            default:
-                throw new IllegalArgumentException();
+            }
+            case "totale" -> priceVerificationV23(priceTotal, null, Integer.parseInt(user), tipoCosto);
+            default -> throw new IllegalArgumentException();
         }
     }
 
@@ -3049,14 +2945,11 @@ public class AvanzamentoNotificheB2bSteps {
                 throw new IllegalArgumentException();
         }
 
-        switch (tipoCosto.toLowerCase()) {
-            case "parziale":
-                return pricePartial;
-            case "totale":
-                return priceTotal;
-            default:
-                return null;
-        }
+        return switch (tipoCosto.toLowerCase()) {
+            case "parziale" -> pricePartial;
+            case "totale" -> priceTotal;
+            default -> null;
+        };
     }
 
     @Then("viene verificato che tutti i campi per il calcolo del iva per il destinatario {int} siano valorizzati")
@@ -3162,12 +3055,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private LegalFactDownloadMetadataResponse takeLegalFact(String legalFactCategory, String deliveryDetailCode) {
-        try {
-            Thread.sleep(sharedSteps.getWait());
-        } catch (InterruptedException exc) {
-            throw new RuntimeException(exc);
-        }
-
+        threadWaitUtility.tryWait(sharedSteps);
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
 
         TimelineElementV23 timelineElement = null;

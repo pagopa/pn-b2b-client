@@ -4,24 +4,15 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
-import it.pagopa.pn.cucumber.steps.legalfact.data.LegalFactClientType;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.stereotype.Component;
 
-import java.util.List;
-
+@Component
 public class LegalFactPAClient implements LegalFactClient {
-
-    private static final LegalFactClientType LEGAL_FACT_PA_CLIENT_TYPE = LegalFactClientType.PA;
-
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(final List<LegalFactClientType> legalFactClientTypes, final SharedSteps sharedSteps, final LegalFactCategory categorySearch, final String finalKeySearch) {
-        LegalFactDownloadMetadataResponse response = null;
-        if (legalFactClientTypes.contains(LEGAL_FACT_PA_CLIENT_TYPE)) {
-            IPnPaB2bClient b2bClient = sharedSteps.getB2bClient();
-            response = Assertions.assertDoesNotThrow(() ->  b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
-            //LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch);
-        }
-        return response;
+    public LegalFactDownloadMetadataResponse getLegalFact(final SharedSteps sharedSteps, final LegalFactCategory categorySearch, final String finalKeySearch) {
+        IPnPaB2bClient b2bClient = sharedSteps.getB2bClient();
+        return Assertions.assertDoesNotThrow(() -> b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
     }
 
 }
