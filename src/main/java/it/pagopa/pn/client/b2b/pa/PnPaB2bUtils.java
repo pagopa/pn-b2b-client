@@ -35,6 +35,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -1197,5 +1201,23 @@ public class PnPaB2bUtils {
 
     private void attachmentSetDigestsV20(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationPaymentAttachment notificationPaymentAttachment, String sha256) {
         notificationPaymentAttachment.digests(new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationAttachmentDigests().sha256(sha256));
+    }
+
+    public String getOffsetDateTimeFromDate(Instant date) {
+        ZoneId zoneId = ZoneId.of("Europe/Rome");
+        OffsetDateTime offsetDateTime = OffsetDateTime.ofInstant(date, zoneId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        return offsetDateTime.truncatedTo(java.time.temporal.ChronoUnit.SECONDS).format(formatter);
+    }
+
+    public int convertToSeconds(String timeStr) {
+        int number = Integer.parseInt(timeStr.substring(0, timeStr.length() - 1));
+        char unit = timeStr.toLowerCase().charAt(timeStr.length() - 1);
+
+        if (unit == 'm') {
+            return number * 60;
+        } else {
+            throw new IllegalArgumentException("Unità di misura non supportata");
+        }
     }
 }

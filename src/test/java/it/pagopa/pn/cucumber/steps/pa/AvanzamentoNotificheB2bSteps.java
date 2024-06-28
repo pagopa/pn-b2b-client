@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -59,6 +60,8 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
+    @Value("${pn.external.allowed.future.offset.duration}")
+    private String pnEcConsAllowedFutureOffsetDuration;
 
 
     @Autowired
@@ -3293,4 +3296,40 @@ try{
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+    private Map<String, String> populateConsolidatoreMap(Instant date) {
+        String iun = sharedSteps.getSentNotification().getIun();
+        Map<String, String> mapInfo = new HashMap<>();
+        mapInfo.put("requestId", "PREPARE_ANALOG_DOMICILE.IUN_GDHR-TAEM-VRNX-202312-Y-1.RECINDEX_0.ATTEMPT_0.PCRETRY_0");
+        mapInfo.put("attachments", null);
+        mapInfo.put("clientRequestTimeStamp", utils.getOffsetDateTimeFromDate(date));
+        mapInfo.put("deliveryFailureCause", null);
+        mapInfo.put("discoveredAddress", null);
+        mapInfo.put("iun", iun);
+        mapInfo.put("productType", "AR");
+        mapInfo.put("registeredLetterCode", null);
+        mapInfo.put("statusCode", "CON020");
+        mapInfo.put("statusDateTime", utils.getOffsetDateTimeFromDate(date));
+        mapInfo.put("statusDescription", "Affido conservato");
+        return mapInfo;
+    }
+
+    @Then("viene invocato il consolidatore con clientRequestTimeStamp e statusDateTime nel {string}")
+    public void vieneInvocatoIlConsolidatore(String statusDate) {
+        Instant now = null;
+        if (statusDate.equalsIgnoreCase("Futuro")) {
+            now = Instant.now()
+                    .plusSeconds(utils.convertToSeconds(pnEcConsAllowedFutureOffsetDuration)).plusSeconds(60);
+        } else {
+            now = Instant.now();
+        }
+
+        Map<String, String> mapInfo = populateConsolidatoreMap(now);
+        try {
+            externalClient.pushConsolidatoreNotification(mapInfo);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
 }
