@@ -1129,7 +1129,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
-    public void paRequiresDownloadOfLegalFact3(String legalFactCategory) {
+    public void paRequiresDownloadOfLegalFact(String legalFactCategory) {
         downloadLegalFact(List.of(LegalFactClientType.PA), legalFactCategory, null);
     }
 
