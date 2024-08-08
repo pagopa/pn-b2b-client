@@ -45,16 +45,15 @@ public class RaddAltThrottleSteps {
     @Then("Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica un numero di volte superiore al limite definito")
     public void vengonoVisualizzatiGliAttiPiuVolteDelLimite() {
         Assertions.assertThrows(HttpClientErrorException.class,
-                () -> vengonoVisualizzatiGliAttiPiuVolte(raddAltSteps.operationid, 300));
+                () -> vengonoVisualizzatiGliAttiPiuVolte(300));
     }
 
     @Then("Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica {int} volte")
-    public void vengonoVisualizzatiGliAttiPiuVolte(String operationid, int iteration) {
+    public void vengonoVisualizzatiGliAttiPiuVolte(int iteration) {
         IntStream.range(0, iteration)
-                .takeWhile(i -> i == 0 || raddAltSteps.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_0))
-                .forEach(x -> {
-                    raddAltSteps.startTransactionActRaddAlternative(operationid,false);
-                });
+                .takeWhile(i -> i == 0 || raddAltSteps.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_0)
+                    || raddAltSteps.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2))
+                .forEach(x -> raddAltSteps.startTransactionActRaddAlternative(generateRandomNumber(),false));
     }
 
     /**

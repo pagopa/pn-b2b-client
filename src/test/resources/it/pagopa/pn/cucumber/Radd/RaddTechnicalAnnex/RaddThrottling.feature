@@ -33,6 +33,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then Si recuperano gli atti 100 volte su radd alternative da operatore radd "UPLOADER"
+    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
 
   @raddTechnicalThrottle
     #aorInquiry
@@ -70,7 +71,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario Mario Cucumber e:
+    And destinatario Signor casuale e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | SI                            |
@@ -93,7 +94,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | senderDenomination | Comune di Palermo                            |
       | feePolicy          | DELIVERY_MODE                                |
       | paFee              | 0                                            |
-    And destinatario Mario Cucumber e:
+    And destinatario Signor casuale e:
       | digitalDomicile         | NULL                          |
       | physicalAddress_address | Via @ok_890                   |
       | payment_pagoPaForm      | SI                            |
@@ -114,7 +115,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
+    And destinatario Signor casuale
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber" un numero di volte superiore al limite definito
 
@@ -124,7 +125,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
-    And destinatario Mario Cucumber
+    And destinatario Signor casuale
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber" 100 volte
     And la lettura si conclude correttamente su radd alternative
