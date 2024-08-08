@@ -44,7 +44,6 @@ public class RaddAltSteps {
     private final PnExternalServiceClientImpl externalServiceClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils pnPaB2bUtils;
-    private ActInquiryResponse actInquiryResponse;
     private String qrCode;
     private String iun;
     private String fileZip;
@@ -60,11 +59,12 @@ public class RaddAltSteps {
     private String uidRaddUploaderOperator;
     @Value("${pn.radd.alt.external.operatore-standard-uid}")
     private String uidRaddStandardOperator;
-    private String operationid;
-    private StartTransactionResponse startTransactionResponse;
-    private StartTransactionResponse aorStartTransactionResponse;
+    protected String operationid;
+    protected ActInquiryResponse actInquiryResponse;
+    protected StartTransactionResponse startTransactionResponse;
+    protected StartTransactionResponse aorStartTransactionResponse;
+    protected AORInquiryResponse aorInquiryResponse;
     private final String uid = "1234556";
-    private AORInquiryResponse aorInquiryResponse;
     private CompleteTransactionResponse completeTransactionResponse;
     private PnPaB2bUtils.Pair<String, String> documentUploadResponse;
     private AbortTransactionResponse abortActTransaction;
@@ -305,7 +305,7 @@ public class RaddAltSteps {
         startTransactionActRaddAlternative(this.operationid, false);
     }
 
-    private void startTransactionActRaddAlternative(String operationid, boolean retry) {
+    protected void startTransactionActRaddAlternative(String operationid, boolean retry) {
         ActStartTransactionRequest actStartTransactionRequest = createActStartTransactionRequest(operationid);
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddAltClient.startActTransaction(uid, actStartTransactionRequest);
@@ -620,7 +620,7 @@ public class RaddAltSteps {
         Assertions.assertEquals(error, this.abortActTransaction.getStatus().getMessage());
     }
 
-    private void selectUserRaddAlternative(String cf) {
+    protected void selectUserRaddAlternative(String cf) {
         switch (cf.toUpperCase()) {
             case "MARIO CUCUMBER" -> {
                 this.currentUserCf = sharedSteps.getMarioCucumberTaxID();
