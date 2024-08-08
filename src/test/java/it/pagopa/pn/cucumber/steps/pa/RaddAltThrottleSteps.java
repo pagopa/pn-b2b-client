@@ -8,11 +8,9 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.generateRandomNumber;
-import static org.awaitility.Awaitility.await;
 
 public class RaddAltThrottleSteps {
     private final RaddAltSteps raddAltSteps;
@@ -37,8 +35,8 @@ public class RaddAltThrottleSteps {
         IntStream.range(0, iteration)
                 .takeWhile(i -> i == 0 || raddAltSteps.actInquiryResponse.getStatus().getCode() == ActInquiryResponseStatus.CodeEnum.NUMBER_0)
                 .forEach(x -> {
-                    await().atMost(500, TimeUnit.MILLISECONDS);
                     raddAltSteps.lOperatoreUsoIUNPerRecuperariGliAtti(tipologiaIun, cf);
+                    waitBetweenCalls();
                 });
     }
 
@@ -57,8 +55,8 @@ public class RaddAltThrottleSteps {
                 .takeWhile(i -> i == 0 || raddAltSteps.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_0)
                     || raddAltSteps.startTransactionResponse.getStatus().getCode().equals(StartTransactionResponseStatus.CodeEnum.NUMBER_2))
                 .forEach(x -> {
-                    await().atMost(500, TimeUnit.MILLISECONDS);
                     raddAltSteps.startTransactionActRaddAlternative(generateRandomNumber(),false);
+                    waitBetweenCalls();
                 });
     }
 
@@ -76,8 +74,8 @@ public class RaddAltThrottleSteps {
         IntStream.range(0, iteration)
                 .takeWhile(i -> i == 0 || raddAltSteps.aorInquiryResponse.getStatus().getCode() == ResponseStatus.CodeEnum.NUMBER_0)
                 .forEach(x -> {
-                    await().atMost(500, TimeUnit.MILLISECONDS);
                     raddAltSteps.laPersonaFisicaChiedeDiVerificareAdOperatoreRaddLaPresenzaDiNotifiche(citizen, raddOperatorType);
+                    waitBetweenCalls();
                 });
     }
 
@@ -95,9 +93,17 @@ public class RaddAltThrottleSteps {
         IntStream.range(0, iteration)
                 .takeWhile(i -> i == 0 || raddAltSteps.aorStartTransactionResponse.getStatus().getCode() == StartTransactionResponseStatus.CodeEnum.NUMBER_0)
                 .forEach(x -> {
-                    await().atMost(500, TimeUnit.MILLISECONDS);
                     raddAltSteps.operationid = generateRandomNumber();
                     raddAltSteps.vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType);
+                    waitBetweenCalls();
                 });
+    }
+
+    private void waitBetweenCalls() {
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
