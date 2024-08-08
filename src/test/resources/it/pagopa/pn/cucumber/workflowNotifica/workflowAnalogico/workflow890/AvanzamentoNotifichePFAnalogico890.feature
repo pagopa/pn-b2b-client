@@ -39,6 +39,56 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
+  @workflowAnalogico
+  Scenario: [B2B-TIMELINE_HOTFIX-BUG-PEC_3] ordinamento non rispettato nella costruzione della richiesta di postalizzazione
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo           |
+      | document           | DOC_1_PG; DOC_2_PG          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@ok_890           |
+      | payment_f24             | PAYMENT_F24_FLAT     |
+      | title_payment           | F24_STANDARD_GHERKIN |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    And si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 5 allegati
+    And si verifica che il 1 documento arrivato sia di tipo "AAR"
+    And si verifica che il 2 documento arrivato sia di tipo "ATTO"
+    And si verifica che il 3 documento arrivato sia di tipo "ATTO"
+    And si verifica che il 4 documento arrivato sia di tipo "ATTO"
+    And si verifica che il 5 documento arrivato sia di tipo "ATTO"
+
+  @workflowAnalogico
+  Scenario: [B2B-TIMELINE_HOTFIX-BUG-PEC_4] inserimento notifica analogica con 120 F24 STANDARD DELIVERY_MODE e controllo coerenza degli allegati cartacei.
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@ok_890           |
+      | payment_pagoPaForm      | SI                   |
+      | payment_f24             | PAYMENT_F24_FLAT     |
+      | title_payment           | F24_STANDARD_GHERKIN |
+      | payment_multy_number    | 20                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
+    And si verifica che il contenuto degli attachments da inviare in via cartacea abbia 20 attachment di tipo "F24"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di Palermo            |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@ok_AR            |
+      | payment_pagoPaForm      | SI                   |
+      | payment_f24             | PAYMENT_F24_FLAT     |
+      | title_payment           | F24_STANDARD_GHERKIN |
+      | payment_multy_number    | 20                   |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    Then si verifica il contenuto degli attachments da inviare in via cartacea al destinatario 0 con 42 allegati
+    And si verifica che il contenuto degli attachments da inviare in via cartacea abbia 20 attachment di tipo "F24"
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_4] Invio notifica ed attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_scenario positivo
