@@ -88,7 +88,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | payment_multy_number    | 15                            |
       | taxId                   | DVNLRD52D15M059P              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale"
     Then la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica un numero di volte superiore al limite definito
@@ -113,7 +113,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | payment_multy_number    | 15                            |
       | taxId                   | PLOMRC01P30L736Y              |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
-    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber"
+    When L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale"
     Then la lettura si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative
     Then Vengono visualizzati sia gli atti e le attestazioni riferiti alla notifica 100 volte
@@ -129,7 +129,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | denomination    | Galileo Galilei  |
       | taxId           | MNDLCU98T68C933T |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber" un numero di volte superiore al limite definito
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale" un numero di volte superiore al limite definito
 
   @raddTechnicalThrottle
   #actInquiry
@@ -141,5 +141,5 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Throttling
       | denomination    | Galileo Galilei  |
       | taxId           | DSRDNI00A01A225I |
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Mario Cucumber" 100 volte
+    Then L'operatore usa lo IUN "corretto" per recuperare gli atti di "Signor casuale" 100 volte
     And la lettura si conclude correttamente su radd alternative
