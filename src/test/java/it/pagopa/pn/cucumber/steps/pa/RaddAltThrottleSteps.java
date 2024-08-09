@@ -93,7 +93,6 @@ public class RaddAltThrottleSteps {
         IntStream.range(0, iteration)
                 .takeWhile(i -> i == 0 || raddAltSteps.aorStartTransactionResponse.getStatus().getCode() == StartTransactionResponseStatus.CodeEnum.NUMBER_0)
                 .forEach(x -> {
-                    raddAltSteps.operationid = generateRandomNumber();
                     raddAltSteps.vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType);
                     waitBetweenCalls();
                 });
