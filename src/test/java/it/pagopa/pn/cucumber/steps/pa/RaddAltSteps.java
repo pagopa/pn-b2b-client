@@ -59,11 +59,11 @@ public class RaddAltSteps {
     private String uidRaddUploaderOperator;
     @Value("${pn.radd.alt.external.operatore-standard-uid}")
     private String uidRaddStandardOperator;
-    protected String operationid;
-    protected ActInquiryResponse actInquiryResponse;
-    protected StartTransactionResponse startTransactionResponse;
-    protected StartTransactionResponse aorStartTransactionResponse;
-    protected AORInquiryResponse aorInquiryResponse;
+    private String operationid;
+    private ActInquiryResponse actInquiryResponse;
+    private StartTransactionResponse startTransactionResponse;
+    private StartTransactionResponse aorStartTransactionResponse;
+    private AORInquiryResponse aorInquiryResponse;
     private final String uid = "1234556";
     private CompleteTransactionResponse completeTransactionResponse;
     private PnPaB2bUtils.Pair<String, String> documentUploadResponse;
