@@ -5,7 +5,7 @@ Feature: interop probing test
     When viene chiamato il servizio di probing per interop
     Then la chiamata al servizio di probing per interop restituisce 200
 
-  @interopProbing @ignore
+  @interopProbing
   Scenario: [INTEROP-PROBING_2] interop probing ERROR
     When viene chiamato il servizio di probing per interop
     Then la chiamata al servizio di probing per interop restituisce 500
