@@ -17,7 +17,7 @@ public class IPnInteropProbingClientImpl implements IPnInteropProbingClient {
 
 
   public IPnInteropProbingClientImpl(RestTemplate restTemplate,
-      @Value("${pn.external.base-url.pagopa}") String basePath) {
+      @Value("${pn.external.base-url}") String basePath) {
     this.interopProbingApi = new InteropProbingApi(
         newApiClient(restTemplate, basePath));
   }
