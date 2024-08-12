@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpServerErrorException;
 
 @Slf4j
 public class InteropProbingSteps {
@@ -21,11 +22,15 @@ public class InteropProbingSteps {
 
   @When("viene chiamato il servizio di probing per interop")
   public void probingService() {
-    probingResponse = IPnInteropProbingClient.getEserviceStatus();
+    try {
+      probingResponse = IPnInteropProbingClient.getEserviceStatus();
+    } catch (HttpServerErrorException e) {
+      probingResponse = ResponseEntity.status(e.getRawStatusCode()).build();
+    }
   }
 
   @Then("la chiamata al servizio di probing per interop restituisce {int}")
-  public void probingServiceResponse(int exspectedStatus) {
-    Assertions.assertEquals(exspectedStatus, probingResponse.getStatusCodeValue());
+  public void probingServiceResponse(int expectedStatus) {
+    Assertions.assertEquals(expectedStatus, probingResponse.getStatusCodeValue());
   }
 }
