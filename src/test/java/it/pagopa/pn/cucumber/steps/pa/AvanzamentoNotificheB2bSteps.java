@@ -8,6 +8,7 @@ import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
+import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.*;
@@ -32,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -43,10 +43,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.awaitility.Awaitility.await;
+
 
 @Slf4j
 public class AvanzamentoNotificheB2bSteps {
@@ -63,6 +63,7 @@ public class AvanzamentoNotificheB2bSteps {
     private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
+    private final LegalFactContentVerifySteps legalFactContentVerifySteps;
     @Value("${pn.external.allowed.future.offset.duration}")
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
@@ -72,16 +73,17 @@ public class AvanzamentoNotificheB2bSteps {
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
-                                         IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient) {
+                                        IPnPrivateDeliveryPushExternalClient pnPrivateDeliveryPushExternalClient,
+                                        LegalFactContentVerifySteps legalFactContentVerifySteps) {
         this.sharedSteps = sharedSteps;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.pnTimelineAndLegalFactV23 = new PnTimelineAndLegalFactV23();
-
         this.b2bClient = sharedSteps.getB2bClient();
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.timingForPolling = timingForPolling;
+        this.legalFactContentVerifySteps = legalFactContentVerifySteps;
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
@@ -488,6 +490,11 @@ public class AvanzamentoNotificheB2bSteps {
         readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
     }
 
+    @Then("viene verificato che per l'elemento di timeline della notifica {string} non ci siano duplicati")
+    public void checkTimeLineEventWithoutDuplicates(String timelineEventCategory) {
+        checkTimeLineEventDuplicates(timelineEventCategory);
+    }
+
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
         TimelineElementV23 event = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
@@ -648,6 +655,23 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
         return pnPollingResponseV23.getTimelineElement();
+    }
+
+    public void checkTimeLineEventDuplicates(String timelineEventCategory) {
+        int countTimeLineEventCategory = 0;
+
+        for (TimelineElementV23 timelineElementV23 : sharedSteps.getSentNotification().getTimeline()) {
+            if (timelineEventCategory.equals(timelineElementV23.getCategory())) {
+                countTimeLineEventCategory++;
+            }
+        }
+
+        try {
+            Assertions.assertTrue(countTimeLineEventCategory <= 1,
+                    "L'elemento di timeline della notifica '" + timelineEventCategory + "' è presente solo una volta.");
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} V1")
@@ -1211,7 +1235,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile {string}")
     public void paRequiresDownloadOfLegalFact(String legalFactCategory) {
-        downloadLegalFact(legalFactCategory, true, false, false, null);
+        String legalFactUrl = downloadLegalFact(legalFactCategory, true, false, false, null);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 
     @Then("verifica generazione Atto opponibile senza la messa a disposizione in {string}")
@@ -1247,18 +1272,21 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("la PA richiede il download dell'attestazione opponibile {string} con deliveryDetailCode {string}")
     public void paRequiresDownloadOfLegalFactWithDeliveryDetailCode(String legalFactCategory, String deliveryDetailCode) {
-        downloadLegalFact(legalFactCategory, true, false, false, deliveryDetailCode);
+        String legalFactUrl = downloadLegalFact(legalFactCategory, true, false, false, deliveryDetailCode);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 
     @Then("viene richiesto tramite appIO il download dell'attestazione opponibile {string}")
     public void appIODownloadLegalFact(String legalFactCategory) {
-        downloadLegalFact(legalFactCategory, false, true, false, null);
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, true, false, null);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 
     @Then("{string} richiede il download dell'attestazione opponibile {string}")
     public void userDownloadLegalFact(String user, String legalFactCategory) {
         sharedSteps.selectUser(user);
-        downloadLegalFact(legalFactCategory, false, false, true, null);
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 
     @Then("la PA richiede il download dell'attestazione opponibile PEC_RECEIPT")
@@ -1276,7 +1304,8 @@ public class AvanzamentoNotificheB2bSteps {
     public void userDownloadLegalFactError(String user, String legalFactCategory,String statusCode) {
         try {
             sharedSteps.selectUser(user);
-            downloadLegalFact(legalFactCategory, false, false, true, null);
+            String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
+            legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
         } catch (AssertionFailedError assertionFailedError) {
             // System.out.println(assertionFailedError.getCause().toString());
             // System.out.println(assertionFailedError.getCause().getMessage().toString());
@@ -1284,26 +1313,28 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    private void downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
+    @And("ricerca ed effettua download del legalFact con la categoria {string}")
+    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory) {
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
+    }
+
+    private String downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
         try {
             Thread.sleep(sharedSteps.getWait());
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
 
-
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
-
-
         TimelineElementV23 timelineElement = null;
 
         for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
-
-            if (element.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())) {
+            if (Objects.requireNonNull(element.getCategory()).equals(categoriesV23.getTimelineElementInternalCategory())) {
                 if (deliveryDetailCode == null) {
                     timelineElement = element;
                     break;
-                } else if (element.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode)) {
+                } else if (Objects.equals(Objects.requireNonNull(element.getDetails()).getDeliveryDetailCode(), deliveryDetailCode)) {
                     timelineElement = element;
                     break;
                 }
@@ -1322,33 +1353,28 @@ public class AvanzamentoNotificheB2bSteps {
             String finalKeySearch = getKeyLegalFact(key);
 
             if (pa) {
-
-                Assertions.assertDoesNotThrow(() ->  this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
-                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch);
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = Assertions.assertDoesNotThrow(() ->  this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch));
+                return legalFactDownloadMetadataResponse.getUrl();
             }
             if (appIO) {
-
                 // Assertions.assertDoesNotThrow(() -> this.appIOB2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch.toString(), finalKeySearch,
                 //  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
-
             }
             if (webRecipient) {
-                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-                        finalKeySearch
-
-                ));
-
-                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-                        finalKeySearch);
-                System.out.println("NOME FILE PEC RECIPIENT DEST"+legalFactDownloadMetadataResponse.getFilename());
+                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
+                Assertions.assertDoesNotThrow(() ->
+                    this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
+                            sharedSteps.deepCopy(categorySearch,
+                                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
+                            finalKeySearch
+                    ));
+                System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
+                return legalFactDownloadMetadataResponse.getUrl();
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+        return null;
     }
 
     private void downloadLegalFactPecRecipient(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
@@ -1481,7 +1507,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void checksNotificationViewedStatus() {
-        String status = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus.VIEWED.getValue();
+        String status = NotificationStatus.VIEWED.getValue();
         PnPollingServiceStatusRapidV23 statusRapidV23 = (PnPollingServiceStatusRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
 
         PnPollingResponseV23 pnPollingResponseV23 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
@@ -1846,7 +1872,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1865,7 +1891,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1904,7 +1930,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(noticeCode);
             paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1943,7 +1969,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(noticeCode);
             paymentEventPagoPa.setCreditorTaxId(creditorTaxId);
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1968,7 +1994,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(idAvviso).getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
             List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -1987,7 +2013,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotificationV1().getRecipients().get(utente).getPayment().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotificationV1().getRecipients().get(0).getPayment().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getPartialPrice());
 
             List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();
@@ -2011,7 +2037,7 @@ public class AvanzamentoNotificheB2bSteps {
             paymentEventPagoPa.setNoticeCode(notificationPaymentItem.getPagoPa().getNoticeCode());
             paymentEventPagoPa.setCreditorTaxId(notificationPaymentItem.getPagoPa().getCreditorTaxId());
             DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+            paymentEventPagoPa.setPaymentDate(fmt.format(now()));
             paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
             paymentEventPagoPaList.add(paymentEventPagoPa);
         }
@@ -2032,7 +2058,7 @@ public class AvanzamentoNotificheB2bSteps {
         paymentEventPagoPa.setNoticeCode(sharedSteps.getSentNotification().getRecipients().get(utente).getPayments().get(0).getPagoPa().getNoticeCode());
         paymentEventPagoPa.setCreditorTaxId(sharedSteps.getSentNotification().getRecipients().get(0).getPayments().get(0).getPagoPa().getCreditorTaxId());
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        paymentEventPagoPa.setPaymentDate(fmt.format(OffsetDateTime.now()));
+        paymentEventPagoPa.setPaymentDate(fmt.format(now()));
         paymentEventPagoPa.setAmount(notificationPrice.getTotalPrice());
 
         List<PaymentEventPagoPa> paymentEventPagoPaList = new LinkedList<>();

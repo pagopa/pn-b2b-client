@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
@@ -29,8 +30,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -1048,32 +1049,62 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
         }
     }
 
-
-
     @And("si verifica il contenuto della pec abbia {int} attachment di tipo {string}")
     public void presenzaAttachment(Integer numeroDocumenti, String tipologia) {
-
         Integer contoDocumento = 0;
-
         for (String attachmentUrl : documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls()) {
-            contoDocumento = attachmentUrl.contains(tipologia) ? contoDocumento + 1 : contoDocumento;
+            contoDocumento += attachmentUrl.contains(tipologia) ? 1 : 0;
         }
-
         try {
-
             Assertions.assertTrue(numeroDocumenti == contoDocumento);
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "Verifica Allegati pec in errore ";
+            String message = assertionFailedError.getMessage() + "Verifica Allegati pec in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
+    @And("si verifica il contenuto degli attachments da inviare in via cartacea al destinatario {int} con {int} allegati")
+    public void checkDocumentInviatiPaper(Integer destinatario, Integer allegati) {
+        try {
+            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
+            Assertions.assertNotNull(documentiPec);
+            log.info("documenti analogici : {}", documentiPec);
+            Assertions.assertEquals(allegati, documentiPec.get(0).getPaperEngageRequest().getAttachments().size());
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "Verifica Allegati analogici in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
 
+    @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
+    public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
+        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+                .map(ReceivedMessage::getPaperEngageRequest)
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of())
+                .stream()
+                .map(PaperEngageRequestAttachments::getUri)
+                .filter(uri -> uri.contains(tipologia))
+                .toList();
+        try {
+            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size());
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "Verifica Allegati Cartacei in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @And("si verifica che il {int} documento arrivato sia di tipo {string}")
+    public void checkIndexedDocument(Integer documentIndex, String tipologia) {
+        ReceivedMessage firstDocumentReceived = documentiPec.get(0);
+        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest());
+        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest().getAttachments());
+        Assertions.assertTrue(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType().equals(tipologia));
+        log.info(firstDocumentReceived.toString());
+    }
 
     @Value("${b2b.sender.mail}")
     private String senderEmail;
-
 
 
     private void sendEmail() {

@@ -911,19 +911,19 @@ public class PnPaB2bUtils {
         return null;
     }
 
-    private void loadToPresigned(String url, String secret, String sha256, String resource) {
+    public void loadToPresigned(String url, String secret, String sha256, String resource) {
         loadToPresigned(url, secret, sha256, resource, APPLICATION_PDF, 0);
     }
 
-    private void loadToPresignedMetadati(String url, String secret, String sha256, String resource) {
+    public void loadToPresignedMetadati(String url, String secret, String sha256, String resource) {
         loadToPresigned(url, secret, sha256, resource, APPLICATION_JSON, 0);
     }
 
-    private void loadToPresignedZip(String url, String secret, String sha256, String resource) {
+    public void loadToPresignedZip(String url, String secret, String sha256, String resource) {
         loadToPresigned(url, secret, sha256, resource, "application/zip", 0);
     }
 
-    private void loadToPresignedCsv( String url, String secret, String sha256, String resource ) {
+    public void loadToPresignedCsv( String url, String secret, String sha256, String resource ) {
         loadToPresigned(url,secret,sha256,resource,"text/csv",0);
     }
 
