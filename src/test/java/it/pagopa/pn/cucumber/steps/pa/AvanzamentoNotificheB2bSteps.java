@@ -1105,9 +1105,7 @@ public class AvanzamentoNotificheB2bSteps {
     @And("Lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void matteo(String category, String deliveryDetailCode) {
         String iun = sharedSteps.getSentNotification().getIun();
-        String mandateId = sharedSteps.getSentNotification().getSenderDenomination();
-        log.info(String.format("IUN: %s , MANDATE_ID: %s", iun, mandateId));
-        FullReceivedNotificationV23 webReceivedNotification = this.webRecipientClient.getReceivedNotification(iun, mandateId);
+        FullReceivedNotificationV23 webReceivedNotification = this.webRecipientClient.getReceivedNotification(iun, null);
         Assertions.assertNotNull(webReceivedNotification);
         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement =
                 webReceivedNotification.getTimeline().stream()
