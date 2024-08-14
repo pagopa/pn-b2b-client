@@ -9,7 +9,7 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata da "Mario Gherkin"
 
-  @letturaDestinatario
+  @letturaDestinatario @matteo
   Scenario: [MATTEO]
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
