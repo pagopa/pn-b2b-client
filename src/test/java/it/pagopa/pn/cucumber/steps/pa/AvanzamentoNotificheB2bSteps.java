@@ -20,7 +20,6 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationHistoryResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
@@ -1100,20 +1099,6 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-    }
-
-    @And("Lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
-    public void matteo(String category, String deliveryDetailCode) {
-        String iun = sharedSteps.getSentNotification().getIun();
-        FullReceivedNotificationV23 webReceivedNotification = this.webRecipientClient.getReceivedNotification(iun, null);
-        Assertions.assertNotNull(webReceivedNotification);
-        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement =
-                webReceivedNotification.getTimeline().stream()
-                        .filter(x -> x.getCategory().toString().equals(category) &&
-                                x.getDetails() != null &&
-                                x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
-                        .findFirst().orElse(null);
-        Assertions.assertNull(timelineElement);
     }
 
     @Then("esiste l'elemento di timeline della notifica {string} per l'utente {int}")

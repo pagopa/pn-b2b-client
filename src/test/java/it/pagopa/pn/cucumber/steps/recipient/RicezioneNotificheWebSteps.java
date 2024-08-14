@@ -24,6 +24,7 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -49,6 +50,8 @@ public class RicezioneNotificheWebSteps {
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
     private HttpStatusCodeException notificationError;
+
+    private FullReceivedNotificationV23 fullNotification;
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -76,14 +79,27 @@ public class RicezioneNotificheWebSteps {
     public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         });
+    }
+
+    @And("lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
+    public void matteo(String category, String deliveryDetailCode) {
+        Assertions.assertNotNull(this.fullNotification);
+        fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
+        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement =
+                fullNotification.getTimeline().stream()
+                        .filter(x -> x.getCategory().toString().equals(category) &&
+                                x.getDetails() != null &&
+                                x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        .findFirst().orElse(null);
+        Assertions.assertNull(timelineElement);
     }
 
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        FullReceivedNotificationV23 fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         Assertions.assertNull(fullNotification);
 
     }
