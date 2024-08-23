@@ -123,13 +123,12 @@ Feature: Radd Alternative Anagrafica Sportelli
       | null            | 01-5245951      | Il campo descrizione è obbligatorio   |
       | test sportelli  | null            | Il campo telefono è obbligatorio      |
 
-  #da modificare il valore di description e metterlo piu codificato
   @raddAnagrafica @raddAlternativeCsv @puliziaSportelliCsv
   Scenario: [ADEG-RADD-VAL-FIELD-3] caricamento CSV contiene solo il campo telefono compilato erroneamente
     When viene cambiato raddista con "STANDARD"
     When viene caricato il csv con dati:
       | address_radd_row | address_radd_cap | address_radd_province | address_radd_city    | address_radd_country | radd_description | radd_phoneNumber  | radd_geoLocation_latitudine | radd_geoLocation_longitudine | radd_openingTime | radd_start_validity | radd_end_validity | radd_capacity | radd_externalCode |
-      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | test sportelli   | ciao              | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
+      | via posto        | 30022            | VE                    | CEGGIA               | ITALIA               | test sportelli   | ĄŁĽŚŠŞŤŹŽż              | 45.0000                     | 42.2412                      | lun=9:00-10:00#  | now                 | +10g              | 10            | testRadd          |
     Then viene controllato lo stato di caricamento del csv a "DONE"
     Then si controlla che gli sportelli inseriti siano nello status giusto:
       | index | status   | errorMessage                                       |
@@ -199,7 +198,6 @@ Feature: Radd Alternative Anagrafica Sportelli
       | radd_capacity                | 100             |
     Then si controlla che il sportello sia in stato "ACCEPTED"
 
-  # due test per controllare che vada in errore con descrizione e telefono
   @raddAnagrafica
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_2] inserimento sportello RADD senza campi obbligatori
     When viene generato uno sportello Radd con restituzione errore con dati:
@@ -219,7 +217,6 @@ Feature: Radd Alternative Anagrafica Sportelli
       | via posto | 20161 | MI        | MILANO | NULL        | +39 9858425136 |
       | via posto | 20161 | MI        | NULL   | descrizione | NULL           |
 
-  #test in piu sulla malformattazione del telefono
   @raddAnagrafica
   Scenario Outline: [RADD_ANAGRAFICA_CRUD_3] inserimento sportello RADD con formato campi errato
     When viene generato uno sportello Radd con restituzione errore con dati:
@@ -336,8 +333,10 @@ Feature: Radd Alternative Anagrafica Sportelli
       | radd_openingTime | tue=10:00-20:00#       |
       | radd_phoneNumber | +39 9858425136         |
 
-#se faccio una moifica non va in errore con un campo null
-  @raddAnagrafica @puliziaSportelli
+  # questo test non fa quello per cui è stato creato.
+  # TODO modificarlo per controllare se effettivamente i campi rimangono uguali
+  # non ho trovato un metodo che mi ritorni i dati dello dopo la modifica
+  @raddAnagrafica @puliziaSportelli @ignore
   Scenario: [RADD_ANAGRAFICA_CRUD_8] modifica sportello RADD con campi vuoto dove non obbligatorio controllo successo modifica
     When viene generato uno sportello Radd con dati:
       | address_radd_row      | via posto        |
@@ -353,7 +352,6 @@ Feature: Radd Alternative Anagrafica Sportelli
       | radd_description | NULL |
       | radd_openingTime | NULL |
       | radd_phoneNumber | NULL |
-    # controllo che i campi non vengono modificati
 
   @raddAnagrafica @puliziaSportelli
   Scenario: [RADD_ANAGRAFICA_CRUD_9] modifica sportello RADD con formato campi errato controllo restituzione errore
