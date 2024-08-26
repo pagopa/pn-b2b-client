@@ -838,7 +838,7 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     @Then("viene verificato che lato utente l'elemento di timeline {string} con deliveryDetailCode {string} non esista")
-    public void readingRREventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode) {
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeWithouthSuccess(String timelineEventCategory, String deliveryDetailCode) {
         PnPollingResponseV23 pnPollingResponseV23 = getPollingResponse(timelineEventCategory, deliveryDetailCode);
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV23.getNotification().getTimeline());
 
