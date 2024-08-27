@@ -109,7 +109,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON018 |
 
-  @preesitiEnabledFlag
+  @preesitiEnabledTags
   Scenario: [PREESITI_POSTALIZZAZIONE_2] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode sia all’interno della timeline B2B sia della timeline web
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -151,71 +151,71 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | RECRS002A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRS002D |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN001A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN002A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN002D |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG001A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG002A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG003A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG003D |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRS004A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRS005A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN003A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN004A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRN005A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG005A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG006A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG007A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG008A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRSI004A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRI003A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECRI004A |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | RECAG012 |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
-#      | details | NOT_NULL |
-#      | details_deliveryDetailCode | CON018 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRS002D |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN001A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN002A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN002D |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG001A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG002A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG003A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG003D |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRS004A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRS005A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN003A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN004A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN005A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG005A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG006A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG007A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG008A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRSI004A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRI003A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRI004A |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECAG012 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | CON018 |
 
 
