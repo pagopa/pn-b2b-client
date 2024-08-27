@@ -12,6 +12,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
     And la notifica può essere correttamente recuperata da "Mario Cucumber"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002A" non è visibile
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002D" non è visibile
