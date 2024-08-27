@@ -80,6 +80,7 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            log.info("timeline received: " + fullNotification.getTimeline());
         });
     }
 
