@@ -11,10 +11,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
@@ -32,10 +29,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-Giacenza-lte10_890   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
@@ -53,10 +47,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@ok_AR                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
@@ -75,10 +66,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
     And la notifica viene recuperata dal sistema tramite codice IUN
@@ -97,10 +85,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" è visibile
     And la notifica viene recuperata dal sistema tramite codice IUN
@@ -119,10 +104,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@OK-WO-011B            |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" non è visibile
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
@@ -145,10 +127,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | via@ok_AR                 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-      | loadTimeline | true |
-      | pollingTime | 30000 |
-      | numCheck    | 20     |
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" è visibile
     And la notifica viene recuperata dal sistema tramite codice IUN
