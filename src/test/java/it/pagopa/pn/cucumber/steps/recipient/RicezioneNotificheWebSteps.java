@@ -96,6 +96,19 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertNull(timelineElement);
     }
 
+    @And("lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void matteoPresente(String category, String deliveryDetailCode) {
+        Assertions.assertNotNull(this.fullNotification);
+        fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
+        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement =
+                fullNotification.getTimeline().stream()
+                        .filter(x -> x.getCategory().toString().equals(category) &&
+                                x.getDetails() != null &&
+                                x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        .findFirst().orElse(null);
+        Assertions.assertNull(timelineElement);
+    }
+
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);

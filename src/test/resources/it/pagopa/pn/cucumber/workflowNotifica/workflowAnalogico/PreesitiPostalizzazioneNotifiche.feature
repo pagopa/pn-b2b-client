@@ -15,7 +15,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | loadTimeline | true |
       | pollingTime | 30000 |
       | numCheck    | 20     |
-    And la notifica può essere correttamente recuperata da "Mario Cucumber"
+    And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002A" non è visibile
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002D" non è visibile
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001A" non è visibile
@@ -108,5 +108,46 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
 #    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
 #      | details | NOT_NULL |
 #      | details_deliveryDetailCode | CON018 |
+
+  @preesitiEnabledFlag
+  Scenario: [PREESITI_POSTALIZZAZIONE_2] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode sia all’interno della timeline B2B sia della timeline web
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario
+      | denomination            | OK-CompiutaGiacenza_890     |
+      | taxId                   | CLMCST42R12D969Z            |
+      | digitalDomicile         | NULL                        |
+      | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
+      | loadTimeline | true |
+      | pollingTime | 30000 |
+      | numCheck    | 20     |
+    And la notifica può essere correttamente recuperata da "Mario Gherkin"
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS002D" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002D" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG002A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003D" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS004A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRS005A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN003A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN004A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN005A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG005A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG006A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRSI004A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI003A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRI004A" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" è visibile
+    Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" è visibile
+
 
 
