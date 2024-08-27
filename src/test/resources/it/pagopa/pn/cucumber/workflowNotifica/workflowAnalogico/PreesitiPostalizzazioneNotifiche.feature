@@ -103,7 +103,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | numCheck    | 20     |
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" è visibile
-    #And la notifica viene recuperata dal sistema tramite codice IUN
+    And la notifica viene recuperata dal sistema tramite codice IUN
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | RECAG012A |
@@ -126,7 +126,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" non è visibile
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
-    #And la notifica viene recuperata dal sistema tramite codice IUN
+    And la notifica viene recuperata dal sistema tramite codice IUN
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | RECAG012 |
@@ -151,7 +151,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | numCheck    | 20     |
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" è visibile
-    #And la notifica viene recuperata dal sistema tramite codice IUN
+    And la notifica viene recuperata dal sistema tramite codice IUN
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" non esista
       | details | NOT_NULL |
       | details_deliveryDetailCode | CON018 |
