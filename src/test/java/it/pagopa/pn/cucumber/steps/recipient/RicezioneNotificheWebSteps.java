@@ -85,16 +85,22 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
-    public void matteo(String category, String deliveryDetailCode) {
-        Assertions.assertNotNull(this.fullNotification);
+    public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
+        Assertions.assertNull(getTimelineElementV23(category, deliveryDetailCode));
+    }
+
+    @And("lato utente l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void timelineEventWithCategoryAndDeliveryDetailCodePresent(String category, String deliveryDetailCode) {
+        Assertions.assertNotNull(getTimelineElementV23(category, deliveryDetailCode));
+    }
+
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 getTimelineElementV23(String category, String deliveryDetailCode) {
         fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
-        it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement =
-                fullNotification.getTimeline().stream()
-                        .filter(x -> x.getCategory().toString().equals(category) &&
-                                x.getDetails() != null &&
-                                x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
-                        .findFirst().orElse(null);
-        Assertions.assertNull(timelineElement);
+        return fullNotification.getTimeline().stream()
+            .filter(x -> x.getCategory().toString().equals(category) &&
+                    x.getDetails() != null &&
+                    x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+            .findFirst().orElse(null);
     }
 
     @Then("la notifica non può essere correttamente recuperata da {string}")
