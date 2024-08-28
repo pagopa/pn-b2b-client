@@ -71,7 +71,23 @@ Feature: address validation feature
       | TEST_NORMALIZZATORE_49 | NULL         | VIA MOLINI 2                                        | NULL            | 37062   | DOSSOBUONO                    | NULL                | NULL      | NULL          | HTTP_ERROR                    |
       | TEST_NORMALIZZATORE_50 | NULL         | VIA EURIALO N^47 IN.6                               | NULL            | 00100   | ROMA                          | NULL                | RM        | italia        | ACCEPTED                      |
 
-
+@testNormalizzatore45
+  Scenario : [B2B_ADDRESS_VALIDATION_NORM45] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | TEST_NORMALIZZATORE_45 |
+      |    taxId     | CLMCST42R12D969Z |
+      | physicalAddress_address | VIA PIPPO  |
+      | at | NULL |
+      | physicalAddress_addressDetails | NULL |
+      | physicalAddress_zip | 198 |
+      | physicalAddress_municipality | ROMA |
+      | physicalAddress_municipalityDetails | LIDO DI OSTIA |
+      | physicalAddress_province | NULL |
+      | physicalAddress_State | NULL |
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi HTTP_ERROR
 
   Scenario Outline: [B2B_ADDRESS_VALIDATION_2] Controllo physicalAddress con caratteri ISOLatin1 e limite a 44 - PN-10272
     Given viene generata una nuova notifica
