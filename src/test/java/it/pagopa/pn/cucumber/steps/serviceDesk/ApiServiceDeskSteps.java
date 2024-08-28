@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentBodyRef;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationAttachmentDigests;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDocument;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
 import it.pagopa.pn.client.b2b.pa.service.IPServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.serviceDesk.model.*;
@@ -948,6 +949,19 @@ public class ApiServiceDeskSteps {
             }
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
+        }
+    }
+
+    @And("viene chiamato service desk e si controlla la presenza dell'elemento {string}} nella response")
+    public void invocazioneServizioPerVerificaElementoTimelineNEllaResponse(String elemento){
+        if (sharedSteps.getSentNotification()!= null){
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun(););
+
+            //TODO continuare da qui
+            return response != null &&
+                    response.getTimeline() != null &&
+                    response.getTimeline().stream()
+                            .anyMatch(entry -> "REFINEMENT".equalsIgnoreCase(entry.getCategory()));
         }
     }
 
