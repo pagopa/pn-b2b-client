@@ -20,7 +20,7 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
 
     public PnBFFRecipientNotificationClientImpl(RestTemplate restTemplate,
                                                 @Value("${pn.webapi.external.base-url}") String basePath,
-                                                @Value("${pn.bearer-token.user2") String berearTokenRecipient,
+                                                @Value("${pn.bearer-token.user2}") String berearTokenRecipient,
                                                 @Value("${pn.external.bearer-token-pa-1}") String berearTokenSender) {
         this.notificationReceivedApi = new NotificationReceivedApi(newApiClientForRecipient(restTemplate, basePath, berearTokenRecipient));
         this.notificationSentApi = new NotificationSentApi(newApiClientForSender(restTemplate, basePath, berearTokenSender));
