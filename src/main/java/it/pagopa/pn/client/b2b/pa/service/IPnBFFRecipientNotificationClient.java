@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.http.ResponseEntity;
 
 public interface IPnBFFRecipientNotificationClient {

@@ -19,16 +19,17 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
     private final NotificationSentApi notificationSentApi;
 
     public PnBFFRecipientNotificationClientImpl(RestTemplate restTemplate,
-                                                @Value("${pn.webapi.external.base-url}")String basePath,
-                                                @Value("${pn.bearer-token.user1}")String berearToken) {
-        this.notificationReceivedApi = new NotificationReceivedApi(newApiClientForRecipient(restTemplate, basePath, berearToken));
-        this.notificationSentApi = new NotificationSentApi(newApiClientForSender(restTemplate, basePath, berearToken));
+                                                @Value("${pn.webapi.external.base-url}") String basePath,
+                                                @Value("${pn.bearer-token.user2") String berearTokenRecipient,
+                                                @Value("${pn.external.bearer-token-pa-1}") String berearTokenSender) {
+        this.notificationReceivedApi = new NotificationReceivedApi(newApiClientForRecipient(restTemplate, basePath, berearTokenRecipient));
+        this.notificationSentApi = new NotificationSentApi(newApiClientForSender(restTemplate, basePath, berearTokenSender));
     }
 
     private static ApiClient newApiClientForRecipient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-        newApiClient.addDefaultHeader("Authorization","Bearer "+bearerToken);
+        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
         return newApiClient;
     }
 
