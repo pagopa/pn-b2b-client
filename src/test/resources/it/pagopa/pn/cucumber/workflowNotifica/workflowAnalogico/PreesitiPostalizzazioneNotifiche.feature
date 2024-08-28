@@ -136,7 +136,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And lato mittente vengono letti i dettagli della notifica lato web dal destinatario
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
 
-  @precondition @cleanWebhook @preesitiDisabledFlag
+  @cleanWebhook @preesitiDisabledFlag
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_1] Verifica assenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG008A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -157,7 +157,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And vengono letti gli eventi dello stream versione V23
     And viene verificato che gli eventi dello stream non contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A"
 
-  @precondition @cleanWebhook @preesitiEnabledTags
+  @cleanWebhook @preesitiEnabledTags
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_2] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -178,7 +178,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And vengono letti gli eventi dello stream versione V23
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A"
 
-  @precondition @cleanWebhook @preesitiEnabledTags
+  @cleanWebhook @preesitiEnabledTags
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_3] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -200,7 +200,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012"
     And viene verificato che gli eventi dello stream non contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012"
 
-  @precondition @cleanWebhook @preesitiEnabledTags
+  @cleanWebhook @preesitiEnabledTags
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_4] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
