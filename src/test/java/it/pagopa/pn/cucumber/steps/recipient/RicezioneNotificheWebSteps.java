@@ -273,11 +273,10 @@ public class RicezioneNotificheWebSteps {
                 Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
             Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
-        }else {
+        } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
                 Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-
         }
     }
 
@@ -329,9 +328,13 @@ public class RicezioneNotificheWebSteps {
 
     @Then("(il download)(il recupero) non ha prodotto errori")
     public void operationProducedErrorWithStatusCode() {
-        Assertions.assertTrue((this.notificationError == null && sharedSteps.consumeNotificationError() == null) );
+        try {
+            Assertions.assertNull(this.notificationError);
+            Assertions.assertNull(sharedSteps.consumeNotificationError());
+        } catch (AssertionFailedError e) {
+            sharedSteps.throwAssertFailerWithIUN(e);
+        }
     }
-
 
     @And("download attestazione opponibile AAR da parte {string}")
     public void downloadLegalFactIdAARByRecipient(String recipient) {
