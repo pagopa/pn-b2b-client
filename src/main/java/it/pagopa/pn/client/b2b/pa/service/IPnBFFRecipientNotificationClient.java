@@ -10,4 +10,7 @@ public interface IPnBFFRecipientNotificationClient {
 
     ResponseEntity<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1> getSentNotificationV1WithHttpInfoForSender(String iun);
 
+    void setRecipientBearerToken(SettableBearerToken.BearerTokenType bearerToken);
+
+    void setSenderBearerToken(SettableBearerToken.BearerTokenType bearerToken);
 }

@@ -14,9 +14,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
     And lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è presente
-    Then lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    Then lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è presente
 
   @preesitiDisabledFlag
@@ -33,9 +33,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
     And lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
-    Then lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    Then lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
 
   @preesitiDisabledFlag
@@ -52,9 +52,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
     And lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è presente
-    Then lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    Then lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è presente
 
   @preesitiEnabledTags
@@ -71,9 +71,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
-    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
-    And lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" non è visibile
 
   @preesitiEnabledTags
@@ -90,9 +90,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
-    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
-    And lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
 
   @preesitiEnabledTags
@@ -108,13 +108,13 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
-    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" non è visibile
+    Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è visibile
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
-    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" non è visibile
-    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" non è visibile
-    And lato mittente vengono letti i dettagli della notifica lato web dal destinatario
-    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012" non è visibile
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
+    And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG012A" non è presente
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG012" non è visibile
 
   @preesitiEnabledTags
@@ -131,9 +131,9 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" è visibile
-    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario
-    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
-    And lato mittente vengono letti i dettagli della notifica lato web dal destinatario
+    And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
+    Then lato destinatario dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è presente
+    And lato mittente vengono letti i dettagli della notifica lato web "Comune_Multi"
     And lato mittente dal web l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
 
   @precondition @cleanWebhook @preesitiDisabledFlag @webhook3
