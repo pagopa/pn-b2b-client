@@ -9,21 +9,6 @@ Feature: Ricezione notifiche api web con invio tramite api B2B
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata da "Mario Gherkin"
 
-  @letturaDestinatario @matteo
-  Scenario: [MATTEO]
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
-    And destinatario
-      | denomination            | OK-Giacenza-gt10_890 |
-      | taxId                   | CLMCST42R12D969Z     |
-      | digitalDomicile         | NULL                 |
-      | physicalAddress_address | Via@ok_AR            |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018"
-    And la notifica può essere correttamente recuperata da "Mario Gherkin"
-    And lato utente l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018" non è visibile
-
   @SmokeTest @letturaDestinatario
   Scenario: [WEB-PF-RECIPIENT_2] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
     Given viene generata una nuova notifica

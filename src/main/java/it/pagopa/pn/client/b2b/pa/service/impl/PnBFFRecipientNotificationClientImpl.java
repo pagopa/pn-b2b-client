@@ -96,7 +96,6 @@ public class PnBFFRecipientNotificationClientImpl implements IPnBFFRecipientNoti
             }
             case USER_2 -> {
                 this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, marioGherkinBearerToken));
-
             }
             case USER_3 -> {
                 this.notificationReceivedApi.setApiClient(newApiClientForRecipient(restTemplate, basePath, leonardoBearerToken));

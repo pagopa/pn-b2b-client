@@ -77,6 +77,7 @@ public class RicezioneNotificheWebSteps {
     @Then("la notifica può essere correttamente recuperata da {string}")
     public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
+        waitState(100000);
         Assertions.assertDoesNotThrow(() -> {
             this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
             log.info("timeline received: " + fullNotification.getTimeline());
@@ -85,6 +86,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("lato destinatario vengono letti i dettagli della notifica lato web dal destinatario {string}")
     public void latoDestinatarioVengonoLettiIDettagliDellaNotificaLatoWeb(String user) {
+        selectUser(user);
         bffFullNotificationV1Recipient =
             Assertions.assertDoesNotThrow(() ->
                 bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
@@ -95,6 +97,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
+
         Assertions.assertNull(getTimelineElementV23(category, deliveryDetailCode));
     }
 
@@ -145,7 +148,8 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
-    public void latoMittenteVengonoLettiIDettagliDellaNotificaLatoWebDalDestinatario(String mittente) {
+    public void latoMittenteVengonoLettiIDettagliDellaNotificaLatoWebDalDestinatario(String sender) {
+        selectPa(sender);
         bffFullNotificationV1Sender = Assertions.assertDoesNotThrow(() ->
                 bffRecipientNotificationClient.getSentNotificationV1WithHttpInfoForSender(sharedSteps.getSentNotification().getIun())
                         .getBody());
@@ -664,34 +668,27 @@ public class RicezioneNotificheWebSteps {
     }
 
     public void selectUser(String user) {
-        switch (user) {
+        switch (user.trim().toLowerCase()) {
             case "mario cucumber", "ettore fieramosca" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
             }
             case "mario gherkin", "cristoforo colombo" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             }
             case "gherkinsrl" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
             case "cucumberspa" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
             case "leonardo da vinci" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
             }
             case "dino sauro" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
             }
             case "mario cucumber con credenziali non valide" -> {
-                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
-                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             }
             default -> throw new IllegalArgumentException();
 
@@ -702,26 +699,29 @@ public class RicezioneNotificheWebSteps {
     public void selectPa(String pa){
         switch (pa) {
             case "Comune_1" -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
             }
             case "Comune_2" -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
             }
             case "Comune_Multi" -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.GA);
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
             }
             case "Comune_Son" -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.SON);
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
             }
             case "Comune_Root" -> {
-                this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
-                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.ROOT);
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             }
             default -> throw new IllegalArgumentException();
+        }
+    }
+
+    private static void waitState(Integer waitingStateCsv) {
+        try {
+            Thread.sleep(waitingStateCsv);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }
