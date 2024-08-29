@@ -89,7 +89,8 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertDoesNotThrow(() ->
                 bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
                 .getBody());
-        log.info("FULL TIMELINE: " + bffFullNotificationV1Sender.getTimeline());
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
     }
 
     @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
@@ -141,7 +142,8 @@ public class RicezioneNotificheWebSteps {
         bffFullNotificationV1Sender = Assertions.assertDoesNotThrow(() ->
                 bffRecipientNotificationClient.getSentNotificationV1WithHttpInfoForSender(sharedSteps.getSentNotification().getIun())
                         .getBody());
-        log.info("FULL TIMELINE: " + bffFullNotificationV1Recipient.getTimeline());
+        Assertions.assertNotNull(bffFullNotificationV1Sender);
+        log.info("FULL TIMELINE SENDER: " + bffFullNotificationV1Sender.getTimeline());
     }
 
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
