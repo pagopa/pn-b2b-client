@@ -952,16 +952,16 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @And("viene chiamato service desk e si controlla la presenza dell'elemento {string}} nella response")
+    @And("viene chiamato service desk e si controlla la presenza dell'elemento {string} nella response")
     public void invocazioneServizioPerVerificaElementoTimelineNEllaResponse(String elemento){
         if (sharedSteps.getSentNotification()!= null){
-            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun(););
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun());
 
-            //TODO continuare da qui
-            return response != null &&
-                    response.getTimeline() != null &&
-                    response.getTimeline().stream()
-                            .anyMatch(entry -> "REFINEMENT".equalsIgnoreCase(entry.getCategory()));
+            if (timelineResponse != null && timelineResponse.getTimeline() != null) {
+                boolean hasRefinementCategory = timelineResponse.getTimeline().stream()
+                        .anyMatch(entry -> elemento.equalsIgnoreCase(entry.getCategory().toString()));
+                Assertions.assertTrue(hasRefinementCategory, "La categoria " + elemento + " non è presente nella timeline.");
+            }
         }
     }
 
