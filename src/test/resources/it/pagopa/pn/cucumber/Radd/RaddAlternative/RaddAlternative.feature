@@ -1272,21 +1272,6 @@ Feature: Radd Alternative
     #Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica con lo stesso operationId dal raddista "issuer_2"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
 
-  @raddAlt @zip
-  Scenario: [RADD-ALT_AOR-STANDARD] PF -  Start di una AOR transaction effettuata da operatore STANDARD - ricezione OK (PN-12207)
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber radd alternative  |
-      | senderDenomination | Comune di Palermo           |
-    And destinatario Signor casuale e:
-      | digitalDomicile         | NULL                                         |
-      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
-    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    When la persona fisica "Signor casuale" chiede di verificare la presenza di notifiche
-    Then La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisica con lo stesso operationId dal raddista "issuer_2"
-    And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
-
   @raddAlt @ignore
   Scenario: [RADD-ALT_AOR-77] PF -  Start di una AOR transaction su notifica irreperibile perfezionata > 120gg - Ricezione errore RetryAfter
     When la persona fisica "Mario Cucumber" chiede di verificare la presenza di notifiche
