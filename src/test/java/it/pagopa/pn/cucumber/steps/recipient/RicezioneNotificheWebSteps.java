@@ -112,11 +112,18 @@ public class RicezioneNotificheWebSteps {
                 .findFirst().orElse(null);
     }
 
+    @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+        Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertFalse(dato.get().getHidden());
+    }
+
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
         Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
-        Assertions.assertFalse(dato.get().getHidden());
+        Assertions.assertTrue(dato.get().getHidden());
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
@@ -146,11 +153,18 @@ public class RicezioneNotificheWebSteps {
         log.info("FULL TIMELINE SENDER: " + bffFullNotificationV1Sender.getTimeline());
     }
 
+    @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+        Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertFalse(dato.get().getHidden());
+    }
+
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
     public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
         Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
-        Assertions.assertFalse(dato.get().getHidden());
+        Assertions.assertTrue(dato.get().getHidden());
     }
 
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
