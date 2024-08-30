@@ -31,7 +31,7 @@ Feature: avanzamento notifiche analogico RS persona giuridica
   Scenario: [B2B_TIMELINE_PG_RIS_1] Invio notifica digitale ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milanoAvanzamentoNotificheB2bPFDigitaleNR            |
+      | senderDenomination | Comune di milano            |
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RIS   |
