@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddAlternativeClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnRaddFsuClient;
+import it.pagopa.pn.client.b2b.pa.service.utils.RaddOperator;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model_AnagraficaCsv.RegistryUploadResponse;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadRequest;
 import it.pagopa.pn.client.b2b.radd.generated.openapi.clients.internalb2bradd.model.DocumentUploadResponse;
@@ -770,6 +771,7 @@ public class PnPaB2bUtils {
         String secret = documentUploadResponse.getSecret();
         String url = documentUploadResponse.getUrl();
         log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
+
         if(usePresignedUrl){
             loadToPresignedZip( url, secret, sha256, resourcePath );
             log.info("UPLOAD RADD COMPLETE");
@@ -777,6 +779,29 @@ public class PnPaB2bUtils {
             log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
         }
         return new Pair<>(key, sha256);
+    }
+
+    public Pair<String, String> preloadRaddOperatoreAlternativeDocument(String resourcePath, boolean usePresignedUrl, String operationId, RaddOperator uidRaddOperator) throws IOException {
+        String sha256 = computeSha256(resourcePath);
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse documentUploadResponse = getDocumentUploadResponsePerOperatore(operationId, uidRaddOperator, sha256);
+
+        String key = documentUploadResponse.getFileKey();
+        String secret = documentUploadResponse.getSecret();
+        String url = documentUploadResponse.getUrl();
+        log.info(ATTACHMENT_RESOURCE_KEY_SHA_256_SECRET_PRESIGNED_URL, resourcePath, sha256, secret, url);
+
+        if(usePresignedUrl){
+            loadToPresignedZip( url, secret, sha256, resourcePath );
+            log.info("UPLOAD RADD COMPLETE");
+        } else {
+            log.info("UPLOAD RADD COMPLETE WITHOUT UPLOAD");
+        }
+        return new Pair<>(key, sha256);
+    }
+
+    private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse getDocumentUploadResponsePerOperatore(String operationId, RaddOperator raddOperator, String sha256) {
+        raddAltClient.setAuthTokenRadd(raddOperator.getIssuerType());
+        return getPreLoadRaddOperatorAlternativeResponse(sha256, operationId, raddOperator.getUid());
     }
 
     private DocumentUploadResponse getPreLoadRaddResponse(String sha256) {
@@ -792,6 +817,13 @@ public class PnPaB2bUtils {
                 .operationId(operationid)
                 .checksum(sha256);
         return raddAltClient.documentUpload("1234556", documentUploadRequest);
+    }
+
+    private it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadResponse getPreLoadRaddOperatorAlternativeResponse(String sha256, String operationid, String uidRaddOperator) {
+        it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadRequest documentUploadRequest = new it.pagopa.pn.client.b2b.radd.generated.openapi.clients.externalb2braddalt.model.DocumentUploadRequest()
+                .operationId(operationid)
+                .checksum(sha256);
+        return raddAltClient.documentUpload(uidRaddOperator, documentUploadRequest);
     }
 
     public NotificationDocument preloadDocument(NotificationDocument document) throws IOException {

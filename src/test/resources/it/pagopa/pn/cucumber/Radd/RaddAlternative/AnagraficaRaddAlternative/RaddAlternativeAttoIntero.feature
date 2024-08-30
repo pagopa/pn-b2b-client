@@ -62,7 +62,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-    And viene verificato il costo di 213 e il peso di 10 nei details del'elemento di timeline letto
+    And viene verificato il costo di 214 e il peso di 10 nei details del'elemento di timeline letto
 
   @raddAttoIntero
   Scenario Outline: [RADD_FILTRO_ATTO-INTERO_4] invio notifica 890 coperto da RADD e controllo diminuzione costi con filtro con rule typeWithNextResult

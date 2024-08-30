@@ -271,7 +271,7 @@ public class AsyncSteps {
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(Integer user) {
             log.info("Costo totale attualmente presente sulla Notifica: {}", amountNotifica.get(user));
             log.info("Costo totale attualmente presente sulla posizione debitoria: {}", amountGPD);
-            Assertions.assertEquals(amountNotifica.get(user),amountGPD);
+            Assertions.assertEquals(amountGPD, amountNotifica.get(user));
     }
 
 
@@ -320,10 +320,10 @@ public class AsyncSteps {
     @And("viene aggiunto il costo della notifica totale")
     public void vieneAggiuntoIlCostoDellaNotificaTotale() {
         try {
-            for(int i=0;i<amountNotifica.size();i++) {
+            for(int i=0; i < amountNotifica.size(); i++) {
                 int paFee = Objects.requireNonNull(Objects.requireNonNull(sharedSteps.getSentNotification()).getPaFee());
                 int costototale = costoBaseNotifica + paFee;
-                log.info("Amount+costo base:"+costototale);
+                log.info("Amount+costo base:" + costototale);
                 amountNotifica.set(i, amountNotifica.get(i) + costototale);
             }
             Assertions.assertNotNull(amountNotifica);
