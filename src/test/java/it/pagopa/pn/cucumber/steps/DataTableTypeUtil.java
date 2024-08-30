@@ -241,8 +241,8 @@ public class DataTableTypeUtil {
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null ? null : (new NotificationDigitalAddress()
+                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null ?
                                 null : NotificationDigitalAddress.TypeEnum.PEC ))
                         .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
                 )

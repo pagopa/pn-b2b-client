@@ -106,7 +106,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN con OpenApi V1
 
-  @version
+  # Il seguente test non viene eseguito in quanto nel caso V1 le notifiche non hanno mai un evento di tipo NOTIFICATION_CANCELLATION_REQUEST nella history
   Scenario: [B2B-PA-SEND_VERSION_V1_V21_10] Invio notifica digitale mono destinatario e mono pagamento V2.1 con annullamento e recupero tramite codice IUN V1.1 (p.fisica)_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
