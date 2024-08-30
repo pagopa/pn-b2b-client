@@ -27,8 +27,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -1015,6 +1017,10 @@ public class PnPaB2bUtils {
     }
 
     public byte[] downloadFile(String downloadUrl) {
+        if (downloadUrl == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "download Url cannot be null");
+        }
+
         try {
             URL url = new URL(downloadUrl);
             return IOUtils.toByteArray(url);

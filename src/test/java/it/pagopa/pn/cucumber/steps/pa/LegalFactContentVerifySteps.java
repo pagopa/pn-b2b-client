@@ -10,30 +10,32 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResp
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAnalogico;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.lang.reflect.Field;
 
-
 @Slf4j
 public class LegalFactContentVerifySteps {
     private final PnPaB2bUtils b2bUtils;
     private final PnParserService pnParserService;
+    private final SharedSteps sharedSteps;
     @Setter
     private String legalFactUrl;
     @Setter
     private String legalFactType;
 
-
     @Autowired
-    public LegalFactContentVerifySteps(PnPaB2bUtils b2bUtils, PnParserService pnParserService) {
+    public LegalFactContentVerifySteps(PnPaB2bUtils b2bUtils, PnParserService pnParserService, SharedSteps sharedSteps) {
         this.b2bUtils = b2bUtils;
         this.pnParserService = pnParserService;
+        this.sharedSteps = sharedSteps;
     }
 
     @Then("si verifica se il legalFact è di tipo {string}")
@@ -185,14 +187,19 @@ public class LegalFactContentVerifySteps {
         assertLegalFactParserResponse(pnParserLegalFactResponse);
         PnLegalFactNotificaPresaInCaricoMultiDestinatario pnLegalFactNotificaPresaInCaricoMultiDestinatario = (PnLegalFactNotificaPresaInCaricoMultiDestinatario) pnParserLegalFactResponse.getResponse().getPnLegalFact();
 
-        if(multiDestinatarioPosition == 0) {
-            Assertions.assertEquals(destinatarioAnalogicoList.size(), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().size());
-            Assertions.assertTrue(destinatarioAnalogicoList.containsAll(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici())
-                    && pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
-        } else {
-            Assertions.assertEquals(multiDestinatarioPosition, pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0))+1);
-            Assertions.assertEquals(destinatarioAnalogicoList.get(0), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition-1));
-            Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
+        try {
+            if(multiDestinatarioPosition == 0) {
+                Assertions.assertEquals(destinatarioAnalogicoList.size(), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().size());
+                Assertions.assertTrue(destinatarioAnalogicoList.containsAll(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici())
+                        && pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
+            } else {
+                Assertions.assertEquals(multiDestinatarioPosition, pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0))+1);
+                Assertions.assertEquals(destinatarioAnalogicoList.get(0), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition-1));
+                Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
+            }
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+
     }
 }
