@@ -13,7 +13,6 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
-import it.pagopa.pn.cucumber.steps.pa.StepSharedContext;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -82,9 +81,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnLegalFactTokens.class,
         PnParser.class,
         PnExternalChannelsServiceClientImpl.class,
-        PnSafeStoragePrivateClientImpl.class,
-        StepSharedContext.class,
-
+        PnSafeStoragePrivateClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

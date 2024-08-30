@@ -69,7 +69,6 @@ public class AvanzamentoNotificheB2bSteps {
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
-    private final StepSharedContext stepSharedContext;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -85,7 +84,6 @@ public class AvanzamentoNotificheB2bSteps {
         this.pnPollingFactory = sharedSteps.getPollingFactory();
         this.timingForPolling = timingForPolling;
         this.legalFactContentVerifySteps = legalFactContentVerifySteps;
-        this.stepSharedContext = sharedSteps.getStepSharedContext();
     }
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} dalla PA {string}")
@@ -489,14 +487,12 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
-        stepSharedContext.setPnPollingResponse(readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory));
+        readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
     }
 
     @Then("gli eventi di timeline ricevuti sono i seguenti$")
     public void verifyTimelineEventsAreTheOnesExpected(List<String> expectedEvents) {
-        PnPollingResponseV23 timelineElementV23 = stepSharedContext.getPnPollingResponse();
-        List<String> actualTimeline = Optional.ofNullable(timelineElementV23)
-                .map(PnPollingResponseV23::getNotification)
+        List<String> actualTimeline = Optional.ofNullable(sharedSteps.getSentNotification())
                 .map(FullSentNotificationV23::getTimeline)
                 .orElse(List.of())
                 .stream()
@@ -517,8 +513,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string}")
     public void TimelineElementOfNotification(String timelineEventCategory, String cost) {
-        PnPollingResponseV23 event = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
-        Long notificationCost = event.getTimelineElement().getDetails().getNotificationCost();
+        TimelineElementV23 event = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
+        Long notificationCost = event.getDetails().getNotificationCost();
 
         if (cost.equalsIgnoreCase("null")) {
             Assertions.assertNull(notificationCost);
@@ -635,7 +631,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    public PnPollingResponseV23 readingEventUpToTheTimelineElementOfNotificationForCategory(String timelineEventCategory) {
+    public TimelineElementV23 readingEventUpToTheTimelineElementOfNotificationForCategory(String timelineEventCategory) {
         PnPollingServiceTimelineSlowV23 timelineSlowV23 = (PnPollingServiceTimelineSlowV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V23);
 
         PnPollingResponseV23 pnPollingResponseV23 = timelineSlowV23.waitForEvent(sharedSteps.getIunVersionamento(),
@@ -653,7 +649,7 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-        return pnPollingResponseV23;
+        return pnPollingResponseV23.getTimelineElement();
     }
 
     public TimelineElementV23 readingEventUpToTheTimelineElementOfNotificationForCategoryExtraRapid(String timelineEventCategory) {
@@ -2963,7 +2959,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con indirizzo normalizzato:")
     public void vengonoLettiGliEventiFinoAllElementoDiTimelineDellaNotificaConIndirizzoNormalizzato(String timelineEventCategory, DataTable table) {
-        TimelineElementV23 timelineElementV23 = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory).getTimelineElement();
+        TimelineElementV23 timelineElementV23 = readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
 
         System.out.println(table);
         log.info("indirizzo: {}", timelineElementV23.getDetails().getOldAddress());
