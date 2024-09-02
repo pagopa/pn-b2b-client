@@ -450,7 +450,6 @@ public class SharedSteps {
                                 .address(getDigitalAddressValue())
                         )
                 , new HashMap<>());
-
     }
 
     @And("destinatario Mario Cucumber V1")
