@@ -957,11 +957,13 @@ public class ApiServiceDeskSteps {
         if (sharedSteps.getSentNotification()!= null){
             timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun());
 
-            if (timelineResponse != null && timelineResponse.getTimeline() != null) {
-                boolean hasRefinementCategory = timelineResponse.getTimeline().stream()
+            Assertions.assertNotNull(timelineResponse);
+            Assertions.assertNotNull(timelineResponse.getTimeline());
+
+            boolean hasRefinementCategory = timelineResponse.getTimeline().stream()
                         .anyMatch(entry -> elemento.equalsIgnoreCase(entry.getCategory().toString()));
-                Assertions.assertTrue(hasRefinementCategory, "La categoria " + elemento + " non è presente nella timeline.");
-            }
+
+            Assertions.assertTrue(hasRefinementCategory, "La categoria " + elemento + " non è presente nella timeline.");
         }
     }
 
