@@ -501,8 +501,7 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
                     }
                 }
             }
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            byte[] bytes = b2bUtils.downloadFile(this.downloadResponse.getUrl());
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
