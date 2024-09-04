@@ -115,7 +115,7 @@ Feature: verifica compatibilità tra v1.1 a v2.1
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED e successivamente annullata
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
-    And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "NOTIFICATION_CANCELLATION_REQUEST" V1
+    And vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "NOTIFICATION_CANCELLATION_REQUEST" V1
     And vengono letti gli eventi fino allo stato della notifica "CANCELLED" V1
 
 

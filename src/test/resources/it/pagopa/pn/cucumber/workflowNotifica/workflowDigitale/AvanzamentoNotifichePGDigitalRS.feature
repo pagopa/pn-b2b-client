@@ -1,29 +1,20 @@
 Feature: avanzamento notifiche analogico RS persona giuridica
 
-
   @dev @workflowDigitale
-  Scenario: [B2B_TIMELINE_PG_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
+    # [B2B_TIMELINE_PG_RS_2]
+  Scenario Outline: [B2B_TIMELINE_PG_RS_1] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
     And destinatario Cucumber Analogic e:
       | digitalDomicile_address | test@fail.it |
-      | physicalAddress_address | Via@ok_RS    |
+      | physicalAddress_address | <physical_address> |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-
-
-  @dev @workflowDigitale
-  Scenario: [B2B_TIMELINE_PG_RS_2] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it    |
-      | physicalAddress_address | Via@ok-Retry_RS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-
+    Examples:
+      | physical_address |
+      | Via@ok_RS |
+      | Via@ok-Retry_RS |
 
   @dev @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_RS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
@@ -36,7 +27,6 @@ Feature: avanzamento notifiche analogico RS persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
-
   @dev @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_RIS_1] Invio notifica digitale ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo
     Given viene generata una nuova notifica
@@ -47,7 +37,6 @@ Feature: avanzamento notifiche analogico RS persona giuridica
       | physicalAddress_address | Via@ok_RIS   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-
 
   @dev
   #[B2B_TIMELINE_PG_8]
@@ -70,7 +59,6 @@ Feature: avanzamento notifiche analogico RS persona giuridica
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
-
 
   @dev @workflowDigitale
   Scenario: [B2B_TIMELINE_PG_RS_6] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER_scenario positivo

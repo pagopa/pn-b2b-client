@@ -17,7 +17,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
 
 
   @workflowAnalogico
@@ -292,7 +292,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico AR
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
 
 
   @workflowAnalogico

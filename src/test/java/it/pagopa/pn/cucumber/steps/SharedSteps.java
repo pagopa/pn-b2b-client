@@ -287,6 +287,7 @@ public class SharedSteps {
         this.timingConfigs = timingConfigs;
         this.pollingFactory = pollingFactory;
     }
+
     @BeforeAll
     public static void before_all() {
         log.debug("SHARED_GLUE START");
