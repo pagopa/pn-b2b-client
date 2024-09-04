@@ -2,8 +2,10 @@ package it.pagopa.pn.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.DataTableType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.cucumber.utils.CalculateRequestParameter;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -681,6 +683,22 @@ public class DataTableTypeUtil {
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
+    }
+
+    @DataTableType
+    public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) throws JsonProcessingException {
+        ShipmentCalculateRequest.ProductEnum product = ShipmentCalculateRequest.ProductEnum.fromValue(getValue(data, "product"));
+        String geokey = getValue(data, "geokey");
+        Integer numPages = Integer.valueOf(Objects.requireNonNull(getValue(data, "numPages")));
+        Boolean isReversePrinter = Boolean.valueOf(getValue(data, "isReversePrinter"));
+        Integer weight = Integer.valueOf(Objects.requireNonNull(getValue(data, "weight")));
+        CalculateRequestParameter requestParameter = new CalculateRequestParameter();
+        requestParameter.setProduct(product);
+        requestParameter.setGeokey(geokey);
+        requestParameter.setNumPages(numPages);
+        requestParameter.setIsReversePrinter(isReversePrinter);
+        requestParameter.setWeight(weight);
+        return requestParameter;
     }
 
 
