@@ -725,7 +725,7 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
-        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, true);
+        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, false);
     }
 
     @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
