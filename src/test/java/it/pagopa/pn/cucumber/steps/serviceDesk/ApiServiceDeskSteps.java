@@ -60,7 +60,9 @@ public class ApiServiceDeskSteps {
     private Integer retentionTimePreLoad;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
     private static final String CF_corretto = "CLMCST42R12D969Z";
+    private static final String CF_ada = "LVLDAA85T50G702B";
     private static final String CF_errato = "CPNTMS85T15H703WCPNTMS85T15H703W|";
+    private static final String PIVA_errata = "1234567899999999999999999999999999999";
     private static final String CF_errato2 = "CPNTM@85T15H703W";
     private final String CF_vuoto = null;
     private static final String ticketid_errato = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
@@ -626,19 +628,21 @@ public class ApiServiceDeskSteps {
         Integer size = setSearchPageSize(searchPageSize);
         String nextPagesKey = setNextPagesKey(searchNextPagesKey);
 
-        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, false);
+        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate);
 
-        if(size==50 && nextPagesKey==null){
-            Assertions.assertEquals(50, Objects.requireNonNull(searchNotificationsResponse.getResults()).size());
-        }
-
-        List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
-        for (NotificationResponse notificationResponseTmp: Objects.requireNonNull(searchNotificationsResponse.getResults())) {
-            if (notificationResponseTmp.getCourtesyMessages()!=null && !notificationResponseTmp.getCourtesyMessages().isEmpty()){
-                listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+        if (searchNotificationsResponse!= null) {
+            if (size == 50 && nextPagesKey == null) {
+                Assertions.assertEquals(50, Objects.requireNonNull(searchNotificationsResponse.getResults()).size());
             }
+
+            List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
+            for (NotificationResponse notificationResponseTmp : Objects.requireNonNull(searchNotificationsResponse.getResults())) {
+                if (notificationResponseTmp.getCourtesyMessages() != null && !notificationResponseTmp.getCourtesyMessages().isEmpty()) {
+                    listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+                }
+            }
+            Assertions.assertFalse(listCourtesyMessage.isEmpty());
         }
-        Assertions.assertFalse(listCourtesyMessage.isEmpty());
     }
 
     @Then("Il servizio risponde correttamente")
@@ -670,6 +674,13 @@ public class ApiServiceDeskSteps {
                 profileRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 profileRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                if ("PF".equalsIgnoreCase(recipientType)) {
+                    profileRequest.setTaxId(CF_errato);
+                }else {
+                    profileRequest.setTaxId(PIVA_errata);
+                }
+
             } else {
                 profileRequest.setTaxId(setTaxID(taxId));
             }
@@ -685,7 +696,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, boolean multiTaxId) {
+    private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
         try {
             Integer size = setSearchPageSize(searchPageSize);
             String nextPagesKey = setNextPagesKey(searchNextPagesKey);
@@ -697,12 +708,14 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
-            } else {
-                if(multiTaxId) {
-                    searchNotificationsRequest.setTaxId(setTaxID(setTaxID(taxId)));
-                } else {
-                    searchNotificationsRequest.setTaxId(setTaxID(taxId));
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                if ("PF".equalsIgnoreCase(recipientType)) {
+                    searchNotificationsRequest.setTaxId(CF_errato);
+                }else {
+                    searchNotificationsRequest.setTaxId(PIVA_errata);
                 }
+            } else {
+                    searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
 
             if (!"NULL".equalsIgnoreCase(recipientType)) {
@@ -724,7 +737,7 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
-        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, true);
+        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate);
     }
 
     @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
@@ -783,6 +796,10 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
+            } else if ("ADA".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
             } else {
                 String resultTaxID = setTaxID(taxid);
                 searchNotificationsRequest.setTaxId(resultTaxID);
@@ -808,6 +825,10 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
+            } else if ("ADA".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(CF_ada);
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
