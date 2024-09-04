@@ -785,9 +785,9 @@ public class ApiServiceDeskSteps {
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
             } else {
-                String resultTaxID = setTaxID(taxid);
-                searchNotificationsRequest.setTaxId(resultTaxID);
-                if (!resultTaxID.equalsIgnoreCase(taxidQuery)) {
+                //String resultTaxID = setTaxID(taxid);
+                searchNotificationsRequest.setTaxId(taxid);
+                if (!taxid.equalsIgnoreCase(taxidQuery)) {
                     diversoTaxid = true;
                 }
             }
