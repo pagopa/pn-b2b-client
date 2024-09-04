@@ -875,7 +875,7 @@ Feature: Api Service Cruscotto Assitenza
       | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
     #Response 404 NOT_FOUND
 
-  @cruscottoAssistenza
+  @cruscottoAssistenza @testSuiteDiProvaTemporanea
   Scenario Outline: [API-SERVICE-CA_CE02.13_97] Invocazione del servizio con IUN corretto e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And Il servizio risponde correttamente
