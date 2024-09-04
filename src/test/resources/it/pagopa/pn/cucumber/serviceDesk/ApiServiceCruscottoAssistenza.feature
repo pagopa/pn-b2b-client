@@ -74,7 +74,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID      | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | GherkinSrl | PG             | 10               | NULL                 | 2023-01-01 | 2024-08-01 |
+      | CucumberSpa | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-01 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
@@ -82,7 +82,7 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
       | Mario Cucumber | PF             | 1                | NULL                 | 2023-01-01 | 2024-08-01 |
     #Response 200 OK
 
@@ -113,8 +113,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 50               | NULL                 | 2023-01-01 | 2024-08-01 |
       #Response 200 OK
 
   @cruscottoAssistenza
@@ -165,8 +165,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 1                | NULL                 | 2023-01-01 | 2024-08-01 |
 
 
    #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche

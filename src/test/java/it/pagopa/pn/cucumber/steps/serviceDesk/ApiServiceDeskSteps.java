@@ -837,7 +837,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(timelineResponse);
             TimelineElement timelineElement = null;
             for (TimelineElement element : timelineResponse.getTimeline()) {
-                if (!destinatario.equals(element.getDetail().getRecIndex())) {
+                if (!"REQUEST_ACCEPTED".equalsIgnoreCase(element.getCategory().toString()) && !destinatario.equals(element.getDetail().getRecIndex())) {
                     timelineElement = element;
                     break;
                 }
