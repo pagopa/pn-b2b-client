@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.gestionecosti;
 
+import com.opencsv.bean.CsvToBeanBuilder;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -12,10 +13,16 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.List;
+import java.util.Objects;
+
 public class PaperCalculatorSteps {
     private final PaperCalculatorApi paperCalculatorApi;
     private ShipmentCalculateRequest shipmentCalculateRequest;
     private ResponseEntity<ShipmentCalculateResponse> calculateResponseResponseEntity;
+    private List<CalculateRequestParameter> requestParamsFromCsv;
 
     @Autowired
     public PaperCalculatorSteps(PaperCalculatorApi paperCalculatorApi) {
@@ -55,33 +62,26 @@ public class PaperCalculatorSteps {
     }
 
     @Given("vengono recuperati i valori delle richieste da file")
-    public List<String[]> readCsvFromUrl(String csvUrl) {
-        List<String[]> records = new ArrayList<>();
+    public List<CalculateRequestParameter> transformCsvToObject() throws FileNotFoundException {
+        String fileName = "src/main/resources/TEST_massivo_costi - TEST.csv";
+        requestParamsFromCsv = new CsvToBeanBuilder(new FileReader(fileName))
+                .withType(CalculateRequestParameter.class)
+                .withSeparator(';')
+                .withIgnoreLeadingWhiteSpace(true)
+                .withSkipLines(1)
+                .build()
+                .parse();
+        return requestParamsFromCsv;
+    }
 
-        try {
-            URL url = new URL(csvUrl);
-            BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream()));
-
-            String line;
-            while ((line = br.readLine()) != null) {
-
-                String[] values = line.split(";", -1);
-
-                // Verifica che nessun valore sia null o vuoto
-                for (String value : values) {
-                    Assertions.assertNotNull(value);
-                    Assertions.assertFalse(value.isEmpty());
-                }
-
-                records.add(values);
-            }
-
-            br.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return records;
+    @Then("viene invocata l'api e si controlla che il risultato sia quello atteso")
+    public void callApiAndCheckResult() {
+        requestParamsFromCsv.stream()
+                .forEach(x -> {
+                    createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumPages(), x.getIsReversePrinter(), x.getWeight());
+                    callPaperCalculateCost("");
+                    Assertions.assertEquals(Integer.parseInt(x.getExpectedResult()), Objects.requireNonNull(calculateResponseResponseEntity.getBody()).getCost());
+                });
     }
 
 
