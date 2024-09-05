@@ -914,8 +914,8 @@ public class ApiServiceDeskSteps {
                 eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));
             }
 
-            String mandateIdSearch = getTaxIdDelegator(type, taxId, searchMandateId);
-            String delegateInternalIdSearch = getTaxIdDelegator(type, taxId, searchInternalId);
+            String mandateIdSearch = getTaxIdMandate(type, taxId, searchMandateId);
+            String delegateInternalIdSearch = getTaxIdInternal(type, taxId, searchInternalId);
 
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, delegateInternalIdSearch,recipientType, size, nextPagesKey, sDate, eDate);
             Assertions.assertNotNull(searchNotificationsResponse);
@@ -1032,27 +1032,52 @@ public class ApiServiceDeskSteps {
     }
 
 
-    private String getTaxIdDelegator(String type, String taxId, String searchInternalId) {
+
+
+    private String getTaxIdInternal(String type, String taxId, String searchInternalId) {
         if ("NO_SET".equalsIgnoreCase(searchInternalId)) {
             if ("delegato".equalsIgnoreCase(type)) {
-                String taxIdDelegator = setTaxID(taxId);
+                String taxIdDelegate = setTaxID(taxId);
                 Assertions.assertNotNull(profileResponse.getDelegateMandates());
                 for (Mandate mandate: profileResponse.getDelegateMandates()) {
-                    if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())) {
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
                         return mandate.getDelegateInternalId();
                     }
                 }
             } else if ("delegante".equalsIgnoreCase(type)) {
                 Assertions.assertNotNull(profileResponse.getDelegatorMandates());
                 for (Mandate mandate: profileResponse.getDelegatorMandates()) {
-                    String taxIdDelegator = setTaxID(taxId);
-                    if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())) {
+                    String taxIdDelegate = setTaxID(taxId);
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
                         return mandate.getDelegateInternalId();
                     }
                 }
             }
         }
         return searchInternalId;
+    }
+
+    private String getTaxIdMandate(String type, String taxId, String searchMandatelId) {
+        if ("NO_SET".equalsIgnoreCase(searchMandatelId)) {
+            if ("delegato".equalsIgnoreCase(type)) {
+                String taxIdDelegate = setTaxID(taxId);
+                Assertions.assertNotNull(profileResponse.getDelegateMandates());
+                for (Mandate mandate: profileResponse.getDelegateMandates()) {
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
+                        return mandate.getMandateId();
+                    }
+                }
+            } else if ("delegante".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegatorMandates());
+                for (Mandate mandate: profileResponse.getDelegatorMandates()) {
+                    String taxIdDelegate = setTaxID(taxId);
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
+                        return mandate.getMandateId();
+                    }
+                }
+            }
+        }
+        return searchMandatelId;
     }
 
     private void createOperationRequestSteps(String cf) {
