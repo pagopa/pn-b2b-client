@@ -27,6 +27,7 @@ public class PnB2bClientTimingConfigs {
     private Integer waitingTimingSlowMultiplier;
     private Integer waitMillisShort;
     private Integer waitMillisExtraRapid;
+    private Integer waitMillisForSendAnalogEvents;
 
 
     private Integer workflowWaitAcceptedMillisShort;

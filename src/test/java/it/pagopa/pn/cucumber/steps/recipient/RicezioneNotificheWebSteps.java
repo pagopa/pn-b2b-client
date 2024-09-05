@@ -8,6 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -45,6 +46,8 @@ public class RicezioneNotificheWebSteps {
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
+    private final PnB2bClientTimingConfigs timingConfigs;
+    private static final Integer waitDefault = 10000;
 
     private HttpStatusCodeException notificationError;
     private FullReceivedNotificationV23 fullNotification;
@@ -63,7 +66,8 @@ public class RicezioneNotificheWebSteps {
     private String senderIdROOT;
 
     @Autowired
-    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnBFFRecipientNotificationClient bffRecipientNotificationClient) {
+    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient,
+                          IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
@@ -72,12 +76,12 @@ public class RicezioneNotificheWebSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
+        this.timingConfigs = timingConfigs;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
     public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        waitState(100000);
         Assertions.assertDoesNotThrow(() -> {
             this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
             log.info("timeline received: " + fullNotification.getTimeline());
@@ -233,7 +237,6 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(recipient);
 
         String iun =sharedSteps.getIunVersionamento();
-
 
         try {
             OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
@@ -647,6 +650,12 @@ public class RicezioneNotificheWebSteps {
         for (int i = 0; i < newTimelineElement.getLegalFactsIds().size(); i++) {
             Assertions.assertEquals(newTimelineElement.getLegalFactsIds().get(i).getKey(), timelineElement.getLegalFactsIds().get(i).getKey());
         }
+    }
+
+    @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
+    public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault :  timingConfigs.getWaitMillisForSendAnalogEvents();
+        waitState(waiting);
     }
 
     private static class NotificationSearchParam {

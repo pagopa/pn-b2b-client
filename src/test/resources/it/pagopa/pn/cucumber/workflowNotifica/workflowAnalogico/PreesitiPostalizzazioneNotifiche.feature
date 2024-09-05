@@ -69,6 +69,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
       | physicalAddress_address | via@OK-CompiutaGiacenza_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
+    And attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti
     And la notifica può essere correttamente recuperata da "Mario Gherkin"
     Then lato api l'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG008A" è visibile
     And lato destinatario vengono letti i dettagli della notifica lato web dal destinatario "Mario Gherkin"
@@ -140,7 +141,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_1] Verifica assenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG008A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | senderDenomination | Comune di verona                |
     And destinatario
       | denomination            | OK-CompiutaGiacenza_890     |
       | taxId                   | CLMCST42R12D969Z            |
@@ -161,7 +162,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_2] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | senderDenomination | Comune di verona                |
     And destinatario
       | denomination            | OK-Giacenza-lte10_890       |
       | taxId                   | CLMCST42R12D969Z            |
@@ -182,7 +183,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_3] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | senderDenomination | Comune di verona                |
     And destinatario
       | denomination            | OK-WO-011B                  |
       | taxId                   | CLMCST42R12D969Z            |
@@ -204,7 +205,7 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
   Scenario: [PREESITI_POSTALIZZAZIONE_WEBHOOK_4] Verifica presenza evento SEND_ANALOG_PROGRESS con i nuovi DeliveryDetailCode RECAG012A all’interno della timeline stream webhook.
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo               |
+      | senderDenomination | Comune di verona                |
     And destinatario
       | denomination            | ok_AR                       |
       | taxId                   | CLMCST42R12D969Z            |
@@ -220,4 +221,3 @@ Feature: arricchimento della timeline con eventi intermedi (preesiti) di postali
     And vengono letti gli eventi dello stream del "Comune_2" fino all'elemento di timeline "SCHEDULE_REFINEMENT" con la versione V23
     And vengono letti gli eventi dello stream versione V23
     And viene verificato che gli eventi dello stream contengono l'elemento di timeline "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON018"
-
