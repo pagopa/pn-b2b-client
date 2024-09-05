@@ -1,6 +1,6 @@
 Feature: Adeguamento gestione costi analogici
 
-
+# @tendersCost
   Scenario Outline: [Scenario-5] Recupero dei costi associati ad uno specifico CAP con TenderId errato
     Given viene creata una richiesta con valori di default
     When viene chiamata l'api di calcolo costi con tenderId "<TENDERID>"
@@ -9,39 +9,39 @@ Feature: Adeguamento gestione costi analogici
     |TENDERID |
     |56ed074c-13b6-4d61-ba49-221953e6b60f    |
 
-#
-  Scenario Outline: [Scenario-6] Recupero dei costi associati ad uno specifico Stato Estero per ogni prodotto disponibile
+# @tendersCost
+  Scenario Outline: [Scenario-12] Recupero dei costi associati ad uno specifico cap con costo per il prodotto non presente tra i recapitisti e nel FSU
     Given viene creata una richiesta con i seguenti valori
       | product           | <PRODUCT>|
       | geokey            | <GEOKEY> |
       | numPages          | <NUMPAGES> |
       | isReversePrinter  | <ISREVERSEPRINTER>|
-      | weight            | <WEIGHT>|
+      | pageWeight            | <PAGEWEIGHT>|
     When viene chiamata l'api di calcolo costi con tenderId "<TENDERID>"
-    Then l'api ritorna status code 200
+    Then l'api ritorna status code 404
     Examples:
-     |TENDERID     | PRODUCT   | GEOKEY    | NUMPAGES 	| ISREVERSEPRINTER 	    | WEIGHT |
+     |TENDERID     | PRODUCT   | GEOKEY    | NUMPAGES 	| ISREVERSEPRINTER 	    | PAGEWEIGHT |
      | NULL        | AR        |   100     | 3		    | true                  | 80   |
 #
-#
+# @tendersCost
   Scenario Outline: [Scenario-4] Recupero dei costi associati ad uno specifico CAP con un campo mandatory della Request body settato a  NULL
     Given viene creata una richiesta con i seguenti valori
       | product           | <PRODUCT>|
       | geokey            | <GEOKEY> |
       | numPages          | <NUMPAGES> |
       | isReversePrinter  | <ISREVERSEPRINTER>|
-      | weight            | <WEIGHT>|
+      | weight            | <PAGEWEIGHT>|
     When viene chiamata l'api di calcolo costi con tenderId "<TENDERID>"
     Then l'api ritorna status code 400
     Examples:
-      |TENDERID    | PRODUCT   | GEOKEY     | NUMPAGES 	| ISREVERSEPRINTER 	    | WEIGHT |
+      |TENDERID    | PRODUCT   | GEOKEY     | NUMPAGES 	| ISREVERSEPRINTER 	    | PAGEWEIGHT |
       | test       | NULL      |   100      | 50 	    | false                 | 255    |
       | test       | RS        |   NULL     | 50 	    | false                 | 255    |
       | test       | RS        |   100      | NULL		| false                 | 255    |
       | test       | RS        |   100      | 50 	    | NULL                  | 255    |
       | test       | RS        |   100      | 50 	    | false                 | NULL   |
 
-
+# @tendersCostMassive
   Scenario: [Scenario-massivo] Viene effettuato un test massivo effettuando le chiamate con dati presi dal CSV
     Given vengono recuperati i valori delle richieste da file
     Then viene invocata l'api e si controlla che il risultato sia quello atteso

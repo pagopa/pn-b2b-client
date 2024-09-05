@@ -36,7 +36,7 @@ public class PaperCalculatorSteps {
 
     @Given("viene creata una richiesta con i seguenti valori")
     public ShipmentCalculateRequest createShipmentCalculateRequest(@Transpose CalculateRequestParameter parameter) {
-        return createShipmentCalculateRequest(parameter.getProduct(), parameter.getGeokey(), parameter.getNumPages(), parameter.getIsReversePrinter(), parameter.getWeight());
+        return createShipmentCalculateRequest(parameter.getProduct(), parameter.getGeokey(), parameter.getNumPages(), parameter.getIsReversePrinter(), parameter.getPageWeight());
     }
 
 
@@ -57,7 +57,7 @@ public class PaperCalculatorSteps {
         shipmentCalculateRequest.setGeokey(geokey);
         shipmentCalculateRequest.setNumPages(numPages);
         shipmentCalculateRequest.setIsReversePrinter(isReversePrinter);
-        shipmentCalculateRequest.setWeight(weight);
+        shipmentCalculateRequest.setPageWeight(weight);
         return shipmentCalculateRequest;
     }
 
@@ -78,9 +78,9 @@ public class PaperCalculatorSteps {
     public void callApiAndCheckResult() {
         requestParamsFromCsv.stream()
                 .forEach(x -> {
-                    createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumPages(), x.getIsReversePrinter(), x.getWeight());
+                    createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumPages(), x.getIsReversePrinter(), x.getPageWeight());
                     callPaperCalculateCost("");
-                    Assertions.assertEquals(Integer.parseInt(x.getExpectedResult()), Objects.requireNonNull(calculateResponseResponseEntity.getBody()).getCost());
+                    Assertions.assertEquals(Integer.parseInt(x.getExpectedResult()), Objects.requireNonNull(calculateResponseResponseEntity.getBody()).getCost(),"Il costo calcolato non corrisponde al costo atteso per il cap: "+x.getGeokey() );
                 });
     }
 

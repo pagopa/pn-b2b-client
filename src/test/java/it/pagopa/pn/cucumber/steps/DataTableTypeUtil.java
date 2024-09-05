@@ -697,7 +697,7 @@ public class DataTableTypeUtil {
         requestParameter.setGeokey(geokey);
         requestParameter.setNumPages(numPages);
         requestParameter.setIsReversePrinter(isReversePrinter);
-        requestParameter.setWeight(weight);
+        requestParameter.setPageWeight(weight);
         return requestParameter;
     }
 
