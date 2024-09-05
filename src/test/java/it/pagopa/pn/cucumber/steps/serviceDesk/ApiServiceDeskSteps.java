@@ -1054,6 +1054,9 @@ public class ApiServiceDeskSteps {
                 }
             }
         }
+        if ("NULL".equalsIgnoreCase(searchInternalId)){
+            return  null;
+        }
         return searchInternalId;
     }
 
@@ -1076,6 +1079,9 @@ public class ApiServiceDeskSteps {
                     }
                 }
             }
+        }
+        if ("NULL".equalsIgnoreCase(searchMandatelId)){
+            return  null;
         }
         return searchMandatelId;
     }
