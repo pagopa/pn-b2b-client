@@ -689,8 +689,9 @@ public class DataTableTypeUtil {
     @DataTableType
     public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) throws JsonProcessingException {
         CalculateRequestParameter requestParameter = new CalculateRequestParameter();
-        requestParameter.setProduct(ShipmentCalculateRequest.ProductEnum.fromValue(getValue(data, "product")));
         requestParameter.setGeokey(getValue(data, "geokey"));
+        requestParameter.setProduct(ShipmentCalculateRequest.ProductEnum.fromValue(getValue(data, "product")));
+        requestParameter.setTenderId(getValue(data, "tenderId"));
         requestParameter.setNumPages(ofNullable(getValue(data, "numPages")).map(Integer::valueOf).orElse(null));
         requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
         requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));

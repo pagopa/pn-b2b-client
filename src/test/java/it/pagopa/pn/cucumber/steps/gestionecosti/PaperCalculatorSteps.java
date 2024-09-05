@@ -79,7 +79,7 @@ public class PaperCalculatorSteps {
         requestParamsFromCsv.stream()
                 .forEach(x -> {
                     createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumPages(), x.getIsReversePrinter(), x.getPageWeight());
-                    callPaperCalculateCost("");
+                    callPaperCalculateCost(x.getTenderId());
                     Assertions.assertEquals(Integer.parseInt(x.getExpectedResult()), Objects.requireNonNull(calculateResponseResponseEntity.getBody()).getCost(),"Il costo calcolato non corrisponde al costo atteso per il cap: "+x.getGeokey() );
                 });
     }

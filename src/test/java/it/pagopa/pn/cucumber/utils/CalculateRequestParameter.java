@@ -9,17 +9,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CalculateRequestParameter {
-    @CsvCustomBindByPosition(position = 1, converter = ShipmentCalculateRequestConverter.class)
-    private ShipmentCalculateRequest.ProductEnum product;
     @CsvBindByPosition(position = 0)
     private String geokey;
-    @CsvBindByPosition(position = 3)
-    private Integer numPages;
-    @CsvBindByPosition(position = 5)
-    private Boolean isReversePrinter;
+    @CsvCustomBindByPosition(position = 1, converter = ShipmentCalculateRequestConverter.class)
+    private ShipmentCalculateRequest.ProductEnum product;
     @CsvBindByPosition(position = 2)
+    private String tenderId;
+    @CsvBindByPosition(position = 3)
     private Integer pageWeight;
     @CsvBindByPosition(position = 4)
+    private Integer numPages;
+    @CsvBindByPosition(position = 6)
+    private Boolean isReversePrinter;
+    @CsvBindByPosition(position = 7)
     private String expectedResult;
 
 }
