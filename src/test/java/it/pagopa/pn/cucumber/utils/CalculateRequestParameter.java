@@ -18,7 +18,7 @@ public class CalculateRequestParameter {
     @CsvBindByPosition(position = 5)
     private Boolean isReversePrinter;
     @CsvBindByPosition(position = 2)
-    private Integer weight;
+    private Integer pageWeight;
     @CsvBindByPosition(position = 4)
     private String expectedResult;
 

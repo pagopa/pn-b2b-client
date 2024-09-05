@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static java.util.Optional.ofNullable;
 
 
 public class DataTableTypeUtil {
@@ -687,17 +688,12 @@ public class DataTableTypeUtil {
 
     @DataTableType
     public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) throws JsonProcessingException {
-        ShipmentCalculateRequest.ProductEnum product = ShipmentCalculateRequest.ProductEnum.fromValue(getValue(data, "product"));
-        String geokey = getValue(data, "geokey");
-        Integer numPages = Integer.valueOf(Objects.requireNonNull(getValue(data, "numPages")));
-        Boolean isReversePrinter = Boolean.valueOf(getValue(data, "isReversePrinter"));
-        Integer weight = Integer.valueOf(Objects.requireNonNull(getValue(data, "weight")));
         CalculateRequestParameter requestParameter = new CalculateRequestParameter();
-        requestParameter.setProduct(product);
-        requestParameter.setGeokey(geokey);
-        requestParameter.setNumPages(numPages);
-        requestParameter.setIsReversePrinter(isReversePrinter);
-        requestParameter.setWeight(weight);
+        requestParameter.setProduct(ShipmentCalculateRequest.ProductEnum.fromValue(getValue(data, "product")));
+        requestParameter.setGeokey(getValue(data, "geokey"));
+        requestParameter.setNumPages(ofNullable(getValue(data, "numPages")).map(Integer::valueOf).orElse(null));
+        requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
+        requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));
         return requestParameter;
     }
 
