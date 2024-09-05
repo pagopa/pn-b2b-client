@@ -139,7 +139,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 0
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -163,8 +163,8 @@ Feature: avanzamento b2b notifica analogico difgitale
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "COMPLETELY_UNREACHABLE"
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "COMPLETELY_UNREACHABLE"
+    Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "COMPLETELY_UNREACHABLE"
     #TODO Controllare non arriva lo stato COMPLETELY_UNREACHABLE arriva   ACCEPTED-DELIVERING-EFFECTIVE_DATE
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"

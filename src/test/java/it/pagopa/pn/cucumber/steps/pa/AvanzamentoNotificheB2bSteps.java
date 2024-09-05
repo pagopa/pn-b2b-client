@@ -41,6 +41,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import static java.time.OffsetDateTime.now;
@@ -68,7 +69,6 @@ public class AvanzamentoNotificheB2bSteps {
     private String pnEcConsAllowedFutureOffsetDuration;
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
-
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -488,6 +488,22 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string}")
     public void readingEventUpToTheTimelineElementOfNotification(String timelineEventCategory) {
         readingEventUpToTheTimelineElementOfNotificationForCategory(timelineEventCategory);
+    }
+
+    @Then("gli eventi di timeline ricevuti sono i seguenti$")
+    public void verifyTimelineEventsAreTheOnesExpected(List<String> expectedEvents) {
+        List<String> actualTimeline = Optional.ofNullable(sharedSteps.getSentNotification())
+                .map(FullSentNotificationV23::getTimeline)
+                .orElse(List.of())
+                .stream()
+                .map(TimelineElementV23::getCategory)
+                .map(TimelineElementCategoryV23::toString)
+                .toList();
+        try {
+            Assertions.assertFalse(expectedEvents.stream().anyMatch(Predicate.not(actualTimeline::contains)));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
     }
 
     @Then("viene verificato che per l'elemento di timeline della notifica {string} non ci siano duplicati")
@@ -1160,8 +1176,8 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string}")
-    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEvento(Integer destinatario, String timelineEventCategory) {
+    @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string}")
+    public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEvento(Integer destinatario, String timelineEventCategory) {
         PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
 
         PnPollingResponseV23 pnPollingResponseV23 = timelineRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
@@ -1179,8 +1195,8 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string} V1")
-    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEventoV1(Integer destinatario, String timelineEventCategory) {
+    @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string} V1")
+    public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEventoV1(Integer destinatario, String timelineEventCategory) {
         String iun;
         if (sharedSteps.getSentNotificationV1() != null) {
             iun = sharedSteps.getSentNotificationV1().getIun();
@@ -1214,8 +1230,8 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("vengono letti gli eventi e verificho che l'utente {int} non abbia associato un evento {string} con responseStatus {string}")
-    public void vengonoLettiGliEventiVerifichoCheUtenteNonAbbiaAssociatoEventoWithResponseStatus(Integer destinatario, String timelineEventCategory, String responseStatus) {
+    @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string} con responseStatus {string}")
+    public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEventoWithResponseStatus(Integer destinatario, String timelineEventCategory, String responseStatus) {
         PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
 
         PnPollingResponseV23 pnPollingResponseV23 = timelineRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
