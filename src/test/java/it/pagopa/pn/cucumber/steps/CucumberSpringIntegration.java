@@ -84,6 +84,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnParser.class,
         PnExternalChannelsServiceClientImpl.class,
         PnSafeStoragePrivateClientImpl.class,
+        IPnInteropProbingClientImpl.class,
         PaperCalculatorApi.class,
         ApiClient.class,
         PaperCalculatorClientImpl.class
