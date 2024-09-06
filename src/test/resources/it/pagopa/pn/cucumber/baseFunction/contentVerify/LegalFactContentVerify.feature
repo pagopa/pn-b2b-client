@@ -21,7 +21,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
       | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA COSENZA CS ITALIA                                |
 
-  @legalFact
+  @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_2] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -54,7 +54,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
       | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA |
 
-  @legalFact
+  @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_3] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -114,7 +114,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO" e contiene il campo "DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE" con value "Mario Cucumber"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_AVVENUTO_ACCESSO" e contiene il campo "DESTINATARIO_CODICE_FISCALE" con value "FRMTTR76M06B715E"
 
-  @legalFact
+  @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_6] Data una notifica digitale, in seguito al completamento del relativo workflow ed a presa visione da parte del delegato, si verifica l'esistenza del legalFact generato se sia di tipo AVVENUTO ACCESSO DELEGATO
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     Given "Mario Gherkin" viene delegato da "Mario Cucumber"

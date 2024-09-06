@@ -46,7 +46,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo RS/RIR
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" con deliveryDetailCode "RECRS001C"
   #"sequence": "@sequence.5s-CON080.5s-RECRS001C"
 
-  @dev @workflowDigitale
+#  Il test viene ignorato poiché il mock genera una sequence non valida con deliveryDetailCode diverso
+  @dev @workflowDigitale @ignore
   Scenario: [B2B_TIMELINE_RIS_3] Invio notifica ed attesa elemento di timeline SEND_SIMPLE_REGISTERED_LETTER positivo
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
