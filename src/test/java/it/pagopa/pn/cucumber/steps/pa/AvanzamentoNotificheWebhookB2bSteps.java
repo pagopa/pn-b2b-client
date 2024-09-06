@@ -59,6 +59,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private final PnPollingFactory pollingFactory;
     private final TimingForPolling timingForPolling;
+    private List<ProgressResponseElementV23> progressResponseElements;
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
     public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
@@ -577,12 +578,34 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsV23() {
         updateApiKeyForStream();
         try{
-            List<ProgressResponseElementV23> progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
+            progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
             log.info("EventProgress: " + progressResponseElements);
         }catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
         }
+    }
+
+    private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertNotNull(progressResponseElements);
+        return progressResponseElements.stream()
+                    .filter(Objects::nonNull)
+                    .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
+                    .map(ProgressResponseElementV23::getElement)
+                    .filter(x -> x.getElementId().contains(timelineEvent))
+                    .map(TimelineElementV23::getDetails)
+                    .filter(Objects::nonNull)
+                    .anyMatch(x -> x.getDeliveryDetailCode().equals(deliveryDetailCode));
+    }
+
+    @And("viene verificato che gli eventi dello stream non contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
+    public void verifyStreamNotContainsSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertFalse(searchSpecificTimelineEvent(timelineEvent, deliveryDetailCode));
+    }
+
+    @And("viene verificato che gli eventi dello stream contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
+    public void verifyStreamContainsSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertTrue(searchSpecificTimelineEvent(timelineEvent, deliveryDetailCode));
     }
 
     @And("vengono letti gli eventi dello stream non esistente versione V23")

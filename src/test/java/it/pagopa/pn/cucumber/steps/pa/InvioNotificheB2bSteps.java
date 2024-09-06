@@ -65,6 +65,7 @@ public class InvioNotificheB2bSteps {
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
+    private FullSentNotificationV23 notificationRetrieved;
 
     private final JavaMailSender emailSender;
 
@@ -291,7 +292,9 @@ private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTim
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
         AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
+            FullSentNotificationV23 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
+            notificationByIun.set(notificationResponseComplete);
+            sharedSteps.setSentNotification(notificationResponseComplete);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
