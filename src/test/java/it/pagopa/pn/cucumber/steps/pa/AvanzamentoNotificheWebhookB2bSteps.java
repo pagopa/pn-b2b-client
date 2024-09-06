@@ -1221,27 +1221,42 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("vengono letti tutti gli eventi degli stream v23 creati per il test di carico per {int} minuti")
     public void readAllStreamEvent(int minuti) {
         int elapsedMinute = 0;
+        setPaWebhook("Comune_Multi");
         while(elapsedMinute < minuti){
-            for(StreamMetadataResponseV23 streamId: eventStreamListV23){
-                List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(streamId.getStreamId(), null);
-                System.out.println("progressResponseElementV23s: "+progressResponseElementV23s);
+            try{
+                for(StreamMetadataResponseV23 streamId: eventStreamListV23){
+                    List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(streamId.getStreamId(), null);
+                    System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
+                    sleepTest(1*1000);
+                }
+                sleepTest(60*1000);
+                elapsedMinute+=1;
+                setPaWebhook("Comune_Multi");
+            }catch (Exception e){
+                System.out.println("Exception");
             }
-            sleepTest(60*1000);
-            elapsedMinute+=1;
+
         }
     }
 
-    String[] streamList = {"00d62a5b-2c90-484a-920a-f75b160bf123"};
+
     @And("vengono letti tutti gli eventi degli stream v23 hardcodati per il test di carico per {int} minuti")
     public void readAllStreamEventHardCoded(int minuti) {
         int elapsedMinute = 0;
+        setPaWebhook("Comune_Multi");
         while(elapsedMinute < minuti){
-            for(String streamID: streamList){
-                List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(UUID.fromString(streamID), null);
-                System.out.println("progressResponseElementV23s: "+progressResponseElementV23s);
+            try{
+                for(String streamID: streamList){
+                    List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(UUID.fromString(streamID), null);
+                    System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
+                    sleepTest(1*1000);
+                }
+                sleepTest(60*1000);
+                elapsedMinute+=1;
+                setPaWebhook("Comune_Multi");
+            }catch (Exception e) {
+                System.out.println("Exception in read");
             }
-            sleepTest(60*1000);
-            elapsedMinute+=1;
         }
     }
 
@@ -1837,5 +1852,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 throw new IllegalArgumentException();
         }
     }
+
 
 }
