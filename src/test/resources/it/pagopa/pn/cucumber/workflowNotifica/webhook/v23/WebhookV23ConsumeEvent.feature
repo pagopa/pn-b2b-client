@@ -1,7 +1,34 @@
 Feature: avanzamento notifiche webhook b2b V23
 
-  #COMUNE 1
+  ##ONLY FOR DUBUG AND STRESS TEST
+  Scenario: test lettura
+    And vengono letti gli eventi dello stream con id "00d62a5b-2c90-484a-920a-f75b160bf123" v23
 
+
+  Scenario: creazione stream
+    And si predispone 700 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+
+
+  Scenario: creazione stream e consumo stream
+    And si predispone 700 nuovo stream denominato "stream-test" con eventType "TIMELINE" con versione "V23"
+    And si crea il nuovo stream V23 per il "Comune_Multi" con un gruppo disponibile "NO_GROUPS"
+    And lo stream è stato creato e viene correttamente recuperato dal sistema tramite stream id con versione "V23"
+    And vengono letti tutti gli eventi degli stream v23 creati per il test di carico per 120 minuti
+
+
+  Scenario: [B2B-STREAM_ES123123124] test lettura
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination  | Galileo galileo   |
+      | taxId         | GLLGLL64B15G702I  |
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+
+
+#COMUNE 1
   @webhookV23 @precondition @cleanWebhook @webhook1
   Scenario: [B2B-STREAM_ES1.1_112] Creazione con replaceID di uno stream notifica senza gruppo uguale al precedente stream con eventType "TIMELINE" utilizzando un apikey master. (replacedStreamId settato) con controllo EventId incrementale e senza duplicati.
     Given viene generata una nuova notifica
