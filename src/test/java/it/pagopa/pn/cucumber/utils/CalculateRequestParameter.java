@@ -22,6 +22,6 @@ public class CalculateRequestParameter {
     @CsvBindByPosition(position = 6)
     private Boolean isReversePrinter;
     @CsvBindByPosition(position = 7)
-    private String expectedResult;
+    private Integer expectedResult;
 
 }
