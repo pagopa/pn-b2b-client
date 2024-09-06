@@ -17,8 +17,8 @@ public class CalculateRequestParameter {
     private String tenderId;
     @CsvBindByPosition(position = 3)
     private Integer pageWeight;
-    @CsvBindByPosition(position = 4)
-    private Integer numPages;
+    @CsvBindByPosition(position = 5)
+    private Integer numSides;
     @CsvBindByPosition(position = 6)
     private Boolean isReversePrinter;
     @CsvBindByPosition(position = 7)

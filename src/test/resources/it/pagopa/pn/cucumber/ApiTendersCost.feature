@@ -16,7 +16,7 @@ Feature: Adeguamento gestione costi analogici
     Given viene creata una richiesta con i seguenti valori
       | product           | AR   |
       | geokey            | 100  |
-      | numPages          | 3    |
+      | numSides          | 3    |
       | isReversePrinter  | true |
       | pageWeight        | 80   |
     When viene chiamata l'api di calcolo costi con tenderId "NULL"
@@ -27,13 +27,13 @@ Feature: Adeguamento gestione costi analogici
     Given viene creata una richiesta con i seguenti valori
       | product           | <PRODUCT>|
       | geokey            | <GEOKEY> |
-      | numPages          | <NUMPAGES> |
+      | numSides          | <NUMSIDES> |
       | isReversePrinter  | <ISREVERSEPRINTER>|
       | weight            | <PAGEWEIGHT>|
     When viene chiamata l'api di calcolo costi con tenderId "<TENDERID>"
     Then l'api ritorna status code 400
     Examples:
-      |TENDERID    | PRODUCT   | GEOKEY     | NUMPAGES 	| ISREVERSEPRINTER 	    | PAGEWEIGHT |
+      |TENDERID    | PRODUCT   | GEOKEY     | NUMSIDES 	| ISREVERSEPRINTER 	    | PAGEWEIGHT |
       | test       | NULL      |   100      | 50 	    | false                 | 255    |
       | test       | RS        |   NULL     | 50 	    | false                 | 255    |
       | test       | RS        |   100      | NULL		| false                 | 255    |

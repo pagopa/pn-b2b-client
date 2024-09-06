@@ -42,7 +42,7 @@
         <open.api.version.radd.alt>v2.6.0-RC.1</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
-        <open.api.version.paper.channel>feature/PN-12279</open.api.version.paper.channel>
+        <open.api.version.paper.channel>develop</open.api.version.paper.channel>
     </properties>
 
     <dependencies>
