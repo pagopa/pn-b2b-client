@@ -63,8 +63,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 10               | NULL                 | 2023-10-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
     #Response 200 OK
 
   @cruscottoAssistenza
@@ -74,7 +74,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID      | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | CucumberSpa | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-01 |
+      | CucumberSpa | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
@@ -82,8 +82,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-10-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 1                | NULL                 | 2024-01-01 | 2024-08-30 |
     #Response 200 OK
 
 
@@ -113,8 +113,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 50               | NULL                 | 2024-01-01 | 2024-08-30 |
       #Response 200 OK
 
   @cruscottoAssistenza
@@ -166,7 +166,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+      | Mario Cucumber | PF             | 1                | NULL                 |  2024-01-01 | 2024-08-30 |
 
 
    #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche
@@ -694,11 +694,11 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then il servizio risponde con errore "400"
+    Then il servizio risponde con errore "410"
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | NULL             | NULL                 | 2024-01-01 | 2024-03-30 |
+      | Mario Gherkin | PF             | NULL             | NULL                 | 2024-04-01 | 2024-04-30 |
     #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-6585bfef-39e3629554030a8d73dcf647","timestamp":"2023-12-22T16:57:19.95458306Z","errors":[]}] null
 
 
