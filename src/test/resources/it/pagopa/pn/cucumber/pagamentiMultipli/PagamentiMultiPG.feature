@@ -1722,7 +1722,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination         | Vita Nova Sas               |
       | recipientType        | PG                          |
       | taxId                | 12666810299                 |
-      | digitalDomicile_address | pectest@pec.pagopa.it    |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it    |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_12666810299 |
@@ -1764,7 +1764,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination            | Vita Nova Sas            |
       | recipientType           | PG                       |
       | taxId                   | 12666810299              |
-      | digitalDomicile_address | pectest@pec.pagopa.it    |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it    |
       | payment_pagoPaForm      | NULL                     |
       | payment_f24             | PAYMENT_F24_STANDARD     |
       | title_payment           | F24_STANDARD_12666810299 |
@@ -1806,7 +1806,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination            | Vita Nova Sas         |
       | recipientType           | PG                    |
       | taxId                   | 12666810299           |
-      | digitalDomicile_address | pectest@pec.pagopa.it |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
       | title_payment           | F24_FLAT_12666810299  |
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_FLAT      |
@@ -1848,7 +1848,7 @@ Feature: avanzamento notifiche b2b persona giuridica multi pagamento
       | denomination            | Vita Nova Sas         |
       | recipientType           | PG                    |
       | taxId                   | 12666810299           |
-      | digitalDomicile_address | pectest@pec.pagopa.it |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
       | title_payment           | F24_FLAT_12666810299  |
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_FLAT      |

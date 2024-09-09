@@ -37,8 +37,8 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then l'avviso pagopa viene pagato correttamente dall'utente 0
-    And si attende il corretto pagamento della notifica dell'utente 0
+    Then l'avviso pagopa viene pagato correttamente dall'utente <PayingUser>
+    And si attende il corretto pagamento della notifica dell'utente <PayingUser>
     And vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente <PayingUser>
     And non vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" per l'utente <NonPayingUser>
     Examples:
@@ -203,12 +203,12 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
     And destinatario Mario Gherkin
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "AAR_GENERATION"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     Then gli eventi di timeline ricevuti sono i seguenti
-    | "AAR_GENERATION" |
-    | "SEND_DIGITAL_DOMICILE" |
-    | "REQUEST_ACCEPTED" |
-    | "GET_ADDRESS" |
+    | AAR_GENERATION |
+    | SEND_DIGITAL_DOMICILE |
+    | REQUEST_ACCEPTED |
+    | GET_ADDRESS |
 
   @workflowDigitale
    #[B2B_TIMELINE_MULTI_9]
