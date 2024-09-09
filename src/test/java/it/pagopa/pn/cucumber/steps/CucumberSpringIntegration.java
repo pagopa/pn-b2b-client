@@ -86,8 +86,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnSafeStoragePrivateClientImpl.class,
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
-        PaperCalculatorApi.class,
-        ApiClient.class,
         PaperCalculatorClientImpl.class
 })
 @EnableScheduling
