@@ -1,6 +1,6 @@
 Feature: Test sul processo di fruizione e aggiornamento costi gara
 
-#  Test massivo con recupero dati da file csv posizione nel path: src/main/resources/TEST_massivo_costi.csv
+#  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST_massivo_costi.csv
 #  NOTA: Il csv da passare in input deve essere rinominato in: TEST_massivo_costi.csv
   @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-SUCCESS-1] Viene effettuato un test massivo effettuando le chiamate con dati presi dal CSV
@@ -13,6 +13,7 @@ Feature: Test sul processo di fruizione e aggiornamento costi gara
     When viene chiamata l'api di calcolo costi con tenderId "aaaa-bbbb-cccc"
     Then l'api ritorna status code 404
 
+ #   NOTA: Il tenderId corretto da utilizzare va recuperato nella tabella pn-PaperChannelTender
  @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-FAILURE-2] Recupero dei costi associati ad uno specifico CAP con costo per il prodotto non presente tra i recapitisti e nel FSU
     Given viene creata una richiesta con i seguenti valori

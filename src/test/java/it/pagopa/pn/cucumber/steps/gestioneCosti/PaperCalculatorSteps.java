@@ -43,7 +43,6 @@ public class PaperCalculatorSteps {
         return createShipmentCalculateRequest(parameter.getProduct(), parameter.getGeokey(), parameter.getNumSides(), parameter.getIsReversePrinter(), parameter.getPageWeight());
     }
 
-
     @When("viene chiamata l'api di calcolo costi con tenderId {string}")
     public void callPaperCalculateCost(String tenderId) {
         try {
@@ -74,8 +73,7 @@ public class PaperCalculatorSteps {
     @Given("vengono recuperati i valori delle richieste da file")
     public List<CalculateRequestParameter> transformCsvToObject() throws FileNotFoundException {
         try {
-            String fileName = "src/main/resources/TEST_massivo_costi - TEST.csv";
-            requestParamsFromCsv = new CsvToBeanBuilder(new FileReader(fileName))
+            requestParamsFromCsv = new CsvToBeanBuilder(new FileReader("src/main/resources/TEST_massivo_costi.csv"))
                     .withType(CalculateRequestParameter.class)
                     .withSeparator(';')
                     .withIgnoreLeadingWhiteSpace(true)
