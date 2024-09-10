@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.cucumber.steps.gestioneCosti.converter;
 
 import com.opencsv.bean.AbstractBeanField;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
@@ -6,7 +6,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.mod
 public class ShipmentCalculateRequestConverter extends AbstractBeanField<ShipmentCalculateRequest.ProductEnum, String> {
 
     @Override
-    protected Object convert(String value) {
+    protected ShipmentCalculateRequest.ProductEnum convert(String value) {
         return ShipmentCalculateRequest.ProductEnum.fromValue(value);
     }
 

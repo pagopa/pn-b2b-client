@@ -1,8 +1,9 @@
-package it.pagopa.pn.cucumber.utils;
+package it.pagopa.pn.cucumber.steps.gestioneCosti.domain;
 
 import com.opencsv.bean.CsvBindByPosition;
 import com.opencsv.bean.CsvCustomBindByPosition;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
+import it.pagopa.pn.cucumber.steps.gestioneCosti.converter.ShipmentCalculateRequestConverter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,7 +22,7 @@ public class CalculateRequestParameter {
     private Integer numSides;
     @CsvBindByPosition(position = 6)
     private Boolean isReversePrinter;
-    @CsvBindByPosition(position = 7)
+    @CsvBindByPosition(position = 9)
     private Integer expectedResult;
 
 }

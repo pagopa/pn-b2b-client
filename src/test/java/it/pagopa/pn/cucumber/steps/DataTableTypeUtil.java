@@ -5,7 +5,7 @@ import io.cucumber.java.DataTableType;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.cucumber.utils.CalculateRequestParameter;
+import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParameter;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 

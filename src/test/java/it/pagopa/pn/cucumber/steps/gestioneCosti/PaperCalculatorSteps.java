@@ -8,7 +8,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPaperCalculatorClientImpl;
-import it.pagopa.pn.cucumber.utils.CalculateRequestParameter;
+import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParameter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
