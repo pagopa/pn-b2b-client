@@ -17,7 +17,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | CF_MITTENTE                               | 80016350821                                                                                                |
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | destinatario@certificatanoprod.notifichedigitali.it                                                                                      |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | pectest@pec.pagopa.it                                                                                      |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
       | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA CS ITALIA                                        |
 
@@ -96,7 +96,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | TITLE                                     | Attestazione opponibile a terzi: notifica digitale                                                         |
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
-      | DESTINATARIO_DOMICILIO_DIGITALE           | destinatario@certificatanoprod.notifichedigitali.it                                                                                      |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | pectest@pec.pagopa.it                                                                                      |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
   @legalFact
