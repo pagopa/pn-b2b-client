@@ -16,7 +16,6 @@ public class CalculateRequestParameter {
     private ShipmentCalculateRequest.ProductEnum product;
     @CsvBindByPosition(position = 2)
     private String tenderId;
-    @CsvBindByPosition(position = 3)
     private Integer pageWeight;
     @CsvBindByPosition(position = 5)
     private Integer numSides;
