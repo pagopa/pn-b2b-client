@@ -1227,7 +1227,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 for(StreamMetadataResponseV23 streamId: eventStreamListV23){
                     List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(streamId.getStreamId(), null);
                     System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
-                    sleepTest(1*1000);
+                    sleepTest(50);
                 }
                 sleepTest(60*1000);
                 elapsedMinute+=1;
@@ -1239,6 +1239,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    String[] streamList = {"00001d7a-42e8-41df-a995-40da72a087d7"};
 
     @And("vengono letti tutti gli eventi degli stream v23 hardcodati per il test di carico per {int} minuti")
     public void readAllStreamEventHardCoded(int minuti) {
@@ -1249,7 +1250,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 for(String streamID: streamList){
                     List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(UUID.fromString(streamID), null);
                     System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
-                    sleepTest(1*1000);
+                    sleepTest(50);
                 }
                 sleepTest(60*1000);
                 elapsedMinute+=1;
