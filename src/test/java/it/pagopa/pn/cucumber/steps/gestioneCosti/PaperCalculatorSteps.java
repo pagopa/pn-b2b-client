@@ -30,7 +30,7 @@ public class PaperCalculatorSteps {
     private ShipmentCalculateRequest shipmentCalculateRequest;
     private ResponseEntity<ShipmentCalculateResponse> calculateResponseResponseEntity;
     private List<CalculateRequestParameter> requestParamsFromCsv;
-    private List<String> errorList;
+    private final List<String> errorList;
 
     public PaperCalculatorSteps(IPaperCalculatorClientImpl paperCalculatorClient) {
         this.paperCalculatorClient = paperCalculatorClient;
@@ -100,8 +100,7 @@ public class PaperCalculatorSteps {
                             .map(HttpEntity::getBody)
                             .map(ShipmentCalculateResponse::getCost)
                             .ifPresentOrElse((value) -> checkIfEquals(x, value),
-                                    () -> AssertionFailureBuilder.assertionFailure().message("Si è verificato un errore nel recuperare il costo per il CAP: " + x.getGeokey()).buildAndThrow()
-                            );
+                                    () -> errorList.add(formatSingleErrorMessage(x, AssertionFailureBuilder.assertionFailure().message("errore nel recuperare il costo").build())));
                 });
         Assertions.assertTrue(errorList.isEmpty(), createGeneralErrorMessage(errorList));
     }
@@ -110,19 +109,17 @@ public class PaperCalculatorSteps {
         try {
             Assertions.assertEquals(calculateRequestParameter.getExpectedResult(), actualCost);
         } catch (AssertionFailedError ex) {
-            errorList.add(formatErrorMessage(calculateRequestParameter, ex));
+            errorList.add(formatSingleErrorMessage(calculateRequestParameter, ex));
         }
     }
 
     private String createGeneralErrorMessage(List<String> err) {
         StringBuilder stringBuilder = new StringBuilder("Si è verificato un problema con le seguenti tuple: ");
-        for (String c : err) {
-            stringBuilder.append(c);
-        }
+        for (String c : err) stringBuilder.append(c);
         return stringBuilder.toString();
     }
 
-    private String formatErrorMessage(CalculateRequestParameter calculateRequestParameter, AssertionFailedError assertionFailedError) {
+    private String formatSingleErrorMessage(CalculateRequestParameter calculateRequestParameter, AssertionFailedError assertionFailedError) {
         return String.format("%s;%s;%s;%d;%d;%d;%b;%s;%s;%d %s\n",
                 calculateRequestParameter.getGeokey(), calculateRequestParameter.getProduct().getValue(), calculateRequestParameter.getTenderId(),
                 calculateRequestParameter.getPageWeight(), calculateRequestParameter.getPageNumber(), calculateRequestParameter.getNumSides(),
