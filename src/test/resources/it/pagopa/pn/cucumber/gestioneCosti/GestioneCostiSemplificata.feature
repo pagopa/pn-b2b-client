@@ -22,7 +22,7 @@ Feature: Test sul processo di fruizione e aggiornamento costi gara
       | numSides          | 3     |
       | isReversePrinter  | true  |
       | pageWeight        | 80    |
-    When viene chiamata l'api di calcolo costi con tenderId "20190724"
+    When viene chiamata l'api di calcolo costi con tenderId "20240801"
     Then l'api ritorna status code 404
 
  @gestioneCostiSemplificata
@@ -32,7 +32,7 @@ Feature: Test sul processo di fruizione e aggiornamento costi gara
       | geokey            | <GEOKEY> |
       | numSides          | <NUMSIDES> |
       | isReversePrinter  | <ISREVERSEPRINTER>  |
-    When viene chiamata l'api di calcolo costi con tenderId "20190724"
+    When viene chiamata l'api di calcolo costi con tenderId "20240801"
     Then l'api ritorna status code 400
     Examples:
       | PRODUCT    | GEOKEY     | NUMSIDES 	| ISREVERSEPRINTER    |
