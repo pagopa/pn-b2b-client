@@ -16,11 +16,18 @@ public class CalculateRequestParameter {
     private ShipmentCalculateRequest.ProductEnum product;
     @CsvBindByPosition(position = 2)
     private String tenderId;
+    @CsvBindByPosition(position = 3)
     private Integer pageWeight;
+    @CsvBindByPosition(position = 4)
+    private Integer pageNumber;
     @CsvBindByPosition(position = 5)
     private Integer numSides;
     @CsvBindByPosition(position = 6)
     private Boolean isReversePrinter;
+    @CsvBindByPosition(position = 7)
+    private String cost;
+    @CsvBindByPosition(position = 8)
+    private String costPlusEuroDigital;
     @CsvBindByPosition(position = 9)
     private Integer expectedResult;
 

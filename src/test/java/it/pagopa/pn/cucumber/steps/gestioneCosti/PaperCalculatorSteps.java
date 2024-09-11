@@ -35,12 +35,12 @@ public class PaperCalculatorSteps {
 
     @Given("viene creata una richiesta con valori di default")
     public ShipmentCalculateRequest createDefaultShipmentCalculateRequest() {
-        return createShipmentCalculateRequest(ShipmentCalculateRequest.ProductEnum._890, "00102", 2, true, 12);
+        return createShipmentCalculateRequest(ShipmentCalculateRequest.ProductEnum._890, "00102", 2, true);
     }
 
     @Given("viene creata una richiesta con i seguenti valori")
     public ShipmentCalculateRequest createShipmentCalculateRequest(@Transpose CalculateRequestParameter parameter) {
-        return createShipmentCalculateRequest(parameter.getProduct(), parameter.getGeokey(), parameter.getNumSides(), parameter.getIsReversePrinter(), parameter.getPageWeight());
+        return createShipmentCalculateRequest(parameter.getProduct(), parameter.getGeokey(), parameter.getNumSides(), parameter.getIsReversePrinter());
     }
 
     @When("viene chiamata l'api di calcolo costi con tenderId {string}")
@@ -60,13 +60,12 @@ public class PaperCalculatorSteps {
     }
 
     private ShipmentCalculateRequest createShipmentCalculateRequest(ShipmentCalculateRequest.ProductEnum product, String geokey,
-            Integer numSides, Boolean isReversePrinter, Integer pageWeight) {
+            Integer numSides, Boolean isReversePrinter) {
         shipmentCalculateRequest = new ShipmentCalculateRequest();
         shipmentCalculateRequest.setProduct(product);
         shipmentCalculateRequest.setGeokey(geokey);
         shipmentCalculateRequest.setNumSides(numSides);
         shipmentCalculateRequest.setIsReversePrinter(isReversePrinter);
-        shipmentCalculateRequest.setPageWeight(pageWeight);
         return shipmentCalculateRequest;
     }
 
@@ -91,15 +90,23 @@ public class PaperCalculatorSteps {
     public void callApiAndCheckResult() {
         requestParamsFromCsv
                 .forEach(x -> {
-                    createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumSides(), x.getIsReversePrinter(), x.getPageWeight());
+                    createShipmentCalculateRequest(x.getProduct(), x.getGeokey(), x.getNumSides(), x.getIsReversePrinter());
                     callPaperCalculateCost(x.getTenderId());
                     Optional.ofNullable(calculateResponseResponseEntity)
                             .map(HttpEntity::getBody)
                             .map(ShipmentCalculateResponse::getCost)
-                            .ifPresentOrElse((value) -> Assertions.assertEquals(x.getExpectedResult(), value),
+                            .ifPresentOrElse((value) -> Assertions.assertEquals(x.getExpectedResult(), value, formatErrorMessage(x)),
                                     () -> AssertionFailureBuilder.assertionFailure().message("Si è verificato un errore nel recuperare il costo per il CAP: " + x.getGeokey()).buildAndThrow()
                             );
                 });
+    }
+
+    private String formatErrorMessage(CalculateRequestParameter calculateRequestParameter) {
+        return String.format("Si è verificato un errore per la tupla: %s;%s;%s;%d;%d;%d;%b;%s;%s;%d",
+                calculateRequestParameter.getGeokey(), calculateRequestParameter.getProduct().getValue(), calculateRequestParameter.getTenderId(),
+                calculateRequestParameter.getPageWeight(), calculateRequestParameter.getPageNumber(), calculateRequestParameter.getNumSides(),
+                calculateRequestParameter.getIsReversePrinter(), calculateRequestParameter.getCost(), calculateRequestParameter.getCostPlusEuroDigital(),
+                calculateRequestParameter.getExpectedResult());
     }
 
 }
