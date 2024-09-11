@@ -39,7 +39,7 @@ public class OpenSearchSteps {
     }
 
     private void checkAudit(String auditLogType, String auditLogRetention, Integer maxAge){
-        PnExternalServiceClientImpl.OpenSearchResponse openSearchResponse = pnExternalServiceClient.openSearchGetAudit(auditLogRetention,auditLogType,10);
+        PnExternalServiceClientImpl.OpenSearchResponse openSearchResponse = pnExternalServiceClient.openSearchGetAudit(auditLogRetention,auditLogType,500);
         Assertions.assertFalse(openSearchResponse.getHits().getHits().isEmpty());
         PnExternalServiceClientImpl.InnerHits innerHits = openSearchResponse.getHits().getHits().get(0);
         Assertions.assertTrue(innerHits.get_source().getAud_type().equalsIgnoreCase(auditLogType));
