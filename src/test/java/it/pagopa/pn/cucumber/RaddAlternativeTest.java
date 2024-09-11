@@ -15,6 +15,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"raddAlt","raddAnagrafica","raddAttoIntero"})
+@IncludeTags({"raddAlt", "raddAttoIntero"})
 public class RaddAlternativeTest {
 }
