@@ -12,6 +12,7 @@ import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParamete
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +30,11 @@ public class PaperCalculatorSteps {
     private ShipmentCalculateRequest shipmentCalculateRequest;
     private ResponseEntity<ShipmentCalculateResponse> calculateResponseResponseEntity;
     private List<CalculateRequestParameter> requestParamsFromCsv;
+    private List<String> errorList;
 
     public PaperCalculatorSteps(IPaperCalculatorClientImpl paperCalculatorClient) {
         this.paperCalculatorClient = paperCalculatorClient;
+        this.errorList = new ArrayList<>();
     }
 
     @Given("viene creata una richiesta con valori di default")
@@ -95,18 +99,35 @@ public class PaperCalculatorSteps {
                     Optional.ofNullable(calculateResponseResponseEntity)
                             .map(HttpEntity::getBody)
                             .map(ShipmentCalculateResponse::getCost)
-                            .ifPresentOrElse((value) -> Assertions.assertEquals(x.getExpectedResult(), value, formatErrorMessage(x)),
+                            .ifPresentOrElse((value) -> checkIfEquals(x, value),
                                     () -> AssertionFailureBuilder.assertionFailure().message("Si è verificato un errore nel recuperare il costo per il CAP: " + x.getGeokey()).buildAndThrow()
                             );
                 });
+        Assertions.assertTrue(errorList.isEmpty(), createGeneralErrorMessage(errorList));
     }
 
-    private String formatErrorMessage(CalculateRequestParameter calculateRequestParameter) {
-        return String.format("Si è verificato un errore per la tupla: %s;%s;%s;%d;%d;%d;%b;%s;%s;%d",
+    private void checkIfEquals(CalculateRequestParameter calculateRequestParameter, Integer actualCost) {
+        try {
+            Assertions.assertEquals(calculateRequestParameter.getExpectedResult(), actualCost);
+        } catch (AssertionFailedError ex) {
+            errorList.add(formatErrorMessage(calculateRequestParameter, ex));
+        }
+    }
+
+    private String createGeneralErrorMessage(List<String> err) {
+        StringBuilder stringBuilder = new StringBuilder("Si è verificato un problema con le seguenti tuple: ");
+        for (String c : err) {
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+    }
+
+    private String formatErrorMessage(CalculateRequestParameter calculateRequestParameter, AssertionFailedError assertionFailedError) {
+        return String.format("%s;%s;%s;%d;%d;%d;%b;%s;%s;%d %s\n",
                 calculateRequestParameter.getGeokey(), calculateRequestParameter.getProduct().getValue(), calculateRequestParameter.getTenderId(),
                 calculateRequestParameter.getPageWeight(), calculateRequestParameter.getPageNumber(), calculateRequestParameter.getNumSides(),
                 calculateRequestParameter.getIsReversePrinter(), calculateRequestParameter.getCost(), calculateRequestParameter.getCostPlusEuroDigital(),
-                calculateRequestParameter.getExpectedResult());
+                calculateRequestParameter.getExpectedResult(), assertionFailedError.getMessage());
     }
 
 }
