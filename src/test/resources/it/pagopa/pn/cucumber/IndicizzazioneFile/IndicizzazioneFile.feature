@@ -134,7 +134,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagPerRequest' reached"
 
-  @uat
+  @uatIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_7.2] Create ERROR - MaxValuesPerTagPerRequest
@@ -244,7 +244,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 6. Max value: 5"
 
-  @uat
+  @uatIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_9.1] UpdateSingle ERROR - MaxValuesPerTagDocument
@@ -277,7 +277,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Number of values for tag global_multivalue exceeds maxValues limit"
 
-  @uat
+  @uatIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_11.2] UpdateSingle ERROR - MaxValuesPerTagPerRequest

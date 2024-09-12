@@ -353,7 +353,7 @@ public class SafeStorageSteps {
         } else {
             List<String> expectedFileKeys = new LinkedList<>();
             documentIndexes.forEach(x -> expectedFileKeys.add(this.indicizzazioneStepsPojo.getCreatedFiles().get(Integer.parseInt(x) - 1).getKey()));
-            Assertions.assertEquals(searchResult.size(), expectedFileKeys.size());
+            Assertions.assertEquals(expectedFileKeys.size(), searchResult.size());
             searchResult.forEach(x -> Assertions.assertTrue(expectedFileKeys.contains(x)));
         }
     }
