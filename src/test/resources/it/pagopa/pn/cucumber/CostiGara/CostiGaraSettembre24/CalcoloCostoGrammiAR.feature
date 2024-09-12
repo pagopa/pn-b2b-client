@@ -26,7 +26,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80060 | 546   | MASSAQUANO | NA       | notifica analogica FSU         |
       | 60012 | 452   | MONTERADO    | AN       | notifica analogica RECAPITISTA |
       | 60123 | 409   | ANCONA       | AN       | notifica analogica RECAPITISTA |
-      | 70123 | 371   | BARI         | BA       | notifica analogica RECAPITISTA |
+      | 70123 | 377   | BARI         | BA       | notifica analogica RECAPITISTA |
       | 80013 | 467   | CASAREA      | NA       | notifica analogica RECAPITISTA |
       | 80123 | 397   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 418   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
