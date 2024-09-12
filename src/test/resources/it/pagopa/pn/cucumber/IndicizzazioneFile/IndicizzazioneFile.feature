@@ -74,7 +74,7 @@ Feature: test preliminari indicizzazione File safeStorage
     And La chiamata genera un errore con status code 404
     And Il messaggio di errore riporta la dicitura "Document is missing from bucket"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_3] Create ERROR - MaxTagsPerRequest
@@ -89,7 +89,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxTagsPerRequest' reached"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
@@ -102,7 +102,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_5] Create ERROR - MaxValuesPerTagDocument
@@ -111,7 +111,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached."
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_6] Create ERROR - MaxTagsPerDocument
@@ -125,7 +125,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxTagsPerDocument' reached"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_CREATE_7] Create ERROR - MaxValuesPerTagPerRequest
@@ -206,7 +206,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "SET and DELETE cannot contain the same tags: [global_multivalue]"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_7] UpdateSingle ERROR - MaxFileKeys
@@ -218,7 +218,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxFileKeys' reached. Current value: 6. Max value: 5"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_8] UpdateSingle ERROR - MaxOperationsOnTagsPerRequest
@@ -233,7 +233,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Number of tags to update exceeds maxOperationsOnTags limit"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_9] UpdateSingle ERROR - MaxValuesPerTagDocument
@@ -255,7 +255,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxValuesPerTagDocument' reached. Current value: 1001. Max value: 1000"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_10] UpdateSingle ERROR - MaxTagsPerDocument
@@ -267,7 +267,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Limit 'MaxTagsPerDocument' reached. Current value: 3. Max value: 2"
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_SINGLE_11] UpdateSingle ERROR - MaxValuesPerTagPerRequest
@@ -407,7 +407,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_8] Update Massive ERROR - MaxFileKeysUpdateMassivePerRequest
@@ -423,7 +423,7 @@ Feature: test preliminari indicizzazione File safeStorage
     Then La chiamata genera un errore con status code 400
     And Il messaggio di errore riporta la dicitura "Number of documents to update exceeds MaxFileKeysUpdateMassivePerRequest limit."
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_9] Update Massive ERROR - MaxOperationsOnTagsPerRequest
@@ -443,7 +443,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1  |
       | global_singlevalue:test6 |
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
@@ -462,7 +462,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_indexed_multivalue:test |
       | global_multivalue:test1        |
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_11] Update Massive ERROR - MaxValuesPerTagDocument
@@ -477,7 +477,7 @@ Feature: test preliminari indicizzazione File safeStorage
     And Il documento 1 è associato alla seguente lista di tag
       | global_multivalue:test1,test2,test3,test4,test5 |
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_12] Update Massive ERROR - MaxTagsPerDocument
@@ -494,7 +494,7 @@ Feature: test preliminari indicizzazione File safeStorage
       | global_multivalue:test1  |
       | global_singlevalue:test1 |
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @indicizzazioneSafeStorage
   Scenario: [INDEX_SS_UPDATE_MASSIVE_13] Update Massive ERROR - MaxValuesPerTagPerRequest
@@ -510,7 +510,7 @@ Feature: test preliminari indicizzazione File safeStorage
 
   ########################################################### SEARCH FILE-KEY ###################################################################
 
-  @test
+  @testIndexSS
   @aggiuntaTag
   @concurrencyIndexSs
   @indicizzazioneSafeStorage
