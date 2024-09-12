@@ -64,8 +64,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1012  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1089  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1154  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 1046  | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1046   | CERBARA       | PG       | notifica analogica RECAPITISTA |
+      | 11100 | 1043  | AOSTA       | AO       | notifica analogica RECAPITISTA |
+
 
 
   @costoAnalogicoSettembre24
@@ -97,8 +99,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1169  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 90054 | 1027  | GERACI SICULO  | PA       | notifica analogica RECAPITISTA |
       | 88071 | 1061  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
-
       | 06012 | 1061   | CERBARA       | PG       | notifica analogica RECAPITISTA |
+
+      | 38097 | 1046   | TERRE D'ADIGE       | TN       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_890-51GR_4] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -190,8 +194,11 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1131  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1214  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1284  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
-
       | 06012 | 1169   | CERBARA       | PG       | notifica analogica RECAPITISTA |
+
+      | 86081 | 1378   | AGNONE       | IS       | notifica analogica RECAPITISTA |
+
+
 
 
   @costoAnalogicoSettembre24
@@ -253,8 +260,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1221  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1304  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1374  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
-
       | 06012 | 1259   | CERBARA        | PG       | notifica analogica RECAPITISTA |
+
+      | 34129 | 1259   | TRIESTE        | TS       | notifica analogica RECAPITISTA |
+
 
 
   @costoAnalogicoSettembre24
@@ -316,8 +325,10 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 1372  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 1464  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 1541  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 1417  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 06012 | 1417  | CERBARA       | PG       | notifica analogica RECAPITISTA |
+      | 19126 | 1267  | LA SPEZIA        | SP       | notifica analogica RECAPITISTA |
+
 
 
   @costoAnalogicoSettembre24
@@ -411,7 +422,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 70010 | 2359  | ADELFIA        | BA       | notifica analogica RECAPITISTA |
       | 10010 | 2451  | ANDRATE        | TO       | notifica analogica RECAPITISTA |
       | 60012 | 2528  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
+      | 06012 | 2404   | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 06012 | 2404   | CERBARA        | PG       | notifica analogica RECAPITISTA |
+      | 9121 | 1264   | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
 
 
