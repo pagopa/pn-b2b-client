@@ -34,7 +34,7 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
-        this.publicKeysApi = new PublicKeysApi(newApiClient(basePath, null));
+        this.publicKeysApi = new PublicKeysApi(newApiClient(basePath, cucumberSpaBearerToken));
     }
 
     private ApiClient newApiClient(String basePath, String bearerToken) {
