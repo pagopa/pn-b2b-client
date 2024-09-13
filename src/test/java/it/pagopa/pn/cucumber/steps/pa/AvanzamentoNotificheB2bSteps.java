@@ -1318,7 +1318,7 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             // System.out.println(assertionFailedError.getCause().toString());
             // System.out.println(assertionFailedError.getCause().getMessage().toString());
-            Assertions.assertEquals(assertionFailedError.getCause().getMessage().substring(0, 3), statusCode);
+            Assertions.assertEquals(statusCode, assertionFailedError.getCause().getMessage().substring(0, 3));
         }
     }
 
