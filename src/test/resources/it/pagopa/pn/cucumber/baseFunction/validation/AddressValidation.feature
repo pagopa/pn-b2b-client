@@ -1,5 +1,7 @@
 Feature: address validation feature
 
+
+  @VerificaTestNormalizzatore
   Scenario Outline: [B2B_ADDRESS_VALIDATION_NEW] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo (DA VERIFICARE)
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -376,5 +378,3 @@ Feature: address validation feature
       | TEST_NORMALIZZATORE_14 | NULL | COMMESSAGGIO                                          | NULL           | 46018  | COMMESSAGGIO                  | NULL                | MN       | ita                      | REFUSED                      |
       | TEST_NORMALIZZATORE_15 | NULL | strada belmonte                                       | NULL           | NULL   | MONTEGIARDINO                 | NULL                | RM       | REPUBBLICA DI SAN MARINO | REFUSED                      |
       | TEST_NORMALIZZATORE_16 | NULL | 0                                                     | NULL           | 00185  | ROMA                          | NULL                | RM       | ITALIA                   | HTTP_ERROR                   |
-
-
