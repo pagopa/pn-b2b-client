@@ -66,7 +66,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1154  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1046  | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 11100 | 1043  | AOSTA       | AO       | notifica analogica RECAPITISTA |
+      | 11100 | 1046  | AOSTA       | AO       | notifica analogica RECAPITISTA |
 
 
 
@@ -101,7 +101,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 88071 | 1061  | STALETTI       | CZ       | notifica analogica RECAPITISTA |
       | 06012 | 1061   | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 38097 | 1046   | TERRE D'ADIGE       | TN       | notifica analogica RECAPITISTA |
+      | 38097 | 1061   | TERRE D'ADIGE       | TN       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre24
@@ -196,7 +196,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1284  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1169   | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 86081 | 1378   | AGNONE       | IS       | notifica analogica RECAPITISTA |
+      | 86081 | 1228   | AGNONE       | IS       | notifica analogica RECAPITISTA |
 
 
 
@@ -327,7 +327,7 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 1541  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 1417  | CERBARA        | PG       | notifica analogica RECAPITISTA |
 
-      | 19126 | 1267  | LA SPEZIA        | SP       | notifica analogica RECAPITISTA |
+      | 19126 | 1417  | LA SPEZIA        | SP       | notifica analogica RECAPITISTA |
 
 
 
@@ -424,6 +424,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 2528  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 2404   | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 9121 | 1264   | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
+      | 9121 | 2404   | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
 
 
