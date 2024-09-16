@@ -83,7 +83,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnExternalChannelsServiceClientImpl.class,
         PnSafeStoragePrivateClientImpl.class,
         PnBFFRecipientNotificationClientImpl.class,
-        IPnInteropProbingClientImpl.class,
+        IPnInteropProbingClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
