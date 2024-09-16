@@ -33,11 +33,11 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 546   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 458   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 485   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
-
       | 90088 | 467   | SAN CIPIRELLO   | PA       | notifica analogica RECAPITISTA |
       | 84022 | 467   | CAMPAGNA        | SA       | notifica analogica RECAPITISTA |
       | 88071 | 467   | STALETTI        | CZ       | notifica analogica RECAPITISTA |
 
+      | 85036 | 452   | ROCCANOVA        | PZ       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
@@ -70,6 +70,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 508   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 536   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
+      | 74021 | 508   | CAROSINO        | TA       | notifica analogica RECAPITISTA |
+
+
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-50GR_3] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
@@ -100,10 +103,10 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 635   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 523   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 551   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
-
       | 91030 | 541   | SAN VITO LO CAPO  | TP       | notifica analogica RECAPITISTA |
       | 36049 | 635  | SOVIZZO            | VI       | notifica analogica RECAPITISTA |
 
+      | 63094 | 523   | BALZO        | AP       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -136,6 +139,8 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 563   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 591   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
+      | 28028 | 675   | PETTENASCO        | NO       | notifica analogica RECAPITISTA |
+
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-100GR_5] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
@@ -166,8 +171,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 702   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 590   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 618    | FOGLIANO    | LT       | notifica analogica RECAPITISTA |
-
       | 91032 | 601    | PETROSINO   | TP       | notifica analogica RECAPITISTA |
+
+      | 80146 | 513    | NAPOLI   | NA       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
@@ -200,6 +206,8 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00118 | 635   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 663   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
+      | 90020 | 637    | CASTELLANA SICULA   | PA       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-250GR_7] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 250gr
@@ -231,9 +239,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 833   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 724   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 750   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
-
       | 92035 | 722   | JOPPOLO GIANCAXIO | AG  | notifica analogica RECAPITISTA |
 
+      | 87030 | 724    | SAN VINCENZO LA COSTA   | CS       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
