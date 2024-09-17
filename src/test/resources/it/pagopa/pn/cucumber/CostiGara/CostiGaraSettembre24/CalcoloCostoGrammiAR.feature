@@ -38,6 +38,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 88071 | 467   | STALETTI        | CZ       | notifica analogica RECAPITISTA |
 
       | 85036 | 452   | ROCCANOVA        | PZ       | notifica analogica RECAPITISTA |
+      | 21009 | 546   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr

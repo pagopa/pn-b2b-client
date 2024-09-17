@@ -36,6 +36,9 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 17011 | 1103  | ALBISOLA CAPO           | SV       | notifica analogica RECAPITISTA |
       | 87020 | 957   | ACQUAPPESA              | CS       | notifica analogica RECAPITISTA |
 
+      | 21009 | 906   | BARDELLO              | VA       | notifica analogica RECAPITISTA |
+      | 14027 | 924   | TONENGO              | AT       | notifica analogica RECAPITISTA |
+
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_890-21GR_2] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
