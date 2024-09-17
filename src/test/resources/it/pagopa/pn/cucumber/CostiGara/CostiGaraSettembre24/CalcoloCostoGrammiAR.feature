@@ -307,7 +307,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 04100 | 847   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
       | 95058 | 810   | CAMPOROTONDO ETNEO      | CT       | notifica analogica RECAPITISTA |
-
+      | 44026 | 926   | MESOLA     | FE       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
