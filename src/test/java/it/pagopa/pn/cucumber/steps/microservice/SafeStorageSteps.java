@@ -347,6 +347,8 @@ public class SafeStorageSteps {
     public void checkSearchResult(DataTable dataTable) {
         List<String> searchResult = this.indicizzazioneStepsPojo.getAdditionalFileTagsSearchResponseResponseEntity().getBody().getFileKeys()
                 .stream().map(AdditionalFileTagsSearchResponseFileKeys::getFileKey).toList();
+        log.info("SEARCH_RESULT:" + searchResult);
+        log.info("CREATED_FILES:" + this.indicizzazioneStepsPojo.getCreatedFiles().stream().map(x -> x.getKey()).toList());
         List<String> documentIndexes = dataTable.asList();
         if (documentIndexes.contains("null")) {
             Assertions.assertTrue(searchResult.isEmpty());
