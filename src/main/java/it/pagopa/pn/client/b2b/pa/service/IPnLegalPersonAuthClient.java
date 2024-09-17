@@ -1,11 +1,10 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.*;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
-
-import java.util.List;
 
 public interface IPnLegalPersonAuthClient {
 
@@ -15,7 +14,7 @@ public interface IPnLegalPersonAuthClient {
 
     BffPublicKeyResponse rotatePublicKeyV1(String kid, BffPublicKeyRequest bffPublicKeyRequest) throws RestClientException;
 
-    //ResponseEntity<PublicKeysIssuerResponse> getIssuerStatusWithHttpInfo(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId) throws RestClientException;
+//    ResponseEntity<PublicKeysIssuerResponse> getIssuerStatusWithHttpInfo(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId) throws RestClientException;
 
     void deletePublicKeyV1(String kid) throws RestClientException;
 

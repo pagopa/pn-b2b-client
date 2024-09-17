@@ -1,16 +1,16 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.RequestNewVirtualKey;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.RequestVirtualKeyStatus;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.ResponseNewVirtualKey;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffNewVirtualKeyRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffNewVirtualKeyResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffVirtualKeyStatusRequest;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonVirtualKeyServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.junit.jupiter.api.Assertions;
 
 public class LegalPersonVirtualKeySteps {
 
-    private ResponseNewVirtualKey responseNewVirtualKey;
+    private BffNewVirtualKeyResponse responseNewVirtualKey;
 
     private IPnLegalPersonVirtualKeyServiceClient virtualKeyServiceClient;
 
@@ -21,7 +21,7 @@ public class LegalPersonVirtualKeySteps {
     @Given("un utente amministratore {string} censisce una virtual key per se stesso")
     public void unUtenteAmministratoreCensisceUnaVirtualKeyPerSeStesso(String admin) {
         selectPGUser(admin);
-        RequestNewVirtualKey requestNewVirtualKey = new RequestNewVirtualKey();
+        BffNewVirtualKeyRequest requestNewVirtualKey = new BffNewVirtualKeyRequest();
         responseNewVirtualKey = Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.createVirtualKey(requestNewVirtualKey));
     }
 
@@ -40,17 +40,17 @@ public class LegalPersonVirtualKeySteps {
         selectPGUser(admin);
         switch (operation) {
             case "crea" -> {
-                RequestNewVirtualKey requestNewVirtualKey = new RequestNewVirtualKey();
+                BffNewVirtualKeyRequest requestNewVirtualKey = new BffNewVirtualKeyRequest();
                 responseNewVirtualKey = Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.createVirtualKey(requestNewVirtualKey));
             }
             case "ruota" -> {
-                RequestVirtualKeyStatus requestNewVirtualKey = new RequestVirtualKeyStatus();
-                requestNewVirtualKey.setStatus(RequestVirtualKeyStatus.StatusEnum.ROTATE);
+                BffVirtualKeyStatusRequest requestNewVirtualKey = new BffVirtualKeyStatusRequest();
+                requestNewVirtualKey.setStatus(BffVirtualKeyStatusRequest.StatusEnum.ROTATE);
                 Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.changeStatusVirtualKeys(responseNewVirtualKey.getId(), requestNewVirtualKey));
             }
             case "blocca" -> {
-                RequestVirtualKeyStatus requestNewVirtualKey = new RequestVirtualKeyStatus();
-                requestNewVirtualKey.setStatus(RequestVirtualKeyStatus.StatusEnum.BLOCK);
+                BffVirtualKeyStatusRequest requestNewVirtualKey = new BffVirtualKeyStatusRequest();
+                requestNewVirtualKey.setStatus(BffVirtualKeyStatusRequest.StatusEnum.BLOCK);
                 Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.changeStatusVirtualKeys(responseNewVirtualKey.getId(), requestNewVirtualKey));
             }
             case "elimina" -> {

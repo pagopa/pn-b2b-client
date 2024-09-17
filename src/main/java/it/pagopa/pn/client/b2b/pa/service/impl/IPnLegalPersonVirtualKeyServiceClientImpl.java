@@ -1,11 +1,11 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.virtualKey.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.virtualKey.pg.VirtualKeysApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.RequestNewVirtualKey;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.RequestVirtualKeyStatus;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.ResponseNewVirtualKey;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.virtualKey.pg.VirtualKeysResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.apikey.manager.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.apikey.manager.pg.VirtualKeysApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffNewVirtualKeyRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffNewVirtualKeyResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffVirtualKeyStatusRequest;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffVirtualKeysResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonVirtualKeyServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,23 +42,23 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     }
 
     @Override
-    public void changeStatusVirtualKeys(String id, RequestVirtualKeyStatus requestVirtualKeyStatus) throws RestClientException {
-        virtualKeysApi.changeStatusVirtualKeys(null, null, null, null, id, requestVirtualKeyStatus, null);
+    public void changeStatusVirtualKeys(String kid, BffVirtualKeyStatusRequest bffNewVirtualKeyRequest) throws RestClientException {
+        virtualKeysApi.changeStatusVirtualKeysV1(null, null, null, kid, bffNewVirtualKeyRequest, null, null);
     }
 
     @Override
-    public ResponseNewVirtualKey createVirtualKey(RequestNewVirtualKey requestNewVirtualKey) throws RestClientException {
-        return virtualKeysApi.createVirtualKey(null, null, null, null, requestNewVirtualKey, null);
+    public BffNewVirtualKeyResponse createVirtualKey(BffNewVirtualKeyRequest requestNewVirtualKey) throws RestClientException {
+        return virtualKeysApi.newVirtualKeyV1(null, null, null, requestNewVirtualKey);
     }
 
     @Override
-    public void deleteVirtualKey(String id) throws RestClientException {
-        virtualKeysApi.deleteVirtualKey(null, null, null, null, id, null);
+    public void deleteVirtualKey(String kid) throws RestClientException {
+        virtualKeysApi.deleteVirtualKeyV1(null, null, null, kid, null, null);
     }
 
     @Override
-    public VirtualKeysResponse getVirtualKeys(Integer limit, String lastKey, String lastUpdate, Boolean showVirtualKey) throws RestClientException {
-        return virtualKeysApi.getVirtualKeys(null, null, null, null, null, limit, lastKey, lastUpdate, showVirtualKey);
+    public BffVirtualKeysResponse getVirtualKeys(Integer limit, String lastKey, String lastUpdate, Boolean showVirtualKey) throws RestClientException {
+        return virtualKeysApi.getVirtualKeysV1(null, null, null, null, null, limit, lastKey, lastUpdate, showVirtualKey);
     }
 
     @Override

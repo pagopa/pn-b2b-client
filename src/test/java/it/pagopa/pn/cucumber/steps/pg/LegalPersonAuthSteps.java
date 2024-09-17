@@ -1,25 +1,33 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
+import io.cucumber.java.After;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponsePojo;
 import it.pagopa.pn.cucumber.utils.LegalPersonsAuthStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.client.RestClientException;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class LegalPersonAuthSteps {
     private LegalPersonsAuthStepsPojo pojo;
+    private LegalPersonAuthExpectedResponsePojo responsePojo;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
 
     public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
+        this.pojo = LegalPersonsAuthStepsPojo.builder().build();
+        this.responsePojo = LegalPersonAuthExpectedResponsePojo.builder().build();
     }
 
     /**
@@ -29,11 +37,17 @@ public class LegalPersonAuthSteps {
      * bloccata -> attiva, cancellata
      */
 
+    private void selectAdmin(String admin) {
+        switch (admin.toUpperCase()) {
+            case "AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+        }
+    }
+
     @Given("esiste una chiave pubblica creata da {string} in stato {string}")
     public void creaChiavePubblicaAndChangeStatus(String admin, String status) {
         selectAdmin(admin);
         creaChiavePubblica();
-        String kid = pojo.getPublicKeysResponses().get(0).bffPublicKeyResponse.getKid();
+        String kid = pojo.getPublicKeysResponses().get(0).getKid();
         switch (status.toUpperCase()) {
             case "BLOCCATA" -> bloccaChiavePubblica(kid);
             case "RUOTATA" -> ruotaChiavePubblica(kid);
@@ -47,10 +61,10 @@ public class LegalPersonAuthSteps {
     @When("l'amministratore {string} {string} la chiave pubblica per la PG")
     public void changeStatusChiavePubblica(String admin, String operation) {
         selectAdmin(admin);
-        if (Arrays.asList("CREA", "RICREA").contains(operation.toUpperCase())) {
+        if (asList("CREA", "RICREA").contains(operation.toUpperCase())) {
             creaChiavePubblica();
         } else {
-            String kid = pojo.getPublicKeysResponses().get(0).bffPublicKeyResponse.getKid();
+            String kid = pojo.getPublicKeysResponses().get(0).getKid();
             switch (operation.toUpperCase()) {
                 case "BLOCCA" -> bloccaChiavePubblica(kid);
                 case "RUOTA" -> ruotaChiavePubblica(kid);
@@ -62,20 +76,24 @@ public class LegalPersonAuthSteps {
 
     @Then("la chiave pubblica viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG")
     public void searchChiavePubblica() {
-        pnLegalPersonAuthClient.getPublicKeysV1();//TODO aggiungere parametri
+        pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
     }
 
-    private void selectAdmin(String admin) {
-        switch (admin.toUpperCase()) {
-            case "AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-        }
+    @Then("la chiave pubblica non è più presentenell'elenco delle chiavi pubbliche per la PG")
+    public void searchChiavePubblicaNegativeCase() {
+        pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
     }
 
     private void creaChiavePubblica() {
         BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST");
         try {
-            BffPublicKeyResponse bffPublicKeyResponse = pnLegalPersonAuthClient.newPublicKeyV1(request);
-            pojo.getPublicKeysResponses().add(new ExpectedPublicKey(bffPublicKeyResponse, "ACTIVE"));
+            BffPublicKeyResponse response = pnLegalPersonAuthClient.newPublicKeyV1(request);
+            pojo.getPublicKeysResponses().add(response);
+            responsePojo = LegalPersonAuthExpectedResponsePojo.builder()
+                    .response(response)
+                    .status("ACTIVE")
+                    .build();
+            pojo.getPublicKeysResponses().add(pnLegalPersonAuthClient.newPublicKeyV1(request));
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -84,13 +102,7 @@ public class LegalPersonAuthSteps {
     private void bloccaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.changeStatusPublicKeyV1(kid, "BLOCKED");
-            pojo.getPublicKeysResponses().stream()
-                    .filter(data -> data.bffPublicKeyResponse.getKid().equals(kid))
-                    .findFirst()
-                    .map(data -> {
-                        data.setExpectedStatus("BLOCKED");
-                        return data;
-                    });
+            responsePojo.setStatus("BLOCKED");
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -100,6 +112,7 @@ public class LegalPersonAuthSteps {
         BffPublicKeyRequest bffPublicKeyRequest = new BffPublicKeyRequest();//TODO crea request
         try {
             pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
+            responsePojo.setStatus("ROTATE");
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -108,13 +121,7 @@ public class LegalPersonAuthSteps {
     private void riattivaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.changeStatusPublicKeyV1(kid, "ACTIVE");
-            pojo.getPublicKeysResponses().stream()
-                    .filter(data -> data.bffPublicKeyResponse.getKid().equals(kid))
-                    .findFirst()
-                    .map(data -> {
-                        data.setExpectedStatus("ACTIVE");
-                        return data;
-                    });
+            responsePojo.setStatus("ACTIVE");
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -123,19 +130,20 @@ public class LegalPersonAuthSteps {
     private void cancellaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.deletePublicKeyV1(kid);
+            responsePojo.setStatus("CANCELLED");
         } catch (RestClientException e) {
             pojo.setException(e);
         }
     }
 
-    @After(todoScegliereNome)
+    @After("todoScegliereNome")
     public void eliminaChiaviPubblicheCreate() {
         pojo.getPublicKeysResponses().stream().forEach(k -> {
-            String kid = k.bffPublicKeyResponse.getKid();
-            if (k.getExpectedStatus().equalsIgnoreCase("ACTIVE")) {
+            String kid = k.getKid();
+            if (responsePojo.getStatus().equalsIgnoreCase("ACTIVE")) {
                 bloccaChiavePubblica(kid);
             }
-            if (!k.getExpectedStatus().equalsIgnoreCase("CANCELLED")) {
+            if (!responsePojo.getStatus().equalsIgnoreCase("CANCELLED")) {
                 pnLegalPersonAuthClient.deletePublicKeyV1(kid);
             }
         });
