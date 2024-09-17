@@ -107,7 +107,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 91030 | 541   | SAN VITO LO CAPO  | TP       | notifica analogica RECAPITISTA |
       | 36049 | 635  | SOVIZZO            | VI       | notifica analogica RECAPITISTA |
 
-      | 63094 | 523   | BALZO        | AP       | notifica analogica RECAPITISTA |
+      | 63094 | 523   | BISIGNANO        | AP       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoSettembre24
   Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
@@ -238,9 +238,9 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 80123 | 636   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
       | 83100 | 657   | AVELLINO     | AV       | notifica analogica RECAPITISTA |
       | 00012 | 833   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
-      | 00118 | 724   | ROMA         | RM       | notifica analogica RECAPITISTA |
+      | 00118 | 722   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 750   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
-      | 92035 | 722   | JOPPOLO GIANCAXIO | AG  | notifica analogica RECAPITISTA |
+      | 92035 | 724   | JOPPOLO GIANCAXIO | AG  | notifica analogica RECAPITISTA |
 
       | 87030 | 724    | SAN VINCENZO LA COSTA   | CS       | notifica analogica RECAPITISTA |
 
@@ -274,6 +274,8 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 00012 | 869   | ALBUCCIONE   | RM       | notifica analogica RECAPITISTA |
       | 00118 | 757   | ROMA         | RM       | notifica analogica RECAPITISTA |
       | 04100 | 790   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
+
+      | 51018 | 869   | PIEVE A NIEVOLE     | PT       | notifica analogica RECAPITISTA |
 
 
   @costoAnalogicoSettembre24

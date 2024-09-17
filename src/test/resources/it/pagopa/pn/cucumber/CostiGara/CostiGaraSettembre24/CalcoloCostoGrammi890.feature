@@ -427,6 +427,6 @@ Feature: calcolo costo notifica in base hai grammi con notifiche 890
       | 60012 | 2528  | MONTERADO      | AN       | notifica analogica RECAPITISTA |
       | 06012 | 2404   | CERBARA       | PG       | notifica analogica RECAPITISTA |
 
-      | 9121 | 2404   | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
+      | 09121 | 2404   | CAGLIARI       | CA       | notifica analogica RECAPITISTA |
 
 
