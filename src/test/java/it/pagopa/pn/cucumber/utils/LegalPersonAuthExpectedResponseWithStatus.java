@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class LegalPersonAuthExpectedResponsePojo {
+public class LegalPersonAuthExpectedResponseWithStatus {
     BffPublicKeyResponse response;
     String status;
 }
