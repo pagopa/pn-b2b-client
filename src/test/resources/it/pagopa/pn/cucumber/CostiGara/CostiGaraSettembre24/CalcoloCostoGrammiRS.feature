@@ -3,8 +3,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
   Background:
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
-  @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_RS-20GR_1] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso <= 20gr
+  @costoAnalogicoSettembre24
+  Scenario Outline: [CALCOLO-COSTO_RS-20GR_1] (Settembre) Invio notifica e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | <SUBJECT>         |
       | senderDenomination | Comune di palermo |
@@ -32,13 +32,14 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
       | 80022 | 344   | ARZANO       | NA       | notifica analogica RECAPITISTA |
       | 84124 | 295   | SALERNO      | SA       | notifica analogica RECAPITISTA |
       | 80129 | 274   | NAPOLI       | NA       | notifica analogica RECAPITISTA |
-
       | 27062 | 402   | CAMPOSPINOSO ALBAREDO   | PV       | notifica analogica RECAPITISTA |
       | 92038 | 344   | MONTEVAGO               | AG       | notifica analogica RECAPITISTA |
       | 92044 | 344   | PALMA DI MONTECHIARO    | AG       | notifica analogica RECAPITISTA |
 
-  @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_RS-20GR_2] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
+      | 14027 | 402   | TONENGO              | AT       | notifica analogica RECAPITISTA |
+
+  @costoAnalogicoSettembre24
+  Scenario: [CALCOLO-COSTO_RS-20GR_2] (Settembre) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -54,8 +55,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "737" della notifica
 
-  @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_RS-20GR_3] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  @costoAnalogicoSettembre24
+  Scenario: [CALCOLO-COSTO_RS-20GR_3] (Settembre) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -71,8 +72,8 @@ Feature: calcolo costo notifica in base hai grammi con notifiche RS
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And viene verificato il costo = "852" della notifica
 
-  @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_RS-20GR_4] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  @costoAnalogicoSettembre24
+  Scenario: [CALCOLO-COSTO_RS-20GR_4] (Settembre) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
