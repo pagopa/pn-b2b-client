@@ -85,7 +85,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         IPnLegalPersonAuthClientImpl.class,
-        IPnLegalPersonVirtualKeyServiceClientImpl.class
+        IPnLegalPersonVirtualKeyServiceClientImpl.class,
+        IPnTosPrivacyClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
