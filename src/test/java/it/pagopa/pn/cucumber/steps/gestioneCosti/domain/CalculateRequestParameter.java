@@ -14,21 +14,21 @@ public class CalculateRequestParameter {
     private String geokey;
     @CsvCustomBindByPosition(position = 1, converter = ShipmentCalculateRequestConverter.class)
     private ShipmentCalculateRequest.ProductEnum product;
-    @CsvBindByPosition(position = 2)
-    private String tenderId;
-    @CsvBindByPosition(position = 3)
-    private Integer pageWeight;
     @CsvBindByPosition(position = 4)
-    private Integer pageNumber;
+    private String tenderId;
     @CsvBindByPosition(position = 5)
-    private Integer numSides;
+    private Integer pageWeight;
     @CsvBindByPosition(position = 6)
-    private Boolean isReversePrinter;
+    private Integer pageNumber;
     @CsvBindByPosition(position = 7)
-    private String cost;
+    private Integer numSides;
     @CsvBindByPosition(position = 8)
-    private String costPlusEuroDigital;
+    private Boolean isReversePrinter;
     @CsvBindByPosition(position = 9)
+    private String cost;
+    @CsvBindByPosition(position = 10)
+    private String costPlusEuroDigital;
+    @CsvBindByPosition(position = 11)
     private Integer expectedResult;
 
 }
