@@ -24,7 +24,7 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     private VirtualKeysApi virtualKeysApi;
 
     public IPnLegalPersonVirtualKeyServiceClientImpl(RestTemplate restTemplate,
-                                                     @Value("") String basePath,
+                                                     @Value("${pn.webapi.external.base-url}") String basePath,
                                                      @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                                      @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;

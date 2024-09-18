@@ -9,7 +9,7 @@ import org.springframework.web.client.RestClientException;
 
 public interface IPnLegalPersonVirtualKeyServiceClient {
 
-    void changeStatusVirtualKeys(String id, BffVirtualKeyStatusRequest requestVirtualKeyStatus) throws RestClientException;
+    void changeStatusVirtualKeys(String kid, BffVirtualKeyStatusRequest requestVirtualKeyStatus) throws RestClientException;
 
     BffNewVirtualKeyResponse createVirtualKey(BffNewVirtualKeyRequest requestNewVirtualKey) throws RestClientException;
 
