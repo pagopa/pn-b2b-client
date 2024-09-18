@@ -65,18 +65,18 @@ Feature: Api b2b per destinatari strutturati
 
 
   @useB2B
-  Scenario Outline: [Scenario-5] Viene invocatae l’API di creazione delega da delegante PG a delegato PF con codice fiscale vuoto
+  Scenario Outline: [Scenario-5] Viene invocatae l’API di creazione delega da delegante PG a delegato PF con campi non conformi
     Given viene creato un user con parametri: displayName "<DISPLAYNAME>",firstName "<FIRSTNAME>",lastName "<LASTNAME>",fiscalCode "<FISCALCODE>"
     And "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
     And "Mario Gherkin" viene delegato da "GherkinSrl"
     And si verifica che la risposta contenga lo status code: 400
     Examples:
-      | DISPLAYNAME   | FIRSTNAME | LASTNAME                                                                     | FISCALCODE        |
-      | Mario Gherkin | Mario     | Gherkin                                                                      | " "               |
-      | Mario Gherkin | Mario     | Gherkin                                                                      | CLMC0T42R12D969Z5 |
-      | Mario Gherkin | " "       | " "                                                                          | CLMCST42R12D969Z  |
-      | Mario Gherkin | Mario     | PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP | CLMCST42R12D969Z  |
-      | Mario Gherkin | 861       | ADELFIA                                                                      | CLMCST42R12D969Z  |
+      | DISPLAYNAME   | FIRSTNAME                                                                    | LASTNAME                                                                     | FISCALCODE        |
+      | Mario Gherkin | Mario                                                                        | Gherkin                                                                      | " "               |
+      | Mario Gherkin | Mario                                                                        | Gherkin                                                                      | CLMC0T42R12D969Z5 |
+      | Mario Gherkin | " "                                                                          | " "                                                                          | CLMCST42R12D969Z  |
+      | Mario Gherkin | Mario                                                                        | PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP | CLMCST42R12D969Z  |
+      | Mario Gherkin | PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP | Gherkin                                                                      | CLMCST42R12D969Z  |
 
 
 

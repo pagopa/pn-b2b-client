@@ -49,6 +49,7 @@ public class RicezioneNotificheWebDelegheSteps {
     private final String marioGherkinTaxID;
     private final String gherkinSrltaxId;
     private final String cucumberSpataxId;
+    private UserDto userDtoCustom;
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -134,10 +135,6 @@ public class RicezioneNotificheWebDelegheSteps {
         return !beenSet;
     }
 
-
-    private UserDto userDtoCustom;
-
-
     @Given("viene creato un user con parametri: displayName {string},firstName {string},lastName {string},fiscalCode {string}")
    public void removeCfFromUser1(String displayName,String firstName,String lastName,String fiscalCode){
         userDtoCustom.displayName(displayName)
@@ -145,12 +142,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 .lastName(lastName)
                 .fiscalCode(fiscalCode)
                 .person(true);
-
-
-
     }
-
-
 
     @And("{string} viene delegato da user")
     public void delegateUserCustom(String delegate, String delegator) {
@@ -175,14 +167,6 @@ public class RicezioneNotificheWebDelegheSteps {
             this.notificationError = e;
         }
     }
-
-
-
-
-
-
-
-
 
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
