@@ -18,15 +18,15 @@ Feature: Public key legal Person Authentication
   Scenario: [LEGAL_PERSON_AUTH_4] Amministratore PG cancella una chiave pubblica per la Persona Giuridica dopo averla ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
     When l'amministratore "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG
-    Then //TODO verificare non sia presente
+    Then la chiave pubblica non è più presente nell'elenco delle chiavi pubbliche per la PG
 
   Scenario: [LEGAL_PERSON_AUTH_5] Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
     When l'amministratore "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG
-    Then //TODO verificare non sia presente
+    Then la chiave pubblica non è più presente nell'elenco delle chiavi pubbliche per la PG
 
   Scenario: [LEGAL_PERSON_AUTH_5] Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
     When l'amministratore "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG
-    Then //TODO verificare non sia presente
+    Then la chiave pubblica non è più presente nell'elenco delle chiavi pubbliche per la PG
 

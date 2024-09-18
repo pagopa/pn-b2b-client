@@ -6,11 +6,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponsePojo;
 import it.pagopa.pn.cucumber.utils.LegalPersonsAuthStepsPojo;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestClientException;
@@ -23,8 +25,8 @@ import static java.util.Arrays.asList;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class LegalPersonAuthSteps {
-    private LegalPersonsAuthStepsPojo pojo;
-    private List<LegalPersonAuthExpectedResponsePojo> responsePojoList;
+    private final LegalPersonsAuthStepsPojo pojo;
+    private final List<LegalPersonAuthExpectedResponsePojo> responsePojoList;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
 
     public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient, LegalPersonsAuthStepsPojo pojo) {
@@ -79,12 +81,16 @@ public class LegalPersonAuthSteps {
 
     @Then("la chiave pubblica viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG")
     public void searchChiavePubblica() {
-        pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
+        BffPublicKeysResponse response = pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
+        Assertions.assertTrue(response.getItems().stream().map(x -> x.getKid()).toList().
+                contains(pojo.getPublicKeysResponses().get(0).getKid()));
     }
 
-    @Then("la chiave pubblica non è più presentenell'elenco delle chiavi pubbliche per la PG")
+    @Then("la chiave pubblica non è più presente nell'elenco delle chiavi pubbliche per la PG")
     public void searchChiavePubblicaNegativeCase() {
-        pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
+        BffPublicKeysResponse response = pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
+        Assertions.assertFalse(response.getItems().stream().map(x -> x.getKid()).toList().
+                contains(pojo.getPublicKeysResponses().get(0).getKid()));
     }
 
     private void creaChiavePubblica() {
@@ -143,15 +149,15 @@ public class LegalPersonAuthSteps {
                     .status(status)
                     .build());
         } else {
-            LegalPersonAuthExpectedResponsePojo listElement = this.responsePojoList.stream()
-                    .filter(x -> x.getResponse().getKid().equals(kid)).findFirst().orElse(null);
-            listElement.setStatus(status);
+            this.responsePojoList.stream().filter(
+                            x -> x.getResponse().getKid().equals(kid)).findFirst().
+                    ifPresent(listElement -> listElement.setStatus(status));
         }
     }
 
     @After("todoScegliereNome")
     public void eliminaChiaviPubblicheCreate() {
-        responsePojoList.stream().forEach(pojo -> {
+        responsePojoList.forEach(pojo -> {
             if (pojo.getStatus().equalsIgnoreCase("ACTIVE")) {
                 bloccaChiavePubblica(pojo.getResponse().getKid());
             }
