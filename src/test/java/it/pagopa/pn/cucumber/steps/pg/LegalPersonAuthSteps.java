@@ -15,19 +15,22 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestClientException;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static java.util.Arrays.asList;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class LegalPersonAuthSteps {
     private LegalPersonsAuthStepsPojo pojo;
-    private LegalPersonAuthExpectedResponsePojo responsePojo;
+    private List<LegalPersonAuthExpectedResponsePojo> responsePojoList;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
 
-    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient) {
+    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient, LegalPersonsAuthStepsPojo pojo) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
-        this.pojo = LegalPersonsAuthStepsPojo.builder().build();
-        this.responsePojo = LegalPersonAuthExpectedResponsePojo.builder().build();
+        this.pojo = pojo;
+        this.responsePojoList = new LinkedList<>();
     }
 
     /**
@@ -89,10 +92,7 @@ public class LegalPersonAuthSteps {
         try {
             BffPublicKeyResponse response = pnLegalPersonAuthClient.newPublicKeyV1(request);
             pojo.getPublicKeysResponses().add(response);
-            responsePojo = LegalPersonAuthExpectedResponsePojo.builder()
-                    .response(response)
-                    .status("ACTIVE")
-                    .build();
+            updateResponseStatus(response, "ACTIVE", null);
             pojo.getPublicKeysResponses().add(pnLegalPersonAuthClient.newPublicKeyV1(request));
         } catch (RestClientException e) {
             pojo.setException(e);
@@ -102,7 +102,7 @@ public class LegalPersonAuthSteps {
     private void bloccaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.changeStatusPublicKeyV1(kid, "BLOCKED");
-            responsePojo.setStatus("BLOCKED");
+            updateResponseStatus(null, "BLOCKED", kid);
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -112,7 +112,7 @@ public class LegalPersonAuthSteps {
         BffPublicKeyRequest bffPublicKeyRequest = new BffPublicKeyRequest();//TODO crea request
         try {
             pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
-            responsePojo.setStatus("ROTATE");
+            updateResponseStatus(null, "ROTATED", kid);
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -121,7 +121,7 @@ public class LegalPersonAuthSteps {
     private void riattivaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.changeStatusPublicKeyV1(kid, "ACTIVE");
-            responsePojo.setStatus("ACTIVE");
+            updateResponseStatus(null, "ACTIVE", kid);
         } catch (RestClientException e) {
             pojo.setException(e);
         }
@@ -130,21 +130,33 @@ public class LegalPersonAuthSteps {
     private void cancellaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.deletePublicKeyV1(kid);
-            responsePojo.setStatus("CANCELLED");
+            updateResponseStatus(null, "CANCELLED", kid);
         } catch (RestClientException e) {
             pojo.setException(e);
         }
     }
 
+    private void updateResponseStatus(BffPublicKeyResponse response, String status, String kid) {
+        if (kid == null) {
+            this.responsePojoList.add(LegalPersonAuthExpectedResponsePojo.builder()
+                    .response(response)
+                    .status(status)
+                    .build());
+        } else {
+            LegalPersonAuthExpectedResponsePojo listElement = this.responsePojoList.stream()
+                    .filter(x -> x.getResponse().getKid().equals(kid)).findFirst().orElse(null);
+            listElement.setStatus(status);
+        }
+    }
+
     @After("todoScegliereNome")
     public void eliminaChiaviPubblicheCreate() {
-        pojo.getPublicKeysResponses().stream().forEach(k -> {
-            String kid = k.getKid();
-            if (responsePojo.getStatus().equalsIgnoreCase("ACTIVE")) {
-                bloccaChiavePubblica(kid);
+        responsePojoList.stream().forEach(pojo -> {
+            if (pojo.getStatus().equalsIgnoreCase("ACTIVE")) {
+                bloccaChiavePubblica(pojo.getResponse().getKid());
             }
-            if (!responsePojo.getStatus().equalsIgnoreCase("CANCELLED")) {
-                pnLegalPersonAuthClient.deletePublicKeyV1(kid);
+            if (!pojo.getStatus().equalsIgnoreCase("CANCELLED")) {
+                pnLegalPersonAuthClient.deletePublicKeyV1(pojo.getResponse().getKid());
             }
         });
     }
