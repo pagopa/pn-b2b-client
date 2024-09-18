@@ -11,7 +11,6 @@ import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.IMandateServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -31,6 +30,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
+        B2bMandateServiceClientImpl.class,
         PnExternalServiceClientImpl.class,
         PnWebUserAttributesExternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
@@ -87,9 +87,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         IMandateReverseServiceClient.class,
-        MandateReverseServiceClientImpl.class,
-        IMandateServiceClient.class,
-        MandateServiceClientImpl.class
+        MandateReverseServiceClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
