@@ -3,10 +3,10 @@ package it.pagopa.pn.cucumber.steps.pg;
 import lombok.Data;
 
 public enum VirtualKeyState {
-    BLOCKED("blocked"),
-    ROTATED("rotated"),
-    ACTIVE("active"),
-    CANCELLED("cancelled");
+    BLOCKED("BLOCK"),
+    ROTATED("ROTATE"),
+    ENABLE("ENABLE"),
+    CANCELLED("CANCELLED");
 
     private String state;
 
