@@ -15,20 +15,18 @@ public class CalculateRequestParameter {
     @CsvCustomBindByPosition(position = 1, converter = ShipmentCalculateRequestConverter.class)
     private ShipmentCalculateRequest.ProductEnum product;
     @CsvBindByPosition(position = 4)
-    private String tenderId;
-    @CsvBindByPosition(position = 5)
     private Integer pageWeight;
-    @CsvBindByPosition(position = 6)
+    @CsvBindByPosition(position = 5)
     private Integer pageNumber;
-    @CsvBindByPosition(position = 7)
+    @CsvBindByPosition(position = 6)
     private Integer numSides;
-    @CsvBindByPosition(position = 8)
+    @CsvBindByPosition(position = 7)
     private Boolean isReversePrinter;
-    @CsvBindByPosition(position = 9)
+    @CsvBindByPosition(position = 8)
     private String cost;
-    @CsvBindByPosition(position = 10)
+    @CsvBindByPosition(position = 9)
     private String costPlusEuroDigital;
-    @CsvBindByPosition(position = 11)
+    @CsvBindByPosition(position = 10)
     private Integer expectedResult;
 
 }

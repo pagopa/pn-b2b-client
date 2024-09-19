@@ -2,10 +2,11 @@ Feature: Test sul processo di fruizione e aggiornamento costi gara
 
 #  Test massivo con recupero dati da file csv contenuto nel path: src/main/resources/TEST_massivo_costi.csv
 #  NOTA: Il csv da passare in input deve essere rinominato in: TEST_massivo_costi.csv
+#  e il tenderID da usare nello step è l'id contenuto nel nome del csv originale
   @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-SUCCESS-1] Viene effettuato un test massivo effettuando le chiamate con dati presi dal CSV
     Given vengono recuperati i valori delle richieste da file
-    Then viene invocata l'api e si controlla che il risultato sia quello atteso
+    Then viene invocata l'api e si controlla che il risultato sia quello atteso per la gara con tenderId "20241001"
 
  @gestioneCostiSemplificata
   Scenario: [COST-ANALOGIC-FAILURE-1] Recupero dei costi associati ad uno specifico CAP con TenderId errato
