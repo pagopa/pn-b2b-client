@@ -18,6 +18,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeTags({"workflowDigitale", "workflowAnalogico", "pagamentiMultipli",
         "Async", "f24", "version", "AOO_UO", "Annullamento",
         "validation", "RetentionAllegati", "apiKeyManager", "downtimeLogs",
-        "legalFact", "letturaDestinatario", "hotfix-11281", "indicizzazioneSafeStorage", "uatIndexSS"})
+        "legalFact", "letturaDestinatario", "hotfix-11281", "indicizzazioneSafeStorage"})
 public class NrtTest_hotfix {
 }
