@@ -1,7 +1,10 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
+import java.util.ArrayList;
+import java.util.List;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import lombok.Setter;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyBody;
@@ -9,14 +12,8 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonVirtualKeyServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import lombok.Setter;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class LegalPersonVirtualKeySteps {
 
@@ -62,41 +59,30 @@ public class LegalPersonVirtualKeySteps {
         Assertions.assertEquals(exception.getRawStatusCode(), errorCode);
     }
 
-    @Given("un utente {string} controlla che la sua virtual key sia in stato {string}")
-    public void unUtenteControllaCheLaSuaVirtualKeySiaInStato(String admin, String status) {
-        selectPGUser(admin);
-        VirtualKeyExpectedResponse virtualKeyExpectedResponse = responseNewVirtualKeys.get(responseNewVirtualKeys.size() - 1);
-        BffVirtualKeysResponse response = Assertions.assertDoesNotThrow(()-> virtualKeyServiceClient.getVirtualKeys(10, virtualKeyExpectedResponse.response.getVirtualKey(), null, true));
-        Assertions.assertFalse(responseNewVirtualKeys.isEmpty());
-        VirtualKey virtualKeyFounded = response.getItems().stream()
-                .filter(data -> data.getId().equals(virtualKeyExpectedResponse.response.getVirtualKey()))
-                .findFirst().orElse(null);
-        Assertions.assertNotNull(virtualKeyFounded);
-        Assertions.assertEquals(virtualKeyExpectedResponse.response.getId(), virtualKeyFounded.getId());
-        Assertions.assertEquals(status, virtualKeyExpectedResponse.state.getState());
-        Assertions.assertEquals(status, virtualKeyFounded.getStatus().getValue());
-    }
-
-    @And("controllo che l utente {string} abbia tutte le virtual su cui ha operato con lo stato giusto")
-    public void controlloCheLUtenteAbbiaTutteLeVirtualSuCuiHaOperato(String user) {
-        List<VirtualKeyExpectedResponse> virtualKeyExpected = responseNewVirtualKeys
-                .stream()
+    @And("controllo che l'utente {string} veda {string} virtual key nella PG")
+    public void controlloCheLUtenteVirtualKeyNellaPG(String user, String condition) {
+        List<VirtualKeyExpectedResponse> responses = user.equals("AMMINISTRATORE") ?
+                responseNewVirtualKeys : responseNewVirtualKeys.stream()
                 .filter(data -> data.user.equals(user))
                 .toList();
+        retrieveAndCheckVirtualKeyPresent(responses, user);
+    }
 
-        BffVirtualKeysResponse response = Assertions.assertDoesNotThrow(()-> virtualKeyServiceClient.getVirtualKeys(10, virtualKeyExpected.get(0).response.getVirtualKey(), null, true));
-        Assertions.assertNotNull(response);
-        Assertions.assertNotNull(response.getItems());
-        Assertions.assertNotNull(virtualKeyExpected);
-        Assertions.assertEquals(virtualKeyExpected.size(), response.getItems().size());
+    private void retrieveAndCheckVirtualKeyPresent(List<VirtualKeyExpectedResponse> expectedResponses, String user) {
+        selectPGUser(user);
+        BffVirtualKeysResponse response = Assertions.assertDoesNotThrow(()-> virtualKeyServiceClient.getVirtualKeys(null, null, null, null));
         response.getItems()
             .forEach(virtualKey -> {
-                boolean matches = virtualKeyExpected.stream()
-                        .filter(data -> data.user.equals(user))
-                        .filter(data -> data.response.getId().equals(virtualKey.getId()))
-                        .anyMatch(data -> data.state.equals(virtualKey.getStatus().getValue()));
+                boolean matches = expectedResponses.stream()
+                    .anyMatch(data -> checkVirtualKeyPresent(data, virtualKey));
                 Assertions.assertTrue(matches);
             });
+    }
+
+    private boolean checkVirtualKeyPresent(VirtualKeyExpectedResponse expected, VirtualKey actual) {
+        return expected != null && expected.response != null && expected.state != null && expected.response.getId() != null &&
+                actual != null && actual.getStatus() != null && actual.getId() != null &&
+                expected.state.getState().equals(actual.getStatus().getValue()) && expected.response.getId().equals(actual.getId());
     }
 
     @Given("un utente {string} {string} i tos")

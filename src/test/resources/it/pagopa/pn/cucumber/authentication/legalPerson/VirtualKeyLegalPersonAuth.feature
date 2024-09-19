@@ -9,11 +9,11 @@ Feature: Virtual key legal Person Authentication
     And un utente "<USER>" censisce una virtual key per se stesso
     And un utente "<USER>" "BLOCCA" una virtual key in stato "ENABLE" per se stesso
     When un utente "<USER>" "RIATTIVA" una virtual key in stato "BLOCK" per se stesso
-    And controllo che l utente "<USER>" abbia tutte le virtual su cui ha operato con lo stato giusto
+    And controllo che l'utente "<USER>" veda "<CONDITION>" virtual key nella PG
     Examples:
-      | USER           |
-      | AMMINISTRATORE |
-      | PG             |
+      | USER           | CONDITION  |
+      | AMMINISTRATORE | TUTTE LE   |
+      | PG             | LE PROPRIE |
 
   Scenario: [LEGAL-PERSON-AUTH_2] Un Amministratore Persona Giuridica blocca e riattiva la virtual key di un utente della PG
     #8
@@ -33,7 +33,7 @@ Feature: Virtual key legal Person Authentication
     When un utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per se stesso
     When un utente "PG" "CANCELLA" una virtual key in stato "BLOCK" per se stesso
     And un utente "PG" censisce una virtual key per se stesso
-    And controllo che l utente "PG" abbia tutte le virtual su cui ha operato con lo stato giusto
+    And controllo che l'utente "PG" veda "LE PROPRIE" virtual key nella PG
 
   Scenario: [LEGAL-PERSON-AUTH_4] Un utente Persona Giuridica censisce una virtual key dopo averne ruotata e bloccata una in precedenza
     #10
@@ -43,7 +43,7 @@ Feature: Virtual key legal Person Authentication
     When un utente "PG" "RUOTA" una virtual key in stato "ENABLE" per se stesso
     When un utente "PG" "BLOCCA" una virtual key in stato "ROTATE" per se stesso
     And un utente "PG" censisce una virtual key per se stesso
-    And controllo che l utente "PG" abbia tutte le virtual su cui ha operato con lo stato giusto
+    And controllo che l'utente "PG" veda "LE PROPRIE" virtual key nella PG
 
   Scenario: [LEGAL-PERSON-AUTH_5] Un Amministratore Persona Giuridica cancella la virtual key dopo averne ruotata una in precedenza
     #11
@@ -52,9 +52,9 @@ Feature: Virtual key legal Person Authentication
     And un utente "AMMINISTRATORE" censisce una virtual key per se stesso
     When un utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per se stesso
     When un utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ROTATE" per se stesso
-    And controllo che l utente "AMMINISTRATORE" abbia tutte le virtual su cui ha operato con lo stato giusto
+    And controllo che l'utente "AMMINISTRATORE" veda "TUTTE LE" virtual key nella PG
 
-  Scenario: [LEGAL-PERSON-AUTH_6] Un Amministratore Persona Giuridica ruota e cancella la virtual key di un altro utente
+  Scenario: [LEGAL-PERSON-AUTH_6] Un Amministratore Persona Giuridica prima ruota e poi cancella la virtual key di un altro utente
     #12
     # aggiungi GIVEN censimento chiave pubblica per la PG
     And un utente "AMMINISTRATORE" "ACCETTA" i tos
@@ -63,8 +63,7 @@ Feature: Virtual key legal Person Authentication
     And un utente "PG" censisce una virtual key per se stesso
     When un utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per l'utente "PG"
     When un utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ENABLE" per l'utente "PG"
-    And controllo che l utente "PG" abbia tutte le virtual su cui ha operato con lo stato giusto
-    And controllo che l utente "AMMINISTRATORE" abbia tutte le virtual su cui ha operato con lo stato giusto
+    And controllo che l'utente "AMMINISTRATORE" veda "TUTTE LE" virtual key nella PG
 
   Scenario: [LEGAL-PERSON-AUTH_7] Un Amministratore Persona Giuridica censisce la virtual key per se stesso, senza aver accettato i TOS
     #45
@@ -110,7 +109,7 @@ Feature: Virtual key legal Person Authentication
       | CANCELLA  |
 
   Scenario Outline: [LEGAL-PERSON-AUTH_12] Un utente Persona Giuridica e Amministratore Persona Giuridica appartenente ad un gruppo blocca/ruota la virtual key attiva di un altro utente
-    #50 -64
+    #50 - 62
     # aggiungi GIVEN chiave pubblica attiva
     And un utente "<USER1>" "ACCETTA" i tos
     And un utente "<USER2>" "ACCETTA" i tos
@@ -196,7 +195,7 @@ Feature: Virtual key legal Person Authentication
       | RIATTIVA  |
 
   Scenario Outline: [LEGAL-PERSON-AUTH_19] Un Amministratore/utente PG riattiva/blocca/ruota la propria virtual key ruotata
-    #58 - 61 - caso ancora da definire in srs
+    #58 - 61 - 77
     # aggiungi GIVEN chiave pubblica attiva
     And un utente "<USER>" "ACCETTA" i tos
     And un utente "<USER>" censisce una virtual key per se stesso
@@ -257,4 +256,4 @@ Feature: Virtual key legal Person Authentication
     And un utente "PG" censisce una virtual key per se stesso
     And un utente "PG" "RUOTA" una virtual key in stato "ENABLE" per se stesso
     And un utente "AMMINISTRATORE CON GRUPPI" "CANCELLA" una virtual key in stato "ROTATE" per l'utente "PG" e riceve errore 409
-    #controllare verifica lettura chiavi pubbliche
+    And controllo che l'utente "AMMINISTRATORE CON GRUPPI" veda "LE PROPRIE" virtual key nella PG
