@@ -50,7 +50,7 @@ Feature: Virtual key legal Person Authentication
     And l'utente "PG" censisce una virtual key per sè stesso
     And l'utente "PG" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
     And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ROTATE" per sè stesso
+    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     When l'utente "PG" censisce una virtual key per sè stesso
     Then controllo che l'utente "PG" veda "LE PROPRIE" virtual key nella PG
 
@@ -226,7 +226,7 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_19] Un Amministratore/utente PG riattiva/blocca/ruota la propria virtual key ruotata
-    #58 - 61 - 77
+    #58 - 61 - 78
     # c'è da capire serve un amministratore con la stessa PG dello user
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "<USER>" "ACCETTA" i tos
