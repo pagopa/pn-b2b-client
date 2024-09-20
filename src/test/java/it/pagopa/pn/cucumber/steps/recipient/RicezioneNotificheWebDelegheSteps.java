@@ -145,6 +145,11 @@ public class RicezioneNotificheWebDelegheSteps {
                 .person(true);
     }
 
+    @Then("si verifica che lo status code sia: {int}")
+    public void checkStatusCode(int statusCode) {
+        Assertions.assertEquals(statusCode, this.notificationError.getStatusCode());
+    }
+
     @And("{string} viene delegato da user")
     public void delegateUserCustom(String delegator) {
         //
