@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
 import io.cucumber.java.Before;
+import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -135,17 +136,18 @@ public class RicezioneNotificheWebDelegheSteps {
         return !beenSet;
     }
 
-    @Given("viene creato un user con parametri: displayName {string},firstName {string},lastName {string},fiscalCode {string}")
-   public void removeCfFromUser1(String displayName,String firstName,String lastName,String fiscalCode){
-        userDtoCustom.displayName(displayName)
-                .firstName(firstName)
-                .lastName(lastName)
-                .fiscalCode(fiscalCode)
+    @Given("viene creato un user con i seguenti valori:")
+    public void removeCfFromUser1(@Transpose UserDto parameter){
+        userDtoCustom.displayName(parameter.getDisplayName())
+                .firstName(parameter.getFirstName())
+                .lastName(parameter.getLastName())
+                .fiscalCode(parameter.getFiscalCode())
                 .person(true);
     }
 
     @And("{string} viene delegato da user")
-    public void delegateUserCustom(String delegate, String delegator) {
+    public void delegateUserCustom(String delegator) {
+        //
         if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
@@ -160,6 +162,55 @@ public class RicezioneNotificheWebDelegheSteps {
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
         );
 
+        System.out.println("MANDATE: " + mandate);
+        try {
+            webMandateClient.createMandate(mandate);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @And("{string} viene delegato da user")
+    public void delegateUserWithNotValidDate(String delegate, String delegator) {
+        //
+        if (setBearerToken(delegator)) {
+            throw new IllegalArgumentException();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = (new MandateDto()
+                .delegator(getUserDtoByuser(delegator)))
+                .delegate(getUserDtoByuser(delegate))
+                .verificationCode(verificationCode)
+                .datefrom(sdf.format(new Date()))
+                .visibilityIds(new LinkedList<>())
+                .status(MandateDto.StatusEnum.PENDING)
+                .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
+                );
+
+        System.out.println("MANDATE: " + mandate);
+        try {
+            webMandateClient.createMandate(mandate);
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @And("{string} viene delegato da {string} con data di fine delega antecedente a quella di inizio")
+    public void delegateUserWithInvalidDateRange(String delegate, String delegator) {
+        //
+        if (setBearerToken(delegator)) {
+            throw new IllegalArgumentException();
+        }
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        MandateDto mandate = (new MandateDto()
+                .delegator(getUserDtoByuser(delegator)))
+                .delegate(getUserDtoByuser(delegate))
+                .verificationCode(verificationCode)
+                .dateto(sdf.format(new Date()))
+                .visibilityIds(new LinkedList<>())
+                .status(MandateDto.StatusEnum.PENDING)
+                .datefrom(sdf.format(DateUtils.addDays(new Date(), 1))
+                );
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
@@ -191,35 +242,6 @@ public class RicezioneNotificheWebDelegheSteps {
             this.notificationError = e;
         }
     }
-
-    @And("{string} viene delegato da {string}")
-    public void delegateUserNo(String delegate, String delegator) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
-         UserDto delegat = getUserDtoByuser(delegate);
-         delegat.setFiscalCode("");
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(delegat)
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
-        );
-
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
-    }
-
-
 
     @And("{string} viene delegato da {string} per comune {string}")
     public void delegateUser(String delegate, String delegator, String comune) {
