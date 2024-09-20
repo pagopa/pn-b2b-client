@@ -7,6 +7,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.PublicKeyRow;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponseWithStatus;
@@ -17,9 +18,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.util.List;
 import java.util.Objects;
-
-import static java.util.Arrays.asList;
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
@@ -47,76 +47,56 @@ public class LegalPersonAuthSteps {
         }
     }
 
-    @Given("esiste una chiave pubblica creata da {string} in stato {string}")
-    public void creaChiavePubblicaAndChangeStatus(String utente, String status) {
+    @When("l'utente {string} crea una chiave pubblica per la PG")
+    public BffPublicKeyResponse creaChiavePubblica(String utente) {
         selectAdmin(utente);
-        BffPublicKeyResponse response = creaChiavePubblica();
-        if (response != null) {
+        BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST");
+        try {
+            BffPublicKeyResponse response = pnLegalPersonAuthClient.newPublicKeyV1(request);
             pojo.getResponseWithStatusList().add(
                     LegalPersonAuthExpectedResponseWithStatus.builder()
                             .status("ACTIVE")
                             .response(response)
                             .build());
-            String kid = response.getKid();
-            switch (status.toUpperCase()) {
-                case "BLOCCATA" -> bloccaChiavePubblica(kid);
-                case "RUOTATA" -> ruotaChiavePubblica(kid);
-                case "CANCELLATA" -> {
-                    bloccaChiavePubblica(kid);
-                    cancellaChiavePubblica(kid);
-                }
+            return response;
+        } catch (RestClientResponseException e) {
+            pojo.setException(e);
+            return null;
+        }
+    }
+
+    @Given("esiste una chiave pubblica creata da {string} in stato {string}")
+    public void creaChiavePubblicaAndChangeStatus(String utente, String status) {
+        BffPublicKeyResponse response = creaChiavePubblica(utente);
+        String kid = response.getKid();
+        switch (status.toUpperCase()) {
+            case "BLOCCATA" -> bloccaChiavePubblica(kid);
+            case "RUOTATA" -> ruotaChiavePubblica(kid);
+            case "CANCELLATA" -> {
+                bloccaChiavePubblica(kid);
+                cancellaChiavePubblica(kid);
             }
         }
     }
 
-    @When("l'utente {string} {string} la chiave pubblica per la PG")
-    public void changeStatusChiavePubblica(String utente, String operation) {
+    @Given("l'utente {string} non ha censito alcuna chiave pubblica")
+    public void checkForAbsenceOfPublicKey(String utente) {
+        //TODO
+    }
+
+    @When("l'utente {string} {string} la chiave pubblica per la PG che si trova in stato {string}")
+    public void changeStatusChiavePubblica(String utente, String operation, String status) {
         selectAdmin(utente);
-        if (asList("CREA", "RICREA").contains(operation.toUpperCase())) {
-            BffPublicKeyResponse response = creaChiavePubblica();
-            if (response != null) {
-                pojo.getResponseWithStatusList().add(
-                        LegalPersonAuthExpectedResponseWithStatus.builder()
-                                .status("ACTIVE")
-                                .response(response)
-                                .build());
-            }
+        if (operation.equalsIgnoreCase("RICREA")) {
+            creaChiavePubblica(utente);
         } else {
-            String kid = pojo.getResponseWithStatusList().get(0).getResponse().getKid();
+            String kid = getPublicKeyKidByStatus(status);
             switch (operation.toUpperCase()) {
                 case "BLOCCA" -> bloccaChiavePubblica(kid);
                 case "RUOTA" -> ruotaChiavePubblica(kid);
                 case "RIATTIVA" -> riattivaChiavePubblica(kid);
                 case "CANCELLA" -> cancellaChiavePubblica(kid);
             }
-        }
-    }
-
-    @When("l'utente {string} crea una seconda chiava pubblica")
-    public BffPublicKeyResponse createSecondPublicKey(String utente) {
-        selectAdmin(utente);
-        BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST 2");
-        BffPublicKeyResponse response = pnLegalPersonAuthClient.newPublicKeyV1(request);
-        this.pojo.getResponseWithStatusList().add(
-                LegalPersonAuthExpectedResponseWithStatus.builder()
-                        .status("ACTIVE")
-                        .response(response)
-                        .build());
-        return response;
-    }
-
-    @When("l'utente {string} crea una seconda chiava pubblica e prova a cambiarne lo stato in {string}")
-    public void createSecondPublicKeyAndChangeItsStatus(String utente, String status) {
-        BffPublicKeyResponse response = createSecondPublicKey(utente);
-        try {
-            switch (status.toUpperCase()) {
-                case "BLOCCATA" -> bloccaChiavePubblica(response.getKid());
-                case "RUOTATA" -> ruotaChiavePubblica(response.getKid());
-                case "RIATTIVATA" -> riattivaChiavePubblica(response.getKid());
-                case "CANCELLATA" -> cancellaChiavePubblica(response.getKid());
-            }
-        } catch (RestClientResponseException e) {
-            this.pojo.setException(e);
         }
     }
 
@@ -142,19 +122,18 @@ public class LegalPersonAuthSteps {
         }
     }
 
-
-    @Then("la chiave pubblica viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG")
-    public void searchChiavePubblica() {
+    @Then("la chiave pubblica in stato {string} viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG")
+    public void searchChiavePubblica(String status) {
         BffPublicKeysResponse response = pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
-        Assertions.assertTrue(response.getItems().stream().map(x -> x.getKid()).toList().
-                contains(pojo.getResponseWithStatusList().get(0).getResponse().getKid()));
+        String targetKid = getPublicKeyKidByStatus(status);
+        Assertions.assertTrue(response.getItems().stream().map(PublicKeyRow::getKid).toList().contains(targetKid));
     }
 
-    @Then("la chiave pubblica non è più presente nell'elenco delle chiavi pubbliche per la PG")
-    public void searchChiavePubblicaNegativeCase() {
+    @Then("la chiave pubblica in stato {string} non è più presente nell'elenco delle chiavi pubbliche per la PG")
+    public void searchChiavePubblicaNegativeCase(String status) {
         BffPublicKeysResponse response = pnLegalPersonAuthClient.getPublicKeysV1(0, "", "", true);//TODO modificare i parametri
-        Assertions.assertFalse(response.getItems().stream().map(x -> x.getKid()).toList().
-                contains(pojo.getResponseWithStatusList().get(0).getResponse().getKid()));
+        String targetKid = getPublicKeyKidByStatus(status);
+        Assertions.assertFalse(response.getItems().stream().map(PublicKeyRow::getKid).toList().contains(targetKid));
     }
 
     @Then("la chiamata restituisce un errore con status code {int} riportante il messaggio {string}")
@@ -164,14 +143,25 @@ public class LegalPersonAuthSteps {
         Assertions.assertTrue(Objects.requireNonNull(pojo.getException().getMessage()).contains(errorMessage));
     }
 
-    private BffPublicKeyResponse creaChiavePubblica() {
-        BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST");
-        try {
-            return pnLegalPersonAuthClient.newPublicKeyV1(request);
-        } catch (RestClientResponseException e) {
-            pojo.setException(e);
-            return null;
-        }
+    @When("l'utente {string} tenta di recuperare i dati dell'utente avente user id {string}")
+    public void recuperaDatiUtente(String utente, String userId) {
+        //TODO
+    }
+
+    @Then("i dati utente vengono correttamente recuperati")
+    public void checkDatiUtente() {
+        Assertions.assertNotNull(this.pojo.getUserListResponse());
+    }
+
+    @Then("la chiamata va in status 200 e restituisce una lista utenti vuota")
+    public void checkEmptyUserList() {
+        Assertions.assertTrue(pojo.getUserListResponse().isEmpty());
+    }
+
+    private String getPublicKeyKidByStatus(String status) {
+        return this.pojo.getResponseWithStatusList().stream().filter(
+                x -> x.getStatus().equalsIgnoreCase(status)).findFirst().map(
+                y -> y.getResponse().getKid()).orElse("");
     }
 
     private void bloccaChiavePubblica(String kid) {
@@ -186,7 +176,13 @@ public class LegalPersonAuthSteps {
     private void ruotaChiavePubblica(String kid) {
         BffPublicKeyRequest bffPublicKeyRequest = new BffPublicKeyRequest();//TODO crea request
         try {
-            pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
+            BffPublicKeyResponse response = pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
+            this.pojo.getResponseWithStatusList().add(
+                    LegalPersonAuthExpectedResponseWithStatus.builder().
+                            response(response).
+                            status("ACTIVE").
+                            build()
+            );
             updateResponseStatus("ROTATED", kid);
         } catch (RestClientResponseException e) {
             pojo.setException(e);
@@ -227,12 +223,21 @@ public class LegalPersonAuthSteps {
 
     @After("publicKeyCreation")
     public void eliminaChiaviPubblicheCreate() {
-        this.pojo.getResponseWithStatusList().forEach(pojo -> {
-            if (pojo.getStatus().equalsIgnoreCase("ACTIVE")) {
-                bloccaChiavePubblica(pojo.getResponse().getKid());
+
+        List<String> blockedKids = this.pojo.getResponseWithStatusList().stream().filter(
+                x -> x.getStatus().equalsIgnoreCase("BLOCKED")).map(
+                y -> y.getResponse().getKid()).toList();
+
+        blockedKids.forEach(kid -> cancellaChiavePubblica(kid));
+        List<LegalPersonAuthExpectedResponseWithStatus> otherPublicKeys = this.pojo.getResponseWithStatusList().stream().filter(
+                x -> !blockedKids.contains(x.getResponse().getKid())).toList();
+
+        otherPublicKeys.forEach(pk -> {
+            if (pk.getStatus().equalsIgnoreCase("ACTIVE")) {
+                bloccaChiavePubblica(pk.getResponse().getKid());
             }
-            if (!pojo.getStatus().equalsIgnoreCase("CANCELLED")) {
-                pnLegalPersonAuthClient.deletePublicKeyV1(pojo.getResponse().getKid());
+            if (!pk.getStatus().equalsIgnoreCase("CANCELLED")) {
+                pnLegalPersonAuthClient.deletePublicKeyV1(pk.getResponse().getKid());
             }
         });
     }
