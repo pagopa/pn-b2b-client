@@ -19,8 +19,6 @@ import org.springframework.web.client.RestClientResponseException;
 
 import java.util.Objects;
 
-import static java.util.Arrays.asList;
-
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class LegalPersonAuthSteps {
@@ -69,10 +67,15 @@ public class LegalPersonAuthSteps {
         }
     }
 
-    @When("l'utente {string} {string} la chiave pubblica per la PG")
+    @Given("l'utente {string} non ha censito alcuna chiave pubblica")
+    public void checkForAbsenceOfPublicKey(String utente) {
+        //TODO
+    }
+
+    @When("l'utente {string} {string} la suddetta chiave pubblica per la PG")
     public void changeStatusChiavePubblica(String utente, String operation) {
         selectAdmin(utente);
-        if (asList("CREA", "RICREA").contains(operation.toUpperCase())) {
+        if (operation.equalsIgnoreCase("RICREA")) {
             BffPublicKeyResponse response = creaChiavePubblica();
             if (response != null) {
                 pojo.getResponseWithStatusList().add(
@@ -114,6 +117,22 @@ public class LegalPersonAuthSteps {
                 case "RUOTATA" -> ruotaChiavePubblica(response.getKid());
                 case "RIATTIVATA" -> riattivaChiavePubblica(response.getKid());
                 case "CANCELLATA" -> cancellaChiavePubblica(response.getKid());
+            }
+        } catch (RestClientResponseException e) {
+            this.pojo.setException(e);
+        }
+    }
+
+    @When("l'utente {string} {string} la chiava pubblica generatasi dopo aver ruotato la prima")
+    public void changeStatusOfPublicKeyCreatedAfterRotation(String utente, String operation) {
+        selectAdmin(utente);
+        String secondKid = this.pojo.getResponseWithStatusList().get(1).getResponse().getKid();
+        try {
+            switch (operation.toUpperCase()) {
+                case "BLOCCA" -> bloccaChiavePubblica(secondKid);
+                case "RUOTA" -> ruotaChiavePubblica(secondKid);
+                case "RIATTIVA" -> riattivaChiavePubblica(secondKid);
+                case "CANCELLA" -> cancellaChiavePubblica(secondKid);
             }
         } catch (RestClientResponseException e) {
             this.pojo.setException(e);
@@ -164,7 +183,8 @@ public class LegalPersonAuthSteps {
         Assertions.assertTrue(Objects.requireNonNull(pojo.getException().getMessage()).contains(errorMessage));
     }
 
-    private BffPublicKeyResponse creaChiavePubblica() {
+    @When("l'utente {string} crea una chiave pubblica per la PG")
+    public BffPublicKeyResponse creaChiavePubblica() {
         BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST");
         try {
             return pnLegalPersonAuthClient.newPublicKeyV1(request);
@@ -172,6 +192,21 @@ public class LegalPersonAuthSteps {
             pojo.setException(e);
             return null;
         }
+    }
+
+    @When("l'utente {string} tenta di recuperare i dati dell'utente avente user id {string}")
+    public void recuperaDatiUtente(String utente, String userId) {
+        //TODO
+    }
+
+    @Then("i dati utente vengono correttamente recuperati")
+    public void checkDatiUtente() {
+        Assertions.assertNotNull(this.pojo.getUserListResponse());
+    }
+
+    @Then("la chiamata va in status 200 e restituisce una lista utenti vuota")
+    public void checkEmptyUserList() {
+        Assertions.assertTrue(pojo.getUserListResponse().isEmpty());
     }
 
     private void bloccaChiavePubblica(String kid) {
@@ -186,7 +221,13 @@ public class LegalPersonAuthSteps {
     private void ruotaChiavePubblica(String kid) {
         BffPublicKeyRequest bffPublicKeyRequest = new BffPublicKeyRequest();//TODO crea request
         try {
-            pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
+            BffPublicKeyResponse response = pnLegalPersonAuthClient.rotatePublicKeyV1(kid, bffPublicKeyRequest);
+            this.pojo.getResponseWithStatusList().add(
+                    LegalPersonAuthExpectedResponseWithStatus.builder().
+                            response(response).
+                            status("ACTIVE").
+                            build()
+            );
             updateResponseStatus("ROTATED", kid);
         } catch (RestClientResponseException e) {
             pojo.setException(e);

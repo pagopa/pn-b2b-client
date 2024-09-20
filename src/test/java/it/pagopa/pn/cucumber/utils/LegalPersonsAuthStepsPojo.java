@@ -12,9 +12,11 @@ import java.util.List;
 public class LegalPersonsAuthStepsPojo {
 
     private List<LegalPersonAuthExpectedResponseWithStatus> responseWithStatusList;
+    private List<Object> userListResponse;
     private RestClientResponseException exception;
 
     public LegalPersonsAuthStepsPojo() {
         this.responseWithStatusList = new LinkedList<>();
+        this.userListResponse = new LinkedList<>();
     }
 }
