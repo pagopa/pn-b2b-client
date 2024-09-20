@@ -1,7 +1,11 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
+import java.io.File;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -255,5 +259,18 @@ public class LegalPersonVirtualKeySteps {
             this.state = state;
             this.user = user;
         }
+    }
+
+    @After("@removeAllVirtualKey")
+    public void deleteZip() {
+        selectPGUser("amministratore");
+        responseNewVirtualKeys.forEach(data -> {
+            if (data.state.getState().equals(VirtualKeyState.ENABLE.getState())) {
+                Assertions.assertDoesNotThrow(() -> changeVirtualKey(VirtualKeyState.BLOCKED.getState(), data));
+            }
+            if (!data.state.getState().equals(VirtualKeyState.CANCELLED.getState())) {
+                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data, data.response.getId()));
+            }
+        });
     }
 }
