@@ -18,4 +18,5 @@ public interface IPnWebMandateClient extends SettableBearerToken {
      void rejectMandate(String mandateId) throws RestClientException;
      void revokeMandate(String mandateId) throws RestClientException;
      List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException;
+     List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups);
 }
