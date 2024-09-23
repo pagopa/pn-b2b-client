@@ -23,10 +23,10 @@ public class B2BDeliveryServiceClientImpl implements B2BDeliveryServiceClient {
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
 
-    private RestTemplate restTemplate;
-    private String basePath;
+    private final RestTemplate restTemplate;
+    private final String basePath;
 
-    private RecipientReadB2BApi recipientReadB2BApi;
+    private final RecipientReadB2BApi recipientReadB2BApi;
 
     public B2BDeliveryServiceClientImpl(RestTemplate restTemplate,
                                         @Value("${pn.delivery.base-url}") String basePath,
@@ -47,6 +47,7 @@ public class B2BDeliveryServiceClientImpl implements B2BDeliveryServiceClient {
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
         newApiClient.setBasePath(basePath);
         return newApiClient;
     }
