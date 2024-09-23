@@ -1525,7 +1525,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/991cd0bba8cd1532bd19e58d520cf0e118c3d7f4/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/develop/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

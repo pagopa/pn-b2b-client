@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -87,6 +88,7 @@ public class RicezioneNotificheWebDelegheSteps {
             case "Mario Gherkin" -> marioGherkinTaxID;
             case "GherkinSrl" -> gherkinSrltaxId;
             case "CucumberSpa" -> cucumberSpataxId;
+            case "Utente errato" -> "asdasdasd";
             default -> throw new IllegalArgumentException();
         };
     }
@@ -137,7 +139,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     @Given("viene creato un user con i seguenti valori:")
-    public void removeCfFromUser1(@Transpose UserDto parameter){
+    public void removeCfFromUser1(@Transpose UserDto parameter) {
         userDtoCustom.displayName(parameter.getDisplayName())
                 .firstName(parameter.getFirstName())
                 .lastName(parameter.getLastName())
@@ -165,7 +167,7 @@ public class RicezioneNotificheWebDelegheSteps {
                 .visibilityIds(new LinkedList<>())
                 .status(MandateDto.StatusEnum.PENDING)
                 .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
-        );
+                );
 
         System.out.println("MANDATE: " + mandate);
         try {
@@ -255,7 +257,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
-         switch (comune) {
+        switch (comune) {
             case "Comune_1" -> organizationIdDto
                     .name("Comune di Milano")
                     .uniqueIdentifier(senderId);
@@ -635,6 +637,56 @@ public class RicezioneNotificheWebDelegheSteps {
                 .findAny()
                 .orElse(null);
     }
+
+    @Then("il delegato {string} visualizza le deleghe a suo carico")
+    public void delegateViewsAssignedMandates(String user) {
+        if (setBearerToken(user)) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @Then("il delegato {string} visualizza le deleghe da parte di un delegante con CF: {string}")
+    public void delegateViewsAssignedMandates(String user, String fiscalCode) {
+        if (setBearerToken(user)) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(fiscalCode, null);
+            Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+            Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
+    @Then("il delegato {string} visualizza le deleghe da parte di {string} in stato {string}")
+    public void delegateViewsAssignedMandatesWithStatus(String delegate, String delegator, String status) {
+        if (setBearerToken(delegate)) {
+            throw new IllegalArgumentException();
+        }
+        try {
+            List<MandateDto> mandateList;
+            if (status.trim().equals("")) {
+                mandateList = webMandateClient.searchMandatesByDelegate(getTaxIdByUser(delegator), null);
+            } else if (delegator.trim().equals("")) {
+                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter("", List.of(status), null);
+            } else {
+                mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(getTaxIdByUser(delegator), List.of(status), null);
+                Assertions.assertNotNull(mandateList, "La lista mandateList è null");
+                Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
+            }
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+        }
+    }
+
 
     //for debug
     @And("{string} visualizza le deleghe")
