@@ -87,7 +87,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         IMandateReverseServiceClient.class,
-        MandateReverseServiceClientImpl.class
+        MandateReverseServiceClientImpl.class,
+        B2BDeliveryServiceClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
