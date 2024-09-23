@@ -99,7 +99,52 @@ Feature: Api b2b per destinatari strutturati
     And "Mario Gherkin" viene delegato da "GherkinSrl"
     Then si verifica che lo status code sia: 400
 
+  @useB2B
+  Scenario: [Scenario-24] Viene invocata l’API di visualizzazione elenco deleghe ricevute ddai deleganti
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Then il delegato "CucumberSpa" visualizza le deleghe a suo carico
 
+  @useB2B
+  Scenario: [Scenario-25] Viene invocata l’API di rifiuto di una delega da parte di un delegato prima dell'accettazione
+    Given "Mario Gherkin" viene delegato da "GherkinSrl"
+    Then "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
+
+  @useB2B
+  Scenario: [Scenario-26] Viene invocata l’API di rifiuto di una delega da parte di un delegato dopo l'accettazione
+    Given "Mario Gherkin" viene delegato da "GherkinSrl"
+    And "Mario Gherkin" accetta la delega "GherkinSrl"
+    Then "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
+
+  @useB2B
+  Scenario: [Scenario-27] Viene invocata l’API di ricerca delegante tramite CF
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And "CucumberSpa" accetta la delega "GherkinSrl"
+    Then il delegato "CucumberSpa" visualizza le deleghe da parte di un delegante con CF: "12666810299"
+
+    #Scenario-28 non va implementato
+
+  @useB2B
+  Scenario: [Scenario-29] Viene invocata l’API di ricerca delegante tramite stato della delega
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Then il delegato "CucumberSpa" visualizza le deleghe da parte di "" in stato "PENDING"
+
+  @useB2B
+  Scenario: [Scenario-30] Viene invocata l’API di ricerca delegante con codice fiscale errato
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And il delegato "CucumberSpa" visualizza le deleghe da parte di "Utente errato" in stato ""
+    Then si verifica che lo status code sia: 400
+
+    #Scenario-31 non va implementato
+  @useB2B
+  Scenario: [Scenario-32] Viene invocata l’API di ricerca delegante con codice fiscale errato
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    And il delegato "CucumberSpa" visualizza le deleghe da parte di "" in stato "PENDINGSSS"
+    Then si verifica che lo status code sia: 400
 
 
 

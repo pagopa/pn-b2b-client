@@ -87,6 +87,11 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) {
+        return List.of();
+    }
+
+    @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
         return false;
     }
