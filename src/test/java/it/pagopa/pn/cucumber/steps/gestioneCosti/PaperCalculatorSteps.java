@@ -120,7 +120,7 @@ public class PaperCalculatorSteps {
     }
 
     private String formatSingleErrorMessage(CalculateRequestParameter calculateRequestParameter, AssertionFailedError assertionFailedError) {
-        return String.format("%s;%s;%s;%d;%d;%d;%b;%s;%s;%d %s\n",
+        return String.format("%s;%s;%d;%d;%d;%b;%s;%s;%d %s\n",
                 calculateRequestParameter.getGeokey(), calculateRequestParameter.getProduct().getValue(), calculateRequestParameter.getPageWeight(),
                 calculateRequestParameter.getPageNumber(), calculateRequestParameter.getNumSides(),
                 calculateRequestParameter.getIsReversePrinter(), calculateRequestParameter.getCost(), calculateRequestParameter.getCostPlusEuroDigital(),
