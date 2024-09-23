@@ -4,43 +4,71 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDtoRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UserDto;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.IMandateServiceClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnB2BRecipientExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
+import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.util.*;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
-    private final IMandateServiceClient mandateServiceClient;
+    private final IPnWebMandateClient mandateServiceClient;
+    private final IPnWebRecipientClient b2BRecipientExternalClient;
+    private final SharedSteps sharedSteps;
     private MandateDtoRequest mandateDtoRequest;
     private ResponseEntity<String> mandateReverseResponse;
+    private ResponseEntity<Void> acceptMandateResponse;
+    private final List<String> groups = new ArrayList<>();
 
-    public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, IMandateServiceClient mandateServiceClient) {
+    public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps, PnB2BRecipientExternalClientImpl b2BRecipientExternalClient) {
         this.mandateReverseServiceClient = mandateReverseServiceClient;
         this.mandateServiceClient = mandateServiceClient;
+        this.sharedSteps = sharedSteps;
+        this.b2BRecipientExternalClient = b2BRecipientExternalClient;
     }
 
-    @Given("viene popolata la richiesta con:")
-    public void createMandateDtoRequest(Map<String, String> data) {
-        mandateDtoRequest = new MandateDtoRequest();
-        mandateDtoRequest.setDatefrom(getDateTo("TODAY"));
-        mandateDtoRequest.setDateto(getDateTo(data.getOrDefault("endTo", "TOMORROW")));
-        mandateDtoRequest.setDelegator(getUserDto(data.getOrDefault("citizen", "VALID_CITIZEN")));
+    private SettableBearerToken.BearerTokenType getBearerToken(String user) {
+        return switch (user.trim().toLowerCase()) {
+            case "gherkinsrl" -> SettableBearerToken.BearerTokenType.PG_1;
+            case "cucumberspa" -> SettableBearerToken.BearerTokenType.PG_2;
+            default -> throw new IllegalStateException("Unexpected value: " + user.trim().toLowerCase());
+        };
     }
 
-    @When("viene effettuata la chiamata all'api b2b")
-    public void callApi() {
-        mandateReverseResponse = mandateReverseServiceClient.createReverseMandateWithHttpInfo(mandateDtoRequest);
+   @Given("{string} crea una delega verso se stesso a nome di {string}")
+   public void createMandatePG(String delegate, String delegator) {
+        mandateReverseServiceClient.setBearerToken(getBearerToken(delegate));
+        MandateDtoRequest request = new MandateDtoRequest();
+        request.setDatefrom(getDateTo("TODAY"));
+        request.setDateto(getDateTo("TOMORROW"));
+        request.setDelegator(getUserDto(delegator));
+        try {
+            mandateReverseResponse = mandateReverseServiceClient.createReverseMandateWithHttpInfo(request);
+        } catch (HttpClientErrorException.BadRequest exception) {
+            mandateReverseResponse = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+   }
+
+    @When("l'intermediario massivo effettua la richiesta di creazione delega verso se stesso a nome di {string}")
+    public void callApi(String delegator) {
+        createMandatePG("gherkinsrl", delegator);
     }
 
     @Then("si verifica che la risposta contenga status code: {int}")
@@ -58,31 +86,87 @@ public class MandateReverseSteps {
         isMandatePresent().ifPresent(x -> {throw new AssertionFailedError("Delega creata nonostante i campi errati!");});
     }
 
+    @And("la delega viene accettata dal delegato {string} senza associare nessun gruppo")
+    public void acceptMandate(String delegate) {
+        mandateServiceClient.setBearerToken(getBearerToken(delegate));
+//        String delegatorTaxId = getTaxIdByUser(delegate);
+//        List<MandateDto> mandateDtoList = mandateServiceClient.searchMandatesByDelegate(getTaxIdByUser(delegate), null);
+//        MandateDto mandateDto = mandateDtoList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
+        acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(null).verificationCode(""));
+    }
+
+    @And("la delega viene accettata dal delegato {string} associando un gruppo")
+    public void acceptMandateWithGroup(String delegate) {
+        mandateServiceClient.setBearerToken(getBearerToken(delegate));
+        acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().verificationCode("24411").groups(groups));
+    }
+
+    @And("la notifica non può essere recuperata da {string}")
+    public void notificationDelegatedNotVisible(String delegate) {
+        b2BRecipientExternalClient.setBearerToken(getBearerToken(delegate));
+        Assertions.assertFalse(getReceivedDelegatedNotification());
+    }
+
+    @And("si verifica che la delega è stata accettata e la risposta contenga status code: {int}")
+    public void checkAcceptMandateResponseStatusCode(int statusCode) {
+        Assertions.assertEquals(statusCode, acceptMandateResponse.getStatusCode().value());
+    }
+
+    @Then("si verifica che la delega è stata creata senza un gruppo associato")
+    public void isMandateCreatedWithoutGroup() {
+        Assertions.assertFalse(isMandateGroupPresent());
+    }
+
+    @Then("viene recuperato il primo gruppo disponibile attivo per il delegato {string}")
+    public void retrieveTheFirstGroupAvailableForDelegate(String delegato) {
+        mandateServiceClient.setBearerToken(getBearerToken(delegato));
+        String activeGroup = sharedSteps.getPnExternalServiceClient().pgGroupInfo(mandateServiceClient.getBearerTokenSetted())
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(x -> "ACTIVE".equals(x.get("status")))
+                .map(x -> x.get("id"))
+                .findFirst().orElse(null);
+        if (activeGroup != null && !activeGroup.isEmpty()) {
+            groups.add(activeGroup);
+        }
+    }
+
     private Optional<MandateDto> isMandatePresent() {
-        return mandateServiceClient.listMandatesByDelegate1("PENDING").stream()
+//        setBearerToken("cucumberspa");
+        return mandateServiceClient.listMandatesByDelegate1("pending").stream()
                 .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
                 .findFirst();
     }
 
-    private UserDto getUserDto(String citizen) {
-        return switch (citizen) {
-            case "VALID_CITIZEN" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "CLMCST42R12D969Z");
-            case "EMPTY_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", null);
-            case "INVALID_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "AAA8090ZAC");
-            case "EMPTY_NAME" -> createUserDto(null, null, null, "CLMCST42R12D969Z");
-            case "FIRST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP", "Colombo", "CLMCST42R12D969Z");
-            case "LAST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP", "CLMCST42R12D969Z");
-            default -> throw new IllegalStateException("Unexpected value: " + citizen);
+    private boolean isMandateGroupPresent() {
+        return mandateServiceClient.listMandatesByDelegate1("active").stream()
+                .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
+                .map(MandateDto::getGroups)
+                .anyMatch(Objects::nonNull);
+    }
+
+    private UserDto getUserDto(String delegator) {
+        return switch (delegator) {
+            case "VALID_DELEGATOR" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "CLMCST42R12D969Z", null, true);
+            case "EMPTY_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", null, null, true);
+            case "INVALID_FISCAL_CODE" -> createUserDto("Cristoforo Colombo", "Cristoforo", "Colombo", "AAA8090ZAC", null, true);
+            case "EMPTY_NAME" -> createUserDto(null, null, null, "CLMCST42R12D969Z", null, true);
+            case "FIRST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP", "Colombo", "CLMCST42R12D969Z", null, true);
+            case "LAST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP", "CLMCST42R12D969Z", null, true);
+            case "PG1" -> createUserDto("gherkinsrl", "gherkin", "srl", "12666810299", "gherkinsrl", false);
+            case "CucumberSpa" -> createUserDto("cucumberspa", "cucumber", "spa", "20517490320", "cucumberspa", false);
+            default -> throw new IllegalStateException("Unexpected value: " + delegator);
         };
     }
 
-    private UserDto createUserDto(String displayName, String firstName, String lastName, String fiscalCode) {
+    private UserDto createUserDto(String displayName, String firstName, String lastName, String fiscalCode, String companyName, boolean isPerson) {
         UserDto userDto = new UserDto();
-        userDto.setPerson(true);
+        userDto.setPerson(isPerson);
         userDto.setDisplayName(displayName);
         userDto.setFirstName(firstName);
         userDto.setLastName(lastName);
         userDto.setFiscalCode(fiscalCode);
+        userDto.setCompanyName(companyName);
         return userDto;
     }
 
@@ -98,5 +182,21 @@ public class MandateReverseSteps {
         };
     }
 
+    private boolean getReceivedDelegatedNotification() {
+        boolean beenFound;
+        NotificationSearchResponse notificationSearchResponse = b2BRecipientExternalClient.searchReceivedDelegatedNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null,
+                null, null, null, null, 10, null);
+        beenFound = Objects.requireNonNull(notificationSearchResponse.getResultsPage()).stream().anyMatch(elem -> Objects.requireNonNull(elem.getMandateId()).equals(mandateReverseResponse.getBody()));
+        if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
+            for (String pageKey : notificationSearchResponse.getNextPagesKey()) {
+                notificationSearchResponse = b2BRecipientExternalClient
+                        .searchReceivedDelegatedNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(),
+                                null, null, null, null, null, 10, pageKey);
+                beenFound = Objects.requireNonNull(notificationSearchResponse.getResultsPage()).stream().anyMatch(elem -> Objects.requireNonNull(elem.getMandateId()).equals(mandateReverseResponse.getBody()));
+                if (beenFound) break;
+            }
+        }
+        return beenFound;
+    }
 
 }
