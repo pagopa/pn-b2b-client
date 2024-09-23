@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -304,7 +305,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
-        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(delegatorTaxId, List.of("PENDING"),null);
 
         //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
@@ -340,12 +341,53 @@ public class RicezioneNotificheWebDelegheSteps {
 
     }
 
+    @And("{string} accetta la delega {string} associando un gruppo")
+    public void userAcceptsMandateWithGroups(String delegate, String delegator) {
+        if (setBearerToken(delegate)) {
+            throw new IllegalArgumentException();
+        }
+        String delegatorTaxId = getTaxIdByUser(delegator);
+
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
+        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+        System.out.println("MANDATE-LIST: " + mandateList);
+        MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
+
+        Assertions.assertNotNull(mandateDto);
+        this.mandateToSearch = mandateDto;
+
+        List<HashMap<String, String>> resp = sharedSteps.getPnExternalServiceClient().pgGroupInfo(webRecipientClient.getBearerTokenSetted());
+        String gruppoAttivo = null;
+        if (resp != null && !resp.isEmpty()) {
+            for (HashMap<String, String> entry : resp) {
+                if ("ACTIVE".equals(entry.get("status"))) {
+                    gruppoAttivo = entry.get("id");
+                    break;
+                }
+            }
+        }
+
+        AcceptRequestDto acceptRequestDto = new AcceptRequestDto().verificationCode(verificationCode).groups(List.of(gruppoAttivo));
+        Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), acceptRequestDto));
+
+    }
+
     @And("la notifica può essere correttamente letta da {string} con delega")
     public void notificationCanBeCorrectlyReadFromWithMandate(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
             webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), mandateToSearch.getMandateId());
         });
+    }
+
+    @Then("come delegante {string} l'associazione a gruppi sulla delega di {string}")
+    public void removeGrups(String delegator, String delegate) {
+        sharedSteps.selectUser(delegator);
+
+        UpdateRequestDto updateRequestDto = new UpdateRequestDto();
+        updateRequestDto.setGroups(new LinkedList<>());
+
+        Assertions.assertDoesNotThrow(() -> webMandateClient.updateMandate( mandateToSearch.getMandateId(), updateRequestDto));
     }
 
     @Then("come amministratore {string} associa alla delega il primo gruppo disponibile attivo per il delegato {string}")
@@ -598,6 +640,51 @@ public class RicezioneNotificheWebDelegheSteps {
         });
     }
 
+    private NotificationSearchResponse notificationSearchResponse;
+    @And("{string} visualizza l'elenco delle notifiche per comune {string}")
+    public void notificationCanBeCorrectlyReadFromAtPa(String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.selectPA(pa);
+        sharedSteps.selectUser(recipient);
+        try{
+            this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
+                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
+                    searchParam.iunMatch, searchParam.size, null);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @And("{string} visualizza l'elenco delle notifiche del delegante {string} per comune {string}")
+    public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
+        sharedSteps.selectPA(pa);
+        sharedSteps.selectUser(user);
+        try{
+            this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
+                    searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
+                    null, searchParam.senderId, searchParam.status,
+                    searchParam.iunMatch, searchParam.size, null);
+        } catch (HttpStatusCodeException e) {
+            this.sharedSteps.setNotificationError(e);
+        }
+    }
+
+    //TODO: insert recipientID da selfcare (si possono recuperare dai token)
+    private String getRecipientId(String recipientId){
+        return switch (recipientId){
+            case "mario cucumber" -> "123";
+            case "mario gherkin" -> "345";
+            case "gherkinsrl" -> "789";
+            case "cucumberspa" -> "1011";
+            default -> throw new IllegalStateException("Unexpected value: " + recipientId);
+        };
+    }
+
+    @And("Si verifica che il numero di notifiche restituite nella pagina sia {int}")
+    public void verifyNumberOfNotification(Integer number){
+        Assertions.assertEquals(notificationSearchResponse.getResultsPage().size(),number);
+    }
+
+
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
         TimelineElementV23 timelineElement = getTimelineElementV23();
@@ -640,17 +727,31 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("il delegato {string} visualizza le deleghe a suo carico")
     public void delegateViewsAssignedMandates(String user) {
+        delegateViewMandate(user, null);
+    }
+
+    @Then("il delegato {string} visualizza le deleghe a suo carico con stato {string}")
+    public void delegateViewsAssignedMandatesWithStatus(String user, String status) {
+        try{
+            delegateViewMandate(user, status);
+        } catch (HttpStatusCodeException e) {
+        this.notificationError = e;
+        }
+    }
+
+    private void delegateViewMandate(String user, String statusFilter){
         if (setBearerToken(user)) {
             throw new IllegalArgumentException();
         }
         try {
-            List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
+            List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(statusFilter);
             Assertions.assertNotNull(mandateList, "La lista mandateList è null");
             Assertions.assertFalse(mandateList.isEmpty(), "La lista mandateList è vuota");
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
         }
     }
+
 
     @Then("il delegato {string} visualizza le deleghe da parte di un delegante con CF: {string}")
     public void delegateViewsAssignedMandates(String user, String fiscalCode) {
@@ -688,7 +789,6 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
 
-    //for debug
     @And("{string} visualizza le deleghe")
     public void visualizzaLeDeleghe(String user) {
         if (setBearerToken(user)) {
@@ -696,7 +796,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
-        List<MandateDto> mandateDtos = webMandateClient.listMandatesByDelegator1();
+        List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(()-> webMandateClient.listMandatesByDelegator1());
 
         System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
         System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);

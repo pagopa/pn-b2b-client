@@ -418,8 +418,13 @@ public class RicezioneNotificheWebSteps {
         searchParam.endDate = dates.getValue2();
         searchParam.subjectRegExp = data.getOrDefault("subjectRegExp", null);
         String iun = data.getOrDefault("iunMatch", null);
+        if(data.containsKey("status")){
+            searchParam.status = NotificationStatus.valueOf(data.get("status"));
+        }
         searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
+
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
+        if(searchParam.size == -1)searchParam.size = null;
         return searchParam;
     }
 
@@ -529,6 +534,8 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
             case "Lucio Anneo Seneca" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case "GherkinSrl" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             default -> throw new IllegalArgumentException();
         }
     }
@@ -658,7 +665,7 @@ public class RicezioneNotificheWebSteps {
         waitState(waiting);
     }
 
-    private static class NotificationSearchParam {
+    public static class NotificationSearchParam {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;

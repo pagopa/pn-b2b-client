@@ -32,8 +32,10 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -1059,6 +1061,54 @@ public class SharedSteps {
         } catch (HttpStatusCodeException httpStatusCodeException) {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
                 log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di pec inserite per l'utente {string}")
+    public void viewedPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            Assertions.assertFalse(legalAddressByRecipient.isEmpty());
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di recapiti di cortesia inseriti per l'utente {string}")
+    public void viewedCourtesyAddress(String user) {
+        selectUser(user);
+        try {
+            List<CourtesyDigitalAddress> courtesyAddressByRecipient = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
+            Assertions.assertFalse(courtesyAddressByRecipient.isEmpty());
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("EMAIL NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di qualunque tipo di recapito inserito per l'utente {string}")
+    public void viewedAllAddress(String user) {
+        selectUser(user);
+        try {
+            UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+            Assertions.assertTrue(
+                    (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
+                    || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
+            );
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("EMAIL NOT FOUND");
             } else {
                 throw httpStatusCodeException;
             }

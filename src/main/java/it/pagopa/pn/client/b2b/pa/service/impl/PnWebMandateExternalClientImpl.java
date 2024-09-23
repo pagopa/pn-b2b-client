@@ -96,6 +96,10 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         return this.bearerTokenSetted;
     }
 
+    @Override
+    public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
+        throw new UnsupportedOperationException();
+    }
 
 
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
