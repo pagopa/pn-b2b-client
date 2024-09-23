@@ -19,15 +19,34 @@ import java.util.List;
 
 @Component
 public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
-    private final MandateServiceApi mandateServiceApi;
+    private final RestTemplate restTemplate;
+    private final String marioCucumberBearerToken;
+    private final String gherkinSrlBearerToken;
+    private final String cucumberSpaBearerToken;
+    private final String basePath;
+    private MandateServiceApi mandateServiceApi;
+    private BearerTokenType bearerTokenSetted;
 
-    public B2bMandateServiceClientImpl(RestTemplate restTemplate, @Value("${pn.delivery.base-url}") String basePath) {
-        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath));
+    public B2bMandateServiceClientImpl(RestTemplate restTemplate,
+                                       @Value("${pn.delivery.base-url}") String basePath,
+                                       @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                       @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+        this.restTemplate = restTemplate;
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.basePath = basePath;
+        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken));
+        this.bearerTokenSetted = BearerTokenType.USER_1;
+        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath) {
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
+        newApiClient.setBearerToken(bearerToken);
+//        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -73,6 +92,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public void rejectMandate(String mandateId) throws RestClientException {
+        mandateServiceApi.rejectMandate(mandateId);
 
     }
 
@@ -83,17 +103,44 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public List<MandateDto> searchMandatesByDelegate(String taxId, List<String> groups) throws RestClientException {
-        return List.of();
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto searchMandateRequestDto = new it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto();
+        searchMandateRequestDto.setTaxId(taxId);
+        searchMandateRequestDto.setGroups(groups);
+        List<MandateDto> result = null;
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto res = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        if (res!= null){
+            result = res.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList();
+        }
+        return result;
     }
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        return false;
+        boolean beenSet = false;
+        switch (bearerToken) {
+            case USER_1 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
+                beenSet = true;
+            }
+            case PG_1 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
+                this.bearerTokenSetted = BearerTokenType.PG_1;
+                beenSet = true;
+            }
+            case PG_2 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
+                this.bearerTokenSetted = BearerTokenType.PG_2;
+                beenSet = true;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
+        }
+        return beenSet;
     }
 
     @Override
     public BearerTokenType getBearerTokenSetted() {
-        return null;
+        return bearerTokenSetted;
     }
 
     private <T> T deepCopy( Object obj, Class<T> toClass) {
