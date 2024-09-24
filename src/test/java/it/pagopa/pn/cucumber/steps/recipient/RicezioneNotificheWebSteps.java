@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
@@ -10,7 +11,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.service.*;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.io.ByteArrayInputStream;
@@ -38,8 +40,9 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class RicezioneNotificheWebSteps {
+    private final ApplicationContext context;
     private final IPnWebRecipientClient webRecipientClient;
-    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnPaB2bClient b2bClient;
     private final PnExternalServiceClientImpl externalClient;
@@ -65,9 +68,15 @@ public class RicezioneNotificheWebSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
+    @Before("@useB2B")
+    public void beforeMethod() {
+        this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
+    }
+
     @Autowired
-    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient,
+    public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
                           IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
+        this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
@@ -422,7 +431,6 @@ public class RicezioneNotificheWebSteps {
             searchParam.status = NotificationStatus.valueOf(data.get("status"));
         }
         searchParam.iunMatch = ((iun != null && iun.equalsIgnoreCase("ACTUAL") ? sharedSteps.getSentNotification().getIun() : iun));
-
         searchParam.size = Integer.parseInt(data.getOrDefault("size", "10"));
         if(searchParam.size == -1)searchParam.size = null;
         return searchParam;

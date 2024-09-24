@@ -1,9 +1,6 @@
 Feature: Api b2b per destinatari strutturati
 
-
-  #TODO: Aggiungere annotation per limitare la concorrenza e step di background per eliminare le deleghe
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-1] Viene invocata l’API di creazione delega da delegante PG a delegato PF con l’accesso alle notifiche da parte di tutti gli enti
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "Mario Gherkin" viene delegato da "GherkinSrl"
@@ -15,8 +12,7 @@ Feature: Api b2b per destinatari strutturati
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "Mario Gherkin" con delega
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-2] Viene invocata l’API di creazione delega da delegante PG a delegato PG con l’accesso alle notifiche da parte di tutti gli enti
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
@@ -28,8 +24,7 @@ Feature: Api b2b per destinatari strutturati
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-3] Viene invocata l’API di creazione delega da delegante PG a delegato PF con l’accesso alle notifiche da parte di enti specifici
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
     And "Mario Gherkin" viene delegato da "GherkinSrl" per comune "Comune_1"
@@ -40,8 +35,7 @@ Feature: Api b2b per destinatari strutturati
     And destinatario GherkinSrl
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-4] Viene invocata l’API di creazione delega da delegante PG a delegato PG con l’accesso alle notifiche da parte di enti specifici
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     And "CucumberSpa" viene delegato da "GherkinSrl" per comune "Comune_1"
@@ -53,8 +47,7 @@ Feature: Api b2b per destinatari strutturati
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente letta da "CucumberSpa" con delega
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario Outline: [Scenario-5-6-9-10-11-12] Viene invocata l’API di creazione delega da delegante PG a delegato PF con campi non conformi
     Given viene creato un user con i seguenti valori:
       | displayName | <DISPLAYNAME> |
@@ -77,94 +70,92 @@ Feature: Api b2b per destinatari strutturati
       | PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoP | Mario                                                                        | Gherkin                                                                      | CLMCST42R12D969Z  |
 
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-8] Viene invocata l’API di creazione delega da delegante PG a delegato PF con data di fine delega antecedente a quella di inizio
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "Mario Gherkin" viene delegato da "GherkinSrl" con data di fine delega antecedente a quella di inizio
     Then si verifica che lo status code sia: 400
 
-  ##TODO
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-7] Viene invocata l’API di creazione delega da delegante PG a delegato PF con data di fine delega antecedente a quella di inizio
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "Mario Gherkin" viene delegato da "GherkinSrl" con data di fine delega antecedente a quella di inizio
     Then si verifica che lo status code sia: 400
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-13] Viene invocata l’API di creazione delega da delegante PG a se stesso
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "GherkinSrl" viene delegato da "GherkinSrl"
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-14] Viene invocata l’API di creazione delega da delegante PG a delegato PF con l’accesso alle notifiche da parte di tutti gli enti
-    Given "Mario Gherkin" viene delegato da "GherkinSrl"
+    Given "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "Mario Gherkin" viene delegato da "GherkinSrl"
     And "Mario Gherkin" accetta la delega "GherkinSrl"
     And "Mario Gherkin" viene delegato da "GherkinSrl"
     Then si verifica che lo status code sia: 400
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_20] associazione ad un gruppo di una delega già accetta da parte di un delegato persona giuridica
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
     Then "CucumberSpa" accetta la delega "GherkinSrl" associando un gruppo
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_21] associazione ad un gruppo di una delega già accetta da parte di un delegato persona giuridica
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Then "GherkinSrl" visualizza le deleghe
     And come amministratore "GherkinSrl" associa alla delega il primo gruppo disponibile attivo per il delegato "CucumberSpa"
     And come delegante "GherkinSrl" l'associazione a gruppi sulla delega di "CucumberSpa"
 
-  @useB2B
-  Scenario: [Scenario-24] Viene invocata l’API di visualizzazione elenco deleghe ricevute ddai deleganti
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+  @useB2B @deleghe1
+  Scenario: [Scenario-24] Viene invocata l’API di visualizzazione elenco deleghe ricevute dai deleganti
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Then il delegato "CucumberSpa" visualizza le deleghe a suo carico
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-25] Viene invocata l’API di rifiuto di una delega da parte di un delegato prima dell'accettazione
     Given "Mario Gherkin" viene delegato da "GherkinSrl"
     Then "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-26] Viene invocata l’API di rifiuto di una delega da parte di un delegato dopo l'accettazione
     Given "Mario Gherkin" viene delegato da "GherkinSrl"
     And "Mario Gherkin" accetta la delega "GherkinSrl"
     Then "Mario Gherkin" rifiuta se presente la delega ricevuta "GherkinSrl"
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-27] Viene invocata l’API di ricerca delegante tramite CF
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Then il delegato "CucumberSpa" visualizza le deleghe da parte di un delegante con CF: "12666810299"
 
-    #Scenario-28 non va implementato
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-29] Viene invocata l’API di ricerca delegante tramite stato della delega
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     Then il delegato "CucumberSpa" visualizza le deleghe da parte di "" in stato "PENDING"
 
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-30] Viene invocata l’API di ricerca delegante con codice fiscale errato
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And il delegato "CucumberSpa" visualizza le deleghe da parte di "Utente errato" in stato ""
     Then si verifica che lo status code sia: 400
 
-    #Scenario-31 non va implementato
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [Scenario-32] Viene invocata l’API di ricerca delegante con codice fiscale errato
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     Given "CucumberSpa" viene delegato da "GherkinSrl"
     And il delegato "CucumberSpa" visualizza le deleghe da parte di "" in stato "PENDINGSSS"
     Then si verifica che lo status code sia: 400
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_34] Invocare l’API di visualizzazione dell’elenco delle notifiche
     Then "CucumberSpa" visualizza l'elenco delle notifiche per comune "Comune_Multi"
       |  |  |
@@ -187,10 +178,10 @@ Feature: Api b2b per destinatari strutturati
       | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_35] Invio notifica digitale mono destinatario e recupero documento notificato_scenario positivo
-    Given "GherkinSrl" viene delegato da "Mario Cucumber"
+    Given "GherkinSrl" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    And "GherkinSrl" viene delegato da "Mario Cucumber"
     And "GherkinSrl" accetta la delega "Mario Cucumber"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -199,10 +190,10 @@ Feature: Api b2b per destinatari strutturati
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then il documento notificato può essere correttamente recuperato da "GherkinSrl" con delega
 
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_36] Invocare l’API di visualizzazione dell’elenco delle notifiche con delega
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
       |  |  |
@@ -234,11 +225,10 @@ Feature: Api b2b per destinatari strutturati
       | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
 
-
-
-  @useB2B
+  @useB2B @deleghe1
   Scenario: [B2B_MANDATE_DEST_37] Invio notifica digitale mono destinatario e recupero allegato pagopa_scenario positivo
-    Given "CucumberSpa" viene delegato da "GherkinSrl"
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
+    And "CucumberSpa" viene delegato da "GherkinSrl"
     And "CucumberSpa" accetta la delega "GherkinSrl"
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -248,10 +238,6 @@ Feature: Api b2b per destinatari strutturati
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
-
-
-     #TODO: decidere se spostare in altro feature file
-    #TODO: aggiungere la modifica del client anche per questa classe (RicezioneNotificheWebSteps)
 
   @userAttributes  @useB2B
   Scenario: [B2B-DEST-USER-ATTR_2] inserimento pec errato
@@ -335,29 +321,21 @@ Feature: Api b2b per destinatari strutturati
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£(@gmail.com                  |
       | qazwsxedcrfvtgbyhnujmikolpQAZWSXEDCRFVTGBYHNUJMIKOLP1234567890!#$%&'+/=?^_`{}~-£@gmail.com                   |
 
-    #TODO: migliorare con un pò di assertion le chiamate e/o con verifica dell'assenza di errori
-  #TODO: attenzione a mantenere l'annotation per limitare la concorrenza
-  #TODO: viene usata anche sharedStep valutare se spostare gli step (creati appositamente per il test)
   @addressBook1
   Scenario: [B2B-DEST-USER-ATTR_10] invio messaggio di cortesia - invio notifica per email per ente padre per PG
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     And viene inserito un recapito legale "example3@pecSuccess.it"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca"
-    And viene verificata la presenza di recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
+    And viene verificata la presenza di qualunque tipo di recapito inserito per l'utente "Lucio Anneo Seneca"
     And viene rimossa se presente la pec di piattaforma di "Lucio Anneo Seneca"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_Root"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_Root"
-    And viene verificata la presenza di recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
-    And viene verificata la presenza di recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
+    And viene verificata la presenza di 4 recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
     And viene cancellata l'email di cortesia per il comune "Comune_Root"
 
-
-    #TODO: decidere se spostare in altro feature file
-    #TODO: aggiungere la modifica del client anche per questa classe (AvanzamentoNotificheB2bSteps)
   @legalFact @useB2B
   Scenario: [B2B-RECIPIENT_LEGALFACT_1] Invio notifica e download atto opponibile SENDER_ACK_scenario positivo
     Given viene generata una nuova notifica
@@ -399,10 +377,6 @@ Feature: Api b2b per destinatari strutturati
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
-
-
-
-    #TODO: aggiungere la modifica del client anche per questa classe (RicezioneNotificheWebSteps)
   @useB2B
   Scenario: [B2B-DEST-DELIVERY_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo
     Given viene generata una nuova notifica

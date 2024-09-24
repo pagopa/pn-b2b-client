@@ -178,22 +178,21 @@ public class RicezioneNotificheWebDelegheSteps {
         }
     }
 
-    @And("{string} viene delegato da user")
-    public void delegateUserWithNotValidDate(String delegate, String delegator) {
+    @And("{string} viene delegato da {string}")
+    public void delegateUser(String delegate, String delegator) {
         //
         if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator)))
+        MandateDto mandate = new MandateDto()
+                .delegator(getUserDtoByuser(delegator))
                 .delegate(getUserDtoByuser(delegate))
                 .verificationCode(verificationCode)
                 .datefrom(sdf.format(new Date()))
                 .visibilityIds(new LinkedList<>())
                 .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(), 1))
-                );
+                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)));
 
         System.out.println("MANDATE: " + mandate);
         try {
@@ -219,30 +218,6 @@ public class RicezioneNotificheWebDelegheSteps {
                 .status(MandateDto.StatusEnum.PENDING)
                 .datefrom(sdf.format(DateUtils.addDays(new Date(), 1))
                 );
-        System.out.println("MANDATE: " + mandate);
-        try {
-            webMandateClient.createMandate(mandate);
-        } catch (HttpStatusCodeException e) {
-            this.notificationError = e;
-        }
-    }
-
-    @And("{string} viene delegato da {string}")
-    public void delegateUser(String delegate, String delegator) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        MandateDto mandate = (new MandateDto()
-                .delegator(getUserDtoByuser(delegator))
-                .delegate(getUserDtoByuser(delegate))
-                .verificationCode(verificationCode)
-                .datefrom(sdf.format(new Date()))
-                .visibilityIds(new LinkedList<>())
-                .status(MandateDto.StatusEnum.PENDING)
-                .dateto(sdf.format(DateUtils.addDays(new Date(), 1)))
-        );
-
         System.out.println("MANDATE: " + mandate);
         try {
             webMandateClient.createMandate(mandate);
