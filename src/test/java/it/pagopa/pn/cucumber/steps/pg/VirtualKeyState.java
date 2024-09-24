@@ -1,11 +1,12 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
-import lombok.Data;
-
 public enum VirtualKeyState {
-    BLOCKED("BLOCK"),
+    BLOCK("BLOCK"),
+    BLOCKED("BLOCKED"),
+    ROTATE("ROTATE"),
     ROTATED("ROTATE"),
     ENABLE("ENABLE"),
+    REACTIVE("ENABLE"),
     CANCELLED("CANCELLED");
 
     private String state;

@@ -14,6 +14,7 @@ import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponseWithStatus;
 import it.pagopa.pn.cucumber.utils.LegalPersonsAuthStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.web.client.RestClientResponseException;
@@ -27,7 +28,11 @@ public class LegalPersonAuthSteps {
     private final LegalPersonsAuthStepsPojo pojo;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
 
-    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient, LegalPersonsAuthStepsPojo pojo) {
+    @Value("${pn.authentication.pg.public.key}")
+    private String publicKey;
+
+    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient,
+                                LegalPersonsAuthStepsPojo pojo) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
         this.pojo = pojo;
     }
@@ -50,7 +55,9 @@ public class LegalPersonAuthSteps {
     @When("l'utente {string} crea una chiave pubblica per la PG")
     public BffPublicKeyResponse creaChiavePubblica(String utente) {
         selectAdmin(utente);
-        BffPublicKeyRequest request = new BffPublicKeyRequest().name("TEST");
+        BffPublicKeyRequest request = new BffPublicKeyRequest()
+                .publicKey(publicKey)
+                .name("TEST_PUBLIC_KEY");
         try {
             BffPublicKeyResponse response = pnLegalPersonAuthClient.newPublicKeyV1(request);
             pojo.getResponseWithStatusList().add(

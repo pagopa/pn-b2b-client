@@ -5,11 +5,10 @@ Feature: Virtual key legal Person Authentication
     #6-7
     Given l'utente "<USER>" crea una chiave pubblica per la PG
     And l'utente "<USER>" "ACCETTA" i tos
-    And l'utente "<USER>" censisce una virtual key per sè stesso
     And l'utente "<USER>" controlla l'accettazione dei tos "POSITIVA"
     And l'utente "<USER>" censisce una virtual key per sè stesso
     And l'utente "<USER>" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "<USER>" "RIATTIVA" una virtual key in stato "BLOCK" per sè stesso
+    When l'utente "<USER>" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso
     Then controllo che l'utente "<USER>" veda "<CONDITION>" virtual key nella PG
     Examples:
       | USER           | CONDITION  |
@@ -19,15 +18,14 @@ Feature: Virtual key legal Person Authentication
   @removeAllVirtualKey
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_2] Un Amministratore Persona Giuridica blocca e riattiva la virtual key di l'utente della PG
     #8
-    # c'è da cpire serve un amministratore con la stessa PG dello user
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "PG" "ACCETTA" i tos
+    #Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+    #And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+   # And l'utente "PG" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "PG" censisce una virtual key per sè stesso
     When l'utente "Amministratore" "BLOCCA" una virtual key in stato "ENABLE" per l'utente "PG"
-    When l'utente "Amministratore" "RIATTIVA" una virtual key in stato "BLOCK" per l'utente "PG"
-    Then controllo che la chiave sia in stato "ATTIVA" per l'utente "PG"
+    When l'utente "Amministratore" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "PG"
+    Then controllo che la chiave sia in stato "ENABLE" per l'utente "PG"
 
   @removeAllVirtualKey
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_3] Un utente Persona Giuridica censisce una virtual key dopo averne cancellata una in precedenza
