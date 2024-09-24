@@ -399,3 +399,15 @@ Feature: Api b2b per destinatari strutturati
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then "GherkinSrl" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
 
+
+
+
+    #TODO: aggiungere la modifica del client anche per questa classe (RicezioneNotificheWebSteps)
+  @useB2B
+  Scenario: [B2B-DEST-DELIVERY_1] Invio notifica digitale mono destinatario e recupero tramite codice IUN API WEB_scenario positivo
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario GherkinSrl
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then la notifica può essere correttamente recuperata da "GherkinSrl"

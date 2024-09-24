@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.UUID;
 
 @Component
-public class B2BDeliveryServiceClientImpl implements B2BDeliveryServiceClient {
+public class B2BDeliveryServiceClientImpl implements B2BDeliveryServiceClient /*TODO: Dovrebbe implementare la stessa interfaccia implements IPnWebRecipientClient*/ {
 
     private final String marioCucumberBearerToken;
     private final String marioGherkinBearerToken;
