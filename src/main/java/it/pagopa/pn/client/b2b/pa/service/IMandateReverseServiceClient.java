@@ -5,11 +5,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 
-public interface IMandateReverseServiceClient {
+public interface IMandateReverseServiceClient extends SettableBearerToken{
 
     ResponseEntity<String> createReverseMandateWithHttpInfo(MandateDtoRequest mandateDtoRequest) throws RestClientException;
-
-    void setBearerToken(SettableBearerToken.BearerTokenType bearerToken);
-
-
 }

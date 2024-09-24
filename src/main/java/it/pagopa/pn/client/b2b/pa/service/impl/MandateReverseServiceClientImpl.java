@@ -18,6 +18,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     private final String cucumberSpaBearerToken;
     private final String basePath;
     private final RestTemplate restTemplate;
+    private BearerTokenType bearerTokenSetted;
 
     public MandateReverseServiceClientImpl(RestTemplate restTemplate,
                                            @Value("${pn.external.dest.base-url}") String basePath,
@@ -27,6 +28,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
+        this.bearerTokenSetted = BearerTokenType.PG_1;
         this.mandateReverseServiceApi = new MandateReverseServiceApi(newApiClient(cucumberSpaBearerToken));
     }
 
@@ -43,15 +45,24 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     }
 
     @Override
-    public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
+    public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case PG_1 -> {
                 this.mandateReverseServiceApi.setApiClient(newApiClient(gherkinSrlBearerToken));
+                this.bearerTokenSetted = BearerTokenType.PG_1;
             }
-            default ->  {
+            case PG_2 -> {
                 this.mandateReverseServiceApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+                this.bearerTokenSetted = BearerTokenType.PG_2;
             }
+            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
+        return true;
+    }
+
+    @Override
+    public BearerTokenType getBearerTokenSetted() {
+        return this.bearerTokenSetted;
     }
 
 
