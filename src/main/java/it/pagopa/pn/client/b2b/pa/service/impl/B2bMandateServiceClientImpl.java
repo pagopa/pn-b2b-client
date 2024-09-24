@@ -21,23 +21,25 @@ import java.util.List;
 public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     private final RestTemplate restTemplate;
     private final String marioCucumberBearerToken;
+    private final String marioGherkinBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
     private final String basePath;
-    private MandateServiceApi mandateServiceApi;
+    private final MandateServiceApi mandateServiceApi;
     private BearerTokenType bearerTokenSetted;
 
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.delivery.base-url}") String basePath,
                                        @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+                                       @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                        @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                        @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
-        this.mandateServiceApi = new MandateServiceApi( newApiClient( restTemplate, basePath, marioCucumberBearerToken));
         this.bearerTokenSetted = BearerTokenType.USER_1;
         this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
     }
@@ -46,7 +48,6 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.setBearerToken(bearerToken);
-//        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -73,8 +74,12 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
-    public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
+    public void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException {
+        this.mandateServiceApi.updateMandate(mandateId,deepCopy(updateRequestDto,it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UpdateRequestDto.class));
+    }
 
+    @Override
+    public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
     }
 
     @Override
@@ -98,6 +103,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public void revokeMandate(String mandateId) throws RestClientException {
+        mandateServiceApi.revokeMandate(mandateId);
 
     }
 
@@ -115,12 +121,37 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
+
+        SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
+        searchMandateRequestDto.setTaxId(taxId);
+        searchMandateRequestDto.setGroups(groups);
+        searchMandateRequestDto.setStatus(status);
+
+        List<MandateDto> result = null;
+        SearchMandateResponseDto res = deepCopy(
+                mandateServiceApi.searchMandatesByDelegate(10, null,
+                        deepCopy(searchMandateRequestDto,
+                                it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto.class)),
+                it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.SearchMandateResponseDto.class);
+        if (res!= null){
+            result = res.getResultsPage();
+        }
+        return result;
+    }
+
+    @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
         boolean beenSet = false;
         switch (bearerToken) {
             case USER_1 -> {
                 this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
+                beenSet = true;
+            }
+            case USER_2 -> {
+                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_2;
                 beenSet = true;
             }
             case PG_1 -> {

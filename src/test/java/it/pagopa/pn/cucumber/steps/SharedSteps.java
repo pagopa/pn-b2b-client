@@ -21,10 +21,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
@@ -45,6 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.convert.DurationStyle;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -81,7 +79,7 @@ public class SharedSteps {
     private final PnPaB2bUtils b2bUtils;
 
     @Getter
-    private final IPnWebRecipientClient webRecipientClient;
+    private IPnWebRecipientClient webRecipientClient;
 
     @Getter
     private final PnExternalServiceClientImpl pnExternalServiceClient;
@@ -196,6 +194,7 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    private final ApplicationContext applicationContext;
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
     private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
@@ -265,14 +264,15 @@ public class SharedSteps {
     private HashMap<String,String> mapAllegatiNotificaSha256 = new HashMap<>();
 
     @Autowired
-    public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
-                       PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
+    public SharedSteps(ApplicationContext applicationContext, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
+                       PnPaB2bUtils b2bUtils, PnWebRecipientExternalClientImpl webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
                        IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
                        PnPollingFactory pollingFactory) {
+        this.applicationContext = applicationContext;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webPaClient = webPaClient;
@@ -292,6 +292,11 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @Before("@useB2B")
+    public void before() {
+        webRecipientClient = applicationContext.getBean(B2BRecipientExternalClientImpl.class);
     }
 
     @Before

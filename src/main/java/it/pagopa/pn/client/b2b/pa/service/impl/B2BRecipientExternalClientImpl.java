@@ -24,23 +24,33 @@ import java.util.UUID;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnB2BRecipientExternalClientImpl implements IPnWebRecipientClient {
-    private final RestTemplate restTemplate;
-    private final RecipientReadB2BApi recipientReadB2BApi;
-    private BearerTokenType bearerTokenSetted;
+public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
+    private final String marioCucumberBearerToken;
+    private final String marioGherkinBearerToken;
+    private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-    private final String basePath;
 
-    public PnB2BRecipientExternalClientImpl(RestTemplate restTemplate,
-                                            @Value("${pn.external.base-url}") String basePath,
-                                            @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
-        this.restTemplate = restTemplate;
-        this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
+    private final RestTemplate restTemplate;
+    private final String basePath;
+    private final RecipientReadB2BApi recipientReadB2BApi;
+    private BearerTokenType bearerTokenSetted;
+
+    public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
+                                          @Value("${pn.delivery.base-url}") String basePath,
+                                          @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
+                                          @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
+                                          @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
+                                          @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                          @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+        this.marioCucumberBearerToken = marioCucumberBearerToken;
+        this.marioGherkinBearerToken = marioGherkinBearerToken;
+        this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.restTemplate = restTemplate;
         this.basePath = basePath;
+        this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
@@ -52,7 +62,7 @@ public class PnB2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public FullReceivedNotificationV23 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return null;
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV23(iun, mandateId), FullReceivedNotificationV23.class);
     }
 
     @Override
@@ -72,29 +82,26 @@ public class PnB2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId, Integer attachmentIdx) throws RestClientException {
-        return null;
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationAttachment(iun, attachmentName, mandateId, null), it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse.class);
     }
 
     @Override
     public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationDocument(String iun, Integer docIdx, UUID mandateId) throws RestClientException {
-        return null;
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationDocument(iun, docIdx, mandateId), it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse.class);
     }
 
     @Override
     public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, String group, String senderId, NotificationStatus status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus convertedStatus = Optional.ofNullable(status)
-                .map(NotificationStatus::getValue)
-                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus::fromValue)
-                .orElse(null);
-
         it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedDelegatedNotification(
-                startDate.toString(), endDate.toString(), senderId,recipientId, group, iunMatch,  convertedStatus, size, nextPagesKey);
+                startDate.toString(), endDate.toString(), senderId,recipientId, group, iunMatch,  convertStatus(status), size, nextPagesKey);
         return deepCopy(response, NotificationSearchResponse.class);
     }
 
     @Override
     public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
-        return null;
+        it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedNotification(startDate.toString(), endDate.toString(), mandateId,
+                senderId, convertStatus(status), subjectRegExp, iunMatch, size, nextPagesKey);
+        return deepCopy(response, NotificationSearchResponse.class);
     }
 
     @Override
@@ -109,25 +116,48 @@ public class PnB2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean beenSet = false;
-        switch (bearerToken){
-            case PG_1:
-                this.recipientReadB2BApi.setApiClient(newApiClient( restTemplate, basePath, gherkinSrlBearerToken));
+        boolean operation = false;
+        switch (bearerToken) {
+            case USER_1 -> {
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
+                operation = true;
+            }
+            case USER_2 -> {
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_2;
+                operation = true;
+            }
+            case USER_3 -> {
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_3;
+                operation = true;
+            }
+            case PG_1 -> {
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
-                beenSet = true;
-                break;
-            case PG_2:
-                this.recipientReadB2BApi.setApiClient(newApiClient( restTemplate, basePath, cucumberSpaBearerToken));
+                operation = true;
+            }
+            case PG_2 -> {
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
-                beenSet = true;
-                break;
+                operation = true;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return beenSet;
+        return operation;
     }
 
     @Override
     public BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
+    }
+
+    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus convertStatus(NotificationStatus status) {
+        return Optional.ofNullable(status)
+                .map(NotificationStatus::getValue)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus::fromValue)
+                .orElse(null);
     }
 
     private <T> T deepCopy( Object obj, Class<T> toClass) {

@@ -21,7 +21,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
 
     public MandateReverseServiceClientImpl(RestTemplate restTemplate,
                                            @Value("${pn.external.dest.base-url}") String basePath,
-                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                           @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
                                            @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
@@ -33,8 +33,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     private ApiClient newApiClient(String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-//        newApiClient.setBearerToken(bearerToken);
-        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
+        newApiClient.setBearerToken(bearerToken);
         return newApiClient;
     }
 

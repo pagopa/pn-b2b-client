@@ -1,7 +1,9 @@
 Feature: Pn-mandate api b2b per intermediari massivi
 
+  @useB2B
   Scenario: [B2B-REVERSE-MANDATE-SUCCESS] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante
-    When l'intermediario massivo effettua la richiesta di creazione delega verso se stesso a nome di "VALID_CITIZEN"
+    Given "GherkinSrl" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    When l'intermediario massivo effettua la richiesta di creazione delega verso se stesso a nome di "Mario Cucumber"
     Then si verifica che la risposta contenga status code: 201
     And si verifica che la delega è stata creata con stato pending
 
@@ -52,7 +54,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     Then si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
-#  @useB2B
+  @useB2B
   Scenario: [B2B-ACCEPT-MANDATE-2] Viene invocata l'API di accettazione di una delega da parte di un delegato persona giuridica inserita verso se stesso a nome del delegante persona giuridica, associandola ad un gruppo
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
@@ -62,14 +64,14 @@ Feature: Pn-mandate api b2b per intermediari massivi
     And si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
-#  @useB2B
+  @useB2B
   Scenario: [B2B-ACCEPT-MANDATE-3] Viene invocata l'API di visualizzazione dell’elenco delle notifiche per le quali il destinatario risulta essere delegato senza aver accettato la delega
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
     Then si verifica che la risposta contenga status code: 201
     And la notifica non può essere recuperata da "GherkinSrl"
 
-#  @useB2B
+  @useB2B
   Scenario: [B2B-ACCEPT-MANDATE-4] Viene invocata l'API di accettazione di una delega da parte di un delegato persona giuridica verso se stesso a nome del delegante persona giuridica e successivamente invocare l’API di rifiuto della delega
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
