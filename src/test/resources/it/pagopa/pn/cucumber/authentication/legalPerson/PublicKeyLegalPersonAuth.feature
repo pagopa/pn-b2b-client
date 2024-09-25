@@ -214,8 +214,8 @@ Feature: Public key legal Person Authentication
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_33] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    And un utente "<role>" "ACCETTA" i tos
-    And un utente "<role>" censisce una virtual key per sè stesso
+    And l'utente "<role>" "ACCETTA" i tos
+    And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
     Then i dati utente vengono correttamente recuperati
     Examples:
@@ -226,8 +226,8 @@ Feature: Public key legal Person Authentication
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    And un utente "<role>" "NON ACCETTA" i tos
-    And un utente "<role>" censisce una virtual key per sè stesso
+    And l'utente "<role>" "NON ACCETTA" i tos
+    And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
     Examples:
@@ -238,8 +238,8 @@ Feature: Public key legal Person Authentication
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_35] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver censito la chiave pubblica
     Given l'utente "AMMINISTRATORE" non ha censito alcuna chiave pubblica
-    And un utente "<role>" "ACCETTA" i tos
-    And un utente "<role>" censisce una virtual key per sè stesso
+    And l'utente "<role>" "ACCETTA" i tos
+    And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
     Examples:
@@ -250,8 +250,8 @@ Feature: Public key legal Person Authentication
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    And un utente "<role>" "ACCETTA" i tos
-    And un utente "<role>" censisce una virtual key per sè stesso
+    And l'utente "<role>" "ACCETTA" i tos
+    And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "INESISTENTE"
     Then la chiamata va in status 200 e restituisce una lista utenti vuota
     Examples:
