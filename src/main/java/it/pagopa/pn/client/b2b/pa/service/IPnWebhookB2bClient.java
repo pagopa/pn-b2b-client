@@ -5,11 +5,10 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamRequestV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestClientException;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,5 +29,8 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
     StreamMetadataResponseV23 updateEventStreamV23(UUID streamId, StreamRequestV23 streamRequest);
     StreamMetadataResponseV23 disableEventStreamV23(UUID streamId);
     List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId);
+
     ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId);
+
+    ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException;
 }

@@ -9,19 +9,19 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamRequestV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 import java.util.UUID;
+
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
 
 
@@ -159,23 +159,29 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return this.streamsApiV23.disableEventStreamV23(streamId);
     }
 
-    public List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId){
+    public List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId) {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV23.consumeEventStreamV23(streamId,lastEventId);
+        return this.eventsApiV23.consumeEventStreamV23(streamId, lastEventId);
     }
 
     @Override
     public ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId) {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId,lastEventId);
+        return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return this.eventsApiV23.consumeEventStreamV24WithHttpInfo(streamId, lastEventId);
     }
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
-        switch(apiKey){
+        switch (apiKey) {
             case MVP_1:
-                if(this.apiKeySetted != ApiKeyType.MVP_1){
+                if (this.apiKeySetted != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
