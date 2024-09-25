@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV23;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -25,7 +24,7 @@ import java.util.function.Predicate;
 public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimelineRapidV23 {
 
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV23 notificationV23;
+    private FullSentNotificationV24 notificationV23;
 
     public PnPollingServiceTimelineSlowE2eV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
@@ -37,7 +36,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     public Callable<PnPollingResponseV23> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            FullSentNotificationV23 fullSentNotificationV23;
+            FullSentNotificationV24 fullSentNotificationV23;
             try {
                 fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
             } catch (Exception exception) {
@@ -92,17 +91,17 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     }
 
     private boolean isPresentCategory(PnPollingResponseV23 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV23 timelineElementV23 = pnPollingResponse
+        TimelineElementV24 timelineElementV23 = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
                         ?
-                        timelineElement->
+                        timelineElement ->
                                 timelineElement.getCategory() != null
                                         && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
                         :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
+                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV24())
                 .findAny()
                 .orElse(null);
 

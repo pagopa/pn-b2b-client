@@ -2,8 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,7 +33,7 @@ public class InvioNotificheB2bMultiPaSteps {
     @Then("la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA {string}")
     public void notificationCanBeRetrievedWithIUNByPA(String paType) {
         sharedSteps.selectPA(paType);
-        AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
+        AtomicReference<FullSentNotificationV24> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
                     notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()))

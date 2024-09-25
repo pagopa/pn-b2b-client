@@ -129,7 +129,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV23 timelineElementV23;
+    private TimelineElementV24 timelineElementV23;
 
     @Getter
     @Setter
@@ -205,7 +205,7 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
-    private FullSentNotificationV23 notificationResponseComplete;
+    private FullSentNotificationV24 notificationResponseComplete;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
@@ -380,18 +380,18 @@ public class SharedSteps {
         }
 
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV23> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV24> sentNotifications = new ConcurrentLinkedQueue<>();
 
         for (NewNotificationRequestV23 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
                 threadWait(getWait());
-                FullSentNotificationV23 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
+                FullSentNotificationV24 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
                 Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV23 timelineElementV23 = null;
+                TimelineElementV24 timelineElementV23 = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
@@ -429,7 +429,7 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV23 notificationV23 : sentNotifications) {
+        for (FullSentNotificationV24 notificationV23 : sentNotifications) {
             log.info(notificationV23.getIun());
         }
         log.debug("End IUN list");
@@ -1662,7 +1662,7 @@ public class SharedSteps {
         }
     }
 
-    public FullSentNotificationV23 getSentNotification() {
+    public FullSentNotificationV24 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -1678,7 +1678,7 @@ public class SharedSteps {
         return notificationResponseCompleteV21;
     }
 
-    public void setSentNotification(FullSentNotificationV23 notificationResponseComplete) {
+    public void setSentNotification(FullSentNotificationV24 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -1966,23 +1966,26 @@ public class SharedSteps {
             case "ANALOG_SUCCESS_WORKFLOW" -> TimelineEventId.ANALOG_SUCCESS_WORKFLOW.buildEventId(event);
             case "DIGITAL_FAILURE_WORKFLOW" -> TimelineEventId.DIGITAL_FAILURE_WORKFLOW.buildEventId(event);
             case "SEND_ANALOG_FEEDBACK" -> TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
-            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" ->
+                    TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
             case "SEND_ANALOG_PROGRESS" -> TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
             case "ANALOG_FAILURE_WORKFLOW" -> TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
             case "PREPARE_ANALOG_DOMICILE" -> TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
             case "SCHEDULE_ANALOG_WORKFLOW" -> TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
             case "SEND_ANALOG_DOMICILE" -> TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
             case "SEND_SIMPLE_REGISTERED_LETTER" -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
-            case "PREPARE_SIMPLE_REGISTERED_LETTER" -> TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case "PREPARE_SIMPLE_REGISTERED_LETTER" ->
+                    TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case "NOTIFICATION_VIEWED" -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
             case "COMPLETELY_UNREACHABLE" -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
-            case "DIGITAL_DELIVERY_CREATION_REQUEST" -> TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+            case "DIGITAL_DELIVERY_CREATION_REQUEST" ->
+                    TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
             default -> null;
         };
     }
 
-    public TimelineElementV23 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV23> timelineElementList = notificationResponseComplete.getTimeline();
+    public TimelineElementV24 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV24> timelineElementList = notificationResponseComplete.getTimeline();
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategoryV23.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
