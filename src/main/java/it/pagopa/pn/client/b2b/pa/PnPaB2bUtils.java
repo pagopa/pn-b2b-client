@@ -30,9 +30,13 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.util.*;
+import org.springframework.util.Base64Utils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -424,35 +428,35 @@ public class PnPaB2bUtils {
         }
     }
 
-    public FullSentNotificationV23 waitForRequestAcceptation(NewNotificationResponse response) {
+    public FullSentNotificationV24 waitForRequestAcceptation(NewNotificationResponse response) {
         PnPollingServiceValidationStatusV23 validationStatusV23 = (PnPollingServiceValidationStatusV23) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V23);
         PnPollingResponseV23 pollingResponseV23 = validationStatusV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
         return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification();
     }
 
-    public FullSentNotificationV23 waitForRequestNoAcceptation(NewNotificationResponse response) {
+    public FullSentNotificationV24 waitForRequestNoAcceptation(NewNotificationResponse response) {
         PnPollingServiceValidationStatusNoAcceptedV23 validationStatusNoAcceptedV23 = (PnPollingServiceValidationStatusNoAcceptedV23) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V23);
         PnPollingResponseV23 pollingResponseV23 = validationStatusNoAcceptedV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
-        return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification() ;
-    }
-
-
-    public FullSentNotificationV23 waitForRequestAcceptationShort(NewNotificationResponse response) {
-
-        PnPollingServiceValidationStatusAcceptedShortV23 validationStatusAcceptedShortV23 = (PnPollingServiceValidationStatusAcceptedShortV23) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V23) ;
-        PnPollingResponseV23 pollingResponseV23 = validationStatusAcceptedShortV23.waitForEvent( response.getNotificationRequestId(), PnPollingParameter.builder().value (ACCEPTED).build());
         return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification();
     }
 
 
-    public FullSentNotificationV23 waitForRequestAcceptationExtraRapid( NewNotificationResponse response) {
+    public FullSentNotificationV24 waitForRequestAcceptationShort(NewNotificationResponse response) {
+
+        PnPollingServiceValidationStatusAcceptedShortV23 validationStatusAcceptedShortV23 = (PnPollingServiceValidationStatusAcceptedShortV23) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V23);
+        PnPollingResponseV23 pollingResponseV23 = validationStatusAcceptedShortV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification();
+    }
+
+
+    public FullSentNotificationV24 waitForRequestAcceptationExtraRapid(NewNotificationResponse response) {
 
         PnPollingServiceValidationStatusAcceptedExtraRapidV23 validationStatusAcceptedExtraRapidV23 = (PnPollingServiceValidationStatusAcceptedExtraRapidV23) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V23);
         PnPollingResponseV23 pollingResponseV23 = validationStatusAcceptedExtraRapidV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
-        return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification() ;
+        return pollingResponseV23.getNotification() == null ? null : pollingResponseV23.getNotification();
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification searchForRequestV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
@@ -511,8 +515,8 @@ public class PnPaB2bUtils {
         long endTime = System.currentTimeMillis();
         log.info("Execution time {}ms",(endTime - startTime));
         StringBuilder error = new StringBuilder();
-        if (pollingResponseV23.getStatusResponse() != null && pollingResponseV23.getStatusResponse().getErrors()!= null && !pollingResponseV23.getStatusResponse().getErrors().isEmpty()) {
-            for (ProblemError err :pollingResponseV23.getStatusResponse().getErrors()) {
+        if (pollingResponseV23.getStatusResponse() != null && pollingResponseV23.getStatusResponse().getErrors() != null && !pollingResponseV23.getStatusResponse().getErrors().isEmpty()) {
+            for (ProblemError err : pollingResponseV23.getStatusResponse().getErrors()) {
                 error.append(" ").append(err.getDetail());
             }
         }
@@ -520,14 +524,14 @@ public class PnPaB2bUtils {
         return error.toString();
     }
 
-    public void verifyNotification(FullSentNotificationV23 fsn) throws IllegalStateException {
-        verifySha256NotificationV23(fsn);
+    public void verifyNotification(FullSentNotificationV24 fsn) throws IllegalStateException {
+        verifySha256NotificationV24(fsn);
         getSentNotificationAttachment(fsn);
         verifyLegalFactFormat(fsn.getIun(), Objects.requireNonNull(fsn.getTimeline().get(0).getLegalFactsIds()));
         checkNotificationStatus(fsn.getNotificationStatus());
     }
 
-    private void getSentNotificationAttachment(FullSentNotificationV23 fsn) {
+    private void getSentNotificationAttachment(FullSentNotificationV24 fsn) {
         fsn.getRecipients().stream()
                 .filter(recipient -> recipient.getPayments() != null && !recipient.getPayments().isEmpty())
                 .forEach(recipient -> {
@@ -536,7 +540,7 @@ public class PnPaB2bUtils {
                 });
     }
 
-    private void extractAttachment(FullSentNotificationV23 fsn, NotificationRecipientV23 recipient) {
+    private void extractAttachment(FullSentNotificationV24 fsn, NotificationRecipientV23 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getF24() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), F_24, 0);
             if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
@@ -551,7 +555,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void extractAndCheckAttachment(FullSentNotificationV23 fsn, NotificationRecipientV23 recipient) {
+    private void extractAndCheckAttachment(FullSentNotificationV24 fsn, NotificationRecipientV23 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), PAGOPA, 0);
             checkAttachment(resp);
@@ -592,8 +596,8 @@ public class PnPaB2bUtils {
         checkNotificationStatusV2(fsn.getNotificationStatus());
     }
 
-    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV23 fsn, String attachment) throws IllegalStateException {
-        verifySha256NotificationV23(fsn);
+    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV24 fsn, String attachment) throws IllegalStateException {
+        verifySha256NotificationV24(fsn);
         for (int i = 0; i < fsn.getRecipients().size(); i++) {
             NotificationRecipientV23 recipient = fsn.getRecipients().get(i);
             if (fsn.getRecipients().get(i).getPayments() != null &&
@@ -611,7 +615,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void verifySha256NotificationV23(FullSentNotificationV23 fsn) {
+    private void verifySha256NotificationV24(FullSentNotificationV24 fsn) {
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
             checkSha256Notification(getSentNotificationDocument(fsn.getIun(), docIdx), docIdx);
@@ -1067,7 +1071,7 @@ public class PnPaB2bUtils {
         return Base64Utils.encodeToString(hash);
     }
 
-    public FullSentNotificationV23 getNotificationByIun(String iun) {
+    public FullSentNotificationV24 getNotificationByIun(String iun) {
         return client.getSentNotification(iun);
     }
 

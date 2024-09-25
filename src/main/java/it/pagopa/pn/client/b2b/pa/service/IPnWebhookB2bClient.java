@@ -21,16 +21,25 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
     StreamMetadataResponse updateEventStream(UUID streamId, StreamCreationRequest streamCreationRequest);
     List<ProgressResponseElement> consumeEventStream(UUID streamId, String lastEventId);
     ResponseEntity<List<ProgressResponseElement>> consumeEventStreamHttp(UUID streamId, String lastEventId);
+
     //Versione 2_2
     StreamMetadataResponseV23 createEventStreamV23(StreamCreationRequestV23 streamCreationRequest);
+
     void deleteEventStreamV23(UUID streamId);
+
     StreamMetadataResponseV23 getEventStreamV23(UUID streamId);
+
     List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> listEventStreamsV23();
+
     StreamMetadataResponseV23 updateEventStreamV23(UUID streamId, StreamRequestV23 streamRequest);
+
     StreamMetadataResponseV23 disableEventStreamV23(UUID streamId);
-    List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId);
 
-    ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId);
+    List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId) throws RestClientException;
 
-    ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException;
+    ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId) throws RestClientException;
+
+    List<ProgressResponseElementV24> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException;
+
+    ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamHttpV24(UUID streamId, String lastEventId) throws RestClientException;
 }

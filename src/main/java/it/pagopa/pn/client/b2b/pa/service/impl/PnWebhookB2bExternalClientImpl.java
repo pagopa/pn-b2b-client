@@ -159,19 +159,25 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return this.streamsApiV23.disableEventStreamV23(streamId);
     }
 
-    public List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId) {
+    public List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.eventsApiV23.consumeEventStreamV23(streamId, lastEventId);
     }
 
     @Override
-    public ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId) {
+    public ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId, lastEventId);
     }
 
     @Override
-    public ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException {
+    public List<ProgressResponseElementV24> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return this.eventsApiV23.consumeEventStreamV24(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamHttpV24(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         return this.eventsApiV23.consumeEventStreamV24WithHttpInfo(streamId, lastEventId);
     }

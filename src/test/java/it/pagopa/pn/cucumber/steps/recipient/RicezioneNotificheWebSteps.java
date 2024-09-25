@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -120,21 +121,21 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
-    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsVisibile(String category, String deliveryDetailCode) {
         Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
         Assertions.assertFalse(dato.get().getHidden());
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
-    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsNotVisibile(String category, String deliveryDetailCode) {
         Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
         Assertions.assertTrue(dato.get().getHidden());
     }
 
     @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
-    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈPresente(String category, String deliveryDetailCode) {
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsNotPresente(String category, String deliveryDetailCode) {
         Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
         Assertions.assertTrue(dato.isEmpty());
     }
@@ -145,9 +146,10 @@ public class RicezioneNotificheWebSteps {
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(data ->
-                    data.getElementId().contains(category) && data.getDetails() != null &&
-                            data.getDetails().getDeliveryDetailCode() != null &&
-                            data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        data.getElementId().contains(category)
+                                && data.getDetails() != null
+                                && data.getDetails().getDeliveryDetailCode() != null
+                                && data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
     }
 
@@ -162,21 +164,21 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
-    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsVisibile(String category, String deliveryDetailCode) {
         Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
         Assertions.assertFalse(dato.get().getHidden());
     }
 
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
-    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsNotVisibile(String category, String deliveryDetailCode) {
         Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
         Assertions.assertFalse(dato.isEmpty());
         Assertions.assertTrue(dato.get().getHidden());
     }
 
     @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
-    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈPresente(String category, String deliveryDetailCode) {
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeIsNotPresente(String category, String deliveryDetailCode) {
         Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
         Assertions.assertTrue(dato.isEmpty());
     }
@@ -350,10 +352,10 @@ public class RicezioneNotificheWebSteps {
             throw exc;
         }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory= it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
+        TimelineElementV24 timelineElement = null;
 
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (TimelineElementV24 element : sharedSteps.getSentNotification().getTimeline()) {
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
@@ -442,9 +444,9 @@ public class RicezioneNotificheWebSteps {
 
         Calendar now = Calendar.getInstance();
         int month = now.get(Calendar.MONTH);
-        String monthString = (((month + "").length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1))) + "";
+        String monthString = String.valueOf(((String.valueOf(month)).length() == 2 || month == 9) ? (month + 1) : ("0" + (month + 1)));
         int day = now.get(Calendar.DAY_OF_MONTH);
-        String dayString = (day + "").length() == 2 ? (day + "") : ("0" + day);
+        String dayString = (String.valueOf(day)).length() == 2 ? (String.valueOf(day)) : ("0" + day);
         String start = data.getOrDefault("startDate", dayString + "/" + monthString + "/" + now.get(Calendar.YEAR));
         String end = data.getOrDefault("endDate", null);
 
@@ -638,12 +640,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
-                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV24 timelineElement =
+                sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 newTimelineElement =
+        TimelineElementV24 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
@@ -681,50 +683,37 @@ public class RicezioneNotificheWebSteps {
 
     public void selectUser(String user) {
         switch (user.trim().toLowerCase()) {
-            case "mario cucumber", "ettore fieramosca" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-            }
-            case "mario gherkin", "cristoforo colombo" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-            }
-            case "gherkinsrl" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            }
-            case "cucumberspa" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            }
-            case "leonardo da vinci" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
-            }
-            case "dino sauro" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-            }
-            case "mario cucumber con credenziali non valide" -> {
-                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
-            }
+            case "mario cucumber", "ettore fieramosca" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            case "mario gherkin", "cristoforo colombo" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            case "gherkinsrl" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case "cucumberspa" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case "leonardo da vinci" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+            case "dino sauro" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+            case "mario cucumber con credenziali non valide" ->
+                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             default -> throw new IllegalArgumentException();
-
         }
 
     }
 
     public void selectPa(String pa){
         switch (pa) {
-            case "Comune_1" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
-            }
-            case "Comune_2" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
-            }
-            case "Comune_Multi" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
-            }
-            case "Comune_Son" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
-            }
-            case "Comune_Root" -> {
-                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
-            }
+            case "Comune_1" ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
+            case "Comune_2" ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
+            case "Comune_Multi" ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
+            case "Comune_Son" ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
+            case "Comune_Root" ->
+                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             default -> throw new IllegalArgumentException();
         }
     }

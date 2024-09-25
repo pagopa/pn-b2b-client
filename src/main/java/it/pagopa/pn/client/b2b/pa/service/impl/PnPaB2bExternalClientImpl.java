@@ -15,7 +15,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
+
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
 
 
@@ -300,12 +302,13 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
-        return newNotificationApiV21.sendNewNotificationV21( newNotificationRequest );
+        return newNotificationApiV21.sendNewNotificationV21(newNotificationRequest);
     }
+
     @Override
-    public FullSentNotificationV23 getSentNotification(String iun) {
+    public FullSentNotificationV24 getSentNotification(String iun) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApi.retrieveSentNotificationV23( iun );
+        return senderReadB2BApi.retrieveSentNotificationV24(iun);
     }
 
     @Override

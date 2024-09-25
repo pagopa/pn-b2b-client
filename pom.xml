@@ -25,17 +25,15 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>v2.5.0</open.api.version.delivery>
-        <open.api.version.delivery.push>v2.5.1</open.api.version.delivery.push>
+        <open.api.version.delivery>dbc5ba1c1e5e8454e6cacb7f2bc84a5905ff0a0c</open.api.version.delivery>
+        <open.api.version.delivery.push>781d53ca1ae4bd3b364576f2e0bff24a55e77761</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
         <open.api.version.delivery.push_v2>v2.1.0-RC.5</open.api.version.delivery.push_v2> <!--TODO: a cosa serve ?-->
         <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
-        <open.api.version.delivery.push_v23>36069ddec82d35af4a574df944d47db7e24c2c37</open.api.version.delivery.push_v23>
-        <open.api.version.delivery_v24>v2.4.0</open.api.version.delivery_v24>
-        <open.api.version.delivery.push_v24>781d53ca1ae4bd3b364576f2e0bff24a55e77761</open.api.version.delivery.push_v24>
+        <!--<open.api.version.delivery.push_v23>36069ddec82d35af4a574df944d47db7e24c2c37</open.api.version.delivery.push_v23>-->
         <open.api.version.user.attributes>v2.4.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.4.0</open.api.version.mandate>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
@@ -408,7 +406,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery_v24}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/api-internal-b2b-pa.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -787,7 +785,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push_v24}/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-b2b-webhook-bundle.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
