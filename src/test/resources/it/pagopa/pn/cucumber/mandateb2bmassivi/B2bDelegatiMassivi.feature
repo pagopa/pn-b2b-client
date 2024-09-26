@@ -50,7 +50,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
   Scenario: [B2B-ACCEPT-MANDATE-1] Viene invocata l'API di accettazione di una delega da parte di un delegato persona giuridica verso se stesso a nome del delegante persona giuridica, senza associarla ad un gruppo
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
-    When la delega viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
+    When la delega verso "CucumberSpa" viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
     Then si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
@@ -60,7 +60,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
     Then si verifica che la risposta contenga status code: 201
     Then viene recuperato il primo gruppo disponibile attivo per il delegato "CucumberSpa"
-    And la delega viene accettata dal delegato "GherkinSrl" associando un gruppo
+    And la delega verso "CucumberSpa" viene accettata dal delegato "GherkinSrl" associando un gruppo
     And si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
@@ -76,6 +76,6 @@ Feature: Pn-mandate api b2b per intermediari massivi
     Given "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And "GherkinSrl" crea una delega verso se stesso a nome di "CucumberSpa"
     Then si verifica che la risposta contenga status code: 201
-    And la delega viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
+    And la delega verso "CucumberSpa" viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
     And "GherkinSrl" rifiuta se presente la delega ricevuta "CucumberSpa"
     And la notifica non può essere recuperata da "GherkinSrl"

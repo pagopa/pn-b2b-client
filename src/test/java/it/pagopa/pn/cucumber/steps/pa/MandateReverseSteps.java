@@ -6,12 +6,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDtoRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.UserDto;
+import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
+import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model.BffMandate;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
@@ -31,17 +33,19 @@ public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
     private final IPnWebMandateClient mandateServiceClient;
     private final IPnWebRecipientClient b2BRecipientExternalClient;
+    private final IBffMandateServiceApi bffMandateServiceApi;
     private final SharedSteps sharedSteps;
-    private MandateDtoRequest mandateDtoRequest;
     private ResponseEntity<String> mandateReverseResponse;
     private ResponseEntity<Void> acceptMandateResponse;
     private final List<String> groups = new ArrayList<>();
 
-    public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps, B2BRecipientExternalClientImpl b2BRecipientExternalClient) {
+    public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps,
+                               B2BRecipientExternalClientImpl b2BRecipientExternalClient, IBffMandateServiceApi bffMandateServiceApi) {
         this.mandateReverseServiceClient = mandateReverseServiceClient;
         this.mandateServiceClient = mandateServiceClient;
         this.sharedSteps = sharedSteps;
         this.b2BRecipientExternalClient = b2BRecipientExternalClient;
+        this.bffMandateServiceApi = bffMandateServiceApi;
     }
 
     private void selectPG(String user) {
@@ -84,28 +88,39 @@ public class MandateReverseSteps {
 
     @And("si verifica che la delega è stata creata con stato pending")
     public void verifyMandateIsCreatedWithPendingStatus() {
-        isMandatePresent().orElseThrow(() -> new AssertionFailedError("Delega non trovata tra quelle in stato PENDING!"));
+        isMandatePresent().orElseThrow(() -> new AssertionFailedError("Mandate with PENDING status not found!"));
     }
 
     @And("si verifica che la delega non è stata creata")
     public void verifyMandateIsNotCreated() {
-        isMandatePresent().ifPresent(x -> {throw new AssertionFailedError("Delega creata nonostante i campi errati!");});
+        isMandatePresent().ifPresent(x -> {throw new AssertionFailedError("Mandate created despite wrong fields!");});
     }
 
-    @And("la delega viene accettata dal delegato {string} senza associare nessun gruppo")
-    public void acceptMandate(String delegate) {
-        selectPG(delegate);
-        //TODO add call to bff to retrieve the verificationCode
-//        String delegatorTaxId = getTaxIdByUser(delegate);
-//        List<MandateDto> mandateDtoList = mandateServiceClient.searchMandatesByDelegate(getTaxIdByUser(delegate), null);
-//        MandateDto mandateDto = mandateDtoList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
-        acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(null).verificationCode(""));
+    @And("la delega verso {string} viene accettata dal delegato {string} senza associare nessun gruppo")
+    public void acceptMandate(String delegator, String delegate) {
+        selectPG(delegator);
+        acceptMandate(null);
     }
 
-    @And("la delega viene accettata dal delegato {string} associando un gruppo")
-    public void acceptMandateWithGroup(String delegate) {
-        selectPG(delegate);
-        acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().verificationCode("24411").groups(groups));
+    @And("la delega verso {string} viene accettata dal delegato {string} associando un gruppo")
+    public void acceptMandateWithGroup(String delegator, String delegate) {
+        selectPG(delegator);
+        acceptMandate(groups);
+    }
+
+    private void acceptMandate(List<String> groups) {
+        String verificationCode = bffMandateServiceApi.getMandatesByDelegatorV1()
+                .stream()
+                .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
+                .map(BffMandate::getVerificationCode)
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+        try {
+            acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
+        } catch (Exception ex) {
+            throw new AssertionFailedError("There was an error while accepting the mandate " + ex);
+        }
     }
 
     @And("la notifica non può essere recuperata da {string}")
