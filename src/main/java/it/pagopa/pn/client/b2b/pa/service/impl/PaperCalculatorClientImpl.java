@@ -14,7 +14,7 @@ import org.springframework.web.client.RestTemplate;
 public class PaperCalculatorClientImpl implements IPaperCalculatorClientImpl {
     private final PaperCalculatorApi paperCalculatorApi;
 
-    public PaperCalculatorClientImpl(RestTemplate restTemplate, @Value("${pn.paper-channel.base-url}") String basePath) {
+    public PaperCalculatorClientImpl(RestTemplate restTemplate, @Value("${pn.delivery.base-url}") String basePath) {
         this.paperCalculatorApi = new PaperCalculatorApi(newApiClient(restTemplate, basePath));
     }
 
