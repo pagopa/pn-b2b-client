@@ -53,7 +53,7 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
 
     @Override
     public BffNewVirtualKeyResponse createVirtualKey(BffNewVirtualKeyRequest requestNewVirtualKey) throws RestClientException {
-        return virtualKeysApi.newVirtualKeyV1(null, null, null, requestNewVirtualKey);
+        return virtualKeysApi.newVirtualKeyV1(null, null, null, requestNewVirtualKey, null, null);
     }
 
     @Override
