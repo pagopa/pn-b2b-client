@@ -586,210 +586,263 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @When("viene richiesto l'inserimento della pec {string}")
+    public void perLUtenteVieneSettatoLaPec(String pec) {
+        postRecipientLegalAddress("default", pec, "00000", false);
+    }
 
-        @When("viene richiesto l'inserimento della pec {string}")
-        public void perLUtenteVieneSettatoLaPec (String pec){
-            postRecipientLegalAddress("default", pec, "00000", false);
-        }
+    @When("viene richiesto l'inserimento del numero di telefono {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone) {
+        postRecipientCourtesyAddress("default", phone, CourtesyChannelType.SMS, "00000", false);
+    }
 
-        @When("viene richiesto l'inserimento del numero di telefono {string}")
-        public void vieneRichiestoLInserimentoDelNumeroDiTelefono (String phone){
-            postRecipientCourtesyAddress("default", phone, CourtesyChannelType.SMS, "00000", false);
-        }
+    @When("viene richiesto l'inserimento del email di cortesia {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesia(String email) {
+        postRecipientCourtesyAddress("default", email, CourtesyChannelType.EMAIL, "00000", false);
+    }
 
-        @When("viene richiesto l'inserimento del email di cortesia {string}")
-        public void vieneRichiestoLInserimentoDelEmailDiCortesia (String email){
-            postRecipientCourtesyAddress("default", email, CourtesyChannelType.EMAIL, "00000", false);
-        }
-
-        @And("viene inserito un recapito legale {string} per il comune {string}")
-        public void nuovoRecapitoLegaleDalComune (String pec, String pa){
-            String senderIdPa = getSenderIdPa(pa);
-            postRecipientLegalAddress(senderIdPa, pec, null, true);
-        }
+    @And("viene inserito un recapito legale {string} per il comune {string}")
+    public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientLegalAddress(senderIdPa, pec, null, true);
+    }
 
     @And("viene attivato il servizio SERCQ SEND per il comune {string}")
-    public void attivazioneSercqPerEnteSpecifico(String senderIdPa){
-        postRecipientLegalAddressSercq(senderIdPa,"default", null, true);
+    public void attivazioneSercqPerEnteSpecifico(String senderIdPa) {
+        postRecipientLegalAddressSercq(senderIdPa, "default", null, true);
     }
-        @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
-        public void perLUtenteVieneSettatoLaPecPerIlComune (String pec, String pa){
-            String senderIdPa = getSenderIdPa(pa);
-            postRecipientLegalAddress(senderIdPa, pec, "00000", false);
-        }
 
-        @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
-        public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune (String email, String pa){
-            String senderIdPa = getSenderIdPa(pa);
-            postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, "00000", false);
-        }
+    @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
+    public void perLUtenteVieneSettatoLaPecPerIlComune(String pec, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientLegalAddress(senderIdPa, pec, "00000", false);
+    }
 
-        @And("viene inserita l'email di cortesia {string} per il comune {string}")
-        public void vieneInseritaEmailDiCortesiaDalComune (String email, String pa){
-            String senderIdPa = getSenderIdPa(pa);
-            postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, null, true);
-        }
+    @And("viene richiesto l'inserimento del email di cortesia {string} per il comune {string}")
+    public void vieneRichiestoLInserimentoDelEmailDiCortesiaDalComune(String email, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, "00000", false);
+    }
 
-        @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
-        public void vieneRichiestoLInserimentoDelNumeroDiTelefono (String phone, String pa){
-            String senderIdPa = getSenderIdPa(pa);
-            postRecipientCourtesyAddress(senderIdPa, phone, CourtesyChannelType.SMS, "00000", false);
-        }
+    @And("viene inserita l'email di cortesia {string} per il comune {string}")
+    public void vieneInseritaEmailDiCortesiaDalComune(String email, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, email, CourtesyChannelType.EMAIL, null, true);
+    }
 
-        private void postRecipientCourtesyAddress (String senderId, String addressVerification, CourtesyChannelType
-        type, String verificationCode,boolean inserimento){
-            try {
-                if (inserimento) {
-                    this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
-                    verificationCode = this.externalClient.getVerificationCode(addressVerification);
-                }
-                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
-            } catch (HttpStatusCodeException httpStatusCodeException) {
-                sharedSteps.setNotificationError(httpStatusCodeException);
+    @When("viene richiesto l'inserimento del numero di telefono {string} per il comune {string}")
+    public void vieneRichiestoLInserimentoDelNumeroDiTelefono(String phone, String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientCourtesyAddress(senderIdPa, phone, CourtesyChannelType.SMS, "00000", false);
+    }
+
+    private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType
+            type, String verificationCode, boolean inserimento) {
+        try {
+            if (inserimento) {
+                this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
+                verificationCode = this.externalClient.getVerificationCode(addressVerification);
             }
-        }
-
-        private void postRecipientLegalAddress (String senderIdPa, String addressVerification, String verificationCode,
-        boolean inserimento){
-            try {
-                if (inserimento) {
-                    this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
-                    verificationCode = this.externalClient.getVerificationCode(addressVerification);
-                }
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
-            } catch (HttpStatusCodeException httpStatusCodeException) {
-                sharedSteps.setNotificationError(httpStatusCodeException);
-            }
-        }
-
-
-        @And("viene cancellata l'email di cortesia per il comune {string}")
-        public void vieneCancellataEmailDiCortesiaDalComune (String pa){
-            String senderIdPa = getSenderIdPa(pa);
-
-            try {
-                this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL);
-            } catch (HttpStatusCodeException httpStatusCodeException) {
-                sharedSteps.setNotificationError(httpStatusCodeException);
-            }
-        }
-
-        private String getSenderIdPa (String pa){
-            return switch (pa) {
-                case "Comune_1" -> senderId;
-                case "Comune_2" -> senderId2;
-                case "Comune_Multi" -> senderIdGA;
-                case "Comune_Son" -> senderIdSON;
-                case "Comune_Root" -> senderIdROOT;
-                default -> "default";
-            };
-        }
-
-        @Then("l'inserimento ha prodotto un errore con status code {string}")
-        public void lInserimentoHaProdottoUnErroreConStatusCode (String statusCode){
-            HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
-            Assertions.assertTrue((httpStatusCodeException != null) &&
-                    (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
-        }
-
-        @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
-        public void verificoAttoOpponibileSiaUguale (String timelineEventCategory, @Transpose DataTest dataFromTest){
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
-                    sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-            // get new timeline
-            String iun = sharedSteps.getSentNotification().getIun();
-            sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 newTimelineElement =
-                    sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-            // check legal fact key
-            Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
-            for (int i = 0; i < newTimelineElement.getLegalFactsIds().size(); i++) {
-                Assertions.assertEquals(newTimelineElement.getLegalFactsIds().get(i).getKey(), timelineElement.getLegalFactsIds().get(i).getKey());
-            }
-        }
-
-        @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
-        public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti () {
-            Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault : timingConfigs.getWaitMillisForSendAnalogEvents();
-            waitState(waiting);
-        }
-
-        private static class NotificationSearchParam {
-            OffsetDateTime startDate;
-            OffsetDateTime endDate;
-            String mandateId;
-            String senderId;
-            NotificationStatus status;
-            String subjectRegExp;
-            String iunMatch;
-            Integer size = 10;
-        }
-
-        private static class NotificationSearchParamWebPA {
-            OffsetDateTime startDate;
-            OffsetDateTime endDate;
-            String mandateId;
-            it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
-            String subjectRegExp;
-            String iunMatch;
-            Integer size = 10;
-        }
-
-        public void selectUser (String user){
-            switch (user.trim().toLowerCase()) {
-                case "mario cucumber", "ettore fieramosca" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
-                }
-                case "mario gherkin", "cristoforo colombo" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
-                }
-                case "gherkinsrl" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-                }
-                case "cucumberspa" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-                }
-                case "leonardo da vinci" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
-                }
-                case "dino sauro" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
-                }
-                case "mario cucumber con credenziali non valide" -> {
-                    bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
-                }
-                default -> throw new IllegalArgumentException();
-
-            }
-
-        }
-
-        public void selectPa (String pa){
-            switch (pa) {
-                case "Comune_1" -> {
-                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
-                }
-                case "Comune_2" -> {
-                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
-                }
-                case "Comune_Multi" -> {
-                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
-                }
-                case "Comune_Son" -> {
-                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
-                }
-                case "Comune_Root" -> {
-                    this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
-                }
-                default -> throw new IllegalArgumentException();
-            }
-        }
-
-        private static void waitState (Integer waitingStateCsv){
-            try {
-                Thread.sleep(waitingStateCsv);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
         }
     }
+
+    private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode,
+                                           boolean inserimento) {
+        try {
+            if (inserimento) {
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
+                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+            }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+
+    @And("viene cancellata l'email di cortesia per il comune {string}")
+    public void vieneCancellataEmailDiCortesiaDalComune(String pa) {
+        String senderIdPa = getSenderIdPa(pa);
+
+        try {
+            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(senderIdPa, CourtesyChannelType.EMAIL);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            sharedSteps.setNotificationError(httpStatusCodeException);
+        }
+    }
+
+    private String getSenderIdPa(String pa) {
+        return switch (pa) {
+            case "Comune_1" -> senderId;
+            case "Comune_2" -> senderId2;
+            case "Comune_Multi" -> senderIdGA;
+            case "Comune_Son" -> senderIdSON;
+            case "Comune_Root" -> senderIdROOT;
+            default -> "default";
+        };
+    }
+
+    @Then("l'inserimento ha prodotto un errore con status code {string}")
+    public void lInserimentoHaProdottoUnErroreConStatusCode(String statusCode) {
+        HttpStatusCodeException httpStatusCodeException = this.sharedSteps.consumeNotificationError();
+        Assertions.assertTrue((httpStatusCodeException != null) &&
+                (httpStatusCodeException.getStatusCode().toString().substring(0, 3).equals(statusCode)));
+    }
+
+    @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
+    public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
+                sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        // get new timeline
+        String iun = sharedSteps.getSentNotification().getIun();
+        sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 newTimelineElement =
+                sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        // check legal fact key
+        Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
+        for (int i = 0; i < newTimelineElement.getLegalFactsIds().size(); i++) {
+            Assertions.assertEquals(newTimelineElement.getLegalFactsIds().get(i).getKey(), timelineElement.getLegalFactsIds().get(i).getKey());
+        }
+    }
+
+    @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
+    public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault : timingConfigs.getWaitMillisForSendAnalogEvents();
+        waitState(waiting);
+    }
+
+    private static class NotificationSearchParam {
+        OffsetDateTime startDate;
+        OffsetDateTime endDate;
+        String mandateId;
+        String senderId;
+        NotificationStatus status;
+        String subjectRegExp;
+        String iunMatch;
+        Integer size = 10;
+    }
+
+    private static class NotificationSearchParamWebPA {
+        OffsetDateTime startDate;
+        OffsetDateTime endDate;
+        String mandateId;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
+        String subjectRegExp;
+        String iunMatch;
+        Integer size = 10;
+    }
+
+    public void selectUser(String user) {
+        switch (user.trim().toLowerCase()) {
+            case "mario cucumber", "ettore fieramosca" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            }
+            case "mario gherkin", "cristoforo colombo" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            }
+            case "gherkinsrl" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            }
+            case "cucumberspa" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
+            case "leonardo da vinci" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+            }
+            case "dino sauro" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+            }
+            case "mario cucumber con credenziali non valide" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+            }
+            default -> throw new IllegalArgumentException();
+
+        }
+
+    }
+
+    public void selectPa(String pa) {
+        switch (pa) {
+            case "Comune_1" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
+            }
+            case "Comune_2" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
+            }
+            case "Comune_Multi" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
+            }
+            case "Comune_Son" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
+            }
+            case "Comune_Root" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
+            }
+            default -> throw new IllegalArgumentException();
+        }
+    }
+
+    private static void waitState(Integer waitingStateCsv) {
+        try {
+            Thread.sleep(waitingStateCsv);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @And("viene verificata l' assenza di pec inserite per l'utente {string}")
+    public void viewedPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            Assertions.assertTrue(legalAddressByRecipient.isEmpty());
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata l' assenza di pec inserite per l'utente {string} per il comune {string}")
+    public void viewedNoPecPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+
+            Assertions.assertFalse(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di pec inserite per l'utente {string} per il comune {string}")
+    public void viewedPecPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+
+            Assertions.assertTrue(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+
+}
