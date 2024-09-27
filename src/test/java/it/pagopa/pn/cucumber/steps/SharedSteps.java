@@ -129,7 +129,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV24 timelineElementV23;
+    private TimelineElementV24 timelineElement;
 
     @Getter
     @Setter
@@ -391,17 +391,17 @@ public class SharedSteps {
                 Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV24 timelineElementV23 = null;
+                TimelineElementV24 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
                     log.info("NOTIFICATION_TIMELINE: " + fullSentNotificationV23.getTimeline());
-                    timelineElementV23 = fullSentNotificationV23.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
-                    if (timelineElementV23 != null) {
+                    timelineElement = fullSentNotificationV23.getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.COMPLETELY_UNREACHABLE)).findAny().orElse(null);
+                    if (timelineElement != null) {
                         break;
                     }
                 }
-                Assertions.assertNotNull(timelineElementV23);
+                Assertions.assertNotNull(timelineElement);
                 sentNotifications.add(fullSentNotificationV23);
             });
 
@@ -429,8 +429,8 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV24 notificationV23 : sentNotifications) {
-            log.info(notificationV23.getIun());
+        for (FullSentNotificationV24 fullSentNotification : sentNotifications) {
+            log.info(fullSentNotification.getIun());
         }
         log.debug("End IUN list");
         //la prima notifica viene inserita

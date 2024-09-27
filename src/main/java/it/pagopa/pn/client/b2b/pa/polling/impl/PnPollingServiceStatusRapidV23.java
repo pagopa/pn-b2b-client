@@ -25,7 +25,7 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV24 notificationV23;
+    private FullSentNotificationV24 fullSentNotification;
 
 
     public PnPollingServiceStatusRapidV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
@@ -37,15 +37,15 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
     protected Callable<PnPollingResponseV23> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            FullSentNotificationV24 fullSentNotificationV23;
+            FullSentNotificationV24 fullSentNotification;
             try {
-                fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV23);
-            this.notificationV23 = fullSentNotificationV23;
+            pnPollingResponse.setNotification(fullSentNotification);
+            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }
@@ -70,7 +70,7 @@ public class PnPollingServiceStatusRapidV23 extends PnPollingTemplate<PnPollingR
     @Override
     protected PnPollingResponseV23 getException(Exception exception) {
         PnPollingResponseV23 pollingResponse = new PnPollingResponseV23();
-        pollingResponse.setNotification(this.notificationV23);
+        pollingResponse.setNotification(this.fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }

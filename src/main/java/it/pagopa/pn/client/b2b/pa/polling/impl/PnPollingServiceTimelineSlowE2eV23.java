@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimelineRapidV23 {
 
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV24 notificationV23;
+    private FullSentNotificationV24 fullSentNotification;
 
     public PnPollingServiceTimelineSlowE2eV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
@@ -36,15 +36,15 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     public Callable<PnPollingResponseV23> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            FullSentNotificationV24 fullSentNotificationV23;
+            FullSentNotificationV24 fullSentNotification;
             try {
-                fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotificationV23);
-            this.notificationV23 = fullSentNotificationV23;
+            pnPollingResponse.setNotification(fullSentNotification);
+            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }
@@ -72,7 +72,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     @Override
     protected PnPollingResponseV23 getException(Exception exception) {
         PnPollingResponseV23 pollingResponse = new PnPollingResponseV23();
-        pollingResponse.setNotification(this.notificationV23);
+        pollingResponse.setNotification(this.fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -91,22 +91,22 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
     }
 
     private boolean isPresentCategory(PnPollingResponseV23 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV24 timelineElementV23 = pnPollingResponse
+        TimelineElementV24 timelineElement = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
                         ?
-                        timelineElement ->
-                                timelineElement.getCategory() != null
-                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        te ->
+                                te.getCategory() != null
+                                        && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
                         :
                         pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV24())
                 .findAny()
                 .orElse(null);
 
-        if(timelineElementV23 != null) {
-            pnPollingResponse.setTimelineElement(timelineElementV23);
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }
