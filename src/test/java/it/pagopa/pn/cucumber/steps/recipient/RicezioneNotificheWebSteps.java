@@ -549,21 +549,18 @@ public class RicezioneNotificheWebSteps {
     }
 
     private void postRecipientLegalAddressSercq(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
-        try {
+        final String[] verifCode = {verificationCode};
+        Assertions.assertDoesNotThrow(() -> {
             if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                verifCode[0] = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-            throw httpStatusCodeException;
-
-        }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification).verificationCode(verifCode[0])));
+        });
     }
 
     @And("viene disabilitato il servizio SERCQ SEND")
-    public void vieneDisabilitatoSercqDi() {
+    public void vieneDisabilitatoSercq() {
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
@@ -581,13 +578,11 @@ public class RicezioneNotificheWebSteps {
 
     @Then("vengono accettati i TOS")
     public void vengonoAccettagiTosSercq() {
-        try {
+        Assertions.assertDoesNotThrow(() -> {
             ConsentAction consentAction = new ConsentAction();
             consentAction.setAction(ConsentAction.ActionEnum.ACCEPT);
             this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS, consentAction, "default");
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+        });
     }
 
     @When("viene richiesto l'inserimento della pec {string}")

@@ -310,13 +310,52 @@ Feature: Abilitazione domicilio digitale
 
 
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_12] Inserimento indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente - PG
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    Then viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root"
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_13] Modifica indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente - PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    Then viene inserito un recapito legale "example3@pecSuccess.it" modificando recapito esistente per il comune "Comune_Root"
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_13] Modifica indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente - PG
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    Then viene inserito un recapito legale "example3@pecSuccess.it" modificando recapito esistente per il comune "Comune_Root"
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_16] Attivazione servizio SERCQ e aggiunta recapito di cortesia email - PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_16] Attivazione servizio SERCQ e aggiunta recapito di cortesia email - PG
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica - PF
+    Given si predispone addressbook per l'utente "Mario Gherkin"
+    And viene attivato il servizio SERCQ SEND per recapito principale
+    Given viene generata una nuova notifica
+      | subject | invio notifica a Gherkin |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Gherkin
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    Then
 
-#TODO: migliorare con un pò di assertion le chiamate e/o con verifica dell'assenza di errori
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_12] Inserimento indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente - PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    Then viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root"
+
+  #TODO: migliorare con un pò di assertion le chiamate e/o con verifica dell'assenza di errori
   #TODO: attenzione a mantenere l'annotation per limitare la concorrenza
   #TODO: viene usata anche sharedStep valutare se spostare gli step (creati appositamente per il test)
   @addressBook1
@@ -337,4 +376,3 @@ Feature: Abilitazione domicilio digitale
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "Comune_Root"
     And viene verificata la presenza di recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
     And viene verificata la presenza di recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
-    And viene cancellata l'email di cortesia per il comune "Comune_Root"
