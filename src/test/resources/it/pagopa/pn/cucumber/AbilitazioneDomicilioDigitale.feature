@@ -216,6 +216,10 @@ Feature: Abilitazione domicilio digitale
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And si verifica che gli elementi di timeline associati alla notifica siano 4
+    And si verifica che lo stato "DELIVERING" sia assente
+    Then si verifica che il timestamp dell'evento di Feedback è uguale a quello dell'evento "AAR_GENERATION"
+      | NULL | NULL |
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Mario Cucumber"

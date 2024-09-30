@@ -121,6 +121,69 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
+    @And("si verifica che gli elementi di timeline associati alla notifica siano {int}")
+    public void countTimelineEvents(){
+        PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
+        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV23(
+                statusHistory -> statusHistory
+                        .getStatus()
+                        .getValue().equals("DELIVERED")
+        );
+
+        PnPollingServiceStatusRapidV23 statusRapidV23 = (PnPollingServiceStatusRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+
+        PnPollingResponseV23 pnPollingResponseV23 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value("DELIVERED")
+                        .pnPollingPredicate(pnPollingPredicate)
+                        .build());
+        log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV23.getNotification().getNotificationStatusHistory());
+        try {
+            Assertions.assertTrue(pnPollingResponseV23.getResult());
+            Assertions.assertNotNull(pnPollingResponseV23.getNotificationStatusHistoryElement());
+            sharedSteps.setSentNotification(pnPollingResponseV23.getNotification());
+
+            List<TimelineElementV23> timelineElements = pnPollingResponseV23.getNotification().getTimeline();
+            Assertions.assertEquals(4, timelineElements.size(), "Expected exactly 4 events in the status history");
+
+            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + pnPollingResponseV23.getNotificationStatusHistoryElement());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @And("si verifica che lo stato {string} sia assente")
+    public void checkStatusNotPresent(String status){
+        PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
+        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV23(
+                statusHistory -> statusHistory
+                        .getStatus()
+                        .getValue().equals(status)
+        );
+
+        PnPollingServiceStatusRapidV23 statusRapidV23 = (PnPollingServiceStatusRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+
+        PnPollingResponseV23 pnPollingResponseV23 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value(status)
+                        .pnPollingPredicate(pnPollingPredicate)
+                        .build());
+        log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV23.getNotification().getNotificationStatusHistory());
+        try {
+            Assertions.assertTrue(pnPollingResponseV23.getResult());
+            Assertions.assertNotNull(pnPollingResponseV23.getNotificationStatusHistoryElement());
+            sharedSteps.setSentNotification(pnPollingResponseV23.getNotification());
+
+            List<NotificationStatusHistoryElement> history = pnPollingResponseV23.getNotification().getNotificationStatusHistory();
+            boolean hasDeliveringState = history.stream().anyMatch(event -> "DELIVERING".equals(event.getStatus().getValue()));
+            Assertions.assertFalse(hasDeliveringState, "No event should have the status " + status);
+
+            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + pnPollingResponseV23.getNotificationStatusHistoryElement());
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
     @Then("vengono letti gli eventi fino allo stato della notifica {string} V1")
     public void readingEventUpToTheStatusOfNotificationV1(String status) {
         String iun;
@@ -2777,6 +2840,29 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("timestamp " + timelineEventCategory + " is after or equal timestamp SEND_COURTESY_MESSAGE?: " + test);
 
         Assertions.assertTrue(test);
+    }
+
+    @Then("si verifica che il timestamp dell'evento di Feedback è uguale a quello dell'evento {string}")
+    public void verificaTimestampFeedbackAar(String timelineEventCategory, @Transpose DataTest dataFromTest){
+
+
+            TimelineElementV23 timelineElementCategory = getAndStoreTimelineByB2b(timelineEventCategory, dataFromTest);
+            TimelineElementV23 timelineElementAar = getAndStoreTimelineByB2b("AAR_GENERATION", dataFromTest);
+
+
+            Duration waitingForReadCourtesyMessage = sharedSteps.getWaitingForReadCourtesyMessage();
+
+            OffsetDateTime timestampEventCategory = timelineElementCategory.getTimestamp();
+            OffsetDateTime timestampEventSendCourtesyMessage = timelineElementAar.getTimestamp();
+            OffsetDateTime timestampEventSendCourtesyMessageWithWaitingTime = timestampEventSendCourtesyMessage.plus(waitingForReadCourtesyMessage);
+
+            Boolean test = timestampEventCategory.isEqual(timestampEventSendCourtesyMessageWithWaitingTime) || timestampEventCategory.isAfter(timestampEventSendCourtesyMessageWithWaitingTime);
+
+            log.info("timestamp " + timelineEventCategory + ": " + timestampEventCategory);
+            log.info("timestamp SEND_COURTESY_MESSAGE ( +" + waitingForReadCourtesyMessage + " minutes): " + timestampEventSendCourtesyMessageWithWaitingTime);
+            log.info("timestamp " + timelineEventCategory + " is after or equal timestamp SEND_COURTESY_MESSAGE?: " + test);
+
+            Assertions.assertTrue(test);
     }
 
     @And("download attestazione opponibile AAR")
