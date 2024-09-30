@@ -12,7 +12,7 @@ public interface IPnParserLegalFact {
 
     @Getter
     enum LegalFactTypeTitle {
-        TYPE_TITLE_NOTIFICA_DOWNTIME(LegalFactType.LEGALFACT_NOTIFICA_DOWNTIME, "Attestazione opponibile a terzi"),
+        TYPE_TITLE_NOTIFICA_DOWNTIME(LegalFactType.LEGALFACT_NOTIFICA_DOWNTIME, "Attestazione opponibile a terzi: malfunzionamento e ripristino"),
         TYPE_TITLE_NOTIFICA_DIGITALE(LegalFactType.LEGALFACT_NOTIFICA_DIGITALE, "Attestazione opponibile a terzi: notifica digitale"),
         TYPE_TITLE_NOTIFICA_MANCATO_RECAPITO(LegalFactType.LEGALFACT_NOTIFICA_MANCATO_RECAPITO,"Attestazione opponibile a terzi: mancato recapito digitale"),
         TYPE_TITLE_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO(LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO,"Attestazione opponibile a terzi: notifica presa in carico"),

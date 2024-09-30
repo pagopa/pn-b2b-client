@@ -173,8 +173,8 @@ public class LegalFactContentVerifySteps {
     }
 
     private void assertLegalFactType(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactType) {
-        Assertions.assertEquals(pnParserLegalFactResponse.getResponse().getField(),
-                IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType)));
+        Assertions.assertEquals(IPnParserLegalFact.LegalFactTypeTitle.getTitleByType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType)),
+                pnParserLegalFactResponse.getResponse().getField());
     }
 
     private void assertLegalFactFieldValue(PnParserLegalFactResponse pnParserLegalFactResponse, String legalFactField, String legalFactValue) {
