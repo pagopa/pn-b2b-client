@@ -15,7 +15,10 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -751,4 +754,124 @@ public class RicezioneNotificheWebSteps {
             throw new RuntimeException(e);
         }
     }
+
+    private void postRecipientLegalAddressSercq(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
+        final String[] verifCode = {verificationCode};
+        Assertions.assertDoesNotThrow(() -> {
+            if (inserimento) {
+                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification)));
+                verifCode[0] = this.externalClient.getVerificationCode(addressVerification);
+            }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification).verificationCode(verifCode[0])));
+        });
+    }
+
+    @And("viene disabilitato il servizio SERCQ SEND")
+    public void vieneDisabilitatoSercq() {
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.SERCQ);
+                log.info("SERCQ DISABLED");
+            }
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("SERCQ NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @Then("vengono accettati i TOS")
+    public void vengonoAccettagiTosSercq() {
+        Assertions.assertDoesNotThrow(() -> {
+            ConsentAction consentAction = new ConsentAction();
+            consentAction.setAction(ConsentAction.ActionEnum.ACCEPT);
+            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS, consentAction, "default");
+        });
+    }
+
+    @And("viene verificata l' assenza di pec inserite per l'utente {string}")
+    public void viewedPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            Assertions.assertTrue(legalAddressByRecipient.isEmpty());
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata l' assenza di pec inserite per l'utente {string} per il comune {string}")
+    public void viewedNoPecPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+
+            Assertions.assertFalse(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di pec inserite per l'utente {string} per il comune {string}")
+    public void viewedPecPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+
+            Assertions.assertTrue(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene verificata la presenza di Sercq attivo l'utente {string} per il comune {string}")
+    public void viewedSercqPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId())
+                            &&  "SERCQ".equals(address.getChannelType()));
+
+            Assertions.assertTrue(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+    @And("viene attivato il servizio SERCQ SEND per recapito principale")
+    public void attivazioneSercqSend() {
+        postRecipientLegalAddressSercq("default", "default", null, true);
+    }
+
+    @And("viene attivato il servizio SERCQ SEND per il comune {string}")
+    public void attivazioneSercqPerEnteSpecifico(String senderIdPa) {
+        postRecipientLegalAddressSercq(senderIdPa, "default", null, true);
+    }
+
 }
+
+
