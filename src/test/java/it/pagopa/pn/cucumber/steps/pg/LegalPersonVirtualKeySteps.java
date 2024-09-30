@@ -7,18 +7,16 @@ import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import lombok.Setter;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.*;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyBody;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyConsent;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonVirtualKeyServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestClientResponseException;
 
 public class LegalPersonVirtualKeySteps {
@@ -99,18 +97,23 @@ public class LegalPersonVirtualKeySteps {
         selectPGUser(user);
         BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
         //TO-DO controllare se la chiamata al tos va bene/funge in questo modo.
-        BffTosPrivacyBody bffTosPrivacyBody = new BffTosPrivacyBody().privacy(new BffTosPrivacyActionBody().version(TOS_VERSION).action(actionEnum));
-        Assertions.assertDoesNotThrow(() -> tosPrivacyClient.acceptTosPrivacyV1(bffTosPrivacyBody));
+        BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_DEST_B2B);
+        Assertions.assertDoesNotThrow(() -> tosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
     }
 
     @Given("l'utente {string} controlla l'accettazione dei tos {string}")
     public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
         selectPGUser(user);
-        BffTosPrivacyConsent privacyConsent = Assertions.assertDoesNotThrow(tosPrivacyClient::getTosPrivacyV1);
+        ConsentType consentType = ConsentType.TOS_DEST_B2B;
+        List<BffConsent> privacyConsent = Assertions.assertDoesNotThrow(() -> tosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
         Assertions.assertNotNull(privacyConsent);
-        Assertions.assertNotNull(privacyConsent.getPrivacy());
-        boolean checkStatus = tosStatus.equalsIgnoreCase(TOS_ACCEPTED);
-        Assertions.assertEquals(checkStatus, privacyConsent.getPrivacy().getAccepted());
+        Assertions.assertFalse(privacyConsent.isEmpty());
+        //devo capire come recuperare il recipientId dopo la creazione della public key
+        privacyConsent.forEach(data -> {
+            Assertions.assertNotNull(data.getConsentType());
+            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_DEST_B2B));
+            Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
+        });
     }
 
     @Then("controllo che la chiave sia in stato {string} per l'utente {string}")
@@ -266,6 +269,11 @@ public class LegalPersonVirtualKeySteps {
     @After("@removeAllVirtualKey")
     public void deleteZip() {
         selectPGUser("amministratore");
+        responseNewVirtualKeys.stream()
+            .filter(data -> data.state.getState().equals(VirtualKeyState.BLOCKED.getState()))
+            .findFirst()
+            .ifPresent(data -> virtualKeyCancellation(data.response.getId()));
+
         responseNewVirtualKeys.forEach(data -> {
             if (data.state.getState().equals(VirtualKeyState.ENABLE.getState())) {
                 Assertions.assertDoesNotThrow(() -> changeVirtualKey(OperationStatus.BLOCK, data));

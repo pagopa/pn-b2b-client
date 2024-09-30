@@ -43,27 +43,27 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
 
     @Override
     public BffPublicKeysResponse getPublicKeysV1(Integer limit, String lastKey, String createdAt, Boolean showPublicKey) throws RestClientException {
-        return publicKeysApi.getPublicKeysV1(null, null, null, null, null, limit, lastKey, createdAt, showPublicKey);
+        return publicKeysApi.getPublicKeysV1(limit, lastKey, createdAt, showPublicKey);
     }
 
     @Override
     public BffPublicKeyResponse newPublicKeyV1(BffPublicKeyRequest bffPublicKeyRequest) throws RestClientException {
-        return publicKeysApi.newPublicKeyV1(null, null, null, bffPublicKeyRequest, null, null);
+        return publicKeysApi.newPublicKeyV1(bffPublicKeyRequest);
     }
 
     @Override
     public BffPublicKeyResponse rotatePublicKeyV1(String kid, BffPublicKeyRequest bffPublicKeyRequest) throws RestClientException {
-        return publicKeysApi.rotatePublicKeyV1(null, null, null, kid, bffPublicKeyRequest, null, null);
+        return publicKeysApi.rotatePublicKeyV1(kid, bffPublicKeyRequest);
     }
 
     @Override
     public void deletePublicKeyV1(String kid) throws RestClientException {
-        publicKeysApi.deletePublicKeyV1(null, null, null, kid, null, null);
+        publicKeysApi.deletePublicKeyV1(kid);
     }
 
     @Override
     public void changeStatusPublicKeyV1(String kid, String status) throws RestClientException {
-        publicKeysApi.changeStatusPublicKeyV1(null, null, null, kid, status, null, null);
+        publicKeysApi.changeStatusPublicKeyV1(kid, status);
     }
 
     @Override
@@ -71,6 +71,9 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
         switch (bearerToken) {
             case PG_1 -> {
                 this.publicKeysApi.setApiClient(newApiClient(this.basePath, gherkinSrlBearerToken));
+            }
+            case PG_2 -> {
+                this.publicKeysApi.setApiClient(newApiClient(this.basePath, cucumberSpaBearerToken));
             }
             default ->  {
                 this.publicKeysApi.setApiClient(newApiClient(this.basePath, cucumberSpaBearerToken));

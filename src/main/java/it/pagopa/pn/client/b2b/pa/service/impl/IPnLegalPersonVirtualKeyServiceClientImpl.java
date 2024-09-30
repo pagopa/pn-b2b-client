@@ -48,22 +48,22 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
 
     @Override
     public void changeStatusVirtualKeys(String kid, BffVirtualKeyStatusRequest bffNewVirtualKeyRequest) throws RestClientException {
-        virtualKeysApi.changeStatusVirtualKeysV1(null, null, null, kid, bffNewVirtualKeyRequest, null, null);
+        virtualKeysApi.changeStatusVirtualKeysV1(kid, bffNewVirtualKeyRequest);
     }
 
     @Override
     public BffNewVirtualKeyResponse createVirtualKey(BffNewVirtualKeyRequest requestNewVirtualKey) throws RestClientException {
-        return virtualKeysApi.newVirtualKeyV1(null, null, null, requestNewVirtualKey, null, null);
+        return virtualKeysApi.newVirtualKeyV1(requestNewVirtualKey);
     }
 
     @Override
     public void deleteVirtualKey(String kid) throws RestClientException {
-        virtualKeysApi.deleteVirtualKeyV1(null, null, null, kid, null, null);
+        virtualKeysApi.deleteVirtualKeyV1(kid);
     }
 
     @Override
     public BffVirtualKeysResponse getVirtualKeys(Integer limit, String lastKey, String lastUpdate, Boolean showVirtualKey) throws RestClientException {
-        return virtualKeysApi.getVirtualKeysV1(null, null, null, null, null, limit, lastKey, lastUpdate, showVirtualKey);
+        return virtualKeysApi.getVirtualKeysV1(limit, lastKey, lastUpdate, showVirtualKey);
     }
 
     @Override

@@ -1527,8 +1527,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/feat/PN-12583/docs/openapi/api-internal-pn-bff-pg-apikeys.yaml
-                            </inputSpec>
+                                https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/develop/docs/openapi/api-external-pn-bff-pg-apikeys.yaml                            </inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1566,7 +1565,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <inputSpec>
-                                https://raw.githubusercontent.com/pagopa/pn-bff/54a1219d813c1bf61a9530ccd9e4020857d56506/docs/openapi/api-external-pn-bff-tos-privacy.yaml</inputSpec>
+                                https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/develop/docs/openapi/api-external-pn-bff-tos-privacy.yaml                            </inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>

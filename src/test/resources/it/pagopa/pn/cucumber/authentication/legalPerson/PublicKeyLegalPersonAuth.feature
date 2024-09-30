@@ -2,45 +2,38 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_1] Un Amministratore PG censisce una chiave pubblica per la Persona Giuridica dopo averla cancellata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLATA"
-    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "CANCELLATA"
-    Then la chiave pubblica in stato "ATTIVA" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
+    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "CANCELLED"
+    Then la chiave pubblica in stato "ACTIVE" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_2] Un Amministratore PG censisce una chiave pubblica per la Persona Giuridica dopo averla bloccata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
-    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "BLOCCATA"
-    Then la chiave pubblica in stato "ATTIVA" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    Then la chiave pubblica in stato "ACTIVE" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_3] Un Amministratore PG riattiva una chiave pubblica per la Persona Giuridica dopo averla bloccata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
-    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "BLOCCATA"
-    Then la chiave pubblica in stato "ATTIVA" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    Then la chiave pubblica in stato "ACTIVE" viene correttamente visualizzata nell'elenco delle chiavi pubbliche per la PG
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_4] Un Amministratore PG cancella una chiave pubblica per la Persona Giuridica dopo averla ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "RUOTATA"
-    Then la chiave pubblica in stato "CANCELLATA" non è più presente nell'elenco delle chiavi pubbliche per la PG
-
-  #TODO questo scenario non torna non si puo bloccare una chiave ruotata
-  @publicKeyCreation
-  Scenario: [LEGAL_PERSON_AUTH_5] Un Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "RUOTATA"
-    Then la chiave pubblica in stato "BLOCCATA" non è più presente nell'elenco delle chiavi pubbliche per la PG
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ROTATED"
+    Then la chiave pubblica in stato "CANCELLED" non è più presente nell'elenco delle chiavi pubbliche per la PG
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_5] Un Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiave pubblica in stato "BLOCCATA" non è più presente nell'elenco delle chiavi pubbliche per la PG
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiave pubblica in stato "BLOCKED" non è più presente nell'elenco delle chiavi pubbliche per la PG
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_6] Un Amministratore PG con un gruppo associato censisce una chiave pubblica per la Persona Giuridica
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" crea una chiave pubblica per la PG
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized to access this resource with an explicit deny"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_7] Un utente PG censisce una chiave pubblica per la Persona Giuridica
@@ -49,50 +42,51 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_8] Un Amministratore PG censisce una chiave pubblica duplicata per la Persona Giuridica
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "RICREA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_9] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica senza una chiave attiva con una chiave bloccata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
-    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "BLOCCATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_10] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica con una chiave associata cancellata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLATA"
-    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "CANCELLATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
+    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "CANCELLED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_11] Un utente PG ruota la chiave pubblica per la Persona Giuridica
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "NON AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "NON AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_12] Un Amministratore PG con un gruppo associato ruota la chiave pubblica per la Persona Giuridica
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "RUOTA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_13] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica già ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "RUOTATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ROTATED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_14] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica con una chiave ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_15] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica senza una chiave associata
     When l'utente "AMMINISTRATORE" "RUOTA" una chiave pubblica per la PG che non esiste
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Then la chiamata restituisce un errore con status code 404 riportante il messaggio "GENERIC_ERROR"
+    #correggere message
 
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_16] Un utente (PG / Amministratore con gruppo associato) recupera la lista delle chiavi pubbliche
@@ -105,52 +99,52 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_17] Un Amministratore PG blocca la chiave pubblica della PG, la quale è già bloccata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
-    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCCATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_18] Un Amministratore PG blocca la chiave pubblica della PG con chiave pubblica cancellata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLATA"
-    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "CANCELLATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_19] Un Amministratore PG con un gruppo associato blocca la chiave pubblica della PG
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized to access this resource with an explicit deny"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_20] Un Amministratore PG blocca la chiave pubblica per la Persona Giuridica con una chiave bloccata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
     When l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_21] Un utente PG blocca la chiave pubblica della PG
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "NON AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "NON AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_22] Un Amministratore PG riattiva la chiave pubblica della PG, la quale risulta essere già stata riattivata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_23] Un Amministratore PG riattiva la chiave pubblica della PG, la quale risulta essere già stata cancellata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLATA"
-    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "CANCELLATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
+    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "CANCELLED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_24] Un Amministratore PG riattiva la chiave pubblica della PG, la quale risulta essere stata ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "RUOTATA"
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "ROTATED"
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_25] Un Amministratore PG riattiva la chiave pubblica della PG, la quale risulta essere scaduta
@@ -165,9 +159,9 @@ Feature: Public key legal Person Authentication
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "<status>"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "<message>"
     Examples:
-      | status   | message |
-      | BLOCCATA | TODO    |
-      | RUOTATA  | TODO    |
+      | status   | message                                                                 |
+      | BLOCCATA | User is not authorized to access this resource with an explicit deny    |
+      | RUOTATA  | User is not authorized to access this resource with an explicit deny    |
 
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_27] Un utente PG riattiva la chiave pubblica della PG
@@ -181,21 +175,21 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_28] Un Amministratore PG riattiva la chiave pubblica della PG dopo averne censita un’altra che risulta attiva
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCCATA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "BLOCKED"
     When l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "BLOCCATA"
+    And l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
     Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_29] Un Amministratore PG cancella la chiave pubblica della PG che è in stato attivo
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_30] Un utente PG cancella la chiave pubblica della PG
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
-    When l'utente "NON AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
+    When l'utente "NON AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
 
   @publicKeyCreation
@@ -207,13 +201,13 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario: [LEGAL_PERSON_AUTH_32] Un Amministratore PG con un gruppo associato cancella la chiave pubblica della PG ruotata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "RUOTATA"
-    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "CANCELLA" la chiave pubblica per la PG che si trova in stato "RUOTATA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ROTATED"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
 
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_33] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     And l'utente "<role>" "ACCETTA" i tos
     And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
@@ -225,7 +219,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     And l'utente "<role>" "NON ACCETTA" i tos
     And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
@@ -249,7 +243,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation
   Scenario Outline: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ATTIVA"
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     And l'utente "<role>" "ACCETTA" i tos
     And l'utente "<role>" censisce una virtual key per sè stesso
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "INESISTENTE"
@@ -259,21 +253,9 @@ Feature: Public key legal Person Authentication
       | AMMINISTRATORE     |
       | NON AMMINISTRATORE |
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  #TODO questo scenario non torna non si puo bloccare una chiave ruotata
+  @publicKeyCreation
+  Scenario: [LEGAL_PERSON_AUTH_5] Un Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ROTATED"
+    Then la chiave pubblica in stato "BLOCKED" non è più presente nell'elenco delle chiavi pubbliche per la PG

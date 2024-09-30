@@ -161,7 +161,7 @@ Feature: Virtual key legal Person Authentication
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "ENABLE" per sè stesso e riceve errore 403
     Examples:
       | OPERATION |
@@ -215,7 +215,7 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ATTIVA"
+    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "BLOCK" per sè stesso e riceve errore 403
     Examples:
       | OPERATION |

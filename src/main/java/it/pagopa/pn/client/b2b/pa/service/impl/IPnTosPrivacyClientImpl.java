@@ -2,8 +2,9 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.api.external.bff.tos.privacy.UserConsentsApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyBody;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyConsent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.service.IPnTosPrivacyClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +13,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -44,13 +47,23 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     }
 
     @Override
-    public void acceptTosPrivacyV1(BffTosPrivacyBody bffTosPrivacyBody) throws RestClientException {
-        userConsentsApi.acceptTosPrivacyV1(bffTosPrivacyBody);
+    public void acceptTosPrivacyV1(List<BffTosPrivacyActionBody> bffTosPrivacyBody) throws RestClientException {
+        userConsentsApi.acceptPgTosPrivacyV1(bffTosPrivacyBody);
     }
 
     @Override
-    public BffTosPrivacyConsent getTosPrivacyV1() throws RestClientException {
-        return userConsentsApi.getTosPrivacyV1();
+    public List<BffConsent> getTosPrivacyV1(List<ConsentType> consentTypes) throws RestClientException {
+        return userConsentsApi.getPgConsentByType(consentTypes);
+    }
+
+    @Override
+    public void acceptTosPrivacyV2(List<BffTosPrivacyActionBody> bffTosPrivacyBody) throws RestClientException {
+        userConsentsApi.acceptTosPrivacyV2(bffTosPrivacyBody);
+    }
+
+    @Override
+    public List<BffConsent> getTosPrivacyV2(List<ConsentType> consentTypes) throws RestClientException {
+        return userConsentsApi.getTosPrivacyV2(consentTypes);
     }
 
     @Override

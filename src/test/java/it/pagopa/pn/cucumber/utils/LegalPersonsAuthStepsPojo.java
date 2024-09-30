@@ -2,6 +2,9 @@ package it.pagopa.pn.cucumber.utils;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -10,7 +13,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@Component
 public class LegalPersonsAuthStepsPojo {
 
     private List<LegalPersonAuthExpectedResponseWithStatus> responseWithStatusList;
