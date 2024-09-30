@@ -532,6 +532,8 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
             case "Lucio Anneo Seneca" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            case "Gherkin spa" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             default -> throw new IllegalArgumentException();
         }
     }
@@ -555,6 +557,8 @@ public class RicezioneNotificheWebSteps {
             this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
         } catch (HttpStatusCodeException httpStatusCodeException) {
             sharedSteps.setNotificationError(httpStatusCodeException);
+            throw httpStatusCodeException;
+
         }
     }
 
@@ -833,6 +837,27 @@ public class RicezioneNotificheWebSteps {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
                     .anyMatch(address -> senderId.equals(address.getSenderId()));
+
+            Assertions.assertTrue(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+
+
+    @And("viene verificata la presenza di Sercq attivo l'utente {string} per il comune {string}")
+    public void viewedSercqPerEnte(String user, String senderId) {
+        selectUser(user);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId())
+                            &&  "SERCQ".equals(address.getChannelType()));
 
             Assertions.assertTrue(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {

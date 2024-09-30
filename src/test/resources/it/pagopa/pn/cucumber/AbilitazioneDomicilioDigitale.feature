@@ -33,75 +33,282 @@ Feature: Abilitazione domicilio digitale
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
     Then vengono accettati i TOS
 
+#
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC DA PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene verificata l' assenza di pec inserite per l'utente "Mario Cucumber"
+    Then vengono accettati i TOS
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC DA PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ DA PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber"
+
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    Then vengono accettati i TOS
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_8] Attivazione del servizio SERCQ SEND per recapito specifico per ente per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
+    Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
+    And viene verificata l' assenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_Root"
+    Then vengono accettati i TOS
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
+    And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
+    Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_2"
+    Then vengono accettati i TOS
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente per ente per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
+    #controllo su sercQ attivo?
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente da PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
+
+
+  #TODO
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_14] Elimina indirizzo PEC come recapito specifico per ente con la presenza di una PEC già associata
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
+    Then viene rimossa se presente la pec di piattaforma di "Mario Cucumber"
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_15] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    Then viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene disabilitato il servizio SERCQ SEND
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_22] Attivazione del servizio SERCQ SEND per recapito specifico per più enti e presenza del recapito legale PEC princi per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_2"
+    Then vengono accettati i TOS
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ per PF
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ per PG
+    Given si predispone addressbook per l'utente "Gherkin spa"
+    Then viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Gherkin spa
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+      | details_recIndex | 0 |
+
+
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
+    Given si predispone addressbook per l'utente "Gherkin spa"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario Gherkin spa
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And si verifica la corretta acquisizione della notifica
+    And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+      | details_recIndex | 0 |
+
+
+#verificare mittente notifica
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene inserito un recapito legale "test@fail.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Attestazione opponibile a terzi: mancato recapito digitale                                                 |
+
+
+
+ #verificare mittente notifica
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
+    Given si predispone addressbook per l'utente "Gherkin spa"
+    Then viene inserito un recapito legale "test@fail.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene generata una nuova notifica
+      | subject | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
+    And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
+    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
+    Then si verifica se il legalFact contiene i campi
+      | TITLE                                     | Attestazione opponibile a terzi: mancato recapito digitale
+
+
+
+
+
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_72] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato da PG
+    Given si predispone addressbook per l'utente "Gherkin spa"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    #Aver un utente con recapito PEC generale
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | Gherkin spa |
+      | taxId | CLMCST42R12D969Z |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
+
+    #
+
+
+
+
+
+
+#
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC DA PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example3@pecSuccess.it"
-    Then viene attivato il servizio SERCQ SEND come recapito principale
-    And viene verificata l' assenza di pec inserite per l'utente "Lucio Anneo Seneca"
-    Then Viene richiesto l'ultimo consenso di tipo "TOS"
-    And Il recupero del consenso non ha prodotto errori
-    And Il consenso è accettato
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene verificata l' assenza di pec inserite per l'utente "Mario Cucumber"
+    Then vengono accettati i TOS
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ DA PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ DA PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    Then viene attivato il servizio SERCQ SEND come recapito principale
+    Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example3@pecSuccess.it"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber"
 
 
-  #TODO vedere i tos
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    Then viene attivato il servizio SERCQ SEND come recapito principale
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    Then vengono accettati i TOS
 
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_8] Attivazione del servizio SERCQ SEND per recapito specifico per ente per PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_8] Attivazione del servizio SERCQ SEND per recapito specifico per ente per PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    #And viene cancellata la pec per il comune "Comune_Root"
-    And viene verificata l' assenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_Root"
-    Then Viene richiesto l'ultimo consenso di tipo "TOS"
-    And Il recupero del consenso non ha prodotto errori
-    And Il consenso è accettato
+    And viene verificata l' assenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_Root"
+    Then vengono accettati i TOS
 
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente per PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_9] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente per PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_2"
-    Then Viene richiesto l'ultimo consenso di tipo "TOS"
-    And Il recupero del consenso non ha prodotto errori
-    And Il consenso è accettato
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_2"
+    Then vengono accettati i TOS
 
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente per ente per PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente per ente per PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    Then viene attivato il servizio SERCQ SEND come recapito principale
+    Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
+    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
     #controllo su sercQ attivo?
 
 
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente da PF
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente da PF
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
 
 
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_14] Elimina indirizzo PEC come recapito specifico per ente con la presenza di una PEC già associata
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
-    And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
-    Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_2"
-    Then Viene richiesto l'ultimo consenso di tipo "TOS"
-    And Il recupero del consenso non ha prodotto errori
-    And Il consenso è accettato
+    Then viene rimossa se presente la pec di piattaforma di "Mario Cucumber"
+
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_15] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente per PF
+    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    Then viene attivato il servizio SERCQ SEND per il comune "Comune_1"
+    Then viene disabilitato il servizio SERCQ SEND
+
+
+
+
+
+
+
+
 
 
 
