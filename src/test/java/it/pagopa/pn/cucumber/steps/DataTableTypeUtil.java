@@ -2,8 +2,10 @@ package it.pagopa.pn.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.DataTableType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParameter;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static java.util.Optional.ofNullable;
 
 
 public class DataTableTypeUtil {
@@ -681,6 +684,17 @@ public class DataTableTypeUtil {
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
+    }
+
+    @DataTableType
+    public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) {
+        CalculateRequestParameter requestParameter = new CalculateRequestParameter();
+        requestParameter.setGeokey(getValue(data, "geokey"));
+        requestParameter.setProduct(ofNullable(getValue(data, "product")).map(ShipmentCalculateRequest.ProductEnum::fromValue).orElse(null));
+        requestParameter.setNumSides(ofNullable(getValue(data, "numSides")).map(Integer::valueOf).orElse(null));
+        requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
+        requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));
+        return requestParameter;
     }
 
 
