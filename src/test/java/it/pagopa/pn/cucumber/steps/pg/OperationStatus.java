@@ -9,7 +9,7 @@ public enum OperationStatus {
     ROTATE("RUOTA", VirtualKeyState.ROTATE),
     BLOCK("BLOCCA", VirtualKeyState.BLOCK),
     REACTIVATE("RIATTIVA", VirtualKeyState.ENABLE),
-    DELETE("ELIMINA", VirtualKeyState.CANCELLED);
+    DELETE("CANCELLA", VirtualKeyState.CANCELLED);
 
     private String value;
     private VirtualKeyState status;

@@ -4,10 +4,11 @@ public enum VirtualKeyState {
     BLOCK("BLOCK"),
     BLOCKED("BLOCKED"),
     ROTATE("ROTATE"),
-    ROTATED("ROTATE"),
+    ROTATED("ROTATED"),
     ENABLE("ENABLE"),
-    REACTIVE("ENABLE"),
-    CANCELLED("CANCELLED");
+    REACTIVE("ENABLED"),
+    CANCELLED("CANCELLED"),
+    UNKNOWN("UNKNOWN");
 
     private String state;
 

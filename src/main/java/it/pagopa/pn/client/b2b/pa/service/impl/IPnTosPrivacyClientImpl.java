@@ -72,6 +72,9 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
             case PG_1 -> {
                 this.userConsentsApi.setApiClient(newApiClient(gherkinSrlBearerToken));
             }
+            case PG_2 -> {
+                this.userConsentsApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            }
             default ->  {
                 this.userConsentsApi.setApiClient(newApiClient(cucumberSpaBearerToken));
             }

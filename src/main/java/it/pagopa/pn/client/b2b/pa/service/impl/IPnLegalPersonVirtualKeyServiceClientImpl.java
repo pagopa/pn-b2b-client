@@ -72,6 +72,9 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
             case PG_1 -> {
                 this.virtualKeysApi.setApiClient(newApiClient(gherkinSrlBearerToken));
             }
+            case PG_2 -> {
+                this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            }
             default ->  {
                 this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
             }

@@ -66,7 +66,9 @@ public class LegalPersonVirtualKeySteps {
 
     @Given("l'utente {string} {string} una virtual key in stato {string} per l'utente {string} e riceve errore {int}")
     public void lUtenteFaDelleOperazioniSuUnaVirtualKeyPerLUtenteSenzaSuccesso(String user, String operation, String startOperation, String userVirtualKeyToChange, Integer errorCode) {
-        RestClientResponseException exception = Assertions.assertThrows(RestClientResponseException.class, ()-> executeOperation(user, OperationStatus.valueOf(operation), VirtualKeyState.valueOf(startOperation), userVirtualKeyToChange));
+        OperationStatus operationToDo = operation != null ? OperationStatus.fromValue(operation) : null;
+        VirtualKeyState startState = startOperation != null ? VirtualKeyState.valueOf(startOperation) : null;
+        RestClientResponseException exception = Assertions.assertThrows(RestClientResponseException.class, ()-> executeOperation(user, operationToDo, startState, userVirtualKeyToChange));
         Assertions.assertEquals(exception.getRawStatusCode(), errorCode);
     }
 
@@ -132,29 +134,34 @@ public class LegalPersonVirtualKeySteps {
         switch (operation) {
             case REGISTER -> {
                 BffNewVirtualKeyRequest requestNewVirtualKey = new BffNewVirtualKeyRequest();
+                requestNewVirtualKey.setName("TEST_VIRTUAL_KEY");
                 BffNewVirtualKeyResponse responseNewVirtualKey = virtualKeyServiceClient.createVirtualKey(requestNewVirtualKey);
                 Assertions.assertNotNull(responseNewVirtualKey);
                 responseNewVirtualKeys.add(new VirtualKeyExpectedResponse(responseNewVirtualKey, VirtualKeyState.ENABLE, userToChange));
             }
-            case ROTATE -> chengeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.ROTATED);
-            case BLOCK -> chengeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.BLOCKED);
-            case REACTIVATE -> chengeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.REACTIVE);
-            case DELETE -> responseNewVirtualKeys.stream()
-                .filter(data -> data.user.equals(userToChange))
-                .filter(data -> data.state.equals(startOperation))
-                .findFirst()
-                .ifPresentOrElse(data -> {
-                    virtualKeyCancellation(data.response.getId());
-                    data.setState(VirtualKeyState.CANCELLED);},
-                    () -> {
-                        if (startOperation.equals(UNKNOWN)) {
-                            virtualKeyCancellation(VIRTUAL_KEY_UNKNOW);
-                        } else {
-                            throw new AssertionFailedError("NOT FOUND VIRTUAL KEY TO DELETE");}});
+            case ROTATE -> changeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.ROTATED);
+            case BLOCK -> changeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.BLOCKED);
+            case REACTIVATE -> changeStatusFrom(operation, startOperation, userToChange, VirtualKeyState.REACTIVE);
+            case DELETE -> deleteFromStatus(startOperation, userToChange);
         }
     }
 
-    private void chengeStatusFrom(OperationStatus operation, VirtualKeyState startOperation, String userToChange, VirtualKeyState statusToSeet) {
+    private void deleteFromStatus(VirtualKeyState startOperation, String userToChange) {
+        responseNewVirtualKeys.stream()
+            .filter(data -> data.user.equals(userToChange))
+            .filter(data -> data.state.equals(startOperation))
+            .findFirst()
+            .ifPresentOrElse(data -> {
+                virtualKeyCancellation(data.response.getId());
+                data.setState(VirtualKeyState.CANCELLED);},
+                () -> {
+                    if (startOperation.getState().equals(UNKNOWN)) {
+                        virtualKeyCancellation(VIRTUAL_KEY_UNKNOW);
+                    } else {
+                        throw new AssertionFailedError("NOT FOUND VIRTUAL KEY TO DELETE");}});
+    }
+
+    private void changeStatusFrom(OperationStatus operation, VirtualKeyState startOperation, String userToChange, VirtualKeyState statusToSeet) {
         responseNewVirtualKeys.stream()
             .filter(data -> data.user.equals(userToChange) && data.state.equals(startOperation))
             .findFirst()
@@ -195,7 +202,8 @@ public class LegalPersonVirtualKeySteps {
     }
 
     private boolean checkVirtualKeyPresent(VirtualKeyExpectedResponse expected, VirtualKey actual) {
-        return expected.state.getState().equals(actual.getStatus().getValue()) && expected.response.getId().equals(actual.getId());
+        String expectedState = expected.state.getState().equals("ENABLE") ? "ENABLED" : expected.state.getState();
+        return expectedState.equals(actual.getStatus().getValue()) && expected.response.getId().equals(actual.getId());
     }
 
     private VirtualKeyExpectedResponse retrieveExpectedVirtualKey(String user, VirtualKeyState status) {
@@ -207,12 +215,13 @@ public class LegalPersonVirtualKeySteps {
     }
 
     private VirtualKey retrieveNewVirtualKey(String user, BffVirtualKeysResponse response) {
+        String denomination = retrieveUserName(user);
         return response.getItems()
                 .stream()
                 .filter(data -> data.getUser() != null && data.getUser().getDenomination() != null)
-                .filter(data -> data.getUser().getDenomination().equals(user))
-                .filter(data -> data.getStatus().getValue().equals(VirtualKeyState.ENABLE.getState()))
-                .filter(data -> notAlreadyPresent(user, data))
+                .filter(data -> data.getUser().getDenomination().equals(denomination))
+                .filter(data -> data.getStatus().getValue() != null && data.getStatus().getValue().equals("ENABLED"))
+                .filter(data -> notAlreadyPresent(denomination, data))
                 .findFirst()
                 .orElse(null);
     }
@@ -224,10 +233,11 @@ public class LegalPersonVirtualKeySteps {
     }
 
     private VirtualKey retrieveVirtualKeyWithStatus(BffVirtualKeysResponse response, VirtualKeyExpectedResponse expectedVirtualKey) {
+        String denomination = retrieveUserName(expectedVirtualKey.user);
         return response.getItems()
                 .stream()
                 .filter(data -> data.getUser() != null && data.getUser().getDenomination() != null)
-                .filter(data -> data.getUser().getDenomination().equals(expectedVirtualKey.user))
+                .filter(data -> data.getUser().getDenomination().equals(denomination))
                 .filter(data -> filterVirtualKeyCheck(expectedVirtualKey, data))
                 .filter(data -> data.getId().equals(expectedVirtualKey.response.getId()))
                 .filter(data -> data.getStatus().getValue().equals(expectedVirtualKey.state.getState()))
@@ -235,13 +245,30 @@ public class LegalPersonVirtualKeySteps {
                 .orElse(null);
     }
 
+    private String retrieveUserName(String user) {
+        String denomination;
+        switch (user.toLowerCase()) {
+            case "amministratore" -> {
+                denomination = "Dante Alighieri";
+            }
+            case "amministratore con gruppi" -> {
+                denomination = "Pippo Baudo";
+            }
+            case "pg user" -> {
+                denomination = "Rino Gaetano";
+            }
+            default -> throw new IllegalArgumentException("cannot use this User");
+        }
+        return denomination;
+    }
+
     void selectPGUser(String admin) {
         switch (admin.toLowerCase()) {
-            case "amministratore con gruppi" -> {
+            case "amministratore" -> {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
-            case "amministratore" -> {
+            case "amministratore con gruppi" -> {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
@@ -264,22 +291,30 @@ public class LegalPersonVirtualKeySteps {
             this.state = state;
             this.user = user;
         }
+
+        private VirtualKeyExpectedResponse(BffNewVirtualKeyResponse response) {
+            this.response = response;
+        }
     }
 
     @After("@removeAllVirtualKey")
-    public void deleteZip() {
+    public void removeVirtualKey() {
+        //se la chiave pubblica è cancellata devo riattivarla per eliminare le virtual key e poi ricancellarla.
         selectPGUser("amministratore");
-        responseNewVirtualKeys.stream()
-            .filter(data -> data.state.getState().equals(VirtualKeyState.BLOCKED.getState()))
+        BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
+        getVirtualKeys.getItems().stream()
+            .filter(data -> data.getStatus() != null && data.getStatus().getValue().equals(VirtualKeyState.BLOCKED.getState()))
             .findFirst()
-            .ifPresent(data -> virtualKeyCancellation(data.response.getId()));
+            .ifPresent(data -> virtualKeyCancellation(data.getId()));
 
-        responseNewVirtualKeys.forEach(data -> {
-            if (data.state.getState().equals(VirtualKeyState.ENABLE.getState())) {
-                Assertions.assertDoesNotThrow(() -> changeVirtualKey(OperationStatus.BLOCK, data));
-            }
-            if (!data.state.getState().equals(VirtualKeyState.CANCELLED.getState())) {
-                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.response.getId()));
+        getVirtualKeys.getItems().forEach(data -> {
+            if (data.getStatus().getValue().equals(VirtualKeyState.ENABLE.getState()) || data.getStatus().getValue().equals(VirtualKeyState.REACTIVE.getState())) {
+                BffVirtualKeyStatusRequest requestNewVirtualKey = new BffVirtualKeyStatusRequest();
+                requestNewVirtualKey.setStatus(BffVirtualKeyStatusRequest.StatusEnum.BLOCK);
+                Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.changeStatusVirtualKeys(data.getId(), requestNewVirtualKey));
+                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
+            } else if (!data.getStatus().getValue().equals(VirtualKeyState.BLOCKED.getState())){
+                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
             }
         });
     }
