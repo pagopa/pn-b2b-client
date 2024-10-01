@@ -36,7 +36,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Cucumber"
-    #Then viene attivato il servizio SERCQ SEND per recapito principale
+    Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber"
 
