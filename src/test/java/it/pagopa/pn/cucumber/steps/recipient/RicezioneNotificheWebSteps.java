@@ -917,8 +917,8 @@ public class RicezioneNotificheWebSteps {
     }
 
     @And("viene inserito un recapito legale {string}")
-    public void nuovoRecapitoLegaleNotValidOtp(String pec) {
-        postRecipientLegalAddress("default", pec, "x1223x", false);
+    public void nuovoRecapitoLegale(String pec) {
+        postRecipientLegalAddress("default", pec, null, true);
     }
 
 

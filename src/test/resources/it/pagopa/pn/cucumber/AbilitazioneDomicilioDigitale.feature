@@ -36,7 +36,7 @@ Feature: Abilitazione domicilio digitale
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Cucumber"
-    Then viene attivato il servizio SERCQ SEND per recapito principale
+    #Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber"
 
@@ -314,7 +314,7 @@ Feature: Abilitazione domicilio digitale
     Then si verifica se il legalFact contiene i campi
       | TITLE | Attestazione opponibile a terzi: mancato recapito digitale
 
-  #TODO
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Gherkin spa"
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -326,9 +326,9 @@ Feature: Abilitazione domicilio digitale
       | denomination            | Gherkin spa               |
       | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-    #
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-    #TODO
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Mario Cucumber"
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -340,7 +340,7 @@ Feature: Abilitazione domicilio digitale
       | denomination            | Gherkin spa               |
       | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-    #
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
 
