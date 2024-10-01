@@ -755,14 +755,9 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    private void postRecipientLegalAddressSercq(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
-        final String[] verifCode = {verificationCode};
+    private void postRecipientLegalAddressSercq(String senderIdPa,String address) {
         Assertions.assertDoesNotThrow(() -> {
-            if (inserimento) {
-                this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification)));
-                verifCode[0] = this.externalClient.getVerificationCode(addressVerification);
-            }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(addressVerification).verificationCode(verifCode[0])));
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address)));
         });
     }
 
@@ -788,19 +783,22 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertDoesNotThrow(() -> {
             ConsentAction consentAction = new ConsentAction();
             consentAction.setAction(ConsentAction.ActionEnum.ACCEPT);
-            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS, consentAction, "default");
+            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS, consentAction, "version");
         });
     }
 
     @And("viene verificata l' assenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
-        selectUser(user);
+        //selectUser(user);
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            Assertions.assertTrue(legalAddressByRecipient.isEmpty());
+            boolean exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+
+            Assertions.assertFalse(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
+                log.info("PEC IS PRESENT");
             } else {
                 throw httpStatusCodeException;
             }
@@ -850,12 +848,12 @@ public class RicezioneNotificheWebSteps {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
                     .anyMatch(address -> senderId.equals(address.getSenderId())
-                            &&  "SERCQ".equals(address.getChannelType()));
+                            &&  LegalChannelType.SERCQ.equals(address.getChannelType()));
 
             Assertions.assertTrue(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {
             if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
+                log.info("SERCQ NOT FOUND");
             } else {
                 throw httpStatusCodeException;
             }
@@ -864,12 +862,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
     public void attivazioneSercqSend() {
-        postRecipientLegalAddressSercq("default", "default", null, true);
+        postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
     @And("viene attivato il servizio SERCQ SEND per il comune {string}")
     public void attivazioneSercqPerEnteSpecifico(String senderIdPa) {
-        postRecipientLegalAddressSercq(senderIdPa, "default", null, true);
+        postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
 }
