@@ -59,13 +59,16 @@ Feature: avanzamento notifiche webhook b2b V23
     Then vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con la versione V23
     And viene verificato che il ProgressResponseElement del webhook abbia un EventId incrementale e senza duplicati V23
     #TEST VERIFICA CORRISPONDENZA ELEMENTO DI TIMELINE STREAM
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
+    Then  vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_COURTESY_MESSAGE"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_COURTESY_MESSAGE" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And  vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_DOMICILE" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And  vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "SEND_DIGITAL_FEEDBACK" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_1" fino all'elemento di timeline "DIGITAL_SUCCESS_WORKFLOW" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
     #TEST VERIFICA REFINEMENT
@@ -230,10 +233,13 @@ Feature: avanzamento notifiche webhook b2b V23
     And si crea il nuovo stream per il "Comune_Multi" con versione "V23"
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
-    Then vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con versione V23 e apiKey aggiornata con position 0
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PREPARE_ANALOG_DOMICILE"
+    And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "PREPARE_ANALOG_DOMICILE" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "SEND_ANALOG_DOMICILE" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi dello stream del "Comune_Multi" fino all'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" con versione V23 e apiKey aggiornata con position 0
     And verifica corrispondenza tra i detail del webhook e quelli della timeline
     And viene modificato lo stato dell'apiKey in "BLOCK"

@@ -3,6 +3,8 @@ package it.pagopa.pn.cucumber.steps.pa;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -1438,24 +1440,21 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws IllegalAccessException, JsonProcessingException {
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElementV23().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
 
         it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
-        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = ow.writeValueAsString(timelineElementDetails);
-        System.out.println(json);
 
-        ObjectWriter ow1 = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json1 = ow1.writeValueAsString(timelineElementDetails);
-        System.out.println(json1);
+        ObjectWriter ow = JsonMapper.builder().addModule(new JavaTimeModule()).build().writer().withDefaultPrettyPrinter();
+        String json = ow.writeValueAsString(timelineElementDetails);
+
+        ObjectWriter ow1 =  JsonMapper.builder().addModule(new JavaTimeModule()).build().writer().withDefaultPrettyPrinter();
+        String json1 = ow1.writeValueAsString(timelineElementWebhookDetails);
 
         ObjectMapper mapper = new ObjectMapper();
         Assertions.assertEquals(mapper.readTree(json), mapper.readTree(json1));
-
     }
 
     @Then("verifica deanonimizzazione degli eventi di timeline con delega {string} analogico")
