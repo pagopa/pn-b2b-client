@@ -25,27 +25,17 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
-    private final String marioCucumberBearerToken;
-    private final String marioGherkinBearerToken;
-    private final String leonardoBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
-
     private final RestTemplate restTemplate;
     private final String basePath;
     private final RecipientReadB2BApi recipientReadB2BApi;
     private BearerTokenType bearerTokenSetted;
 
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
-                                          @Value("${pn.delivery.base-url}") String basePath,
-                                          @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                          @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                          @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
-                                          @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                          @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
-        this.leonardoBearerToken = leonardoBearerToken;
+                                          @Value("${pn.external.dest.base-url}") String basePath,
+                                          @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
+                                          @Value("${pn.bearer-token-b2b.pg1}") String cucumberSpaBearerToken) {
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.restTemplate = restTemplate;
@@ -116,36 +106,18 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean operation = false;
         switch (bearerToken) {
-            case USER_1 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
-                operation = true;
-            }
-            case USER_2 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_2;
-                operation = true;
-            }
-            case USER_3 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_3;
-                operation = true;
-            }
             case PG_1 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
-                operation = true;
             }
             case PG_2 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
-                operation = true;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return operation;
+        return true;
     }
 
     @Override

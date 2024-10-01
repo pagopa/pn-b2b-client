@@ -10,6 +10,8 @@ import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -18,10 +20,9 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     private final RestTemplate restTemplate;
-    private final String marioCucumberBearerToken;
-    private final String marioGherkinBearerToken;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
     private final String basePath;
@@ -29,19 +30,15 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     private BearerTokenType bearerTokenSetted;
 
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
-                                       @Value("${pn.delivery.base-url}") String basePath,
-                                       @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
-                                       @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
-                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                       @Value("${pn.external.dest.base-url}") String basePath,
+                                       @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
+                                       @Value("${pn.bearer-token-b2b.pg1}") String cucumberSpaBearerToken) {
         this.restTemplate = restTemplate;
-        this.marioCucumberBearerToken = marioCucumberBearerToken;
-        this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
-        this.bearerTokenSetted = BearerTokenType.USER_1;
-        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
+        this.bearerTokenSetted = BearerTokenType.PG_1;
+        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
@@ -142,31 +139,18 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean beenSet = false;
         switch (bearerToken) {
-            case USER_1 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_1;
-                beenSet = true;
-            }
-            case USER_2 -> {
-                this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
-                this.bearerTokenSetted = BearerTokenType.USER_2;
-                beenSet = true;
-            }
             case PG_1 -> {
                 this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
-                beenSet = true;
             }
             case PG_2 -> {
                 this.mandateServiceApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
-                beenSet = true;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return beenSet;
+        return true;
     }
 
     @Override

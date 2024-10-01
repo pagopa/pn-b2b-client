@@ -4,14 +4,16 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.api.MandateReverseServiceApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDtoRequest;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class MandateReverseServiceClientImpl implements IMandateReverseServiceClient {
     private final MandateReverseServiceApi mandateReverseServiceApi;
     private final String gherkinSrlBearerToken;
@@ -23,7 +25,7 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     public MandateReverseServiceClientImpl(RestTemplate restTemplate,
                                            @Value("${pn.external.dest.base-url}") String basePath,
                                            @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
-                                           @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                           @Value("${pn.bearer-token-b2b.pg1}") String cucumberSpaBearerToken) {
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
