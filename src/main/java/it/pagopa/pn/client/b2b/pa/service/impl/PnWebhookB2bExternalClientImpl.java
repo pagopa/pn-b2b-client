@@ -20,8 +20,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.List;
 import java.util.UUID;
+
 import static it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton.ENEBLED_INTEROP;
 
 
@@ -161,28 +163,41 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
 
     public List<ProgressResponseElementV23> consumeEventStreamV23(UUID streamId, String lastEventId){
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV23.consumeEventStreamV23(streamId,lastEventId);
+        return this.eventsApiV23.consumeEventStreamV23(streamId, lastEventId);
     }
 
     @Override
     public ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId) {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId,lastEventId);
+        return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId, lastEventId);
     }
+
+    //TODO MATTEO
+//    @Override
+//    public List<ProgressResponseElementV24> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException {
+//        refreshAndSetTokenInteropClient();
+//        return this.eventsApiV23.consumeEventStreamV24(streamId, lastEventId);
+//    }
+//
+//    @Override
+//    public ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamHttpV24(UUID streamId, String lastEventId) throws RestClientException {
+//        refreshAndSetTokenInteropClient();
+//        return this.eventsApiV23.consumeEventStreamV23WithHttpInfo(streamId, lastEventId);
+//    }
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
-        switch(apiKey){
+        switch (apiKey) {
             case MVP_1:
-                if(this.apiKeySetted != ApiKeyType.MVP_1){
+                if (this.apiKeySetted != ApiKeyType.MVP_1) {
                     setApiKey(apiKeyMvp1);
                     this.apiKeySetted = ApiKeyType.MVP_1;
                 }
                 beenSet = true;
                 break;
             case MVP_2:
-                if(this.apiKeySetted != ApiKeyType.MVP_2) {
+                if (this.apiKeySetted != ApiKeyType.MVP_2) {
                     setApiKey(apiKeyMvp2);
                     this.apiKeySetted = ApiKeyType.MVP_2;
                 }

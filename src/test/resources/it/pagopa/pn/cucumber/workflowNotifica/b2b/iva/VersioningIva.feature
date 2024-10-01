@@ -273,3 +273,56 @@ Feature: controllo costo notifiche con IVA
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
     And viene verificato il costo "parziale" di una notifica "890" del utente "0"
     And viene verificato il costo "totale" di una notifica "890" del utente "0"
+
+  Scenario Outline: [TODO_MATTEO] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api Webhook dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
+    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
+    Then gli elementi di timeline contengono i campi attesi in accordo alla versione "<version>"
+    Examples:
+      | timeline_element | version |
+      | REQUEST_ACCEPTED | v2.3    |
+      | REQUEST_ACCEPTED | v2.4    |
+
+  Scenario Outline: [MATTEO_TODO] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+    Given viene generata una nuova notifica
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "<timeline_element>"
+    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
+    Then gli elementi di timeline contengono i campi attesi in accordo alla versione "<version>"
+    Examples:
+      | timeline_element | version |
+      | REQUEST_ACCEPTED | v2.3    |
+      | REQUEST_ACCEPTED | v2.4    |
+      #| NOTIFICATION_VIEWED                     | v2.4    |
+      #| SEND_ANALOG_FEEDBACK                    | v2.4    |
+      #| ANALOG_FAILURE_WORKFLOW                 | v2.4    |
+      #| COMPLETELY_UNREACHABLE                  | v2.4    |
+      #| REFINEMENT                              | v2.4    |
+      #| SEND_ANALOG_PROGRESS                    | v2.4    |
+      #| SCHEDULE_REFINEMENT                     | v2.4    |
+      #| ANALOG_SUCCESS_WORKFLOW                 | v2.4    |
+      #| COMPLETELY_UNREACHABLE_CREATION_REQUEST | v2.4    |
+      #| NOTIFICATION_VIEWED                     | v2.3    |
+      #| SEND_DIGITAL_FEEDBACK                   | v2.3    |
+      #| SEND_ANALOG_FEEDBACK                    | v2.3    |
+      #| ANALOG_FAILURE_WORKFLOW                 | v2.3    |
+      #| COMPLETELY_UNREACHABLE                  | v2.3    |
+      #| REFINEMENT                              | v2.3    |
+      #| SEND_ANALOG_PROGRESS                    | v2.3    |
+      #| SCHEDULE_REFINEMENT                     | v2.3    |
+      #| ANALOG_SUCCESS_WORKFLOW                 | v2.3    |
+      #| COMPLETELY_UNREACHABLE_CREATION_REQUEST | v2.3    |
+
+
+
+
+
+

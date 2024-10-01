@@ -312,9 +312,14 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
+    public FullSentNotificationV23 getSentNotificationV23(String iun) {
+        return senderReadB2BApi.retrieveSentNotificationV23(iun);
+    }
+
+    @Override
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun) {
         refreshAndSetTokenInteropClient();
-        return senderReadB2BApiV1.retrieveSentNotification( iun );
+        return senderReadB2BApiV1.retrieveSentNotification(iun);
     }
 
     @Override
