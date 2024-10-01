@@ -555,8 +555,12 @@ public class RicezioneNotificheWebSteps {
     @And("viene inserito un recapito legale {string} con verification code {string}")
     public void nuovoRecapitoLegale(String pec, String verificationCode) {
 
-        Assertions.assertThrows(HttpClientErrorException.class,
-               () -> postRecipientLegalAddress("default", pec, verificationCode, false));
+     //   Assertions.assertThrows(HttpClientErrorException.class,
+      //      () -> postRecipientLegalAddress("default", pec, verificationCode, false));
+
+        postRecipientLegalAddress("default", pec, verificationCode, false);
+        Assertions.assertNotNull(sharedSteps.getNotificationError());
+        Assertions.assertEquals(400,sharedSteps.getNotificationError().getStatusCode().value());
 
 
     }
@@ -871,7 +875,7 @@ public class RicezioneNotificheWebSteps {
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> "SERCQ".equals(address.getChannelType()));
+                    .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
 
             Assertions.assertTrue(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -889,7 +893,7 @@ public class RicezioneNotificheWebSteps {
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> "PEC".equals(address.getChannelType()));
+                    .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
 
             Assertions.assertFalse(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {

@@ -98,6 +98,7 @@ public class SharedSteps {
     @Setter
     private NewNotificationRequestV23 notificationRequest;
 
+    @Getter
     @Setter
     private HttpStatusCodeException notificationError;
 
