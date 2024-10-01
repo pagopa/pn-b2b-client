@@ -330,6 +330,5 @@ Feature: address validation feature
       | physicalAddress_State               | <foreignState_res>        |
     Examples:
       | denomination            | at   | address                        | addressDetails | zip   | municipality  | municipalityDetails | province | foreignState | at_res | address_res           | addressDetails_res | zip_res | municipality_res | municipalityDetails_res | province_res | foreignState_res |
-      | denomination            | at   | address                        | addressDetails | zip   | municipality  | municipalityDetails | province | foreignState | at_res | address_res           | addressDetails_res | zip_res | municipality_res | municipalityDetails_res | province_res | foreignState_res |
       | TEST_NORMALIZZATORE_135 | NULL | RUE DE LA RUE DE LA Aâ!€Bâ˜¼CÂ | NULL           | 00000 | PARIS         | NULL                | FR       | FRANCIA      | NULL   | RUE DE LA AA  BA  CA. | 0_CHAR             | 00000   | PARIS            | 0_CHAR                  | FR           | FRANCIA          |
       | TEST_NORMALIZZATORE_137 | NULL | RUE DE LA 12/5                 | NULL           | 00000 | PAâ!€Râ€¼I\|S | NULL                | FR       | FRANCIA      | NULL   | RUE DE LA 12/5        | 0_CHAR             | 00000   | PAA  RA  I SS    | 0_CHAR                  | FR           | FRANCIA          |
