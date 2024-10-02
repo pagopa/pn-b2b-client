@@ -264,7 +264,7 @@ public class SharedSteps {
         this.mapAllegatiNotificaSha256 = mapAllegatiNotificaSha256;
     }
 
-    private HashMap<String,String> mapAllegatiNotificaSha256 = new HashMap<>();
+    private HashMap<String, String> mapAllegatiNotificaSha256 = new HashMap<>();
 
     @Before("@useB2B")
     public void beforeMethod() {
@@ -379,7 +379,7 @@ public class SharedSteps {
                             generatedFiscalCode,
                             NotificationRecipientV23.RecipientTypeEnum.PF,
                             null
-                            ),
+                    ),
                     notificationRecipientMap);
 
 
@@ -458,7 +458,7 @@ public class SharedSteps {
                         new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue())
-                        )
+                )
                 , new HashMap<>());
     }
 
@@ -646,7 +646,7 @@ public class SharedSteps {
                         gherkinSpaTaxID,
                         NotificationRecipientV23.RecipientTypeEnum.PG,
                         null)
-        , data);
+                , data);
     }
 
     @And("destinatario Cucumber srl")
@@ -686,7 +686,7 @@ public class SharedSteps {
                         new NotificationDigitalAddress()
                                 .type(NotificationDigitalAddress.TypeEnum.PEC)
                                 .address(getDigitalAddressValue()))
-                ,new HashMap<>());
+                , new HashMap<>());
     }
 
     @And("destinatario Cucumber Society e:")
@@ -711,7 +711,7 @@ public class SharedSteps {
                         "signor RaddCasuale",
                         generateCF(System.currentTimeMillis()),
                         NotificationRecipientV23.RecipientTypeEnum.PF,
-                null)
+                        null)
                 , data);
     }
 
@@ -877,12 +877,12 @@ public class SharedSteps {
     @And("viene effettuato recupero stato della notifica con la V1 dal comune {string}")
     public void retriveStateNotification(String paType) {
         selectPaAndSenderTaxId(paType, "V1");
-        this.notificationRequestV1= new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest();
+        this.notificationRequestV1 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest();
         searchNotificationV1(Base64Utils.encodeToString(getSentNotification().getIun().getBytes()));
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED {string}")
-    public void laNotificaVieneInviataOkV21(String paType,String version) {
+    public void laNotificaVieneInviataOkV21(String paType, String version) {
         configureAndSendNotification(paType, version);
     }
 
@@ -934,7 +934,7 @@ public class SharedSteps {
     }
 
     @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi ACCEPTED e successivamente annullata {string}")
-    public void laNotificaVieneInviataOkAndCancelledV2(String paType,String versione) {
+    public void laNotificaVieneInviataOkAndCancelledV2(String paType, String versione) {
         selectPaAndSenderTaxId(paType, versione);
         sendNotificationAndCancelV2();
     }
@@ -1039,7 +1039,7 @@ public class SharedSteps {
     }
 
     @And("al destinatario viene associato lo iuv creato mediante partita debitoria per {string} alla posizione {int}")
-    public void destinatarioAddIuvGPD(String denominazione,Integer posizione) {
+    public void destinatarioAddIuvGPD(String denominazione, Integer posizione) {
         if (this.notificationRequest != null) {
             Objects.requireNonNull(Objects.requireNonNull(Objects.requireNonNull(this.notificationRequest.getRecipients().get(0).denomination(denominazione).getPayments())).get(posizione).getPagoPa()).setNoticeCode(getIuvGPD(posizione));
         } else if (this.notificationRequestV21 != null) {
@@ -1077,8 +1077,15 @@ public class SharedSteps {
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
         selectUser(user);
-        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-        Assertions.assertFalse(legalAddressByRecipient.isEmpty(), "Error: PEC not found!");
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                boolean exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+
+                Assertions.assertTrue(exists, "PEC NOT FOUND");
+            }
+        });
     }
 
     @And("viene verificata la presenza di {int} recapiti di cortesia inseriti per l'utente {string}")
@@ -1091,11 +1098,11 @@ public class SharedSteps {
     @And("viene verificata la presenza di qualunque tipo di recapito inserito per l'utente {string}")
     public void viewedAllAddress(String user) {
         selectUser(user);
-            UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
-            Assertions.assertTrue(
-                    (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
-                    || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
-            );
+        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+        Assertions.assertTrue(
+                (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
+                        || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
+        );
     }
 
     @Then("si verifica che la notifica non viene accettata causa {string}")
@@ -1377,7 +1384,7 @@ public class SharedSteps {
                 this.newNotificationResponseV1 = b2bUtils.uploadNotificationV1(notificationRequestV1);
             } else if (notificationRequestV2 != null) {
                 this.newNotificationResponseV2 = b2bUtils.uploadNotificationV2(notificationRequestV2);
-            }else if(notificationRequestV21!= null){
+            } else if (notificationRequestV21 != null) {
                 this.newNotificationResponseV21 = b2bUtils.uploadNotificationV21(notificationRequestV21);
             }
 
@@ -1586,30 +1593,30 @@ public class SharedSteps {
     public void setSenderTaxIdFromProperties(String version) {
         switch (settedPa) {
             case "Comune_1" -> {
-                if(version != null){
+                if (version != null) {
                     setSenderTaxIdVersioning(version);
                     setGrupVersioning(SettableApiKey.ApiKeyType.MVP_1, version);
-                }else{
+                } else {
                     this.notificationRequest.setSenderTaxId(this.senderTaxId);
                     setGrup(SettableApiKey.ApiKeyType.MVP_1);
                 }
                 apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_1;
             }
             case "Comune_2" -> {
-                if(version != null){
+                if (version != null) {
                     setSenderTaxIdVersioning(version);
                     setGrupVersioning(SettableApiKey.ApiKeyType.MVP_2, version);
-                }else{
+                } else {
                     this.notificationRequest.setSenderTaxId(this.senderTaxIdTwo);
                     setGrup(SettableApiKey.ApiKeyType.MVP_2);
                 }
                 apiKeyTypeSetted = SettableApiKey.ApiKeyType.MVP_2;
             }
             case "Comune_Multi" -> {
-                if(version != null){
+                if (version != null) {
                     setSenderTaxIdVersioning(version);
                     setGrupVersioning(SettableApiKey.ApiKeyType.GA, version);
-                }else{
+                } else {
                     this.notificationRequest.setSenderTaxId(this.senderTaxIdGa);
                     setGrup(SettableApiKey.ApiKeyType.GA);
                 }
@@ -1629,7 +1636,7 @@ public class SharedSteps {
     }
 
     private void setSenderTaxIdVersioning(String version) {
-        switch(version.toLowerCase()){
+        switch (version.toLowerCase()) {
 
             case "v1" -> this.notificationRequestV1.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v2" -> this.notificationRequestV2.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
@@ -1666,13 +1673,13 @@ public class SharedSteps {
         }
     }
 
-    private void setGrupVersioning(SettableApiKey.ApiKeyType apiKeyType,String version) {
-        String group=null;
+    private void setGrupVersioning(SettableApiKey.ApiKeyType apiKeyType, String version) {
+        String group = null;
 
-        switch (version.toLowerCase()){
-            case "v1" -> group=this.notificationRequestV1.getGroup();
-            case "v2" -> group=this.notificationRequestV2.getGroup();
-            case "v21" -> group=this.notificationRequestV21.getGroup();
+        switch (version.toLowerCase()) {
+            case "v1" -> group = this.notificationRequestV1.getGroup();
+            case "v2" -> group = this.notificationRequestV2.getGroup();
+            case "v21" -> group = this.notificationRequestV21.getGroup();
         }
 
         if (groupToSet && group == null) {
@@ -1687,7 +1694,7 @@ public class SharedSteps {
             }
             if (id == null) return;
 
-            switch (version.toLowerCase()){
+            switch (version.toLowerCase()) {
                 case "v1" -> this.notificationRequestV1.setGroup(id);
                 case "v2" -> this.notificationRequestV2.setGroup(id);
                 case "v21" -> this.notificationRequestV21.setGroup(id);
@@ -1707,7 +1714,7 @@ public class SharedSteps {
         return notificationResponseCompleteV2;
     }
 
-    public  it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 getSentNotificationV21() {
+    public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 getSentNotificationV21() {
         return notificationResponseCompleteV21;
     }
 
@@ -1794,7 +1801,7 @@ public class SharedSteps {
         }
     }
 
-    public PnPollingFactory getPollingFactory(){
+    public PnPollingFactory getPollingFactory() {
         return pollingFactory;
     }
 
@@ -1865,7 +1872,8 @@ public class SharedSteps {
     }
 
     public Integer getWorkFlowWait() {
-        if (timingConfigs.getWorkflowWaitMillis() == null) return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
+        if (timingConfigs.getWorkflowWaitMillis() == null)
+            return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
         return timingConfigs.getWorkflowWaitMillis() + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
     }
 
@@ -1882,22 +1890,26 @@ public class SharedSteps {
     }
 
     public Duration getSchedulingDaysSuccessDigitalRefinement() {
-        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null) return schedulingDaysSuccessDigitalRefinementDefault;
+        if (timingConfigs.getSchedulingDaysSuccessDigitalRefinement() == null)
+            return schedulingDaysSuccessDigitalRefinementDefault;
         return timingConfigs.getSchedulingDaysSuccessDigitalRefinement();
     }
 
     public Duration getSchedulingDaysFailureDigitalRefinement() {
-        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null) return schedulingDaysFailureDigitalRefinementDefault;
+        if (timingConfigs.getSchedulingDaysFailureDigitalRefinement() == null)
+            return schedulingDaysFailureDigitalRefinementDefault;
         return timingConfigs.getSchedulingDaysFailureDigitalRefinement();
     }
 
     public Duration getSchedulingDaysSuccessAnalogRefinement() {
-        if (timingConfigs.getSchedulingDaysSuccessAnalogRefinement() == null) return schedulingDaysSuccessAnalogRefinementDefault;
+        if (timingConfigs.getSchedulingDaysSuccessAnalogRefinement() == null)
+            return schedulingDaysSuccessAnalogRefinementDefault;
         return timingConfigs.getSchedulingDaysSuccessAnalogRefinement();
     }
 
     public Duration getSchedulingDaysFailureAnalogRefinement() {
-        if (timingConfigs.getSchedulingDaysFailureAnalogRefinement() == null) return schedulingDaysFailureAnalogRefinementDefault;
+        if (timingConfigs.getSchedulingDaysFailureAnalogRefinement() == null)
+            return schedulingDaysFailureAnalogRefinementDefault;
         return timingConfigs.getSchedulingDaysFailureAnalogRefinement();
     }
 
@@ -1907,7 +1919,8 @@ public class SharedSteps {
     }
 
     public Duration getSecondNotificationWorkflowWaitingTime() {
-        if (timingConfigs.getSecondNotificationWorkflowWaitingTime() == null) return secondNotificationWorkflowWaitingTimeDefault;
+        if (timingConfigs.getSecondNotificationWorkflowWaitingTime() == null)
+            return secondNotificationWorkflowWaitingTimeDefault;
         return timingConfigs.getSecondNotificationWorkflowWaitingTime();
     }
 
@@ -1999,17 +2012,20 @@ public class SharedSteps {
             case "ANALOG_SUCCESS_WORKFLOW" -> TimelineEventId.ANALOG_SUCCESS_WORKFLOW.buildEventId(event);
             case "DIGITAL_FAILURE_WORKFLOW" -> TimelineEventId.DIGITAL_FAILURE_WORKFLOW.buildEventId(event);
             case "SEND_ANALOG_FEEDBACK" -> TimelineEventId.SEND_ANALOG_FEEDBACK.buildEventId(event);
-            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
+            case "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" ->
+                    TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER_PROGRESS.buildEventId(event);
             case "SEND_ANALOG_PROGRESS" -> TimelineEventId.SEND_ANALOG_PROGRESS.buildEventId(event);
             case "ANALOG_FAILURE_WORKFLOW" -> TimelineEventId.ANALOG_FAILURE_WORKFLOW.buildEventId(event);
             case "PREPARE_ANALOG_DOMICILE" -> TimelineEventId.PREPARE_ANALOG_DOMICILE.buildEventId(event);
             case "SCHEDULE_ANALOG_WORKFLOW" -> TimelineEventId.SCHEDULE_ANALOG_WORKFLOW.buildEventId(event);
             case "SEND_ANALOG_DOMICILE" -> TimelineEventId.SEND_ANALOG_DOMICILE.buildEventId(event);
             case "SEND_SIMPLE_REGISTERED_LETTER" -> TimelineEventId.SEND_SIMPLE_REGISTERED_LETTER.buildEventId(event);
-            case "PREPARE_SIMPLE_REGISTERED_LETTER" -> TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
+            case "PREPARE_SIMPLE_REGISTERED_LETTER" ->
+                    TimelineEventId.PREPARE_SIMPLE_REGISTERED_LETTER.buildEventId(event);
             case "NOTIFICATION_VIEWED" -> TimelineEventId.NOTIFICATION_VIEWED.buildEventId(event);
             case "COMPLETELY_UNREACHABLE" -> TimelineEventId.COMPLETELY_UNREACHABLE.buildEventId(event);
-            case "DIGITAL_DELIVERY_CREATION_REQUEST" -> TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
+            case "DIGITAL_DELIVERY_CREATION_REQUEST" ->
+                    TimelineEventId.DIGITAL_DELIVERY_CREATION_REQUEST.buildEventId(event);
             default -> null;
         };
     }
@@ -2056,27 +2072,27 @@ public class SharedSteps {
             return getSentNotificationV1().getIun();
         } else if (getSentNotificationV2() != null) {
             return getSentNotificationV2().getIun();
-        } else if (getSentNotificationV21()!= null) {
+        } else if (getSentNotificationV21() != null) {
             return getSentNotificationV21().getIun();
-        } else if (getSentNotification()!= null) {
+        } else if (getSentNotification() != null) {
             return getSentNotification().getIun();
         } else {
             return null;
         }
     }
 
-    public List<String> getDatiPagamentoVersionamento(Integer destinatario,Integer pagamento){
+    public List<String> getDatiPagamentoVersionamento(Integer destinatario, Integer pagamento) {
         List<String> DatiPagamento = new ArrayList<>();
-        if (getSentNotificationV1()!= null) {
+        if (getSentNotificationV1() != null) {
             DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
             DatiPagamento.add(Objects.requireNonNull(getSentNotificationV1().getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (getSentNotificationV2()!= null) {
+        } else if (getSentNotificationV2() != null) {
             DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getCreditorTaxId());
             DatiPagamento.add(Objects.requireNonNull(getSentNotificationV2().getRecipients().get(destinatario).getPayment()).getNoticeCode());
-        } else if (getSentNotificationV21()!= null) {
+        } else if (getSentNotificationV21() != null) {
             DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
             DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotificationV21().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
-        } else if (getSentNotification()!= null) {
+        } else if (getSentNotification() != null) {
             DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getCreditorTaxId());
             DatiPagamento.add(Objects.requireNonNull(Objects.requireNonNull(getSentNotification().getRecipients().get(destinatario).getPayments()).get(pagamento).getPagoPa()).getNoticeCode());
         }
@@ -2108,50 +2124,50 @@ public class SharedSteps {
 
     private <T, V, K> T updateNotificationRecipient(T notificationRecipient, String denomination, String taxId, V recipientType, K digitalDomicile) {
 
-        if (notificationRecipient instanceof NotificationRecipientV23){
+        if (notificationRecipient instanceof NotificationRecipientV23) {
             ((NotificationRecipientV23) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
-            if(recipientType != null) {
+            if (recipientType != null) {
                 ((NotificationRecipientV23) notificationRecipient)
                         .recipientType((NotificationRecipientV23.RecipientTypeEnum) recipientType);
             }
-            if(digitalDomicile != null) {
+            if (digitalDomicile != null) {
                 ((NotificationRecipientV23) notificationRecipient)
                         .digitalDomicile((NotificationDigitalAddress) digitalDomicile);
             }
         }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient){
+        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
-            if(recipientType != null) {
+            if (recipientType != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
                         .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient.RecipientTypeEnum) recipientType);
             }
-            if(digitalDomicile != null) {
+            if (digitalDomicile != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationRecipient) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NotificationDigitalAddress) digitalDomicile);
             }
         }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient){
+        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
-            if(recipientType != null) {
+            if (recipientType != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
                         .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient.RecipientTypeEnum) recipientType);
             }
-            if(digitalDomicile != null) {
+            if (digitalDomicile != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationRecipient) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress) digitalDomicile);
             }
         }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21){
+        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) {
             ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
-            if(recipientType != null) {
+            if (recipientType != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                         .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum) recipientType);
             }
-            if(digitalDomicile != null) {
+            if (digitalDomicile != null) {
                 ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress) digitalDomicile);
             }

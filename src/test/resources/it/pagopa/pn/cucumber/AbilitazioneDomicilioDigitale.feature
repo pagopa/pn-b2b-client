@@ -50,7 +50,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Mario Cucumber"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene inserito un recapito legale "example3@pecSuccess.it" con verification code "*$%&+/"
+    And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
     Then viene verificata l'assenza di  indirizzi Pec per l'utente "Mario Cucumber"
     And viene verificata la presenza di Sercq attivo per l'utente "Mario Cucumber"
 
@@ -58,7 +58,7 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene inserito un recapito legale "example3@pecSuccess.it" con verification code "*$%&+/"
+    And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
     Then viene verificata l'assenza di  indirizzi Pec per l'utente "Lucio Anneo Seneca"
     And viene verificata la presenza di Sercq attivo per l'utente "Lucio Anneo Seneca"
 
@@ -107,8 +107,8 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
-    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_2"
+    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
+    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_2"
     Then vengono accettati i TOS
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
@@ -116,14 +116,12 @@ Feature: Abilitazione domicilio digitale
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
-    #controllo su sercQ attivo?
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
-    And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
-    #controllo su sercQ attivo?
+    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente
     Given si predispone addressbook per l'utente "Mario Cucumber"
@@ -149,19 +147,19 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     Then viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_Root"
 
-    ##TODO DA RIVEDERE
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_13] Modifica indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente
     Given si predispone addressbook per l'utente "Mario Cucumber"
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
-    Then viene inserito un recapito legale "example3@pecSuccess.it" modificando recapito esistente per il comune "Comune_Root"
+    And viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_1" con verification code errato "*$%&+/"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
 
-     ##TODO DA RIVEDERE
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_13] Modifica indirizzo PEC come recapito specifico per ente, con PEC già associata per lo stesso ente
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
-    Then viene inserito un recapito legale "example3@pecSuccess.it" modificando recapito esistente per il comune "Comune_Root"
+    And viene inserito un recapito legale "example3@pecSuccess.it" per il comune "Comune_1" con verification code errato "*$%&+/"
+    And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_14] Elimina indirizzo PEC come recapito specifico per ente con la presenza di una PEC già associata
     Given si predispone addressbook per l'utente "Mario Cucumber"
@@ -173,7 +171,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
-    Then viene rimossa se presente la pec di piattaforma di "Mario Cucumber"
+    Then viene rimossa se presente la pec di piattaforma di "Lucio Anneo Seneca"
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_15] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti per ente
     Given si predispone addressbook per l'utente "Mario Cucumber"
@@ -237,6 +235,7 @@ Feature: Abilitazione domicilio digitale
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
 
+  ##TODO VERIFICARE UTENZA
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Gherkin spa"
     Then viene inserito un recapito legale "example3@pecSuccess.it"
@@ -265,6 +264,7 @@ Feature: Abilitazione domicilio digitale
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                  |
 
+    ##TODO VERIFICARE L'UTENZA
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Gherkin spa"
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -299,6 +299,7 @@ Feature: Abilitazione domicilio digitale
       | TITLE | Attestazione opponibile a terzi: mancato recapito digitale |
 
  #verificare mittente notifica
+   ##TODO VERIFICARE L'UTENZA
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Gherkin spa"
     Then viene inserito un recapito legale "test@fail.it"
@@ -314,7 +315,20 @@ Feature: Abilitazione domicilio digitale
     Then si verifica se il legalFact contiene i campi
       | TITLE | Attestazione opponibile a terzi: mancato recapito digitale
 
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
+    Given si predispone addressbook per l'utente "Mario Cucumber"
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+    And destinatario
+      | denomination            | Gherkin spa               |
+      | taxId                   | CLMCST42R12D969Z          |
+      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
+    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
+ ##TODO VERIFICARE L'UTENZA
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Gherkin spa"
     Then viene attivato il servizio SERCQ SEND per recapito principale
@@ -328,19 +342,6 @@ Feature: Abilitazione domicilio digitale
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
-
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
-    Given si predispone addressbook per l'utente "Mario Cucumber"
-    Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene inserito un recapito legale "example3@pecSuccess.it"
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-    And destinatario
-      | denomination            | Gherkin spa               |
-      | taxId                   | CLMCST42R12D969Z          |
-      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
 

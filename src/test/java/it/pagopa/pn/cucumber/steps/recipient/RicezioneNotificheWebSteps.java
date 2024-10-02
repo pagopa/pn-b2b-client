@@ -79,7 +79,7 @@ public class RicezioneNotificheWebSteps {
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                          IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -105,9 +105,9 @@ public class RicezioneNotificheWebSteps {
     public void latoDestinatarioVengonoLettiIDettagliDellaNotificaLatoWeb(String user) {
         selectUser(user);
         bffFullNotificationV1Recipient =
-            Assertions.assertDoesNotThrow(() ->
-                bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
-                .getBody());
+                Assertions.assertDoesNotThrow(() ->
+                        bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
+                                .getBody());
         Assertions.assertNotNull(bffFullNotificationV1Recipient);
         log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
     }
@@ -158,9 +158,9 @@ public class RicezioneNotificheWebSteps {
                 .stream()
                 .filter(Objects::nonNull)
                 .filter(data ->
-                    data.getElementId().contains(category) && data.getDetails() != null &&
-                            data.getDetails().getDeliveryDetailCode() != null &&
-                            data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        data.getElementId().contains(category) && data.getDetails() != null &&
+                                data.getDetails().getDeliveryDetailCode() != null &&
+                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
                 .findFirst();
     }
 
@@ -257,9 +257,9 @@ public class RicezioneNotificheWebSteps {
             log.info("scheduleDate : {}", scheduleDate);
             log.info("refinementDate : {}", refinementDate);
 
-            Assertions.assertEquals(scheduleDate,refinementDate);
+            Assertions.assertEquals(scheduleDate, refinementDate);
 
-        }catch (AssertionFailedError assertionFailedError) {
+        } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
@@ -270,7 +270,7 @@ public class RicezioneNotificheWebSteps {
         sharedSteps.selectUser(recipient);
         NotificationAttachmentDownloadMetadataResponse downloadResponse = getReceivedNotificationAttachment(attachmentName);
 
-        if (downloadResponse!= null && downloadResponse.getRetryAfter()!= null && downloadResponse.getRetryAfter()>0){
+        if (downloadResponse != null && downloadResponse.getRetryAfter() != null && downloadResponse.getRetryAfter() > 0) {
             try {
                 await().atMost(downloadResponse.getRetryAfter() * 3L, TimeUnit.MILLISECONDS);
                 downloadResponse = getReceivedNotificationAttachment(attachmentName);
@@ -280,7 +280,7 @@ public class RicezioneNotificheWebSteps {
             }
         }
 
-        if (!"F24".equalsIgnoreCase(attachmentName)){
+        if (!"F24".equalsIgnoreCase(attachmentName)) {
             AtomicReference<String> Sha256 = new AtomicReference<>("");
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
             Assertions.assertDoesNotThrow(() -> {
@@ -291,8 +291,8 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
         } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
-                Assertions.assertDoesNotThrow(() ->
-                        b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
+            Assertions.assertDoesNotThrow(() ->
+                    b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
         }
     }
 
@@ -552,13 +552,9 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    @And("viene inserito un recapito legale {string} con verification code {string}")
+    @And("viene inserito un recapito legale {string} con verification code errato {string}")
     public void nuovoRecapitoLegale(String pec, String verificationCode) {
-
-        Assertions.assertThrows(HttpClientErrorException.class,
-               () -> postRecipientLegalAddress("default", pec, verificationCode, false));
-
-
+        postRecipientLegalAddressWrongCode("default", pec, verificationCode);
     }
 
     @When("viene richiesto l'inserimento della pec {string}")
@@ -580,6 +576,12 @@ public class RicezioneNotificheWebSteps {
     public void nuovoRecapitoLegaleDalComune(String pec, String pa) {
         String senderIdPa = getSenderIdPa(pa);
         postRecipientLegalAddress(senderIdPa, pec, null, true);
+    }
+
+    @And("viene inserito un recapito legale {string} per il comune {string} con verification code errato {string}")
+    public void nuovoRecapitoLegaleDalComuneConVerificationCodeErrato(String pec, String pa, String verificationCode) {
+        String senderIdPa = getSenderIdPa(pa);
+        postRecipientLegalAddressWrongCode(senderIdPa, pec, verificationCode);
     }
 
     @When("viene richiesto l'inserimento della pec {string} per il comune {string}")
@@ -607,27 +609,32 @@ public class RicezioneNotificheWebSteps {
     }
 
     private void postRecipientCourtesyAddress(String senderId, String addressVerification, CourtesyChannelType type, String verificationCode, boolean inserimento) {
-        try {
-            if(inserimento){
+        String[] code = {verificationCode};
+        Assertions.assertDoesNotThrow(() -> {
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, CourtesyChannelType.EMAIL, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                code[0] = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+            this.iPnWebUserAttributesClient.postRecipientCourtesyAddress(senderId, type, (new AddressVerification().value(addressVerification).verificationCode(code[0])));
+        });
     }
 
     private void postRecipientLegalAddress(String senderIdPa, String addressVerification, String verificationCode, boolean inserimento) {
-        try {
-            if (inserimento){
+        String[] code = {verificationCode};
+        Assertions.assertDoesNotThrow(() -> {
+            if (inserimento) {
                 this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification)));
-                verificationCode = this.externalClient.getVerificationCode(addressVerification);
+                code[0] = this.externalClient.getVerificationCode(addressVerification);
             }
-            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(verificationCode)));
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            sharedSteps.setNotificationError(httpStatusCodeException);
-        }
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(code[0])));
+        });
+    }
+
+    private void postRecipientLegalAddressWrongCode(String senderIdPa, String addressVerification, String verificationCode) {
+        String[] code = {verificationCode};
+        Assertions.assertThrows(HttpStatusCodeException.class, () -> {
+            this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.PEC, (new AddressVerification().value(addressVerification).verificationCode(code[0])));
+        });
     }
 
     @And("viene cancellata l'email di cortesia per il comune {string}")
@@ -661,8 +668,8 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
-                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
+                sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
@@ -713,7 +720,7 @@ public class RicezioneNotificheWebSteps {
             case "gherkinsrl" -> {
                 bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
-            case "cucumberspa" -> {
+            case "cucumberspa", "lucio anneo seneca" -> {
                 bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }
             case "leonardo da vinci" -> {
@@ -731,7 +738,7 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    public void selectPa(String pa){
+    public void selectPa(String pa) {
         switch (pa) {
             case "Comune_1" -> {
                 this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
@@ -760,7 +767,7 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    private void postRecipientLegalAddressSercq(String senderIdPa,String address) {
+    private void postRecipientLegalAddressSercq(String senderIdPa, String address) {
         Assertions.assertDoesNotThrow(() -> {
             this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address)));
         });
@@ -768,19 +775,13 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene disabilitato il servizio SERCQ SEND")
     public void vieneDisabilitatoSercq() {
-        try {
+        Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.SERCQ);
                 log.info("SERCQ DISABLED");
             }
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("SERCQ NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
-            }
-        }
+        });
     }
 
     @Then("vengono accettati i TOS")
@@ -794,56 +795,52 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene verificata l' assenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
-        //selectUser(user);
-        try {
+        selectUser(user);
+
+        Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+
+            Assertions.assertNotNull(legalAddressByRecipient);
+
             boolean exists = legalAddressByRecipient.stream()
                     .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
-
-            Assertions.assertFalse(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC IS PRESENT");
-            } else {
-                throw httpStatusCodeException;
-            }
-        }
+            Assertions.assertFalse(exists, "PEC IS PRESENT");
+        });
     }
 
     @And("viene verificata l' assenza di pec inserite per l'utente {string} per il comune {string}")
-    public void viewedNoPecPerEnte(String user, String senderId) {
+    public void verifyPecIsNotPresentPerUserPerEnte(String user, String pa) {
         selectUser(user);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+        String senderId = getSenderIdPa(pa);
 
-            Assertions.assertFalse(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean notExists = true;
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                notExists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> senderId.equals(address.getSenderId()) && LegalChannelType.PEC.equals(address.getChannelType()));
             }
-        }
+
+            Assertions.assertTrue(notExists, "PEC FOUND");
+        });
     }
 
     @And("viene verificata la presenza di pec inserite per l'utente {string} per il comune {string}")
-    public void viewedPecPerEnte(String user, String senderId) {
+    public void verifyPecIsPresentPerUserPerEnte(String user, String pa) {
         selectUser(user);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+        String senderId = getSenderIdPa(pa);
 
-            Assertions.assertTrue(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = false;
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> senderId.equals(address.getSenderId()));
             }
-        }
+            Assertions.assertTrue(exists, "PEC NOT FOUND");
+        });
+
+
     }
 
     @And("viene verificata la presenza di Sercq attivo per l'utente {string} per il comune {string}")
@@ -853,7 +850,7 @@ public class RicezioneNotificheWebSteps {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
                     .anyMatch(address -> senderId.equals(address.getSenderId())
-                            &&  LegalChannelType.SERCQ.equals(address.getChannelType()));
+                            && LegalChannelType.SERCQ.equals(address.getChannelType()));
 
             Assertions.assertTrue(exists);
         } catch (HttpStatusCodeException httpStatusCodeException) {
@@ -868,46 +865,44 @@ public class RicezioneNotificheWebSteps {
     @And("viene verificata la presenza di Sercq attivo per l'utente {string}")
     public void viewedSercqPerUtente(String user) {
         selectUser(user);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> "SERCQ".equals(address.getChannelType()));
 
-            Assertions.assertTrue(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = false;
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
             }
-        }
+            Assertions.assertTrue(exists, "SERCQ NOT FOUND");
+        });
+
     }
 
     @And("viene verificata l'assenza di  indirizzi Pec per l'utente {string}")
     public void viewedPecPerUtente(String user) {
         selectUser(user);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> "PEC".equals(address.getChannelType()));
 
-            Assertions.assertFalse(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = false;
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
             }
-        }
+            Assertions.assertFalse(exists, "PEC FOUND");
+        });
     }
 
+    //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per recapito principale")
     public void attivazioneSercqSend() {
         postRecipientLegalAddressSercq("default", "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
+    //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
     @And("viene attivato il servizio SERCQ SEND per il comune {string}")
-    public void attivazioneSercqPerEnteSpecifico(String senderIdPa) {
+    public void attivazioneSercqPerEnteSpecifico(String pa) {
+        String senderIdPa = getSenderIdPa(pa);
         postRecipientLegalAddressSercq(senderIdPa, "x-pagopa-pn-sercq:send-self:notification-already-delivered");
     }
 
