@@ -50,8 +50,8 @@ public class MandateReverseSteps {
    public void createMandatePG(Map<String, String> data) {
         selectPG(data.get("delegate"));
         MandateDtoRequest request = new MandateDtoRequest();
-        request.setDatefrom(getDateTo(data.getOrDefault("dateFrom", "TODAY")));
-        request.setDateto(getDateTo(data.getOrDefault("dateTo", "TOMORROW")));
+        request.setDatefrom(getDate(data.getOrDefault("dateFrom", "TODAY")));
+        request.setDateto(getDate(data.getOrDefault("dateTo", "TOMORROW")));
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
         try {
             mandateReverseResponse = mandateReverseServiceClient.createReverseMandateWithHttpInfo(request);
@@ -70,21 +70,21 @@ public class MandateReverseSteps {
         isMandatePresent(delegator).orElseThrow(() -> new AssertionFailedError("Mandate with PENDING status not found!"));
     }
 
-    @And("la delega a nome di {string} viene accettata dal delegato {string} senza associare nessun gruppo")
-    public void acceptMandateWithoutGroup(String delegator, String delegate) {
-        acceptMandate(null, delegate, getVerificationCode(delegator));
+    @And("la delega a nome di {string} viene accettata dal delegato senza associare nessun gruppo")
+    public void acceptMandateWithoutGroup(String delegator) {
+        acceptMandate(null, getVerificationCode(delegator));
     }
 
-    @And("la delega a nome di {string} viene accettata dal delegato {string} associando un gruppo")
-    public void acceptMandateWithGroup(String delegator, String delegate) {
+    @And("la delega a nome di {string} viene accettata dal delegato associando un gruppo")
+    public void acceptMandateWithGroup(String delegator) {
         Assertions.assertFalse(groups.isEmpty(), "The group list cannot be empty!");
-        acceptMandate(groups, delegate, getVerificationCode(delegator));
+        acceptMandate(groups, getVerificationCode(delegator));
     }
 
     @And("la notifica non può essere recuperata da {string}")
     public void notificationDelegatedNotVisible(String delegate) {
         selectPG(delegate);
-        Assertions.assertThrows(HttpClientErrorException.Forbidden.class,
+        Assertions.assertThrows(HttpClientErrorException.NotFound.class,
                 () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getIunVersionamento(), mandateReverseResponse.getBody()));
     }
 
@@ -103,9 +103,8 @@ public class MandateReverseSteps {
         Assertions.assertTrue(isMandateGroupPresent());
     }
 
-    @Then("viene recuperato il primo gruppo disponibile attivo per il delegatore {string}")
-    public void retrieveTheFirstGroupAvailableForDelegator(String delegator) {
-        selectPG(delegator);
+    @Then("viene recuperato il primo gruppo disponibile attivo")
+    public void retrieveTheFirstGroupAvailableForDelegator() {
         String activeGroup = sharedSteps.getPnExternalServiceClient().pgGroupInfo(mandateServiceClient.getBearerTokenSetted())
                 .stream()
                 .filter(Objects::nonNull)
@@ -129,17 +128,16 @@ public class MandateReverseSteps {
                     .findFirst()
                     .orElse(null);
         } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while retrieving the verification code " + ex);
+            throw new AssertionFailedError("There was an error while retrieving the verification code: " + ex);
         }
         return verificationCode;
     }
 
-    private void acceptMandate(List<String> groups, String delegate, String verificationCode) {
-        selectPG(delegate);
+    private void acceptMandate(List<String> groups, String verificationCode) {
         try {
             acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
         } catch (Exception ex) {
-            throw new AssertionFailedError("There was an error while accepting the mandate " + ex);
+            throw new AssertionFailedError("There was an error while accepting the mandate: " + ex);
         }
     }
 
@@ -201,15 +199,15 @@ public class MandateReverseSteps {
         return userDto;
     }
 
-    private String getDateTo(String endTo) {
+    private String getDate(String date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return switch (endTo) {
+        return switch (date) {
             case "TODAY" -> sdf.format(new Date());
             case "TOMORROW" -> sdf.format(DateUtils.addDays(new Date(), 1));
             case "PAST_DATE" -> "2023-01-01";
             case "INVALID_FORMAT" -> "01-01-2023";
             case "EMPTY_DATE" -> null;
-            default -> throw new IllegalStateException("Unexpected value: " + endTo);
+            default -> throw new IllegalStateException("Unexpected value: " + date);
         };
     }
 

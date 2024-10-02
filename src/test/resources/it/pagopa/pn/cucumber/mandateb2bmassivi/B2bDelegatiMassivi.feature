@@ -84,7 +84,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | CucumberSpa |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    When la delega a nome di "CucumberSpa" viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
+    When la delega a nome di "CucumberSpa" viene accettata dal delegato senza associare nessun gruppo
     Then si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
@@ -97,8 +97,8 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
     Then si verifica che la risposta contenga status code: 201
-    Then viene recuperato il primo gruppo disponibile attivo per il delegatore "CucumberSpa"
-    And la delega a nome di "CucumberSpa" viene accettata dal delegato "GherkinSrl" associando un gruppo
+    Then viene recuperato il primo gruppo disponibile attivo
+    And la delega a nome di "CucumberSpa" viene accettata dal delegato associando un gruppo
     And si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata con un gruppo associato
 
@@ -127,7 +127,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
     Then si verifica che la risposta contenga status code: 201
-    And la delega a nome di "CucumberSpa" viene accettata dal delegato "GherkinSrl" senza associare nessun gruppo
+    And la delega a nome di "CucumberSpa" viene accettata dal delegato senza associare nessun gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
