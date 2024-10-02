@@ -251,5 +251,5 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
-    Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "STANDARD" con versionToken errato
+    Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" con versionToken errato
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken obbligatorio mancante"
