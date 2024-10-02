@@ -18,10 +18,10 @@ Feature: Abilitazione domicilio digitale
     Then vengono accettati i TOS
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_2] Attivazione del servizio SERCQ SEND per recapito principale e presenza del recapito legale PEC
-    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
-    And viene inserito un recapito legale "example3@pecSuccess.it"
+    Given si predispone addressbook per l'utente "GherkinSrl"
+    And viene inserito un recapito legale "example1@pecSuccess.it"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata l' assenza di pec inserite per l'utente "Lucio Anneo Seneca"
+    And viene verificata l' assenza di pec inserite per l'utente "GherkinSrl"
     Then vengono accettati i TOS
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_3] Disattivazione del servizio SERCQ SEND per recapito principale
@@ -30,7 +30,7 @@ Feature: Abilitazione domicilio digitale
     Then viene disabilitato il servizio SERCQ SEND
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
-    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    Given si predispone addressbook per l'utente "GherkinSrl"
     And viene attivato il servizio SERCQ SEND per recapito principale
     Then viene disabilitato il servizio SERCQ SEND
 
@@ -41,10 +41,10 @@ Feature: Abilitazione domicilio digitale
     And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber"
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
-    Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
+    Given si predispone addressbook per l'utente "GherkinSrl"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example3@pecSuccess.it"
-    And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca"
+    And viene verificata la presenza di pec inserite per l'utente "GherkinSrl"
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
@@ -116,13 +116,14 @@ Feature: Abilitazione domicilio digitale
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene verificata la presenza di pec inserite per l'utente "Mario Cucumber" per il comune "Comune_1"
+    #controllo su sercQ attivo?
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene verificata la presenza di pec inserite per l'utente "Lucio Anneo Seneca" per il comune "Comune_1"
-
+     #controllo su sercQ attivo?
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente
     Given si predispone addressbook per l'utente "Mario Cucumber"
     And viene inserito un recapito legale "example3@pecSuccess.it"
