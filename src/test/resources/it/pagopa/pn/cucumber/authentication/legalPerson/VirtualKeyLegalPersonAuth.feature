@@ -9,46 +9,79 @@ Feature: Virtual key legal Person Authentication
     And l'utente "<USER>" censisce una virtual key per sè stesso
     And l'utente "<USER>" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     When l'utente "<USER>" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso
-    Then controllo che l'utente "<USER>" veda "<CONDITION>" virtual key nella PG
     Examples:
-      | USER           | CONDITION  |
-      | AMMINISTRATORE | TUTTE LE   |
- #     | PG             | LE PROPRIE | in attesa delle utenze
+      | USER           |
+      | AMMINISTRATORE |
+ #     | PG             | in attesa delle utenze
 
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_2] Un Amministratore Persona Giuridica blocca e riattiva la virtual key di l'utente della PG
+#    #8 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per l'utente "PG"
+#    When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "PG"
+#    Then controllo che la chiave sia in stato "ENABLE" per l'utente "PG"
+
+  #cancellare e ripristinare il test sopra
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_2] Un Amministratore Persona Giuridica blocca e riattiva la virtual key di l'utente della PG
-    #8 in attesa delle utenze
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "PG" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
-    When l'utente "Amministratore" "BLOCCA" una virtual key in stato "ENABLE" per l'utente "PG"
-    When l'utente "Amministratore" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "PG"
-    Then controllo che la chiave sia in stato "ENABLE" per l'utente "PG"
+    When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso
+    Then controllo che la chiave sia in stato "ENABLE" per l'utente "AMMINISTRATORE"
 
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_3] Un utente Persona Giuridica censisce una virtual key dopo averne cancellata una in precedenza
+#    #9 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+#    And l'utente "PG" "CANCELLA" una virtual key in stato "BLOCKED" per sè stesso
+#    When l'utente "PG" censisce una virtual key per sè stesso
+#    Then controllo che l'utente "PG" veda le proprie virtual key nella PG
+
+    #cancellare e ripristinare il test sopra
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_3] Un utente Persona Giuridica censisce una virtual key dopo averne cancellata una in precedenza
-    #9 in attesa delle utenze
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    And l'utente "PG" "CANCELLA" una virtual key in stato "BLOCKED" per sè stesso
-    When l'utente "PG" censisce una virtual key per sè stesso
-    Then controllo che l'utente "PG" veda "LE PROPRIE" virtual key nella PG
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    And l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "BLOCKED" per sè stesso
+    When l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    Then controllo che l'utente "AMMINISTRATORE" veda le proprie virtual key nella PG
 
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_4] Un utente Persona Giuridica censisce una virtual key dopo averne ruotata e bloccata una in precedenza
+#    #10 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "PG" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
+#    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
+#    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+#    When l'utente "PG" censisce una virtual key per sè stesso
+#    Then controllo che l'utente "PG" veda le proprie virtual key nella PG
+
+    #cancellare e ripristinare il test sopra
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_4] Un utente Persona Giuridica censisce una virtual key dopo averne ruotata e bloccata una in precedenza
-    #10 in attesa delle utenze
+    #10
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "PG" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
-    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "PG" censisce una virtual key per sè stesso
-    Then controllo che l'utente "PG" veda "LE PROPRIE" virtual key nella PG
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
+    And controllo che la rotazione è stata effettuata con successo per l'utente "AMMINISTRATORE"
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    When l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    Then controllo che l'utente "AMMINISTRATORE" veda tutte le virtual key nella PG
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_5] Un Amministratore Persona Giuridica cancella la virtual key dopo averne ruotata una in precedenza
@@ -59,27 +92,28 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
     And controllo che la rotazione è stata effettuata con successo per l'utente "AMMINISTRATORE"
     When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ROTATED" per sè stesso
-    Then controllo che l'utente "AMMINISTRATORE" veda "TUTTE LE" virtual key nella PG
+    Then controllo che l'utente "AMMINISTRATORE" veda tutte le virtual key nella PG
 
-  @removeAllVirtualKey @publicKeyCreation
-  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_6] Un Amministratore Persona Giuridica prima ruota e poi cancella la virtual key di un altro utente
-    #12 in attesa delle utenze
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
-    When l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per l'utente "PG"
-    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
-    When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ENABLE" per l'utente "PG"
-    Then controllo che l'utente "AMMINISTRATORE" veda "TUTTE LE" virtual key nella PG
+# da ripristinare appena si hanno le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_6] Un Amministratore Persona Giuridica prima ruota e poi cancella la virtual key di un altro utente
+#    #12 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    When l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per l'utente "PG"
+#    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
+#    When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ENABLE" per l'utente "PG"
+#    Then controllo che l'utente "AMMINISTRATORE" veda tutte le virtual key nella PG
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_7] Un Amministratore Persona Giuridica censisce la virtual key per sè stesso, senza aver accettato i TOS
-    #45 in attesa utenze
+    #45
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "NON ACCETTA" i tos
     And l'utente "AMMINISTRATORE" controlla l'accettazione dei tos "NEGATIVA"
-    When l'utente "AMMINISTRATORE CON GRUPPO" censisce una virtual key per sè stesso senza successo con l'errore 403
+    When l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso senza successo con l'errore 403
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_8] Un Amministratore Persona Giuridica censisce la virtual key per sè stesso, senza la presenza di una chiave pubblica attiva per la PG
@@ -97,12 +131,12 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_10] Un Amministratore Persona Giuridica blocca la virtual key per sè stesso, nonostante sia stata già bloccata
-    #48 in attesa di utenze
+    #48
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "PG" "BLOCCA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_11] Un Amministratore Persona Giuridica prova delle operazioni sulla virtual key cancellata
@@ -120,29 +154,45 @@ Feature: Virtual key legal Person Authentication
       | RUOTA     |
       | CANCELLA  |
 
-  @removeAllVirtualKey @publicKeyCreation
-  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_12] Un utente Persona Giuridica e Amministratore Persona Giuridica appartenente ad un gruppo blocca/ruota la virtual key attiva di un altro utente
-    #50 - 62 in attesa di utenze
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "<USER1>" "ACCETTA" i tos
-    And l'utente "<USER2>" "ACCETTA" i tos
-    And l'utente "<USER1>" censisce una virtual key per sè stesso
-    And l'utente "<USER2>" censisce una virtual key per sè stesso
-    When l'utente "<USER1>" "<OPERATION>" una virtual key in stato "ENABLE" per l'utente "<USER2>" e riceve errore 409
-    Examples:
-      | USER1                     | USER2           | OPERATION |
-      | PG                        | AMMINISTRATORE  | BLOCCA    |
-      | AMMINISTRATORE CON GRUPPI | PG              | RUOTA     |
+# da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_12] Un utente Persona Giuridica e Amministratore Persona Giuridica appartenente ad un gruppo blocca/ruota la virtual key attiva di un altro utente
+#    #50 - 62 in attesa di utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "<USER1>" "ACCETTA" i tos
+#    And l'utente "<USER2>" "ACCETTA" i tos
+#    And l'utente "<USER1>" censisce una virtual key per sè stesso
+#    And l'utente "<USER2>" censisce una virtual key per sè stesso
+#    When l'utente "<USER1>" "<OPERATION>" una virtual key in stato "ENABLE" per l'utente "<USER2>" e riceve errore 409
+#    Examples:
+#      | USER1                     | USER2           | OPERATION |
+#      | PG                        | AMMINISTRATORE  | BLOCCA    |
+#      | AMMINISTRATORE CON GRUPPI | PG              | RUOTA     |
 
+# da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_13] Un Amministratore Persona Giuridica blocca/ruota la virtual key per un altro utente, senza aver accettato i TOS
+#    #51 - 63 in attesa di utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "AMMINISTRATORE" "NON ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE" controlla l'accettazione dei tos "NEGATIVA"
+#    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "ENABLE" per l'utente "PG" e riceve errore 403
+#    Examples:
+#      | OPERATION |
+#      | BLOCCA    |
+#      | RUOTA     |
+
+   #da ripristinare quando abbiamo le utenze
   @removeAllVirtualKey @publicKeyCreation
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_13] Un Amministratore Persona Giuridica blocca/ruota la virtual key per un altro utente, senza aver accettato i TOS
     #51 - 63 in attesa di utenze
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "AMMINISTRATORE" "NON ACCETTA" i tos
     And l'utente "AMMINISTRATORE" controlla l'accettazione dei tos "NEGATIVA"
-    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "ENABLE" per l'utente "PG" e riceve errore 403
+    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "ENABLE" per sè stesso e riceve errore 403
     Examples:
       | OPERATION |
       | BLOCCA    |
@@ -172,33 +222,35 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso e riceve errore 409
 
-  @removeAllVirtualKey @publicKeyCreation
-  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_16] Un utente Persona Giuridica riattiva la virtual key bloccata di un altro utente
-    #55 in attesa delle utenze
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "PG" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "AMMINISTRATORE" e riceve errore 403
+#  da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_16] Un utente Persona Giuridica riattiva la virtual key bloccata di un altro utente
+#    #55 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+#    When l'utente "PG" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "AMMINISTRATORE" e riceve errore 403
 
-  @removeAllVirtualKey @publicKeyCreation
-  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_17] Un Amministratore Persona Giuridica che non ha accettato i TOS, cancella/riattiva la virtual key bloccata di un altro utente
-    # 56 - 71 in attesa delle utenze
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "AMMINISTRATORE CON GRUPPI" "ACCETTA" i tos
-    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "AMMINISTRATORE CON GRUPPI" censisce una virtual key per sè stesso
-    And l'utente "AMMINISTRATORE" "DECLINA" i tos
-    And l'utente "AMMINISTRATORE" controlla l'accettazione dei tos "NEGATIVA"
-    And l'utente "AMMINISTRATORE CON GRUPPI" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "BLOCKED" per l'utente "AMMINISTRATORE CON GRUPPI" e riceve errore 403
-    Examples:
-      | OPERATION   |
-      | CANCELLA    |
-      | RIATTIVA    |
+  #  da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_17] Un Amministratore Persona Giuridica che non ha accettato i TOS, cancella/riattiva la virtual key bloccata di un altro utente
+#    # 56 - 71 in attesa delle utenze
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE CON GRUPPI" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+#    And l'utente "AMMINISTRATORE CON GRUPPI" censisce una virtual key per sè stesso
+#    And l'utente "AMMINISTRATORE" "DECLINA" i tos
+#    And l'utente "AMMINISTRATORE" controlla l'accettazione dei tos "NEGATIVA"
+#    And l'utente "AMMINISTRATORE CON GRUPPI" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+#    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "BLOCKED" per l'utente "AMMINISTRATORE CON GRUPPI" e riceve errore 403
+#    Examples:
+#      | OPERATION   |
+#      | CANCELLA    |
+#      | RIATTIVA    |
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_18] Un Amministratore Persona Giuridica riattiva/cancella la propria virtual key bloccata, senza esistenza di una chiave pubblica attiva
@@ -217,7 +269,7 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_19] Un Amministratore/utente PG riattiva/blocca/ruota la propria virtual key ruotata
-    #58 - 61 - 78 in attesa degli utenti
+    #58 - 61 - 78
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "<USER>" "ACCETTA" i tos
     And l'utente "<USER>" censisce una virtual key per sè stesso
@@ -228,26 +280,38 @@ Feature: Virtual key legal Person Authentication
       | USER           | OPERATION |
       | AMMINISTRATORE | BLOCCA    |
       | AMMINISTRATORE | RIATTIVA  |
-      | PG             | RUOTA     |
+      #| PG             | RUOTA     | da ripristinare quando abbiamo le utenze
 
+  #  da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_20] Un Utente Persona Giuridica riattiva la propria virtual key, nonostante sia presente una già attiva
+#    #59 in attesa degli utenti
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG " "ACCETTA" i tos
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    When l'utente "PG" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
+
+  #da rimuovere appena abbiamo le utenze
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_20] Un Utente Persona Giuridica riattiva la propria virtual key, nonostante sia presente una già attiva
     #59 in attesa degli utenti
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG " "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE " "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_21] Un Amministratore Persona Giuridica ruota la propria virtual key bloccata
-    #65 in attesa degli utenti
+    #65
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "PG" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
-    When l'utente "PG" "RUOTA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    When l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 409
 
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_22] Un Amministratore Persona Giuridica ruota la virtual key per sè stesso, nonostante esiste una già ruotata
@@ -267,23 +331,34 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "UNKNOWN" per sè stesso e riceve errore 404
 
+    #  da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_24] Un Utente Persona Giuridica cancella la propria virtual key attiva
+#    #69 in attesa degli utenti
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    When l'utente "PG" "CANCELLA" una virtual key in stato "ENABLE" per sè stesso e riceve errore 409
+
+ # da rimuovere quando abbiamo le utenze
   @removeAllVirtualKey @publicKeyCreation
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_24] Un Utente Persona Giuridica cancella la propria virtual key attiva
     #69 in attesa degli utenti
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "PG" censisce una virtual key per sè stesso
-    When l'utente "PG" "CANCELLA" una virtual key in stato "ENABLE" per sè stesso e riceve errore 409
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "ENABLE" per sè stesso e riceve errore 409
 
-  @removeAllVirtualKey @publicKeyCreation
-  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_25] Un Amministratore Persona Giuridica appartenente ad un gruppo cancella la virtual key ruotata di un altro utente
-    #70 in attesa degli utenti
-    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE CON GRUPPI" "ACCETTA" i tos
-    And l'utente "PG" "ACCETTA" i tos
-    And l'utente "AMMINISTRATORE CON GRUPPI" censisce una virtual key per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
-    And l'utente "PG" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
-    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
-    When l'utente "AMMINISTRATORE CON GRUPPI" "CANCELLA" una virtual key in stato "ROTATED" per l'utente "PG" e riceve errore 409
-    Then controllo che l'utente "AMMINISTRATORE CON GRUPPI" veda "LE PROPRIE" virtual key nella PG
+  #  da ripristinare quando abbiamo le utenze
+#  @removeAllVirtualKey @publicKeyCreation
+#  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_25] Un Amministratore Persona Giuridica appartenente ad un gruppo cancella la virtual key ruotata di un altro utente
+#    #70 in attesa degli utenti
+#    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+#    And l'utente "AMMINISTRATORE CON GRUPPI" "ACCETTA" i tos
+#    And l'utente "PG" "ACCETTA" i tos
+#    And l'utente "AMMINISTRATORE CON GRUPPI" censisce una virtual key per sè stesso
+#    And l'utente "PG" censisce una virtual key per sè stesso
+#    And l'utente "PG" "RUOTA" una virtual key in stato "ENABLE" per sè stesso
+#    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
+#    When l'utente "AMMINISTRATORE CON GRUPPI" "CANCELLA" una virtual key in stato "ROTATED" per l'utente "PG" e riceve errore 409
+#    Then controllo che l'utente "AMMINISTRATORE CON GRUPPI" veda le proprie virtual key nella PG

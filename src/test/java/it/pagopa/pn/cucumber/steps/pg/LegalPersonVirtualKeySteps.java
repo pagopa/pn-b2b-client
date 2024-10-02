@@ -24,7 +24,6 @@ public class LegalPersonVirtualKeySteps {
     private static final String TOS_VERSION = "2";
     private static final String ADMIN_ROLE = "AMMINISTRATORE";
     private static final String ACCEPT_TOS = "ACCETTA";
-    private static final String TOS_ACCEPTED = "POSITIVA";
     private static final String UNKNOWN = "UNKNOWN";
     private static final String VIRTUAL_KEY_UNKNOW = "123345";
 
@@ -32,11 +31,13 @@ public class LegalPersonVirtualKeySteps {
 
     private final IPnLegalPersonVirtualKeyServiceClient virtualKeyServiceClient;
     private final IPnTosPrivacyClient tosPrivacyClient;
+    private final LegalPersonAuthSteps publicKeySteps;
 
-    public LegalPersonVirtualKeySteps(IPnLegalPersonVirtualKeyServiceClient virtualKeyServiceClient, IPnTosPrivacyClient tosPrivacyClient) {
+    public LegalPersonVirtualKeySteps(IPnLegalPersonVirtualKeyServiceClient virtualKeyServiceClient, IPnTosPrivacyClient tosPrivacyClient, LegalPersonAuthSteps publicKeySteps) {
         this.virtualKeyServiceClient = virtualKeyServiceClient;
         this.tosPrivacyClient = tosPrivacyClient;
         this.responseNewVirtualKeys = new ArrayList<>();
+        this.publicKeySteps = publicKeySteps;
     }
 
     @Given("l'utente {string} censisce una virtual key per sè stesso")
@@ -85,7 +86,7 @@ public class LegalPersonVirtualKeySteps {
         responseNewVirtualKeys.add(new VirtualKeyExpectedResponse(new BffNewVirtualKeyResponse().id(actualVirtualKeyActive.getId()).virtualKey(response.getLastKey()), VirtualKeyState.ENABLE, user));
     }
 
-    @And("controllo che l'utente {string} veda {string} virtual key nella PG")
+    @And("controllo che l'utente {string} veda (le proprie)(tutte le) virtual key nella PG")
     public void controlloCheLUtenteVirtualKeyNellaPG(String user, String condition) {
         List<VirtualKeyExpectedResponse> responses = user.equals(ADMIN_ROLE) ?
                 responseNewVirtualKeys : responseNewVirtualKeys.stream()
@@ -98,7 +99,7 @@ public class LegalPersonVirtualKeySteps {
     public void lUtenteAccettaITos(String user, String operation) {
         selectPGUser(user);
         BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
-        //TO-DO controllare se la chiamata al tos va bene/funge in questo modo.
+        //TODO controllare se la chiamata al tos va bene/funge in questo modo.
         BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_DEST_B2B);
         Assertions.assertDoesNotThrow(() -> tosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
     }
@@ -317,5 +318,29 @@ public class LegalPersonVirtualKeySteps {
                 Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
             }
         });
+    }
+
+    @After("@removeAllVirtualKeyTest")
+    public void removeVirtualKeyTest() {
+        String user = "AMMINISTRATORE";
+        selectPGUser(user);
+        //se la chiave pubblica è cancellata devo riattivarla per eliminare le virtual key e poi ricancellarla (faccio partire il metodo after delle public dopo).
+        if (publicKeySteps.existPublicKeyActive()) publicKeySteps.creaChiavePubblica(user);
+        BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
+        getVirtualKeys.getItems().stream()
+                        .filter(data -> {
+                            if (data.getStatus() != null && data.getStatus().getValue().equals(VirtualKeyState.BLOCKED.getState())) {
+                                virtualKeyCancellation(data.getId());
+                                return false;
+                            }
+                            return true;
+                        }).filter(data -> {
+                            if (data.getStatus().getValue().equals(VirtualKeyState.ENABLE.getState()) || data.getStatus().getValue().equals(VirtualKeyState.REACTIVE.getState())) {
+                                BffVirtualKeyStatusRequest requestNewVirtualKey = new BffVirtualKeyStatusRequest();
+                                requestNewVirtualKey.setStatus(BffVirtualKeyStatusRequest.StatusEnum.BLOCK);
+                                Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.changeStatusVirtualKeys(data.getId(), requestNewVirtualKey));
+                                //Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
+                            } return true;
+                }).forEach(data -> virtualKeyCancellation(data.getId()));
     }
 }

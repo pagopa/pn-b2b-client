@@ -14,7 +14,6 @@ import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponseWithStatus;
 import it.pagopa.pn.cucumber.utils.LegalPersonsAuthStepsPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -22,6 +21,7 @@ import org.springframework.web.client.RestClientResponseException;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Slf4j
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -236,6 +236,16 @@ public class LegalPersonAuthSteps {
                             x -> x.getResponse().getKid().equals(kid)).findFirst().
                     ifPresent(listElement -> listElement.setStatus(status));
         }
+    }
+
+    public boolean existPublicKeyActive() {
+        selectAdmin("AMMINISTRATORE");
+        BffPublicKeysResponse response = pnLegalPersonAuthClient.getPublicKeysV1(null, null, null, null);
+        return Optional.ofNullable(response)
+                .map(BffPublicKeysResponse::getItems)
+                .map(data -> data.stream()
+                        .anyMatch(key -> key.getStatus().getValue().equals("ACTIVE")))
+                .orElse(false);
     }
 
     @After("@publicKeyCreation")
