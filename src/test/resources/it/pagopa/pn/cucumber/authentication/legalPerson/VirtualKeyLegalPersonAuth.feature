@@ -34,7 +34,7 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso
-    Then controllo che la chiave sia in stato "ENABLE" per l'utente "AMMINISTRATORE"
+    Then controllo che la chiave sia in stato "REACTIVE" per l'utente "AMMINISTRATORE"
 
 #  @removeAllVirtualKey @publicKeyCreation
 #  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_3] Un utente Persona Giuridica censisce una virtual key dopo averne cancellata una in precedenza
