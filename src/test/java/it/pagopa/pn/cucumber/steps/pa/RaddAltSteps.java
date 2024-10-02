@@ -55,11 +55,8 @@ public class RaddAltSteps {
     private String iunLucio120gg;
     @Value("${pn.radd.alt.external.max-print-request}")
     private int maxPrintRequest;
-    @Value("${pn.radd.alt.external.operatore-uploader-uid}")
-    private String uidRaddUploaderOperator;
-    @Value("${pn.radd.alt.external.operatore-standard-uid}")
-    private String uidRaddStandardOperator;
     private String operationid;
+    private String versionToken = null;
     private ActInquiryResponse actInquiryResponse;
     private StartTransactionResponse startTransactionResponse;
     private StartTransactionResponse aorStartTransactionResponse;
@@ -294,12 +291,6 @@ public class RaddAltSteps {
                 () -> vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARDaRaddAlternativePerOperatoreStandard(raddOperatorType));
     }
 
-    @And("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR con lo stesso operationId dal raddista {string}")
-    public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARUtilizzandoIlPrecedenteOperationIdOrganizzazioneDiversa(String raddista ) {
-        changeRaddista(raddista);
-        startTransactionActRaddAlternative(this.operationid, true);
-    }
-
     @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative senza ritentativi")
     public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARSenzaRetry() {
         startTransactionActRaddAlternative(this.operationid, false);
@@ -403,6 +394,7 @@ public class RaddAltSteps {
     @Given("la persona (fisica)(giuridica) {string} chiede di verificare la presenza di notifiche")
     public void ilCittadinoChiedeDiVerificareLaPresenzaDiNotifiche(String cf) {
         selectUserRaddAlternative(cf);
+        this.versionToken = "string";
         this.aorInquiryResponse = raddAltClient.aorInquiry(uid,
                 this.currentUserCf,
                 this.recipientType);
@@ -412,6 +404,7 @@ public class RaddAltSteps {
     public void laPersonaFisicaChiedeDiVerificareAdOperatoreRaddLaPresenzaDiNotifiche(String citizen, String raddOperatorType) {
         RaddOperator raddOperator = RaddOperator.valueOf(raddOperatorType);
         selectUserRaddAlternative(citizen);
+        this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? "string" : null;
         this.aorInquiryResponse = raddAltClient.aorInquiry(raddOperator.getUid(),
                 this.currentUserCf,
                 this.recipientType);
@@ -445,7 +438,7 @@ public class RaddAltSteps {
 
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) 2 volte su radd alternative")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibile2volte() {
-        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionResponse();
+        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
         this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid, aorStartTransactionRequest);
         this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid, aorStartTransactionRequest);
     }
@@ -453,7 +446,7 @@ public class RaddAltSteps {
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) con lo stesso operationId dal raddista {string}")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileStessoOperationId(String organizzazione) {
         changeRaddista(organizzazione);
-        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionResponse();
+        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
         this.aorStartTransactionResponse = raddAltClient.startAorTransaction(this.uid,
                 aorStartTransactionRequest);
     }
@@ -461,7 +454,7 @@ public class RaddAltSteps {
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) su radd alternative da operatore radd {string}")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
-        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionResponse();
+        AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
         this.aorStartTransactionResponse = raddAltClient.startAorTransaction(raddOperator.getUid(), aorStartTransactionRequest);
     }
 
@@ -532,6 +525,13 @@ public class RaddAltSteps {
                 () -> vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType));
     }
 
+    @When("tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd {string} con versionToken errato")
+    public void siEsegueUnTentativoDiRecuperareGliAarDelleNotificheInStatoIrreperibileDaOperatoreRaddSenzaVersionToken(String raddOperatorType) {
+        this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? null : "string";
+        this.expectedStartTransactionException = Assertions.assertThrows(HttpClientErrorException.class,
+                () -> vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType));
+    }
+
     @And("il tentativo genera un errore {int} {string} con il messaggio {string}")
     public void lErroreDelRecuperoDegliAarDelleNotificheGenereUnErroreConIlMessaggio(int errorCode, String errorType, String errorMessage) {
         Assertions.assertNotNull(expectedStartTransactionException);
@@ -539,7 +539,7 @@ public class RaddAltSteps {
         Assertions.assertNotNull(expectedStartTransactionException.getMessage());
         Assertions.assertEquals(errorCode, expectedStartTransactionException.getStatusCode().value());
         Assertions.assertEquals(errorType, expectedStartTransactionException.getStatusText());
-        Assertions.assertTrue(expectedStartTransactionException.getMessage().contains(errorMessage));
+        Assertions.assertTrue(expectedStartTransactionException.getMessage().contains(errorMessage), "the message is: " + expectedStartTransactionException.getMessage());
     }
 
     @And("viene chiusa la transazione per il recupero degli aar su radd alternative")
@@ -754,7 +754,6 @@ public class RaddAltSteps {
             lOperatoreScansioneIlQrCodePerRecuperariGliAtti();
             laScansioneSiConcludeCorrettamenteAlternative();
             vengonoCaricatiIDocumentoDiIdentitaDelCittadino();
-            //vengonoCaricatiIDocumentoDiIdentitàDelCittadinoSuRaddAlternativeDallOperatoreRADD("STANDARD");
             vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAAR();
             lOperazioneDiDownloadDegliAttiSiConcludeCorrettamente();
             vieneConclusaLaVisualizzatiDiAttiEdAttestazioniDellaNotifica();
@@ -849,16 +848,15 @@ public class RaddAltSteps {
                 .checksum(this.documentUploadResponse != null ? this.documentUploadResponse.getValue2() : null);
     }
 
-    private AorStartTransactionRequest createAorStartTransactionResponse() {
+    private AorStartTransactionRequest createAorStartTransactionRequest() {
         return new AorStartTransactionRequest()
-                .versionToken("string")
+                .versionToken(this.versionToken)
                 .fileKey(this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null)
                 .operationId(this.operationid == null ? generateRandomNumber() : this.operationid)
                 .recipientTaxId(this.currentUserCf)
                 .recipientType(this.recipientType.equalsIgnoreCase("PF") ? AorStartTransactionRequest.RecipientTypeEnum.PF :
                         AorStartTransactionRequest.RecipientTypeEnum.PG)
                 .operationDate(dateTimeFormatter.format(OffsetDateTime.now()))
-                //.delegateTaxId("")
                 .checksum(this.documentUploadResponse != null ? this.documentUploadResponse.getValue2() : null);
     }
 

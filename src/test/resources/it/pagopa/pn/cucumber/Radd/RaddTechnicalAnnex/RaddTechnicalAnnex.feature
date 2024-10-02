@@ -21,6 +21,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
 #    And lato destinatario la notifica può essere correttamente recuperata da "Mario Cucumber" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
 #    And lato desinatario "Mario Cucumber" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
 
+  #RADD-ALT_ACT-75
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-PRINT_ACTS-2] PF - Stampa limitata di documenti disponibili associati a QR code esistente con CF corretto
     Given viene generata una nuova notifica
@@ -219,3 +220,36 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     | operatorType |
     | WITHOUT_ROLE |
     | STANDARD     |
+
+  @raddTechnicalAnnex
+  Scenario: [ADEG-RADD-TRANS_AOR-5] Operatore RADD_STANDARD - Start di una AOR transaction con versionToken presente - ricezione Error
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Signor casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "STANDARD" la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "STANDARD" con versionToken errato
+    And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken inaspettato"
+
+  @raddTechnicalAnnex
+  Scenario: [ADEG-RADD-TRANS_AOR-6] Operatore RADD_UPLOADER - Start di una AOR transaction senza versionToken presente - ricezione Error
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Signor casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
+    And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
+    Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "STANDARD" con versionToken errato
+    And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken obbligatorio mancante"
