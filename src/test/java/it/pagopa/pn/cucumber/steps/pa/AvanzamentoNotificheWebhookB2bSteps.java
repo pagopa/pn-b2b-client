@@ -10,9 +10,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -30,7 +28,6 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
@@ -113,27 +110,27 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         log.info("webhook eseguito: "+webhookTestLaunch);
         if(webhookTestLaunch){
             log.info("Starting cleaning");
-            for(SettableApiKey.ApiKeyType pa: paForStream.values()){
+            for (SettableApiKey.ApiKeyType pa : paForStream.values()) {
                 //TODO: MODIFICARE
                 webhookClientForClean.setApiKeys(pa);
 
                 //DELETE V1
                 List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookClientForClean.listEventStreams();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
-                    try{
+                for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
+                    try {
                         webhookClientForClean.deleteEventStream(elem.getStreamId());
-                    }catch (HttpStatusCodeException statusCodeException){
-                        log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+                    } catch (HttpStatusCodeException statusCodeException) {
+                        log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
                     }
                 }
 
                 //DELETE V2.3
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
-                    try{
+                List<StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
+                for (StreamListElement elem : streamListElementsV23) {
+                    try {
                         webhookClientForClean.deleteEventStreamV23(elem.getStreamId());
-                    }catch (HttpStatusCodeException statusCodeException){
-                        log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+                    } catch (HttpStatusCodeException statusCodeException) {
+                        log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
                     }
                 }
             }
@@ -182,28 +179,27 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-
-    private void deleteAllPaStreamForAllVersion(SettableApiKey.ApiKeyType pa){
+    private void deleteAllPaStreamForAllVersion(SettableApiKey.ApiKeyType pa) {
         //TODO: MODIFICARE
         webhookClientForClean.setApiKeys(pa);
 
         //DELETE V1
         List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookClientForClean.listEventStreams();
-        for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
-            try{
+        for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
+            try {
                 webhookClientForClean.deleteEventStream(elem.getStreamId());
-            }catch (HttpStatusCodeException statusCodeException){
-                log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
             }
         }
 
         //DELETE V2.3
-        List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
-        for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
-            try{
+        List<StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
+        for (StreamListElement elem : streamListElementsV23) {
+            try {
                 webhookClientForClean.deleteEventStreamV23(elem.getStreamId());
-            }catch (HttpStatusCodeException statusCodeException){
-                log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
             }
         }
     }
@@ -526,9 +522,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 }
                 break;
             case "V23":
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
+                List<StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
                 for(StreamMetadataResponseV23 eventStream: eventStreamListV23){
-                    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement streamListElementV23 = streamListElementsV23.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+                    StreamListElement streamListElementV23 = streamListElementsV23.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
                     Assertions.assertNull(streamListElementV23);
                 }
                 break;
@@ -1085,7 +1081,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElementListV23.clear();
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
         }else if(timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus){
-            pnPollingWebhook.setNotificationStatusV23((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus) timeLineOrStatus);
+            pnPollingWebhook.setNotificationStatusV23((NotificationStatus) timeLineOrStatus);
             progressResponseElementListV23.clear();
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
         } else{
@@ -1318,16 +1314,16 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         switch (versione) {
             case "V10":
                 List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
+                for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
                     System.out.println(elem);
-                    deleteStreamWrapper(V10,pa,elem.getStreamId());
+                    deleteStreamWrapper(V10, pa, elem.getStreamId());
                 }
                 break;
             case "V23":
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
+                List<StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
+                for (StreamListElement elem : streamListElementsV23) {
                     System.out.println(elem);
-                    deleteStreamWrapper(V23,pa,elem.getStreamId());
+                    deleteStreamWrapper(V23, pa, elem.getStreamId());
                 }
                 break;
             default:
@@ -1441,16 +1437,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertEquals(progressResponseElements.size() , numEventi);
             System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.size());
         });
-
     }
 
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
-
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
-
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
+        TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
+        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(timelineElementDetails);
         System.out.println(json);
