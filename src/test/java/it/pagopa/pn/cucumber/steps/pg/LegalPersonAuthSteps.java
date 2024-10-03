@@ -55,6 +55,13 @@ public class LegalPersonAuthSteps {
         }
     }
 
+    @When("l'utente {string} crea una chiave pubblica per la PG usando una chiave già presente in stato ruotato")
+    public void lUtenteCreaUnaChiavePubblicaPerLaPGUsandoUnaChiaveGiàPresenteInStatoRuotato(String utente) {
+        selectAdmin(utente);
+        RestClientResponseException e = Assertions.assertThrows(RestClientResponseException.class, () ->creaChiavePubblica(utente));
+        pojo.setException(e);
+    }
+
     @When("l'utente {string} crea una chiave pubblica per la PG")
     public BffPublicKeyResponse creaChiavePubblica(String utente) {
         selectAdmin(utente);
@@ -153,6 +160,12 @@ public class LegalPersonAuthSteps {
         Assertions.assertNotNull(pojo.getException());
         Assertions.assertEquals(errorCode, pojo.getException().getRawStatusCode());
         Assertions.assertTrue(Objects.requireNonNull(pojo.getException().getMessage()).contains(errorMessage), "the error message is: " + pojo.getException().getMessage());
+    }
+
+    @Then("la chiamata restituisce un errore con status code {int}")
+    public void laChiamataRestituisceUnErroreConStatusCodeConIlJwtDellUtenteNonValido(int errorCode) {
+        Assertions.assertNotNull(pojo.getException());
+        Assertions.assertEquals(errorCode, pojo.getException().getRawStatusCode());
     }
 
     @When("l'utente {string} tenta di recuperare i dati dell'utente avente user id {string}")
@@ -268,4 +281,5 @@ public class LegalPersonAuthSteps {
             }
         });
     }
+
 }

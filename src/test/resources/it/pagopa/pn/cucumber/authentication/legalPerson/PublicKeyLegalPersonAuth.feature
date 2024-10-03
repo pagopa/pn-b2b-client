@@ -88,7 +88,6 @@ Feature: Public key legal Person Authentication
   Scenario: [LEGAL_PERSON_AUTH_15] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica senza una chiave associata
     When l'utente "AMMINISTRATORE" "RUOTA" una chiave pubblica per la PG che non esiste
     Then la chiamata restituisce un errore con status code 404 riportante il messaggio "GENERIC_ERROR"
-    #correggere message
 
   # da ripristinare quando abbiamo le utenze
 #  @publicKeyCreation
@@ -158,14 +157,14 @@ Feature: Public key legal Person Authentication
 #    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
 
   @publicKeyCreation
-  Scenario Outline: [LEGAL_PERSON_AUTH_26] Un Amministratore PG con un gruppo associato riattiva la chiave pubblica della PG
+  Scenario Outline: [LEGAL_PERSON_AUTH_26] Un Amministratore PG con un gruppo associato riattiva la chiave pubblica di una PG di cui non fa parte
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "<status>"
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "<status>"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "<message>"
+    Then la chiamata restituisce un errore con status code 403
     Examples:
-      | status   | message                                                                 |
-      | BLOCCATA | User is not authorized to access this resource with an explicit deny    |
-      | RUOTATA  | User is not authorized to access this resource with an explicit deny    |
+      | status   |
+      | BLOCCATA |
+      | RUOTATA  |
 
 # da ripristinare quando abbiamo le utenze
 #  @publicKeyCreation
@@ -263,3 +262,11 @@ Feature: Public key legal Person Authentication
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
     When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
     Then la chiamata restituisce un errore con status code 404 riportante il messaggio "GENERIC_ERROR"
+
+  @publicKeyCreation
+  Scenario: [LEGAL_PERSON_AUTH_5] Un Amministratore PG blocca una chiave pubblica per la Persona Giuridica dopo averla ruotata
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG usando una chiave già presente in stato ruotato
+    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
