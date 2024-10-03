@@ -1079,26 +1079,6 @@ public class SharedSteps {
         });
     }
 
-    @And("viene controllato che siano presenti pec verificate inserite per l'utente {string}")
-    public void waitedAndViewedPecDiPiattaformaDi(String user) {
-        selectUser(user);
-        Assertions.assertDoesNotThrow(() -> {
-            try {
-                Thread.sleep(120000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Sleep was interrupted", e);
-            }
-
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                boolean exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
-
-                Assertions.assertTrue(exists, "PEC NOT FOUND");
-            }
-        });
-    }
 
     @And("viene verificata la presenza di {int} recapiti di cortesia inseriti per l'utente {string}")
     public void viewedCourtesyAddress(int expectedItems, String user) {

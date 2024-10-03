@@ -773,12 +773,13 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene disabilitato il servizio SERCQ SEND")
-    public void vieneDisabilitatoSercq() {
+    @And("viene disabilitato il servizio SERCQ SEND per il comune di {string}")
+    public void vieneDisabilitatoSercqPerEnte(String pa) {
+        String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.SERCQ);
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalChannelType.SERCQ);
                 log.info("SERCQ DISABLED");
             }
         });
@@ -793,9 +794,8 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene verificata l' assenza di pec inserite per l'utente {string}")
-    public void viewedPecDiPiattaformaDi(String user) {
-        selectUser(user);
+    @And("viene verificata l' assenza di pec inserite per l'utente")
+    public void viewedPecDiPiattaformaDi() {
 
         Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
@@ -808,9 +808,8 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene verificata l' assenza di pec inserite per l'utente {string} per il comune {string}")
-    public void verifyPecIsNotPresentPerUserPerEnte(String user, String pa) {
-        selectUser(user);
+    @And("viene verificata l' assenza di pec per il comune {string}")
+    public void verifyPecIsNotPresentPerUserPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -825,9 +824,8 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene verificata la presenza di pec inserite per l'utente {string} per il comune {string}")
+    @And("viene verificata la presenza di pec inserite per il comune {string}")
     public void verifyPecIsPresentPerUserPerEnte(String user, String pa) {
-        selectUser(user);
         String senderId = getSenderIdPa(pa);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -843,9 +841,9 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    @And("viene verificata la presenza di Sercq attivo per l'utente {string} per il comune {string}")
-    public void viewedSercqPerEnte(String user, String senderId) {
-        selectUser(user);
+    @And("viene verificata la presenza di Sercq attivo per il comune {string}")
+    public void viewedSercqPerEnte(String pa) {
+        String senderId = getSenderIdPa(pa);
         try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = legalAddressByRecipient.stream()
@@ -862,7 +860,7 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-    @And("viene verificata la presenza di Sercq attivo per l'utente {string}")
+    @And("viene verificata la presenza di Sercq attivo per l'utente {string} ")
     public void viewedSercqPerUtente(String user) {
         selectUser(user);
 
@@ -878,9 +876,9 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    @And("viene verificata l'assenza di Sercq attivo per l'utente {string}")
-    public void notViewedSercqPerUtente(String user) {
-        selectUser(user);
+    @And("viene verificata l'assenza di Sercq attivo")
+    public void notViewedSercqPerUtente() {
+
 
         Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
@@ -894,9 +892,8 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    @And("viene verificata l'assenza di indirizzi Pec per l'utente {string} per il comune {string}")
-    public void viewedPecPerUtentePerEnte(String user, String pa) {
-        selectUser(user);
+    @And("viene verificata l'assenza di indirizzi Pec per il comune {string}")
+    public void viewedPecPerUtentePerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
         Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
@@ -927,7 +924,33 @@ public class RicezioneNotificheWebSteps {
         postRecipientLegalAddress("default", pec, null, true);
     }
 
+    @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
+    public void waitedAndViewedPecDiPiattaformaDi(String pa) {
+        String senderId = getSenderIdPa(pa);
+        Assertions.assertDoesNotThrow(() -> {
+            try {
+                Thread.sleep(180000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Sleep was interrupted", e);
+            }
 
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                boolean exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
+
+                Assertions.assertTrue(exists, "PEC NOT FOUND");
+            }
+        });
+    }
+
+    @And("viene rimossa se presente la pec per il comune {string}")
+    public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String pa) {
+        String senderId = getSenderIdPa(pa);
+        Assertions.assertDoesNotThrow( () -> {this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalChannelType.PEC);
+            log.info("PEC FOUND AND DELETED");}, "PEC NOT FOUND");
+    }
 }
 
 
