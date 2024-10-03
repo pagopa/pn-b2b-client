@@ -1060,25 +1060,36 @@ public class SharedSteps {
     @And("viene rimossa se presente la pec di piattaforma di {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
-                log.info("PEC FOUND AND DELETED");
-            }
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("PEC NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
-            }
-        }
+        Assertions.assertDoesNotThrow( () -> {this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+            log.info("PEC FOUND AND DELETED");}, "PEC NOT FOUND");
     }
+
 
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
         selectUser(user);
         Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                boolean exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+
+                Assertions.assertTrue(exists, "PEC NOT FOUND");
+            }
+        });
+    }
+
+    @And("viene controllato che siano presenti pec verificate inserite per l'utente {string}")
+    public void waitedAndViewedPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        Assertions.assertDoesNotThrow(() -> {
+            try {
+                Thread.sleep(120000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new RuntimeException("Sleep was interrupted", e);
+            }
+
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 boolean exists = legalAddressByRecipient.stream()

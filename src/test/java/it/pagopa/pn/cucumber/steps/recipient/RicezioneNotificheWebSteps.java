@@ -544,7 +544,7 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             case "Galileo Galilei" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case "Lucio Anneo Seneca" ->
+            case "Lucio Anneo Seneca","CucumberSpa"->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             case "GherkinSrl" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
@@ -878,8 +878,8 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    @And("viene verificata l'assenza di  indirizzi Pec per l'utente {string}")
-    public void viewedPecPerUtente(String user) {
+    @And("viene verificata l'assenza di Sercq attivo per l'utente {string}")
+    public void notViewedSercqPerUtente(String user) {
         selectUser(user);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -887,7 +887,23 @@ public class RicezioneNotificheWebSteps {
             boolean exists = false;
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+                        .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
+            }
+            Assertions.assertFalse(exists, "SERCQ FOUND");
+        });
+
+    }
+
+    @And("viene verificata l'assenza di indirizzi Pec per l'utente {string} per il comune {string}")
+    public void viewedPecPerUtentePerEnte(String user, String pa) {
+        selectUser(user);
+        String senderId = getSenderIdPa(pa);
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = false;
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                exists = legalAddressByRecipient.stream()
+                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
             }
             Assertions.assertFalse(exists, "PEC FOUND");
         });
