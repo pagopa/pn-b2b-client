@@ -91,7 +91,7 @@ public class LegalPersonAuthSteps {
 
     @Given("l'utente {string} non ha censito alcuna chiave pubblica")
     public void checkForAbsenceOfPublicKey(String utente) {
-        //TODO
+        //TODO aggiungere assert che non ci sono chiavi pubbliche
     }
 
     @When("l'utente {string} {string} la chiave pubblica per la PG che si trova in stato {string}")
@@ -152,7 +152,7 @@ public class LegalPersonAuthSteps {
     public void fdf(Integer errorCode, String errorMessage) {
         Assertions.assertNotNull(pojo.getException());
         Assertions.assertEquals(errorCode, pojo.getException().getRawStatusCode());
-        Assertions.assertTrue(Objects.requireNonNull(pojo.getException().getMessage()).contains(errorMessage));
+        Assertions.assertTrue(Objects.requireNonNull(pojo.getException().getMessage()).contains(errorMessage), "the error message is: " + pojo.getException().getMessage());
     }
 
     @When("l'utente {string} tenta di recuperare i dati dell'utente avente user id {string}")

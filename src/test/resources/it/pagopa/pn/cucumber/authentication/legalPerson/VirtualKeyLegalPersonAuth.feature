@@ -298,7 +298,7 @@ Feature: Virtual key legal Person Authentication
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_20] Un Utente Persona Giuridica riattiva la propria virtual key, nonostante sia presente una già attiva
     #59 in attesa degli utenti
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
-    And l'utente "AMMINISTRATORE " "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
