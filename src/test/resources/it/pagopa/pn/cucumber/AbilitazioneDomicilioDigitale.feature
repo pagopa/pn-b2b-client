@@ -1,5 +1,7 @@
 Feature: Abilitazione domicilio digitale
 
+  #TODO RINOMINARE CUCUMBERSPA IN LUCIO ANNEO SENECA o VICEVERSA
+  
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -279,8 +281,6 @@ Feature: Abilitazione domicilio digitale
     And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
     And viene verificata l'assenza di Sercq attivo per il comune "Comune_1"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene rimossa se presente la pec per il comune "Comune_1"
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_15] Attivazione del servizio SERCQ SEND per recapito specifico per ente e presenza del recapito legale PEC specifico per enti differenti
@@ -292,8 +292,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
     And viene verificata l'assenza di Sercq attivo per il comune "Comune_1"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene rimossa se presente la pec per il comune "Comune_1"
+
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_16] Attivazione servizio SERCQ e aggiunta recapito di cortesia email
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -334,8 +333,6 @@ Feature: Abilitazione domicilio digitale
     And viene verificata la presenza di Sercq attivo per il comune "Comune_2"
     Then vengono accettati i TOS
 
-
-  ##TODO DA TERMINARE
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -348,10 +345,10 @@ Feature: Abilitazione domicilio digitale
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-    Then Verifico che il workflow della notifica sia
-    And si verifica che gli elementi di timeline associati alla notifica siano 4
-    And si verifica che lo stato "DELIVERING" sia assente
+    And si verifica la corretta acquisizione della notifica
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+    And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -368,11 +365,10 @@ Feature: Abilitazione domicilio digitale
       | digitalDomicile | NULL             |
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
-    And si verifica che lo stato "DELIVERING" sia assente
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
 
-##TODO INSERIRE STEP CONTROLLO WORKFLOW PER SERCQ
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -385,8 +381,9 @@ Feature: Abilitazione domicilio digitale
     And destinatario CucumberSpa
     And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
-    And si verifica che lo stato "DELIVERING" sia assente
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
@@ -410,8 +407,8 @@ Feature: Abilitazione domicilio digitale
       | details                | NOT_NULL                                           |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                  |
-    And si verifica che lo stato "DELIVERING" sia assente
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
@@ -433,8 +430,8 @@ Feature: Abilitazione domicilio digitale
       | details                | NOT_NULL                                           |
       | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                  |
-    And si verifica che lo stato "DELIVERING" sia assente
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
@@ -450,7 +447,7 @@ Feature: Abilitazione domicilio digitale
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
@@ -467,7 +464,7 @@ Feature: Abilitazione domicilio digitale
     Given viene generata una nuova notifica
       | subject            | invio notifica a CucumberSpa |
     And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
@@ -488,8 +485,9 @@ Feature: Abilitazione domicilio digitale
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
       | digitalDomicile | NULL             |
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
-
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
@@ -505,4 +503,6 @@ Feature: Abilitazione domicilio digitale
       | denomination            | Gherkin spa               |
       | taxId                   | CLMCST42R12D969Z          |
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
+    When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"

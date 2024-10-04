@@ -1789,6 +1789,10 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             }
+            case "galileo galilei" -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+            }
             default -> throw new IllegalArgumentException();
         }
     }

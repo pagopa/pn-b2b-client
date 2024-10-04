@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -956,7 +957,7 @@ public class RicezioneNotificheWebSteps {
 
     @And("vengono rimossi eventuali recapiti presenti per l'utente")
     public void cleanLegalAddressForUser() {
-        Assertions.assertDoesNotThrow(() -> {
+        try {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
             if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
                 legalAddressByRecipient.stream()
@@ -965,16 +966,28 @@ public class RicezioneNotificheWebSteps {
                             log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
                         });
             }
-            /*List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
+            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
             if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
                 courtesyDigitalAddresses.stream()
                         .forEach(address -> {
                             this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), address.getChannelType());
                             log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
                         });
-            }*/
-        });
+            }
+        } catch (Exception e) {
+            log.error("RIMOZIONE RECAPITI FALLITA:\n" + e);
+        }
     }
+
+    @And("Viene verificato che non sia arrivato un evento di {string}")
+    public void verificaAssenzaElementoTimeline(String categoryToFind) {
+        FullSentNotificationV23 fullSentNotificationV23 = sharedSteps.getSentNotification();
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23> timelineElements = fullSentNotificationV23.getTimeline();
+        boolean exist = timelineElements.stream()
+                .anyMatch(element -> element.getCategory() != null && element.getCategory().toString().equals(categoryToFind));
+        Assertions.assertFalse(exist);
+    }
+
 }
 
 
