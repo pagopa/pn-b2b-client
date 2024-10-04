@@ -102,8 +102,8 @@ Feature: esposizione timestamp tecnici per gli SLA
 
   @timestampTecnici @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_READ_STREAM_KO] Leggendo gli elementi di uno stream invocando un api con versione diversa da quella con cui è stato creato lo stream, si ottiene errore
-    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "<versionCreate>"
-    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "<versionRead>"
+    Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
+    And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
     And viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
@@ -115,8 +115,8 @@ Feature: esposizione timestamp tecnici per gli SLA
     And si crea il nuovo stream per il "Comune_2" con versione "<versionCreate>"
     And la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     When vengono letti gli eventi dello stream versione "<versionRead>"
-    Then la chiamata restituisce un errore <errorCode> riportante la dicitura "GENERIC_ERROR"
+    Then la chiamata restituisce un errore 403 riportante la dicitura "GENERIC_ERROR"
     Examples:
-      | versionCreate | versionRead | errorCode |
-      | V24           | V23         | 403       |
-      | V23           | V24         | 403       |
+      | versionCreate | versionRead |
+      | V24           | V23         |
+      | V23           | V24         |
