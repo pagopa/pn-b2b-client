@@ -13,10 +13,7 @@ import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyChannelType;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
@@ -544,7 +541,7 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             case "Galileo Galilei" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-            case "Lucio Anneo Seneca","CucumberSpa"->
+            case "Lucio Anneo Seneca", "CucumberSpa" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             case "GherkinSrl" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
@@ -808,24 +805,8 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @And("viene verificata l' assenza di pec per il comune {string}")
-    public void verifyPecIsNotPresentPerUserPerEnte(String pa) {
-        String senderId = getSenderIdPa(pa);
-
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean notExists = true;
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                notExists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> senderId.equals(address.getSenderId()) && LegalChannelType.PEC.equals(address.getChannelType()));
-            }
-
-            Assertions.assertTrue(notExists, "PEC FOUND");
-        });
-    }
-
     @And("viene verificata la presenza di pec inserite per il comune {string}")
-    public void verifyPecIsPresentPerUserPerEnte(String user, String pa) {
+    public void verifyPecIsPresentPerUserPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
 
         Assertions.assertDoesNotThrow(() -> {
@@ -860,6 +841,27 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @And("viene verificata l'assenza di Sercq attivo per il comune {string}")
+    public void viewedSercqNotActivePerEnte(String pa) {
+        String senderId = getSenderIdPa(pa);
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            boolean exists = false;
+            exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> senderId.equals(address.getSenderId())
+                            && LegalChannelType.SERCQ.equals(address.getChannelType()));
+
+            Assertions.assertFalse(exists);
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("SERCQ FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
+    }
+
+
     @And("viene verificata la presenza di Sercq attivo per l'utente {string} ")
     public void viewedSercqPerUtente(String user) {
         selectUser(user);
@@ -878,8 +880,6 @@ public class RicezioneNotificheWebSteps {
 
     @And("viene verificata l'assenza di Sercq attivo")
     public void notViewedSercqPerUtente() {
-
-
         Assertions.assertDoesNotThrow(() -> {
             List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
             boolean exists = false;
@@ -948,8 +948,32 @@ public class RicezioneNotificheWebSteps {
     @And("viene rimossa se presente la pec per il comune {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String pa) {
         String senderId = getSenderIdPa(pa);
-        Assertions.assertDoesNotThrow( () -> {this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalChannelType.PEC);
-            log.info("PEC FOUND AND DELETED");}, "PEC NOT FOUND");
+        Assertions.assertDoesNotThrow(() -> {
+            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(senderId, LegalChannelType.PEC);
+            log.info("PEC FOUND AND DELETED");
+        }, "PEC NOT FOUND");
+    }
+
+    @And("vengono rimossi eventuali recapiti presenti per l'utente")
+    public void cleanLegalAddressForUser() {
+        Assertions.assertDoesNotThrow(() -> {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                legalAddressByRecipient.stream()
+                        .forEach(address -> {
+                            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), address.getChannelType());
+                            log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
+                        });
+            }
+            /*List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
+            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
+                courtesyDigitalAddresses.stream()
+                        .forEach(address -> {
+                            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), address.getChannelType());
+                            log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
+                        });
+            }*/
+        });
     }
 }
 

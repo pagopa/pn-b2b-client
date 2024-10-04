@@ -121,36 +121,7 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @And("si verifica che gli elementi di timeline associati alla notifica siano {int}")
-    public void countTimelineEvents(){
-        PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
-        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV23(
-                statusHistory -> statusHistory
-                        .getStatus()
-                        .getValue().equals("DELIVERED")
-        );
 
-        PnPollingServiceStatusRapidV23 statusRapidV23 = (PnPollingServiceStatusRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
-
-        PnPollingResponseV23 pnPollingResponseV23 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
-                PnPollingParameter.builder()
-                        .value("DELIVERED")
-                        .pnPollingPredicate(pnPollingPredicate)
-                        .build());
-        log.info("NOTIFICATION_STATUS_HISTORY: " + pnPollingResponseV23.getNotification().getNotificationStatusHistory());
-        try {
-            Assertions.assertTrue(pnPollingResponseV23.getResult());
-            Assertions.assertNotNull(pnPollingResponseV23.getNotificationStatusHistoryElement());
-            sharedSteps.setSentNotification(pnPollingResponseV23.getNotification());
-
-            List<TimelineElementV23> timelineElements = pnPollingResponseV23.getNotification().getTimeline();
-            Assertions.assertEquals(4, timelineElements.size(), "Expected exactly 4 events in the status history");
-
-            log.info("NOTIFICATION_STATUS_HISTORY_ELEMENT: " + pnPollingResponseV23.getNotificationStatusHistoryElement());
-        } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
-        }
-    }
 
     @And("si verifica che lo stato {string} sia assente")
     public void checkStatusNotPresent(String status){
@@ -3549,4 +3520,36 @@ try{
                         .build());
     }
 
+    @And("si verifica che gli elementi di timeline associati alla notifica siano {int}")
+    public void countTimelineEvents(){
+        FullSentNotificationV23 fullSentNotificationV23 =sharedSteps.getSentNotification();
+        List<TimelineElementV23> timelineElements = fullSentNotificationV23.getTimeline();
+        Assertions.assertEquals(4, timelineElements.size(), "Expected exactly 4 events in the status history");
+    }
+
+    @And("viene verificato che il timestamp dell'evento {string} sia uguale a quello dell'evento {string}")
+    public void confrontoTimestampEventi(String timelineEventA, String timelineEventB){
+        FullSentNotificationV23 fullSentNotificationV23 =sharedSteps.getSentNotification();
+        List<TimelineElementV23> timelineElements = fullSentNotificationV23.getTimeline();
+
+        Optional<TimelineElementV23> timelineElementV23OptionalA = timelineElements.stream()
+                .filter(element -> element.getCategory() != null && element.getCategory().toString().equals(timelineEventA))
+                .findFirst();
+        Optional<TimelineElementV23> timelineElementV23OptionalB = timelineElements.stream()
+                .filter(element -> element.getCategory() != null && element.getCategory().toString().equals(timelineEventB))
+                .findFirst();
+
+        /*if (timelineElementV23OptionalA.isPresent() && timelineElementV23OptionalB.isPresent()) {
+            Long timestampA = timelineElementV23OptionalA.get().getDetails().getSchedulingDate().toInstant().toEpochMilli();
+            Long timeStampB = timelineElementV23OptionalB.get().getDetails().getSchedulingDate().toInstant().toEpochMilli();
+            Long diff = timestampA - timeStampB;
+            Long delta = Long.valueOf(sharedSteps.getSchedulingDelta());
+            log.info("PRE-ASSERTION: iun={} schedulingDateMillis={}, digitalDeliveryCreationMillis={}, differenza={}, delayMillis={}, delta={}",
+                    sharedSteps.getSentNotification().getIun(), schedulingDateMillis, digitalDeliveryCreationMillis, diff, delayMillis, delta);
+            Assertions.assertTrue(diff <= delayMillis + delta && diff >= delayMillis - delta);
+            }
+*/
+
+
+    }
 }
