@@ -381,6 +381,21 @@ Feature: Abilitazione domicilio digitale
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
+ @sercq @addressBook2
+ Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica
+  Given si predispone addressbook per l'utente "CucumberSpa"
+  And vengono rimossi eventuali recapiti presenti per l'utente
+  And viene attivato il servizio SERCQ SEND per recapito principale
+  And viene verificata la presenza di Sercq attivo per il comune "default"
+  Given viene generata una nuova notifica
+   | subject            | invio notifica a CucumberSpa |
+  And destinatario CucumberSpa
+  When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+  And si verifica la corretta acquisizione della notifica
+  And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+  Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
+  And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
+
   @sercq @addressBook1
    Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"

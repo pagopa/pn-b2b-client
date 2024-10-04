@@ -3542,8 +3542,8 @@ public class AvanzamentoNotificheB2bSteps {
                 .findFirst();
         Assertions.assertTrue(timelineElementV23OptionalNext.isPresent() && timelineElementV23OptionalPrevious.isPresent());
 
-        Long timestampNext = timelineElementV23OptionalNext.get().getDetails().getSchedulingDate().toInstant().toEpochMilli();
-        Long timeStampPrevious = timelineElementV23OptionalPrevious.get().getDetails().getSchedulingDate().toInstant().toEpochMilli();
+        Long timestampNext = timelineElementV23OptionalNext.get().getDetails().getEventTimestamp().toInstant().toEpochMilli();
+        Long timeStampPrevious = timelineElementV23OptionalPrevious.get().getDetails().getEventTimestamp().toInstant().toEpochMilli();
         Long diffMillis = timestampNext - timeStampPrevious;
         delta = delta * 1000;
 
