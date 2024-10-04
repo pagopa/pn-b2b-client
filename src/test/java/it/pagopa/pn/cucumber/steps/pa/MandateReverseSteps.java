@@ -70,15 +70,15 @@ public class MandateReverseSteps {
         isMandatePresent(delegator).orElseThrow(() -> new AssertionFailedError("Mandate with PENDING status not found!"));
     }
 
-    @And("la delega a nome di {string} viene accettata dal delegato senza associare nessun gruppo")
-    public void acceptMandateWithoutGroup(String delegator) {
-        acceptMandate(null, getVerificationCode(delegator));
+    @And("la delega a nome di {string} viene accettata da {string} senza associare nessun gruppo")
+    public void acceptMandateWithoutGroup(String delegator, String delegate) {
+        acceptMandate(delegate, null, getVerificationCode(delegator));
     }
 
-    @And("la delega a nome di {string} viene accettata dal delegato associando un gruppo")
-    public void acceptMandateWithGroup(String delegator) {
+    @And("la delega a nome di {string} viene accettata da {string} associando un gruppo")
+    public void acceptMandateWithGroup(String delegator, String delegate) {
         Assertions.assertFalse(groups.isEmpty(), "The group list cannot be empty!");
-        acceptMandate(groups, getVerificationCode(delegator));
+        acceptMandate(delegate, groups, getVerificationCode(delegator));
     }
 
     @And("la notifica non può essere recuperata da {string}")
@@ -133,7 +133,8 @@ public class MandateReverseSteps {
         return verificationCode;
     }
 
-    private void acceptMandate(List<String> groups, String verificationCode) {
+    private void acceptMandate(String delegate, List<String> groups, String verificationCode) {
+        selectPG(delegate);
         try {
             acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
         } catch (Exception ex) {

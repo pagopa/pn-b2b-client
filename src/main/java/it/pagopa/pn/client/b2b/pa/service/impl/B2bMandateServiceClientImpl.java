@@ -31,14 +31,14 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     public B2bMandateServiceClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.external.dest.base-url}") String basePath,
-                                       @Value("${pn.bearer-token-b2b.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token-b2b.pg1}") String cucumberSpaBearerToken) {
+                                       @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
+                                       @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
         this.restTemplate = restTemplate;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
-        this.bearerTokenSetted = BearerTokenType.PG_1;
-        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
+        this.bearerTokenSetted = BearerTokenType.PG_2;
+        this.mandateServiceApi = new MandateServiceApi(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
