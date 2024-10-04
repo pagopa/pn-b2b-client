@@ -96,6 +96,7 @@ public class SharedSteps {
     private NewNotificationRequestV23 notificationRequest;
 
     @Setter
+    @Getter
     private HttpStatusCodeException notificationError;
 
     @Getter
@@ -140,6 +141,10 @@ public class SharedSteps {
     @Getter
     @Setter
     private StreamMetadataResponseV23 eventStreamV23;
+
+    @Getter
+    @Setter
+    private StreamMetadataResponseV24 eventStreamV24;
 
     @Getter
     @Setter

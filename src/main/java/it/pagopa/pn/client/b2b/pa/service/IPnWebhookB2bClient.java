@@ -40,6 +40,20 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     ResponseEntity<List<ProgressResponseElementV23>> consumeEventStreamHttpV23(UUID streamId, String lastEventId);
 
+    //Versione 2.4
+
+    StreamMetadataResponseV24 createEventStreamV24(StreamCreationRequestV24 streamCreationRequestV24) throws RestClientException;
+
+    StreamMetadataResponseV24 disableEventStreamV24(UUID streamId) throws RestClientException;
+
+    List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement> listEventStreamsV24() throws RestClientException;
+
+    void removeEventStreamV24(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV24 retrieveEventStreamV24(UUID streamId) throws RestClientException;
+
+    StreamMetadataResponseV24 updateEventStreamV24(UUID streamId, StreamRequestV24 streamRequestV24) throws RestClientException;
+
     List<ProgressResponseElementV24> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException;
 
     ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamHttpV24(UUID streamId, String lastEventId) throws RestClientException;

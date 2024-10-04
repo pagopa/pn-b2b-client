@@ -55,7 +55,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<StreamCreationRequest> streamCreationRequestList;
     private List<StreamMetadataResponse> eventStreamList;
     private List<StreamCreationRequestV23> streamCreationRequestListV23;
+    private List<StreamCreationRequestV24> streamCreationRequestListV24;
     private List<StreamMetadataResponseV23> eventStreamListV23;
+    private List<StreamMetadataResponseV24> eventStreamListV24;
     private StreamRequestV23 streamRequestV23;
     private StreamCreationRequest streamCreationRequest;
     private Integer requestNumber;
@@ -63,6 +65,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private final PnPollingFactory pollingFactory;
     private final TimingForPolling timingForPolling;
     private List<ProgressResponseElementV23> progressResponseElements;
+    private List<ProgressResponseElementV24> progressResponseElementsV24;
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
     public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
@@ -73,7 +76,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     //private final WebhookSynchronizer webhookSynchronizer;
 
-    public enum StreamVersion {V23,V10,V10_V23}
+    public enum StreamVersion {V23, V10, V10_V23, V24}
 
     private final Set<String> paStreamOwner = new HashSet<>();
 
@@ -1635,13 +1638,24 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
             case V23 -> {
                 this.streamCreationRequestListV23 = new LinkedList<>();
-                for(int i = 0; i<number; i++){
+                for (int i = 0; i < number; i++) {
                     StreamCreationRequestV23 streamRequest = new StreamCreationRequestV23();
-                    streamRequest.setTitle(title+"_"+i);
+                    streamRequest.setTitle(title + "_" + i);
                     streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
                             StreamCreationRequestV23.EventTypeEnum.STATUS : StreamCreationRequestV23.EventTypeEnum.TIMELINE);
                     streamRequest.setFilterValues(filterValues);
                     streamCreationRequestListV23.add(streamRequest);
+                }
+            }
+            case V24 -> {
+                this.streamCreationRequestListV24 = new LinkedList<>();
+                for (int i = 0; i < number; i++) {
+                    StreamCreationRequestV24 streamRequest = new StreamCreationRequestV24();
+                    streamRequest.setTitle(title + "_" + i);
+                    streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
+                            StreamCreationRequestV24.EventTypeEnum.STATUS : StreamCreationRequestV24.EventTypeEnum.TIMELINE);
+                    streamRequest.setFilterValues(filterValues);
+                    streamCreationRequestListV24.add(streamRequest);
                 }
             }
         }
@@ -1694,6 +1708,41 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                                 this.eventStreamListV23 = new LinkedList<>();
                             }
                             this.eventStreamListV23.add(eventStream);
+                            addStreamId(pa, eventStream.getStreamId(), streamVersion);
+
+                        } catch (HttpStatusCodeException e) {
+                            this.notificationError = e;
+                            sharedSteps.setNotificationError(e);
+                        }
+
+                    }
+                }
+                case V24 -> {
+                    if (this.eventStreamListV24 == null) this.eventStreamListV24 = new LinkedList<>();
+                    for (StreamCreationRequestV24 request : streamCreationRequestListV24) {
+                        if (filteredValues != null && !filteredValues.isEmpty()) {
+                            request.setFilterValues(filteredValues);
+                        }
+                        if (listGroups != null) {
+                            request.setGroups(listGroups);
+                        }
+                        if (replaceId) {
+                            request.setReplacedStreamId(sharedSteps.getEventStreamV23().getStreamId());
+                        }
+                        try {
+                            StreamMetadataResponseV24 eventStream = webhookB2bClient.createEventStreamV24(request);
+                            if (replaceId) {
+                                StreamMetadataResponseV24 eventStreamV24 =
+                                        webhookB2bClient.retrieveEventStreamV24(this.eventStreamListV24.get(0).getStreamId());
+                                sharedSteps.setEventStreamV24(eventStreamV24);
+                                Assertions.assertNotNull(eventStreamV24);
+                                Assertions.assertNotNull(eventStreamV24.getStreamId());
+                                Assertions.assertNotNull(eventStreamV24.getDisabledDate());
+                                log.info("EVENTSTREAM REPLACED: {}", eventStreamV24);
+
+                                this.eventStreamListV24 = new LinkedList<>();
+                            }
+                            this.eventStreamListV24.add(eventStream);
                             addStreamId(pa, eventStream.getStreamId(), streamVersion);
 
                         } catch (HttpStatusCodeException e) {
@@ -1875,10 +1924,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //    @When("si invoca l'api Webhook versione {string} per ottenere gli elementi di timeline di tale notifica")
 //    public void getTimelineElementVersionWebhook(String version) {
 //        String iun = this.sharedSteps.getSentNotification().getIun();
-//        if (version.equalsIgnoreCase("V2.4")) {
+//        if (version.equalsIgnoreCase("V24")) {
 //            FullSentNotificationV24 fullSentNotification = webhookB2bClient.getSentNotification(iun);
 //            this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
-//        } else if (version.equalsIgnoreCase("V2.3")) {
+//        } else if (version.equalsIgnoreCase("V23")) {
 //            FullSentNotificationV23 fullSentNotification = webhookB2bClient..getSentNotificationV23(iun);
 //            this.sharedSteps.setNotificationResponseCompleteV23(fullSentNotification);
 //        }
@@ -1887,21 +1936,33 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @When("si invoca l'api B2B versione {string} per ottenere gli elementi di timeline di tale notifica")
     public void getTimelineElementVersionB2B(String version) {
         String iun = this.sharedSteps.getSentNotification().getIun();
-        if (version.equalsIgnoreCase("V2.4")) {
+        if (version.equalsIgnoreCase("V24")) {
             FullSentNotificationV24 fullSentNotification = b2bClient.getSentNotification(iun);
             this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
-        } else if (version.equalsIgnoreCase("V2.3")) {
+        } else if (version.equalsIgnoreCase("V23")) {
             FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
             this.sharedSteps.setNotificationResponseCompleteV23(fullSentNotification);
         }
     }
 
+    @When("si invoca l'api Webhook versione {string} per ottenere gli elementi di timeline di tale notifica")
+    public void getTimelineElementVersionWebhook(String version) {
+        String iun = this.sharedSteps.getSentNotification().getIun();
+//        if (version.equalsIgnoreCase("V24")) {
+//            List<ProgressResponseElementV24> progressResponseElementV24List = webhookB2bClient.consumeEventStreamV24(iun);
+//            this.progressResponseElementsV24 = progressResponseElementV24List;
+//        } else if (version.equalsIgnoreCase("V23")) {
+//            List<ProgressResponseElementV23> progressResponseElementV23List = webhookB2bClient.consumeEventStreamV24(iun);
+//            this.progressResponseElements = progressResponseElementV23List;
+//        }
+    }
+
     @Then("gli elementi di timeline contengono i campi attesi in accordo alla versione {string}")
     public void checkTimelineElementVersion(String version) {
-        if (version.equalsIgnoreCase("V2.4")) {
+        if (version.equalsIgnoreCase("V24")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseComplete());
             checkTimelineElement(this.sharedSteps.getNotificationResponseComplete());
-        } else if (version.equalsIgnoreCase("V2.3")) {
+        } else if (version.equalsIgnoreCase("V23")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV23());
             checkTimelineElement(this.sharedSteps.getNotificationResponseCompleteV23());
         }
@@ -1912,14 +1973,112 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             fullSentNotificationV24.getTimeline().forEach(timelineElementV24 -> {
                 Assertions.assertNotNull(timelineElementV24.getIngestionTimestamp());
                 Assertions.assertNotNull(timelineElementV24.getNotificationSentAt());
+                Assertions.assertNotNull(timelineElementV24.getEventTimestamp());
+                log.info("Field presence checked for " + timelineElementV24.getCategory().getValue());
+                checkValues(timelineElementV24, fullSentNotificationV24.getTimeline());
             });
         } else if (timeline instanceof FullSentNotificationV23 fullSentNotificationV23) {
             fullSentNotificationV23.getTimeline().forEach(timelineElementV23 -> {
                 Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(timelineElementV23, Map.class);
                 Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
                 Assertions.assertFalse(timelineElementMap.containsKey("notificationSentAt"));
+                Assertions.assertFalse(timelineElementMap.containsKey("eventTimestamp"));
             });
         }
     }
 
+    private void checkValues(TimelineElementV24 timelineElementV24, List<TimelineElementV24> timelineElementV24list) {
+        String category = timelineElementV24.getCategory().getValue();
+        try {
+            switch (category) {
+                case "NOTIFICATION_VIEWED", "REFINEMENT", "PAYMENT", "NOTIFICATION_RADD_RETRIEVED", "SEND_DIGITAL_PROGRESS" -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
+                }
+                case "SEND_DIGITAL_FEEDBACK", "SEND_ANALOG_FEEDBACK", "SEND_ANALOG_PROGRESS", "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getNotificationDate());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getNotificationDate());
+                }
+                case "ANALOG_SUCCESS_WORKFLOW", "ANALOG_FAILURE_WORKFLOW", "COMPLETELY_UNREACHABLE_CREATION_REQUEST", "COMPLETELY_UNREACHABLE" -> {
+                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
+                            .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
+                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
+                            .map(x -> x.getTimestamp()).findFirst().orElse(null);
+                    OffsetDateTime mostRecentEvent;
+                    if (odtAnalogFeedBack != null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogFeedBack.isAfter(odtAnalogDomicileFailure) ? odtAnalogFeedBack : odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack == null) {
+                        mostRecentEvent = odtAnalogDomicileFailure;
+                    } else {
+                        mostRecentEvent = odtAnalogFeedBack;
+                    }
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                }
+                case "SCHEDULE_REFINEMENT" -> {
+                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
+                            .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
+                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
+                            .map(x -> x.getTimestamp()).findFirst().orElse(null);
+                    OffsetDateTime mostRecentEvent = timelineElementV24.getTimestamp();
+                    if (odtAnalogFeedBack != null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogFeedBack.isAfter(odtAnalogDomicileFailure) ? odtAnalogFeedBack : odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack == null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack != null && odtAnalogDomicileFailure == null) {
+                        mostRecentEvent = odtAnalogFeedBack;
+                    }
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                }
+
+                case "DIGITAL_SUCCESS_WORKFLOW", "DIGITAL_FAILURE_WORKFLOW " -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getIngestionTimestamp(), timelineElementV24.getNotificationSentAt());
+                    Assertions.assertEquals(timelineElementV24.getNotificationSentAt(), timelineElementV24.getIngestionTimestamp());
+                }
+            }
+        } catch (AssertionFailedError e) {
+            log.error("Assertion failed for category " + category);
+        }
+    }
+
+    @And("vengono letti gli eventi dello stream versione {string}")
+    public void readStreamEventsVersion(String version) {
+        updateApiKeyForStream();
+        try {
+            if (version.equalsIgnoreCase("V24")) {
+                progressResponseElementsV24 = webhookB2bClient.consumeEventStreamV24(this.eventStreamListV24.get(0).getStreamId(), null);
+                log.info("EventProgress: " + progressResponseElementsV24);
+            } else if (version.equalsIgnoreCase("V23")) {
+                progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
+                log.info("EventProgress: " + progressResponseElements);
+            }
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @Then("la chiamata restituisce correttamente lo stream di elementi timeline versione {string}")
+    public void checkForNoError(String version) {
+        Assertions.assertNull(sharedSteps.getNotificationError());
+        if (version.equalsIgnoreCase("V24")) {
+            Assertions.assertNotNull(this.progressResponseElementsV24);
+        } else {
+            Assertions.assertNotNull(this.progressResponseElements);
+        }
+    }
+
+    @Then("la chiamata restituisce un errore {int} riportante la dicitura {string}")
+    public void checkForError(Integer errorCode, String errorMessage) {
+        Assertions.assertNotNull(this.notificationError);
+        Assertions.assertEquals(errorCode, this.notificationError.getRawStatusCode());
+        Assertions.assertTrue(this.notificationError.getMessage().contains(errorMessage));
+    }
 }

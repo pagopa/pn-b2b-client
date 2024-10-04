@@ -25,8 +25,8 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>c4e81d9588546f3fe9d094465c79c38251b82344</open.api.version.delivery>
-        <open.api.version.delivery.push>6092751243ad1ee1259390a48ffbd5483717f779</open.api.version.delivery.push>
+        <open.api.version.delivery>81aa435724375175ea6419d63d9ec3cabf1e0a73</open.api.version.delivery>
+        <open.api.version.delivery.push>cb8eaaa9d2d747d3c7089f512c410cc2f19c7acb</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
