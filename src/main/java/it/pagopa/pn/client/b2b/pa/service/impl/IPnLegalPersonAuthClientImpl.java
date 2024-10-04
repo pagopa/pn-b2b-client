@@ -17,21 +17,26 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
-    private final String gherkinSrlBearerToken;
-    private final String cucumberSpaBearerToken;
-    private String basePath;
+
+    private final String aldameriniPGBearerToken;
+    private final String mariaMontessoriPGBearerToken;
+    private final String nildeIottiPGBearerToken;
+
+    private final String basePath;
     private RestTemplate restTemplate;
-    private PublicKeysApi publicKeysApi;
+    private final PublicKeysApi publicKeysApi;
 
     public IPnLegalPersonAuthClientImpl(RestTemplate restTemplate,
                                         @Value("${pn.webapi.external.base-url}") String basePath,
-                                        @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                        @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+                                        @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
+                                        @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
+                                        @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
+        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
+        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
+        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
-        this.publicKeysApi = new PublicKeysApi(newApiClient(basePath, cucumberSpaBearerToken));
+        this.publicKeysApi = new PublicKeysApi(newApiClient(basePath, aldameriniPGBearerToken));
     }
 
     private ApiClient newApiClient(String basePath, String bearerToken) {
@@ -69,14 +74,17 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_1 -> {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, gherkinSrlBearerToken));
+            case PG_3 -> {
+                this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
             }
-            case PG_2 -> {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, cucumberSpaBearerToken));
+            case PG_4 -> {
+                this.publicKeysApi.setApiClient(newApiClient(this.basePath, mariaMontessoriPGBearerToken));
+            }
+            case PG_5 -> {
+                this.publicKeysApi.setApiClient(newApiClient(this.basePath, nildeIottiPGBearerToken));
             }
             default ->  {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, cucumberSpaBearerToken));
+                this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
             }
         }
     }

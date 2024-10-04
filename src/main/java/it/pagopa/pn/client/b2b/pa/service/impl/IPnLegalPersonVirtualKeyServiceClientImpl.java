@@ -19,24 +19,27 @@ import org.springframework.web.client.RestTemplate;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPersonVirtualKeyServiceClient {
 
-    private final String gherkinSrlBearerToken;
-    private final String cucumberSpaBearerToken;
+    private final String aldameriniPGBearerToken;
+    private final String mariaMontessoriPGBearerToken;
+    private final String nildeIottiPGBearerToken;
 
-    private String basePath;
+    private final String basePath;
 
     private RestTemplate restTemplate;
 
-    private VirtualKeysApi virtualKeysApi;
+    private final VirtualKeysApi virtualKeysApi;
 
     public IPnLegalPersonVirtualKeyServiceClientImpl(RestTemplate restTemplate,
                      @Value("${pn.webapi.external.base-url}") String basePath,
-                     @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                     @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+                     @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
+                     @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
+                     @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
+        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
+        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
+        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
-        this.virtualKeysApi = new VirtualKeysApi(newApiClient(cucumberSpaBearerToken));
+        this.virtualKeysApi = new VirtualKeysApi(newApiClient(aldameriniPGBearerToken));
     }
 
     private ApiClient newApiClient(String bearerToken) {
@@ -69,14 +72,17 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_1 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(gherkinSrlBearerToken));
+            case PG_3 -> {
+                this.virtualKeysApi.setApiClient(newApiClient(aldameriniPGBearerToken));
             }
-            case PG_2 -> {
-                this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            case PG_4 -> {
+                this.virtualKeysApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
+            }
+            case PG_5 -> {
+                this.virtualKeysApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
             }
             default ->  {
-                this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+                this.virtualKeysApi.setApiClient(newApiClient(aldameriniPGBearerToken));
             }
         }
     }

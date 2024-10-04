@@ -19,24 +19,27 @@ import java.util.List;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
-    private final String gherkinSrlBearerToken;
-    private final String cucumberSpaBearerToken;
+    private final String aldameriniPGBearerToken;
+    private final String mariaMontessoriPGBearerToken;
+    private final String nildeIottiPGBearerToken;
 
     private String basePath;
 
     private RestTemplate restTemplate;
 
-    UserConsentsApi userConsentsApi;
+    private final UserConsentsApi userConsentsApi;
 
     public IPnTosPrivacyClientImpl(RestTemplate restTemplate,
                                    @Value("${pn.webapi.external.base-url}") String basePath,
-                                   @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                   @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
-        this.gherkinSrlBearerToken = gherkinSrlBearerToken;
-        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+                                   @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
+                                   @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
+                                   @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
+        this.aldameriniPGBearerToken = aldameriniPGBearerToken;
+        this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
+        this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
-        this.userConsentsApi = new UserConsentsApi(newApiClient(cucumberSpaBearerToken));
+        this.userConsentsApi = new UserConsentsApi(newApiClient(aldameriniPGBearerToken));
     }
 
     private ApiClient newApiClient(String bearerToken) {
@@ -53,7 +56,7 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
 
     @Override
     public List<BffConsent> getTosPrivacyV1(List<ConsentType> consentTypes) throws RestClientException {
-        return userConsentsApi.getPgConsentByType(consentTypes);
+        return userConsentsApi.getPgTosPrivacyV1(consentTypes);
     }
 
     @Override
@@ -69,14 +72,17 @@ public class IPnTosPrivacyClientImpl implements IPnTosPrivacyClient {
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_1 -> {
-                this.userConsentsApi.setApiClient(newApiClient(gherkinSrlBearerToken));
+            case PG_3 -> {
+                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
             }
-            case PG_2 -> {
-                this.userConsentsApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            case PG_4 -> {
+                this.userConsentsApi.setApiClient(newApiClient(mariaMontessoriPGBearerToken));
+            }
+            case PG_5 -> {
+                this.userConsentsApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
             }
             default ->  {
-                this.userConsentsApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+                this.userConsentsApi.setApiClient(newApiClient(aldameriniPGBearerToken));
             }
         }
     }

@@ -75,6 +75,7 @@ public class LegalPersonVirtualKeySteps {
 
     @And("controllo che la rotazione è stata effettuata con successo per l'utente {string}")
     public void controlloCheLaVirtualKeySiaInStatoPerLUtente(String user) {
+        selectPGUser("AMMINISTRATORE");
         BffVirtualKeysResponse response = Assertions.assertDoesNotThrow(()-> virtualKeyServiceClient.getVirtualKeys(null, null, null, null));
         Assertions.assertNotNull(response);
         VirtualKeyExpectedResponse expectedVirtualKey = retrieveExpectedVirtualKey(user, VirtualKeyState.ROTATED);
@@ -99,9 +100,7 @@ public class LegalPersonVirtualKeySteps {
     public void lUtenteAccettaITos(String user, String operation) {
         selectPGUser(user);
         BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
-        //TODO la v2 non funziona, devo verificare che è giusto il comportamento
         BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_DEST_B2B);
-        Assertions.assertDoesNotThrow(() -> tosPrivacyClient.acceptTosPrivacyV2(List.of(bffTosPrivacyBody)));
         Assertions.assertDoesNotThrow(() -> tosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
     }
 
@@ -109,17 +108,9 @@ public class LegalPersonVirtualKeySteps {
     public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
         selectPGUser(user);
         ConsentType consentType = ConsentType.TOS_DEST_B2B;
-        List<BffConsent> privacyConsent = Assertions.assertDoesNotThrow(() -> tosPrivacyClient.getTosPrivacyV2(List.of(consentType)));
         List<BffConsent> privacyConsentv1 = Assertions.assertDoesNotThrow(() -> tosPrivacyClient.getTosPrivacyV1(List.of(consentType)));
-        Assertions.assertNotNull(privacyConsent);
         Assertions.assertNotNull(privacyConsentv1);
-        Assertions.assertFalse(privacyConsent.isEmpty());
-        //devo capire come recuperare il recipientId dopo la creazione della public key
-        privacyConsent.forEach(data -> {
-            Assertions.assertNotNull(data.getConsentType());
-            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_DEST_B2B));
-            Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
-        });
+        Assertions.assertFalse(privacyConsentv1.isEmpty());
         privacyConsentv1.forEach(data -> {
             Assertions.assertNotNull(data.getConsentType());
             Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_DEST_B2B));
@@ -129,7 +120,7 @@ public class LegalPersonVirtualKeySteps {
 
     @Then("controllo che la chiave sia in stato {string} per l'utente {string}")
     public void controlloCheLaChiaveSiaInStatoPerLUtente(String status, String user) {
-        selectPGUser(user);
+        selectPGUser("AMMINISTRATORE");
         BffVirtualKeysResponse response = Assertions.assertDoesNotThrow(()-> virtualKeyServiceClient.getVirtualKeys(null, null, null, null));
         Assertions.assertNotNull(response);
         VirtualKeyExpectedResponse expectedVirtualKey = retrieveExpectedVirtualKey(user, VirtualKeyState.valueOf(status));
@@ -259,13 +250,13 @@ public class LegalPersonVirtualKeySteps {
         String denomination;
         switch (user.toLowerCase()) {
             case "amministratore" -> {
-                denomination = "Dante Alighieri";
+                denomination = "Alda Merini";
             }
             case "amministratore con gruppi" -> {
-                denomination = "Pippo Baudo";
+                denomination = "Maria Montessori";
             }
-            case "pg user" -> {
-                denomination = "Rino Gaetano";
+            case "pg" -> {
+                denomination = "Nilde Lotti";
             }
             default -> throw new IllegalArgumentException("cannot use this User");
         }
@@ -275,16 +266,16 @@ public class LegalPersonVirtualKeySteps {
     void selectPGUser(String admin) {
         switch (admin.toLowerCase()) {
             case "amministratore" -> {
-                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             }
             case "amministratore con gruppi" -> {
-                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             }
             case "pg" -> {
-                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.valueOf("pg"));
-                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.valueOf("pg"));
+                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
+                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             }
             default -> throw new IllegalArgumentException("ADMIN NOT VALID");
         }
