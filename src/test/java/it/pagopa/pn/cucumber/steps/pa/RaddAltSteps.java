@@ -209,6 +209,7 @@ public class RaddAltSteps {
     @And("vengono caricati i documento di identità del cittadino su radd alternative")
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadino() {
         this.operationid = generateRandomNumber();
+        this.versionToken = "string";
         uploadDocumentRaddAlternative(true);
     }
 
@@ -221,6 +222,7 @@ public class RaddAltSteps {
     @And("vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD {string}")
     public void vengonoCaricatiIDocumentoDiIdentitàDelCittadinoSuRaddAlternativeDallOperatoreRADD(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
+        this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? "string" : null;
         this.operationid = generateRandomNumber();
         Assertions.assertDoesNotThrow(()->
                 uploadDocumentRaddOperatorAlternative(true, raddOperator));
@@ -230,6 +232,15 @@ public class RaddAltSteps {
     public void lOperatoreTentaDiCaricareIDocumentoDiIdentitàDelCittadinoSuRaddAlternativeSenzaSuccesso(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
         this.operationid = generateRandomNumber();
+        documentUploadError = Assertions.assertThrows(HttpStatusCodeException.class,
+                () ->  uploadDocumentRaddOperatorAlternative(true, raddOperator));
+    }
+
+    @And("l'operatore {string} tenta di caricare i documento di identità del cittadino su radd alternative con versionToken errato")
+    public void lOperatoreTentaDiCaricareIDocumentoDiIdentitàDelCittadinoSuRaddAlternativeConVersionTokenErrato(String raddOperatorType) {
+        RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
+        this.operationid = generateRandomNumber();
+        this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? null : "string";
         documentUploadError = Assertions.assertThrows(HttpStatusCodeException.class,
                 () ->  uploadDocumentRaddOperatorAlternative(true, raddOperator));
     }
@@ -284,7 +295,6 @@ public class RaddAltSteps {
         startTransactionActRaddAlternativeForOperator(this.operationid,true, raddOperator.getUid());
     }
 
-
     @When("tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore {string} senza successo")
     public void tentativoDiRecuperareGliAttiDelleNotificheAssociataAllAARDaRaddAlternativePerOperatoreSenzaSuccesso(String raddOperatorType) {
         this.expectedStartTransactionException = Assertions.assertThrows(HttpClientErrorException.class,
@@ -310,7 +320,6 @@ public class RaddAltSteps {
 
     private void startTransactionActRaddAlternativeForOperator(String operationid, boolean retry, String uidRaddOperator) {
         ActStartTransactionRequest actStartTransactionRequest = createActStartTransactionRequest(operationid);
-
         System.out.println("actStartTransactionRequest: " + actStartTransactionRequest);
         this.startTransactionResponse = raddAltClient.startActTransaction(uidRaddOperator, actStartTransactionRequest);
 
@@ -837,7 +846,7 @@ public class RaddAltSteps {
     private ActStartTransactionRequest createActStartTransactionRequest(String operationid) {
         return new ActStartTransactionRequest()
                 .qrCode(this.qrCode)
-                .versionToken("string")
+                .versionToken(this.versionToken)
                 .fileKey(this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null)
                 .operationId(operationid)
                 .recipientTaxId(this.currentUserCf)
@@ -873,5 +882,4 @@ public class RaddAltSteps {
             throw new RuntimeException(e);
         }
     }
-
 }

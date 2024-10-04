@@ -253,3 +253,35 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
     Then tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" con versionToken errato
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken obbligatorio mancante"
+
+  @raddTechnicalAnnex
+  Scenario: [ADEG-RADD-TRANS_ACT-6] PF - Operatore RADD_UPLOADER - Start di una ACT transaction senza version token presente - ricezione OK
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative  |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore "UPLOADER" scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "UPLOADER"
+    And l'operatore "UPLOADER" tenta di caricare i documento di identità del cittadino su radd alternative con versionToken errato
+    And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken mancante"
+
+  @raddTechnicalAnnex
+  Scenario: [ADEG-RADD-TRANS_ACT-7] PF - Operatore RADD_UPLOADER - Start di una ACT transaction senza version token presente - ricezione OK
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative  |
+      | senderDenomination | Comune di Palermo           |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
+    Then L'operatore "STANDARD" scansione il qrCode per recuperare gli atti da radd alternative
+    And la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative dall'operatore RADD "STANDARD"
+    And l'operatore "STANDARD" tenta di caricare i documento di identità del cittadino su radd alternative con versionToken errato
+    And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken inaspettato"
