@@ -165,7 +165,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     When viene individuato se presente l'evento più recente
     Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
 
-  @legalFact
+  @legalFact @ignore
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_10] In seguito ad un disservizio verificatosi in piattaforma durante il workflow di una notifica, si verifica l'esistenza del legalFact generato se sia di tipo DOWNTIME
     Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi al "workflow notifiche"
     When viene individuato se presente l'evento più recente

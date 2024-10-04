@@ -1,6 +1,8 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.api.PaperCalculatorApi;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
@@ -83,7 +85,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnExternalChannelsServiceClientImpl.class,
         PnSafeStoragePrivateClientImpl.class,
         PnBFFRecipientNotificationClientImpl.class,
-        IPnInteropProbingClientImpl.class
+        IPnInteropProbingClientImpl.class,
+        PaperCalculatorClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
