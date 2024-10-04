@@ -201,7 +201,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     @Override
-    public void removeEventStreamV24(UUID streamId) throws RestClientException {
+    public void deleteEventStreamV24(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
         this.streamsApiV23.removeEventStreamV24(streamId);
     }

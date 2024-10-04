@@ -209,7 +209,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         List<StreamListElement> streamListElementsV24 = webhookClientForClean.listEventStreamsV24();
         for (StreamListElement elem : streamListElementsV24) {
             try {
-                webhookClientForClean.removeEventStreamV24(elem.getStreamId());
+                webhookClientForClean.deleteEventStreamV24(elem.getStreamId());
             } catch (HttpStatusCodeException statusCodeException) {
                 log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
             }
@@ -1847,7 +1847,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             switch (streamVersion) {
                 case V10 -> webhookB2bClient.deleteEventStream(streamID);
                 case V23 -> webhookB2bClient.deleteEventStreamV23(streamID);
-                case V24 -> webhookB2bClient.removeEventStreamV24(streamID);
+                case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
             }
             return true;
         }catch (HttpStatusCodeException e){

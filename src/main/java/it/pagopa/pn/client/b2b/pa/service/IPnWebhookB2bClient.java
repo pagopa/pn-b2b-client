@@ -48,7 +48,7 @@ public interface IPnWebhookB2bClient extends SettableApiKey {
 
     List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement> listEventStreamsV24() throws RestClientException;
 
-    void removeEventStreamV24(UUID streamId) throws RestClientException;
+    void deleteEventStreamV24(UUID streamId) throws RestClientException;
 
     StreamMetadataResponseV24 retrieveEventStreamV24(UUID streamId) throws RestClientException;
 
