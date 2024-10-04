@@ -10,6 +10,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -41,7 +42,7 @@ import static org.awaitility.Awaitility.await;
 public class RicezioneNotificheWebDelegheSteps {
     private final ApplicationContext context;
     private IPnWebMandateClient webMandateClient;
-    private final IPnWebRecipientClient webRecipientClient;
+    private IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
     private MandateDto mandateToSearch;
@@ -67,6 +68,8 @@ public class RicezioneNotificheWebDelegheSteps {
     @Before("@useB2B")
     public void beforeMethod() {
         this.webMandateClient = context.getBean(B2bMandateServiceClientImpl.class);
+        this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        sharedSteps.setWebRecipientClient(webRecipientClient);
     }
 
     @Autowired
@@ -97,32 +100,10 @@ public class RicezioneNotificheWebDelegheSteps {
     private UserDto getUserDtoByuser(String user) {
 
         return switch (user.trim().toLowerCase()) {
-            case "mario cucumber" -> new UserDto()
-                    .displayName("Mario Cucumber")
-                    .firstName("Mario")
-                    .lastName("Cucumber")
-                    .fiscalCode(marioCucumberTaxID)
-                    .person(true);
-            case "mario gherkin" -> new UserDto()
-                    .displayName("Mario Gherkin")
-                    .firstName("Mario")
-                    .lastName("Gherkin")
-                    .fiscalCode(marioGherkinTaxID)
-                    .person(true);
-            case "gherkinsrl" -> new UserDto()
-                    .displayName("gherkinsrl")
-                    .firstName("gherkin")
-                    .lastName("srl")
-                    .fiscalCode(gherkinSrltaxId)
-                    .companyName("gherkinsrl")
-                    .person(false);
-            case "cucumberspa" -> new UserDto()
-                    .displayName("cucumberspa")
-                    .firstName("cucumber")
-                    .lastName("spa")
-                    .fiscalCode(cucumberSpataxId)
-                    .companyName("cucumberspa")
-                    .person(false);
+            case "mario cucumber" -> createUserDto("Mario Cucumber", "Mario","Cucumber", marioCucumberTaxID, null, true);
+            case "mario gherkin" -> createUserDto("Mario Gherkin", "Mario", "Gherkin", marioGherkinTaxID, null, true);
+            case "gherkinsrl" -> createUserDto("gherkinsrl", "gherkin", "srl", gherkinSrltaxId, "gherkinsrl", false);
+            case "cucumberspa" -> createUserDto("cucumberspa", "cucumber", "spa", cucumberSpataxId, "cucumberspa", false);
             default -> throw new IllegalArgumentException();
         };
     }
@@ -139,18 +120,9 @@ public class RicezioneNotificheWebDelegheSteps {
         return !beenSet;
     }
 
-    @Given("viene creato un user con i seguenti valori:")
-    public void removeCfFromUser1(@Transpose UserDto parameter) {
-        userDtoCustom.displayName(parameter.getDisplayName())
-                .firstName(parameter.getFirstName())
-                .lastName(parameter.getLastName())
-                .fiscalCode(parameter.getFiscalCode())
-                .person(true);
-    }
-
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, this.notificationError.getStatusCode());
+        Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
     }
 
     @And("{string} viene delegato da user")
@@ -273,6 +245,13 @@ public class RicezioneNotificheWebDelegheSteps {
         }
     }
 
+    @Given("{string} rifiuta se presente la delega ricevuta {string} da portale")
+    public void userRejectMandateFromUI(String delegate, String delegator) {
+        this.webMandateClient = context.getBean(PnWebMandateExternalClientImpl.class);
+        userRejectIfPresentMandateOfAnotheruser(delegate, delegator);
+    }
+
+
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
         if (setBearerToken(delegate)) {
@@ -280,7 +259,7 @@ public class RicezioneNotificheWebDelegheSteps {
         }
         String delegatorTaxId = getTaxIdByUser(delegator);
 
-        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegateStatusFilter(delegatorTaxId, List.of("PENDING"),null);
+        List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId,null);
 
         //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
@@ -626,6 +605,7 @@ public class RicezioneNotificheWebDelegheSteps {
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
+            this.notificationError = e;
         }
     }
 
@@ -640,12 +620,13 @@ public class RicezioneNotificheWebDelegheSteps {
                     searchParam.iunMatch, searchParam.size, null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
+            this.notificationError = e;
         }
     }
 
     //TODO: insert recipientID da selfcare (si possono recuperare dai token)
     private String getRecipientId(String recipientId){
-        return switch (recipientId){
+        return switch (recipientId.toLowerCase().trim()){
             case "mario cucumber" -> "123";
             case "mario gherkin" -> "345";
             case "gherkinsrl" -> "789";
@@ -777,5 +758,64 @@ public class RicezioneNotificheWebDelegheSteps {
         System.out.println("MANDATE-LIST (user: +" + user + ") : " + mandateList);
         System.out.println("TOKEN SETTED (user: +" + user + ") : " + webMandateClient.getBearerTokenSetted());
         System.out.println("MANDATE-LIST-DELEGATOR (user: +" + user + ") : " + mandateDtos);
+    }
+
+    @And("viene creata una delega con i seguenti parametri errati:")
+    public void createMandateWithNotValidDate(Map<String, String> data) {
+            if (setBearerToken(data.get("delegator"))) {
+                throw new IllegalArgumentException();
+            }
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            MandateDto mandate = new MandateDto()
+                    .delegator(getUserDtoByuser(data.get("delegator")))
+                    .delegate(Optional.ofNullable(data.get("delegate")).map(this::getInvalidUserDto).orElse(getUserDtoByuser("mario gherkin")))
+                    .verificationCode(verificationCode)
+                    .datefrom(data.getOrDefault("dateFrom", sdf.format(new Date())))
+                    .visibilityIds(new LinkedList<>())
+                    .status(MandateDto.StatusEnum.PENDING)
+                    .dateto(data.getOrDefault("dateTo", sdf.format(DateUtils.addDays(new Date(), 1))));
+
+            System.out.println("MANDATE: " + mandate);
+            try {
+                webMandateClient.createMandate(mandate);
+            } catch (HttpStatusCodeException e) {
+                this.notificationError = e;
+            }
+        }
+
+    private UserDto getInvalidUserDto(String delegator) {
+        return switch (delegator) {
+            case "EMPTY_FISCAL_CODE" -> createUserDto("Mario Cucumber", "Mario", "Cucumber", null, null, true);
+            case "INVALID_FISCAL_CODE" ->  createUserDto("Mario Cucumber", "Mario", "Cucumber", "AAA8090ZAC", null, true);
+            case "EMPTY_FIRST_NAME" -> createUserDto("Mario Cucumber", null, "Cucumber", "CLMCST42R12D969Z", null, true);
+            case "EMPTY_LAST_NAME" -> createUserDto("Mario Cucumber", "Mario", null, "CLMCST42R12D969Z", null, true);
+            case "FIRST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Colombo", "FRMTTR76M06B715E", null, true);
+            case "LAST_NAME_NOT_VALID" -> createUserDto("Cristoforo Colombo", "Cristoforo", "PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "FRMTTR76M06B715E", null, true);
+            case "EMPTY_DISPLAY_NAME" -> createUserDto(null, "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
+            case "DISPLAY_NAME_NOT_VALID" -> createUserDto("PippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippoPippo", "Mario", "Cucumber", "CLMCST42R12D969Z", null, true);
+            default -> throw new IllegalStateException("Unexpected value: " + delegator);
+        };
+    }
+
+    private String getDate(String date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return switch (date) {
+            case "TODAY" -> sdf.format(new Date());
+            case "TOMORROW" -> sdf.format(DateUtils.addDays(new Date(), 1));
+            case "PAST_DATE" -> "2023-01-01";
+            case "INVALID_FORMAT" -> "01-01-2023";
+            case "EMPTY_DATE" -> null;
+            default -> throw new IllegalStateException("Unexpected value: " + date);
+        };
+    }
+
+    private UserDto createUserDto(String displayName, String firstName, String lastName, String fiscalCode, String companyName, boolean isPerson) {
+    return new UserDto()
+                .displayName(displayName)
+                .firstName(firstName)
+                .lastName(lastName)
+                .fiscalCode(fiscalCode)
+                .companyName(companyName)
+                .person(isPerson);
     }
 }

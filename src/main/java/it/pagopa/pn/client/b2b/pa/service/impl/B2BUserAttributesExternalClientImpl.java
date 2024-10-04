@@ -45,7 +45,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
 
 
     public B2BUserAttributesExternalClientImpl(RestTemplate restTemplate,
-                                               @Value("${pn.delivery.base-url}") String basePath,
+                                               @Value("${pn.external.dest.base-url}") String basePath,
                                                @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                                @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                                @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
@@ -53,7 +53,7 @@ public class B2BUserAttributesExternalClientImpl implements IPnWebUserAttributes
                                                @Value("${pn.bearer-token.user5}") String dinoBearerToken,
                                                @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                                @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                               @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                               @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;

@@ -33,25 +33,29 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     private final String cucumberSpaBearerToken;
 
     private final RestTemplate restTemplate;
-    private final String basePath;
+    private final String webBasePath;
+    private final String b2bBasePath;
     private final RecipientReadB2BApi recipientReadB2BApi;
     private BearerTokenType bearerTokenSetted;
 
     public B2BRecipientExternalClientImpl(RestTemplate restTemplate,
-                                          @Value("${pn.delivery.base-url}") String basePath,
+                                          @Value("${pn.webapi.external.base-url}") String webBasePath,
+                                          @Value("${pn.external.dest.base-url}") String b2bBasePath,
                                           @Value("${pn.bearer-token.user1}") String marioCucumberBearerToken,
                                           @Value("${pn.bearer-token.user2}") String marioGherkinBearerToken,
                                           @Value("${pn.bearer-token.user3}") String leonardoBearerToken,
                                           @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                          @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                          @Value("${pn.bearer-token-b2b.pg2}") String cucumberSpaBearerToken) {
         this.marioCucumberBearerToken = marioCucumberBearerToken;
         this.marioGherkinBearerToken = marioGherkinBearerToken;
         this.leonardoBearerToken = leonardoBearerToken;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.restTemplate = restTemplate;
-        this.basePath = basePath;
-        this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
+        this.webBasePath = webBasePath;
+        this.b2bBasePath = b2bBasePath;
+        this.bearerTokenSetted = BearerTokenType.PG_1;
+        this.recipientReadB2BApi = new RecipientReadB2BApi(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
     }
 
     private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken) {
@@ -120,27 +124,27 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         boolean operation = false;
         switch (bearerToken) {
             case USER_1 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioCucumberBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
                 operation = true;
             }
             case USER_2 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, marioGherkinBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
                 operation = true;
             }
             case USER_3 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, leonardoBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, leonardoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
                 operation = true;
             }
             case PG_1 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
                 operation = true;
             }
             case PG_2 -> {
-                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
+                this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
                 operation = true;
             }
