@@ -21,6 +21,7 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
     private final String aldameriniPGBearerToken;
     private final String mariaMontessoriPGBearerToken;
     private final String nildeIottiPGBearerToken;
+    private final String cucumberSpaBearerToken;
 
     private final String basePath;
     private RestTemplate restTemplate;
@@ -28,12 +29,14 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
 
     public IPnLegalPersonAuthClientImpl(RestTemplate restTemplate,
                                         @Value("${pn.webapi.external.base-url}") String basePath,
+                                        @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
                                         @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                                         @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
                                         @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
         this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
         this.publicKeysApi = new PublicKeysApi(newApiClient(basePath, aldameriniPGBearerToken));
@@ -74,15 +77,10 @@ public class IPnLegalPersonAuthClientImpl implements IPnLegalPersonAuthClient {
     @Override
     public void setBearerToken(SettableBearerToken.BearerTokenType bearerToken) {
         switch (bearerToken) {
-            case PG_3 -> {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
-            }
-            case PG_4 -> {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, mariaMontessoriPGBearerToken));
-            }
-            case PG_5 -> {
-                this.publicKeysApi.setApiClient(newApiClient(this.basePath, nildeIottiPGBearerToken));
-            }
+            case PG_2 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, cucumberSpaBearerToken));
+            case PG_3 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
+            case PG_4 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, mariaMontessoriPGBearerToken));
+            case PG_5 -> this.publicKeysApi.setApiClient(newApiClient(this.basePath, nildeIottiPGBearerToken));
             default ->  {
                 this.publicKeysApi.setApiClient(newApiClient(this.basePath, aldameriniPGBearerToken));
             }

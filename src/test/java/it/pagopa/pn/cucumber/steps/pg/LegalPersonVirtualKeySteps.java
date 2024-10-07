@@ -70,7 +70,7 @@ public class LegalPersonVirtualKeySteps {
         OperationStatus operationToDo = operation != null ? OperationStatus.fromValue(operation) : null;
         VirtualKeyState startState = startOperation != null ? VirtualKeyState.valueOf(startOperation) : null;
         RestClientResponseException exception = Assertions.assertThrows(RestClientResponseException.class, ()-> executeOperation(user, operationToDo, startState, userVirtualKeyToChange));
-        Assertions.assertEquals(exception.getRawStatusCode(), errorCode);
+        Assertions.assertEquals(errorCode, exception.getRawStatusCode());
     }
 
     @And("controllo che la rotazione è stata effettuata con successo per l'utente {string}")

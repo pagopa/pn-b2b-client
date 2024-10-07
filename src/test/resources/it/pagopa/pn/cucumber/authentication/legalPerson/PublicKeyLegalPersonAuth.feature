@@ -256,14 +256,26 @@ Feature: Public key legal Person Authentication
       | NON AMMINISTRATORE |
 
   @publicKeyCreation @pgAuthentication
-  Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto con chiave pubblica cancellata
-    # questo era stato aggiunto e moficato per restituire 404 cercare thread
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
+  Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto
+    # questo era stato aggiunto e moficato per restituire 404 cercare thread invece ritorna 403
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
+    Then la chiamata restituisce un errore con status code 404
 
   @publicKeyCreation @pgAuthentication
-  Scenario: [LEGAL_PERSON_AUTH_38] Un Amministratore PG crea una public key con una chiave già usata per una chiave pubblica ruotata
+  Scenario Outline: [LEGAL_PERSON_AUTH_38] Un Amministratore PG blocca la chiave pubblica della PG passando kid non appartenente alla sua pg
+    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "<status>"
+    When l'utente "DI UNA PG DIVERSA" "<operation>" la chiave pubblica per la PG che si trova in stato "<status>"
+    Then la chiamata restituisce un errore con status code 404
+    #da definire il blocco e l errore per tutti e tre
+    Examples:
+    | status      | operation |
+    | BLOCKED     | RIATTIVA  |
+    | ACTIVE      | RUOTA     |
+    | ACTIVE      | BLOCCA    |
+
+  @publicKeyCreation @pgAuthentication
+  Scenario: [LEGAL_PERSON_AUTH_39] Un Amministratore PG crea una public key con una chiave già usata per una chiave pubblica ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
     When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "BLOCKED"

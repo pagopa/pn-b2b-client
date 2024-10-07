@@ -19,7 +19,7 @@ Feature: Virtual key legal Person Authentication
     #8
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    #bug riferito
+    # bug riferito
     #And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "PG" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per l'utente "PG"
@@ -62,7 +62,7 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_6] Un Amministratore Persona Giuridica prima ruota e poi cancella la virtual key di un altro utente
-    #12 sostituito come caso di errore
+    # 12 sostituito come caso di errore
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
