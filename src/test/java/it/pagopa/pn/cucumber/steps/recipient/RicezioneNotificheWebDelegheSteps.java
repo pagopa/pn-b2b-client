@@ -109,15 +109,13 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private boolean setBearerToken(String user) {
-        boolean beenSet = switch (user.trim().toLowerCase()) {
+        return switch (user.trim().toLowerCase()) {
             case "mario cucumber" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
             case "mario gherkin" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             case "gherkinsrl" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             case "cucumberspa" -> webMandateClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
-            default -> false;
+            default -> throw new IllegalArgumentException();
         };
-
-        return !beenSet;
     }
 
     @Then("si verifica che lo status code sia: {int}")
@@ -127,10 +125,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da user")
     public void delegateUserCustom(String delegator) {
-        //
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
                 .delegator(getUserDtoByuser(delegator)))
@@ -152,7 +147,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
-        //
         if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
@@ -176,7 +170,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string} con data di fine delega antecedente a quella di inizio")
     public void delegateUserWithInvalidDateRange(String delegate, String delegator) {
-        //
         if (setBearerToken(delegator)) {
             throw new IllegalArgumentException();
         }
@@ -254,14 +247,11 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Given("{string} rifiuta se presente la delega ricevuta {string}")
     public void userRejectIfPresentMandateOfAnotheruser(String delegate, String delegator) {
-        if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId,null);
 
-        //List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
             log.debug("MANDATE-LIST: {}", mandateList);
@@ -279,13 +269,10 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} accetta la delega {string}")
     public void userAcceptsMandateOfAnotherUser(String delegate, String delegator) {
-        if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
-        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: " + mandateList);
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
@@ -297,13 +284,10 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} accetta la delega {string} associando un gruppo")
     public void userAcceptsMandateWithGroups(String delegate, String delegator) {
-        if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
-        // List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         System.out.println("MANDATE-LIST: " + mandateList);
         MandateDto mandateDto = mandateList.stream().filter(mandate -> Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)).findFirst().orElse(null);
 
@@ -490,9 +474,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} rifiuta la delega ricevuta da {string}")
     public void delegateRefusesMandateReceivedFromDelegator(String delegate, String delegator) {
-        if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegate);
         String delegatorTaxId = getTaxIdByUser(delegator);
 
         List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(delegatorTaxId, null);
@@ -725,9 +707,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("il delegato {string} visualizza le deleghe da parte di {string} in stato {string}")
     public void delegateViewsAssignedMandatesWithStatus(String delegate, String delegator, String status) {
-        if (setBearerToken(delegate)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegate);
         try {
             List<MandateDto> mandateList;
             if (status.trim().equals("")) {
