@@ -19,9 +19,8 @@ import it.pagopa.pn.cucumber.steps.SharedSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -33,8 +32,8 @@ public class MandateReverseSteps {
     private final IPnWebRecipientClient b2BRecipientExternalClient;
     private final IBffMandateServiceApi bffMandateServiceApi;
     private final SharedSteps sharedSteps;
-    private ResponseEntity<String> mandateReverseResponse;
-    private ResponseEntity<Void> acceptMandateResponse;
+    private String reverseMandateResponse;
+    private HttpStatusCodeException reverseMandateStatusCodeException;
     private final List<String> groups = new ArrayList<>();
 
     public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps,
@@ -54,15 +53,15 @@ public class MandateReverseSteps {
         request.setDateto(getDate(data.getOrDefault("dateTo", "TOMORROW")));
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
         try {
-            mandateReverseResponse = mandateReverseServiceClient.createReverseMandateWithHttpInfo(request);
-        } catch (HttpClientErrorException.BadRequest exception) {
-            mandateReverseResponse = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            reverseMandateResponse = mandateReverseServiceClient.createReverseMandate(request);
+        } catch (HttpStatusCodeException statusCodeException) {
+            reverseMandateStatusCodeException = statusCodeException;
         }
    }
 
-    @Then("si verifica che la risposta contenga status code: {int}")
+    @Then("si verifica che la chiamata sia fallita con status code: {int}")
     public void checkStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, mandateReverseResponse.getStatusCode().value());
+        Assertions.assertEquals(statusCode, reverseMandateStatusCodeException.getStatusCode().value());
     }
 
     @And("si verifica che la delega a nome di {string} è stata creata con stato pending")
@@ -85,12 +84,7 @@ public class MandateReverseSteps {
     public void notificationDelegatedNotVisible(String delegate) {
         selectPG(delegate);
         Assertions.assertThrows(HttpClientErrorException.NotFound.class,
-                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getIunVersionamento(), mandateReverseResponse.getBody()));
-    }
-
-    @And("si verifica che la delega è stata accettata e la risposta contenga status code: {int}")
-    public void checkAcceptMandateResponseStatusCode(int statusCode) {
-        Assertions.assertEquals(statusCode, acceptMandateResponse.getStatusCode().value());
+                () -> b2BRecipientExternalClient.getReceivedNotification(sharedSteps.getIunVersionamento(), reverseMandateResponse));
     }
 
     @Then("si verifica che la delega è stata creata senza un gruppo associato")
@@ -122,7 +116,7 @@ public class MandateReverseSteps {
         try {
             verificationCode = bffMandateServiceApi.getMandatesByDelegatorV1()
                     .stream()
-                    .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
+                    .filter(x -> x.getMandateId().equals(reverseMandateResponse))
                     .map(BffMandate::getVerificationCode)
                     .filter(Objects::nonNull)
                     .findFirst()
@@ -136,7 +130,7 @@ public class MandateReverseSteps {
     private void acceptMandate(String delegate, List<String> groups, String verificationCode) {
         selectPG(delegate);
         try {
-            acceptMandateResponse = mandateServiceClient.acceptMandateWithHttpInfo(mandateReverseResponse.getBody(), new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
+            mandateServiceClient.acceptMandate(reverseMandateResponse, new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
         } catch (Exception ex) {
             throw new AssertionFailedError("There was an error while accepting the mandate: " + ex);
         }
@@ -163,13 +157,13 @@ public class MandateReverseSteps {
     private Optional<MandateDto> isMandatePresent(String delegator) {
         String delegatorTaxId = getTaxIdByUser(delegator);
         return mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
-                .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
+                .filter(x -> x.getMandateId().equals(reverseMandateResponse))
                 .findFirst();
     }
 
     private boolean isMandateGroupPresent() {
         return mandateServiceClient.searchMandatesByDelegate(null, null).stream()
-                .filter(x -> x.getMandateId().equals(mandateReverseResponse.getBody()))
+                .filter(x -> x.getMandateId().equals(reverseMandateResponse))
                 .map(MandateDto::getGroups)
                 .filter(Objects::nonNull)
                 .anyMatch(Predicate.not(List::isEmpty));

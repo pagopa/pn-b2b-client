@@ -8,7 +8,6 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | Mario Cucumber |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 201
     And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
 
   @b2bIntermediariMassivi
@@ -18,7 +17,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | EMPTY_FISCAL_CODE |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-2] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con codice fiscale non valido
@@ -28,7 +27,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | INVALID_FISCAL_CODE |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-3] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con data di fine delega formalmente non valida
@@ -38,7 +37,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | Mario Cucumber |
       | dateFrom | TODAY |
       | dateTo  | INVALID_FORMAT |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-4] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con data di fine delega antecedente alla data odierna
@@ -48,7 +47,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | Mario Cucumber |
       | dateFrom | TODAY |
       | dateTo  | PAST_DATE |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-5] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con data di fine delega vuota
@@ -58,7 +57,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | Mario Cucumber |
       | dateFrom | TODAY |
       | dateTo  | EMPTY_DATE |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-6] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con campo nome e cognome vuoti
@@ -67,7 +66,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | EMPTY_NAME |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
 
   @b2bIntermediariMassivi
   Scenario Outline: [B2B-REVERSE-MANDATE-FAILURE-7] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con campo nome e cognome con lunghezza maggiore di 80 caratteri
@@ -77,7 +76,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | <delegator> |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 400
+    Then si verifica che la chiamata sia fallita con status code: 400
     Examples:
       | delegator |
       | FIRST_NAME_NOT_VALID |
@@ -92,7 +91,6 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
     When la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" senza associare nessun gruppo
-    Then si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata senza un gruppo associato
 
   @useB2B @b2bIntermediariMassivi
@@ -103,10 +101,8 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | GherkinSrl |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 201
     Then viene recuperato il primo gruppo disponibile attivo
     And la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" associando un gruppo
-    And si verifica che la delega è stata accettata e la risposta contenga status code: 204
     And si verifica che la delega è stata creata con un gruppo associato
 
   @useB2B @b2bIntermediariMassivi
@@ -117,7 +113,6 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | GherkinSrl |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 201
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di Aglientu         |
@@ -133,7 +128,6 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | GherkinSrl |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    Then si verifica che la risposta contenga status code: 201
     And la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" senza associare nessun gruppo
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |

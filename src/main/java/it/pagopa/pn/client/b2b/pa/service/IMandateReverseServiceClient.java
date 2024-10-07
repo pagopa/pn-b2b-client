@@ -7,5 +7,5 @@ import org.springframework.web.client.RestClientException;
 
 public interface IMandateReverseServiceClient extends SettableBearerToken{
 
-    ResponseEntity<String> createReverseMandateWithHttpInfo(MandateDtoRequest mandateDtoRequest) throws RestClientException;
+    String createReverseMandate(MandateDtoRequest mandateDtoRequest) throws RestClientException;
 }

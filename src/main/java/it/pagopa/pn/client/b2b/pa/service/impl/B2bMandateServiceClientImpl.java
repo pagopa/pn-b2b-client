@@ -12,7 +12,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -52,12 +51,6 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto acceptRequestDto1 = deepCopy(acceptRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto.class);
         mandateServiceApi.acceptMandate(mandateId, acceptRequestDto1);
-    }
-
-    @Override
-    public ResponseEntity<Void> acceptMandateWithHttpInfo(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto acceptRequestDto1 = deepCopy(acceptRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto.class);
-        return  mandateServiceApi.acceptMandateWithHttpInfo(mandateId, acceptRequestDto1);
     }
 
     @Override

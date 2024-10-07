@@ -42,8 +42,8 @@ public class MandateReverseServiceClientImpl implements IMandateReverseServiceCl
     }
 
     @Override
-    public ResponseEntity<String> createReverseMandateWithHttpInfo(MandateDtoRequest mandateDtoRequest) throws RestClientException {
-        return mandateReverseServiceApi.createReverseMandateWithHttpInfo(mandateDtoRequest);
+    public String createReverseMandate(MandateDtoRequest mandateDtoRequest) throws RestClientException {
+        return mandateReverseServiceApi.createReverseMandate(mandateDtoRequest);
     }
 
     @Override
