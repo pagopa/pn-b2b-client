@@ -62,12 +62,13 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public MandateDto createMandate(MandateDto mandateDto) throws RestClientException {
-        return null;
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto convertedMandateDto = deepCopy(mandateDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.MandateDto.class);
+        return deepCopy(mandateServiceApi.createMandate(convertedMandateDto), MandateDto.class);
     }
 
     @Override
@@ -77,6 +78,7 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public void updateMandate(String xPagopaPnCxId, CxTypeAuthFleet xPagopaPnCxType, String mandateId, List<String> xPagopaPnCxGroups, String xPagopaPnCxRole, UpdateRequestDto updateRequestDto) throws RestClientException {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -89,19 +91,20 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
-        return List.of();
+        return mandateServiceApi.listMandatesByDelegator1()
+                .stream()
+                .map(x -> deepCopy(x, MandateDto.class))
+                .toList();
     }
 
     @Override
     public void rejectMandate(String mandateId) throws RestClientException {
         mandateServiceApi.rejectMandate(mandateId);
-
     }
 
     @Override
     public void revokeMandate(String mandateId) throws RestClientException {
         mandateServiceApi.revokeMandate(mandateId);
-
     }
 
     @Override
@@ -109,32 +112,23 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
         it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto searchMandateRequestDto = new it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
-        List<MandateDto> result = null;
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto res = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        if (res!= null){
-            result = res.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList();
-        }
-        return result;
+        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateResponseDto responseDto= mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        return (responseDto != null && responseDto.getResultsPage() != null)
+                ? responseDto.getResultsPage().stream().map(x -> deepCopy(x, MandateDto.class)).toList() : null;
     }
 
     @Override
-    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
-
+    public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId, List<String> status, List<String> groups) throws RestClientException {
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
         searchMandateRequestDto.setStatus(status);
-
-        List<MandateDto> result = null;
-        SearchMandateResponseDto res = deepCopy(
+        SearchMandateResponseDto responseDto = deepCopy(
                 mandateServiceApi.searchMandatesByDelegate(10, null,
                         deepCopy(searchMandateRequestDto,
                                 it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.SearchMandateRequestDto.class)),
                 it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.SearchMandateResponseDto.class);
-        if (res!= null){
-            result = res.getResultsPage();
-        }
-        return result;
+        return responseDto != null ? responseDto.getResultsPage() : null;
     }
 
     @Override

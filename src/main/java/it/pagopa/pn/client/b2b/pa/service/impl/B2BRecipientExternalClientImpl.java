@@ -57,17 +57,17 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v2.FullReceivedNotification getReceivedNotificationV2(String iun, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -96,12 +96,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
