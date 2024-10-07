@@ -62,15 +62,12 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_6] Un Amministratore Persona Giuridica prima ruota e poi cancella la virtual key di un altro utente
-    #12 da capire se è uno scenario fattibile
+    #12 sostituito come caso di errore
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "PG" censisce una virtual key per sè stesso
-    When l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per l'utente "PG"
-    And controllo che la rotazione è stata effettuata con successo per l'utente "PG"
-    When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "REACTIVE" per l'utente "PG"
-    Then controllo che l'utente "AMMINISTRATORE" veda tutte le virtual key nella PG
+    When l'utente "AMMINISTRATORE" "RUOTA" una virtual key in stato "ENABLE" per l'utente "PG" e riceve errore 403
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_7] Un Amministratore Persona Giuridica censisce la virtual key per sè stesso, senza aver accettato i TOS

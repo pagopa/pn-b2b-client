@@ -89,7 +89,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_16] Un utente (PG / Amministratore con gruppo associato) recupera la lista delle chiavi pubbliche
-    #questo sta andando verde non c'è l errore
+    #amministratore con gruppo associato da definire
     When l'utente "<user>" recupera la lista delle chiavi pubbliche
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
     Examples:
@@ -219,6 +219,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
+    #scenario get Utenza
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     And l'utente "AMMINISTRATORE" "NON ACCETTA" i tos
     And l'utente "<role>" censisce una virtual key per sè stesso
@@ -231,6 +232,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_35] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver censito la chiave pubblica
+    #scenario get Utenza
     Given non ci sono chiavi pubbliche per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
@@ -238,10 +240,11 @@ Feature: Public key legal Person Authentication
     Examples:
       | role               |
       | AMMINISTRATORE     |
-      #| NON AMMINISTRATORE |
+      | NON AMMINISTRATORE |
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
+    #scenario get Utenza
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "<role>" censisce una virtual key per sè stesso
@@ -250,11 +253,11 @@ Feature: Public key legal Person Authentication
     Examples:
       | role               |
       | AMMINISTRATORE     |
-      #| NON AMMINISTRATORE |
+      | NON AMMINISTRATORE |
 
   @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto con chiave pubblica cancellata
-    #questo era stato aggiunto e moficato per restituire 404 cercare thread
+    # questo era stato aggiunto e moficato per restituire 404 cercare thread
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "CANCELLED"
     When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"

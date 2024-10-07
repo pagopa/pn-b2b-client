@@ -32,8 +32,8 @@ public class LegalPersonAuthSteps {
     @Value("${pn.authentication.pg.public.key}")
     private String publicKey;
 
-    @Value("${pn.authentication.pg.public.key2}")
-    private String publicKeyRotate;
+    @Value("${pn.authentication.pg.public.key.rotation}")
+    private String publicKeyRotation;
 
     public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
@@ -194,7 +194,7 @@ public class LegalPersonAuthSteps {
 
     private void ruotaChiavePubblica(String kid) {
         BffPublicKeyRequest bffPublicKeyRequest = new BffPublicKeyRequest()
-                .publicKey(publicKeyRotate)
+                .publicKey(publicKeyRotation)
                 .name("PUBLIC KEY ROTATE")
                 .exponent("AQAB");
 
