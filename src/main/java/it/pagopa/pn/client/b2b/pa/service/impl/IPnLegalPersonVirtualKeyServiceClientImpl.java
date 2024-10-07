@@ -22,6 +22,7 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
     private final String aldameriniPGBearerToken;
     private final String mariaMontessoriPGBearerToken;
     private final String nildeIottiPGBearerToken;
+    private final String cucumberSpaBearerToken;
 
     private final String basePath;
 
@@ -31,12 +32,14 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
 
     public IPnLegalPersonVirtualKeyServiceClientImpl(RestTemplate restTemplate,
                      @Value("${pn.webapi.external.base-url}") String basePath,
+                     @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
                      @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                      @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
                      @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken) {
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
         this.nildeIottiPGBearerToken = nildeIottiPGBearerToken;
+        this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.restTemplate = restTemplate;
         this.virtualKeysApi = new VirtualKeysApi(newApiClient(aldameriniPGBearerToken));
@@ -81,8 +84,11 @@ public class IPnLegalPersonVirtualKeyServiceClientImpl implements IPnLegalPerson
             case PG_5 -> {
                 this.virtualKeysApi.setApiClient(newApiClient(nildeIottiPGBearerToken));
             }
+            case PG_2 -> {
+                this.virtualKeysApi.setApiClient(newApiClient(cucumberSpaBearerToken));
+            }
             default ->  {
-                this.virtualKeysApi.setApiClient(newApiClient(aldameriniPGBearerToken));
+                throw new IllegalArgumentException("User not found");
             }
         }
     }

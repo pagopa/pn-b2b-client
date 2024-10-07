@@ -277,6 +277,10 @@ public class LegalPersonVirtualKeySteps {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             }
+            case "amministratore di un altra pg" -> {
+                virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
             default -> throw new IllegalArgumentException("ADMIN NOT VALID");
         }
     }

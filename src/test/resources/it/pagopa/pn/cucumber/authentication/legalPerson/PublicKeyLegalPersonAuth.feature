@@ -33,7 +33,7 @@ Feature: Public key legal Person Authentication
   @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL_PERSON_AUTH_6] Un Amministratore PG con un gruppo associato censisce una chiave pubblica per la Persona Giuridica
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" crea una chiave pubblica per la PG
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized to access this resource with an explicit deny"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL_PERSON_AUTH_7] Un utente PG censisce una chiave pubblica per la Persona Giuridica
@@ -68,7 +68,7 @@ Feature: Public key legal Person Authentication
   Scenario: [LEGAL_PERSON_AUTH_12] Un Amministratore PG con un gruppo associato ruota la chiave pubblica per la Persona Giuridica
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL_PERSON_AUTH_13] Un Amministratore PG ruota la chiave pubblica per la Persona Giuridica già ruotata
@@ -89,7 +89,6 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_16] Un utente (PG / Amministratore con gruppo associato) recupera la lista delle chiavi pubbliche
-    #amministratore con gruppo associato da definire
     When l'utente "<user>" recupera la lista delle chiavi pubbliche
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
     Examples:
@@ -113,7 +112,7 @@ Feature: Public key legal Person Authentication
   Scenario: [LEGAL_PERSON_AUTH_19] Un Amministratore PG con un gruppo associato blocca la chiave pubblica della PG
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized to access this resource with an explicit deny"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation @pgAuthentication
   Scenario: [LEGAL_PERSON_AUTH_20] Un Amministratore PG blocca la chiave pubblica per la Persona Giuridica con una chiave bloccata
@@ -203,7 +202,7 @@ Feature: Public key legal Person Authentication
   Scenario: [LEGAL_PERSON_AUTH_32] Un Amministratore PG con un gruppo associato cancella la chiave pubblica della PG ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ROTATED"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "User is not authorized"
+    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication
   Scenario Outline: [LEGAL_PERSON_AUTH_33] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId
