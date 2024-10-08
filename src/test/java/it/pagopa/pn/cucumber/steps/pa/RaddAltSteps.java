@@ -57,6 +57,7 @@ public class RaddAltSteps {
     private int maxPrintRequest;
     private String operationid;
     private String versionToken = null;
+    private String fileKey = null;
     private ActInquiryResponse actInquiryResponse;
     private StartTransactionResponse startTransactionResponse;
     private StartTransactionResponse aorStartTransactionResponse;
@@ -463,6 +464,7 @@ public class RaddAltSteps {
     @Then("Vengono recuperati gli aar delle notifiche in stato irreperibile della persona (fisica)(giuridica) su radd alternative da operatore radd {string}")
     public void vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
+        this.fileKey = this.fileKey != null ? this.fileKey : this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null;
         AorStartTransactionRequest aorStartTransactionRequest = createAorStartTransactionRequest();
         this.aorStartTransactionResponse = raddAltClient.startAorTransaction(raddOperator.getUid(), aorStartTransactionRequest);
     }
@@ -530,6 +532,13 @@ public class RaddAltSteps {
 
     @When("tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd {string} senza successo")
     public void siEsegueUnTentativoDiRecuperareGliAarDelleNotificheInStatoIrreperibileDaOperatoreRaddSenzaSuccesso(String raddOperatorType) {
+        this.expectedStartTransactionException = Assertions.assertThrows(HttpClientErrorException.class,
+                () -> vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType));
+    }
+
+    @When("tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd {string} senza successo con file key {string}")
+    public void siEsegueUnTentativoDiRecuperareGliAarDelleNotificheInStatoIrreperibileDaOperatoreRaddSenzaSuccessoConFileKey(String raddOperatorType, String fileKey) {
+        this.fileKey = fileKey.equals("null") ? this.fileKey : fileKey;
         this.expectedStartTransactionException = Assertions.assertThrows(HttpClientErrorException.class,
                 () -> vengonoRecuperatiGliAttiDelleNotificheInStatoIrreperibileDaOperatoreRaddType(raddOperatorType));
     }
@@ -860,7 +869,7 @@ public class RaddAltSteps {
     private AorStartTransactionRequest createAorStartTransactionRequest() {
         return new AorStartTransactionRequest()
                 .versionToken(this.versionToken)
-                .fileKey(this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null)
+                .fileKey(this.fileKey)
                 .operationId(this.operationid == null ? generateRandomNumber() : this.operationid)
                 .recipientTaxId(this.currentUserCf)
                 .recipientType(this.recipientType.equalsIgnoreCase("PF") ? AorStartTransactionRequest.RecipientTypeEnum.PF :

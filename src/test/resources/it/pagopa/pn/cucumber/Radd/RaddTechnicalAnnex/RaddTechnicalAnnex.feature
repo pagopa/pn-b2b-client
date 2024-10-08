@@ -73,7 +73,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
 
   @raddTechnicalAnnex
-  Scenario: [ADEG-RADD-TRANS_AOR-2] Operatore RADD_UPLOADER - Start di una AOR transaction senza fileKey presente - ricezione Errore
+  Scenario Outline: [ADEG-RADD-TRANS_AOR-2] Operatore RADD_UPLOADER - Start di una AOR transaction con fileKey null o empty - ricezione Errore
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -85,8 +85,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "UPLOADER" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" senza successo
+    When tentativo di recuperare gli aar delle notifiche in stato irreperibile da operatore radd "UPLOADER" senza successo con file key "<fileKey>"
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo fileKey obbligatorio mancante"
+    Examples:
+    | fileKey |
+    | null    |
+    |         |
 
   @raddTechnicalAnnex
   Scenario: [ADEG-RADD-TRANS_ACT-1] PF - Operatore RADD_UPLOADER - Start di una ACT transaction con fileKey presente - ricezione OK
@@ -271,7 +275,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo versionToken mancante"
 
   @raddTechnicalAnnex
-  Scenario: [ADEG-RADD-TRANS_ACT-7] PF - Operatore RADD_UPLOADER - Start di una ACT transaction senza version token presente - ricezione OK
+  Scenario: [ADEG-RADD-TRANS_ACT-7] PF - Operatore RADD_STANDARD - Start di una ACT transaction senza version token presente - ricezione OK
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
