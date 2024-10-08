@@ -21,7 +21,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo di 819 e il peso di 10 nei details del'elemento di timeline letto
+    And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_2] invio notifica AR coperto da RADD e controllo diminuzione costi filtro base (eseguire controllo manuale costi del F24)
@@ -133,7 +133,7 @@ Feature: Radd Alternative Atto Intero
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                                                               | PESO |
       | 30141 | 355   | VENEZIA      | VE       | notifica filtro accetazione AAR, ATTACHMENT_PAGOPA e LEGAL_FACT       | 15   |
-      | 30142 | 409   | VENEZIA      | VE       | notifica filtro accetazione AAR, ATTACHMENT_F24 e LEGAL_FACT_EXTERNAL | 25   |
+      | 30142 | 408   | VENEZIA      | VE       | notifica filtro accetazione AAR, ATTACHMENT_F24 e LEGAL_FACT_EXTERNAL | 25   |
       | 30171 | 358   | VENEZIA      | VE       | notifica filtro accetazione DOCUMENT e AAR                            | 20   |
 
   @raddAttoIntero
@@ -176,7 +176,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                   |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE"
-    And viene verificato il costo di 819 e il peso di 10 nei details del'elemento di timeline letto
+    And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
 
 
   @raddAttoIntero @uatEnvCondition
