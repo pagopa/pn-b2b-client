@@ -11,6 +11,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "CucumberSpa" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 
