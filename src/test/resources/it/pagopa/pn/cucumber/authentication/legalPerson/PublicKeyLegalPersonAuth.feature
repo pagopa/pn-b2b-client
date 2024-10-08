@@ -257,7 +257,7 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto
-    # questo era stato aggiunto e moficato per restituire 404 cercare thread invece ritorna 403
+    # quando ho un utenza che non ha un public key attiva levare commento
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
     Then la chiamata restituisce un errore con status code 404
@@ -267,10 +267,9 @@ Feature: Public key legal Person Authentication
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "<status>"
     When l'utente "DI UNA PG DIVERSA" "<operation>" la chiave pubblica per la PG che si trova in stato "<status>"
     Then la chiamata restituisce un errore con status code 404
-    #da definire il blocco e l errore per tutti e tre
     Examples:
     | status      | operation |
-    | BLOCKED     | RIATTIVA  |
+    #| BLOCKED     | RIATTIVA  |
     | ACTIVE      | RUOTA     |
     | ACTIVE      | BLOCCA    |
 

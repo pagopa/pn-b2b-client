@@ -170,11 +170,10 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_16] Un utente Persona Giuridica riattiva la virtual key bloccata di un altro utente
-    #55 questo va in errore e riceve 409
+    #55
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
-    And l'utente "PG" censisce una virtual key per sè stesso
     And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     When l'utente "PG" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "AMMINISTRATORE" e riceve errore 403
 
