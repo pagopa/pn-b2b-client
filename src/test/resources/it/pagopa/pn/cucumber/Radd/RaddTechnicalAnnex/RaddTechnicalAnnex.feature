@@ -109,7 +109,7 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And l'operazione di download degli atti si conclude correttamente su radd alternative
 
   @raddTechnicalAnnex
-  Scenario: [ADEG-RADD-TRANS_ACT-2] Operatore RADD_UPLOADER - Start di una ACT transaction senza fileKey presente - ricezione Errore
+  Scenario Outline: [ADEG-RADD-TRANS_ACT-2] Operatore RADD_UPLOADER - Start di una ACT transaction senza fileKey presente - ricezione Errore
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative  |
       | senderDenomination | Comune di Palermo           |
@@ -120,8 +120,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "UPLOADER" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    When tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore "UPLOADER" senza successo
+    When tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore "UPLOADER" senza successo con file key "<fileKey>"
     And il tentativo genera un errore 400 "Bad Request" con il messaggio "Campo fileKey obbligatorio mancante"
+    Examples:
+      | fileKey |
+      | null    |
+      |         |
 
   # OPERATORE STANDARD / Senza ruolo
 
@@ -138,12 +142,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And la persona fisica "Signor casuale" chiede di verificare ad operatore radd "<operatorType>" la presenza di notifiche
     And La verifica della presenza di notifiche in stato irreperibile per il cittadino si conclude correttamente su radd alternative
-    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "<operatorType>"
+    Then Vengono recuperati gli aar delle notifiche in stato irreperibile della persona fisicagiuridica su radd alternative da operatore radd "<operatorType>" con file key "<fileKey>"
     And il recupero degli aar in stato irreperibile si conclude correttamente su radd alternative
     Examples:
-      | operatorType |
-      | STANDARD     |
-      | WITHOUT_ROLE |
+      | operatorType | fileKey |
+      | STANDARD     | null    |
+      | WITHOUT_ROLE |         |
 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_AOR-4] Operatore RADD_STANDARD / senza ruolo - Start di una AOR transaction con fileKey presente - ricezione Errore
