@@ -112,6 +112,12 @@ public class LegalPersonAuthSteps {
         }
     }
 
+    @When("l'utente {string} {string} la chiave pubblica per la PG che si trova in stato {string} usando la chiave pubblica già usata per la chiave attiva")
+    public void changeStatusChiavePubblicaConLaChiaveGiàUsata(String utente, String operation, String status) {
+        this.publicKeyRotation = publicKey;
+        changeStatusChiavePubblica(utente, operation, status);
+    }
+
     @When("l'utente {string} {string} una chiave pubblica per la PG che non esiste")
     public void changeStatusChiavePubblicaInesistente(String utente, String operation) {
         selectAdmin(utente);
