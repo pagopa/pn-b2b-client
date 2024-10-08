@@ -68,8 +68,10 @@ public class RicezioneNotificheWebDelegheSteps {
     @Before("@useB2B")
     public void beforeMethod() {
         this.webMandateClient = context.getBean(B2bMandateServiceClientImpl.class);
-        this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
-        sharedSteps.setWebRecipientClient(webRecipientClient);
+        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
+            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+            sharedSteps.setWebRecipientClient(webRecipientClient);
+        }
     }
 
     @Autowired
@@ -147,9 +149,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string}")
     public void delegateUser(String delegate, String delegator) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = new MandateDto()
                 .delegator(getUserDtoByuser(delegator))
@@ -170,9 +170,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string} con data di fine delega antecedente a quella di inizio")
     public void delegateUserWithInvalidDateRange(String delegate, String delegator) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegator);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         MandateDto mandate = (new MandateDto()
                 .delegator(getUserDtoByuser(delegator)))
@@ -193,9 +191,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} viene delegato da {string} per comune {string}")
     public void delegateUser(String delegate, String delegator, String comune) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegator);
         OrganizationIdDto organizationIdDto = new OrganizationIdDto();
 
         switch (comune) {
@@ -452,9 +448,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} revoca la delega a {string}")
     public void userRevokesMandate(String delegator, String delegate) {
-        if (setBearerToken(delegator)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(delegator);
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegator1();
         System.out.println("MANDATE LIST: " + mandateList);
@@ -678,9 +672,7 @@ public class RicezioneNotificheWebDelegheSteps {
     }
 
     private void delegateViewMandate(String user, String statusFilter){
-        if (setBearerToken(user)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(user);
         try {
             List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(statusFilter);
             Assertions.assertNotNull(mandateList, "La lista mandateList è null");
@@ -693,9 +685,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @Then("il delegato {string} visualizza le deleghe da parte di un delegante con CF: {string}")
     public void delegateViewsAssignedMandates(String user, String fiscalCode) {
-        if (setBearerToken(user)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(user);
         try {
             List<MandateDto> mandateList = webMandateClient.searchMandatesByDelegate(fiscalCode, null);
             Assertions.assertNotNull(mandateList, "La lista mandateList è null");
@@ -727,9 +717,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("{string} visualizza le deleghe")
     public void visualizzaLeDeleghe(String user) {
-        if (setBearerToken(user)) {
-            throw new IllegalArgumentException();
-        }
+        setBearerToken(user);
 
         List<MandateDto> mandateList = webMandateClient.listMandatesByDelegate1(null);
         List<MandateDto> mandateDtos = Assertions.assertDoesNotThrow(()-> webMandateClient.listMandatesByDelegator1());
@@ -742,9 +730,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("viene creata una delega con i seguenti parametri errati:")
     public void createMandateWithNotValidDate(Map<String, String> data) {
-            if (setBearerToken(data.get("delegator"))) {
-                throw new IllegalArgumentException();
-            }
+            setBearerToken(data.get("delegator"));
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             MandateDto mandate = new MandateDto()
                     .delegator(getUserDtoByuser(data.get("delegator")))

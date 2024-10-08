@@ -42,7 +42,7 @@ import static org.awaitility.Awaitility.await;
 @Slf4j
 public class RicezioneNotificheWebSteps {
     private final ApplicationContext context;
-    private final IPnWebRecipientClient webRecipientClient;
+    private IPnWebRecipientClient webRecipientClient;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private final PnPaB2bUtils b2bUtils;
     private final IPnPaB2bClient b2bClient;
@@ -72,6 +72,10 @@ public class RicezioneNotificheWebSteps {
     @Before("@useB2B")
     public void beforeMethod() {
         this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
+        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
+            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+            sharedSteps.setWebRecipientClient(webRecipientClient);
+        }
     }
 
     @Autowired

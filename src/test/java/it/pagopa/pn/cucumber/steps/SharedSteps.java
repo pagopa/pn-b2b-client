@@ -269,7 +269,9 @@ public class SharedSteps {
 
     @Before("@useB2B")
     public void beforeMethod() {
-//        this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
+            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        }
         this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
     }
 
