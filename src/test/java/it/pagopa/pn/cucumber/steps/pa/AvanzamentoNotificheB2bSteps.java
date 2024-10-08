@@ -1560,7 +1560,7 @@ public class AvanzamentoNotificheB2bSteps {
             interruptedException.printStackTrace();
         }
 
-        priceVerification(price, null, 0);
+        priceVerification(price, 0);
     }
 
     @Then("vengono verificati costo = {string} e data di perfezionamento della notifica {string}")
