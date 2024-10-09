@@ -238,6 +238,7 @@ public class RaddAltSteps {
     @And("si inizia il processo di caricamento dei documento di identità del cittadino ma non si porta a conclusione su radd alternative")
     public void siIniziaIlProcessoDiCaricamentoDeiDocumentoDiIdentitàDelCittadinoMaNonSiPortaAConclusione() {
         this.operationid = generateRandomNumber();
+        this.versionToken = "string";
         uploadDocumentRaddAlternative(false);
     }
 
