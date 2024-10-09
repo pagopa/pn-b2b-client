@@ -35,6 +35,8 @@ public class LegalPersonAuthSteps {
     @Value("${pn.authentication.pg.public.key.rotation}")
     private String publicKeyRotation;
 
+    private final String UNKNOWN_KID = "4004309b-1bf6-789a-9582-721fe23653b6";
+
     public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
         this.pojo = new LegalPersonsAuthStepsPojo();
@@ -185,9 +187,9 @@ public class LegalPersonAuthSteps {
     }
 
     private String getPublicKeyKidByStatus(String status) {
-        return this.pojo.getResponseWithStatusList().stream().filter(
+        return status.equalsIgnoreCase("INESISTENTE") ? UNKNOWN_KID : this.pojo.getResponseWithStatusList().stream().filter(
                 x -> x.getStatus().equalsIgnoreCase(status)).findFirst().map(
-                y -> y.getResponse().getKid()).orElse("");
+                y -> y.getResponse().getKid()).orElse(null);
     }
 
     private void bloccaChiavePubblica(String kid) {

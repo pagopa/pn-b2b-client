@@ -159,8 +159,8 @@ Feature: Public key legal Person Authentication
     Then la chiamata restituisce un errore con status code 403
     Examples:
       | status   |
-      | BLOCCATA |
-      | RUOTATA  |
+      | BLOCKED  |
+      | ROTATED  |
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL_PERSON_AUTH_27] Un utente PG riattiva la chiave pubblica della PG
@@ -169,8 +169,8 @@ Feature: Public key legal Person Authentication
     Then la chiamata restituisce un errore con status code 403
     Examples:
       | status   |
-      | BLOCCATA |
-      | RUOTATA  |
+      | BLOCKED  |
+      | ROTATED  |
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL_PERSON_AUTH_28] Un Amministratore PG riattiva la chiave pubblica della PG dopo averne censita un’altra che risulta attiva
@@ -257,9 +257,8 @@ Feature: Public key legal Person Authentication
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto
-    # quando ho un utenza che non ha un public key attiva levare commento
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
-    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "INESISTENTE"
     Then la chiamata restituisce un errore con status code 404
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
@@ -278,12 +277,4 @@ Feature: Public key legal Person Authentication
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE" usando la chiave pubblica già usata per la chiave attiva
     Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
-
-#  @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
-#  Scenario: [LEGAL_PERSON_AUTH_40] Un Amministratore PG crea una public key con una chiave già usata per una chiave pubblica ruotata
-#    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
-#    When l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
-#    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
-#    When l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG usando una chiave già presente in stato ruotato
-#    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
     

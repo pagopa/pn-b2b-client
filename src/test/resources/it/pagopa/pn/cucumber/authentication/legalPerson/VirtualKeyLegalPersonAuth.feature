@@ -19,8 +19,7 @@ Feature: Virtual key legal Person Authentication
     #8
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    # bug riferito
-    #And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
     And l'utente "PG" censisce una virtual key per sè stesso
     When l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per l'utente "PG"
     When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per l'utente "PG"
