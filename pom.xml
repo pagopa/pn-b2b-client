@@ -43,6 +43,7 @@
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <external-bff-recipient.version>105e93e8673d0eff1bfaf98bfb42ab7492eacb10</external-bff-recipient.version>
+        <open.api.version.paper.channel>develop</open.api.version.paper.channel>
     </properties>
 
     <dependencies>
@@ -145,7 +146,7 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>5.7.1</version>
+            <version>5.9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>

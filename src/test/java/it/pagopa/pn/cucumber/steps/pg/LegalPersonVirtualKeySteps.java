@@ -304,7 +304,6 @@ public class LegalPersonVirtualKeySteps {
 
     @After("@removeAllVirtualKeyTEst")
     public void removeVirtualKey() {
-        //se la chiave pubblica è cancellata devo riattivarla per eliminare le virtual key e poi ricancellarla.
         selectPGUser("amministratore");
         BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
         getVirtualKeys.getItems().stream()
@@ -329,7 +328,6 @@ public class LegalPersonVirtualKeySteps {
         String user = "AMMINISTRATORE";
         selectPGUser(user);
         lUtenteAccettaITos(user, ACCEPT_TOS);
-        //se la chiave pubblica è cancellata devo riattivarla per eliminare le virtual key e poi ricancellarla (faccio partire il metodo after delle public dopo).
         if (!publicKeySteps.existPublicKeyActive()) publicKeySteps.creaChiavePubblica(user);
         BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
         getVirtualKeys.getItems().stream()

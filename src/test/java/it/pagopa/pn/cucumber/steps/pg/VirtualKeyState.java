@@ -8,7 +8,6 @@ public enum VirtualKeyState {
     ENABLE("ENABLE"),
     REACTIVE("ENABLED"),
     CANCELLED("CANCELLED"),
-   // ENABLED("ENABLED"),
     UNKNOWN("UNKNOWN");
 
     private String state;
