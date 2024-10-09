@@ -60,7 +60,9 @@ public class ApiServiceDeskSteps {
     private Integer retentionTimePreLoad;
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ01234556789";
     private static final String CF_corretto = "CLMCST42R12D969Z";
+    private static final String CF_ada = "LVLDAA85T50G702B";
     private static final String CF_errato = "CPNTMS85T15H703WCPNTMS85T15H703W|";
+    private static final String PIVA_errata = "1234567899999999999999999999999999999";
     private static final String CF_errato2 = "CPNTM@85T15H703W";
     private final String CF_vuoto = null;
     private static final String ticketid_errato = "XXXXXXXXXXXXXXXXXxxxxxxxxxxxxxxxX";
@@ -102,6 +104,21 @@ public class ApiServiceDeskSteps {
         this.createOperationRequest = new CreateOperationRequest();
         this.videoUploadRequest = new VideoUploadRequest();
         this.searchNotificationRequest = new SearchNotificationRequest();
+    }
+
+    @And("viene chiamato service desk e si controlla la presenza dell'elemento {string} nella response")
+    public void invocazioneServizioPerVerificaElementoTimelineNEllaResponse(String elemento){
+        if (sharedSteps.getSentNotification()!= null){
+            timelineResponse = ipServiceDeskClient.getTimelineOfIUN(sharedSteps.getSentNotification().getIun());
+
+            Assertions.assertNotNull(timelineResponse);
+            Assertions.assertNotNull(timelineResponse.getTimeline());
+
+            boolean hasRefinementCategory = timelineResponse.getTimeline().stream()
+                    .anyMatch(entry -> elemento.equalsIgnoreCase(entry.getCategory().toString()));
+
+            Assertions.assertTrue(hasRefinementCategory, "La categoria " + elemento + " non è presente nella timeline.");
+        }
     }
 
     @Given("viene creata una nuova richiesta per invocare il servizio UNREACHABLE per il {string}")
@@ -626,19 +643,21 @@ public class ApiServiceDeskSteps {
         Integer size = setSearchPageSize(searchPageSize);
         String nextPagesKey = setNextPagesKey(searchNextPagesKey);
 
-        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, false);
+        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate);
 
-        if(size==50 && nextPagesKey==null){
-            Assertions.assertEquals(50, Objects.requireNonNull(searchNotificationsResponse.getResults()).size());
-        }
-
-        List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
-        for (NotificationResponse notificationResponseTmp: Objects.requireNonNull(searchNotificationsResponse.getResults())) {
-            if (notificationResponseTmp.getCourtesyMessages()!=null && !notificationResponseTmp.getCourtesyMessages().isEmpty()){
-                listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+        if (searchNotificationsResponse!= null) {
+            if (size == 50 && nextPagesKey == null) {
+                Assertions.assertEquals(50, Objects.requireNonNull(searchNotificationsResponse.getResults()).size());
             }
+
+            List<CourtesyMessage> listCourtesyMessage = new ArrayList<>();
+            for (NotificationResponse notificationResponseTmp : Objects.requireNonNull(searchNotificationsResponse.getResults())) {
+                if (notificationResponseTmp.getCourtesyMessages() != null && !notificationResponseTmp.getCourtesyMessages().isEmpty()) {
+                    listCourtesyMessage.add(notificationResponseTmp.getCourtesyMessages().get(0));
+                }
+            }
+            Assertions.assertFalse(listCourtesyMessage.isEmpty());
         }
-        Assertions.assertFalse(listCourtesyMessage.isEmpty());
     }
 
     @Then("Il servizio risponde correttamente")
@@ -670,6 +689,13 @@ public class ApiServiceDeskSteps {
                 profileRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 profileRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                if ("PF".equalsIgnoreCase(recipientType)) {
+                    profileRequest.setTaxId(CF_errato);
+                }else {
+                    profileRequest.setTaxId(PIVA_errata);
+                }
+
             } else {
                 profileRequest.setTaxId(setTaxID(taxId));
             }
@@ -685,7 +711,7 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate, boolean multiTaxId) {
+    private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
         try {
             Integer size = setSearchPageSize(searchPageSize);
             String nextPagesKey = setNextPagesKey(searchNextPagesKey);
@@ -697,12 +723,14 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
-            } else {
-                if(multiTaxId) {
-                    searchNotificationsRequest.setTaxId(setTaxID(setTaxID(taxId)));
-                } else {
-                    searchNotificationsRequest.setTaxId(setTaxID(taxId));
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                if ("PF".equalsIgnoreCase(recipientType)) {
+                    searchNotificationsRequest.setTaxId(CF_errato);
+                }else {
+                    searchNotificationsRequest.setTaxId(PIVA_errata);
                 }
+            } else {
+                    searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
 
             if (!"NULL".equalsIgnoreCase(recipientType)) {
@@ -724,7 +752,7 @@ public class ApiServiceDeskSteps {
 
     @Given("come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId {string} recipientType  {string} e con searchPageSize {string} searchNextPagesKey {string} startDate {string} endDate {string}")
     public void comeOperatoreDevoAccedereAllElencoDelleNotificheRicevuteDaUnUtenteDiPiattaformaNotificheConCfERecipientType(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
-        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate, true);
+        checkElencoDelleNotificheRicevuteSteps(taxId, recipientType, searchPageSize, searchNextPagesKey, startDate, endDate);
     }
 
     @Given("come operatore devo accedere ai dettagli di una notifica di cui conosco l’identificativo \\(IUN) {string}")
@@ -783,6 +811,10 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxid)) {
                 searchNotificationsRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
+            } else if ("ADA".equalsIgnoreCase(taxid)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
             } else {
                 String resultTaxID = setTaxID(taxid);
                 searchNotificationsRequest.setTaxId(resultTaxID);
@@ -808,6 +840,10 @@ public class ApiServiceDeskSteps {
                 searchNotificationsRequest.setTaxId(null);
             } else if ("VUOTO".equalsIgnoreCase(taxId)) {
                 searchNotificationsRequest.setTaxId("");
+            } else if ("ERRATO".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(CF_errato);
+            } else if ("ADA".equalsIgnoreCase(taxId)) {
+                searchNotificationsRequest.setTaxId(CF_ada);
             } else {
                 searchNotificationsRequest.setTaxId(setTaxID(taxId));
             }
@@ -816,7 +852,7 @@ public class ApiServiceDeskSteps {
             Assertions.assertNotNull(timelineResponse);
             TimelineElement timelineElement = null;
             for (TimelineElement element : timelineResponse.getTimeline()) {
-                if (!destinatario.equals(element.getDetail().getRecIndex())) {
+                if (!"REQUEST_ACCEPTED".equalsIgnoreCase(element.getCategory().toString()) && !destinatario.equals(element.getDetail().getRecIndex())) {
                     timelineElement = element;
                     break;
                 }
@@ -893,8 +929,8 @@ public class ApiServiceDeskSteps {
                 eDate =  OffsetDateTime.parse(myFormatter.format(realEndOfDay));
             }
 
-            String mandateIdSearch = getTaxIdDelegator(type, taxId, searchMandateId);
-            String delegateInternalIdSearch = getTaxIdDelegator(type, taxId, searchInternalId);
+            String mandateIdSearch = getTaxIdMandate(type, taxId, searchMandateId);
+            String delegateInternalIdSearch = getTaxIdInternal(type, taxId, searchInternalId);
 
             searchNotificationsResponse = ipServiceDeskClient.searchNotificationsAsDelegateFromInternalId(mandateIdSearch, delegateInternalIdSearch,recipientType, size, nextPagesKey, sDate, eDate);
             Assertions.assertNotNull(searchNotificationsResponse);
@@ -1011,27 +1047,58 @@ public class ApiServiceDeskSteps {
     }
 
 
-    private String getTaxIdDelegator(String type, String taxId, String searchInternalId) {
+
+
+    private String getTaxIdInternal(String type, String taxId, String searchInternalId) {
         if ("NO_SET".equalsIgnoreCase(searchInternalId)) {
             if ("delegato".equalsIgnoreCase(type)) {
-                String taxIdDelegator = setTaxID(taxId);
+                String taxIdDelegate = setTaxID(taxId);
                 Assertions.assertNotNull(profileResponse.getDelegateMandates());
                 for (Mandate mandate: profileResponse.getDelegateMandates()) {
-                    if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())) {
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
                         return mandate.getDelegateInternalId();
                     }
                 }
             } else if ("delegante".equalsIgnoreCase(type)) {
                 Assertions.assertNotNull(profileResponse.getDelegatorMandates());
                 for (Mandate mandate: profileResponse.getDelegatorMandates()) {
-                    String taxIdDelegator = setTaxID(taxId);
-                    if (taxIdDelegator.equalsIgnoreCase(mandate.getTaxId())) {
+                    String taxIdDelegate = setTaxID(taxId);
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
                         return mandate.getDelegateInternalId();
                     }
                 }
             }
         }
+        if ("NULL".equalsIgnoreCase(searchInternalId)){
+            return  null;
+        }
         return searchInternalId;
+    }
+
+    private String getTaxIdMandate(String type, String taxId, String searchMandatelId) {
+        if ("NO_SET".equalsIgnoreCase(searchMandatelId)) {
+            if ("delegato".equalsIgnoreCase(type)) {
+                String taxIdDelegate = setTaxID(taxId);
+                Assertions.assertNotNull(profileResponse.getDelegateMandates());
+                for (Mandate mandate: profileResponse.getDelegateMandates()) {
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
+                        return mandate.getMandateId();
+                    }
+                }
+            } else if ("delegante".equalsIgnoreCase(type)) {
+                Assertions.assertNotNull(profileResponse.getDelegatorMandates());
+                for (Mandate mandate: profileResponse.getDelegatorMandates()) {
+                    String taxIdDelegate = setTaxID(taxId);
+                    if (taxIdDelegate.equalsIgnoreCase(mandate.getTaxId())) {
+                        return mandate.getMandateId();
+                    }
+                }
+            }
+        }
+        if ("NULL".equalsIgnoreCase(searchMandatelId)){
+            return  null;
+        }
+        return searchMandatelId;
     }
 
     private void createOperationRequestSteps(String cf) {

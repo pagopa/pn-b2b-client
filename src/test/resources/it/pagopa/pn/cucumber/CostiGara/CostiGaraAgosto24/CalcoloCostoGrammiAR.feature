@@ -4,7 +4,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     Given viene rimossa se presente la pec di piattaforma di "Mario Gherkin"
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-20GR_1] Invio notifica e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_AR-20GR_1] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>            |
       | senderDenomination    | Comune di palermo    |
@@ -40,7 +40,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario Outline: [CALCOLO-COSTO_AR-21GR_2] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>            |
       | senderDenomination    | Comune di palermo    |
@@ -71,7 +71,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 04100 | 536   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-50GR_3] Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario Outline: [CALCOLO-COSTO_AR-50GR_3] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>            |
       | senderDenomination    | Comune di palermo    |
@@ -106,7 +106,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario Outline: [CALCOLO-COSTO_AR-51GR_4] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                   |
       | senderDenomination    | Comune di palermo           |
@@ -137,7 +137,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 04100 | 591   | FOGLIANO     | LT       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-100GR_5] Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario Outline: [CALCOLO-COSTO_AR-100GR_5] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                     |
       | senderDenomination    | Comune di palermo                             |
@@ -170,7 +170,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 91032 | 599    | PETROSINO   | TP       | notifica analogica RECAPITISTA |
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario Outline: [CALCOLO-COSTO_AR-101GR_6] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                    |
       | senderDenomination    | Comune di palermo                            |
@@ -202,7 +202,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-250GR_7] Invio notifica e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario Outline: [CALCOLO-COSTO_AR-250GR_7] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                       |
       | senderDenomination    | Comune di palermo                                               |
@@ -236,7 +236,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario Outline: [CALCOLO-COSTO_AR-251GR_8] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                       |
       | senderDenomination    | Comune di palermo                                               |
@@ -268,7 +268,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-350GR_9] Invio notifica e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario Outline: [CALCOLO-COSTO_AR-350GR_9] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                        |
       | senderDenomination    | Comune di palermo                                                |
@@ -302,7 +302,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario Outline: [CALCOLO-COSTO_AR-351GR_10] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                        |
       | senderDenomination    | Comune di palermo                                                |
@@ -334,7 +334,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-1000GR_11] Invio notifica e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1000GR_11] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -368,7 +368,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-1001GR_12] Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario Outline: [CALCOLO-COSTO_AR-1001GR_12] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -400,7 +400,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-2000GR_13] Invio notifica e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario Outline: [CALCOLO-COSTO_AR-2000GR_13] (Agosto) Invio notifica e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | <SUBJECT>                                                                                        |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -432,7 +432,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
 
 
   @costoAnalogicoAgosto24
-  Scenario Outline: [CALCOLO-COSTO_AR-20GR_14] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario Outline: [CALCOLO-COSTO_AR-20GR_14] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -454,7 +454,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
       | 1036  | SUD AFRICA |
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-21GR_15] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario: [CALCOLO-COSTO_AR-21GR_15] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -472,7 +472,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1255" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-50GR_16] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario: [CALCOLO-COSTO_AR-50GR_16] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -490,7 +490,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1270" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-51GR_17] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario: [CALCOLO-COSTO_AR-51GR_17] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -508,7 +508,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1375" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-100GR_18] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario: [CALCOLO-COSTO_AR-100GR_18] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -526,7 +526,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1402" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-101GR_19] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario: [CALCOLO-COSTO_AR-101GR_19] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber              |
       | senderDenomination    | Comune di palermo                            |
@@ -544,7 +544,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1802" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-250GR_20] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario: [CALCOLO-COSTO_AR-250GR_20] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -562,7 +562,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1889" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-251GR_21] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario: [CALCOLO-COSTO_AR-251GR_21] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -580,7 +580,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2081" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-350GR_22] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario: [CALCOLO-COSTO_AR-350GR_22] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -598,7 +598,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2138" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-351GR_23] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario: [CALCOLO-COSTO_AR-351GR_23] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -616,7 +616,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2869" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1000GR_24] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario: [CALCOLO-COSTO_AR-1000GR_24] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -634,7 +634,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "3256" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1001GR_25] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario: [CALCOLO-COSTO_AR-1001GR_25] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -652,7 +652,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "4441" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-2000GR_26] Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario: [CALCOLO-COSTO_AR-2000GR_26] (Agosto) Invio notifica ZONE_2 e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -670,7 +670,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "5038" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-20GR_27] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario: [CALCOLO-COSTO_AR-20GR_27] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -688,7 +688,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "921" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-21GR_28] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario: [CALCOLO-COSTO_AR-21GR_28] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -706,7 +706,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1135" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-50GR_29] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario: [CALCOLO-COSTO_AR-50GR_29] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -724,7 +724,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1150" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-51GR_30] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario: [CALCOLO-COSTO_AR-51GR_30] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -742,7 +742,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1246" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-100GR_31] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario: [CALCOLO-COSTO_AR-100GR_31] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -760,7 +760,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1273" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-101GR_32] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario: [CALCOLO-COSTO_AR-101GR_32] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber              |
       | senderDenomination    | Comune di palermo                            |
@@ -778,7 +778,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1465" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-250GR_33] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario: [CALCOLO-COSTO_AR-250GR_33] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -796,7 +796,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1552" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-251GR_34] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario: [CALCOLO-COSTO_AR-251GR_34] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -814,7 +814,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1692" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-350GR_35] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario: [CALCOLO-COSTO_AR-350GR_35] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -832,7 +832,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1749" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-351GR_36] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario: [CALCOLO-COSTO_AR-351GR_36] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -850,7 +850,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2202" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1000GR_37] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario: [CALCOLO-COSTO_AR-1000GR_37] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -868,7 +868,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2589" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1001GR_38] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario: [CALCOLO-COSTO_AR-1001GR_38] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -886,7 +886,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "3394" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-2000GR_39] Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario: [CALCOLO-COSTO_AR-2000GR_39] (Agosto) Invio notifica ZONE_1 e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -904,7 +904,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "3991" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-20GR_40] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
+  Scenario: [CALCOLO-COSTO_AR-20GR_40] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso <= 20gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -922,7 +922,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1093" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-21GR_41] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 21gr
+  Scenario: [CALCOLO-COSTO_AR-21GR_41] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 21gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -940,7 +940,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1348" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-50GR_42] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 50gr
+  Scenario: [CALCOLO-COSTO_AR-50GR_42] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 50gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -958,7 +958,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1363" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-51GR_43] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 51gr
+  Scenario: [CALCOLO-COSTO_AR-51GR_43] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 51gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |
       | senderDenomination    | Comune di palermo               |
@@ -976,7 +976,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1511" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-100GR_44] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 100gr
+  Scenario: [CALCOLO-COSTO_AR-100GR_44] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 100gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber               |
       | senderDenomination    | Comune di palermo                             |
@@ -994,7 +994,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1538" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-101GR_45] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 101gr
+  Scenario: [CALCOLO-COSTO_AR-101GR_45] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 101gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber              |
       | senderDenomination    | Comune di palermo                            |
@@ -1012,7 +1012,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "1929" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-250GR_46] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 250gr
+  Scenario: [CALCOLO-COSTO_AR-250GR_46] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 250gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -1030,7 +1030,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2016" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-251GR_47] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 251gr
+  Scenario: [CALCOLO-COSTO_AR-251GR_47] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 251gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                 |
       | senderDenomination    | Comune di palermo                                               |
@@ -1048,7 +1048,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2544" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-350GR_48] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 350gr
+  Scenario: [CALCOLO-COSTO_AR-350GR_48] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 350gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -1066,7 +1066,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "2601" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-351GR_49] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 351gr
+  Scenario: [CALCOLO-COSTO_AR-351GR_49] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 351gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                  |
       | senderDenomination    | Comune di palermo                                                |
@@ -1084,7 +1084,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "3662" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1000GR_50] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1000gr
+  Scenario: [CALCOLO-COSTO_AR-1000GR_50] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -1102,7 +1102,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "4049" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-1001GR_51] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1001gr
+  Scenario: [CALCOLO-COSTO_AR-1001GR_51] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 1001gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |
@@ -1120,7 +1120,7 @@ Feature: calcolo costo notifica in base hai grammi con notfiche AR
     And viene verificato il costo = "5375" della notifica
 
   @costoAnalogicoAgosto24
-  Scenario: [CALCOLO-COSTO_AR-2000GR_52] Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 2000gr
+  Scenario: [CALCOLO-COSTO_AR-2000GR_52] (Agosto) Invio notifica ZONE_3 e verifica calcolo del costo su raccomandata con peso = 2000gr
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber                                                                  |
       | senderDenomination    | Comune di palermo                                                                                |

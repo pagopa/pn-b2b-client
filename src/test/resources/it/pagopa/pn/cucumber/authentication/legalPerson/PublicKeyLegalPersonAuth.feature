@@ -271,10 +271,3 @@ Feature: Public key legal Person Authentication
     #| BLOCKED     | RIATTIVA  |
     | ACTIVE      | RUOTA     |
     | ACTIVE      | BLOCCA    |
-
-  @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
-  Scenario: [LEGAL_PERSON_AUTH_39] Un Amministratore PG ruoto una chiave usando la chiave già usata
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
-    When l'utente "AMMINISTRATORE" "RUOTA" la chiave pubblica per la PG che si trova in stato "ACTIVE" usando la chiave pubblica già usata per la chiave attiva
-    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
-    

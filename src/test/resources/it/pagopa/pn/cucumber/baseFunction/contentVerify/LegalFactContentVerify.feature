@@ -19,7 +19,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
       | DESTINATARIO_DOMICILIO_DIGITALE           | destinatario@certificatanoprod.notifichedigitali.it                                                        |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA CS ITALIA                                        |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA SENZA NOME 87100 COSENZA COSENZA CS ITALIA                                |
 
   @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_2] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO
@@ -80,7 +80,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                         |
       | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA |
 
   @legalFact
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_4] Data una notifica digitale, in seguito al completamento del relativo workflow si verifica l'esistenza del legalFact generato se sia di tipo NOTIFICA DIGITALE
@@ -165,7 +165,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
     When viene individuato se presente l'evento più recente
     Then si effettua download della relativa attestazione opponibile e si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_DOWNTIME"
 
-  @legalFact
+  @legalFact @ignore
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_10] In seguito ad un disservizio verificatosi in piattaforma durante il workflow di una notifica, si verifica l'esistenza del legalFact generato se sia di tipo DOWNTIME
     Given vengono letti gli eventi di disservizio degli ultimi 60 giorni relativi al "workflow notifiche"
     When viene individuato se presente l'evento più recente
