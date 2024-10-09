@@ -44,7 +44,6 @@ public class AnagraficaRaddAltSteps {
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils pnPaB2bUtils;
     private final DataTableTypeRaddAlt dataTableTypeRaddAlt;
-    //private final ConditionFilteredUtil conditionFilteredUtil;
 
     private String fileCsvName;
     private String shaCSV;
@@ -64,12 +63,11 @@ public class AnagraficaRaddAltSteps {
 
     @Autowired
     public AnagraficaRaddAltSteps(PnRaddAlternativeClientImpl raddAltClient, PnPaB2bUtils pnPaB2bUtils, SharedSteps sharedSteps,
-          DataTableTypeRaddAlt dataTableTypeRaddAlt/*, ConditionFilteredUtil conditionFilteredUtil*/) {
+          DataTableTypeRaddAlt dataTableTypeRaddAlt) {
         this.raddAltClient = raddAltClient;
         this.sharedSteps = sharedSteps;
         this.pnPaB2bUtils = pnPaB2bUtils;
         this.dataTableTypeRaddAlt = dataTableTypeRaddAlt;
-        //this.conditionFilteredUtil = conditionFilteredUtil;
     }
 
     @When("viene caricato il csv con dati:")
@@ -103,7 +101,7 @@ public class AnagraficaRaddAltSteps {
 
         try {
             RegistryUploadResponse responseUploadCsv = raddAltClient.uploadRegistryRequests(this.uid, registryUploadRequest);
-            if (responseUploadCsv!=null) {
+            if (responseUploadCsv != null) {
                 this.requestid = responseUploadCsv.getRequestId();
                 pnPaB2bUtils.preloadRadCSVDocument("classpath:/" + this.fileCsvName,this.shaCSV,responseUploadCsv,true);
             }
