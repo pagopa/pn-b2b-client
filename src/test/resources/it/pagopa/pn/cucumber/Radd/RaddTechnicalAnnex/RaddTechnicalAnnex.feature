@@ -182,12 +182,12 @@ Feature: Adeguamento RADD alle modifiche dell’allegato tecnico - Stampa degli 
     When Il cittadino "Mario Cucumber" come destinatario 0 mostra il QRCode "corretto"
     Then L'operatore "<operatorType>" scansione il qrCode per recuperare gli atti da radd alternative
     And la scansione si conclude correttamente su radd alternative
-    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative per operatore "<operatorType>"
+    Then Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative per operatore "<operatorType>" con fileKey "<fileKey>"
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     Examples:
-      | operatorType |
-      | STANDARD     |
-      | WITHOUT_ROLE |
+      | operatorType | fileKey |
+      | STANDARD     |  null   |
+      | WITHOUT_ROLE |         |
 
   @raddTechnicalAnnex
   Scenario Outline: [ADEG-RADD-TRANS_ACT-4] Operatore RADD_STANDARD - Start di una ACT transaction con fileKey presente - ricezione Errore

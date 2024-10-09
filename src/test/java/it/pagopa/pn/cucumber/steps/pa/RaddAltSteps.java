@@ -290,6 +290,12 @@ public class RaddAltSteps {
         startTransactionActRaddAlternativeForOperator(this.operationid,true, raddOperator.getUid());
     }
 
+    @Then("Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative per operatore {string} con fileKey {string}")
+    public void vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARDaRaddAlternativePerOperatoreStandard(String raddOperatorType, String fileKey) {
+        this.fileKey = fileKey;
+        vengonoVisualizzatiSiaGliAttiSiaLeAttestazioniOpponibiliRiferitiAllaNotificaAssociataAllAARDaRaddAlternativePerOperatoreStandard(raddOperatorType);
+    }
+
     @When("tentativo di recuperare gli atti delle notifiche associata all'AAR da radd alternative per operatore {string} con versionToken errato")
     public void tentativoDiRecuperareGliAttiDelleNotificheAssociataAllAARDaRaddAlternativePerOperatoreConVersionTokenErrato(String raddOperatorType) {
         this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? null : "string";
