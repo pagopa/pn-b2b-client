@@ -879,19 +879,8 @@ public class RicezioneNotificheWebSteps {
 
     }
 
-    @And("viene verificata l'assenza di Sercq attivo")
-    public void notViewedSercqPerUtente() {
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = false;
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
-            }
-            Assertions.assertFalse(exists, "SERCQ FOUND");
-        });
 
-    }
+
 
     @And("viene verificata l'assenza di indirizzi Pec per il comune {string}")
     public void viewedPecPerUtentePerEnte(String pa) {
@@ -981,11 +970,14 @@ public class RicezioneNotificheWebSteps {
 
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
-        FullSentNotificationV23 fullSentNotificationV23 = sharedSteps.getSentNotification();
-        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23> timelineElements = fullSentNotificationV23.getTimeline();
-        boolean exist = timelineElements.stream()
-                .anyMatch(element -> element.getCategory() != null && element.getCategory().toString().equals(categoryToFind));
-        Assertions.assertFalse(exist);
+        sharedSteps.getSentNotification().getTimeline()
+                .stream()
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23::getCategory)
+                .filter(Objects::nonNull)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23::toString)
+                .filter(category -> category.equals(categoryToFind))
+                .findAny()
+                .ifPresentOrElse(null, () -> { throw new AssertionFailedError("L'evento cercato è stato ritornato!");});
     }
 
 }

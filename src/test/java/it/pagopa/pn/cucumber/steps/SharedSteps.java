@@ -37,6 +37,7 @@ import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AssertionFailureBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
@@ -1067,18 +1068,19 @@ public class SharedSteps {
     }
 
 
+
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
         selectUser(user);
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                boolean exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
-
-                Assertions.assertTrue(exists, "PEC NOT FOUND");
-            }
-        });
+        try {
+            this.iPnWebUserAttributesClient.getLegalAddressByRecipient().stream()
+                    .filter(address -> LegalChannelType.PEC.equals(address.getChannelType()))
+                    .findAny()
+                    .orElseThrow(() -> AssertionFailureBuilder.assertionFailure().message("PEC NOT FOUND!").build());
+        } catch (Exception exc) {
+            log.error("Si è verificato un errore durante la verifica di pec inserite: {}", exc.getMessage());
+            throw exc;
+        }
     }
 
 
