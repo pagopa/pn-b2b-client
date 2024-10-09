@@ -211,6 +211,7 @@ public class RaddAltSteps {
         this.versionToken = "string";
         this.operationid = generateRandomNumber();
         uploadDocumentRaddAlternative(true);
+        this.fileKey = this.documentUploadResponse != null ? this.documentUploadResponse.getValue1() : null;
     }
 
     @And("vengono caricati i documento di identità del cittadino su radd alternative per errore")
