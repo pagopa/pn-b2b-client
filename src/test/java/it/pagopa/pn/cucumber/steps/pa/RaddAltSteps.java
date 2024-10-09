@@ -199,7 +199,6 @@ public class RaddAltSteps {
 
     @And("la (scansione)(lettura) si conclude correttamente su radd alternative")
     public void laScansioneSiConcludeCorrettamenteAlternative() {
-        this.versionToken = "string";
         log.debug("actInquiryResponse {}", actInquiryResponse.toString());
         Assertions.assertEquals(true, actInquiryResponse.getResult());
         Assertions.assertNotNull(actInquiryResponse.getStatus());
@@ -208,6 +207,7 @@ public class RaddAltSteps {
 
     @And("vengono caricati i documento di identità del cittadino su radd alternative")
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadino() {
+        this.versionToken = "string";
         this.operationid = generateRandomNumber();
         uploadDocumentRaddAlternative(true);
     }
@@ -215,7 +215,6 @@ public class RaddAltSteps {
     @And("vengono caricati i documento di identità del cittadino su radd alternative per errore")
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadinoPerErrore() {
         this.operationid = generateRandomNumber();
-        this.versionToken = "string";
         uploadDocumentRaddOperatorAlternative(true, RaddOperator.UPLOADER);
     }
 
