@@ -88,7 +88,6 @@ public class RaddAltSteps {
                 this.recipientType,
                 qrCode,
                 null);
-
         log.info("actInquiryResponse: {}", actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
     }
@@ -211,7 +210,6 @@ public class RaddAltSteps {
     @And("vengono caricati i documento di identità del cittadino su radd alternative")
     public void vengonoCaricatiIDocumentoDiIdentitaDelCittadino() {
         this.operationid = generateRandomNumber();
-        this.versionToken = "string";
         uploadDocumentRaddAlternative(true);
     }
 
@@ -751,6 +749,7 @@ public class RaddAltSteps {
     @When("L'operatore {string} scansione il qrCode per recuperare gli atti da radd alternative")
     public void lOperatoreUploaderScansioneIlQrCodePerRecuperariGliAtti(String raddOperatorType) {
         RaddOperator raddOperator = setOperatorRaddJWT(raddOperatorType);
+        this.versionToken = raddOperatorType.equalsIgnoreCase("UPLOADER") ? "string" : null;
         ActInquiryResponse actInquiryResponse = raddAltClient.actInquiry(raddOperator.getUid(), this.currentUserCf, this.recipientType, qrCode, null);
         log.info("actInquiryResponse: {}",actInquiryResponse);
         this.actInquiryResponse = actInquiryResponse;
