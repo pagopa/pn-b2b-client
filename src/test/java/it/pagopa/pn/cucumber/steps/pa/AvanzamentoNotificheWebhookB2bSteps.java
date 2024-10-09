@@ -1135,7 +1135,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         .build());
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponseV23.getProgressResponseElementV23());
-        if(pnPollingResponseV23.getProgressResponseElementListV23() != null) {
+        if (pnPollingResponseV23.getProgressResponseElementListV23() != null) {
             sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementListV23());
             return pnPollingResponseV23.getProgressResponseElementV23();
         }

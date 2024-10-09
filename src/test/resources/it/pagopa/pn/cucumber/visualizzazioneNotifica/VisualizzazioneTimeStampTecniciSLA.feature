@@ -13,11 +13,27 @@ Feature: esposizione timestamp tecnici per gli SLA
     When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
     Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
     Examples:
-      | timeline_element | version |
-      | REQUEST_ACCEPTED | V24     |
-      | REQUEST_ACCEPTED | V23     |
-      #| DELIVERED        | V24     |
-      #| DELIVERED        | V23     |
+      | timeline_element        | version |
+      | ANALOG_SUCCESS_WORKFLOW | V24     |
+      | ANALOG_SUCCESS_WORKFLOW | V23     |
+
+  @timestampTecnici
+  Scenario Outline: [TIMESTAMP_TECNICI_SLA_B2B_ANALOG_FAIL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
+    Given viene generata una nuova notifica
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Signor casuale e:
+      | digitalDomicile         | NULL                                         |
+      | physicalAddress_address | Via NationalRegistries @fail-Irreperibile_AR |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
+    When si invoca l'api B2B versione "<version>" per ottenere gli elementi di timeline di tale notifica
+    Then gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione "<version>"
+    Examples:
+      | version |
+      | V24     |
+      | V23     |
 
   @timestampTecnici
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_B2B_DIGITAL] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
@@ -33,8 +49,6 @@ Feature: esposizione timestamp tecnici per gli SLA
       | timeline_element | version |
       | REQUEST_ACCEPTED | V24     |
       | REQUEST_ACCEPTED | V23     |
-      #| DELIVERED        | V24     |
-      #| DELIVERED        | V23     |
 
   @timestampTecnici @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_WEBHOOK] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23

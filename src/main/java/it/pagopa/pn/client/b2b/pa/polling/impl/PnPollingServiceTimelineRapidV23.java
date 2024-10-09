@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -26,7 +26,7 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV24 fullSentNotification;
+    private FullSentNotificationV23 notificationV23;
 
 
     public PnPollingServiceTimelineRapidV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
@@ -38,15 +38,15 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
     public Callable<PnPollingResponseV23> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
-            FullSentNotificationV24 fullSentNotification;
+            FullSentNotificationV23 fullSentNotificationV23;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotificationV23 = pnPaB2bClient.getSentNotificationV23(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
             }
-            pnPollingResponse.setNotification(fullSentNotification);
-            this.fullSentNotification = fullSentNotification;
+            pnPollingResponse.setNotification(fullSentNotificationV23);
+            this.notificationV23 = fullSentNotificationV23;
             return pnPollingResponse;
         };
     }
@@ -72,7 +72,7 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
     @Override
     protected PnPollingResponseV23 getException(Exception exception) {
         PnPollingResponseV23 pollingResponse = new PnPollingResponseV23();
-        pollingResponse.setNotification(this.fullSentNotification);
+        pollingResponse.setNotification(this.notificationV23);
         pollingResponse.setResult(false);
         return pollingResponse;
     }
@@ -105,22 +105,22 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
     }
 
     private boolean isPresentCategory(PnPollingResponseV23 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        TimelineElementV24 timelineElement = pnPollingResponse
+        TimelineElementV23 timelineElementV23 = pnPollingResponse
                 .getNotification()
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
                         ?
-                        te ->
-                                te.getCategory() != null
-                                        && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        timelineElement ->
+                                timelineElement.getCategory() != null
+                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
                         :
-                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV24())
+                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
                 .findAny()
                 .orElse(null);
 
-        if (timelineElement != null) {
-            pnPollingResponse.setTimelineElement(timelineElement);
+        if (timelineElementV23 != null) {
+            pnPollingResponse.setTimelineElement(timelineElementV23);
             pnPollingResponse.setResult(true);
             return true;
         }
