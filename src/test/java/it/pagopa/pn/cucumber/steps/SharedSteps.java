@@ -1060,8 +1060,10 @@ public class SharedSteps {
     @And("viene rimossa se presente la pec di piattaforma di {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
-        Assertions.assertDoesNotThrow( () -> {this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
-            log.info("PEC FOUND AND DELETED");}, "PEC NOT FOUND");
+        Assertions.assertDoesNotThrow(() -> {
+            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+            log.info("PEC FOUND AND DELETED");
+        }, "PEC NOT FOUND");
     }
 
 

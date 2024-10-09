@@ -487,42 +487,27 @@ Feature: Abilitazione domicilio digitale
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
-    Given si predispone addressbook per l'utente "Galileo Galilei"
+    Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then viene inserito un recapito legale "test@fail.it"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And  viene verificata l'assenza di indirizzi Pec per il comune "default"
+    And  viene verificata l'assenza di indirizzi Pec per il comune "Comune_1"
+    And viene attivato il servizio SERCQ SEND per il comune "Comune_2"
+    And viene verificata la presenza di Sercq attivo per il comune "Comune_2"
     Given viene generata una nuova notifica
-      | subject | invio notifica a Galileo Galilei |
-    And destinatario
-      | denomination    | Galileo Galilei  |
-      | taxId           | GLLGLL64B15G702I |
-      | digitalDomicile | NULL             |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
     And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
     Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
     Then si verifica se il legalFact contiene i campi
-      | TITLE | Attestazione opponibile a terzi: mancato recapito digitale |
-
-  @sercq @addressBook2
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
-    Given si predispone addressbook per l'utente "CucumberSpa"
-    And vengono rimossi eventuali recapiti presenti per l'utente
-    Then viene inserito un recapito legale "test@fail.it"
-    And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
-    Given viene generata una nuova notifica
-      | subject | invio notifica a CucumberSpa |
-    And destinatario CucumberSpa
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-    And ricerca ed effettua download del legalFact con la categoria "DIGITAL_DELIVERY_FAILURE"
-    Then si verifica se il legalFact è di tipo "LEGALFACT_NOTIFICA_MANCATO_RECAPITO"
-    Then si verifica se il legalFact contiene i campi
-      | TITLE | Attestazione opponibile a terzi: mancato recapito digitale |
+      | TITLE                                     | Attestazione opponibile a terzi: mancato recapito digitale                                                 |
+      | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Gherkin                                                                                              |
+      | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                                                           |
+      | DESTINATARIO_DOMICILIO_DIGITALE           | test@fail.it                                                                                               |
+      | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
 
   @sercq @addressBook1
