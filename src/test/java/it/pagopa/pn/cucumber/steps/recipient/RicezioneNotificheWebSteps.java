@@ -795,70 +795,51 @@ public class RicezioneNotificheWebSteps {
     @And("viene verificata l' assenza di pec inserite per l'utente")
     public void viewedPecDiPiattaformaDi() {
 
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
 
-            Assertions.assertNotNull(legalAddressByRecipient);
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
 
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
-            Assertions.assertFalse(exists, "PEC IS PRESENT");
-        });
+        Assertions.assertNotNull(legalAddressByRecipient);
+
+        boolean exists = legalAddressByRecipient.stream()
+                .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()));
+        Assertions.assertFalse(exists, "PEC IS PRESENT");
+
     }
 
     @And("viene verificata la presenza di pec inserite per il comune {string}")
     public void verifyPecIsPresentPerUserPerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
 
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = false;
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> senderId.equals(address.getSenderId()));
-            }
-            Assertions.assertTrue(exists, "PEC NOT FOUND");
-        });
-
-
-    }
-
-    @And("viene verificata la presenza di Sercq attivo per il comune {string}")
-    public void viewedSercqPerEnte(String pa) {
-        String senderId = getSenderIdPa(pa);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> senderId.equals(address.getSenderId())
-                            && LegalChannelType.SERCQ.equals(address.getChannelType()));
-
-            Assertions.assertTrue(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("SERCQ NOT FOUND");
-            } else {
-                throw httpStatusCodeException;
-            }
-        }
-    }
-
-    @And("viene verificata l'assenza di Sercq attivo per il comune {string}")
-    public void viewedSercqNotActivePerEnte(String pa) {
-        String senderId = getSenderIdPa(pa);
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = false;
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        boolean exists = false;
+        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> senderId.equals(address.getSenderId())
-                            && LegalChannelType.SERCQ.equals(address.getChannelType()));
+                    .anyMatch(address -> senderId.equals(address.getSenderId()));
+        }
+        Assertions.assertTrue(exists, "PEC NOT FOUND");
+    }
 
-            Assertions.assertFalse(exists);
-        } catch (HttpStatusCodeException httpStatusCodeException) {
-            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
-                log.info("SERCQ FOUND");
-            } else {
-                throw httpStatusCodeException;
-            }
+    @And("viene verificato che Sercq sia {string} per il comune {string}")
+    public void viewedSercqPerEnte(String act, String pa) {
+        String senderId = getSenderIdPa(pa);
+
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+
+        boolean exists = Optional.ofNullable(legalAddressByRecipient)
+                .filter(data -> !data.isEmpty())
+                .map(data -> data.stream()
+                        .anyMatch(address -> senderId.equals(address.getSenderId()) && LegalChannelType.SERCQ.equals(address.getChannelType())))
+                .orElse(false);
+
+        switch (act) {
+            case "disabilitato":
+                Assertions.assertFalse(exists, "Sercq risulta abilitato per il comune: " + pa);
+                break;
+            case "abilitato":
+                Assertions.assertTrue(exists, "Sercq risulta disabilitato per il comune: " + pa);
+                break;
+            default:
+                throw new IllegalArgumentException("Valore di 'act' non valido: " + act + ". I valori consentiti sono 'abilitato' o 'disabilitato'.");
         }
     }
 
@@ -867,33 +848,28 @@ public class RicezioneNotificheWebSteps {
     public void viewedSercqPerUtente(String user) {
         selectUser(user);
 
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = false;
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
-            }
-            Assertions.assertTrue(exists, "SERCQ NOT FOUND");
-        });
-
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        boolean exists = false;
+        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+            exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> LegalChannelType.SERCQ.equals(address.getChannelType()));
+        }
+        Assertions.assertTrue(exists, "SERCQ NOT FOUND");
     }
-
-
 
 
     @And("viene verificata l'assenza di indirizzi Pec per il comune {string}")
     public void viewedPecPerUtentePerEnte(String pa) {
         String senderId = getSenderIdPa(pa);
-        Assertions.assertDoesNotThrow(() -> {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            boolean exists = false;
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
-            }
-            Assertions.assertFalse(exists, "PEC FOUND");
-        });
+
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        boolean exists = false;
+        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+            exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
+        }
+        Assertions.assertFalse(exists, "PEC FOUND");
+
     }
 
     //Come da SRS Abilitazione Domicilio Digitale, address è una stringa fissa "x-pagopa-pn-sercq:send-self:notification-already-delivered"
@@ -917,22 +893,23 @@ public class RicezioneNotificheWebSteps {
     @And("viene controllato che siano presenti pec verificate inserite per il comune {string}")
     public void waitedAndViewedPecDiPiattaformaDi(String pa) {
         String senderId = getSenderIdPa(pa);
-        Assertions.assertDoesNotThrow(() -> {
-            try {
-                Thread.sleep(180000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new RuntimeException("Sleep was interrupted", e);
-            }
 
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                boolean exists = legalAddressByRecipient.stream()
-                        .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
+        try {
+            Thread.sleep(180000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Sleep was interrupted", e);
+        }
+        boolean exists = false;
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = Assertions.assertDoesNotThrow(() -> this.iPnWebUserAttributesClient.getLegalAddressByRecipient());
+        if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+            exists = legalAddressByRecipient.stream()
+                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
 
-                Assertions.assertTrue(exists, "PEC NOT FOUND");
-            }
-        });
+
+        }
+        Assertions.assertTrue(exists, "PEC NOT FOUND");
+
     }
 
     @And("viene rimossa se presente la pec per il comune {string}")
@@ -977,7 +954,9 @@ public class RicezioneNotificheWebSteps {
                 .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23::toString)
                 .filter(category -> category.equals(categoryToFind))
                 .findAny()
-                .ifPresentOrElse(null, () -> { throw new AssertionFailedError("L'evento cercato è stato ritornato!");});
+                .ifPresentOrElse(null, () -> {
+                    throw new AssertionFailedError("L'evento cercato è stato ritornato!");
+                });
     }
 
 }

@@ -7,16 +7,16 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
-  @sercq @addressBook1
+  @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
@@ -27,7 +27,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene verificata l' assenza di pec inserite per l'utente
     Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
@@ -39,7 +39,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene verificata l' assenza di pec inserite per l'utente
     Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
@@ -49,47 +49,47 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per il comune "default"
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "default"
-    And viene verificata l'assenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "disabilitato" per il comune "default"
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And viene attivato il servizio SERCQ SEND per il comune "default"
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "default"
-    And viene verificata l'assenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "disabilitato" per il comune "default"
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene verificata l'assenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "disabilitato" per il comune "default"
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_5] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    And viene verificata l'assenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "disabilitato" per il comune "default"
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
     And viene verificata l'assenza di indirizzi Pec per il comune "default"
-    Then viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
 
@@ -97,10 +97,10 @@ Feature: Abilitazione domicilio digitale
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"
     Then viene verificata l'assenza di indirizzi Pec per il comune "default"
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
 
@@ -111,7 +111,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then vengono accettati i TOS
 
   @sercq @addressBook2
@@ -121,7 +121,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then vengono accettati i TOS
 
   @sercq @addressBook1
@@ -133,7 +133,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     And viene verificata l'assenza di indirizzi Pec per il comune "Comune_Root"
     Then vengono accettati i TOS
 
@@ -147,7 +147,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_Root"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_Root"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     And viene verificata l'assenza di indirizzi Pec per il comune "Comune_Root"
     Then vengono accettati i TOS
 
@@ -163,7 +163,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then vengono accettati i TOS
 
   @sercq @addressBook2
@@ -177,7 +177,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example@pecSuccess.it" per il comune "Comune_2"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_2"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_Root"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_Root"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_Root"
     Then vengono accettati i TOS
 
   @sercq @addressBook1
@@ -185,20 +185,20 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
 
   @sercq @addressBook2
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_10] Attivazione del servizio SERCQ SEND per recapito principale e inserimento della PEC come recapito specifico per ente
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_11] Inserimento indirizzo PEC come recapito specifico per ente, dopo attivazione del servizio SERCQ per stesso ente
@@ -207,7 +207,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
 
@@ -219,7 +219,7 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     And viene inserito un recapito legale "example2@pecSuccess.it" per il comune "Comune_1"
     And viene controllato che siano presenti pec verificate inserite per il comune "Comune_1"
 
@@ -302,9 +302,9 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
-    And viene verificata l'assenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "disabilitato" per il comune "Comune_1"
 
 
   @sercq @addressBook2
@@ -314,9 +314,9 @@ Feature: Abilitazione domicilio digitale
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     Then viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "Comune_1"
-    And viene verificata l'assenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "disabilitato" per il comune "Comune_1"
 
 
   @sercq @addressBook1
@@ -324,7 +324,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
 
@@ -333,7 +333,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Lucio Anneo Seneca"
 
@@ -342,11 +342,11 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_2"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_2"
     Then vengono accettati i TOS
 
 
@@ -355,11 +355,11 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_2"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_2"
     Then vengono accettati i TOS
 
   @sercq @addressBook1
@@ -367,7 +367,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
     And destinatario
@@ -386,7 +386,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
     And destinatario CucumberSpa
@@ -404,7 +404,7 @@ Feature: Abilitazione domicilio digitale
     Then viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
     And destinatario
@@ -424,7 +424,7 @@ Feature: Abilitazione domicilio digitale
     Then viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_1"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_1"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_1"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
     And destinatario CucumberSpa
@@ -439,7 +439,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
@@ -466,7 +466,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
@@ -492,7 +492,7 @@ Feature: Abilitazione domicilio digitale
     And  viene verificata l'assenza di indirizzi Pec per il comune "default"
     And  viene verificata l'assenza di indirizzi Pec per il comune "Comune_1"
     And viene attivato il servizio SERCQ SEND per il comune "Comune_2"
-    And viene verificata la presenza di Sercq attivo per il comune "Comune_2"
+    And viene verificato che Sercq sia "abilitato" per il comune "Comune_2"
     Given viene generata una nuova notifica
       | subject            | invio notifica GA cucumber |
       | senderDenomination | Comune di palermo          |
@@ -515,7 +515,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
     And destinatario
@@ -531,7 +531,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Lucio Anneo Seneca"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -550,7 +550,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
     And destinatario CucumberSpa
@@ -567,7 +567,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
@@ -589,7 +589,7 @@ Feature: Abilitazione domicilio digitale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
-    And viene verificata la presenza di Sercq attivo per il comune "default"
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
     Given viene generata una nuova notifica
       | subject | invio notifica a CucumberSpa |
     And destinatario
