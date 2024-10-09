@@ -187,9 +187,12 @@ public class LegalPersonAuthSteps {
     }
 
     private String getPublicKeyKidByStatus(String status) {
-        return status.equalsIgnoreCase("INESISTENTE") ? UNKNOWN_KID : this.pojo.getResponseWithStatusList().stream().filter(
-                x -> x.getStatus().equalsIgnoreCase(status)).findFirst().map(
-                y -> y.getResponse().getKid()).orElse(null);
+        return status.equalsIgnoreCase("INESISTENTE") ? UNKNOWN_KID : this.pojo.getResponseWithStatusList()
+                .stream()
+                .filter(data -> data.getStatus().equalsIgnoreCase(status))
+                .findFirst()
+                .map(data -> data.getResponse().getKid())
+                .orElse(null);
     }
 
     private void bloccaChiavePubblica(String kid) {
