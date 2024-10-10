@@ -546,6 +546,8 @@ public class RicezioneNotificheWebSteps {
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             case "GherkinSrl" ->
                     this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            case "Alda Merini" ->
+                    this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             default -> throw new IllegalArgumentException();
         }
     }
