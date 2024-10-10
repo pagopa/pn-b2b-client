@@ -1,6 +1,6 @@
 Feature: Abilitazione domicilio digitale
 
-  #TODO Aggiungere step per la verifica e l'accettazione dei TOS sercq
+
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS

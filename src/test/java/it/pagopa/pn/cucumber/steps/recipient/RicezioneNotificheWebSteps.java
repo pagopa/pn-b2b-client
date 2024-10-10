@@ -790,7 +790,7 @@ public class RicezioneNotificheWebSteps {
         Assertions.assertDoesNotThrow(() -> {
             ConsentAction consentAction = new ConsentAction();
             consentAction.setAction(ConsentAction.ActionEnum.ACCEPT);
-            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS, consentAction, "version");
+            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS_SERCQ, consentAction, "version");
         });
     }
 
