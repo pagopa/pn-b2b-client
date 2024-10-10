@@ -1391,12 +1391,13 @@ Feature: Radd Alternative
       | details_recIndex | 0        |
     And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
     And lato desinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    And invocazione servizio per recupero timeline notifica con iun
+    And Il servizio risponde correttamente
     Examples:
       | CITIZEN       | CF               |
       | Mario Cucumber | FRMTTR76M06B715E |
 
-    And invocazione servizio per recupero timeline notifica con iun
-    And Il servizio risponde correttamente
+
 
 
 
