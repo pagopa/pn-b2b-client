@@ -380,7 +380,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
-  @sercq @addressBook2
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_59] Creazione notifica digitale con servizio SERCQ attivo e verifica cambiamento workflow della notifica
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -396,7 +396,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
-  @sercq @addressBook1
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_60] Creazione notifica digitale con servizio SERCQ attivo per ente specifico e verifica workflow notifica previsto per SERCQ
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -460,7 +460,7 @@ Feature: Abilitazione domicilio digitale
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
 
-  @sercq @addressBook2
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "CucumberSpa"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -509,7 +509,7 @@ Feature: Abilitazione domicilio digitale
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | Domicilio eletto presso la Pubblica Amministrazione mittente ex art.26, comma 5 lettera b del D.L. 76/2020 |
 
 
-  @sercq @addressBook1
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -520,7 +520,7 @@ Feature: Abilitazione domicilio digitale
     And destinatario
       | denomination    | Galileo Galilei  |
       | taxId           | GLLGLL64B15G702I |
-      | digitalDomicile | NULL             |
+      | digitalDomicile | testpagopa1@pec.pagopa.it  |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
@@ -542,7 +542,7 @@ Feature: Abilitazione domicilio digitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
-  @sercq @addressBook1
+
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_80] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e indirizzo PEC speciale per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
@@ -583,7 +583,7 @@ Feature: Abilitazione domicilio digitale
     And esiste l'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS" per l'utente 1
 
 
-  @sercq @addressBook1
+  
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_82] Creazione notifica digitale multi destinatario con servizio SERCQ attivo per il primo destinatario e workflow analogico per il secondo destinatario
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
