@@ -1,6 +1,6 @@
 Feature: Abilitazione domicilio digitale
 
-  #TODO RINOMINARE CUCUMBERSPA IN LUCIO ANNEO SENECA o VICEVERSA
+  #TODO Aggiungere step per la verifica e l'accettazione dei TOS sercq
 
   @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
@@ -11,13 +11,12 @@ Feature: Abilitazione domicilio digitale
     Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
-  @sercq @addressBook2
+  @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_1] Attivazione del servizio SERCQ SEND per recapito principale e accettazione dei TOS
-    Given si predispone addressbook per l'utente "CucumberSpa"
+    Given si predispone addressbook per l'utente "Alda Merini"
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
-    Then vengono accettati i TOS
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
   @sercq @addressBook1
@@ -53,9 +52,9 @@ Feature: Abilitazione domicilio digitale
     Then viene disabilitato il servizio SERCQ SEND per il comune di "default"
     And viene verificato che Sercq sia "disabilitato" per il comune "default"
 
-  @sercq @addressBook2
+  @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_3] Disattivazione del servizio SERCQ SEND per recapito principale
-    Given si predispone addressbook per l'utente "CucumberSpa"
+    Given si predispone addressbook per l'utente "Alda Merini"
     And viene attivato il servizio SERCQ SEND per il comune "default"
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then viene disabilitato il servizio SERCQ SEND per il comune di "default"
@@ -93,9 +92,9 @@ Feature: Abilitazione domicilio digitale
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
 
 
-  @sercq @addressBook2
+  @sercq @addressBook3
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_6] Inserimento indirizzo PEC come recapito principale, dopo attivazione del servizio SERCQ, con OTP errato
-    Given si predispone addressbook per l'utente "CucumberSpa"
+    Given si predispone addressbook per l'utente "Alda Merini"
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserito un recapito legale "example3@pecSuccess.it" con verification code errato "*$%&+/"

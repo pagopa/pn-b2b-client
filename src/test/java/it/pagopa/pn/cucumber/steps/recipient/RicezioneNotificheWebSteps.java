@@ -868,7 +868,7 @@ public class RicezioneNotificheWebSteps {
         boolean exists = false;
         if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
             exists = legalAddressByRecipient.stream()
-                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()));
+                    .anyMatch(address -> LegalChannelType.PEC.equals(address.getChannelType()) && senderId.equals(address.getSenderId()) && address.getCodeValid());
         }
         Assertions.assertFalse(exists, "PEC FOUND");
 
