@@ -1366,7 +1366,7 @@ Feature: Radd Alternative
 # Scenario: [RADD-ALT_ACT-41] PF/PG - Check conformità AAR
 
   @raddAlt
-  Scenario Outline: [RADD-ALT_ACT-1] PF/PA - stampa e consegna documenti disponibili associati - visualizzazione in timeline avvenuta consegna tramite RADD (NOTIFICATION_RADD_RETRIEVED)
+  Scenario Outline: [RADD-ALT_ACT-19] PF/PA - stampa e consegna documenti disponibili associati - visualizzazione in timeline avvenuta consegna tramite RADD (NOTIFICATION_RADD_RETRIEVED) e recupero timeline dal cruscotto assistenza
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber radd alternative |
       | senderDenomination | Comune di Palermo |
