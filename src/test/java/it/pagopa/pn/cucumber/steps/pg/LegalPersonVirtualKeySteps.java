@@ -2,8 +2,10 @@ package it.pagopa.pn.cucumber.steps.pg;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -302,39 +304,27 @@ public class LegalPersonVirtualKeySteps {
         }
     }
 
-    @After("@removeAllVirtualKeyTEst")
-    public void removeVirtualKey() {
-        selectPGUser("amministratore");
-        BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
-        getVirtualKeys.getItems().stream()
-            .filter(data -> data.getStatus() != null && data.getStatus().getValue().equals(VirtualKeyState.BLOCKED.getState()))
-            .findFirst()
-            .ifPresent(data -> virtualKeyCancellation(data.getId()));
-
-        getVirtualKeys.getItems().forEach(data -> {
-            if (data.getStatus().getValue().equals(VirtualKeyState.ENABLE.getState()) || data.getStatus().getValue().equals(VirtualKeyState.REACTIVE.getState())) {
-                BffVirtualKeyStatusRequest requestNewVirtualKey = new BffVirtualKeyStatusRequest();
-                requestNewVirtualKey.setStatus(BffVirtualKeyStatusRequest.StatusEnum.BLOCK);
-                Assertions.assertDoesNotThrow(() -> virtualKeyServiceClient.changeStatusVirtualKeys(data.getId(), requestNewVirtualKey));
-                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
-            } else if (!data.getStatus().getValue().equals(VirtualKeyState.BLOCKED.getState())){
-                Assertions.assertDoesNotThrow(() -> virtualKeyCancellation(data.getId()));
-            }
-        });
-    }
-
-    @After("@removeAllVirtualKey")
+    @Before("@removeAllVirtualKey")
     public void removeVirtualKeyTest() {
         String user = "AMMINISTRATORE";
         selectPGUser(user);
         lUtenteAccettaITos(user, ACCEPT_TOS);
-        if (!publicKeySteps.existPublicKeyActive()) publicKeySteps.creaChiavePubblica(user);
+        BffPublicKeyResponse publicKeyResponse = null;
+        if (!publicKeySteps.existPublicKeyActive()) publicKeyResponse = publicKeySteps.creaChiavePubblica(user);
         BffVirtualKeysResponse getVirtualKeys = virtualKeyServiceClient.getVirtualKeys(null, null, null, null);
         getVirtualKeys.getItems().stream()
             .filter(this::deleteBlockedVirtualKey)
             .toList().stream()
             .filter(this::deleteEnableVirtualKey)
             .forEach(data -> virtualKeyCancellation(data.getId()));
+
+        Optional.ofNullable(publicKeyResponse)
+                        .map(data -> data.getKid())
+                .ifPresent(data -> {
+                    publicKeySteps.selectAdmin(user);
+                    publicKeySteps.bloccaChiavePubblica(data);
+                    publicKeySteps.cancellaChiavePubblica(data);
+                });
     }
 
     private boolean deleteBlockedVirtualKey(VirtualKey data) {
