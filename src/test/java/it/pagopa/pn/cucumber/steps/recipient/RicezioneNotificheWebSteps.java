@@ -895,7 +895,7 @@ public class RicezioneNotificheWebSteps {
         String senderId = getSenderIdPa(pa);
 
         try {
-            Thread.sleep(180000);
+            Thread.sleep(80000);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException("Sleep was interrupted", e);
@@ -945,20 +945,23 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+
     @And("Viene verificato che non sia arrivato un evento di {string}")
     public void verificaAssenzaElementoTimeline(String categoryToFind) {
-        sharedSteps.getSentNotification().getTimeline()
+
+        boolean isPresent = sharedSteps.getSentNotification().getTimeline()
                 .stream()
                 .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23::getCategory)
                 .filter(Objects::nonNull)
                 .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23::toString)
-                .filter(category -> category.equals(categoryToFind))
-                .findAny()
-                .ifPresentOrElse(null, () -> {
-                    throw new AssertionFailedError("L'evento cercato è stato ritornato!");
-                });
-    }
+                .anyMatch(category -> category.equals(categoryToFind));
 
+        if (isPresent) {
+            throw new AssertionFailedError("L'evento cercato è stato ritornato!");
+        }
+    }
 }
+
+
 
 
