@@ -105,6 +105,7 @@ public class LegalPersonAuthSteps {
             creaChiavePubblica(utente);
         } else {
             String kid = getPublicKeyKidByStatus(status);
+            Assertions.assertNotNull(kid);
             switch (operation.toUpperCase()) {
                 case "BLOCCA" -> bloccaChiavePubblica(kid);
                 case "RUOTA" -> ruotaChiavePubblica(kid);
