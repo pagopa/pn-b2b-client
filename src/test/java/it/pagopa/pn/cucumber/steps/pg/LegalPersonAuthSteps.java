@@ -273,17 +273,18 @@ public class LegalPersonAuthSteps {
         selectAdmin("AMMINISTRATORE");
         BffPublicKeysResponse response = Assertions.assertDoesNotThrow(() -> pnLegalPersonAuthClient.getPublicKeysV1(null, null, null, null));
         List<String> blockedKids = response.getItems().stream()
-                .filter(x -> x.getStatus() != null && x.getStatus().getValue().equalsIgnoreCase("BLOCKED"))
-                .map(PublicKeyRow::getKid).toList();
+                .filter(data -> data.getStatus() != null && data.getStatus().getValue().equalsIgnoreCase("BLOCKED"))
+                .map(PublicKeyRow::getKid)
+                .toList();
 
         blockedKids.forEach(this::cancellaChiavePubblica);
-        List<PublicKeyRow> otherPublicKeys = response.getItems().stream().filter(
-                x -> !blockedKids.contains(x.getKid()))
+        List<PublicKeyRow> otherPublicKeys = response.getItems().stream()
+                .filter(data -> !blockedKids.contains(data.getKid()))
                 .toList();
 
         otherPublicKeys.forEach(pk -> {
             if (pk.getStatus() != null && pk.getStatus().getValue().equalsIgnoreCase("ACTIVE")) {
-                bloccaChiavePubblica(pk.getKid());
+                pnLegalPersonAuthClient.changeStatusPublicKeyV1(pk.getKid(), "BLOCK");
             }
             if (pk.getStatus() != null && !pk.getStatus().getValue().equalsIgnoreCase("CANCELLED")) {
                 pnLegalPersonAuthClient.deletePublicKeyV1(pk.getKid());
