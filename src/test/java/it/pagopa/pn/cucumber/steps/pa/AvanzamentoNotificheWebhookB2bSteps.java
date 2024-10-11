@@ -2096,7 +2096,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             this.progressResponseElementsV24.forEach(pre -> checkTimelineElement(pre.getElement()));
         } else {
             Assertions.assertNotNull(this.progressResponseElementsV23);
-            this.progressResponseElementsV24.forEach(pre -> checkTimelineElement(pre.getElement()));
+            this.progressResponseElementsV23.forEach(pre -> checkTimelineElement(pre.getElement()));
         }
     }
 
