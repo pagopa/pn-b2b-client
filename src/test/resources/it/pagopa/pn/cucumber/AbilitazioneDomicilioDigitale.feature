@@ -493,9 +493,9 @@ Feature: Abilitazione domicilio digitale
       | details_recIndex       | 0                                                  |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
-  @sercq @addressBook2
+  @sercq @addressBook1
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
-    Given si predispone addressbook per l'utente "CucumberSpa"
+    Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
@@ -504,20 +504,18 @@ Feature: Abilitazione domicilio digitale
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
     And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "CucumberSpa"
     Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
+      | subject | invio notifica a Galileo Galilei |
     And destinatario
-      | denomination            | CucumberSpa               |
-      | taxId                   | 20517490320               |
-      | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-      | recipientType           | PG                        |
+      | denomination    | Galileo Galilei           |
+      | taxId           | GLLGLL64B15G702I          |
+      | digitalDomicile | testpagopa1@pec.pagopa.it |
     When la notifica viene inviata tramite api b2b dal "Comune_2" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline           | true                                               |
       | details                | NOT_NULL                                           |
-      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+      | details_digitalAddress | {"address": "provaemail2@test.it", "type": "EMAIL"} |
       | details_recIndex       | 0                                                  |
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_DOMICILE" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
