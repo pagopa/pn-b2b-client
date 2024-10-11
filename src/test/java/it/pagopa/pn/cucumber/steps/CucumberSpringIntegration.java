@@ -88,7 +88,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PaperCalculatorClientImpl.class,
         B2BDeliveryPushServiceClientImpl.class,
         B2BUserAttributesExternalClientImpl.class,
-        B2BRecipientExternalClientImpl.class
+        B2BRecipientExternalClientImpl.class,
+        IPnTosPrivacyClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

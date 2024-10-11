@@ -4,10 +4,15 @@ import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffConsent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.BffTosPrivacyActionBody;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.Consent;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
@@ -16,7 +21,6 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentAction;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.consents.model.ConsentType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
@@ -51,6 +55,7 @@ public class RicezioneNotificheWebSteps {
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
     private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
+    private final IPnTosPrivacyClient iPnTosPrivacyClient;
     private final PnB2bClientTimingConfigs timingConfigs;
     private static final Integer waitDefault = 10000;
 
@@ -58,6 +63,9 @@ public class RicezioneNotificheWebSteps {
     private FullReceivedNotificationV23 fullNotification;
     private BffFullNotificationV1 bffFullNotificationV1Recipient;
     private it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffFullNotificationV1 bffFullNotificationV1Sender;
+
+    private static final String TOS_VERSION = "2";
+    private static final String ACCEPT_TOS = "ACCETTA";
 
     @Value("${pn.external.senderId}")
     private String senderId;
@@ -77,7 +85,7 @@ public class RicezioneNotificheWebSteps {
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,
-                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
+                                      IPnBFFRecipientNotificationClient bffRecipientNotificationClient, IPnTosPrivacyClient iPnTosPrivacyClient, PnB2bClientTimingConfigs timingConfigs) {
         this.context = context;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
@@ -87,6 +95,7 @@ public class RicezioneNotificheWebSteps {
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
         this.bffRecipientNotificationClient = bffRecipientNotificationClient;
+        this.iPnTosPrivacyClient = iPnTosPrivacyClient;
         this.timingConfigs = timingConfigs;
     }
 
@@ -785,14 +794,7 @@ public class RicezioneNotificheWebSteps {
         });
     }
 
-    @Then("vengono accettati i TOS")
-    public void vengonoAccettagiTosSercq() {
-        Assertions.assertDoesNotThrow(() -> {
-            ConsentAction consentAction = new ConsentAction();
-            consentAction.setAction(ConsentAction.ActionEnum.ACCEPT);
-            this.iPnWebUserAttributesClient.consentAction(ConsentType.TOS_SERCQ, consentAction, "version");
-        });
-    }
+
 
     @And("viene verificata l' assenza di pec inserite per l'utente")
     public void viewedPecDiPiattaformaDi() {
@@ -961,6 +963,28 @@ public class RicezioneNotificheWebSteps {
         if (isPresent) {
             throw new AssertionFailedError("L'evento cercato è stato ritornato!");
         }
+    }
+
+    @Given("l'utente {string} {string} i tos per sercq")
+    public void lUtenteAccettaITos(String user, String operation) {
+        sharedSteps.selectUser(user);
+        BffTosPrivacyActionBody.ActionEnum actionEnum = operation.equals(ACCEPT_TOS) ? BffTosPrivacyActionBody.ActionEnum.ACCEPT : BffTosPrivacyActionBody.ActionEnum.DECLINE;
+        BffTosPrivacyActionBody bffTosPrivacyBody = new BffTosPrivacyActionBody().action(actionEnum).version(TOS_VERSION).type(ConsentType.TOS_SERCQ);
+        Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.acceptTosPrivacyV1(List.of(bffTosPrivacyBody)));
+    }
+
+    @Given("l'utente {string} controlla l'accettazione {string} dei tos per sercq")
+    public void lUtenteControllaAccettazioneDeiTos(String user, String tosStatus) {
+        sharedSteps.selectUser(user);
+        it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType consentType = ConsentType.TOS_SERCQ;
+        List<BffConsent> privacyConsentv1 = Assertions.assertDoesNotThrow(() -> iPnTosPrivacyClient.getTosPrivacyV1(List.of(consentType)));
+        Assertions.assertNotNull(privacyConsentv1);
+        Assertions.assertFalse(privacyConsentv1.isEmpty());
+        privacyConsentv1.forEach(data -> {
+            Assertions.assertNotNull(data.getConsentType());
+            Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_SERCQ));
+            Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
+        });
     }
 }
 

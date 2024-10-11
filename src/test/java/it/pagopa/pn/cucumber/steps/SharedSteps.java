@@ -17,10 +17,7 @@ import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -78,6 +75,9 @@ public class SharedSteps {
 
     @Getter
     private final PnPaymentInfoClientImpl pnPaymentInfoClientImpl;
+
+    @Getter
+    private final IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl;
 
     @Getter
     private final PnPaB2bUtils b2bUtils;
@@ -282,7 +282,7 @@ public class SharedSteps {
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
-                       PnPollingFactory pollingFactory) {
+                       PnPollingFactory pollingFactory,IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
@@ -297,6 +297,7 @@ public class SharedSteps {
         this.iuvGPD = new ArrayList<>();
         this.timingConfigs = timingConfigs;
         this.pollingFactory = pollingFactory;
+        this.iPnTosPrivacyClientImpl = iPnTosPrivacyClientImpl;
     }
 
     @BeforeAll
@@ -1768,34 +1769,48 @@ public class SharedSteps {
             case "mario cucumber", "ettore fieramosca" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+
             }
             case "mario gherkin", "cristoforo colombo" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_2);
             }
             case "gherkinsrl" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
             case "cucumberspa" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
+            case "alda merini" -> {
+                webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+                iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             }
             case "leonardo da vinci" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_3);
             }
             case "dino sauro" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_5);
             }
             case "mario cucumber con credenziali non valide" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
             }
             case "galileo galilei" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+                iPnTosPrivacyClientImpl.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
             }
             default -> throw new IllegalArgumentException();
         }
@@ -1803,6 +1818,10 @@ public class SharedSteps {
 
     public PnPollingFactory getPollingFactory() {
         return pollingFactory;
+    }
+
+    public IPnTosPrivacyClientImpl getIPnTosPrivacyClientImpl() {
+        return iPnTosPrivacyClientImpl;
     }
 
 
