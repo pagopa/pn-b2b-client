@@ -176,7 +176,6 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                 .orElse(null);
     }
 
-
     private <T> T deepCopy( Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())

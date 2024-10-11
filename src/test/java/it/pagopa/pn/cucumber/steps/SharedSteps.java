@@ -198,10 +198,10 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
-    private final ApplicationContext context;
+    private final ApplicationContext applicationContext;
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
-    private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
@@ -267,16 +267,8 @@ public class SharedSteps {
 
     private HashMap<String,String> mapAllegatiNotificaSha256 = new HashMap<>();
 
-    @Before("@useB2B")
-    public void beforeMethod() {
-        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
-            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
-        }
-        this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
-    }
-
     @Autowired
-    public SharedSteps(ApplicationContext context, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
+    public SharedSteps(ApplicationContext applicationContext, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
                        PnPaB2bUtils b2bUtils, PnWebRecipientExternalClientImpl webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
                        PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
@@ -284,7 +276,7 @@ public class SharedSteps {
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
                        PnPollingFactory pollingFactory) {
-        this.context = context;
+        this.applicationContext = applicationContext;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webPaClient = webPaClient;
@@ -304,6 +296,14 @@ public class SharedSteps {
     public static void before_all() {
         log.debug("SHARED_GLUE START");
         //only for class activation
+    }
+
+    @Before("@useB2B")
+    public void beforeMethod() {
+        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
+            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        }
+        this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
     }
 
     @Before

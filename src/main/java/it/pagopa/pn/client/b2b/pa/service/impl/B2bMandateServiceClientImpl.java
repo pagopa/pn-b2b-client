@@ -63,12 +63,6 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
     }
 
     @Override
-    public ResponseEntity<Void> acceptMandateWithHttpInfo(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto acceptRequestDto1 = deepCopy(acceptRequestDto, it.pagopa.pn.client.b2b.generated.openapi.clients.mandateb2b.model.AcceptRequestDto.class);
-        return  mandateServiceApi.acceptMandateWithHttpInfo(mandateId, acceptRequestDto1);
-    }
-
-    @Override
     public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
         return null;
     }
@@ -99,7 +93,10 @@ public class B2bMandateServiceClientImpl implements IPnWebMandateClient {
 
     @Override
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
-        return List.of();
+        return mandateServiceApi.listMandatesByDelegator1()
+                .stream()
+                .map(x -> deepCopy(x, MandateDto.class))
+                .toList();
     }
 
     @Override

@@ -101,14 +101,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         throw new UnsupportedOperationException();
     }
 
-
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
         mandateServiceApi.acceptMandate(mandateId, acceptRequestDto);
-    }
-
-    @Override
-    public ResponseEntity<Void> acceptMandateWithHttpInfo(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        return mandateServiceApi.acceptMandateWithHttpInfo(mandateId, acceptRequestDto);
     }
 
     public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
@@ -146,6 +140,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
         return responseDto != null ? responseDto.getResultsPage() : null;
     }
+
+
 
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
         return mandateServiceApi.listMandatesByDelegator1();

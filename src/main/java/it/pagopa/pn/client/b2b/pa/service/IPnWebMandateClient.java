@@ -2,14 +2,12 @@ package it.pagopa.pn.client.b2b.pa.service;
 
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
 import java.util.List;
 
 
 public interface IPnWebMandateClient extends SettableBearerToken {
      void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException;
-     ResponseEntity<Void> acceptMandateWithHttpInfo(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException;
      MandateCountsDto countMandatesByDelegate(String status) throws RestClientException;
      MandateDto createMandate(MandateDto mandateDto) throws RestClientException;
      void updateMandate(String mandateId, UpdateRequestDto updateRequestDto) throws RestClientException;
