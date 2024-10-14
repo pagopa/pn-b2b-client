@@ -66,7 +66,7 @@ Feature: annullamento notifiche b2b
     Then vengono letti gli eventi fino allo stato della notifica "CANCELLED"
 
   @Annullamento @mockPec
-  Scenario: B2B-PA-ANNULLAMENTO_6] PA mittente: annullamento notifica in stato “avvenuto accesso”
+  Scenario: [B2B-PA-ANNULLAMENTO_6] PA mittente: annullamento notifica in stato “avvenuto accesso”
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |

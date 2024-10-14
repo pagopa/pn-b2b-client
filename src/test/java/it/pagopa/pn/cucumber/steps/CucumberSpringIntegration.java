@@ -13,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.IBffMandateServiceApi;
+import it.pagopa.pn.client.b2b.pa.service.IExternalPGServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.IMandateReverseServiceClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
@@ -95,6 +96,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         B2BRecipientExternalClientImpl.class,
         IMandateReverseServiceClient.class,
         MandateReverseServiceClientImpl.class,
+        IExternalPGServiceClient.class,
+        ExternalRegistriesPGServiceClientImpl.class,
         IBffMandateServiceApi.class,
         BffMandateServiceClientImpl.class
 })

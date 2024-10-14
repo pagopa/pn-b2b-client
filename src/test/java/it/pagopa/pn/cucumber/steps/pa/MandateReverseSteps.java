@@ -22,9 +22,13 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
+import javax.validation.constraints.Null;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
@@ -64,9 +68,50 @@ public class MandateReverseSteps {
         Assertions.assertEquals(statusCode, reverseMandateStatusCodeException.getStatusCode().value());
     }
 
+
+    @Then("si verifica che esista la delega:")
+    public void mandateExists(Map<String, String> mandateData) {
+        String delegate = mandateData.get("delegate");
+        String delegator = mandateData.get("delegator");
+        String dateFrom = mandateData.get("dateFrom");
+        String dateTo = mandateData.get("dateTo");
+        String delegatorTaxId = getTaxIdByUser(delegator);
+        String delegateTaxId = getTaxIdByUser(delegate);
+
+        Stream<MandateDto> s = mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
+                .filter(x ->  {
+                    try {
+                        return x.getDelegator().getFiscalCode().equals(delegatorTaxId);
+                    }
+                    catch(NullPointerException nPx) {
+                        return false;
+                    }
+                });
+        mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream().forEach((k) -> {
+            System.out.print(k + "*********");
+        });
+        System.out.println("AFTER delegateID " + s.count());
+        System.out.println("AFTER FROM FILTER" + delegator + "---" + delegatorTaxId + "---" + mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
+                .filter(x -> getDate(dateFrom).equals(x.getDatefrom())).count());
+
+        assertFalse(mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
+                .filter(x ->  {
+                    try {
+                        return x.getDelegator().getFiscalCode().equals(delegatorTaxId);
+                    }
+                    catch(NullPointerException nPx) {
+                        return false;
+                    }
+                })
+                .filter(x -> getDate(dateFrom).equals(x.getDatefrom()))
+                .filter(x -> getDate(dateTo).equals(x.getDateto())).toList().isEmpty());
+
+    }
+
     @And("si verifica che la delega a nome di {string} è stata creata con stato pending")
     public void verifyMandateIsCreatedWithPendingStatus(String delegator) {
-        isMandatePresent(delegator).orElseThrow(() -> new AssertionFailedError("Mandate with PENDING status not found!"));
+        MandateDto mandate = isMandatePresent(delegator).orElseThrow(() -> new AssertionFailedError("Mandate with PENDING status not found!"));
+        Assertions.assertEquals(mandate.getStatus(), MandateDto.StatusEnum.PENDING);
     }
 
     @And("la delega a nome di {string} viene accettata da {string} senza associare nessun gruppo")
@@ -76,7 +121,7 @@ public class MandateReverseSteps {
 
     @And("la delega a nome di {string} viene accettata da {string} associando un gruppo")
     public void acceptMandateWithGroup(String delegator, String delegate) {
-        Assertions.assertFalse(groups.isEmpty(), "The group list cannot be empty!");
+        assertFalse(groups.isEmpty(), "The group list cannot be empty!");
         acceptMandate(delegate, groups, getVerificationCode(delegator));
     }
 
@@ -89,7 +134,7 @@ public class MandateReverseSteps {
 
     @Then("si verifica che la delega è stata creata senza un gruppo associato")
     public void isMandateCreatedWithoutGroup() {
-        Assertions.assertFalse(isMandateGroupPresent());
+        assertFalse(isMandateGroupPresent());
     }
 
     @Then("si verifica che la delega è stata creata con un gruppo associato")

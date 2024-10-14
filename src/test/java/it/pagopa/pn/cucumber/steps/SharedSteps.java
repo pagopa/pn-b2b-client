@@ -201,7 +201,7 @@ public class SharedSteps {
     private final ApplicationContext applicationContext;
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
-    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
@@ -301,9 +301,9 @@ public class SharedSteps {
     @Before("@useB2B")
     public void beforeMethod() {
         if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
-            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+            this.webRecipientClient = applicationContext.getBean(B2BRecipientExternalClientImpl.class);
         }
-        this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
+        this.iPnWebUserAttributesClient = applicationContext.getBean(B2BUserAttributesExternalClientImpl.class);
     }
 
     @Before
