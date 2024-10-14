@@ -500,9 +500,9 @@ Feature: Abilitazione domicilio digitale
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
-    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+    Then viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "Comune_1"
-    And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "CucumberSpa"
+    And viene verificata la presenza di 2 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     Given viene generata una nuova notifica
       | subject | invio notifica a Galileo Galilei |
     And destinatario
