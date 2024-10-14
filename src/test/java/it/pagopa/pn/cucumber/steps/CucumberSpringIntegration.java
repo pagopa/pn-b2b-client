@@ -1,8 +1,6 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.api.PaperCalculatorApi;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
@@ -18,7 +16,6 @@ import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
@@ -87,7 +84,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         PaperCalculatorClientImpl.class,
-        PnExternalRegistryPrivateUserApiImpl.class
+        PnExternalRegistryPrivateUserApiImpl.class,
+        PaperCalculatorClientImpl.class,
+        IPnLegalPersonAuthClientImpl.class,
+        IPnLegalPersonVirtualKeyServiceClientImpl.class,
+        IPnTosPrivacyClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
