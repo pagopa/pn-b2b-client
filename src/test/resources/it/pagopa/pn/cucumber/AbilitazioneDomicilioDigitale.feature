@@ -494,7 +494,7 @@ Feature: Abilitazione domicilio digitale
     Then Viene verificato che non sia arrivato un evento di "SEND_DIGITAL_PROGRESS"
 
   @sercq @addressBook1
-  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PG_61_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
+  Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_61_79] Creazione notifica digitale con servizio SERCQ con Indirizzo speciale settato
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
     Then viene attivato il servizio SERCQ SEND per recapito principale
