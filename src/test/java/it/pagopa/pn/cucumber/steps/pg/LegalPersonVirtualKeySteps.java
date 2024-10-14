@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -271,11 +270,11 @@ public class LegalPersonVirtualKeySteps {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             }
-            case "amministratore con gruppi" -> {
+            case "amministratore con gruppi", "amministratore con gruppo associato" -> {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             }
-            case "pg" -> {
+            case "pg", "non amministratore" -> {
                 virtualKeyServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
                 tosPrivacyClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             }

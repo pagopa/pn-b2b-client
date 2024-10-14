@@ -299,7 +299,7 @@ Feature: Virtual key legal Person Authentication
       | RIATTIVA    |
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
-  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_26] Un Amministratore Persona Giuridica che non fa parte della PG prova a ruotare/bloccare una virtual key di un utente
+  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_27] Un Amministratore Persona Giuridica che non fa parte della PG prova a ruotare/bloccare una virtual key di un utente
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso

@@ -9,6 +9,8 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeyResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.BffPublicKeysResponse;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.apikey.manager.pg.PublicKeyRow;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi.PgUser;
+import it.pagopa.pn.client.b2b.pa.service.IPnExternalRegistryPrivateUserApi;
 import it.pagopa.pn.client.b2b.pa.service.IPnLegalPersonAuthClient;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.cucumber.utils.LegalPersonAuthExpectedResponseWithStatus;
@@ -29,6 +31,7 @@ import java.util.Optional;
 public class LegalPersonAuthSteps {
     private final LegalPersonsAuthStepsPojo pojo;
     private final IPnLegalPersonAuthClient pnLegalPersonAuthClient;
+    private final IPnExternalRegistryPrivateUserApi privateUserApi;
 
     @Value("${pn.authentication.pg.public.key}")
     private String publicKey;
@@ -36,10 +39,23 @@ public class LegalPersonAuthSteps {
     @Value("${pn.authentication.pg.public.key.rotation}")
     private String publicKeyRotation;
 
+    @Value("${pn.authentication.pg.admin.uid}")
+    private String adminUid;
+
+    @Value("${pn.authentication.pg.admin.group.uid}")
+    private String adminGroupUid;
+
+    @Value("${pn.authentication.pg.operator.uid}")
+    private String operatorUid;
+
+    @Value("${pn.authentication.pg.organization.id}")
+    private String organizationId;
+
     private final String UNKNOWN_KID = "4004309b-1bf6-789a-9582-721fe23653b6";
 
-    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient) {
+    public LegalPersonAuthSteps(IPnLegalPersonAuthClient pnLegalPersonAuthClient, IPnExternalRegistryPrivateUserApi privateUserApi) {
         this.pnLegalPersonAuthClient = pnLegalPersonAuthClient;
+        this.privateUserApi = privateUserApi;
         this.pojo = new LegalPersonsAuthStepsPojo();
     }
 
@@ -49,6 +65,14 @@ public class LegalPersonAuthSteps {
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
             case "NON AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
             case "DI UNA PG DIVERSA" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+        }
+    }
+
+    public void selectAdminForGetUser(String utente) {
+        switch (utente.toUpperCase()) {
+            case "AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
+            case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
+            case "NON AMMINISTRATORE" -> privateUserApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_5);
         }
     }
 
@@ -173,14 +197,27 @@ public class LegalPersonAuthSteps {
         Assertions.assertEquals(errorCode, pojo.getException().getRawStatusCode());
     }
 
-    @When("l'utente {string} tenta di recuperare i dati dell'utente avente user id {string}")
-    public void recuperaDatiUtente(String utente, String userId) {
-        //TODO
+    @When("un utente tenta di recuperare i dati dell'utente {string}")
+    public void recuperaDatiUtente(String userToSearch) {
+        recuperaDatiUtente(userToSearch, "corretta");
+    }
+
+    @When("un utente tenta di recuperare i dati dell'utente {string} della pg {string}")
+    public void recuperaDatiUtente( String userToSearch, String pg) {
+        try {
+            String uid = retrieveUID(userToSearch);
+            String pgId = pg.equals("corretta") ? organizationId : null;
+            PgUser user = privateUserApi.getPgUsersPrivate(uid, pgId);
+            pojo.addUserToList(user);
+        } catch (RestClientResponseException e) {
+            pojo.setException(e);
+        }
     }
 
     @Then("i dati utente vengono correttamente recuperati")
     public void checkDatiUtente() {
         Assertions.assertNotNull(this.pojo.getUserListResponse());
+        Assertions.assertFalse(this.pojo.getUserListResponse().isEmpty());
     }
 
     @Then("la chiamata va in status 200 e restituisce una lista utenti vuota")
@@ -290,6 +327,29 @@ public class LegalPersonAuthSteps {
                 pnLegalPersonAuthClient.deletePublicKeyV1(pk.getKid());
             }
         });
+    }
+
+    public String retrieveUID(String user) {
+        switch (user.toLowerCase()) {
+            case "alda merini" -> {
+                return adminUid;
+            }
+            case "maria montessori" -> {
+                return adminGroupUid;
+            }
+            case "nilde iotti" -> {
+                return operatorUid;
+            }
+            case "unknown" -> {
+                return "4a700ac1-4893-495e-9b51-bbf4c37f4bbc";
+            }
+            case "vuoto" -> {
+                return null;
+            }
+            default -> {
+                throw new IllegalArgumentException("user not allowed");
+            }
+        }
     }
 
 }

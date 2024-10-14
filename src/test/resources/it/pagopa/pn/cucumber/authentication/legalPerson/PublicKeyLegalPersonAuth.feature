@@ -145,13 +145,6 @@ Feature: Public key legal Person Authentication
     When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "ROTATED"
     Then la chiamata restituisce un errore con status code 409 riportante il messaggio "GENERIC_ERROR"
 
-#  @publicKeyCreation
-#  Scenario: [LEGAL_PERSON_AUTH_25] Un Amministratore PG riattiva la chiave pubblica della PG, la quale risulta essere scaduta
-#    #TODO
-#    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "SCADUTA"
-#    When l'utente "AMMINISTRATORE" "RIATTIVA" la chiave pubblica per la PG che si trova in stato "SCADUTA"
-#    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
-
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL_PERSON_AUTH_26] Un Amministratore PG con un gruppo associato riattiva la chiave pubblica di una PG di cui non fa parte
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "<status>"
@@ -191,69 +184,42 @@ Feature: Public key legal Person Authentication
     When l'utente "NON AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
-#  @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
-#  Scenario: [LEGAL_PERSON_AUTH_31] Un Amministratore PG cancella la chiave pubblica della PG scaduta
-#    #TODO
-#    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "SCADUTA"
-#    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "SCADUTA"
-#    Then la chiamata restituisce un errore con status code 409 riportante il messaggio "TODO"
-
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL_PERSON_AUTH_32] Un Amministratore PG con un gruppo associato cancella la chiave pubblica della PG ruotata
     Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ROTATED"
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ROTATED"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
-  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
+  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL_PERSON_AUTH_33] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId
-    #scenario get Utenza
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "<role>" censisce una virtual key per sè stesso
-    When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
+    When un utente tenta di recuperare i dati dell'utente "<userToSearch>"
     Then i dati utente vengono correttamente recuperati
     Examples:
-      | role               |
-      | AMMINISTRATORE     |
-      | NON AMMINISTRATORE |
+      | userToSearch     |
+      | Nilde Iotti      |
+      | Alda Merini      |
+      | Maria Montessori |
+
+#  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
+#  Scenario: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
+#    When un utente tenta di recuperare i dati dell'utente "Alda Merini"
+#    Then la chiamata restituisce un errore con status code 403
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
-  Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
-    #scenario get Utenza
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
-    And l'utente "AMMINISTRATORE" "NON ACCETTA" i tos
-    And l'utente "<role>" censisce una virtual key per sè stesso
-    When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "GENERIC_ERROR"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
+  Scenario Outline: [LEGAL_PERSON_AUTH_35] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId o organizzationId vuoto
+    When un utente tenta di recuperare i dati dell'utente "<userToSearch>" della pg "<pg>"
+    Then la chiamata restituisce un errore con status code 400
     Examples:
-      | role               |
-      | AMMINISTRATORE     |
-      #| NON AMMINISTRATORE |
+      | userToSearch | pg             |
+      | vuoto        | corretta       |
+      | vuoto        | corretta       |
+      | Nilde Iotti  | non corretta   |
+      | Alda Merini  | non corretta   |
 
   @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
-  Scenario Outline: [LEGAL_PERSON_AUTH_35] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver censito la chiave pubblica
-    #scenario get Utenza
-    Given non ci sono chiavi pubbliche per la PG
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "TODO"
-    Then la chiamata restituisce un errore con status code 403 riportante il messaggio "TODO"
-    Examples:
-      | role               |
-      | AMMINISTRATORE     |
-      | NON AMMINISTRATORE |
-
-  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
-  Scenario Outline: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
-    #scenario get Utenza
-    Given esiste una chiave pubblica creata da "AMMINISTRATORE" in stato "ACTIVE"
-    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
-    And l'utente "<role>" censisce una virtual key per sè stesso
-    When l'utente "<role>" tenta di recuperare i dati dell'utente avente user id "INESISTENTE"
+  Scenario: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
+    When un utente tenta di recuperare i dati dell'utente "Unknown"
     Then la chiamata va in status 200 e restituisce una lista utenti vuota
-    Examples:
-      | role               |
-      | AMMINISTRATORE     |
-      | NON AMMINISTRATORE |
 
   @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario: [LEGAL_PERSON_AUTH_37] Un Amministratore PG blocca la chiave pubblica della PG passando kid vuoto
@@ -268,6 +234,6 @@ Feature: Public key legal Person Authentication
     Then la chiamata restituisce un errore con status code 404
     Examples:
     | status      | operation |
-    #| BLOCKED     | RIATTIVA  |
     | ACTIVE      | RUOTA     |
     | ACTIVE      | BLOCCA    |
+
