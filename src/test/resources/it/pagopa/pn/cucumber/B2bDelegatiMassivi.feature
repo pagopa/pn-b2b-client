@@ -10,6 +10,49 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateTo  | TOMORROW |
     And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
 
+  @useB2B @b2bIntermediariMassivi @deleghe1
+  Scenario: [B2B-REVERSE-MANDATE-COMPLETE_FLOW_SUCCESS] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante
+    Given "CucumberSpa" rifiuta se presente la delega ricevuta "Mario Cucumber"
+    When viene effettuata una richiesta di creazione delega con i seguenti parametri:
+      | delegate  | CucumberSpa |
+      | delegator | Mario Cucumber |
+      | dateFrom | TODAY |
+      | dateTo  | TOMORROW |
+    And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
+    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      |  |  |
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
+      | size          |    -1      |
+    And si verifica che lo status code sia: 400
+    #size = -1 -> size = null
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
+      | status        | ACCEPTED   |
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
+      | subjectRegExp | adsdasdasdasdasdasdasdasdasdasdasdas   |
+    And Si verifica che il numero di notifiche restituite nella pagina sia 0
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
+      | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
+    And Si verifica che il numero di notifiche restituite nella pagina sia 0
+    When viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | comune di milano            |
+    And destinatario GherkinSrl e:
+      | payment_pagoPaForm | SI               |
+      | payment_f24        | PAYMENT_F24_FLAT |
+    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_1"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+
   @b2bIntermediariMassivi @deleghe1
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-1] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con codice fiscale vuoto
     When viene effettuata una richiesta di creazione delega con i seguenti parametri:

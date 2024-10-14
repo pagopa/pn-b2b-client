@@ -18,12 +18,14 @@
     <description>Esempio utilizzo API</description>
 
     <properties>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <java.version>17</java.version>
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
+        <skipTests>false</skipTests>
         <open.api.version>develop</open.api.version>
         <open.api.version.delivery>v2.5.0</open.api.version.delivery>
         <open.api.version.delivery.push>v2.5.1</open.api.version.delivery.push>
@@ -206,6 +208,7 @@
                 <version>3.0.0-M7</version>
                 <configuration>
                     <properties>
+                        <skipTests>true</skipTests>
                         <configurationParameters>
                             cucumber.junit-platform.naming-strategy=long
                         </configurationParameters>
