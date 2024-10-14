@@ -222,7 +222,6 @@ Feature: Api b2b per destinatari strutturati
       | senderDenomination | comune di milano            |
     And destinatario GherkinSrl e:
       | payment_pagoPaForm | SI               |
-      | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
