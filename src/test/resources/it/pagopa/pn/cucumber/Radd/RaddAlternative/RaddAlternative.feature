@@ -1364,3 +1364,40 @@ Feature: Radd Alternative
 
 # @raddAlt @ignore MANUALE
 # Scenario: [RADD-ALT_ACT-41] PF/PG - Check conformità AAR
+
+  @raddAlt
+  Scenario Outline: [RADD-ALT_ACT-19] PF/PA - stampa e consegna documenti disponibili associati - visualizzazione in timeline avvenuta consegna tramite RADD (NOTIFICATION_RADD_RETRIEVED) e recupero timeline dal cruscotto assistenza (Hotfix PN-12886)
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber radd alternative |
+      | senderDenomination | Comune di Palermo |
+    And destinatario
+      | denomination           | <CITIZEN>  |
+      | taxId                  | <CF>       |
+      | digitalDomicile_address| testpagopa3@pec.pagopa.it |
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_DOMICILE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And Il cittadino "<CITIZEN>" come destinatario 0 mostra il QRCode "corretto"
+    When L'operatore scansione il qrCode per recuperare gli atti di "<CITIZEN>"
+    Then la scansione si conclude correttamente su radd alternative
+    And vengono caricati i documento di identità del cittadino su radd alternative
+    And Vengono visualizzati sia gli atti sia le attestazioni opponibili riferiti alla notifica associata all'AAR da radd alternative
+    And l'operazione di download degli atti si conclude correttamente su radd alternative
+    And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
+    And la chiusura delle transazione per il recupero degli aar non genera errori su radd alternative
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_RADD_RETRIEVED"
+    And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" non esista
+      | details          | NOT_NULL |
+      | details_recIndex | 0        |
+    And lato destinatario la notifica può essere correttamente recuperata da "<CITIZEN>" e verifica presenza dell'evento di timeline NOTIFICATION_RADD_RETRIEVED
+    And lato desinatario "<CITIZEN>" viene verificato che l'elemento di timeline NOTIFICATION_VIEWED non esista
+    And invocazione servizio per recupero timeline notifica con iun
+    And Il servizio risponde correttamente
+    Examples:
+      | CITIZEN       | CF               |
+      | Mario Cucumber | FRMTTR76M06B715E |
+
+
+
+
+
