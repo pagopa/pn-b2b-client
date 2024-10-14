@@ -192,6 +192,8 @@ public class ApikeyManagerSteps {
         System.out.println("New ApiKey: " + responseNewApiKey);
     }
 
+
+
     @Given("Viene creata una nuova apiKey per il comune {string} con due gruppi")
     public void viene_creata_una_nuova_api_key_per_il_comune_con_due_gruppi(String settedPa) {
         setBearerToken(settedPa);
