@@ -39,6 +39,7 @@ public class MandateReverseSteps {
     private String reverseMandateResponse;
     private HttpStatusCodeException reverseMandateStatusCodeException;
     private final List<String> groups = new ArrayList<>();
+    private final String verificationCode = "24411";
 
     public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps,
                                B2BRecipientExternalClientImpl b2BRecipientExternalClient, IBffMandateServiceApi bffMandateServiceApi) {
@@ -58,6 +59,7 @@ public class MandateReverseSteps {
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
         try {
             reverseMandateResponse = mandateReverseServiceClient.createReverseMandate(request);
+            System.out.println("CREATA DELEGA CON ID " + reverseMandateResponse);
         } catch (HttpStatusCodeException statusCodeException) {
             reverseMandateStatusCodeException = statusCodeException;
         }
@@ -173,6 +175,7 @@ public class MandateReverseSteps {
     }
 
     private void acceptMandate(String delegate, List<String> groups, String verificationCode) {
+        System.out.println("VERIFICATION CODE" + verificationCode);
         selectPG(delegate);
         try {
             mandateServiceClient.acceptMandate(reverseMandateResponse, new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
@@ -194,6 +197,9 @@ public class MandateReverseSteps {
                 this.b2BRecipientExternalClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 this.bffMandateServiceApi.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 this.mandateServiceClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
+            case "mario cucumber" -> {
+                this.bffMandateServiceApi.setBearerToken(SettableBearerToken.BearerTokenType.USER_1);
             }
             default -> throw new IllegalStateException("Unexpected value: " + user.trim().toLowerCase());
         };

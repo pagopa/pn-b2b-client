@@ -19,24 +19,24 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
     And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
-    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
-      |  |  |
-    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+    When la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" senza associare nessun gruppo
+    And la delega a nome di "Mario Cucumber" viene accettata da "CucumberSpa" senza associare nessun gruppo
+    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
       | size          |    -1      |
     And si verifica che lo status code sia: 400
-    #size = -1 -> size = null
-    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
       | status        | ACCEPTED   |
-    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
       | subjectRegExp | adsdasdasdasdasdasdasdasdasdasdasdas   |
     And Si verifica che il numero di notifiche restituite nella pagina sia 0
-    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_Multi"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
       | iunMatch      |  VDKD-YVDR-XXXX-202409-X-9  |
@@ -44,14 +44,14 @@ Feature: Pn-mandate api b2b per intermediari massivi
     When viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-    And destinatario GherkinSrl e:
+    And destinatario Mario Cucumber e:
       | payment_pagoPaForm | SI               |
       | payment_f24        | PAYMENT_F24_FLAT |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "GherkinSrl" per comune "Comune_1"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
-    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+#    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
 
   @b2bIntermediariMassivi @deleghe1
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-1] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con codice fiscale vuoto

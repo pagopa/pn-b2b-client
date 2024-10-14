@@ -208,7 +208,6 @@
                 <version>3.0.0-M7</version>
                 <configuration>
                     <properties>
-                        <skipTests>true</skipTests>
                         <configurationParameters>
                             cucumber.junit-platform.naming-strategy=long
                         </configurationParameters>
