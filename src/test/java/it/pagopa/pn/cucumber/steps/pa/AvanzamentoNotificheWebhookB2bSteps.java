@@ -59,6 +59,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private HttpStatusCodeException notificationError;
     private final PnPollingFactory pollingFactory;
     private final TimingForPolling timingForPolling;
+    private List<ProgressResponseElementV23> progressResponseElements;
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
     public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
@@ -577,12 +578,34 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void readStreamEventsV23() {
         updateApiKeyForStream();
         try{
-            List<ProgressResponseElementV23> progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
+            progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
             log.info("EventProgress: " + progressResponseElements);
         }catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
         }
+    }
+
+    private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertNotNull(progressResponseElements);
+        return progressResponseElements.stream()
+                    .filter(Objects::nonNull)
+                    .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
+                    .map(ProgressResponseElementV23::getElement)
+                    .filter(x -> x.getElementId().contains(timelineEvent))
+                    .map(TimelineElementV23::getDetails)
+                    .filter(Objects::nonNull)
+                    .anyMatch(x -> x.getDeliveryDetailCode().equals(deliveryDetailCode));
+    }
+
+    @And("viene verificato che gli eventi dello stream non contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
+    public void verifyStreamNotContainsSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertFalse(searchSpecificTimelineEvent(timelineEvent, deliveryDetailCode));
+    }
+
+    @And("viene verificato che gli eventi dello stream contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
+    public void verifyStreamContainsSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
+        Assertions.assertTrue(searchSpecificTimelineEvent(timelineEvent, deliveryDetailCode));
     }
 
     @And("vengono letti gli eventi dello stream non esistente versione V23")
@@ -1211,6 +1234,56 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     }
 
+    @And("vengono letti gli eventi dello stream con id {string} v23")
+    public void vengonoLettiGliEventiDelloStreamDelV(String streamID) {
+        setPaWebhook("Comune_Multi");
+        List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(UUID.fromString(streamID), null);
+        System.out.println("progressResponseElementV23s: "+progressResponseElementV23s);
+    }
+
+    @And("vengono letti tutti gli eventi degli stream v23 creati per il test di carico per {int} minuti")
+    public void readAllStreamEvent(int minuti) {
+        int elapsedMinute = 0;
+        setPaWebhook("Comune_Multi");
+        while(elapsedMinute < minuti){
+            try{
+                for(StreamMetadataResponseV23 streamId: eventStreamListV23){
+                    List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(streamId.getStreamId(), null);
+                    System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
+                    sleepTest(50);
+                }
+                sleepTest(60*1000);
+                elapsedMinute+=1;
+                setPaWebhook("Comune_Multi");
+            }catch (Exception e){
+                System.out.println("Exception");
+            }
+
+        }
+    }
+
+    String[] streamList = {"00001d7a-42e8-41df-a995-40da72a087d7"};
+
+    @And("vengono letti tutti gli eventi degli stream v23 hardcodati per il test di carico per {int} minuti")
+    public void readAllStreamEventHardCoded(int minuti) {
+        int elapsedMinute = 0;
+        setPaWebhook("Comune_Multi");
+        while(elapsedMinute < minuti){
+            try{
+                for(String streamID: streamList){
+                    List<ProgressResponseElementV23> progressResponseElementV23s = webhookB2bClient.consumeEventStreamV23(UUID.fromString(streamID), null);
+                    System.out.println("progressResponseElementV23s size: "+progressResponseElementV23s.size());
+                    sleepTest(50);
+                }
+                sleepTest(60*1000);
+                elapsedMinute+=1;
+                setPaWebhook("Comune_Multi");
+            }catch (Exception e) {
+                System.out.println("Exception in read");
+            }
+        }
+    }
+
     @Then("si verifica nello stream del {string} che la notifica abbia lo stato VIEWED")
     public void checkViewedState(String pa) {
         sleepTest((sharedSteps.getWait()*2));
@@ -1803,5 +1876,6 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 throw new IllegalArgumentException();
         }
     }
+
 
 }

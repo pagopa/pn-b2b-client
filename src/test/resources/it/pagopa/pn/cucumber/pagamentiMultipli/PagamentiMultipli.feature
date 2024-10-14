@@ -1498,7 +1498,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_STANDARD  |
-      | digitalDomicile_address | pectest@pec.pagopa.it |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
       | title_payment           | F24_STANDARD_MARIO    |
       | apply_cost_f24          | SI                    |
       | payment_multy_number    | 1                     |
@@ -2814,7 +2814,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
@@ -2852,7 +2852,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
@@ -2889,7 +2889,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
       | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
@@ -2924,7 +2924,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
