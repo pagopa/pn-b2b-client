@@ -44,6 +44,9 @@
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
         <external-bff-recipient.version>105e93e8673d0eff1bfaf98bfb42ab7492eacb10</external-bff-recipient.version>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
+        <open.api.version.pn.bff>v1.3.0-RC.1</open.api.version.pn.bff>
+        <open.api.version.user-attributes>v2.8.0-RC.1</open.api.version.user-attributes>
+        <open.api.version.b2b.delivery.push>v2.11.0-RC.2</open.api.version.b2b.delivery.push>
     </properties>
 
     <dependencies>
@@ -1624,7 +1627,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/3392f18186094ea58cf8dafe4531c84c4f37823b/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.pn.bff}/docs/openapi/api-external-pn-bff-recipient-mandate.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1657,7 +1660,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/9a84cf79c8bcdb903eeaf728416bdc2c95a63d3d/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-user-attributes/${open.api.version.user-attributes}/docs/openapi/pn-address-book-b2b-pg-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1689,7 +1692,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/refs/heads/develop/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.b2b.delivery.push}/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
