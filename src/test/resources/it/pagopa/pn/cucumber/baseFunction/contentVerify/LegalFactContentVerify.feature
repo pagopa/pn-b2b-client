@@ -52,7 +52,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                         |
       | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA        |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Cucumber Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA |
 
   @legalFact @deleghe1
   Scenario: [B2B-LEGALFACT_CONTENT_VERIFY_3] Data una notifica analogica, si verifica l'esistenza del legalFact generato in seguito ad accettazione se sia di tipo NOTIFICA PRESA IN CARICO MULTIDESTINATARIO

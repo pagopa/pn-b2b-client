@@ -86,9 +86,9 @@ Feature: Radd Alternative Atto Intero
     And viene verificato il costo di <COSTO> e il peso di <PESO> nei details del'elemento di timeline letto
     Examples:
       | CAP   | COSTO | MUNICIPALITY | PROVINCE | SUBJECT                                                       | PESO |
-      | 30133 | 822   | VENEZIA      | VE       | notifica filtro con AAR, ATTACHMENT_PAGOPA e LEGAL_FACT       | 15   |
+      | 30133 | 821   | VENEZIA      | VE       | notifica filtro con AAR, ATTACHMENT_PAGOPA e LEGAL_FACT       | 15   |
       | 30135 | 989   | VENEZIA      | VE       | notifica filtro con AAR, ATTACHMENT_F24 e LEGAL_FACT_EXTERNAL | 25   |
-      | 30122 | 825   | VENEZIA      | VE       | notifica filtro con DOCUMENT e AAR                            | 20   |
+      | 30122 | 824   | VENEZIA      | VE       | notifica filtro con DOCUMENT e AAR                            | 20   |
 
   @raddAttoIntero
   Scenario: [RADD_FILTRO_ATTO-INTERO_5] invio notifica RS coperto da RADD e controllo diminuzione costi filtro con rule typeWithNextResult DOCUMENT e AAR
@@ -200,7 +200,7 @@ Feature: Radd Alternative Atto Intero
       | apply_cost_f24               | SI                        |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    And viene verificato il costo di 819 e il peso di 10 nei details del'elemento di timeline letto
+    And viene verificato il costo di 818 e il peso di 10 nei details del'elemento di timeline letto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
     And viene verificato il costo di 800 e il peso di 10 nei details del'elemento di timeline letto
 
