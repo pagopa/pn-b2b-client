@@ -21,8 +21,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import javax.validation.constraints.Null;
+import lombok.extern.slf4j.Slf4j;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Predicate;
@@ -30,6 +29,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@Slf4j
 public class MandateReverseSteps {
     private final IMandateReverseServiceClient mandateReverseServiceClient;
     private final IPnWebMandateClient mandateServiceClient;
@@ -58,10 +58,12 @@ public class MandateReverseSteps {
         request.setDateto(getDate(data.getOrDefault("dateTo", "TOMORROW")));
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
         try {
+            log.info("[TEST]. CREATING MANDATE WITH DATA {}", request);
             reverseMandateResponse = mandateReverseServiceClient.createReverseMandate(request);
-            System.out.println("CREATA DELEGA CON ID " + reverseMandateResponse);
+            log.info("[TEST]. CREATED MANDATE {}",  reverseMandateResponse);
         } catch (HttpStatusCodeException statusCodeException) {
             reverseMandateStatusCodeException = statusCodeException;
+            log.info("[TEST]. MANDATE CREATION EXCEPTION");
         }
    }
 
@@ -78,23 +80,6 @@ public class MandateReverseSteps {
         String dateFrom = mandateData.get("dateFrom");
         String dateTo = mandateData.get("dateTo");
         String delegatorTaxId = getTaxIdByUser(delegator);
-        String delegateTaxId = getTaxIdByUser(delegate);
-
-        Stream<MandateDto> s = mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
-                .filter(x ->  {
-                    try {
-                        return x.getDelegator().getFiscalCode().equals(delegatorTaxId);
-                    }
-                    catch(NullPointerException nPx) {
-                        return false;
-                    }
-                });
-        mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream().forEach((k) -> {
-            System.out.print(k + "*********");
-        });
-        System.out.println("AFTER delegateID " + s.count());
-        System.out.println("AFTER FROM FILTER" + delegator + "---" + delegatorTaxId + "---" + mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
-                .filter(x -> getDate(dateFrom).equals(x.getDatefrom())).count());
 
         assertFalse(mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
                 .filter(x ->  {
@@ -160,11 +145,21 @@ public class MandateReverseSteps {
     private String getVerificationCode(String delegator) {
         selectPG(delegator);
         String verificationCode;
+        log.info("[TEST]. LOOKING FOR VERIFICATION CODE FOR MANDATE {}", reverseMandateResponse);
+
+bffMandateServiceApi.getMandatesByDelegatorV1()
+        .stream()
+        .forEach((k) -> {
+            log.info("[TEST]. CURR MANDATE {}", k);
+        });
+        log.info("[TEST]. MANDATES WITH ID {}", reverseMandateResponse);
+
         try {
             verificationCode = bffMandateServiceApi.getMandatesByDelegatorV1()
                     .stream()
                     .filter(x -> x.getMandateId().equals(reverseMandateResponse))
                     .map(BffMandate::getVerificationCode)
+
                     .filter(Objects::nonNull)
                     .findFirst()
                     .orElse(null);
@@ -175,7 +170,8 @@ public class MandateReverseSteps {
     }
 
     private void acceptMandate(String delegate, List<String> groups, String verificationCode) {
-        System.out.println("VERIFICATION CODE" + verificationCode);
+        log.info("[TEST]. ACCEPTING MANDATE WITH VERIFICATION CODE {} USED TO ACCEPT MANDATE {} for delegate {}",
+                verificationCode, reverseMandateResponse, delegate);
         selectPG(delegate);
         try {
             mandateServiceClient.acceptMandate(reverseMandateResponse, new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
@@ -207,6 +203,9 @@ public class MandateReverseSteps {
 
     private Optional<MandateDto> isMandatePresent(String delegator) {
         String delegatorTaxId = getTaxIdByUser(delegator);
+        log.info("[TEST]. MANDATES FOR DELEGATOR ({},TAXID: {}): {}",
+                delegator, delegatorTaxId, mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
+                .filter(x -> x.getMandateId().equals(reverseMandateResponse)).toList());
         return mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
                 .filter(x -> x.getMandateId().equals(reverseMandateResponse))
                 .findFirst();

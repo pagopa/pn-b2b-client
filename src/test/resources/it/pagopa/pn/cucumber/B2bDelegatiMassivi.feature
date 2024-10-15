@@ -18,10 +18,10 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | delegator | Mario Cucumber |
       | dateFrom | TODAY |
       | dateTo  | TOMORROW |
-    And si verifica che la delega a nome di "Mario Cucumber" è stata creata con stato pending
-    When la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" senza associare nessun gruppo
     And la delega a nome di "Mario Cucumber" viene accettata da "CucumberSpa" senza associare nessun gruppo
-    Then "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
+    And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
+      | startDate     | 01/01/2022 |
+      | endDate       | 01/10/2030 |
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
@@ -51,7 +51,11 @@ Feature: Pn-mandate api b2b per intermediari massivi
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
-#    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then "CucumberSpa" richiede il download dell'attestazione opponibile "SENDER_ACK"
+    Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
+    Then il documento notificato può essere correttamente recuperato da "CucumberSpa" con delega
 
   @b2bIntermediariMassivi @deleghe1
   Scenario: [B2B-REVERSE-MANDATE-FAILURE-1] Viene invocata l'API di creazione delega dal delegato (intermediario massivo) verso se stesso a nome del delegante con codice fiscale vuoto

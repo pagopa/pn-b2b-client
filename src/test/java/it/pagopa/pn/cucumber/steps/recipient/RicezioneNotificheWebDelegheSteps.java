@@ -250,14 +250,16 @@ public class RicezioneNotificheWebDelegheSteps {
 
         MandateDto mandateDto = null;
         for (MandateDto mandate : mandateList) {
-            log.info("MANDATE-LIST: {}", mandateList);
+            log.info("[TEST]. MANDATE LIST FOR Delegator ({}, TaxId: {}): {}",
+                    delegator, delegatorTaxId, mandateList);
             if (Objects.requireNonNull(mandate.getDelegator()).getFiscalCode() != null && mandate.getDelegator().getFiscalCode().equalsIgnoreCase(delegatorTaxId)) {
                 mandateDto = mandate;
                 break;
             }
         }
         if (mandateDto != null) {
-            log.info("MANDATE ALREADY EXISTS WITH ID {}", mandateDto.getMandateId());
+            log.info("[TEST]. MANDATE FOR Delegator ({}, TaxId: {}) ALREADY EXISTS WITH ID {}",
+                    delegator, delegatorTaxId, mandateDto.getMandateId());
             MandateDto finalMandateDto = mandateDto;
             Assertions.assertDoesNotThrow(() -> webMandateClient.rejectMandate(finalMandateDto.getMandateId()));
 

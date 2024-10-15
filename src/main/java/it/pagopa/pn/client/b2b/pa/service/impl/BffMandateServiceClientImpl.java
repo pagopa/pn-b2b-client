@@ -19,6 +19,8 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
     private final RestTemplate restTemplate;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
+    private final String user1BearerToken;
+    private final String user2BearerToken;
     private final String basePath;
     private final MandateApi mandateApi;
     private BearerTokenType bearerTokenSetted;
@@ -26,12 +28,16 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
     public BffMandateServiceClientImpl(RestTemplate restTemplate,
                                        @Value("${pn.webapi.external.base-url}") String basePath,
                                        @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
-                                       @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken) {
+                                       @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+                                       @Value("${pn.bearer-token.user1}") String user1BearerToken,
+                                       @Value("${pn.bearer-token.user2}") String user2BearerToken) {
         this.restTemplate = restTemplate;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
         this.basePath = basePath;
         this.bearerTokenSetted = BearerTokenType.PG_1;
+        this.user1BearerToken = user1BearerToken;
+        this.user2BearerToken = user2BearerToken;
         this.mandateApi = new MandateApi(newApiClient(restTemplate, basePath, gherkinSrlBearerToken));
     }
 
@@ -57,6 +63,14 @@ public class BffMandateServiceClientImpl implements IBffMandateServiceApi {
             case PG_2 -> {
                 this.mandateApi.setApiClient(newApiClient(restTemplate, basePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
+            }
+            case USER_1 -> {
+                this.mandateApi.setApiClient(newApiClient(restTemplate, basePath, user1BearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_1;
+            }
+            case USER_2 -> {
+                this.mandateApi.setApiClient(newApiClient(restTemplate, basePath, user2BearerToken));
+                this.bearerTokenSetted = BearerTokenType.USER_2;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
