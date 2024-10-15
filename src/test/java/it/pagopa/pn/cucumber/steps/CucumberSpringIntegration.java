@@ -95,6 +95,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         BffMandateServiceClientImpl.class,
         B2BDeliveryPushServiceClientImpl.class,
         B2BUserAttributesExternalClientImpl.class,
+        IPnLegalPersonAuthClientImpl.class,
+        IPnLegalPersonVirtualKeyServiceClientImpl.class,
         IPnTosPrivacyClientImpl.class
 })
 @EnableScheduling

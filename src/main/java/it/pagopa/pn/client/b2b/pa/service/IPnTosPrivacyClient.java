@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface IPnTosPrivacyClient {
 
-    public void acceptTosPrivacyV1(List<BffTosPrivacyActionBody> bffTosPrivacyBody) throws RestClientException;
+    void acceptTosPrivacyV1(List<BffTosPrivacyActionBody> bffTosPrivacyBody) throws RestClientException;
 
     List<BffConsent> getTosPrivacyV1(List<ConsentType> consentTypes) throws RestClientException;
 
