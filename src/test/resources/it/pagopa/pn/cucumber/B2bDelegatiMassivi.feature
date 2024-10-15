@@ -53,8 +53,10 @@ Feature: Pn-mandate api b2b per intermediari massivi
       | endDate       | 01/10/2030 |
       | status        | ACCEPTED   |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    And "CucumberSpa" legge la notifica ricevuta
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "SENDER_ACK"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
+    Then "CucumberSpa" richiede il download dell'attestazione opponibile "RECIPIENT_ACCESS"
     Then l'allegato "PAGOPA" può essere correttamente recuperato da "CucumberSpa" con delega
     Then il documento notificato può essere correttamente recuperato da "CucumberSpa" con delega
 

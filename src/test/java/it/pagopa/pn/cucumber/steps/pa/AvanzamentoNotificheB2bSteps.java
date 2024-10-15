@@ -1293,8 +1293,10 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("{string} richiede il download dell'attestazione opponibile {string}")
     public void userDownloadLegalFact(String user, String legalFactCategory) {
+        log.info("[TEST].  {} tries to read legal fact of type {}", user, legalFactCategory);
         sharedSteps.selectUser(user);
         String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, null);
+        log.info("[TEST].  Legal fact url {}", legalFactUrl);
         legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 

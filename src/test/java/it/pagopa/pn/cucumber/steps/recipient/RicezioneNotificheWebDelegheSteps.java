@@ -605,6 +605,8 @@ public class RicezioneNotificheWebDelegheSteps {
                     searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
                     null, searchParam.senderId, searchParam.status,
                     searchParam.iunMatch, searchParam.size, null);
+
+            log.info("[TEST]. Notifications received: {}", this.notificationSearchResponse);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
