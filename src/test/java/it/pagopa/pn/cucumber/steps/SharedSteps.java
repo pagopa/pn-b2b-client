@@ -21,10 +21,7 @@ import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
@@ -32,8 +29,10 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
 import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,9 +44,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.convert.DurationStyle;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -81,7 +82,8 @@ public class SharedSteps {
     private final PnPaB2bUtils b2bUtils;
 
     @Getter
-    private final IPnWebRecipientClient webRecipientClient;
+    @Setter
+    private IPnWebRecipientClient webRecipientClient;
 
     @Getter
     private final PnExternalServiceClientImpl pnExternalServiceClient;
@@ -196,9 +198,10 @@ public class SharedSteps {
     @Value("${pn.bearer-token.user2.taxID}")
     private String marioGherkinTaxID;
 
+    private final ApplicationContext context;
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
-    private final IPnWebUserAttributesClient iPnWebUserAttributesClient;
+    private IPnWebUserAttributesClient iPnWebUserAttributesClient;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
@@ -264,15 +267,24 @@ public class SharedSteps {
 
     private HashMap<String,String> mapAllegatiNotificaSha256 = new HashMap<>();
 
+    @Before("@useB2B")
+    public void beforeMethod() {
+        if (!(webRecipientClient instanceof B2BRecipientExternalClientImpl)) {
+            this.webRecipientClient = context.getBean(B2BRecipientExternalClientImpl.class);
+        }
+        this.iPnWebUserAttributesClient = context.getBean(B2BUserAttributesExternalClientImpl.class);
+    }
+
     @Autowired
-    public SharedSteps(DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
-                       PnPaB2bUtils b2bUtils, IPnWebRecipientClient webRecipientClient,
+    public SharedSteps(ApplicationContext context, DataTableTypeUtil dataTableTypeUtil, IPnPaB2bClient b2bClient,
+                       PnPaB2bUtils b2bUtils, PnWebRecipientExternalClientImpl webRecipientClient,
                        PnExternalServiceClientImpl pnExternalServiceClient,
-                       IPnWebUserAttributesClient iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
+                       PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient, IPnWebPaClient webPaClient,
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
                        PnPollingFactory pollingFactory) {
+        this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
         this.webPaClient = webPaClient;
@@ -1065,6 +1077,30 @@ public class SharedSteps {
         }
     }
 
+    @And("viene verificata la presenza di pec inserite per l'utente {string}")
+    public void viewedPecDiPiattaformaDi(String user) {
+        selectUser(user);
+        List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+        Assertions.assertFalse(legalAddressByRecipient.isEmpty(), "Error: PEC not found!");
+    }
+
+    @And("viene verificata la presenza di {int} recapiti di cortesia inseriti per l'utente {string}")
+    public void viewedCourtesyAddress(int expectedItems, String user) {
+        selectUser(user);
+        List<CourtesyDigitalAddress> courtesyAddressByRecipient = this.iPnWebUserAttributesClient.getCourtesyAddressByRecipient();
+        Assertions.assertEquals(expectedItems, courtesyAddressByRecipient.size(), "Error retrieving the courtesy addresses!");
+    }
+
+    @And("viene verificata la presenza di qualunque tipo di recapito inserito per l'utente {string}")
+    public void viewedAllAddress(String user) {
+        selectUser(user);
+            UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+            Assertions.assertTrue(
+                    (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty())
+                    || (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty())
+            );
+    }
+
     @Then("si verifica che la notifica non viene accettata causa {string}")
     public void verificaNotificaNoAccept(String causa) {
         switch (causa) {
@@ -1741,7 +1777,7 @@ public class SharedSteps {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
             }
-            case "cucumberspa" -> {
+            case "cucumberspa", "lucio anneo seneca" -> {
                 webRecipientClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
                 iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_2);
             }

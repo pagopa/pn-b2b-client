@@ -31,6 +31,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnWebRecipientExternalClientImpl.class,
         PnWebhookB2bExternalClientImpl.class,
         PnWebMandateExternalClientImpl.class,
+        B2bMandateServiceClientImpl.class,
         PnExternalServiceClientImpl.class,
         PnWebUserAttributesExternalClientImpl.class,
         PnAppIOB2bExternalClientImpl.class,
@@ -86,7 +87,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnSafeStoragePrivateClientImpl.class,
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
-        PaperCalculatorClientImpl.class
+        PaperCalculatorClientImpl.class,
+        B2BDeliveryPushServiceClientImpl.class,
+        B2BUserAttributesExternalClientImpl.class,
+        B2BRecipientExternalClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
