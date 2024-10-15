@@ -51,6 +51,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     And "CucumberSpa" visualizza l'elenco delle notifiche del delegante "Mario Cucumber" per comune "Comune_1"
       | startDate     | 01/01/2022 |
       | endDate       | 01/10/2030 |
+      | status        | ACCEPTED   |
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_VIEWED"
     Then "CucumberSpa" richiede il download dell'attestazione opponibile "SENDER_ACK"

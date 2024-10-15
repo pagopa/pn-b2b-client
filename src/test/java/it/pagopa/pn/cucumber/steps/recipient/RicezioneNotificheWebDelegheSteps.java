@@ -598,6 +598,8 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromAtPa(String user, String recipient, String pa, @Transpose RicezioneNotificheWebSteps.NotificationSearchParam searchParam) {
         sharedSteps.selectPA(pa);
         sharedSteps.selectUser(user);
+        log.info("[TEST]. Check: can {} view notification from {} with recipient {}?", user, pa, recipient);
+        log.info("[TEST]. Notification search data {}", searchParam);
         try{
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
                     searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
