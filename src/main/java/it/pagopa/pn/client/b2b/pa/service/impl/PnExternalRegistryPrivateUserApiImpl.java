@@ -39,7 +39,7 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
     private ApiClient createApiClient(String bearerToken) {
         ApiClient newApiClient = new ApiClient(restTemplate);
         newApiClient.addDefaultHeader("Authorization","Bearer " + bearerToken);
-        newApiClient.setBasePath(basePath);
+        newApiClient.setBasePath("http://localhost:8080");
         return newApiClient;
     }
 

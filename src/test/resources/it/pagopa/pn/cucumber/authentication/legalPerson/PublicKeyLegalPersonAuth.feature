@@ -190,7 +190,7 @@ Feature: Public key legal Person Authentication
     When l'utente "AMMINISTRATORE CON GRUPPO ASSOCIATO" "CANCELLA" la chiave pubblica per la PG che si trova in stato "ROTATED"
     Then la chiamata restituisce un errore con status code 403 riportante il messaggio "GENERIC_ERROR"
 
-  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency
+  @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL_PERSON_AUTH_33] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId
     When un utente tenta di recuperare i dati dell'utente "<userToSearch>"
     Then i dati utente vengono correttamente recuperati
@@ -200,13 +200,8 @@ Feature: Public key legal Person Authentication
       | Alda Merini      |
       | Maria Montessori |
 
-#  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
-#  Scenario: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId, senza aver accettato i TOS
-#    When un utente tenta di recuperare i dati dell'utente "Alda Merini"
-#    Then la chiamata restituisce un errore con status code 403
-
-  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
-  Scenario Outline: [LEGAL_PERSON_AUTH_35] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId o organizzationId vuoto
+  @pgAuthentication @legalPersonCuncurrency @ignore
+  Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId o organizzationId vuoto
     When un utente tenta di recuperare i dati dell'utente "<userToSearch>" della pg "<pg>"
     Then la chiamata restituisce un errore con status code 400
     Examples:
@@ -215,8 +210,9 @@ Feature: Public key legal Person Authentication
       | vuoto        | corretta       |
       | Nilde Iotti  | non corretta   |
       | Alda Merini  | non corretta   |
+      | vuoto        | non corretta   |
 
-  @publicKeyCreation @removeAllVirtualKey @pgAuthentication @legalPersonCuncurrency @ignore
+  @pgAuthentication @legalPersonCuncurrency @ignore
   Scenario: [LEGAL_PERSON_AUTH_36] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId inesistente
     When un utente tenta di recuperare i dati dell'utente "Unknown"
     Then la chiamata va in status 200 e restituisce una lista utenti vuota
