@@ -16,6 +16,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.mo
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.AcceptRequestDto;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.MandateDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
+import it.pagopa.pn.cucumber.steps.recipient.RicezioneNotificheWebDelegheSteps;
 import org.apache.commons.lang.time.DateUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -39,20 +40,24 @@ public class MandateReverseSteps {
     private HttpStatusCodeException reverseMandateStatusCodeException;
     private final List<String> groups = new ArrayList<>();
     private final String verificationCode = "24411";
+    private final RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps;
+    private MandateDtoRequest request;
 
     public MandateReverseSteps(IMandateReverseServiceClient mandateReverseServiceClient, B2bMandateServiceClientImpl mandateServiceClient, SharedSteps sharedSteps,
-                               B2BRecipientExternalClientImpl b2BRecipientExternalClient, IBffMandateServiceApi bffMandateServiceApi) {
+                               B2BRecipientExternalClientImpl b2BRecipientExternalClient, IBffMandateServiceApi bffMandateServiceApi,
+                               RicezioneNotificheWebDelegheSteps ricezioneNotificheWebDelegheSteps) {
         this.mandateReverseServiceClient = mandateReverseServiceClient;
         this.mandateServiceClient = mandateServiceClient;
         this.sharedSteps = sharedSteps;
         this.b2BRecipientExternalClient = b2BRecipientExternalClient;
         this.bffMandateServiceApi = bffMandateServiceApi;
+        this.ricezioneNotificheWebDelegheSteps = ricezioneNotificheWebDelegheSteps;
     }
 
    @Given("viene effettuata una richiesta di creazione delega con i seguenti parametri:")
    public void createMandatePG(Map<String, String> data) {
         selectPG(data.get("delegate"));
-        MandateDtoRequest request = new MandateDtoRequest();
+        request = new MandateDtoRequest();
         request.setDatefrom(getDate(data.getOrDefault("dateFrom", "TODAY")));
         request.setDateto(getDate(data.getOrDefault("dateTo", "TOMORROW")));
         request.setDelegator(getUserDto(data.getOrDefault("delegator", "CucumberSpa")));
@@ -168,12 +173,35 @@ bffMandateServiceApi.getMandatesByDelegatorV1()
         return verificationCode;
     }
 
+    private MandateDto getMandate(String delegate, String mandateId) {
+        selectPG(delegate);
+        log.info("[TEST]. MANDATE INFOS {}, {} {}", delegate, mandateId, request.getDelegator().getFiscalCode());
+
+        try {
+            String delegatorTaxId = request.getDelegator().getFiscalCode();
+            Optional<MandateDto> mandate = mandateServiceClient.searchMandatesByDelegate(delegatorTaxId, null).stream()
+                    .filter(x ->  {
+                        try {
+                            return x.getMandateId().equals(mandateId);
+                        }
+                        catch(NullPointerException nPx) {
+                            return false;
+                        }
+                    }).findFirst();
+             return mandate.get();
+        } catch (Exception ex) {
+            log.error("TEST", ex);
+            throw new AssertionFailedError("No mandate: " + ex);
+        }
+    }
+
     private void acceptMandate(String delegate, List<String> groups, String verificationCode) {
         log.info("[TEST]. ACCEPTING MANDATE WITH VERIFICATION CODE {} USED TO ACCEPT MANDATE {} for delegate {}",
                 verificationCode, reverseMandateResponse, delegate);
         selectPG(delegate);
         try {
             mandateServiceClient.acceptMandate(reverseMandateResponse, new AcceptRequestDto().groups(groups).verificationCode(verificationCode));
+            ricezioneNotificheWebDelegheSteps.setMandateToSearch(getMandate(delegate, reverseMandateResponse));
         } catch (Exception ex) {
             throw new AssertionFailedError("There was an error while accepting the mandate: " + ex);
         }

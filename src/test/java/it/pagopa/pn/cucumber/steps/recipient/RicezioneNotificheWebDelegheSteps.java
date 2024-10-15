@@ -120,6 +120,10 @@ public class RicezioneNotificheWebDelegheSteps {
         };
     }
 
+    public void setMandateToSearch(MandateDto mandate){
+        if (mandate != null) this.mandateToSearch = mandate;
+    }
+
     @Then("si verifica che lo status code sia: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, this.notificationError.getStatusCode().value());
@@ -312,7 +316,6 @@ public class RicezioneNotificheWebDelegheSteps {
 
         AcceptRequestDto acceptRequestDto = new AcceptRequestDto().verificationCode(verificationCode).groups(List.of(gruppoAttivo));
         Assertions.assertDoesNotThrow(() -> webMandateClient.acceptMandate(mandateDto.getMandateId(), acceptRequestDto));
-
     }
 
     @And("la notifica può essere correttamente letta da {string} con delega")
