@@ -82,17 +82,17 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v2.FullReceivedNotification getReceivedNotificationV2(String iun, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -126,42 +126,36 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        boolean operation = false;
         switch (bearerToken) {
             case USER_1 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioCucumberBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_1;
-                operation = true;
             }
             case USER_2 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, marioGherkinBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_2;
-                operation = true;
             }
             case USER_3 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, leonardoBearerToken));
                 this.bearerTokenSetted = BearerTokenType.USER_3;
-                operation = true;
             }
             case PG_1 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, webBasePath, gherkinSrlBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_1;
-                operation = true;
             }
             case PG_2 -> {
                 this.recipientReadB2BApi.setApiClient(newApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.legalFactsApi.setApiClient(newLegalFactApiClient(restTemplate, b2bBasePath, cucumberSpaBearerToken));
                 this.bearerTokenSetted = BearerTokenType.PG_2;
-                operation = true;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
         }
-        return operation;
+        return true;
     }
 
     @Override
@@ -175,7 +169,6 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                 .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus::fromValue)
                 .orElse(null);
     }
-
 
     private <T> T deepCopy( Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()

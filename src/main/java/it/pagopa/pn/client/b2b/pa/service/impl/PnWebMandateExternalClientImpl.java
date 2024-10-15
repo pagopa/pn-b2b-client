@@ -7,7 +7,6 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -101,14 +100,8 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         throw new UnsupportedOperationException();
     }
 
-
     public void acceptMandate(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
         mandateServiceApi.acceptMandate(mandateId, acceptRequestDto);
-    }
-
-    @Override
-    public ResponseEntity<Void> acceptMandateWithHttpInfo(String mandateId, AcceptRequestDto acceptRequestDto) throws RestClientException {
-        return mandateServiceApi.acceptMandateWithHttpInfo(mandateId, acceptRequestDto);
     }
 
     public MandateCountsDto countMandatesByDelegate(String status) throws RestClientException {
@@ -130,7 +123,6 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     }
 
     public List<MandateDto> searchMandatesByDelegate(String taxId,List<String> groups) throws RestClientException {
-
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
@@ -160,7 +152,5 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
     public void revokeMandate(String mandateId) throws RestClientException {
         mandateServiceApi.revokeMandate(mandateId);
     }
-
-
 
 }

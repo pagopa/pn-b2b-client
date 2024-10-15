@@ -1637,7 +1637,6 @@ public class SharedSteps {
 
     private void setSenderTaxIdVersioning(String version) {
         switch (version.toLowerCase()) {
-
             case "v1" -> this.notificationRequestV1.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v2" -> this.notificationRequestV2.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
