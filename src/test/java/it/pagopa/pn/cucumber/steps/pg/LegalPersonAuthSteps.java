@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pg;
 
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -42,7 +43,7 @@ public class LegalPersonAuthSteps {
         this.pojo = new LegalPersonsAuthStepsPojo();
     }
 
-    private void selectAdmin(String utente) {
+    public void selectAdmin(String utente) {
         switch (utente.toUpperCase()) {
             case "AMMINISTRATORE" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_3);
             case "AMMINISTRATORE CON GRUPPO ASSOCIATO" -> pnLegalPersonAuthClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_4);
@@ -105,6 +106,7 @@ public class LegalPersonAuthSteps {
             creaChiavePubblica(utente);
         } else {
             String kid = getPublicKeyKidByStatus(status);
+            Assertions.assertNotNull(kid);
             switch (operation.toUpperCase()) {
                 case "BLOCCA" -> bloccaChiavePubblica(kid);
                 case "RUOTA" -> ruotaChiavePubblica(kid);
@@ -195,7 +197,7 @@ public class LegalPersonAuthSteps {
                 .orElse(null);
     }
 
-    private void bloccaChiavePubblica(String kid) {
+    public void bloccaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.changeStatusPublicKeyV1(kid, "BLOCK");
             updateResponseStatus("BLOCKED", kid);
@@ -233,7 +235,7 @@ public class LegalPersonAuthSteps {
         }
     }
 
-    private void cancellaChiavePubblica(String kid) {
+    public void cancellaChiavePubblica(String kid) {
         try {
             pnLegalPersonAuthClient.deletePublicKeyV1(kid);
             updateResponseStatus("CANCELLED", kid);
@@ -266,23 +268,23 @@ public class LegalPersonAuthSteps {
                 .orElse(false);
     }
 
-    @After("@publicKeyCreation")
+    @Before("@publicKeyCreation")
     public void eliminaChiaviPubblicheCreate() {
         selectAdmin("AMMINISTRATORE");
         BffPublicKeysResponse response = Assertions.assertDoesNotThrow(() -> pnLegalPersonAuthClient.getPublicKeysV1(null, null, null, null));
         List<String> blockedKids = response.getItems().stream()
-                .filter(
-                x -> x.getStatus() != null && x.getStatus().getValue().equalsIgnoreCase("BLOCKED"))
-                .map(PublicKeyRow::getKid).toList();
+                .filter(data -> data.getStatus() != null && data.getStatus().getValue().equalsIgnoreCase("BLOCKED"))
+                .map(PublicKeyRow::getKid)
+                .toList();
 
         blockedKids.forEach(this::cancellaChiavePubblica);
-        List<PublicKeyRow> otherPublicKeys = response.getItems().stream().filter(
-                x -> !blockedKids.contains(x.getKid()))
+        List<PublicKeyRow> otherPublicKeys = response.getItems().stream()
+                .filter(data -> !blockedKids.contains(data.getKid()))
                 .toList();
 
         otherPublicKeys.forEach(pk -> {
             if (pk.getStatus() != null && pk.getStatus().getValue().equalsIgnoreCase("ACTIVE")) {
-                bloccaChiavePubblica(pk.getKid());
+                pnLegalPersonAuthClient.changeStatusPublicKeyV1(pk.getKid(), "BLOCK");
             }
             if (pk.getStatus() != null && !pk.getStatus().getValue().equalsIgnoreCase("CANCELLED")) {
                 pnLegalPersonAuthClient.deletePublicKeyV1(pk.getKid());

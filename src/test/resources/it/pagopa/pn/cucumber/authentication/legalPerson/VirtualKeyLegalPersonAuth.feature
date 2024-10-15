@@ -193,7 +193,7 @@ Feature: Virtual key legal Person Authentication
       | RIATTIVA    |
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
-  Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_18] Un Amministratore Persona Giuridica riattiva/cancella la propria virtual key bloccata, senza esistenza di una chiave pubblica attiva
+  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_18] Un Amministratore Persona Giuridica riattiva/cancella la propria virtual key bloccata, senza esistenza di una chiave pubblica attiva
     #57 - 72
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
@@ -201,11 +201,18 @@ Feature: Virtual key legal Person Authentication
     And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
     And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
     When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
-    When l'utente "AMMINISTRATORE" "<OPERATION>" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 403
-    Examples:
-      | OPERATION |
-      | CANCELLA  |
-      | RIATTIVA  |
+    When l'utente "AMMINISTRATORE" "CANCELLA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 403
+
+  @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
+  Scenario: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_18_1] Un Amministratore Persona Giuridica riattiva/cancella la propria virtual key bloccata, senza esistenza di una chiave pubblica attiva
+    #57 - 72
+    Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
+    And l'utente "AMMINISTRATORE" "ACCETTA" i tos
+    And l'utente "AMMINISTRATORE" censisce una virtual key per sè stesso
+    And l'utente "AMMINISTRATORE" "BLOCCA" una virtual key in stato "ENABLE" per sè stesso
+    And l'utente "AMMINISTRATORE" "BLOCCA" la chiave pubblica per la PG che si trova in stato "ACTIVE"
+    When l'utente "AMMINISTRATORE" "CANCELLA" la chiave pubblica per la PG che si trova in stato "BLOCKED"
+    When l'utente "AMMINISTRATORE" "RIATTIVA" una virtual key in stato "BLOCKED" per sè stesso e riceve errore 403
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_19] Un Amministratore/utente PG riattiva/blocca/ruota la propria virtual key ruotata
