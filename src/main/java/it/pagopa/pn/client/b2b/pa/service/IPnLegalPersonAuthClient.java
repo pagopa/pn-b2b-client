@@ -14,8 +14,6 @@ public interface IPnLegalPersonAuthClient {
 
     BffPublicKeyResponse rotatePublicKeyV1(String kid, BffPublicKeyRequest bffPublicKeyRequest) throws RestClientException;
 
-//    ResponseEntity<PublicKeysIssuerResponse> getIssuerStatusWithHttpInfo(String xPagopaPnUid, CxTypeAuthFleet xPagopaPnCxType, String xPagopaPnCxId) throws RestClientException;
-
     void deletePublicKeyV1(String kid) throws RestClientException;
 
     void changeStatusPublicKeyV1(String kid, String status) throws RestClientException;

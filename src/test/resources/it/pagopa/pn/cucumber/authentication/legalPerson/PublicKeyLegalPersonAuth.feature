@@ -201,7 +201,7 @@ Feature: Public key legal Person Authentication
       | Maria Montessori |
 
   @pgAuthentication @legalPersonCuncurrency @ignore
-  Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId o organizzationId vuoto
+  Scenario Outline: [LEGAL_PERSON_AUTH_34] Un Amministratore PG / Utente PG recupera i dati di un utente tramite uno userId e/o organizzationId vuoto
     When un utente tenta di recuperare i dati dell'utente "<userToSearch>" della pg "<pg>"
     Then la chiamata restituisce un errore con status code 400
     Examples:

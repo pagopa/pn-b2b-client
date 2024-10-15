@@ -117,7 +117,7 @@ Feature: Virtual key legal Person Authentication
 
   @removeAllVirtualKey @publicKeyCreation @pgAuthentication @legalPersonCuncurrency
   Scenario Outline: [LEGAL-PERSON-AUTH-VIRTUAL-KEY_12] Un utente Persona Giuridica e Amministratore Persona Giuridica appartenente ad un gruppo blocca/ruota la virtual key attiva di un altro utente
-    #50 - 62 il secondo caso va in verde perchè nessuno puo ruotare chiavi di terze persone / vanno aggiunti i gruppi alla pg 2 Maria montessori
+    #50 - 62
     Given l'utente "AMMINISTRATORE" crea una chiave pubblica per la PG
     And l'utente "AMMINISTRATORE" "ACCETTA" i tos
     And l'utente "<USER1>" censisce una virtual key per sè stesso
