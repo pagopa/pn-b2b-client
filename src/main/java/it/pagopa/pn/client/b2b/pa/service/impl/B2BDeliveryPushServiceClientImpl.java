@@ -1,8 +1,8 @@
 package it.pagopa.pn.client.b2b.pa.service.impl;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypush2b.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypush2b.api.LegalFactsApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypush2b.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IB2BDeliveryPushServiceClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

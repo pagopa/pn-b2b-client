@@ -134,28 +134,17 @@ public class PnWebMandateExternalClientImpl implements IPnWebMandateClient {
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
-
-        List<MandateDto> result = null;
-        SearchMandateResponseDto res = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        if (res!= null){
-            result = res.getResultsPage();
-        }
-        return result;
+        SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        return responseDto != null ? responseDto.getResultsPage() : null;
     }
 
     public List<MandateDto> searchMandatesByDelegateStatusFilter(String taxId,List<String> status, List<String> groups) throws RestClientException {
-
         SearchMandateRequestDto searchMandateRequestDto = new SearchMandateRequestDto();
         searchMandateRequestDto.setTaxId(taxId);
         searchMandateRequestDto.setGroups(groups);
         searchMandateRequestDto.setStatus(status);
-
-        List<MandateDto> result = null;
-        SearchMandateResponseDto res = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
-        if (res!= null){
-            result = res.getResultsPage();
-        }
-        return result;
+        SearchMandateResponseDto responseDto = mandateServiceApi.searchMandatesByDelegate(10, null, searchMandateRequestDto);
+        return responseDto != null ? responseDto.getResultsPage() : null;
     }
 
     public List<MandateDto> listMandatesByDelegator1() throws RestClientException {
