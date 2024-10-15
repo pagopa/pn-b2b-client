@@ -103,9 +103,9 @@ public class AvanzamentoNotificheB2bSteps {
                 .getValue().equals(status)
         );
 
-        PnPollingServiceStatusRapidV24 statusRapidV23 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+        PnPollingServiceStatusRapidV24 statusRapidV24 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V24);
 
-        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .pnPollingPredicate(pnPollingPredicate)
@@ -150,9 +150,9 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino allo stato della notifica {string} per il destinatario {int} e presente l'evento {string}")
     public void readingEventUpToTheStatusOfNotification(String status, int destinatario, String evento) {
-        PnPollingServiceStatusRapidV24 statusRapidV23 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+        PnPollingServiceStatusRapidV24 statusRapidV24 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V24);
 
-        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
@@ -1517,9 +1517,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void checksNotificationViewedStatus() {
         String status = NotificationStatus.VIEWED.getValue();
-        PnPollingServiceStatusRapidV24 statusRapidV23 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+        PnPollingServiceStatusRapidV24 statusRapidV24 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V24);
 
-        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
@@ -1536,9 +1536,9 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che la notifica non abbia lo stato {string}")
     public void checksNotificationNotHaveStatus(String status) {
         //AL MOMENTO NON ESISTE UNO SCENARIO CHE INTEGRA QUESTO STEP
-        PnPollingServiceStatusRapidV24 statusRapidV23 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V23);
+        PnPollingServiceStatusRapidV24 statusRapidV24 = (PnPollingServiceStatusRapidV24) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID_V24);
 
-        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingResponseV24 pnPollingResponseV24 = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
