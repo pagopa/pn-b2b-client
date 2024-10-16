@@ -16,6 +16,7 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -375,9 +376,9 @@ public class RicezioneNotificheWebSteps {
         }
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory = it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.AAR_GENERATION;
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement = null;
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement = null;
 
-        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 element : sharedSteps.getSentNotification().getTimeline()) {
             if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
                 timelineElement = element;
                 break;
@@ -477,7 +478,7 @@ public class RicezioneNotificheWebSteps {
         String end = data.getOrDefault("endDate", null);
 
 //        OffsetDateTime sentAt = sharedSteps.getSentNotification().getSentAt();
-        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV23::getSentAt).orElse(OffsetDateTime.now());
+        OffsetDateTime sentAt = Optional.ofNullable(sharedSteps.getSentNotification()).map(FullSentNotificationV24::getSentAt).orElse(OffsetDateTime.now());
         LocalDateTime localDateStart = LocalDate.parse(start, DateTimeFormatter.ofPattern("dd/MM/yyyy")).atStartOfDay();
         OffsetDateTime startDate = OffsetDateTime.of(localDateStart, sentAt.getOffset());
 
@@ -682,12 +683,12 @@ public class RicezioneNotificheWebSteps {
 
     @And("verifico che l'atto opponibile a terzi di {string} sia lo stesso")
     public void verificoAttoOpponibileSiaUguale(String timelineEventCategory, @Transpose DataTest dataFromTest) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // get new timeline
         String iun = sharedSteps.getSentNotification().getIun();
         sharedSteps.setSentNotification(b2bClient.getSentNotification(iun));
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 newTimelineElement =
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 newTimelineElement =
                 sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         // check legal fact key
         Assertions.assertEquals(Objects.requireNonNull(timelineElement.getLegalFactsIds()).size(), Objects.requireNonNull(newTimelineElement.getLegalFactsIds()).size());
@@ -960,7 +961,7 @@ public class RicezioneNotificheWebSteps {
 
         boolean isPresent = sharedSteps.getSentNotification().getTimeline()
                 .stream()
-                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23::getCategory)
+                .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24::getCategory)
                 .filter(Objects::nonNull)
                 .map(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23::toString)
                 .anyMatch(category -> category.equals(categoryToFind));

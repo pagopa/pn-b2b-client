@@ -7,7 +7,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.ApiClient;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NewNotificationApi;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.NotificationPriceV23Api;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.api.SenderReadB2BApi;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.CxTypeAuthFleet;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.NotificationProcessCostResponse;
@@ -16,6 +18,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -225,11 +228,15 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV23 getSentNotification(String iun) {
+    public FullSentNotificationV24 getSentNotification(String iun) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV24 resp;
+        resp = senderReadB2BApi.getSentNotificationV24(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
+        return deepCopy(resp, FullSentNotificationV24.class);
+    }
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV23 resp;
-        resp = senderReadB2BApi.getSentNotificationV23( operatorId, CxTypeAuthFleet.PA, paId, iun, groups );
-        return deepCopy( resp, FullSentNotificationV23.class );
+    @Override
+    public FullSentNotificationV23 getSentNotificationV23(String iun) {
+        throw new UnsupportedOperationException();
     }
 
     @Override

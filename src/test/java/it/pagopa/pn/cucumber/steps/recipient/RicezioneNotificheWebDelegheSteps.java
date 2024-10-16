@@ -7,7 +7,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
@@ -619,7 +619,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura riporti i dati di {string}")
     public void siVerificaCheLElementoDiTimelineDellaLetturaRiportiIDatiDi(String user) {
-        TimelineElementV23 timelineElement = getTimelineElementV23();
+        TimelineElementV24 timelineElement = getTimelineElementV23();
 
         String userTaxId = getTaxIdByUser(user);
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
@@ -631,7 +631,7 @@ public class RicezioneNotificheWebDelegheSteps {
 
     @And("si verifica che l'elemento di timeline della lettura non riporti i dati del delegato")
     public void siVerificaCheLElementoDiTimelineDellaLetturaNonRiportiIDatiDi() {
-        TimelineElementV23 timelineElement = getTimelineElementV23();
+        TimelineElementV24 timelineElement = getTimelineElementV23();
 
         System.out.println("TIMELINE ELEMENT: " + timelineElement);
         Assertions.assertNotNull(timelineElement);
@@ -639,7 +639,7 @@ public class RicezioneNotificheWebDelegheSteps {
         Assertions.assertNull(timelineElement.getDetails().getDelegateInfo());
     }
 
-    private TimelineElementV23 getTimelineElementV23() {
+    private TimelineElementV24 getTimelineElementV23() {
         try {
             await().atMost(sharedSteps.getWorkFlowWait() * 2, TimeUnit.MILLISECONDS);
         } catch (RuntimeException exception) {
