@@ -51,7 +51,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    And si controlla che l'aggiornamento del costo del utente 0 sia corretto
     And l'avviso pagopa viene pagato correttamente
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PAYMENT" e successivamente annullata
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
@@ -71,7 +71,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_6_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato “REQUEST_REFUSED“
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
@@ -116,7 +116,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And viene aggiunto il costo della notifica totale
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    And si controlla che l'aggiornamento del costo del utente 0 sia corretto
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     Then la notifica può essere annullata dal sistema tramite codice IUN
     When vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
@@ -203,11 +203,10 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
-    And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     Then viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del pagamento 0
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
     And viene cancellata la posizione debitoria del pagamento 0
 
   @Async
@@ -230,7 +229,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    And si controlla che l'aggiornamento del costo del utente 0 sia corretto
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @Async
@@ -243,24 +242,24 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
       | pagoPaIntMode      | ASYNC                       |
       | paFee              | 10                          |
     And destinatario Mario Gherkin e:
-      | digitalDomicile         | NULL                  |
-      | physicalAddress_address | Via@FAIL-Discovery_AR |
-      | payment_creditorTaxId   | 77777777777           |
-      | payment_pagoPaForm      | SI                    |
-      | payment_f24             | NULL                  |
-      | apply_cost_pagopa       | SI                    |
-      | payment_multy_number    | 1                     |
+      | digitalDomicile         | NULL                 |
+      | physicalAddress_address | Via@ok_890           |
+      | payment_creditorTaxId   | 77777777777          |
+      | payment_pagoPaForm      | SI                   |
+      | payment_f24             | PAYMENT_F24_STANDARD |
+      | apply_cost_pagopa       | SI                   |
+      | apply_cost_f24          | SI                   |
+      | payment_multy_number    | 1                    |
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_0"
+    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @Async
@@ -283,21 +282,19 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_0"
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 0        |
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_DOMICILE" al tentativo "ATTEMPT_1"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" al tentativo "ATTEMPT_1"
     Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_ANALOG_DOMICILE" del utente 0 al tentativo:
       | details                 | NOT_NULL |
       | details_recIndex        | 0        |
       | details_sentAttemptMade | 1        |
-    Then viene cancellata la posizione debitoria di "Mario Gherkin"
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
+    And viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @Async
   Scenario: [B2B_ASYNC_15_PF] Notifica mono PF-Verifica amount GPD per notifica ASYNC in stato "SEND_SIMPLE_REGISTERED_LETTER"
@@ -318,11 +315,10 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" per la posizione debitoria 0 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
-    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
   @Async
@@ -344,11 +340,10 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     And viene aggiunto il costo della notifica totale
-    Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
     When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
     Then viene cancellata la posizione debitoria di "Mario Gherkin"
 
 
@@ -373,7 +368,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
     Then lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
+    And si controlla che l'aggiornamento del costo del utente 0 sia corretto
     And  viene cancellata la posizione debitoria di "Mario Gherkin"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
 
@@ -395,7 +390,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Mario Gherkin" alla posizione 0
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
+    When vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS"
     #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     Then viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline
     And viene cancellata la posizione debitoria di "Mario Gherkin"
@@ -416,7 +411,7 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED "V1"
     Then si verifica lo scarto dell' acquisizione della notifica V1
 
-  @Async
+  @Async @refused
   Scenario: [B2B_ASYNC_2_MULTI] Notifica multi PF/PG-Verifica amount GPD in fase "REQUEST_REFUSED" costo aggiornato a 0
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Gherkin Analogic" con Piva "05722930657"
@@ -568,20 +563,18 @@ Feature: avanzamento notifiche asincrone b2b PF - controllo costi
     And al destinatario viene associato lo iuv creato mediante partita debitoria per "Gherkin Analogic" per la posizione debitoria 1 del pagamento 0
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED per controllo GPD
     Then viene aggiunto il costo della notifica totale
-    Then  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 0
-    Then  lettura amount posizione debitoria per la notifica corrente di "Gherkin Analogic"
-    And viene effettuato il controllo dell'aggiornamento del costo totale del utente 1
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
-    And  lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" per l'utente 0
+    And lettura amount posizione debitoria per la notifica corrente di "Mario Gherkin"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 0 :
       | details          | NOT_NULL |
       | details_recIndex | 0        |
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 1
+    Then si controlla che l'aggiornamento del costo del utente 0 sia corretto
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" per l'utente 1
     And  lettura amount posizione debitoria per la notifica corrente di "Gherkin Analogic"
     And viene effettuato il controllo del cambiamento del amount nella timeline "SEND_SIMPLE_REGISTERED_LETTER" del utente 1 :
       | details          | NOT_NULL |
       | details_recIndex | 1        |
+    Then si controlla che l'aggiornamento del costo del utente 1 sia corretto
     Then vengono cancellate le posizioni debitorie
 
 

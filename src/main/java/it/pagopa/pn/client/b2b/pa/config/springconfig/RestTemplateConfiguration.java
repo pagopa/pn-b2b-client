@@ -7,6 +7,7 @@ import org.slf4j.MDC;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
@@ -24,9 +25,10 @@ public class RestTemplateConfiguration {
 
     public static final String CUCUMBER_SCENARIO_NAME_MDC_ENTRY = "cucumber_scenario_name";
 
-    @Bean
+    @Bean(name = "customRestTemplate")
+    @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public RestTemplate restTemplate() {
+    public RestTemplate customRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
         requestFactory.setConnectTimeout(990_000);
@@ -41,6 +43,14 @@ public class RestTemplateConfiguration {
         return restTemplate;
     }
 
+    @Bean(name = "defaultRestTemplate")
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    public RestTemplate defaultRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.getInterceptors().add(new RequestAndTraceIdInterceptor());
+
+        return restTemplate;
+    }
 
     private static class RequestAndTraceIdInterceptor implements ClientHttpRequestInterceptor {
 

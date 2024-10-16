@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static it.pagopa.pn.cucumber.utils.RaddAltValue.*;
 
@@ -55,23 +56,20 @@ public class DataTableTypeRaddAlt {
 
 
 
-    public synchronized List<CreateRegistryRequest> convertToListRegistryRequestData(List<Map<String, String>> dataCsv) {
+    public synchronized List<CreateRegistryRequest> convertToListRegistryRequestData(List<Map<String, String>> dataCsv, List<Address> addresses) {
 
         List<CreateRegistryRequest> listaSportelli=new ArrayList<>();
 
         for (Map<String, String>data:dataCsv) {
+            String raddPhoneNumber = getValue(data,RADD_PHONE_NUMBER.key);
+            String raddDescription = getValue(data,RADD_DESCRIPTION.key);
 
         CreateRegistryRequest sportelloRadd= new CreateRegistryRequest()
-                .address(getValue(data,ADDRESS_RADD.key)==null?null:
-                        new Address()
-                                .addressRow(getValue(data,ADDRESS_RADD_ROW.key)==null? null:
-                                        getValue(data,ADDRESS_RADD_ROW.key).equalsIgnoreCase("random")? generateRandomNumber() : getValue(data,ADDRESS_RADD_ROW.key))
-                                .cap(getValue(data,ADDRESS_RADD_CAP.key)==null? null: getValue(data,ADDRESS_RADD_CAP.key))
-                                .city(getValue(data,ADDRESS_RADD_CITY.key)==null? null: getValue(data,ADDRESS_RADD_CITY.key))
-                                .pr(getValue(data,ADDRESS_RADD_PROVINCE.key)==null? null: getValue(data,ADDRESS_RADD_PROVINCE.key))
-                                .country(getValue(data,ADDRESS_RADD_COUNTRY.key)==null? null: getValue(data,ADDRESS_RADD_COUNTRY.key)))
-                .description(getValue(data,RADD_DESCRIPTION.key)==null? null: getValue(data,RADD_DESCRIPTION.key))
-                .phoneNumber(getValue(data,RADD_PHONE_NUMBER.key)==null? null:getValue(data,RADD_PHONE_NUMBER.key))
+                .address(getAddress(data, addresses))
+                .description(raddDescription != null && !raddDescription.equalsIgnoreCase("null") ?
+                        raddDescription : null)
+                .phoneNumber(raddPhoneNumber != null && !raddPhoneNumber.equalsIgnoreCase("null") ?
+                        raddPhoneNumber : null)
                 .geoLocation(getValue(data,RADD_GEO_LOCATION.key)==null? null: new GeoLocation()
                         .latitude(getValue(data,RADD_GEO_LOCATION_LATITUDINE.key)==null? null:getValue(data,RADD_GEO_LOCATION_LATITUDINE.key))
                         .longitude(getValue(data,RADD_GEO_LOCATION_LONGITUDINE.key)==null? null:getValue(data,RADD_GEO_LOCATION_LONGITUDINE.key)))
@@ -94,7 +92,23 @@ public class DataTableTypeRaddAlt {
 
         return listaSportelli;
     }
-    
+
+    private static Address getAddress(Map<String, String> data, List<Address> addresses) {
+        return Optional.ofNullable(getValue(data, ADDRESS_RADD.key))
+            .map(value -> {
+                Address address = new Address()
+                    .addressRow(getValue(data, ADDRESS_RADD_ROW.key) == null ? null :
+                            getValue(data, ADDRESS_RADD_ROW.key).equalsIgnoreCase("random") ? generateRandomNumber() : getValue(data, ADDRESS_RADD_ROW.key))
+                    .cap(getValue(data, ADDRESS_RADD_CAP.key) == null ? null : getValue(data, ADDRESS_RADD_CAP.key))
+                    .city(getValue(data, ADDRESS_RADD_CITY.key) == null ? null : getValue(data, ADDRESS_RADD_CITY.key))
+                    .pr(getValue(data, ADDRESS_RADD_PROVINCE.key) == null ? null : getValue(data, ADDRESS_RADD_PROVINCE.key))
+                    .country(getValue(data, ADDRESS_RADD_COUNTRY.key) == null ? null : getValue(data, ADDRESS_RADD_COUNTRY.key));
+                if (addresses != null) addresses.add(address);
+                return address;
+            })
+            .orElse(null);
+    }
+
     @DataTableType
     public synchronized UpdateRegistryRequest convertUpdateRegistryRequest(Map<String, String> data){
         UpdateRegistryRequest sportelloAggiornatoRadd= new UpdateRegistryRequest()

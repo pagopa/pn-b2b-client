@@ -2,6 +2,8 @@ package it.pagopa.pn.client.b2b.pa.service.impl;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -72,6 +74,8 @@ public class PnExternalServiceClientImpl {
 
     private final InteropTokenSingleton interopTokenSingleton;
 
+    private final String consolidatoreApiKey;
+
     public PnExternalServiceClientImpl(
             RestTemplate restTemplate,
             InteropTokenSingleton interopTokenSingleton,
@@ -91,7 +95,8 @@ public class PnExternalServiceClientImpl {
             @Value("${pn.dataVault.base-url}") String dataVaultBasePath,
             @Value("${pn.OpenSearch.base-url}") String openSearchBaseUrl,
             @Value("${pn.OpenSearch.username}") String openSearchUsername,
-            @Value("${pn.OpenSearch.password}") String openSearchPassword
+            @Value("${pn.OpenSearch.password}") String openSearchPassword,
+            @Value("${pn.consolidatore.api.key}") String consolidatoreApiKey
     ) {
         this.restTemplate = restTemplate;
         this.safeStorageBasePath = safeStorageBasePath;
@@ -116,6 +121,7 @@ public class PnExternalServiceClientImpl {
         this.openSearchBaseUrl = openSearchBaseUrl;
         this.openSearchUsername = openSearchUsername;
         this.openSearchPassword = openSearchPassword;
+        this.consolidatoreApiKey = consolidatoreApiKey;
 
     }
 
@@ -624,6 +630,45 @@ public class PnExternalServiceClientImpl {
         return queryBuilder.toString();
 
     }
+
+    private ResponseEntity<String> pushConsolidatoreNotificationWithHttpInfo(
+            Map<String, String> mapInfo) {
+        Object postBody = null;
+        List<Map<String, String>> requestList = new ArrayList<>();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            requestList.add(mapInfo);
+            postBody = objectMapper.writeValueAsString(requestList);
+        } catch (JsonProcessingException exception) {
+            log.error("Error during parse Json", exception.getMessage());
+        }
+
+        final Map<String, Object> uriVariables = new HashMap<>();
+
+        final HttpHeaders headerParams = new HttpHeaders();
+        headerParams.add("x-pagopa-extch-service-id", "pn-cons-000");
+        headerParams.add("x-api-key", consolidatoreApiKey);
+
+        final String[] localVarAccepts = {
+                "application/json", "application/problem+json"
+        };
+        final List<MediaType> localVarAccept = MediaType.parseMediaTypes(
+                StringUtils.arrayToCommaDelimitedString(localVarAccepts));
+        final MediaType localVarContentType = MediaType.APPLICATION_JSON;
+
+        ParameterizedTypeReference<String> returnType = new ParameterizedTypeReference<>() {
+        };
+
+        return invokeAPI(dataVaultBasePath,
+                "/consolidatore-ingress/v1/push-progress-events/",
+                HttpMethod.PUT, uriVariables, null, postBody,
+                headerParams, localVarAccept, localVarContentType, returnType);
+    }
+
+    public String pushConsolidatoreNotification(Map<String, String> mapInfo) {
+        return pushConsolidatoreNotificationWithHttpInfo(mapInfo).getBody();
+    }
+
     //OPEN SEARCH RESPONSE
     @Getter
     @Setter

@@ -498,11 +498,11 @@ Feature: Digital send e2e
     And viene verificato che l'elemento di timeline "SCHEDULE_REFINEMENT" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
-And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
-  | details | NOT_NULL |
-  | details_recIndex | 0 |
-  | details_digitalAddressSource | PLATFORM |
-  | details_sentAttemptMade | 1 |
+    And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGITAL_FAILURE_WORKFLOW"
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_digitalAddressSource | PLATFORM |
+      | details_sentAttemptMade | 1 |
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" esista
       | details                 | NOT_NULL                                                                                                                                                                                  |
       | details_recIndex        | 0                                                                                                                                                                                         |
@@ -1333,5 +1333,3 @@ And viene schedulato il perfezionamento per decorrenza termini per il caso "DIGI
     And viene effettuato un controllo sulla durata della retention di "ATTACHMENTS" per l'elemento di timeline "REFINEMENT"
       | details | NOT_NULL |
       | details_recIndex | 0 |
-
-

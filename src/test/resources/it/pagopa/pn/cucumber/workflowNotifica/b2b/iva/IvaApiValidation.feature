@@ -1,7 +1,7 @@
-Feature: Validazione campi per feature partitaIva
+Feature: Validazione campi per feature calcoloIva
 
-  @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_1] Invio notifica 890 DELIVERY_MODE SYNC campi obligatori a null controllo riccezione errore
+  @calcoloIva
+  Scenario Outline: [CALCOLO-IVA_VALIDATION_1] Invio notifica 890 DELIVERY_MODE SYNC campi obligatori a null controllo riccezione errore
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -19,8 +19,8 @@ Examples:
   | 10   | NULL  |
 
 
-  @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_2] Invio notifica 890 DELIVERY_MODE con vat a null controllo riccezione errore
+  @calcoloIva
+  Scenario Outline: [CALCOLO-IVA_VALIDATION_2] Invio notifica 890 DELIVERY_MODE con vat a null controllo riccezione errore
     Given viene creata una nuova richiesta per istanziare una nuova posizione debitoria per l'ente creditore "77777777777" e amount "100" per "Mario Gherkin" con CF "CLMCST42R12D969Z"
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -46,8 +46,8 @@ Examples:
       | NULL | 10    |
       | 10   | NULL  |
 
-  @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_3] Invio notifica 890 SYNC con 1 F24 con vat a null controllo riccezione errore
+  @calcoloIva
+  Scenario Outline: [CALCOLO-IVA_VALIDATION_3] Invio notifica 890 SYNC con 1 F24 con vat a null controllo riccezione errore
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | Comune di milano            |
@@ -69,8 +69,8 @@ Examples:
       | NULL | 10    |
       | 10   | NULL  |
 
-  @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_4] Invio notifica 890 DELIVERY_MODE SYNC con controllo max e min campo vat
+  @calcoloIva
+  Scenario Outline: [CALCOLO-IVA_VALIDATION_4] Invio notifica 890 DELIVERY_MODE SYNC con controllo max e min campo vat
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
@@ -86,8 +86,8 @@ Examples:
       | -10 |
       | 101 |
 
-  @partitaIva
-  Scenario Outline: [PARTITA-IVA_VALIDATION_5] Invio notifica 890 DELIVERY_MODE SYNC con controllo max e min campo paFee
+  @calcoloIva
+  Scenario Outline: [CALCOLO-IVA_VALIDATION_5] Invio notifica 890 DELIVERY_MODE SYNC con controllo max e min campo paFee
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |

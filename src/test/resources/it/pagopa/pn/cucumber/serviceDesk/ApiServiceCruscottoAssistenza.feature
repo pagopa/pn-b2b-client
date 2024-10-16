@@ -23,8 +23,8 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID                            | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | CPNTMS85T15H703WCPNTMS85T15H703W! | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | ERRATO | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]
 
   @cruscottoAssistenza
@@ -63,8 +63,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 10               | NULL                 | 2023-10-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
     #Response 200 OK
 
   @cruscottoAssistenza
@@ -74,7 +74,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID      | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | CucumberSpa | PG             | 10               | NULL                 | 2023-10-01 | 2023-12-01 |
+      | CucumberSpa | PG             | 10               | NULL                 | 2024-01-01 | 2024-08-30 |
 
   @cruscottoAssistenza
   Scenario Outline: [API-SERVICE-CA_CE02.2_9] Invocazione del servizio con taxId e recipientType corretti e  1 <searchPageSize> 50
@@ -82,8 +82,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-10-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 1                | NULL                 | 2024-01-01 | 2024-08-30 |
     #Response 200 OK
 
 
@@ -113,8 +113,8 @@ Feature: Api Service Cruscotto Assitenza
     Then Il servizio risponde correttamente
 
     Examples:
-      | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 50               | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID         | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | Mario Cucumber | PF             | 50               | NULL                 | 2024-01-01 | 2024-08-30 |
       #Response 200 OK
 
   @cruscottoAssistenza
@@ -166,7 +166,7 @@ Feature: Api Service Cruscotto Assitenza
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | 1                | NULL                 | 2023-01-01 | 2023-12-01 |
+      | Mario Cucumber | PF             | 1                | NULL                 |  2024-01-01 | 2024-08-30 |
 
 
    #CE02.3 Come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche
@@ -197,8 +197,8 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID                            | RECIPIENT_TYPE |
-      | CPNTMS85T15H703WCPNTMS85T15H703W! | PF             |
+      | TAXIID | RECIPIENT_TYPE |
+      | ERRATO | PF             |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 0 and 32"}]
 
   @cruscottoAssistenza
@@ -207,8 +207,8 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID                                | RECIPIENT_TYPE |
-      | 1234567899999999999999999999999999999 | pg             |
+      | TAXIID | RECIPIENT_TYPE |
+      | ERRATO | PG             |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 0 and 32"}]
 
   @cruscottoAssistenza
@@ -287,8 +287,8 @@ Feature: Api Service Cruscotto Assitenza
     Then il servizio risponde con errore "400"
 
     Examples:
-      | TAXIID                            | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | CPNTMS85T15H703WCPNTMS85T15H703W! | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
+      | TAXIID | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
+      | ERRATO | PF             | NULL             | NULL                 | 2023-01-01 | 2023-12-01 |
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]}
 
   @cruscottoAssistenza
@@ -415,7 +415,7 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_44] Invocazione del servizio con taxId valorizzato ma IUN inesistente
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CLMCST42R12D969Z" e iun "JRDT-ZAPH-JQYW-202312-J-1"
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "Mario Gherkin" e iun "JRDT-ZAPH-JQYW-202312-J-1"
     And il servizio risponde con errore "404"
 
     Examples:
@@ -451,7 +451,7 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_47] Invocazione del servizio con IUN corretto ma taxId non formalmente corretto
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-    And invocazione servizio per recupero dettaglio timeline notifica con taxId "CPNTMS85T15H703WCPNTMS85T15H703W!" e iun ""
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "ERRATO" e iun ""
     And il servizio risponde con errore "400"
 
     Examples:
@@ -463,7 +463,7 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.6_48] Invocazione del servizio con IUN corretto ma taxId non corrispondente al destinatario della notifica
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     Then Il servizio risponde correttamente
-    And invocazione servizio per recupero dettaglio timeline notifica con taxId "FRMTTR76M06B715E" e iun ""
+    And invocazione servizio per recupero dettaglio timeline notifica con taxId "Mario Cucumber" e iun ""
     And il servizio risponde con errore "404"
 
     Examples:
@@ -568,7 +568,7 @@ Feature: Api Service Cruscotto Assitenza
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "CPNTMS85T15H703WCPNTMS85T15H703W!" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "ERRATO" e iun "JRDT-XAPH-JQYW-202312-J-1" per il  destinatario 0
     And il servizio risponde con errore "400"
     #errors":[{"code":"PN_GENERIC_INVALIDPARAMETER","element":"taxId","detail":"size must be between 11 and 32"}]}
 
@@ -581,7 +581,7 @@ Feature: Api Service Cruscotto Assitenza
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
-    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "LVLDAA85T50G702B" e iun "NO_SET" per il  destinatario 0
+    Then invocazione servizio per recupero dettaglio timeline notifica multidestinatario con taxId "ADA" e iun "NO_SET" per il  destinatario 0
     And il servizio risponde con errore "404"
     #Response 404 NOT_FOUND
 
@@ -694,11 +694,11 @@ Feature: Api Service Cruscotto Assitenza
   Scenario Outline: [API-SERVICE-CA_CE02.8_61] Invocazione del servizio con IUN esistente (notifica emessa > 120 gg) e verifica risposta
     Given come operatore devo accedere all’elenco delle notifiche ricevute da un utente di Piattaforma Notifiche con taxId "<TAXIID>" recipientType  "<RECIPIENT_TYPE>" e con searchPageSize "<SEARCH_PAGE_SIZE>" searchNextPagesKey "<SEARCH_NEXT_PAGE_KEY>" startDate "<START_DATE>" endDate "<END_DATE>"
     And come operatore devo effettuare un check sulla disponibilità , validità e dimensione degli allegati con IUN "NO_SET" e taxId "<TAXIID>"  recipientType  "<RECIPIENT_TYPE>"
-    Then il servizio risponde con errore "400"
+    Then il servizio risponde con errore "410"
 
     Examples:
       | TAXIID        | RECIPIENT_TYPE | SEARCH_PAGE_SIZE | SEARCH_NEXT_PAGE_KEY | START_DATE | END_DATE   |
-      | Mario Gherkin | PF             | NULL             | NULL                 | 2023-01-01 | 2023-05-01 |
+      | Mario Gherkin | PF             | NULL             | NULL                 | 2024-04-01 | 2024-04-30 |
     #Errore: 400 BAD_REQUEST 400 Bad Request: [{"type":null,"status":400,"title":"ERROR_ON_DELIVERY_CLIENT","detail":"See logs for details in PN-SERVICE-DESK","traceId":"Root=1-6585bfef-39e3629554030a8d73dcf647","timestamp":"2023-12-22T16:57:19.95458306Z","errors":[]}] null
 
 
@@ -749,9 +749,6 @@ Feature: Api Service Cruscotto Assitenza
       | IUN    | TAXIID        | RECIPIENT_TYPE |
       | NO_SET | Mario Gherkin | PG             |
     #Response 404 NOT_FOUND
-
-
-
 
 
   #CE02.11 Come operatore devo accedere alla lista di tutte le notifiche depositate da un ente (mittente) su Piattaforma Notifiche in un range temporale
@@ -975,4 +972,14 @@ Feature: Api Service Cruscotto Assitenza
   # AUD_CA_VIEW_AK (visualizzazione lista api key)
   # AUD_CA_VIEW_ONBOARDING (visualizzazione lista delle PA onboardate)
   # AUD_CA_DOC_AVAILABLE (disponibilità documenti della notifica)
+
+  @ServiceDeskRefinement @cruscottoAssistenza
+  Scenario: [SERVICE_DESK_TIMELINE_REFINEMENT_1] verifica presenza elemento REFINEMENT nella response di service desk
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
+    And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
 

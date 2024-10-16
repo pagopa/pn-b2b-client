@@ -1,6 +1,118 @@
 Feature: address validation feature
 
 
+  @VerificaTestNormalizzatore
+  Scenario Outline: [B2B_ADDRESS_VALIDATION_NEW] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo (DA VERIFICARE)
+    Given viene generata una nuova notifica
+      | subject | invio notifica con cucumber |
+      | senderDenomination | Comune di milano |
+    And destinatario
+      | denomination | <denomination> |
+      |    taxId     | CLMCST42R12D969Z |
+      | physicalAddress_address | <address> |
+      | at | <at> |
+      | physicalAddress_addressDetails | <addressDetails> |
+      | physicalAddress_zip | <zip> |
+      | physicalAddress_municipality | <municipality> |
+      | physicalAddress_municipalityDetails | <municipalityDetails> |
+      | physicalAddress_province | <province> |
+      | physicalAddress_State | <foreignState> |
+    Then la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi <notificationValidationStatus>
+    Examples:
+      | denomination           | at              | address                              | addressDetails | zip   | municipality | municipalityDetails | province  | foreignState  | notificationValidationStatus  |
+      | TEST_NORMALIZZATORE_01 |NULL            | VIA MICHELANGELO SIGNORILE 2/D        |NULL            | 70121 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_02 |NULL            | VIALE DELLE REGIONI 27/M              |NULL            | 70123 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_03 |NULL            | VIA ADIGE 21                          |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_04 |NULL            | PIAZZA ENRICO DE NICOLA SNC           |NULL            | 70123 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_05 |NULL            | VIALE EUROPA 58                       |NULL            | 98123 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_06 |NULL            | CORSO UMBERTO 185                     |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_07 |NULL            | VIA DE ROSSI 131                      |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_08 |NULL            | CORSO ITALIA 140                      |NULL            | 70123 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_09 |NULL            | VIA MARCO PARTIPILO 4                 |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_10 |NULL            | VIA SALVATORE MATARRESE 30            |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_11 |NULL            | VIA GIOVANNI XXIII 249                |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_12 |NULL            | VIA GIOVANNI MODUGNO PAL. B3          |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_13 |NULL            | VIA NICOLA TRIDENTE 2/BIS             |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_14 |NULL            | VIA LORENZO D'AGOSTINO 1/B            |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_15 |NULL            | VIALE LUIGI EINAUDI 31                |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_16 |NULL            | VIA NICOLA TRIDENTE 2/A               |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_17 |NULL            | VIA MONSIGNOR DOMENICO MOREA 92       |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_18 |NULL            | VIA MAGNA GRECIA 51                   |NULL            | 70126 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_19 |NULL            | VIA PAPALIA 1                         |NULL            | 70126 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_20 |NULL            | VIA MADDALENA 108 PIANO 1 SC. B       |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_21 |NULL            | PIAZZALE STAZIONE MARITTIMA FER       |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_22 |NULL            | TALSANO - CORSO VITTORIO EMANUE       |NULL            | 74122 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_23 |NULL            | PIAZZA ALDO MORO 56                   |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_24 |NULL            | VIA GIULIO PETRONI 25                 |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_25 |NULL            | VIA GAETANO DEVITOFRANCESCO 2N5       |NULL            | 70126 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_26 |NULL            | VIA VITO ROSA 17                      |NULL            | 70127 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_27 |NULL            | VIA TOMMASO TAXO 2                    |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_28 |NULL            | VIA BARBALONGA 1                      |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_29 |NULL            | S.S.114 P.1 SC.A CONTESSE KM.3,5      |NULL            | 98125 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_30 |NULL            | VIA DEL CARMINE 43                    |NULL            | 98125 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_31 |NULL            | VIA PRINCIPE AMEDEO 275               |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_32 |NULL            | VIA ORAZIO QUINTO FLACCO 24           |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_33 |NULL            | VIA LUIGI CAGNOLA 7                   |NULL            | 74122 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_34 |NULL            | VIA NITTI 2                           |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_35 |NULL            | VIA BOTTALICO 1                       |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_36 |NULL            | VIA N. PICCINNI 233                   |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_37 |NULL            | VIA BOTTALICO 40C                     |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_38 |NULL            | VIA MANZONI 141                       |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_39 |NULL            | VIA LUCARELLI 62D                     |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_40 |NULL            | CORSO MAZZINI 121                     |NULL            | 70123 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_41 |NULL            | VIA FIUME 2                           |NULL            | 70127 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_42 |NULL            | VIA GARIBALDI 258                     |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_43 |NULL            | VIA NATOLI IS. 91 84D                 |NULL            | 98123 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_44 |NULL            | VIA ATTILIO GASPARRO 18               |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_45 |NULL            | VIA ROMAGNOSI 2                       |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_46 |NULL            | SS. ANNUNZIATA 17                     |NULL            | 98158 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_47 |NULL            | VIA MAZZINI 182                       |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_48 |NULL            | VIA CACACE PRESSO IL MIO MERCATO SNC  |NULL            | 74122 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_49 |NULL            | VIA TOMMASO D'AQUINO 75               |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_50 |NULL            | VIA DUOMO 185                         |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_51 |NULL            | VIA P. AMEDEO 176                     |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_52 |NULL            | PIAZZA CADUTI DEL LAVORO 10           |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_53 |NULL            | CORSO ALCIDE DE GASPERI, 226          |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_54 |NULL            | PIAZZA GARIBALDI 27                   |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_55 |NULL            | VIA MESSENAPE 16                      |NULL            | 70123 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_56 |NULL            | CORSO A. DE GASPERI 270               |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_57 |NULL            | VIA DIVISIONE PARACADUTISTI FOLGORE 5 |NULL            | 70125 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_58 |NULL            | VIA R. DICILLO 67B                    |NULL            | 70131 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_59 |NULL            | VIA SANTI CIRILLO E METODIO 1         |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_60 |NULL            | VIA D. CIRILLO 73                     |NULL            | 70126 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_61 |NULL            | VIALE MAGNA GRECIA PAL. H/2           |NULL            | 70126 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_62 |NULL            | VIA A. MANZONI 65                     |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_63 |NULL            | SS 114 KM 3500 CONTESSE SNC           |NULL            | 98125 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_64 |NULL            | VIALE SAN MARTINO 146                 |NULL            | 98123 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_65 |NULL            | VIA CALABRIA 1                        |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_66 |NULL            | VIA GIACOMO MINUTOLI BORDONARO 11     |NULL            | 98145 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_67 |NULL            | VIALE GIOSTRA 16-17                   |NULL            | 98152 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_68 |NULL            | VIA PLATEJA 55/05                     |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_69 |NULL            | VIA SALINA PICCOLA10                  |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_70 |NULL            | PIAZZA TEDESCO 2                      |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_71 |NULL            | VIA DARIO LUPO 48                     |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_72 |NULL            | VIA PUPINO 72A                        |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_73 |NULL            | VIA SALVO D'ACQUISTO 24               |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_74 |NULL            | VIA REGINA ELENA 131                  |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_75 |NULL            | VIA CAMPANIA 148                      |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_76 |NULL            | VIA MONFALCONE 14                     |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_77 |NULL            | PIAZZA DANTE 2                        |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_78 |NULL            | VIA UMBERTO I 1 ANG.D.SAVINO          |NULL            | 74122 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_79 |NULL            | VIA MANNARINI 20                      |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_80 |NULL            | VIA UMBRIA 75                         |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_81 |NULL            | PIAZZA BETTOLO 1/C                    |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_82 |NULL            | VIA MARIA CRISTINA DI SAVOIA 4        |NULL            | 70124 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_83 |NULL            | VIA A.M. CALEFATI 6                   |NULL            | 70121 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_84 |NULL            | VIA CATANIA 493                       |NULL            | 98124 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_85 |NULL            | VIA G. BRUNO 116                      |NULL            | 98123 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_86 |NULL            | VIA BARBALONGA 378/B                  |NULL            | 98122 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_87 |NULL            | VIA NOVIZIATO CASAZZA 98              |NULL            | 98124 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_88 |NULL            | VIA DUCA DEGLI ABRUZZI 30             |NULL            | 74123 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_89 |NULL            | VIA QUINTINO SELLA 218                |NULL            | 70122 | BARI         |NULL                 | BA        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_90 |NULL            | VIA SAN GIOVANNI BOSCO 30             |NULL            | 98125 | MESSINA      |NULL                 | ME        | italia        | ACCEPTED                      |
+      | TEST_NORMALIZZATORE_91 |NULL            | VIA OVIDIO 22                         |NULL            | 74121 | TARANTO      |NULL                 | TA        | italia        | ACCEPTED                      |
+
+
 
   Scenario Outline: [B2B_ADDRESS_VALIDATION] Invio notifica digitale ed attesa stato ACCEPTED_scenario positivo
     Given viene generata una nuova notifica
@@ -266,5 +378,3 @@ Feature: address validation feature
       | TEST_NORMALIZZATORE_14 | NULL | COMMESSAGGIO                                          | NULL           | 46018  | COMMESSAGGIO                  | NULL                | MN       | ita                      | REFUSED                      |
       | TEST_NORMALIZZATORE_15 | NULL | strada belmonte                                       | NULL           | NULL   | MONTEGIARDINO                 | NULL                | RM       | REPUBBLICA DI SAN MARINO | REFUSED                      |
       | TEST_NORMALIZZATORE_16 | NULL | 0                                                     | NULL           | 00185  | ROMA                          | NULL                | RM       | ITALIA                   | HTTP_ERROR                   |
-
-

@@ -94,13 +94,13 @@ public class PnPollingServiceWebhookV20 extends PnPollingTemplate<PnPollingRespo
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true,false);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value)  {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true,false);
         return timingResult.numCheck();
     }
 

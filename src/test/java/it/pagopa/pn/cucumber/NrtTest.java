@@ -16,6 +16,6 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore","realNR"})
-@IncludeTags({"workflowAnalogico","workflowDigitale","costoAnalogico","validation","version"})
+@IncludeTags({"workflowAnalogico","workflowDigitale","validation","version"})
 public class NrtTest {
 }

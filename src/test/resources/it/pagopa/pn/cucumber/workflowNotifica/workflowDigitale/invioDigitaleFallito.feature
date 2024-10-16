@@ -1,7 +1,7 @@
-Feature: avanzamento b2b notifica difgitale fallito
+Feature: avanzamento b2b notifica digitale fallito
 
      @workflowDigitale
-     #B2B_TIMELINE_16
+     #[B2B_TIMELINE_16], [B2B_TIMELINE_17], [B2B_TIMELINE_DIGITAL_FAILURE_2]
      Scenario: [B2B_TIMELINE_DIGITAL_FAILURE_1] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_CALL_scenario positivo
           Given viene generata una nuova notifica
                | subject | invio notifica con cucumber |
@@ -9,21 +9,11 @@ Feature: avanzamento b2b notifica difgitale fallito
           And destinatario Mario Cucumber e:
                | digitalDomicile_address | test@fail.it |
           When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-          Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-
-
-     @workflowDigitale
-     #[B2B_TIMELINE_17]
-     Scenario: [B2B_TIMELINE_DIGITAL_FAILURE_2] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
-          Given viene generata una nuova notifica
-               | subject | invio notifica con cucumber |
-               | senderDenomination | Comune di milano |
-          And destinatario Mario Cucumber e:
-               | digitalDomicile_address | test@fail.it |
-          When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
           Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+          And gli eventi di timeline ricevuti sono i seguenti
+               | PUBLIC_REGISTRY_CALL |
 
-     @svil @workflowDigitale
+     @svil
      #[B2B_TIMELINE_19]
      Scenario: [B2B_TIMELINE_DIGITAL_FAILURE_3] Invio notifica digitale ed attesa elemento di timeline SEND_DIGITAL_FEEDBACK e controllo campi deliveryDetailCode e deliveryFailureCause positivo
           Given viene generata una nuova notifica
@@ -58,7 +48,6 @@ Feature: avanzamento b2b notifica difgitale fallito
                | digitalDomicile | NULL |
           When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
           Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_ANALOG_WORKFLOW"
-
 
      @svil
      #[B2B_TIMELINE_PG_15]

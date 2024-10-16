@@ -9,7 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.util.*;
+
+import java.util.List;
 
 
 @Slf4j
@@ -19,15 +20,18 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
     private final RestTemplate restTemplate;
     private final String extChannelsBasePath;
     private final String dataVaultBasePath;
+    private final String baseUrlMockConsolidatore;
     private final MockReceivedMessagesApi mockReceivedMessagesApi;
 
     public PnExternalChannelsServiceClientImpl(
             RestTemplate restTemplate,
+            @Value("${pn.safeStorage.base-url}") String baseUrlMockConsolidatore,
             @Value("${pn.externalChannels.base-url}") String extChannelsBasePath,
             @Value("${pn.dataVault.base-url}") String dataVaultBasePath
     )
     {
         this.restTemplate = restTemplate;
+        this.baseUrlMockConsolidatore = baseUrlMockConsolidatore;
         this.extChannelsBasePath = extChannelsBasePath;
         this.dataVaultBasePath = dataVaultBasePath;
         this.mockReceivedMessagesApi = new MockReceivedMessagesApi( newApiClient( restTemplate, extChannelsBasePath) );
@@ -47,10 +51,20 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
         return this.mockReceivedMessagesApi.getReceivedMessages(iun, recipientIndex);
     }
 
-    public void switchBasePath(String basePath){
-        switch (basePath.toLowerCase()){
-            case "data vault" ->this.mockReceivedMessagesApi.setApiClient(newApiClient( restTemplate, dataVaultBasePath) );
-            case "external channel" ->this.mockReceivedMessagesApi.setApiClient(newApiClient( restTemplate, extChannelsBasePath) );
+    //TODO Matteo
+    public List<ReceivedMessage> getReceivedMessagesAnalogico(String iun, Integer recipientIndex) throws RestClientException {
+        this.mockReceivedMessagesApi.setApiClient(newApiClient(restTemplate, baseUrlMockConsolidatore));
+        List<ReceivedMessage> result = this.mockReceivedMessagesApi.getReceivedMessages(iun, recipientIndex);
+        this.mockReceivedMessagesApi.setApiClient(newApiClient(restTemplate, extChannelsBasePath));
+        return result;
+    }
+
+    public void switchBasePath(String basePath) {
+        switch (basePath.toLowerCase()) {
+            case "data vault" ->
+                    this.mockReceivedMessagesApi.setApiClient(newApiClient(restTemplate, dataVaultBasePath));
+            case "external channel" ->
+                    this.mockReceivedMessagesApi.setApiClient(newApiClient(restTemplate, extChannelsBasePath));
 
         }
     }
