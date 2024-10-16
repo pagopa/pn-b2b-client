@@ -1072,10 +1072,19 @@ public class SharedSteps {
     @And("viene rimossa se presente la pec di piattaforma di {string}")
     public void vieneRimossaSePresenteLaPecDiPiattaformaDi(String user) {
         selectUser(user);
-        Assertions.assertDoesNotThrow(() -> {
-            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
-            log.info("PEC FOUND AND DELETED");
-        }, "PEC NOT FOUND");
+        try {
+            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getLegalAddressByRecipient();
+            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
+                this.iPnWebUserAttributesClient.deleteRecipientLegalAddress("default", LegalChannelType.PEC);
+                log.info("PEC FOUND AND DELETED");
+            }
+        } catch (HttpStatusCodeException httpStatusCodeException) {
+            if (httpStatusCodeException.getStatusCode().is4xxClientError()) {
+                log.info("PEC NOT FOUND");
+            } else {
+                throw httpStatusCodeException;
+            }
+        }
     }
 
 
