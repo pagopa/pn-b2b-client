@@ -35,6 +35,9 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
     private final String userBearerTokenScaduto;
     private final String gherkinSrlBearerToken;
     private final String cucumberSpaBearerToken;
+
+    private final String aldaMeriniBearerToken;
+    private final String mariaMontessoriBearerToken;
     private final String userAgent;
     private final String basePath;
 
@@ -49,6 +52,8 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                                                  @Value("${pn.bearer-token.scaduto}") String userBearerTokenScaduto,
                                                  @Value("${pn.bearer-token.pg1}") String gherkinSrlBearerToken,
                                                  @Value("${pn.bearer-token.pg2}") String cucumberSpaBearerToken,
+                                                 @Value("${pn.bearer-token.pg3}") String aldaMeriniBearerToken,
+                                                 @Value("${pn.bearer-token.pg4}") String mariaMontessoriBearerToken,
                                                  @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.restTemplate = restTemplate;
         this.marioCucumberBearerToken = marioCucumberBearerToken;
@@ -59,6 +64,8 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
         this.userBearerTokenScaduto= userBearerTokenScaduto;
         this.gherkinSrlBearerToken = gherkinSrlBearerToken;
         this.cucumberSpaBearerToken = cucumberSpaBearerToken;
+        this.aldaMeriniBearerToken = aldaMeriniBearerToken;
+        this.mariaMontessoriBearerToken = mariaMontessoriBearerToken;
         this.basePath = basePath;
         this.userAgent = userAgent;
         this.consentsApi = new ConsentsApi(newConsentsApiClient(restTemplate, basePath, marioCucumberBearerToken, userAgent));
@@ -153,6 +160,22 @@ public class PnWebUserAttributesExternalClientImpl implements IPnWebUserAttribut
                 this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, cucumberSpaBearerToken, userAgent));
 
                 this.bearerTokenSetted = BearerTokenType.PG_2;
+                beenSet = true;
+                break;
+            case PG_3:
+                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, aldaMeriniBearerToken, userAgent));
+                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, aldaMeriniBearerToken, userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, aldaMeriniBearerToken, userAgent));
+
+                this.bearerTokenSetted = BearerTokenType.PG_3;
+                beenSet = true;
+                break;
+            case PG_4:
+                this.legalApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, mariaMontessoriBearerToken, userAgent));
+                this.allApi.setApiClient(newAddressBookApiClient(restTemplate, basePath, mariaMontessoriBearerToken, userAgent));
+                this.courtesyApiAddressBook.setApiClient(newAddressBookApiClient(restTemplate, basePath, mariaMontessoriBearerToken, userAgent));
+
+                this.bearerTokenSetted = BearerTokenType.PG_4;
                 beenSet = true;
                 break;
             case USER_SCADUTO:

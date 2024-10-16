@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
@@ -40,10 +41,10 @@ public class PnPollingServiceValidationStatusV23 extends PnPollingTemplate<PnPol
             pnPollingResponse.setStatusResponse(statusResponseV23);
             this.requestStatusResponseV23 = statusResponseV23;
 
-            if (pnPollingResponse.getStatusResponse().getIun() != null){
+            if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 FullSentNotificationV23 fullSentNotificationV23;
                 try {
-                    fullSentNotificationV23 = b2bClient.getSentNotification(pnPollingResponse.getStatusResponse().getIun());
+                    fullSentNotificationV23 = b2bClient.getSentNotificationV23(pnPollingResponse.getStatusResponse().getIun());
                 } catch (Exception exception) {
                     log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", pnPollingResponse.getStatusResponse().getIun(), b2bClient.getApiKeySetted().name(), exception.getMessage());
                     throw new PnPollingException(exception.getMessage());

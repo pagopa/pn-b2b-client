@@ -13,7 +13,6 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -39,7 +38,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
             FullSentNotificationV23 fullSentNotificationV23;
             try {
-                fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotificationV23 = pnPaB2bClient.getSentNotificationV23(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
@@ -98,7 +97,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
                         ?
-                        timelineElement->
+                        timelineElement ->
                                 timelineElement.getCategory() != null
                                         && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
                         :
@@ -106,7 +105,7 @@ public class PnPollingServiceTimelineSlowE2eV23 extends PnPollingServiceTimeline
                 .findAny()
                 .orElse(null);
 
-        if(timelineElementV23 != null) {
+        if (timelineElementV23 != null) {
             pnPollingResponse.setTimelineElement(timelineElementV23);
             pnPollingResponse.setResult(true);
             return true;

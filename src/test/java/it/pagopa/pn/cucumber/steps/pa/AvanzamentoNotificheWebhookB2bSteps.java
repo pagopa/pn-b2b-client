@@ -3,12 +3,14 @@ package it.pagopa.pn.cucumber.steps.pa;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -26,7 +28,6 @@ import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebh
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
@@ -36,11 +37,12 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V10;
-import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.V23;
+
+import static it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheWebhookB2bSteps.StreamVersion.*;
 
 @Slf4j
 public class AvanzamentoNotificheWebhookB2bSteps {
@@ -52,14 +54,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     private List<StreamCreationRequest> streamCreationRequestList;
     private List<StreamMetadataResponse> eventStreamList;
     private List<StreamCreationRequestV23> streamCreationRequestListV23;
+    private List<StreamCreationRequestV24> streamCreationRequestListV24;
     private List<StreamMetadataResponseV23> eventStreamListV23;
+    private List<StreamMetadataResponseV24> eventStreamListV24;
     private StreamRequestV23 streamRequestV23;
     private StreamCreationRequest streamCreationRequest;
     private Integer requestNumber;
     private HttpStatusCodeException notificationError;
     private final PnPollingFactory pollingFactory;
     private final TimingForPolling timingForPolling;
-    private List<ProgressResponseElementV23> progressResponseElements;
+    private List<ProgressResponseElementV23> progressResponseElementsV23;
+    private List<ProgressResponseElementV24> progressResponseElementsV24;
 
     @And("viene verificato che il campo legalfactIds sia valorizzato nel EventStream")
     public void vieneVerificatoCheIlCampoLegalfactIdsSiaValorizzato() {
@@ -70,7 +75,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     //private final WebhookSynchronizer webhookSynchronizer;
 
-    public enum StreamVersion {V23,V10,V10_V23}
+    public enum StreamVersion {V23, V10, V10_V23, V24}
 
     private final Set<String> paStreamOwner = new HashSet<>();
 
@@ -107,27 +112,27 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         log.info("webhook eseguito: "+webhookTestLaunch);
         if(webhookTestLaunch){
             log.info("Starting cleaning");
-            for(SettableApiKey.ApiKeyType pa: paForStream.values()){
+            for (SettableApiKey.ApiKeyType pa : paForStream.values()) {
                 //TODO: MODIFICARE
                 webhookClientForClean.setApiKeys(pa);
 
                 //DELETE V1
                 List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookClientForClean.listEventStreams();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
-                    try{
+                for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
+                    try {
                         webhookClientForClean.deleteEventStream(elem.getStreamId());
-                    }catch (HttpStatusCodeException statusCodeException){
-                        log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+                    } catch (HttpStatusCodeException statusCodeException) {
+                        log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
                     }
                 }
 
                 //DELETE V2.3
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
-                    try{
+                List<StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
+                for (StreamListElement elem : streamListElementsV23) {
+                    try {
                         webhookClientForClean.deleteEventStreamV23(elem.getStreamId());
-                    }catch (HttpStatusCodeException statusCodeException){
-                        log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+                    } catch (HttpStatusCodeException statusCodeException) {
+                        log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
                     }
                 }
             }
@@ -136,10 +141,12 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @After("@cleanWebhook")
-    public void afterStreamTestRun(){
+    public void afterStreamTestRun() {
         log.info("Starting cleaning");
-        for(String pa: paStreamOwner){
-            if(paForStream.containsKey(pa)){ deleteAllPaStreamForAllVersion(paForStream.get(pa)); };
+        for (String pa : paStreamOwner) {
+            if (paForStream.containsKey(pa)) {
+                deleteAllPaStreamForAllVersion(paForStream.get(pa));
+            }
         }
 
         //TODO: Da ripristinare con concorrenza
@@ -174,28 +181,37 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-
-    private void deleteAllPaStreamForAllVersion(SettableApiKey.ApiKeyType pa){
+    private void deleteAllPaStreamForAllVersion(SettableApiKey.ApiKeyType pa) {
         //TODO: MODIFICARE
         webhookClientForClean.setApiKeys(pa);
 
         //DELETE V1
         List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookClientForClean.listEventStreams();
-        for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
-            try{
+        for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
+            try {
                 webhookClientForClean.deleteEventStream(elem.getStreamId());
-            }catch (HttpStatusCodeException statusCodeException){
-                log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
             }
         }
 
         //DELETE V2.3
-        List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
-        for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
-            try{
+        List<StreamListElement> streamListElementsV23 = webhookClientForClean.listEventStreamsV23();
+        for (StreamListElement elem : streamListElementsV23) {
+            try {
                 webhookClientForClean.deleteEventStreamV23(elem.getStreamId());
-            }catch (HttpStatusCodeException statusCodeException){
-                log.error("HTTP Error: statusCode {} message {}",statusCodeException.getStatusCode(),statusCodeException.getMessage());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
+            }
+        }
+
+        //DELETE V2.4
+        List<StreamListElement> streamListElementsV24 = webhookClientForClean.listEventStreamsV24();
+        for (StreamListElement elem : streamListElementsV24) {
+            try {
+                webhookClientForClean.deleteEventStreamV24(elem.getStreamId());
+            } catch (HttpStatusCodeException statusCodeException) {
+                log.error("HTTP Error: statusCode {} message {}", statusCodeException.getStatusCode(), statusCodeException.getMessage());
             }
         }
     }
@@ -518,9 +534,9 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 }
                 break;
             case "V23":
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
+                List<StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
                 for(StreamMetadataResponseV23 eventStream: eventStreamListV23){
-                    it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement streamListElementV23 = streamListElementsV23.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+                    StreamListElement streamListElementV23 = streamListElementsV23.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
                     Assertions.assertNull(streamListElementV23);
                 }
                 break;
@@ -577,25 +593,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @And("vengono letti gli eventi dello stream versione V23")
     public void readStreamEventsV23() {
         updateApiKeyForStream();
-        try{
-            progressResponseElements = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
-            log.info("EventProgress: " + progressResponseElements);
-        }catch (HttpStatusCodeException e) {
+        try {
+            progressResponseElementsV23 = webhookB2bClient.consumeEventStreamV23(this.eventStreamListV23.get(0).getStreamId(), null);
+            log.info("EventProgress: " + progressResponseElementsV23);
+        } catch (HttpStatusCodeException e) {
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
         }
     }
 
     private boolean searchSpecificTimelineEvent(String timelineEvent, String deliveryDetailCode) {
-        Assertions.assertNotNull(progressResponseElements);
-        return progressResponseElements.stream()
-                    .filter(Objects::nonNull)
-                    .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
-                    .map(ProgressResponseElementV23::getElement)
-                    .filter(x -> x.getElementId().contains(timelineEvent))
-                    .map(TimelineElementV23::getDetails)
-                    .filter(Objects::nonNull)
-                    .anyMatch(x -> x.getDeliveryDetailCode().equals(deliveryDetailCode));
+        Assertions.assertNotNull(progressResponseElementsV23);
+        return progressResponseElementsV23.stream()
+                .filter(Objects::nonNull)
+                .filter(x -> x.getIun() != null && x.getIun().equals(sharedSteps.getSentNotification().getIun()))
+                .map(ProgressResponseElementV23::getElement)
+                .filter(x -> x.getElementId().contains(timelineEvent))
+                .map(TimelineElementV23::getDetails)
+                .filter(Objects::nonNull)
+                .anyMatch(x -> x.getDeliveryDetailCode().equals(deliveryDetailCode));
     }
 
     @And("viene verificato che gli eventi dello stream non contengono l'elemento di timeline {string} con deliveryDetailCode {string}")
@@ -1008,39 +1024,39 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @Then("Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook")
     public void readStreamTimelineElementAndVerifyDate() {
-        OffsetDateTime EventTimestamp=null;
-        OffsetDateTime NotificationTimestamp=null;
-        try{
+        OffsetDateTime EventTimestamp;
+        OffsetDateTime NotificationTimestamp;
+        try {
             Assertions.assertNotNull(progressResponseElementList);
 
-            EventTimestamp = progressResponseElementList.stream().filter(elem -> elem.getTimelineEventCategory().equals( it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
-            NotificationTimestamp =sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
-            log.info("event timestamp : {}",EventTimestamp);
-            log.info("notification timestamp : {}",NotificationTimestamp);
+            EventTimestamp = progressResponseElementList.stream().filter(elem -> elem.getTimelineEventCategory().equals(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20.REFINEMENT)).findAny().get().getTimestamp();
+            NotificationTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            log.info("event timestamp : {}", EventTimestamp);
+            log.info("notification timestamp : {}", NotificationTimestamp);
 
-            Assertions.assertEquals(EventTimestamp,NotificationTimestamp);
+            Assertions.assertEquals(EventTimestamp, NotificationTimestamp);
 
-        }catch(AssertionFailedError assertionFailedError){
-            String message = assertionFailedError.getMessage()+
-                    "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
-            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{IUN: " + sharedSteps.getSentNotification().getIun() + " -WEBHOOK: " + this.eventStreamList.get(0).getStreamId() + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
     @Then("Si verifica che l'elemento di timeline REFINEMENT abbia il timestamp uguale a quella presente nel webhook con la versione V23")
     public void readStreamTimelineElementAndVerifyDateV23() {
-        OffsetDateTime EventTimestamp=null;
-        OffsetDateTime NotificationTimestamp=null;
-        try{
+        OffsetDateTime EventTimestamp;
+        OffsetDateTime NotificationTimestamp;
+        try {
             Assertions.assertNotNull(progressResponseElementListV23);
             //TODO Verificare...
             EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getElement().getCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getElement().getTimestamp();
             //EventTimestamp = progressResponseElementListV23.stream().filter(elem -> elem.getTimelineEventCategory().equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
-            NotificationTimestamp =sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
-            log.info("event timestamp : {}",EventTimestamp);
-            log.info("notification timestamp : {}",NotificationTimestamp);
+            NotificationTimestamp = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails().getSchedulingDate();
+            log.info("event timestamp : {}", EventTimestamp);
+            log.info("notification timestamp : {}", NotificationTimestamp);
 
-            Assertions.assertEquals(EventTimestamp,NotificationTimestamp);
+            Assertions.assertEquals(EventTimestamp, NotificationTimestamp);
 
         }catch(AssertionFailedError assertionFailedError){
             String message = assertionFailedError.getMessage()+
@@ -1077,7 +1093,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             progressResponseElementListV23.clear();
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
         }else if(timeLineOrStatus instanceof it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus){
-            pnPollingWebhook.setNotificationStatusV23((it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus) timeLineOrStatus);
+            pnPollingWebhook.setNotificationStatusV23((NotificationStatus) timeLineOrStatus);
             progressResponseElementListV23.clear();
             pnPollingWebhook.setProgressResponseElementListV23(progressResponseElementListV23);
         } else{
@@ -1119,7 +1135,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         .build());
 
         log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponseV23.getProgressResponseElementV23());
-        if(pnPollingResponseV23.getProgressResponseElementListV23() != null) {
+        if (pnPollingResponseV23.getProgressResponseElementListV23() != null) {
             sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementListV23());
             return pnPollingResponseV23.getProgressResponseElementV23();
         }
@@ -1220,16 +1236,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         sleepTest(sharedSteps.getWait()*2);
         setPaWebhook(pa);
         switch (versione) {
-            case "V10":
+            case "V10" -> {
                 ProgressResponseElement progressResponseElement = searchInWebhookV20(NotificationStatus.VIEWED, null, 0);
                 Assertions.assertNotNull(progressResponseElement);
-                break;
-            case "V23":
-                ProgressResponseElementV23 progressResponseElementV23 = searchInWebhookV23(NotificationStatus.VIEWED, null, 0,0);
+            }
+            case "V23" -> {
+                ProgressResponseElementV23 progressResponseElementV23 = searchInWebhookV23(NotificationStatus.VIEWED, null, 0, 0);
                 Assertions.assertNotNull(progressResponseElementV23);
-                break;
-            default:
-                throw new IllegalArgumentException();
+            }
+            default -> throw new IllegalArgumentException();
         }
 
     }
@@ -1308,19 +1323,26 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @Given("vengono cancellati tutti gli stream presenti del {string} con versione {string}")
     public void deleteAll(String pa,String versione) {
         setPaWebhook(pa);
-        switch (versione) {
+        switch (versione.toUpperCase()) {
             case "V10":
                 List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement> streamListElements = webhookB2bClient.listEventStreams();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem: streamListElements){
+                for (it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamListElement elem : streamListElements) {
                     System.out.println(elem);
-                    deleteStreamWrapper(V10,pa,elem.getStreamId());
+                    deleteStreamWrapper(V10, pa, elem.getStreamId());
                 }
                 break;
             case "V23":
-                List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
-                for(it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement elem: streamListElementsV23){
+                List<StreamListElement> streamListElementsV23 = webhookB2bClient.listEventStreamsV23();
+                for (StreamListElement elem : streamListElementsV23) {
                     System.out.println(elem);
-                    deleteStreamWrapper(V23,pa,elem.getStreamId());
+                    deleteStreamWrapper(V23, pa, elem.getStreamId());
+                }
+                break;
+            case "V24":
+                List<StreamListElement> streamListElementsV24 = webhookB2bClient.listEventStreamsV24();
+                for (StreamListElement elem : streamListElementsV24) {
+                    System.out.println(elem);
+                    deleteStreamWrapper(V24, pa, elem.getStreamId());
                 }
                 break;
             default:
@@ -1434,28 +1456,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             Assertions.assertEquals(progressResponseElements.size() , numEventi);
             System.out.println("ELEMENTI NEL WEBHOOK: "+progressResponseElements.size());
         });
-
     }
 
 
-
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
-    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws IllegalAccessException, JsonProcessingException {
-
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElementV23().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
-
-        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
+    public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
+        TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
+        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(timelineElementDetails);
         System.out.println(json);
 
         ObjectWriter ow1 = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json1 = ow1.writeValueAsString(timelineElementDetails);
+        String json1 = ow1.writeValueAsString(timelineElementWebhookDetails);
         System.out.println(json1);
 
         ObjectMapper mapper = new ObjectMapper();
         Assertions.assertEquals(mapper.readTree(json), mapper.readTree(json1));
-
     }
 
     @Then("verifica deanonimizzazione degli eventi di timeline con delega {string} analogico")
@@ -1491,14 +1508,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         updateApiKeyForStream();
         try{
             switch (versione) {
-                case "V10":
-                    webhookB2bClient.consumeEventStreamHttp(this.eventStreamListV23.get(0).getStreamId(), null);
-                    break;
-                case "V23":
-                    webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamList.get(0).getStreamId(), null);
-                    break;
-                default:
-                    throw new IllegalArgumentException();
+                case "V10" ->
+                        webhookB2bClient.consumeEventStreamHttp(this.eventStreamListV23.get(0).getStreamId(), null);
+                case "V23" ->
+                        webhookB2bClient.consumeEventStreamHttpV23(this.eventStreamList.get(0).getStreamId(), null);
+                default -> throw new IllegalArgumentException();
             }
         }catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1615,7 +1629,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 timelineElement =
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement =
                     sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
             if (timelineElement != null) {
                 finish = true;
@@ -1640,13 +1654,24 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
             case V23 -> {
                 this.streamCreationRequestListV23 = new LinkedList<>();
-                for(int i = 0; i<number; i++){
+                for (int i = 0; i < number; i++) {
                     StreamCreationRequestV23 streamRequest = new StreamCreationRequestV23();
-                    streamRequest.setTitle(title+"_"+i);
+                    streamRequest.setTitle(title + "_" + i);
                     streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
                             StreamCreationRequestV23.EventTypeEnum.STATUS : StreamCreationRequestV23.EventTypeEnum.TIMELINE);
                     streamRequest.setFilterValues(filterValues);
                     streamCreationRequestListV23.add(streamRequest);
+                }
+            }
+            case V24 -> {
+                this.streamCreationRequestListV24 = new LinkedList<>();
+                for (int i = 0; i < number; i++) {
+                    StreamCreationRequestV24 streamRequest = new StreamCreationRequestV24();
+                    streamRequest.setTitle(title + "_" + i);
+                    streamRequest.setEventType(eventType.equalsIgnoreCase("STATUS") ?
+                            StreamCreationRequestV24.EventTypeEnum.STATUS : StreamCreationRequestV24.EventTypeEnum.TIMELINE);
+                    streamRequest.setFilterValues(filterValues);
+                    streamCreationRequestListV24.add(streamRequest);
                 }
             }
         }
@@ -1699,6 +1724,41 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                                 this.eventStreamListV23 = new LinkedList<>();
                             }
                             this.eventStreamListV23.add(eventStream);
+                            addStreamId(pa, eventStream.getStreamId(), streamVersion);
+
+                        } catch (HttpStatusCodeException e) {
+                            this.notificationError = e;
+                            sharedSteps.setNotificationError(e);
+                        }
+
+                    }
+                }
+                case V24 -> {
+                    if (this.eventStreamListV24 == null) this.eventStreamListV24 = new LinkedList<>();
+                    for (StreamCreationRequestV24 request : streamCreationRequestListV24) {
+                        if (filteredValues != null && !filteredValues.isEmpty()) {
+                            request.setFilterValues(filteredValues);
+                        }
+                        if (listGroups != null) {
+                            request.setGroups(listGroups);
+                        }
+                        if (replaceId) {
+                            request.setReplacedStreamId(sharedSteps.getEventStreamV23().getStreamId());
+                        }
+                        try {
+                            StreamMetadataResponseV24 eventStream = webhookB2bClient.createEventStreamV24(request);
+                            if (replaceId) {
+                                StreamMetadataResponseV24 eventStreamV24 =
+                                        webhookB2bClient.retrieveEventStreamV24(this.eventStreamListV24.get(0).getStreamId());
+                                sharedSteps.setEventStreamV24(eventStreamV24);
+                                Assertions.assertNotNull(eventStreamV24);
+                                Assertions.assertNotNull(eventStreamV24.getStreamId());
+                                Assertions.assertNotNull(eventStreamV24.getDisabledDate());
+                                log.info("EVENTSTREAM REPLACED: {}", eventStreamV24);
+
+                                this.eventStreamListV24 = new LinkedList<>();
+                            }
+                            this.eventStreamListV24.add(eventStream);
                             addStreamId(pa, eventStream.getStreamId(), streamVersion);
 
                         } catch (HttpStatusCodeException e) {
@@ -1784,9 +1844,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     private boolean deleteStreamWrapperWithoutReleaseStreamCreationSlot(StreamVersion streamVersion, String pa, UUID streamID){
         try{
-            switch (streamVersion){
+            switch (streamVersion) {
                 case V10 -> webhookB2bClient.deleteEventStream(streamID);
-                case V23 ->  webhookB2bClient.deleteEventStreamV23(streamID);
+                case V23 -> webhookB2bClient.deleteEventStreamV23(streamID);
+                case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
             }
             return true;
         }catch (HttpStatusCodeException e){
@@ -1827,7 +1888,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 //    }
 
     private List<String> getGruopForStream(String position, String pa){
-        List<String> groupList = null;
+        List<String> groupList;
         position = position.trim().toUpperCase();
         switch (position) {
             case "FIRST", "LAST" -> groupList = List.of(sharedSteps.getGroupIdByPa(pa, GroupPosition.valueOf(position)));
@@ -1855,27 +1916,194 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
 
-    private void setPaWebhook(String pa){
-        switch (pa){
-            case "Comune_1":
+    private void setPaWebhook(String pa) {
+        switch (pa) {
+            case "Comune_1" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.MVP_1);
                 sharedSteps.selectPA(pa);
-                break;
-            case "Comune_2":
+            }
+            case "Comune_2" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.MVP_2);
                 sharedSteps.selectPA(pa);
-                break;
-            case "Comune_Multi":
+            }
+            case "Comune_Multi" -> {
                 webhookB2bClient.setApiKeys(SettableApiKey.ApiKeyType.GA);
                 pollingFactory.setApiKeys(SettableApiKey.ApiKeyType.GA);
                 sharedSteps.selectPA(pa);
-                break;
-            default:
-                throw new IllegalArgumentException();
+            }
+            default -> throw new IllegalArgumentException();
         }
     }
 
+    @When("si invoca l'api B2B versione {string} per ottenere gli elementi di timeline di tale notifica")
+    public void getTimelineElementVersionB2B(String version) {
+        String iun = this.sharedSteps.getSentNotification().getIun();
+        if (version.equalsIgnoreCase("V24")) {
+            FullSentNotificationV24 fullSentNotification = b2bClient.getSentNotification(iun);
+            this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
+        } else if (version.equalsIgnoreCase("V23")) {
+            FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
+            this.sharedSteps.setNotificationResponseCompleteV23(fullSentNotification);
+        }
+    }
 
+    @When("si invoca l'api Webhook versione {string} per ottenere gli elementi di timeline di tale notifica")
+    public void getTimelineElementVersionWebhook(String version) {
+        updateApiKeyForStream();
+        UUID uuid;
+        if (version.equalsIgnoreCase("V24")) {
+            uuid = this.eventStreamListV24.get(0).getStreamId();
+            List<ProgressResponseElementV24> progressResponseElementV24List = webhookB2bClient.consumeEventStreamV24(uuid, null);
+            this.progressResponseElementsV24 = progressResponseElementV24List;
+        } else if (version.equalsIgnoreCase("V23")) {
+            uuid = this.eventStreamListV23.get(0).getStreamId();
+            List<ProgressResponseElementV23> progressResponseElementV23List = webhookB2bClient.consumeEventStreamV23(uuid, null);
+            this.progressResponseElementsV23 = progressResponseElementV23List;
+        }
+    }
+
+    @Then("gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione {string}")
+    public void checkTimelineElementVersionB2B(String version) {
+        if (version.equalsIgnoreCase("V24")) {
+            Assertions.assertNotNull(this.sharedSteps.getNotificationResponseComplete());
+            checkTimelineElement(this.sharedSteps.getNotificationResponseComplete());
+        } else if (version.equalsIgnoreCase("V23")) {
+            Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV23());
+            this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().forEach(te -> checkTimelineElement(te));
+        }
+    }
+
+    @Then("gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione {string}")
+    public void checkTimelineElementVersionWebHook(String version) {
+        if (version.equalsIgnoreCase("V24")) {
+            Assertions.assertNotNull(this.progressResponseElementsV24);
+            this.progressResponseElementsV24.forEach(pre -> checkTimelineElement(pre.getElement()));
+        } else if (version.equalsIgnoreCase("V23")) {
+            Assertions.assertNotNull(this.progressResponseElementsV23);
+            this.progressResponseElementsV23.forEach(pre -> checkTimelineElement(pre.getElement()));
+        }
+    }
+
+    private void checkTimelineElement(Object timeline) {
+        if (timeline instanceof FullSentNotificationV24 fullSentNotificationV24) {
+            fullSentNotificationV24.getTimeline().forEach(timelineElementV24 -> {
+                Assertions.assertNotNull(timelineElementV24.getIngestionTimestamp());
+                Assertions.assertNotNull(timelineElementV24.getNotificationSentAt());
+                Assertions.assertNotNull(timelineElementV24.getEventTimestamp());
+                log.info("Field presence checked for " + timelineElementV24.getCategory().getValue());
+                checkValues(timelineElementV24, fullSentNotificationV24.getTimeline());
+            });
+        } else if (timeline instanceof TimelineElementV24 timelineElementV24) {
+            Assertions.assertNotNull(timelineElementV24.getIngestionTimestamp());
+            Assertions.assertNotNull(timelineElementV24.getNotificationSentAt());
+            Assertions.assertNotNull(timelineElementV24.getEventTimestamp());
+            log.info("Field presence checked for " + timelineElementV24.getCategory().getValue());
+        } else if (timeline instanceof TimelineElementV23 timelineElementV23) {
+            Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(timelineElementV23, Map.class);
+            Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
+            Assertions.assertFalse(timelineElementMap.containsKey("notificationSentAt"));
+            Assertions.assertFalse(timelineElementMap.containsKey("eventTimestamp"));
+            log.info("Absence of fields checked for " + timelineElementV23.getCategory().getValue());
+        }
+    }
+
+    private void checkValues(TimelineElementV24 timelineElementV24, List<TimelineElementV24> timelineElementV24list) {
+        String category = timelineElementV24.getCategory().getValue();
+        try {
+            switch (category) {
+                case "NOTIFICATION_VIEWED", "REFINEMENT", "PAYMENT", "NOTIFICATION_RADD_RETRIEVED", "SEND_DIGITAL_PROGRESS" -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
+                }
+                case "SEND_DIGITAL_FEEDBACK", "SEND_ANALOG_FEEDBACK", "SEND_ANALOG_PROGRESS", "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getNotificationDate());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getNotificationDate());
+                }
+                case "ANALOG_SUCCESS_WORKFLOW", "ANALOG_FAILURE_WORKFLOW", "COMPLETELY_UNREACHABLE_CREATION_REQUEST", "COMPLETELY_UNREACHABLE" -> {
+                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
+                            .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
+                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
+                            .map(x -> x.getTimestamp()).findFirst().orElse(null);
+                    OffsetDateTime mostRecentEvent;
+                    if (odtAnalogFeedBack != null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogFeedBack.isAfter(odtAnalogDomicileFailure) ? odtAnalogFeedBack : odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack == null) {
+                        mostRecentEvent = odtAnalogDomicileFailure;
+                    } else {
+                        mostRecentEvent = odtAnalogFeedBack;
+                    }
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                }
+                case "SCHEDULE_REFINEMENT" -> {
+                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
+                            .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
+                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                            .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
+                            .map(x -> x.getTimestamp()).findFirst().orElse(null);
+                    OffsetDateTime mostRecentEvent = timelineElementV24.getTimestamp();
+                    if (odtAnalogFeedBack != null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogFeedBack.isAfter(odtAnalogDomicileFailure) ? odtAnalogFeedBack : odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack == null && odtAnalogDomicileFailure != null) {
+                        mostRecentEvent = odtAnalogDomicileFailure;
+                    } else if (odtAnalogFeedBack != null && odtAnalogDomicileFailure == null) {
+                        mostRecentEvent = odtAnalogFeedBack;
+                    }
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                }
+
+                case "DIGITAL_SUCCESS_WORKFLOW", "DIGITAL_FAILURE_WORKFLOW " -> {
+                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getTimestamp());
+                    Assertions.assertEquals(timelineElementV24.getIngestionTimestamp(), timelineElementV24.getNotificationSentAt());
+                    Assertions.assertEquals(timelineElementV24.getNotificationSentAt(), timelineElementV24.getIngestionTimestamp());
+                }
+            }
+        } catch (AssertionFailedError e) {
+            log.error("Assertion failed for category " + category);
+        }
+    }
+
+    @And("vengono letti gli eventi dello stream versione {string}")
+    public void readStreamEventsVersion(String version) {
+        updateApiKeyForStream();
+        UUID uuid = this.eventStreamListV24 != null ? this.eventStreamListV24.get(0).getStreamId() : this.eventStreamListV23.get(0).getStreamId();
+        try {
+            if (version.equalsIgnoreCase("V24")) {
+                progressResponseElementsV24 = webhookB2bClient.consumeEventStreamV24(uuid, null);
+                log.info("EventProgress: " + progressResponseElementsV24);
+            } else if (version.equalsIgnoreCase("V23")) {
+                progressResponseElementsV23 = webhookB2bClient.consumeEventStreamV23(uuid, null);
+                log.info("EventProgress: " + progressResponseElementsV23);
+            }
+        } catch (HttpStatusCodeException e) {
+            this.notificationError = e;
+            sharedSteps.setNotificationError(e);
+        }
+    }
+
+    @Then("la chiamata restituisce correttamente lo stream di elementi timeline versione {string}")
+    public void checkForNoError(String version) {
+        Assertions.assertNull(sharedSteps.getNotificationError());
+        if (version.equalsIgnoreCase("V24")) {
+            Assertions.assertNotNull(this.progressResponseElementsV24);
+            this.progressResponseElementsV24.forEach(pre -> checkTimelineElement(pre.getElement()));
+        } else {
+            Assertions.assertNotNull(this.progressResponseElementsV23);
+            this.progressResponseElementsV23.forEach(pre -> checkTimelineElement(pre.getElement()));
+        }
+    }
+
+    @Then("la chiamata restituisce un errore {int} riportante la dicitura {string}")
+    public void checkForError(Integer errorCode, String errorMessage) {
+        Assertions.assertNotNull(this.notificationError);
+        Assertions.assertEquals(errorCode, this.notificationError.getRawStatusCode());
+        Assertions.assertTrue(this.notificationError.getMessage().contains(errorMessage));
+    }
 }
