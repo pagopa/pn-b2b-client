@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,6 +9,8 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV23;
@@ -19,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 import java.io.ByteArrayInputStream;
@@ -32,7 +36,8 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class RicezioneNotificheWebDelegheSteps {
-    private final IPnWebMandateClient webMandateClient;
+    private final ApplicationContext context;
+    private IPnWebMandateClient webMandateClient;
     private final IPnWebRecipientClient webRecipientClient;
     private final SharedSteps sharedSteps;
     private final PnPaB2bUtils b2bUtils;
@@ -55,9 +60,14 @@ public class RicezioneNotificheWebDelegheSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
+    @Before("@useB2B")
+    public void beforeMethod() {
+        this.webMandateClient = context.getBean(B2bMandateServiceClientImpl.class);
+    }
 
     @Autowired
-    public RicezioneNotificheWebDelegheSteps(IPnWebMandateClient webMandateClient, SharedSteps sharedSteps) {
+    public RicezioneNotificheWebDelegheSteps(ApplicationContext context, PnWebMandateExternalClientImpl webMandateClient, SharedSteps sharedSteps) {
+        this.context = context;
         this.webMandateClient = webMandateClient;
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
