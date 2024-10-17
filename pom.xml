@@ -25,8 +25,8 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>81aa435724375175ea6419d63d9ec3cabf1e0a73</open.api.version.delivery>
-        <open.api.version.delivery.push>143d3a500e74459467389a8c6f18d399c2daa0af</open.api.version.delivery.push>
+        <open.api.version.delivery>v2.10.0-RC.3</open.api.version.delivery>
+        <open.api.version.delivery.push>v2.11.0</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
         <open.api.version.delivery_v2>v2.1.0-RC.5</open.api.version.delivery_v2>
@@ -1648,6 +1648,39 @@
                             <modelPackage>it.pagopa.pn.client.web.generated.openapi.clients.bff.recipientmandate.model</modelPackage>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>generate-internal-client-external-registry-private-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/refs/heads/develop/docs/openapi/api-private-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.privateapi</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.generate.api.externalregistry.privateapi</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.generate.model.externalregistry.privateapi</modelPackage>
+                        </configuration>
+                    </execution>
+
                     <execution>
                         <id>generate-external-bff-apikey-manager-pg</id>
                         <goals>

@@ -19,7 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-
 @CucumberContextConfiguration
 @SpringBootTest(classes = {
         ApiKeysConfiguration.class,
@@ -100,6 +99,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         PaperCalculatorClientImpl.class,
+        PnExternalRegistryPrivateUserApiImpl.class,
         IMandateReverseServiceClient.class,
         MandateReverseServiceClientImpl.class,
         B2BRecipientExternalClientImpl.class,
