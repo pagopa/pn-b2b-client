@@ -65,7 +65,7 @@ import static org.awaitility.Awaitility.await;
 
 
 
-@TestPropertySource(properties = {"spring.profiles.active=test"})
+@TestPropertySource(properties = {"spring.profiles.active=dev"})
 @EnableConfigurationProperties
 public class NewNotificationTest {
 
@@ -97,13 +97,13 @@ public class NewNotificationTest {
                 .vat(22)
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( policy )
-                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( 
                         policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
                          enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
-                        RECIPIENT_TYPE_DIGITAL.DIGITAL_KO, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
+                        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
                 //.addRecipientsItem( newRecipient( policy!=NotificationFeePolicy.FLAT_RATE,"Fiera ", "FRMTTR76M06B715E","classpath:/sample.pdf",
                 //        enableF24Attachment?(policy==NotificationFeePolicy.FLAT_RATE?"classpath:/f24_flat.json":"classpath:/f24_deliverymode.json"):null,
                 //        RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
@@ -177,19 +177,19 @@ public class NewNotificationTest {
         NotificationRecipientV23 recipient = new NotificationRecipientV23()
                 .denomination( prefix + " denomination")
                 .taxId( taxId )
-                .digitalDomicile(recipientTypeDigital==RECIPIENT_TYPE_DIGITAL.NO_DIGITAL?null:
-                        recipientTypeDigital==RECIPIENT_TYPE_DIGITAL.DIGITAL_OK?
-                        new NotificationDigitalAddress()
-                            .type(NotificationDigitalAddress.TypeEnum.PEC)
-                            .address( "FRMTTR76M06B715E@pec.pagopa.it"):
-                        new NotificationDigitalAddress()
-                            .type(NotificationDigitalAddress.TypeEnum.PEC)
-                            .address( "FRMTTR76M06B715E@fail.it")
-                )
+//                .digitalDomicile(recipientTypeDigital==RECIPIENT_TYPE_DIGITAL.NO_DIGITAL?null:
+//                        recipientTypeDigital==RECIPIENT_TYPE_DIGITAL.DIGITAL_OK?
+//                        new NotificationDigitalAddress()
+//                            .type(NotificationDigitalAddress.TypeEnum.PEC)
+//                            .address( "FRMTTR76M06B715E@pec.pagopa.it"):
+//                        new NotificationDigitalAddress()
+//                            .type(NotificationDigitalAddress.TypeEnum.PEC)
+//                            .address( "FRMTTR76M06B715E@fail.it")
+//                )
                 .physicalAddress(
                         recipientTypeAnalog==RECIPIENT_TYPE_ANALOG.ANALOG_OK?
                         new NotificationPhysicalAddress()
-                                .address("via tutto ok 16")
+                                .address("via @OK_AR-CON020 16")
                                 .municipality("ROMA")
                                 .province("RM")
                                 .foreignState("ITALIA")
@@ -201,38 +201,38 @@ public class NewNotificationTest {
                                 .foreignState("ITALIA")
                                 .zip("00173")
                 )
-                .recipientType( NotificationRecipientV23.RecipientTypeEnum.PF )
-                .payments(List.of( new NotificationPaymentItem()
-                                        .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
-                                                .noticeCode( String.format("30201%13d", epochMillis ) )
-                                                .applyCost(withapplycost)
-                                                .attachment ( newAttachment( resourcePath ))),
-                        new NotificationPaymentItem()
-                                .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
-                                        .noticeCode( String.format("30202%13d", epochMillis ) )
-                                        .applyCost(false)
-                                        .attachment ( newAttachment( resourcePath ))),
-                        resourcePathf24 == null ?
-                        new NotificationPaymentItem()
-                                .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
-                                        .noticeCode( String.format("30203%13d", epochMillis ) )
-                                        .applyCost(false)
-                                        .attachment ( newAttachment( resourcePath ))):
-                        new NotificationPaymentItem()
-                                .f24(new F24Payment()
-                                        .applyCost(withapplycost)
-                                        .title("f24 qualcosa")
-                                        .metadataAttachment( newMatadataAttachment( resourcePathf24 ))),new NotificationPaymentItem()
-                                .f24(new F24Payment()
-                                        .applyCost(withapplycost)
-                                        .title("f24 qualcosa 1")
-                                        .metadataAttachment( newMatadataAttachment( resourcePathf24 ))),
-                        new NotificationPaymentItem()
-                                .f24(new F24Payment()
-                                        .applyCost(false)
-                                        .title("f24 qualcosa 2")
-                                        .metadataAttachment( newMatadataAttachment( "classpath:/f24_flat.json" )))
-                ));
+                .recipientType( NotificationRecipientV23.RecipientTypeEnum.PF );
+//                .payments(List.of( new NotificationPaymentItem()
+//                                        .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
+//                                                .noticeCode( String.format("30201%13d", epochMillis ) )
+//                                                .applyCost(withapplycost)
+//                                                .attachment ( newAttachment( resourcePath ))),
+//                        new NotificationPaymentItem()
+//                                .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
+//                                        .noticeCode( String.format("30202%13d", epochMillis ) )
+//                                        .applyCost(false)
+//                                        .attachment ( newAttachment( resourcePath ))),
+//                        resourcePathf24 == null ?
+//                        new NotificationPaymentItem()
+//                                .pagoPa(new PagoPaPayment().creditorTaxId("77777777777")
+//                                        .noticeCode( String.format("30203%13d", epochMillis ) )
+//                                        .applyCost(false)
+//                                        .attachment ( newAttachment( resourcePath ))):
+//                        new NotificationPaymentItem()
+//                                .f24(new F24Payment()
+//                                        .applyCost(withapplycost)
+//                                        .title("f24 qualcosa")
+//                                        .metadataAttachment( newMatadataAttachment( resourcePathf24 ))),new NotificationPaymentItem()
+//                                .f24(new F24Payment()
+//                                        .applyCost(withapplycost)
+//                                        .title("f24 qualcosa 1")
+//                                        .metadataAttachment( newMatadataAttachment( resourcePathf24 ))),
+//                        new NotificationPaymentItem()
+//                                .f24(new F24Payment()
+//                                        .applyCost(false)
+//                                        .title("f24 qualcosa 2")
+//                                        .metadataAttachment( newMatadataAttachment( "classpath:/f24_flat.json" )))
+//                ));
 
         //TODO Modificare.....
         //  .payments( new NotificationPaymentInfo()
