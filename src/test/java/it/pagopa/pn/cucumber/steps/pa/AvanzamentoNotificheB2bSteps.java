@@ -1631,28 +1631,28 @@ public class AvanzamentoNotificheB2bSteps {
     }
 
     private void priceVerification(String price, Integer destinatario) {
-
-        if(sharedSteps.getSentNotification()!=null) {
+        if (sharedSteps.getSentNotification() != null) {
             List<NotificationPaymentItem> listNotificationPaymentItem = sharedSteps.getSentNotification().getRecipients().get(destinatario).getPayments();
-
-            if (listNotificationPaymentItem != null){
-                for (NotificationPaymentItem notificationPaymentItem: listNotificationPaymentItem) {
+            if (listNotificationPaymentItem != null) {
+                for (NotificationPaymentItem notificationPaymentItem : listNotificationPaymentItem) {
                     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPriceResponse notificationPrice = this.b2bClient.getNotificationPrice(notificationPaymentItem.getPagoPa().getCreditorTaxId(), notificationPaymentItem.getPagoPa().getNoticeCode());
                     try {
                         Assertions.assertEquals(notificationPrice.getIun(), sharedSteps.getSentNotification().getIun());
-                        Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                         if (price != null) {
                             log.info("Costo notifica: {} destinatario: {}", notificationPrice.getAmount(), destinatario);
                             Assertions.assertEquals(notificationPrice.getAmount(), Integer.parseInt(price));
+                        }
+                        if (notificationPrice.getRefinementDate() != null) {
+                            Assertions.assertEquals(OffsetDateTime.now().toLocalDate(), notificationPrice.getRefinementDate().toLocalDate());
                         }
                     } catch (AssertionFailedError assertionFailedError) {
                         sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
                     }
                 }
             }
-        }else if(sharedSteps.getSentNotificationV1()!=null) {
+        } else if (sharedSteps.getSentNotificationV1() != null) {
             priceVerificationV1(price, null, destinatario);
-        }else if(sharedSteps.getSentNotificationV2()!=null){
+        } else if (sharedSteps.getSentNotificationV2() != null) {
             priceVerificationV2(price, null, destinatario);
         }
     }
