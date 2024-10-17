@@ -10,12 +10,10 @@ import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import java.lang.invoke.MethodHandles;
+
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
@@ -42,7 +40,7 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
             PnPollingResponseV23 pnPollingResponse = new PnPollingResponseV23();
             FullSentNotificationV23 fullSentNotificationV23;
             try {
-                fullSentNotificationV23 = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotificationV23 = pnPaB2bClient.getSentNotificationV23(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());
@@ -112,16 +110,16 @@ public class PnPollingServiceTimelineRapidV23 extends PnPollingTemplate<PnPollin
                 .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
-                    ?
-                        timelineElement->
-                        timelineElement.getCategory() != null
-                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
-                    :
+                        ?
+                        timelineElement ->
+                                timelineElement.getCategory() != null
+                                        && Objects.requireNonNull(timelineElement.getCategory().getValue()).equals(pnPollingParameter.getValue())
+                        :
                         pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV23())
                 .findAny()
                 .orElse(null);
 
-        if(timelineElementV23 != null) {
+        if (timelineElementV23 != null) {
             pnPollingResponse.setTimelineElement(timelineElementV23);
             pnPollingResponse.setResult(true);
             return true;

@@ -9,11 +9,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PnPollingResponseV23 extends PnPollingResponse {
-    private FullSentNotificationV23 notification;
+public class PnPollingResponseV24 extends PnPollingResponse {
+    private FullSentNotificationV24 notification;
     private NewNotificationRequestStatusResponseV23 statusResponse;
-    private TimelineElementV23 timelineElement;
+    private TimelineElementV24 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
-    private List<ProgressResponseElementV23> progressResponseElementListV23;
-    private ProgressResponseElementV23 progressResponseElementV23;
+    private List<ProgressResponseElementV24> progressResponseElementListV24;
+    private ProgressResponseElementV24 progressResponseElementV24;
 }

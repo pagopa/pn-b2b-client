@@ -1,8 +1,6 @@
 package it.pagopa.pn.cucumber.steps;
 
 import io.cucumber.spring.CucumberContextConfiguration;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.ApiClient;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.api.PaperCalculatorApi;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.*;
@@ -48,19 +46,24 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         TimingForPolling.class,
         PnB2bClientTimingConfigs.class,
         PnPollingFactory.class,
+        PnPollingServiceTimelineRapidV24.class,
         PnPollingServiceTimelineRapidV23.class,
         PnPollingServiceTimelineRapidV21.class,
         PnPollingServiceTimelineRapidV20.class,
         PnPollingServiceTimelineRapidV1.class,
+        PnPollingServiceStatusRapidV24.class,
         PnPollingServiceStatusRapidV23.class,
         PnPollingServiceStatusRapidV21.class,
         PnPollingServiceStatusRapidV20.class,
         PnPollingServiceStatusRapidV1.class,
+        PnPollingServiceTimelineSlowV24.class,
         PnPollingServiceTimelineSlowV23.class,
+        PnPollingServiceTimelineSlowE2eV24.class,
         PnPollingServiceTimelineSlowE2eV23.class,
         PnPollingServiceTimelineSlowV21.class,
         PnPollingServiceTimelineSlowV20.class,
         PnPollingServiceTimelineSlowV1.class,
+        PnPollingServiceStatusSlowV24.class,
         PnPollingServiceStatusSlowV23.class,
         PnPollingServiceStatusSlowV21.class,
         PnPollingServiceStatusSlowV20.class,
@@ -69,13 +72,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnPollingServiceValidationStatusV20.class,
         PnPollingServiceValidationStatusV21.class,
         PnPollingServiceValidationStatusV23.class,
+        PnPollingServiceValidationStatusV24.class,
         PnPollingServiceValidationStatusNoAcceptedV23.class,
+        PnPollingServiceValidationStatusNoAcceptedV24.class,
         PnPollingServiceValidationStatusAcceptedShortV23.class,
+        PnPollingServiceValidationStatusAcceptedShortV24.class,
         PnPollingServiceWebhookV20.class,
         PnPollingServiceWebhookV23.class,
+        PnPollingServiceWebhookV24.class,
         PnPollingServiceValidationStatusAcceptedExtraRapidV23.class,
+        PnPollingServiceValidationStatusAcceptedExtraRapidV24.class,
         PnPollingServiceStatusExtraRapidV23.class,
+        PnPollingServiceStatusExtraRapidV24.class,
         PnPollingServiceTimelineExtraRapidV23.class,
+        PnPollingServiceTimelineExtraRapidV24.class,
         MailSenderConfig.class,
         PnParserService.class,
         LegalFactTokenConfiguration.class,
