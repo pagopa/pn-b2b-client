@@ -50,7 +50,7 @@ Feature: esposizione timestamp tecnici per gli SLA
       | REQUEST_ACCEPTED | V24     |
       | REQUEST_ACCEPTED | V23     |
 
-  @timestampTecnici @webhook2 @cleanWebhook
+  @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_WEBHOOK] Controllo che i nuovi campi del TimelineElement siano presenti chiamando la versione v24 dell'API e assenti chiamando la v23
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "<version>"
     And viene generata una nuova notifica
@@ -71,7 +71,7 @@ Feature: esposizione timestamp tecnici per gli SLA
       | REQUEST_ACCEPTED | V24     |
       | REQUEST_ACCEPTED | V23     |
 
-  @timestampTecnici @webhook2 @cleanWebhook
+  @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario: [TIMESTAMP_TECNICI_SLA_WEBHOOK_2] Controllo che in presenza di due stream (uno v23 e uno v24) richiamando la get con versione v23 i nuovi campi del TimelineElement non siano presenti
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
@@ -94,7 +94,7 @@ Feature: esposizione timestamp tecnici per gli SLA
     When si invoca l'api Webhook versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then gli elementi di timeline restituiti dal Webhook contengono i campi attesi in accordo alla versione "V23"
 
-  @timestampTecnici @webhook2 @cleanWebhook
+  @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_READ_STREAM_OK] Leggendo gli elementi di uno stream invocando un api con versione uguale a quella con cui è stato creato lo stream, la chiamata va a buon fine
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "<version>"
     And viene generata una nuova notifica
@@ -114,7 +114,7 @@ Feature: esposizione timestamp tecnici per gli SLA
       | V24     |
       | V23     |
 
-  @timestampTecnici @webhook2 @cleanWebhook
+  @timestampTecnici @precondition @webhook2 @cleanWebhook
   Scenario Outline: [TIMESTAMP_TECNICI_SLA_READ_STREAM_KO] Leggendo gli elementi di uno stream invocando un api con versione diversa da quella con cui è stato creato lo stream, si ottiene errore
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V24"
     And vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
