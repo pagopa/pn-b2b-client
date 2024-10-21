@@ -93,7 +93,7 @@ Feature: Pn-mandate api b2b per intermediari massivi
     When la delega a nome di "GherkinSrl" viene accettata da "CucumberSpa" senza associare nessun gruppo
     And si verifica che la delega è stata creata senza un gruppo associato
 
-  @useB2B @b2bIntermediariMassivi @deleghe1
+  @useB2B @b2bIntermediariMassivi @deleghe1 @uatEnvCondition
   Scenario: [B2B-ACCEPT-MANDATE-2] Viene invocata l'API di accettazione di una delega da parte di un delegato persona giuridica inserita verso se stesso a nome del delegante persona giuridica, associandola ad un gruppo
     Given "CucumberSpa" rifiuta se presente la delega ricevuta "GherkinSrl"
     When viene effettuata una richiesta di creazione delega con i seguenti parametri:
