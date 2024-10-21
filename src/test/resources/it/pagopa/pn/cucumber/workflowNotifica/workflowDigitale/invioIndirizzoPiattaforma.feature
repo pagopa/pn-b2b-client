@@ -1,4 +1,4 @@
-Feature: avanzamento b2b notifica difgitale con indirizzo piattaforma
+Feature: avanzamento b2b notifica digitale con indirizzo piattaforma
 
   @workflowDigitale @mockPec
   #B2B_TIMELINE_20

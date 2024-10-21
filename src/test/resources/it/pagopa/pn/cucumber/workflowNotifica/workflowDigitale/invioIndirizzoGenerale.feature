@@ -1,4 +1,4 @@
-Feature: avanzamento b2b notifica difgitale con indirizzo generale con chiamata a National Registry (INAD-IPA-INIPEC)
+Feature: avanzamento b2b notifica digitale con indirizzo generale con chiamata a National Registry (INAD-IPA-INIPEC)
 
 
   @dev @mockNR
@@ -27,7 +27,7 @@ Feature: avanzamento b2b notifica difgitale con indirizzo generale con chiamata 
 
 
   @dev
-  #[B2B_TIMELINE_PG_16]
+  #[B2B_TIMELINE_PG_16], [B2B_TIMELINE_PG_13], [B2B_TIMELINE_DIGITAL_GENERAL_5]
   Scenario: [B2B_TIMELINE_DIGITAL_GENERAL_3] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE sia presente il campo Digital Address scenario positivo PN-5992
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -47,14 +47,3 @@ Feature: avanzamento b2b notifica difgitale con indirizzo generale con chiamata 
       | digitalDomicile_address | test@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_CALL"
-
-  @dev @ignore
-  #[B2B_TIMELINE_PG_13]
-  Scenario: [B2B_TIMELINE_DIGITAL_GENERAL_5] Invio notifica digitale ed attesa elemento di timeline PUBLIC_REGISTRY_RESPONSE_scenario positivo
-    Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
-    And destinatario Gherkin spa e:
-      | digitalDomicile_address | test@fail.it |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"

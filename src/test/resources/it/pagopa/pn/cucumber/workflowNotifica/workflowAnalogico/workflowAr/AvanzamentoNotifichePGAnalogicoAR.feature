@@ -175,14 +175,3 @@ Feature: avanzamento notifiche analogico AR persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
-
-  @workflowAnalogico @mockNR
-  Scenario: [B2B_TIMELINE_PG_ANALOG_RIR_3] Invio notifica ed attesa elemento di timeline COMPLETELY_UNREACHABLE_scenario negativo
-    Given viene generata una nuova notifica
-      | subject            | notifica analogica con cucumber |
-      | senderDenomination | Comune di milano                |
-    And destinatario Gherkin Irreperibile e:
-      | digitalDomicile         | NULL         |
-      | physicalAddress_address | Via@fail_RIR |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"

@@ -12,6 +12,7 @@ public class DataTest {
     private boolean isFirstSendRetry;
     private Integer progressIndex;
     private Integer pollingTime;
+    private String pollingType;
     private Integer numCheck;
     private boolean loadTimeline;
 

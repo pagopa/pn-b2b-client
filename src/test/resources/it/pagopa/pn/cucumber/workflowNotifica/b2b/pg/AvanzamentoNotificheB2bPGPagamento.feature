@@ -1,6 +1,6 @@
 Feature: avanzamento b2b persona giuridica pagamento
 
-
+  @workflowDigitale
   Scenario: [B2B-PA-PG-PAY_1] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -11,6 +11,7 @@ Feature: avanzamento b2b persona giuridica pagamento
       | payment_f24        | NULL |
       | apply_cost_pagopa  | SI   |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And "CucumberSpa" legge la notifica ricevuta
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
 
@@ -35,7 +36,6 @@ Feature: avanzamento b2b persona giuridica pagamento
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then viene verificato il costo = "0" della notifica
 
-
   Scenario: [B2B-PA-PG-PAY_4] Invio e visualizzazione notifica e verifica amount e effectiveDate
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -49,7 +49,6 @@ Feature: avanzamento b2b persona giuridica pagamento
     Then l'avviso pagopa viene pagato correttamente
     And si attende il corretto pagamento della notifica
     Then vengono verificati costo = "100" e data di perfezionamento della notifica
-
 
   Scenario: [B2B-PA-PG-PAY_6] Invio notifica e verifica amount
     Given viene generata una nuova notifica

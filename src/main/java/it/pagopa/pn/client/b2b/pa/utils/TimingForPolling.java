@@ -19,10 +19,16 @@ public class TimingForPolling {
         this.timingConfigs = timingConfigs;
     }
 
-    public TimingResult getTimingForElement(String element, boolean isSlow, boolean isWebhook){
+    public TimingResult getTimingForElement(String element, boolean isSlow, boolean isWebhook, boolean isExtraRapid){
         element = element.trim().toUpperCase();
         Element findedElement = Element.valueOf(element);
-        int waiting = timingConfigs.getWorkflowWaitMillis();
+        int waiting;
+        if (isExtraRapid){
+            waiting = timingConfigs.getWorkflowWaitExtraRapidMillis();
+        }else {
+            waiting = timingConfigs.getWorkflowWaitMillis();
+        }
+
         int waitingMultiplier = findedElement.getWaitingMultiplier();
 
         if(!isWebhook && waitingMultiplier > 1) {
@@ -34,15 +40,16 @@ public class TimingForPolling {
         if(isSlow) {
             return new TimingResult(findedElement.getNumCheck(), waiting * timingConfigs.getWaitingTimingSlowMultiplier());
         }
+
         return new TimingResult(findedElement.getNumCheck(), waiting);
     }
 
     public TimingResult getTimingForElement(String element){
-        return getTimingForElement(element, false, false);
+        return getTimingForElement(element, false, false,false);
     }
 
-    public TimingResult getTimingForElement(String element, boolean isWebhook){
-        return getTimingForElement(element, false, isWebhook);
+    public TimingResult getTimingForElement(String element, boolean isWebhook, boolean isExtraRapid){
+        return getTimingForElement(element, false, isWebhook, isExtraRapid);
     }
 
     public TimingResult getTimingForStatusValidation(String element){
@@ -52,6 +59,8 @@ public class TimingForPolling {
 
         if (element.equalsIgnoreCase(Element.ACCEPTED_SHORT_VALIDATION.toString())){
             waiting = timingConfigs.getWaitMillisShort();
+        } else if (element.equalsIgnoreCase(Element.ACCEPTED_EXTRA_RAPID_VALIDATION.toString())) {
+            waiting = timingConfigs.getWaitMillisExtraRapid();
         }
 
         return new TimingResult(findedElement.getNumCheck(), waiting);
@@ -72,14 +81,14 @@ public class TimingForPolling {
         SCHEDULE_DIGITAL_WORKFLOW(3,2),
         PREPARE_DIGITAL_DOMICILE(3,2),
         SEND_DIGITAL_DOMICILE(2,2),
-        SEND_DIGITAL_PROGRESS(2,3),
-        SEND_DIGITAL_FEEDBACK(4,3),
+        SEND_DIGITAL_PROGRESS(6,3),
+        SEND_DIGITAL_FEEDBACK(6,3),
         REFINEMENT(15,1),
         SCHEDULE_REFINEMENT(15,1),
         DIGITAL_DELIVERY_CREATION_REQUEST(15,1),
-        DIGITAL_SUCCESS_WORKFLOW(3,3),
+        DIGITAL_SUCCESS_WORKFLOW(8,3),
         DIGITAL_FAILURE_WORKFLOW(9,1),
-        ANALOG_SUCCESS_WORKFLOW(14,1),
+        ANALOG_SUCCESS_WORKFLOW(15,1),
         ANALOG_FAILURE_WORKFLOW(14,1),
         PREPARE_SIMPLE_REGISTERED_LETTER(14,1),
         SEND_SIMPLE_REGISTERED_LETTER(14,1),
@@ -110,6 +119,7 @@ public class TimingForPolling {
         ACCEPTED_VALIDATION(15,1),
         NO_ACCEPTED_VALIDATION(8,1),
         ACCEPTED_SHORT_VALIDATION(231,1),
+        ACCEPTED_EXTRA_RAPID_VALIDATION(450,1),
         REFUSED_VALIDATION(11,1),
         DELIVERING(2,4),
         DELIVERED(8,4),

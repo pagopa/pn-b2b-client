@@ -54,13 +54,12 @@ Feature: avanzamento b2b notifica PF  difgitale con chiamata a National Registry
       | senderDenomination | Comune di milano            |
     And destinatario
       | denomination    | Test digitale ok |
-      | taxId           | FNIFNA80A01H501G |
+      | taxId           | JPCRPP78D43F165N |
       | digitalDomicile | NULL             |
-    When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che nell'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE" sia presente il campo Digital Address da National Registry
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_FEEDBACK" con responseStatus "OK" e digitalAddressSource "GENERAL"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
+      | physicalAddress_address | Via@FAIL-Irreperibile_AR |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "PUBLIC_REGISTRY_RESPONSE"
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
   #2 (MITTENTE) Invio Notifica mono destinatario a PF con recupero del domicilio digitale - IPA risponde OK

@@ -1,9 +1,13 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
-import org.springframework.web.client.RestClientException;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusUpdateEvent;
 import java.time.OffsetDateTime;
 import java.util.List;
+import org.springframework.web.client.RestClientException;
 
 
 public interface IPnDowntimeLogsClient {

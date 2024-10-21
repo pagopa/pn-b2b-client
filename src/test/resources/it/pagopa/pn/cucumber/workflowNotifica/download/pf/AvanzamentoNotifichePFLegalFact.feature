@@ -36,7 +36,7 @@ Feature: Download legalFact
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      |digitalDomicile_address|pectest@pec.pagopa.it|
+      |digitalDomicile_address|destinatario@certificatanoprod.notifichedigitali.it|
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then la PA richiede il download dell'attestazione opponibile PEC_RECEIPT
@@ -47,7 +47,7 @@ Feature: Download legalFact
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin e:
-      |digitalDomicile_address|pectest@pec.pagopa.it|
+      |digitalDomicile_address|destinatario@certificatanoprod.notifichedigitali.it|
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
     Then "Mario Gherkin" richiede il download dell'attestazione opponibile PEC_RECEIPT

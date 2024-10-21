@@ -14,27 +14,30 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.cucumber.utils.*;
-import lombok.extern.slf4j.Slf4j;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.slf4j.MDC;
@@ -45,6 +48,7 @@ import org.springframework.boot.convert.DurationStyle;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.time.Duration;
@@ -226,7 +230,7 @@ public class SharedSteps {
     private final ObjectMapper objMapper = JsonMapper.builder()
             .addModule(new JavaTimeModule())
             .build();
-    private static final Integer WAITING_GPD = 2000;
+    private static final Integer WAITING_GPD = 1000;
     public static final String DEFAULT_PA = "Comune_1";
     private static final String cucumberAnalogicTaxID = "SNCLNN65D19Z131V";
     // private String gherkinSrltaxId = "CCRMCT06A03A433H";
@@ -283,6 +287,7 @@ public class SharedSteps {
         this.timingConfigs = timingConfigs;
         this.pollingFactory = pollingFactory;
     }
+
     @BeforeAll
     public static void before_all() {
         log.debug("SHARED_GLUE START");
@@ -446,7 +451,6 @@ public class SharedSteps {
                                 .address(getDigitalAddressValue())
                         )
                 , new HashMap<>());
-
     }
 
     @And("destinatario Mario Cucumber V1")
@@ -1093,6 +1097,7 @@ public class SharedSteps {
         sendNotification(getWorkFlowWait());
     }
 
+
     private void sendNotificationNoAccept() {
         sendNotificationNoAccept(getWorkFlowWait());
     }
@@ -1164,9 +1169,43 @@ public class SharedSteps {
         }
     }
 
+
+    private void sendNotificationExtraRapid(int wait) {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponse = b2bUtils.uploadNotification(notificationRequest);
+
+                try {
+                    Thread.sleep(wait);
+                } catch (InterruptedException e) {
+                    log.error("Thread.sleep error retry");
+                    throw new RuntimeException(e);
+                }
+
+                notificationResponseComplete = b2bUtils.waitForRequestAcceptationExtraRapid(newNotificationResponse);
+            });
+
+            try {
+                Thread.sleep(wait);
+            } catch (InterruptedException e) {
+                log.error("Thread.sleep error retry");
+                throw new RuntimeException(e);
+            }
+            Assertions.assertNotNull(notificationResponseComplete);
+
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+
     private void sendNotificationRapidCancellPreRefused() {
         int wait = 1000;
         boolean rifiutata;
+
         try {
             Assertions.assertDoesNotThrow(() -> {
                 notificationCreationDate = OffsetDateTime.now();
@@ -1267,7 +1306,9 @@ public class SharedSteps {
     }
 
     private void sendNotificationAndCancel() {
-        sendNotificationRapid(1000);
+
+        sendNotificationExtraRapid(500);
+
         Assertions.assertDoesNotThrow(() -> {
             RequestStatus resp = Assertions.assertDoesNotThrow(() ->
                     b2bClient.notificationCancellation(notificationResponseComplete.getIun()));
@@ -1658,22 +1699,27 @@ public class SharedSteps {
             case "Comune_1" -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_1);
+                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
             }
             case "Comune_2" -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.MVP_2);
+                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
             }
             case "Comune_Multi" -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.GA);
+                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.GA);
             }
             case "Comune_Son" -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.SON);
+                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.SON);
             }
             case "Comune_Root" -> {
                 this.b2bClient.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
                 this.pollingFactory.setApiKeys(IPnPaB2bClient.ApiKeyType.ROOT);
+                this.webPaClient.setBearerToken(SettableBearerToken.BearerTokenType.ROOT);
             }
             default -> throw new IllegalArgumentException();
         }
@@ -1770,6 +1816,12 @@ public class SharedSteps {
         throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
     }
 
+    public void throwAssertFailerWithAmountGDPAndIUN(AssertionFailedError assertionFailedError, Integer amountGDP) {
+        String message = assertionFailedError.getMessage() +
+                "{IUN: " + notificationResponseComplete.getIun() + ", amountGDP " + (amountGDP == null ? "NULL" : amountGDP.toString()) + "}";
+        throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+    }
+
     public <T> T deepCopy(Object obj, Class<T> toClass) {
         try {
             String json = objMapper.writeValueAsString(obj);
@@ -1783,6 +1835,7 @@ public class SharedSteps {
         if (timingConfigs.getWorkflowWaitMillis() == null) return workFlowWaitDefault + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
         return timingConfigs.getWorkflowWaitMillis() + secureRandom.nextInt(WORKFLOW_WAIT_UPPER_BOUND);
     }
+
 
     public Integer getWait() {
         if (timingConfigs.getWaitMillis() == null) return waitDefault + secureRandom.nextInt(WAIT_UPPER_BOUND);
@@ -2058,18 +2111,25 @@ public class SharedSteps {
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NotificationDigitalAddress) digitalDomicile);
             }
         }
-        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipient){
-            ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipient) notificationRecipient)
+        if (notificationRecipient instanceof it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21){
+            ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                     .denomination(denomination).taxId(taxId);
             if(recipientType != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipient) notificationRecipient)
-                        .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipient.RecipientTypeEnum) recipientType);
+                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
+                        .recipientType((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21.RecipientTypeEnum) recipientType);
             }
             if(digitalDomicile != null) {
-                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipient) notificationRecipient)
+                ((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21) notificationRecipient)
                         .digitalDomicile((it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationDigitalAddress) digitalDomicile);
             }
         }
         return notificationRecipient;
+    }
+
+    @And("senza destinatario")
+    public void senzaDestinatario() {
+        NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
+        addRecipientToNotification(this.notificationRequest,
+                notificationRecipientV23, new HashMap<>());
     }
 }

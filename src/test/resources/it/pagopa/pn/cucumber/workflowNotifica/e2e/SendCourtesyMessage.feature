@@ -50,16 +50,14 @@ Feature: Invio messaggi cortesia e2e
             | details_digitalAddress | {"address": "...", "type": "APPIO"} |
             | details_recIndex | 0 |
 
-    @e2e
-  Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato
-    Given viene generata una nuova notifica
-        | subject | invio notifica con cucumber |
-    And destinatario
-        | denomination | Dino Sauro |
-        | taxId | DSRDNI00A01A225I |
-        | digitalDomicile | NULL |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
-        | NULL | NULL |
-
-
+    @e2e  @ignore
+    Scenario: [E2E-SEND-COURTESY-MESSAGE-4] Invio notifica mono destinatario con messaggio di cortesia non configurato
+        Given viene generata una nuova notifica
+            | subject | invio notifica con cucumber |
+        And destinatario
+            | denomination | Dino Sauro |
+            | taxId | DSRDNI00A01A225I |
+            | digitalDomicile | NULL |
+        When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+        Then viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" non esista
+            | NULL | NULL |

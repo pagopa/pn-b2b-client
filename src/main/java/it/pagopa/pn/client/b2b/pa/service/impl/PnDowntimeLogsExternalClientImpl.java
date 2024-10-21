@@ -4,13 +4,17 @@ import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.ApiClient;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.ReadApi;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.api.WriteApi;
-import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.*;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnDowntimeHistoryResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnFunctionality;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusResponse;
+import it.pagopa.pn.client.b2b.web.generated.openapi.clients.externalDowntimeLogs.model.PnStatusUpdateEvent;
+import java.time.OffsetDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import java.time.OffsetDateTime;
-import java.util.*;
 
 
 @Component

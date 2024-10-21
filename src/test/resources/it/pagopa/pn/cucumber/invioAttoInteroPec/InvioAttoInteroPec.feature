@@ -22,7 +22,7 @@ Feature: Invio atto intero via PEC (fase 2 - estensione F24)
       | document           | DOC_1_PG; DOC_2_PG          |
     And destinatario Cucumber Society e:
       | digitalDomicile_address | test@pecOk.it |
-      | payment     | NULL              |
+      | payment                 | NULL          |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And si verifica il contenuto degli attacchment da inviare nella pec del destinatario 0 con 3 allegati

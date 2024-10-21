@@ -19,3 +19,7 @@ Feature: lettura log stream da open search
  # AUD_WH_DELETE(PnAuditLogMarker.AUDIT10Y),
  # AUD_WH_DISABLE(PnAuditLogMarker.AUDIT10Y),
  # AUD_WH_CONSUME(PnAuditLogMarker.AUDIT10Y),
+
+  Scenario: [B2B-STREAM_ES2.2] Impostare nuova tipologia di Audit Log
+    Then viene verificato che esiste un audit log "AUD_WH_CONSUME" in "10y"
+    And viene verificato che esiste un audit log "AUD_WH_CONSUME" con messaggio "[AUD_WH_CONSUME] FAILURE - Error in reading stream"

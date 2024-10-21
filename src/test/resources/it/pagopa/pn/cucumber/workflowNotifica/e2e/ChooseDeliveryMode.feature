@@ -103,4 +103,3 @@ Feature: Scelta canale di invio (Digitale o analogico)
       | details_retryNumber | 0 |
       | details_sentAttemptMade | 0 |
       | details_isAvailable | false |
-
