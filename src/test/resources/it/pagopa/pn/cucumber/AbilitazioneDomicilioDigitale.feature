@@ -522,7 +522,7 @@ Feature: Abilitazione domicilio digitale
     And viene verificato che il timestamp dell'evento "SEND_DIGITAL_FEEDBACK" sia immediatamente successivo a quello dell'evento "AAR_GENERATION" con una differenza massima di 60 secondi
 
 
-  @sercq @addressBook1
+  @sercq @addressBook4
   Scenario: [ABILITAZIONE_DOMICILIO_DIGITALE_PF_62] Creazione notifica digitale verso utente che abbia attivato servizio SERCQ
     Given si predispone addressbook per l'utente "Mario Gherkin"
     And vengono rimossi eventuali recapiti presenti per l'utente
