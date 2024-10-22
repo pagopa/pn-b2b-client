@@ -1,6 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.service.interop.impl;
 
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.ApiClient;
+import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.HealthApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.TracingsApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
 import it.pagopa.pn.client.b2b.pa.service.interop.IInteropTracingClient;
@@ -21,12 +22,14 @@ import java.util.UUID;
 public class InteropTracingClientImpl implements IInteropTracingClient {
     private final RestTemplate restTemplate;
     private final TracingsApi tracingsApi;
+    private final HealthApi healthApi;
     private final InteropClientConfigs interopClientConfigs;
 
     public InteropTracingClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.interopClientConfigs = interopClientConfigs;
         this.tracingsApi = new TracingsApi(createApiClient(interopClientConfigs));
+        this.healthApi = new HealthApi(createApiClient(interopClientConfigs));
     }
 
     private ApiClient createApiClient(InteropClientConfigs interopClientConfigs) {
@@ -59,6 +62,11 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     @Override
     public SubmitTracingResponse submitTracing(Resource _file, LocalDate date) throws RestClientException {
         return tracingsApi.submitTracing(_file, date);
+    }
+
+    @Override
+    public void getHealthStatus() {
+        healthApi.getStatus();
     }
 
     @Override

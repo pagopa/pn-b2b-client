@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.interop.steps;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -23,6 +24,8 @@ public class TracingSteps {
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
     private GetTracingErrorsResponse getTracingErrorsResponse;
+    private RecoverTracingResponse recoverTracingResponse;
+    private ReplaceTracingResponse replaceTracingResponse;
     private ResourceLoader resourceLoader;
     private Resource resource;
     private HttpStatusCodeException httpStatusCodeException;
@@ -134,6 +137,77 @@ public class TracingSteps {
                 createExpectedResponse("errorCode", "message", "purposeId", 10)
         );
         Assertions.assertEquals(expectedResult, getTracingErrorsResponse.getResults());
+    }
+
+    @When("gli errori riscontrati vengono corretti passando il csv {string}")
+    public void sanitizeErrors(String file) {
+        Assertions.assertNotNull(submitTracingResponse, "There was an error while retrieving the tracing response!");
+        Assertions.assertNotNull(submitTracingResponse.getTracingId());
+        recoverError(submitTracingResponse.getTracingId().toString(), resourceLoader.getResource(selectCsvFile(file)));
+    }
+
+    @When("vengono corretti gli errori riscontrati per il tracingId {string}")
+    public void sanitizeErrorsForSpecificTracingId(String tracingId) {
+        recoverError(tracingId, resourceLoader.getResource("corretto"));
+    }
+
+    private void recoverError(String tracingId, Resource resource) {
+        try {
+            recoverTracingResponse = interopTracingClient.recoverTracing(tracingId, resource);
+        } catch (HttpStatusCodeException statusCodeException) {
+            httpStatusCodeException = statusCodeException;
+        } catch (Exception ex) {
+            throw new AssertionFailedError("There was an error while recovering the tracing: " + ex);
+        }
+    }
+
+    @And("si verifica che il tracing sia presente tra quelli ritornati")
+    public void checkReturnedTracingId() {
+        Assertions.assertTrue(getTracingsResponse.getResults()
+                .stream()
+                .map(GetTracingsResponseResults::getTracingId)
+                .anyMatch(tracingId -> tracingId.equals(submitTracingResponse.getTracingId().toString())));
+    }
+
+    @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv: {string}")
+    public void replaceTracing(String file) {
+        replaceTracing(submitTracingResponse.getTracingId().toString(), resourceLoader.getResource(selectCsvFile(file)));
+    }
+
+
+    private void replaceTracing(String tracingId, Resource resource) {
+        try {
+            replaceTracingResponse = interopTracingClient.replaceTracing(tracingId, resource);
+        } catch (HttpStatusCodeException statusCodeException) {
+            httpStatusCodeException = statusCodeException;
+        } catch (Exception ex) {
+            throw new AssertionFailedError("There was an error while replacing the tracing data: " + ex);
+        }
+    }
+
+    @Then("viene verificato che la sovrascrittura viene effettuata con errori")
+    public void verifyReplaceWithErrors() {
+        verifyReplaceTracingResponse(true);
+    }
+
+    @Then("viene verificato che la sovrascrittura viene effettuata senza errori")
+    public void verifyReplaceWithoutErrors() {
+        verifyReplaceTracingResponse(false);
+    }
+
+    private void verifyReplaceTracingResponse(boolean hasErrors) {
+        Assertions.assertNotNull(replaceTracingResponse, "There was an error while retrieving the replace tracing response!");
+        Assertions.assertEquals(hasErrors, replaceTracingResponse.getErrors());
+    }
+
+    @When("viene sovrascritto il tracing con id: {string}")
+    public void replaceTracingById(String tracingId) {
+        replaceTracing(tracingId, resourceLoader.getResource("corretto"));
+    }
+
+    @When("viene invocato l'endpoint di health con successo")
+    public void getHealthStatus() {
+        Assertions.assertDoesNotThrow(interopTracingClient::getHealthStatus);
     }
 
     private void selectOperator(String operator) {
