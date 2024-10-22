@@ -34,7 +34,7 @@ public class TracingSteps {
 
     @Given("l'ente {string} prepara il file CSV {string}")
     public void createCsv(String operator, String file) {
-        selectOperator(operator);
+        //selectOperator(operator);
         //TODO create csv at runtime or fixed csv?
         resource = resourceLoader.getResource(selectCsvFile(file));
     }
@@ -146,8 +146,8 @@ public class TracingSteps {
 
     private String selectCsvFile(String file) {
         return switch (file.trim().toLowerCase()) {
-            case "corretto" -> "classpath:";
-            case "non valido" -> "classpath:";
+            case "corretto" -> "classpath:interop/2024_10_22_OK.csv";
+            case "errato" -> "classpath:interop/2024_10_22_ERROR.csv";
             default -> throw new IllegalStateException("Unexpected value: " + file.trim().toLowerCase());
         };
     }
