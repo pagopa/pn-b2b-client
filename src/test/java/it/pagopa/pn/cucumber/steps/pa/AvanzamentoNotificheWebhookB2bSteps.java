@@ -899,6 +899,51 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
         }
     }
+    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con deliveryDetailCode {string}")
+    public void readStreamTimelineElementDelivCode(String pa,String timelineEventCategory, String deliveryDetailCode) {
+        setPaWebhook(pa);
+
+        TimelineElementSearchResult<TimelineElementCategoryV20> timelineForStream = getTimelineEventForStream(V10, timelineEventCategory);
+        TimelineElementCategoryV20 timelineElementCategory = timelineForStream.getTimelineElementCategory();
+        int numCheck = timelineForStream.getNumCheck();
+        int waiting = timelineForStream.getWaiting();
+
+        ProgressResponseElement progressResponseElement = null;
+
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
+                it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementCategory.name());
+
+        boolean finish = checkInternalTimeline(timelineElementCategory.name(),numCheck,waiting);
+        Assertions.assertTrue(finish);
+
+        for (int i = 0; i < 4; i++) {
+            progressResponseElement = searchInWebhookV20(timelineElementCategory,null,0);
+            log.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
+            if (progressResponseElement != null) {
+                break;
+            }
+            sleepTest();
+        }
+        try{
+            Assertions.assertNotNull(progressResponseElement);
+            ProgressResponseElement finalProgressResponseElement = progressResponseElement;
+            Assertions.assertFalse(sharedSteps.getSentNotification()
+                    .getTimeline()
+                    .stream()
+                    .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
+                            //&& elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
+                            && elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                    .findAny()
+                    .isEmpty());
+            log.info("EventProgress: " + progressResponseElement);
+            sharedSteps.setProgressResponseElement(progressResponseElement);
+        }catch(AssertionFailedError assertionFailedError){
+            String message = assertionFailedError.getMessage()+
+                    "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamList.get(0).getStreamId()+" }";
+            throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+        }
+    }
 
 
     @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con la versione V23")

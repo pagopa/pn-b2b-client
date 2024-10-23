@@ -3375,6 +3375,9 @@ try{
     private PnPollingPredicate getPnPollingPredicateForTimelineV23(String timelineEventCategory, String deliveryDetailCode, String attempt) {
         return getPnPollingPredicateForTimelineV23(timelineEventCategory, null, deliveryDetailCode, attempt, null, null, false, false, null, false, null);
     }
+    private PnPollingPredicate getPnPollingPredicateForTimelineV23(String timelineEventCategory, String deliveryDetailCode, Integer destinatario) {
+        return getPnPollingPredicateForTimelineV23(timelineEventCategory, destinatario, deliveryDetailCode, null, null, null, false, false, null, false, null);
+    }
     private PnPollingPredicate getPnPollingPredicateForTimelineV23(String timelineEventCategory, Integer destinatario, String deliveryDetailCode, String attempt, String tipoDoc, String responseStatus, boolean isF24, boolean isLegalFactEmpty, String legalFactIdCategory, boolean isAttachmentEmpty, List<String> failureCauses) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
         pnPollingPredicate.setTimelineElementPredicateV23(
@@ -3463,4 +3466,24 @@ try{
                         .build());
     }
 
+    @And ("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con deliveryDetailCode {string} per l'utente {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndDestinatario(String timelineEventCategory, String deliveryDetailCode, int destinatario) {
+        PnPollingServiceTimelineRapidV23 timelineRapidV23 = (PnPollingServiceTimelineRapidV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V23);
+
+        PnPollingResponseV23 pnPollingResponseV23 = timelineRapidV23.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .pnPollingPredicate(getPnPollingPredicateForTimelineV23(timelineEventCategory, destinatario, deliveryDetailCode, null, null, null, false, false, null, false, null))
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV23.getNotification().getTimeline());
+        try {
+            Assertions.assertTrue(pnPollingResponseV23.getResult());
+            Assertions.assertNotNull(pnPollingResponseV23.getTimelineElement());
+            sharedSteps.setSentNotification(pnPollingResponseV23.getNotification());
+            TimelineElementV23 timelineElementV23 = pnPollingResponseV23.getTimelineElement();
+            log.info("TIMELINE_ELEMENT: " + timelineElementV23);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
 }
