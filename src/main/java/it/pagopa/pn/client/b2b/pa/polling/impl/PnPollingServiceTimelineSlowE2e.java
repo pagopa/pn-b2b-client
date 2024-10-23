@@ -18,15 +18,15 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_SLOW_E2E_V24)
+@Service(PnPollingStrategy.TIMELINE_SLOW_E2E)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceTimelineSlowE2eV24 extends PnPollingServiceTimelineRapidV24 {
+public class PnPollingServiceTimelineSlowE2e extends PnPollingServiceTimelineRapid {
 
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotificationV24 fullSentNotification;
 
-    public PnPollingServiceTimelineSlowE2eV24(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceTimelineSlowE2e(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
         this.pnPaB2bClient = pnPaB2bClient;
 

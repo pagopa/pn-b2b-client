@@ -20,17 +20,17 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.WEBHOOK_V24)
+@Service(PnPollingStrategy.WEBHOOK)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceWebhook extends PnPollingTemplate<PnPollingResponseV24> {
     private final IPnWebhookB2bClient webhookB2bClient;
     private final TimingForPolling timingForPolling;
     private List<ProgressResponseElementV24> progressResponseElementListV24;
     private String iun;
 
 
-    public PnPollingServiceWebhookV24(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
+    public PnPollingServiceWebhook(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
         this.timingForPolling = timingForPolling;
         this.webhookB2bClient = webhookB2bClient;
     }
@@ -48,7 +48,7 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
                 pnPollingParameter.setDeepCount(deepCount);
                 listResponseEntity = webhookB2bClient.consumeEventStreamHttpV24(pnPollingParameter.getStreamId(), pnPollingParameter.getLastEventId());
                 progressResponseElementListV24 = listResponseEntity.getBody();
-                pnPollingResponse.setProgressResponseElementListV24(listResponseEntity.getBody());
+                pnPollingResponse.setProgressResponseElementList(listResponseEntity.getBody());
                 log.info("ELEMENTI NEL WEBHOOK: " + Objects.requireNonNull(progressResponseElementListV24));
                 if (deepCount >= 250) {
                     throw new PnPollingException("LOP: PROGRESS-ELEMENTS: " + progressResponseElementListV24
@@ -69,8 +69,8 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
     @Override
     protected Predicate<PnPollingResponseV24> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
-            if (pnPollingResponse.getProgressResponseElementListV24() == null
-                    || pnPollingResponse.getProgressResponseElementListV24().isEmpty()) {
+            if (pnPollingResponse.getProgressResponseElementList() == null
+                    || pnPollingResponse.getProgressResponseElementList().isEmpty()) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -122,7 +122,7 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
 
 
     private boolean isWaitTerminated(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        ProgressResponseElementV24 progressResponseElementV24 = pnPollingResponse.getProgressResponseElementListV24()
+        ProgressResponseElementV24 progressResponseElementV24 = pnPollingResponse.getProgressResponseElementList()
                 .stream()
                 .map(progressResponseElement -> {
                     if (!pnPollingParameter.getPnPollingWebhook().getProgressResponseElementListV24().contains(progressResponseElement)) {
@@ -134,7 +134,7 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
                 .findAny()
                 .orElse(null);
         if (progressResponseElementV24 != null) {
-            pnPollingResponse.setProgressResponseElementV24(progressResponseElementV24);
+            pnPollingResponse.setProgressResponseElement(progressResponseElementV24);
             return true;
         }
         return false;
@@ -142,7 +142,7 @@ public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingRespo
 
     private void selectLastEventId(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {
         ProgressResponseElementV24 lastProgress = pnPollingResponse
-                .getProgressResponseElementListV24()
+                .getProgressResponseElementList()
                 .stream()
                 .reduce((prev, curr) -> prev.getEventId().compareTo(curr.getEventId()) < 0 ? curr : prev)
                 .orElse(null);

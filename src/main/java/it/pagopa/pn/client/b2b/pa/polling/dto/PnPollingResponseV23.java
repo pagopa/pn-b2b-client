@@ -10,10 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 public class PnPollingResponseV23 extends PnPollingResponse {
+    //MATTEO
     private FullSentNotificationV23 notification;
     private NewNotificationRequestStatusResponseV23 statusResponse;
     private TimelineElementV23 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
-    private List<ProgressResponseElementV23> progressResponseElementListV23;
-    private ProgressResponseElementV23 progressResponseElementV23;
+    private List<ProgressResponseElementV23> progressResponseElementList;
+    private ProgressResponseElementV23 progressResponseElement;
 }

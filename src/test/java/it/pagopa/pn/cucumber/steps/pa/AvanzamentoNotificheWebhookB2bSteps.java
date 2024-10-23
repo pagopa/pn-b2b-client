@@ -1114,10 +1114,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         PnPollingServiceWebhookV20 webhookV20 = (PnPollingServiceWebhookV20) sharedSteps.getPollingFactory().getPollingService(PnPollingStrategy.WEBHOOK_V20);
         PnPollingResponseV20 pnPollingResponseV20 = webhookV20.waitForEvent(sharedSteps.getSentNotification().getIun(), pnPollingParameter);
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponseV20.getProgressResponseElementV20());
-        if(pnPollingResponseV20.getProgressResponseElementV20() != null) {
-            sharedSteps.setProgressResponseElements(pnPollingResponseV20.getProgressResponseElementListV20());
-            return pnPollingResponseV20.getProgressResponseElementV20();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V20: " + pnPollingResponseV20.getProgressResponseElement());
+        if (pnPollingResponseV20.getProgressResponseElement() != null) {
+            sharedSteps.setProgressResponseElements(pnPollingResponseV20.getProgressResponseElementList());
+            return pnPollingResponseV20.getProgressResponseElement();
         }
         return null;
     }
@@ -1134,10 +1134,10 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                         .streamId(eventStreamListV23.get(position).getStreamId())
                         .build());
 
-        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponseV23.getProgressResponseElementV23());
-        if (pnPollingResponseV23.getProgressResponseElementListV23() != null) {
-            sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementListV23());
-            return pnPollingResponseV23.getProgressResponseElementV23();
+        log.info("WEBHOOK_PROGRESS_RESPONSE_ELEMENT_V23: " + pnPollingResponseV23.getProgressResponseElement());
+        if (pnPollingResponseV23.getProgressResponseElementList() != null) {
+            sharedSteps.setProgressResponseElementsV23(pnPollingResponseV23.getProgressResponseElementList());
+            return pnPollingResponseV23.getProgressResponseElement();
         }
         return null;
     }
