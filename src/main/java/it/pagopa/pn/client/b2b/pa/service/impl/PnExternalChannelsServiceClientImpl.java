@@ -51,7 +51,6 @@ public class PnExternalChannelsServiceClientImpl implements IPnExternalChannelsS
         return this.mockReceivedMessagesApi.getReceivedMessages(iun, recipientIndex);
     }
 
-    //TODO Matteo
     public List<ReceivedMessage> getReceivedMessagesAnalogico(String iun, Integer recipientIndex) throws RestClientException {
         this.mockReceivedMessagesApi.setApiClient(newApiClient(restTemplate, baseUrlMockConsolidatore));
         List<ReceivedMessage> result = this.mockReceivedMessagesApi.getReceivedMessages(iun, recipientIndex);
