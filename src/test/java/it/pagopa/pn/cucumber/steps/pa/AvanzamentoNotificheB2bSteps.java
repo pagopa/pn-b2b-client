@@ -1328,6 +1328,16 @@ public class AvanzamentoNotificheB2bSteps {
         legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
     }
 
+    @And("ricerca ed effettua download del legalFact con la categoria {string} con DetailCode {string}")
+    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory,String deliveryDetailCode) {
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, deliveryDetailCode);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
+    }
+
+
+
+
+
     private String downloadLegalFact(String legalFactCategory, boolean pa, boolean appIO, boolean webRecipient, String deliveryDetailCode) {
         try {
             Thread.sleep(sharedSteps.getWait());
@@ -3316,6 +3326,8 @@ try{
             return key.substring(key.indexOf("PN_LEGAL_FACTS"));
         } else if (key.contains("PN_NOTIFICATION_ATTACHMENTS")) {
             return key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
+        } else if (key.contains("PN_PRINTED")) {
+            return key.substring(key.indexOf("PN_PRINTED"));
         } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
             return key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
         } else if (key.contains("PN_F24")) {
