@@ -7,6 +7,7 @@ config/api-keys-*.properties
 config/bearer-token-*.properties
 config/api-keys.properties
 config/bearer-token.properties
+config/interop-tracing-*.properties
 
 
 ### Node ###
@@ -44,5 +45,6 @@ build/
 .vscode/
 /config/api-keys-dev.properties
 /config/bearer-token-dev.properties
+/config/interop-tracing-dev.properties
 
 token.json
