@@ -79,4 +79,7 @@ Feature: Interop Tracing feature
   Scenario: [INTEROP-TRACING-11] Invio del file CSV tracing per una stessa data e già in stato completato, in sostituzione a quello già presente
     When viene invocato l'endpoint di health con successo
 
-
+  Scenario: [INTEROP-TRACING-12] Invio del file CSV tracing mancante utilizzando l'identificativo del file di tracing non inserito per una determinata data
+    Given viene recuperata la lista di tracing con stato "MISSING"
+    When viene inviato il csv per la data mancante
+    Then il caricamento del csv viene effettuato senza errori

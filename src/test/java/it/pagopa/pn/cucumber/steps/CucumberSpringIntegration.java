@@ -14,6 +14,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.interop.config.InteropClientConfigs;
+import it.pagopa.pn.client.b2b.pa.service.interop.config.springconfig.InteropConfiguration;
 import it.pagopa.pn.client.b2b.pa.service.interop.impl.InteropTracingClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -89,6 +90,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         PnBFFRecipientNotificationClientImpl.class,
         IPnInteropProbingClientImpl.class,
         PaperCalculatorClientImpl.class,
+        InteropConfiguration.class,
         InteropClientConfigs.class,
         InteropTracingClientImpl.class
 })

@@ -37,14 +37,13 @@ public class TracingSteps {
 
     @Given("l'ente {string} prepara il file CSV {string}")
     public void createCsv(String operator, String file) {
-        //selectOperator(operator);
-        //TODO create csv at runtime or fixed csv?
+//        selectOperator(operator);
         resource = resourceLoader.getResource(selectCsvFile(file));
     }
 
     @When("viene sottomesso il file CSV in data {string}")
     public void uploadCsv(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MMM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
             submitTracingResponse = interopTracingClient.submitTracing(resource, LocalDate.parse(date, formatter));
         } catch (HttpStatusCodeException statusCodeException) {
@@ -208,6 +207,15 @@ public class TracingSteps {
     @When("viene invocato l'endpoint di health con successo")
     public void getHealthStatus() {
         Assertions.assertDoesNotThrow(interopTracingClient::getHealthStatus);
+    }
+
+    @When("viene inviato il csv per la data mancante")
+    public void recoverMissingCsvForDate() {
+        Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
+        Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
+        GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
+        createCsv("", "CORRETTO");
+        uploadCsv(tracingsResponseResults.getDate().toString());
     }
 
     private void selectOperator(String operator) {
