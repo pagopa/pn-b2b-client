@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.service.interop;
+package it.pagopa.pn.client.b2b.pa.interop;
 
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;

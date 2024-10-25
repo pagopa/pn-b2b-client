@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.service.interop.config;
+package it.pagopa.pn.client.b2b.pa.interop.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

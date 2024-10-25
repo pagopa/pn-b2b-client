@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.service.interop.config.springconfig;
+package it.pagopa.pn.client.b2b.pa.interop.config.springconfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;

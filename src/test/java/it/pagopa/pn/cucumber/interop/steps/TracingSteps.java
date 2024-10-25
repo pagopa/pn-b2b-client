@@ -5,7 +5,13 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.service.interop.IInteropTracingClient;
+import it.pagopa.pn.client.b2b.pa.interop.IInteropTracingClient;
+import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnPollingInterop;
+import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnTracingResponse;
+import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.cucumber.interop.domain.TracingCsvFile;
 import org.junit.jupiter.api.Assertions;
@@ -19,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TracingSteps {
+    private final PnPollingFactory pnPollingFactory;
     private final IInteropTracingClient interopTracingClient;
     private TracingCsvFile tracingCsvFile;
     private SubmitTracingResponse submitTracingResponse;
@@ -30,7 +37,8 @@ public class TracingSteps {
     private Resource resource;
     private HttpStatusCodeException httpStatusCodeException;
 
-    public TracingSteps(IInteropTracingClient interopTracingClient, ResourceLoader resourceLoader) {
+    public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, ResourceLoader resourceLoader) {
+        this.pnPollingFactory = pnPollingFactory;
         this.interopTracingClient = interopTracingClient;
         this.resourceLoader = resourceLoader;
     }
@@ -147,7 +155,7 @@ public class TracingSteps {
 
     @When("vengono corretti gli errori riscontrati per il tracingId {string}")
     public void sanitizeErrorsForSpecificTracingId(String tracingId) {
-        recoverError(tracingId, resourceLoader.getResource("corretto"));
+        recoverError(tracingId, resourceLoader.getResource(selectCsvFile("corretto")));
     }
 
     private void recoverError(String tracingId, Resource resource) {
@@ -216,6 +224,16 @@ public class TracingSteps {
         GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
         createCsv("", "CORRETTO");
         uploadCsv(tracingsResponseResults.getDate().toString());
+    }
+
+    @And("si attende che il file di tracing caricato passi in stato {string}")
+    public void waitForStatus(String status) {
+        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(PnPollingStrategy.INTEROP_TRACING);
+        PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
+                PnPollingParameter.builder()
+                        .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
+                        .build());
+        Assertions.assertTrue(pnTracingResponse.getResult());
     }
 
     private void selectOperator(String operator) {

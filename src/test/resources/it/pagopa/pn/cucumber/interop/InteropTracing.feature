@@ -2,8 +2,9 @@ Feature: Interop Tracing feature
 
   Scenario: [INTEROP-TRACING-01] Inserimento di un nuovo file CSV di tracing giornaliero
     Given l'ente "" prepara il file CSV "CORRETTO"
-    When viene sottomesso il file CSV in data "2024-10-22"
+    When viene sottomesso il file CSV in data "2024-10-25"
     Then il caricamento del csv viene effettuato senza errori
+    And si attende che il file di tracing caricato passi in stato "COMPLETED"
     # SCENARIO 15
     When viene sovrascritto il tracing aggiunto in precedenza con il csv: "CORRETTO"
     Then viene verificato che la sovrascrittura viene effettuata con errori

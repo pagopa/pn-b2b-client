@@ -1,11 +1,11 @@
-package it.pagopa.pn.client.b2b.pa.service.interop.impl;
+package it.pagopa.pn.client.b2b.pa.interop.service.impl;
 
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.ApiClient;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.HealthApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.api.TracingsApi;
 import it.pagopa.interop.client.b2b.generated.openapi.clients.interop.model.*;
-import it.pagopa.pn.client.b2b.pa.service.interop.IInteropTracingClient;
-import it.pagopa.pn.client.b2b.pa.service.interop.config.InteropClientConfigs;
+import it.pagopa.pn.client.b2b.pa.interop.config.InteropClientConfigs;
+import it.pagopa.pn.client.b2b.pa.interop.IInteropTracingClient;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;

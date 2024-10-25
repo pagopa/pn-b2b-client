@@ -31,4 +31,5 @@ public class PnPollingStrategy {
     public static final String VALIDATION_STATUS_NO_ACCEPTATION_V23 = "VALIDATION_STATUS_NO_ACCEPTATION_V23";
     public static final String WEBHOOK_V23 = "WEBHOOK_V23";
     public static final String WEBHOOK_V20 = "WEBHOOK_V20";
+    public static final String INTEROP_TRACING = "INTEROP_TRACING";
 }
