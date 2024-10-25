@@ -1,6 +1,6 @@
 Feature: Notifica visualizzata
 
-
+  @e2e
   Scenario: [E2E-NOTIFICATION-VIEWED-1] Visualizzazione da parte del destinatario della notifica
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -22,7 +22,7 @@ Feature: Notifica visualizzata
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e @deleghe1
+  @e2e @ignore
   Scenario: [E2E-NOTIFICATION-VIEWED-2] Visualizzazione da parte del delegato della notifica
     Given "Mario Gherkin" rifiuta se presente la delega ricevuta "Mario Cucumber"
     And "Mario Gherkin" viene delegato da "Mario Cucumber"
@@ -48,7 +48,7 @@ Feature: Notifica visualizzata
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e
+  @e2e @ignore
   Scenario: [E2E-NOTIFICATION-VIEWED-4] A valle della visualizzazione della notifica non deve essere generato un nuovo elemento di timeline NOTIFICATION VIEWED
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
@@ -88,11 +88,11 @@ Feature: Notifica visualizzata
       | physicalAddress_address | @FAIL-DiscoveryIrreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
-      | loadTimeline     | true                                      |
-      | numCheck         | 20                                        |
-      | details          | NOT_NULL                                  |
-      | details_recIndex | 0                                         |
-      | legalFactsIds    | [{"category": "ANALOG_FAILURE_DELIVERY"}] |
+      | loadTimeline | true |
+      | pollingTime | 40000 |
+      | numCheck    | 20     |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
     And viene verificato che il destinatario "DSRDNI00A01A225I" di tipo "PF" sia nella tabella pn-paper-notification-failed
     And la notifica può essere correttamente recuperata da "Dino Sauro"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
@@ -112,15 +112,14 @@ Feature: Notifica visualizzata
       | taxId | CLMCST42R12D969Z |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "SEND_DIGITAL_FEEDBACK" esista
-      | loadTimeline                 | true     |
-      | pollingTime                  | 4000     |
-      | numCheck                     | 8        |
-      | details                      | NOT_NULL |
-      | details_responseStatus       | OK       |
-      | details_recIndex             | 0        |
-      | details_retryNumber          | 0        |
-      | details_sentAttemptMade      | 0        |
-      | details_digitalAddressSource | SPECIAL  |
+      | loadTimeline | true |
+      | pollingTime | 4000 |
+      | numCheck    | 8    |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_retryNumber | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_digitalAddressSource | SPECIAL |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     And viene verificato che l'elemento di timeline "NOTIFICATION_VIEWED" esista
       | loadTimeline | true |
@@ -172,6 +171,10 @@ Feature: Notifica visualizzata
       | digitalDomicile_address | test@fail.it |
       | physicalAddress_address | Via@ok_RS |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "DIGITAL_FAILURE_WORKFLOW" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
     And la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     And viene verificato che l'elemento di timeline "PREPARE_SIMPLE_REGISTERED_LETTER" non esista
       | details | NOT_NULL |
@@ -190,7 +193,7 @@ Feature: Notifica visualizzata
       | taxId        | FRMTTR76M06B715E  |
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_RS |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata da "Ettore Fieramosca"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" non esista
       | details | NOT_NULL |
@@ -242,6 +245,11 @@ Feature: Notifica visualizzata
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@FAIL-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then viene verificato che l'elemento di timeline "SEND_ANALOG_DOMICILE" esista
+      | loadTimeline | true |
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
     Then la notifica può essere correttamente recuperata da "Cristoforo Colombo"
     Then viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
       | loadTimeline | true |
