@@ -34,7 +34,7 @@
         <open.api.version.delivery_v21>v2.3.0</open.api.version.delivery_v21>
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
         <open.api.version.delivery.push_v23>36069ddec82d35af4a574df944d47db7e24c2c37</open.api.version.delivery.push_v23>
-        <open.api.version.user.attributes>v2.8.0-RC.1</open.api.version.user.attributes>
+        <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
         <open.api.version.mandate>v2.4.0</open.api.version.mandate>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
         <open.api.version.downtime.logs>v2.3.0</open.api.version.downtime.logs>
