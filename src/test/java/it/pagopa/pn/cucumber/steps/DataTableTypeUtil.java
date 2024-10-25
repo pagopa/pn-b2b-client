@@ -2,14 +2,20 @@ package it.pagopa.pn.cucumber.steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.DataTableType;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.privatepaperchannel.model.ShipmentCalculateRequest;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParameter;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static java.util.Optional.ofNullable;
 
 
 public class DataTableTypeUtil {
@@ -81,7 +87,7 @@ public class DataTableTypeUtil {
     }
 
     private NotificationDocument getNotificationDocument(String documentElem) {
-        String document = null;
+        String document;
 
         switch (documentElem.toUpperCase().trim()) {
             case "DOC_1_PG" -> document = "classpath:/sample_1pg.pdf";
@@ -232,14 +238,14 @@ public class DataTableTypeUtil {
     @DataTableType
     public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
 
-        List<NotificationPaymentItem> listPayment = new ArrayList<NotificationPaymentItem>();;
+        List<NotificationPaymentItem> listPayment;
 
         NotificationRecipientV23 notificationRecipient =  (new NotificationRecipientV23()
                 .denomination(getValue(data,DENOMINATION.key))
                 .taxId(getValue(data,TAX_ID.key))
                 //.internalId(getValue(data,INTERNAL_ID.key))
-                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null? null : (new NotificationDigitalAddress()
-                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null?
+                .digitalDomicile(getValue(data,DIGITAL_DOMICILE.key) == null ? null : (new NotificationDigitalAddress()
+                        .type((getValue(data,DIGITAL_DOMICILE_TYPE.key) == null ?
                                 null : NotificationDigitalAddress.TypeEnum.PEC ))
                         .address( getValue(data,DIGITAL_DOMICILE_ADDRESS.key)))
                 )
@@ -264,7 +270,7 @@ public class DataTableTypeUtil {
 
         //N PAGAMENTI
         if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
-            listPayment = new ArrayList<NotificationPaymentItem>();
+            listPayment = new ArrayList<>();
             for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
                 try {
                     Thread.sleep(1000);
@@ -350,24 +356,21 @@ public class DataTableTypeUtil {
                                     getNotificationMetadataAttachment(getValue(data, PAYMENT_F24.key))));
 
         } else if (!Objects.equals(getValue(data, PAYMENT_F24_X.key), null)) {
-            boolean applyCost = true;
-            if (i==2 && getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI")){
-                applyCost = false;
-            }
-            if(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("NO")){
+            boolean applyCost = i != 2 || !getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI");
+            if (getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("NO")) {
                 applyCost = false;
             }
             addPaymentsItem.f24(
                     new F24Payment()
                             .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
                             .applyCost(applyCost)
-                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24_X.key)+"_"+i)));
+                            .metadataAttachment(getNotificationMetadataAttachment(getValue(data, PAYMENT_F24_X.key) + "_" + i)));
         }
 
     }
 
     private NotificationMetadataAttachment getNotificationMetadataAttachment(String metadataAttachment) {
-        String metadati = null;
+        String metadati;
 
         switch (metadataAttachment.toUpperCase().trim()) {
             case "PAYMENT_F24_STANDARD_NO_VALID_FORMAT" -> metadati = "classpath:/METADATA_CORRETTO_NO_VALID_FORMAT.json";
@@ -547,7 +550,7 @@ public class DataTableTypeUtil {
     @DataTableType
     public synchronized it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 convertNotificationRecipientV21(Map<String, String> data) {
 
-        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> listPayment = new ArrayList<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem>();
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem> listPayment;
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 notificationRecipient =  (new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21()
                 .denomination(getValue(data,DENOMINATION.key))
@@ -579,7 +582,7 @@ public class DataTableTypeUtil {
 
         //N PAGAMENTI
         if (getValue(data,PAYMENT.key)!= null  && getValue(data,PAYMENT_MULTY_NUMBER.key)!= null  && !getValue(data,PAYMENT_MULTY_NUMBER.key).isEmpty()){
-            listPayment = new ArrayList<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationPaymentItem>();
+            listPayment = new ArrayList<>();
             for (int i = 0; i < Integer.parseInt(getValue(data, PAYMENT_MULTY_NUMBER.key)); i++) {
                 try {
                     Thread.sleep(1000);
@@ -594,7 +597,7 @@ public class DataTableTypeUtil {
                                 new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.PagoPaPayment()
                                         .creditorTaxId(getValue(data, PAYMENT_CREDITOR_TAX_ID.key))
                                         .noticeCode(getValue(data, PAYMENT_NOTICE_CODE.key))
-                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI") ? true : false)
+                                        .applyCost(getValue(data, PAYMENT_APPLY_COST_PAGOPA.key).equalsIgnoreCase("SI"))
                                         .attachment(getValue(data, PAYMENT_PAGOPA_FORM.key).equalsIgnoreCase("NOALLEGATO") ? null : utils.newAttachmentV21(getDefaultValue(PAYMENT_PAGOPA_FORM.key)))));
 
                 //LOAD METADATI F24
@@ -602,14 +605,14 @@ public class DataTableTypeUtil {
                     addPaymentsItem.f24(
                             new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
                                     .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
                                     .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_FLAT.json")));
 
                 } else if (getValue(data,PAYMENT_F24.key)!= null && getValue(data,PAYMENT_F24.key).equalsIgnoreCase("PAYMENT_F24_STANDARD_0")) {
                     addPaymentsItem.f24(
                             new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.F24Payment()
                                     .title(getValue(data, TITLE_PAYMENT.key) + "_" + i)
-                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI") ? true : false)
+                                    .applyCost(getValue(data, PAYMENT_APPLY_COST_F24.key).equalsIgnoreCase("SI"))
                                     .metadataAttachment(utils.newMetadataAttachmentV21("classpath:/METADATA_CORRETTO_0.json")));
 
                 }
@@ -640,6 +643,7 @@ public class DataTableTypeUtil {
         String analogCost = getValue(data, DETAILS_ANALOG_COST.key);
         String pollingTime = getValue(data, POLLING_TIME.key);
         String numCheck = getValue(data, NUM_CHECK.key);
+        String pollingType = getValue(data, POLLING_Type.key);
         String loadTimeline = getValue(data, LOAD_TIMELINE.key);
 
         if (data.size() == 1 && data.get("NULL") != null) {
@@ -675,10 +679,22 @@ public class DataTableTypeUtil {
         dataTest.setFirstSendRetry(isFirstRetry != null ? Boolean.valueOf(isFirstRetry) : null);
         dataTest.setProgressIndex(progressIndex != null ? Integer.parseInt(progressIndex) : null);
         dataTest.setPollingTime(pollingTime != null ? Integer.parseInt(pollingTime) : null);
+        dataTest.setPollingType(pollingType);
         dataTest.setNumCheck(numCheck != null ? Integer.parseInt(numCheck) : null);
         dataTest.setLoadTimeline(loadTimeline != null ? Boolean.valueOf(loadTimeline) : null);
 
         return dataTest;
+    }
+
+    @DataTableType
+    public synchronized CalculateRequestParameter convertShipmentCalculateRequetElement(Map<String, String> data) {
+        CalculateRequestParameter requestParameter = new CalculateRequestParameter();
+        requestParameter.setGeokey(getValue(data, "geokey"));
+        requestParameter.setProduct(ofNullable(getValue(data, "product")).map(ShipmentCalculateRequest.ProductEnum::fromValue).orElse(null));
+        requestParameter.setNumSides(ofNullable(getValue(data, "numSides")).map(Integer::valueOf).orElse(null));
+        requestParameter.setIsReversePrinter(ofNullable(getValue(data, "isReversePrinter")).map(Boolean::valueOf).orElse(null));
+        requestParameter.setPageWeight(ofNullable(getValue(data, "pageWeight")).map(Integer::valueOf).orElse(null));
+        return requestParameter;
     }
 
 

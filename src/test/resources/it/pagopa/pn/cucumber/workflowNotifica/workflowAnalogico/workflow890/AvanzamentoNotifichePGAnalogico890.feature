@@ -94,8 +94,10 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
       | subject | notifica analogica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario Gherkin Analogic e:
-      | digitalDomicile | NULL |
-      | physicalAddress_address | Via@ok_890_SLOW |
-    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+      | digitalDomicile         | NULL             |
+      | physicalAddress_address | Via@ok_890_SLOW  |
+      | payment_f24             | PAYMENT_F24_FLAT |
+      | title_payment           | F24_FLAT_GHERKIN |
+    When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
     Then si attende la corretta sospensione dell'invio cartaceo

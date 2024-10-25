@@ -16,7 +16,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
 
 
   @workflowAnalogico
@@ -39,14 +39,17 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune di palermo               |
-    And destinatario Mario Gherkin
     And destinatario
-      | denomination            | Test 890 Fail    |
-      | taxId                   | PRVMNL80A01F205M |
+      | denomination            | Test 890 ok      |
+      | taxId                   | DVNLRD52D15M059P |
       | digitalDomicile         | NULL             |
-      | physicalAddress_address | Via@fail_890     |
+      | physicalAddress_address | Via1@ok_890       |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile              | NULL           |
+      | physicalAddress_address      | Via2@ok_890     |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
 
 
@@ -112,7 +115,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "ANALOG_SUCCESS_WORKFLOW"
     And verifica date business in timeline ANALOG_SUCCESS_WORKFLOW per l'utente 0 al tentativo 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 0
     And si verifica che scheduleDate del SCHEDULE_REFINEMENT sia uguale al timestamp di REFINEMENT per l'utente 1
@@ -192,7 +195,7 @@ Feature: avanzamento b2b notifica multi destinatario analogico 890
       | digitalDomicile         | NULL              |
       | physicalAddress_address | Via@OK-REC008_890 |
     And destinatario Mario Cucumber e:
-      | digitalDomicile         | NULL       |
+      | digitalDomicile | NULL |
       | physicalAddress_address | Via@ok_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW" per l'utente 1

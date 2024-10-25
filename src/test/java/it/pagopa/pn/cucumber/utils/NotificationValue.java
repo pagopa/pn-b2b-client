@@ -36,7 +36,7 @@ public enum NotificationValue {
     INTERNAL_ID("internalId","",false),
     DIGITAL_DOMICILE("digitalDomicile","",false),
     DIGITAL_DOMICILE_TYPE("digitalDomicile_type","PEC",false),
-    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","pectest@pec.pagopa.it",false),
+    DIGITAL_DOMICILE_ADDRESS("digitalDomicile_address","destinatario@certificatanoprod.notifichedigitali.it",false),
     PHYSICAL_ADDRES("physicalAddress","",false),
     PHYSICAL_ADDRESS_ADDRESS("physicalAddress_address","Via senza nome",false),
     PHYSICAL_ADDRESS_MUNICIPALITY("physicalAddress_municipality","Cosenza",false),
@@ -65,6 +65,7 @@ public enum NotificationValue {
     /*TIMELINE DETAILS*/
     PROGRESS_INDEX("progressIndex", "-1", false),
     POLLING_TIME("pollingTime", null, false),
+    POLLING_Type("pollingType", null, false),
     NUM_CHECK("numCheck", null, false),
     LOAD_TIMELINE("loadTimeline", "false", false),
     IS_FIRST_SEND_RETRY("isFirstSendRetry", "false", false),

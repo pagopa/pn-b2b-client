@@ -5,6 +5,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequest;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.PaperEngageRequestAttachments;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.externalchannels.model.mock.pec.ReceivedMessage;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
@@ -29,8 +30,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
@@ -64,6 +65,7 @@ public class InvioNotificheB2bSteps {
     private String sha256DocumentDownload;
     private NotificationAttachmentDownloadMetadataResponse downloadResponse;
     private List<ReceivedMessage> documentiPec;
+    private FullSentNotificationV23 notificationRetrieved;
 
     private final JavaMailSender emailSender;
 
@@ -158,21 +160,12 @@ public class InvioNotificheB2bSteps {
 
     @And("recupera notifica vecchia di 120 giorni da lato web PA e verifica presenza pagamento")
     public void notification120ggCanBeRetrievedWithIUNWebPA() {
-        AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
-        try {
-            Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(140), OffsetDateTime.now().minusDays(130),null,null,null,null,20,null))
-            );
 
-            Assertions.assertNotNull(notificationByIun.get());
-            Assertions.assertNotNull(notificationByIun.get().getResultsPage());
-            Assertions.assertTrue(notificationByIun.get().getResultsPage().size()>0);
-
-            List<NotificationSearchRow> ricercaNotifiche= notificationByIun.get().getResultsPage();
+        List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(OffsetDateTime.now().minusDays(120));
 
             FullSentNotificationV23 notifica120 = null;
 
-            for(NotificationSearchRow notifiche :ricercaNotifiche){
+            for(NotificationSearchRow notifiche :serarchedNotification){
 
                 notifica120 = b2bClient.getSentNotification(notifiche.getIun());
 
@@ -191,6 +184,7 @@ public class InvioNotificheB2bSteps {
                 }
             }
 
+        try {
             Assertions.assertNotNull(notifica120);
 
             log.info("notifica dopo 120gg: {}", notifica120);
@@ -200,10 +194,67 @@ public class InvioNotificheB2bSteps {
             sharedSteps.setSentNotification(notifica120);
 
         } catch (AssertionFailedError assertionFailedError) {
-            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            String message = assertionFailedError.getMessage() +
+                    "{notifica : " + (notifica120 == null ? "NULL" : notifica120) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
+
+
+
+    @And("recupero notifica del {string} lato web dalla PA {string} e verifica presenza pagamento per notifica che è arrivato fino al elemento {string} con feePolicy {string}")
+    public void notificationFromADateCanBeRetrievedWithIUNWebPA(String stringDate,String pa, String type, String feePolicy) {
+        sharedSteps.selectPA(pa);
+
+        LocalDate date = LocalDate.parse(stringDate);
+        OffsetDateTime offsetDateTime = date.atStartOfDay(ZoneOffset.UTC).toOffsetDateTime();
+
+        List<NotificationSearchRow> serarchedNotification = searchNotificationWebFromADate(offsetDateTime);
+            FullSentNotificationV23 notifica = null;
+
+            for(NotificationSearchRow notifiche :serarchedNotification){
+
+                notifica = b2bClient.getSentNotification(notifiche.getIun());
+
+                if(!notifica.getRecipients().get(0).getPayments().isEmpty() && notifica.getRecipients().get(0).getPayments() != null && notifica.getRecipients().get(0).getPayments().get(0).getPagoPa() != null && notifica.getTimeline().toString().contains(type) && notifica.getNotificationFeePolicy().toString().equals(feePolicy) && notifica.getPaFee() == null){
+                    break;
+                }else{
+                    notifica=null;
+                }
+                    await().atMost(sharedSteps.getWorkFlowWait(), TimeUnit.MILLISECONDS);
+            }
+
+            try{
+            Assertions.assertNotNull(notifica);
+
+            log.info("notifica trovata: {}", notifica);
+                notifica.setPaFee(100);
+                notifica.setVat(22);
+            sharedSteps.setSentNotification(notifica);
+
+        } catch (AssertionFailedError assertionFailedError) {
+
+                String message = assertionFailedError.getMessage() +
+                        "{notifica : " + (notifica == null ? "NULL" : notifica) + " }";
+                throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+private List<NotificationSearchRow> searchNotificationWebFromADate(OffsetDateTime data){
+    AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
+
+          Assertions.assertDoesNotThrow(()->
+          notificationByIun.set(webPaClient.searchSentNotification(data,data.plusDays(20),null,null,null,null,50,null))
+          );
+
+          Assertions.assertNotNull(notificationByIun.get());
+          Assertions.assertNotNull(notificationByIun.get().getResultsPage());
+          Assertions.assertTrue(notificationByIun.get().getResultsPage().size()>0);
+
+          List<NotificationSearchRow> ricercaNotifiche=notificationByIun.get().getResultsPage();
+        return ricercaNotifiche;
+}
 
     @Then("la notifica può essere correttamente recuperata dal sistema tramite Stato {string} dalla web PA {string}")
     public void notificationCanBeRetrievedWithStatusByWebPA(String status, String paType) {
@@ -241,7 +292,9 @@ public class InvioNotificheB2bSteps {
     public void laNotificaVieneRecuperataDalSistemaTramiteCodiceIUN() {
         AtomicReference<FullSentNotificationV23> notificationByIun = new AtomicReference<>();
         try {
-            notificationByIun.set(b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun()));
+            FullSentNotificationV23 notificationResponseComplete = b2bUtils.getNotificationByIun(sharedSteps.getSentNotification().getIun());
+            notificationByIun.set(notificationResponseComplete);
+            sharedSteps.setSentNotification(notificationResponseComplete);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
         }
@@ -451,8 +504,7 @@ public class InvioNotificheB2bSteps {
                     }
                 }
             }
-            byte[] bytes = Assertions.assertDoesNotThrow(() ->
-                    b2bUtils.downloadFile(this.downloadResponse.getUrl()));
+            byte[] bytes = b2bUtils.downloadFile(this.downloadResponse.getUrl());
             this.sha256DocumentDownload = b2bUtils.computeSha256(new ByteArrayInputStream(bytes));
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
@@ -999,32 +1051,62 @@ public class InvioNotificheB2bSteps {
         }
     }
 
-
-
     @And("si verifica il contenuto della pec abbia {int} attachment di tipo {string}")
     public void presenzaAttachment(Integer numeroDocumenti, String tipologia) {
-
         Integer contoDocumento = 0;
-
         for (String attachmentUrl : documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls()) {
-            contoDocumento = attachmentUrl.contains(tipologia) ? contoDocumento + 1 : contoDocumento;
+            contoDocumento += attachmentUrl.contains(tipologia) ? 1 : 0;
         }
-
         try {
-
             Assertions.assertTrue(numeroDocumenti == contoDocumento);
         } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "Verifica Allegati pec in errore ";
+            String message = assertionFailedError.getMessage() + "Verifica Allegati pec in errore ";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
 
+    @And("si verifica il contenuto degli attachments da inviare in via cartacea al destinatario {int} con {int} allegati")
+    public void checkDocumentInviatiPaper(Integer destinatario, Integer allegati) {
+        try {
+            this.documentiPec = pnExternalChannelsServiceClientImpl.getReceivedMessagesAnalogico(sharedSteps.getIunVersionamento(), destinatario);
+            Assertions.assertNotNull(documentiPec);
+            log.info("documenti analogici : {}", documentiPec);
+            Assertions.assertEquals(allegati, documentiPec.get(0).getPaperEngageRequest().getAttachments().size());
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "Verifica Allegati analogici in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
 
+    @And("si verifica che il contenuto degli attachments da inviare in via cartacea abbia {int} attachment di tipo {string}")
+    public void presenceAttachmentAnalogicFlow(Integer numeroDocumenti, String tipologia) {
+        List<String> attachmentsUri = Optional.ofNullable(documentiPec.get(0))
+                .map(ReceivedMessage::getPaperEngageRequest)
+                .map(PaperEngageRequest::getAttachments)
+                .orElse(List.of())
+                .stream()
+                .map(PaperEngageRequestAttachments::getUri)
+                .filter(uri -> uri.contains(tipologia))
+                .toList();
+        try {
+            Assertions.assertEquals(numeroDocumenti, attachmentsUri.size());
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() + "Verifica Allegati Cartacei in errore ";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
+    @And("si verifica che il {int} documento arrivato sia di tipo {string}")
+    public void checkIndexedDocument(Integer documentIndex, String tipologia) {
+        ReceivedMessage firstDocumentReceived = documentiPec.get(0);
+        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest());
+        Assertions.assertNotNull(firstDocumentReceived.getPaperEngageRequest().getAttachments());
+        Assertions.assertTrue(firstDocumentReceived.getPaperEngageRequest().getAttachments().get(documentIndex - 1).getDocumentType().equals(tipologia));
+        log.info(firstDocumentReceived.toString());
+    }
 
     @Value("${b2b.sender.mail}")
     private String senderEmail;
-
 
 
     private void sendEmail() {
@@ -1119,6 +1201,50 @@ public class InvioNotificheB2bSteps {
             case "digitale" -> attchmentNotification= documentiPec.get(0).getDigitalNotificationRequest().getAttachmentUrls();
         }
         return attchmentNotification;
+    }
+
+    private LegalFactDownloadMetadataResponse getLegalFactIdAAR(String aarType) {
+        AtomicReference<LegalFactDownloadMetadataResponse> legalFactDownloadMetadataResponse = new AtomicReference<>();
+        try {
+            Thread.sleep(sharedSteps.getWait());
+        } catch (InterruptedException exc) {
+            throw new RuntimeException(exc);
+        }
+
+        TimelineElementCategoryV23 timelineElementInternalCategory= TimelineElementCategoryV23.AAR_GENERATION;
+        TimelineElementV23 timelineElement = null;
+
+        for (TimelineElementV23 element : sharedSteps.getSentNotification().getTimeline()) {
+
+            if (Objects.requireNonNull(element.getCategory()).equals(timelineElementInternalCategory)) {
+                timelineElement = element;
+                break;
+            }
+        }
+
+        Assertions.assertNotNull(timelineElement);
+        String keySearch = null;
+        if (!Objects.requireNonNull(timelineElement.getDetails()).getGeneratedAarUrl().isEmpty()) {
+
+            if (timelineElement.getDetails().getGeneratedAarUrl().contains(aarType)) {
+                keySearch = timelineElement.getDetails().getGeneratedAarUrl().substring(timelineElement.getDetails().getGeneratedAarUrl().indexOf(aarType));
+            }
+
+            String finalKeySearch = keySearch;
+            try {
+                Assertions.assertDoesNotThrow(() -> {
+                    legalFactDownloadMetadataResponse.set(this.b2bClient.getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), finalKeySearch));});
+                } catch (AssertionFailedError assertionFailedError) {
+                sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+            }
+        }
+        return legalFactDownloadMetadataResponse.get();
+    }
+
+    @Then("download attestazione opponibile AAR e controllo del contenuto del file per verificare se il content-type è {string}")
+    public void verificaContentTypeAttestazione(String contentType) {
+        LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = getLegalFactIdAAR("PN_AAR");
+        Assertions.assertTrue(b2bUtils.downloadUrlAndCheckContent(legalFactDownloadMetadataResponse.getUrl(), contentType));
     }
 
 }

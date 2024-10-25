@@ -21,7 +21,6 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW"
-
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
@@ -60,10 +59,8 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
-
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
     #And vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
 
@@ -80,7 +77,6 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
-    And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "DIGITAL_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
@@ -91,13 +87,13 @@ Feature: avanzamento b2b notifica analogico difgitale
   @dev
   Scenario: [B2B_TIMELINE_FIX_7179_5] Notifica analogica mono destinatario con destinatario irreperibile - Destinatario PF
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
@@ -114,7 +110,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And destinatario Mario Gherkin e:
       | digitalDomicile_address | test@fail.it |
     And destinatario Cucumber Analogic e:
-      | digitalDomicile_address | test@fail.it |
+      | digitalDomicile_address | test1@fail.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED"
     Then esiste l'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
@@ -143,7 +139,7 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "DIGITAL_DELIVERY_CREATION_REQUEST"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_SIMPLE_REGISTERED_LETTER" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "SEND_SIMPLE_REGISTERED_LETTER"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_FAILURE_WORKFLOW" per l'utente 0
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -155,20 +151,20 @@ Feature: avanzamento b2b notifica analogico difgitale
   @dev
   Scenario: [B2B_TIMELINE_FIX_7179_8] Notifica multi destinatario con workflow analogico con destinatari irreperibili
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     And destinatario Mario Gherkin e:
-      | digitalDomicile | NULL |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi e verificho che l'utente 0 non abbia associato un evento "COMPLETELY_UNREACHABLE"
-    And vengono letti gli eventi e verificho che l'utente 1 non abbia associato un evento "COMPLETELY_UNREACHABLE"
+    Then vengono letti gli eventi e verifico che l'utente 0 non abbia associato un evento "COMPLETELY_UNREACHABLE"
+    And vengono letti gli eventi e verifico che l'utente 1 non abbia associato un evento "COMPLETELY_UNREACHABLE"
     #TODO Controllare non arriva lo stato COMPLETELY_UNREACHABLE arriva   ACCEPTED-DELIVERING-EFFECTIVE_DATE
     #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
@@ -176,14 +172,14 @@ Feature: avanzamento b2b notifica analogico difgitale
   @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_8_1] Notifica multi destinatario con workflow analogico con un destinatario irreperibile
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Cucumber Society
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
@@ -192,23 +188,21 @@ Feature: avanzamento b2b notifica analogico difgitale
     #And vengono letti gli eventi fino allo stato della notifica "DELIVERED" per il destinatario 0 e presente l'evento "SCHEDULE_REFINEMENT_WORKFLOW"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 0 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-      #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
   @workflowDigitale
   Scenario: [B2B_TIMELINE_FIX_7179_8_2] Notifica multi destinatario con workflow analogico con un destinatario irreperibile
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
     And destinatario Cucumber Society
     And destinatario
-      | denomination | Test AR Fail 2 |
-      | taxId | DVNLRD52D15M059P |
-      | digitalDomicile | NULL |
+      | denomination            | Test AR Fail 2           |
+      | taxId                   | DVNLRD52D15M059P         |
+      | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
@@ -220,19 +214,20 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And la PA richiede il download dell'attestazione opponibile "DIGITAL_DELIVERY"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE" per l'utente 1
-      #Ritardare Il Perfezionamento per lo stato DELIVERED
     And vengono letti gli eventi fino allo stato della notifica "EFFECTIVE_DATE"
 
 
  # 9	multidestinatario -> successo e verifica nuovo WF (con controllo date perfezionamento per decorrenza termini) --> caso completed per tutti i destinatari
-  @workflowDigitale
+  @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_FIX_7179_9] Notifica multi destinatario PG PF con workflow digitale completato con successo
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-      | physicalCommunication |  AR_REGISTERED_LETTER |
-    And destinatario Cucumber Society
-    And destinatario Mario Gherkin
+      | subject               | notifica analogica con cucumber |
+      | senderDenomination    | Comune di palermo               |
+      | physicalCommunication | AR_REGISTERED_LETTER            |
+    And destinatario Gherkin Analogic e:
+      | digitalDomicile_address | test@OK-pecSuccess.it |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test1@OK-pecSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 1
@@ -245,12 +240,13 @@ Feature: avanzamento b2b notifica analogico difgitale
   @workflowDigitale @mockPec
   Scenario: [B2B_TIMELINE_FIX_7179_10] Notifica multi destinatario PF PF con workflow digitale completato con successo
     Given viene generata una nuova notifica
-      | subject | notifica analogica con cucumber |
-      | senderDenomination | Comune di palermo |
-    And destinatario Mario Gherkin
+      | subject            | notifica analogica con cucumber |
+      | senderDenomination | Comune di palermo               |
+    And destinatario Mario Gherkin e:
+      | digitalDomicile_address | test@OK-pecSuccess.it |
     And destinatario
-      | taxId | GLLGLL64B15G702I |
-      | digitalDomicile_address | DSRDNI00A01A225I@pec.pagopa.it |
+      | taxId                   | GLLGLL64B15G702I    |
+      | digitalDomicile_address | test1@OK-pecSuccess.it |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_DELIVERY_CREATION_REQUEST" per l'utente 1
@@ -259,25 +255,5 @@ Feature: avanzamento b2b notifica analogico difgitale
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT" e verifica data schedulingDate per il destinatario 1 rispetto ell'evento in timeline "SEND_DIGITAL_FEEDBACK"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 1
-
-
-
-
-    #And destinatario
-      #| denomination | Test 890 Fail |
-      #| taxId | PRVMNL80A01F205M |
-      #| digitalDomicile | NULL |
-      #| physicalAddress_address | Via@fail_890 |
-
-
-  #Fallimento
-  #DIGITAL_DELIVERY_CREATION_REQUEST
-  #SCHEDULE_REFINEMENT
-  #SEND_SIMPLE_REGISTERED_LETTER
-  #DELIVERED
-
-  #Fallimento
-  #DELIVERED
-  #SCHEDULE_REFINEMENT
 
 

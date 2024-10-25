@@ -170,7 +170,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
 
 
   #-------------------------------------------------------------------------------------------------
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_83_4] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -189,7 +189,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                           |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_83_5] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Invalid tax code: it not corresponds to other personal data.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -229,7 +229,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_84_2] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=true su tutti i record) scenario negativo.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -246,7 +246,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                      |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_84_3] PA - inserimento notifica mono destinatario con un solo F24 INPS DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi e applyCost=false su tutti i record ) scenario negativo.
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -264,7 +264,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_88_5] PA - inserimento notifica mono destinatario con un solo F24 TREASURY_AE FLAT_RATE  e controllo coerenza dei dati del modello F24 Agenzia delle Entrate (Costi di notifica non inclusi e credit e debit valorizzati sullo stesso record - scenario negativo).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -333,7 +333,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REQUEST_ACCEPTED"
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_1] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: it not corresponds to other personal data (taxcode e birthDate non congruenti ).
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -350,7 +350,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                  |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_2] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Invalid tax code: Argument 'municipality' is not valid .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -367,7 +367,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_3] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -Debit Numerico di 15 - Numeric value (730927309273092) out of range of int (-2147483648 - 2147483647) .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -385,7 +385,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_5] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -402,7 +402,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_6] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Format scenario negativo" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -419,7 +419,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_7] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -No valid Lengh scenario negativo" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -459,7 +459,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento validation
     #Then viene richiesto il download del documento "F24"
     #And il download non ha prodotto errori
 
-  @pagamentiMultipli @f24 @dev
+  @pagamentiMultipli @f24 @dev @refused
   Scenario: [B2B-PA-PAY_MULTI_97] PA - inserimento notifica mono destinatario con un solo F24 SEMPLIFICATO DELIVERY_MODE  e controllo coerenza dei dati del modello F24 (Costi di notifica inclusi)-Only one type of tax payer is allowed. - PN-9070
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |

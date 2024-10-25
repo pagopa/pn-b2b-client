@@ -5,11 +5,11 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffFullNotificationV1;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.recipient.BffNotificationDetailTimeline;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
+import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
+import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.AddressVerification;
@@ -24,20 +24,17 @@ import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.HttpStatusCodeException;
+
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.awaitility.Awaitility.await;
-
 
 @Slf4j
 public class RicezioneNotificheWebSteps {
@@ -48,7 +45,15 @@ public class RicezioneNotificheWebSteps {
     private final PnExternalServiceClientImpl externalClient;
     private final SharedSteps sharedSteps;
     private final IPnWebPaClient webPaClient;
+    private final IPnBFFRecipientNotificationClient bffRecipientNotificationClient;
+    private final PnB2bClientTimingConfigs timingConfigs;
+    private static final Integer waitDefault = 10000;
+
     private HttpStatusCodeException notificationError;
+    private FullReceivedNotificationV23 fullNotification;
+    private BffFullNotificationV1 bffFullNotificationV1Recipient;
+    private it. pagopa. pn. client. b2b. generated. openapi. clients. external. generate. model. external. bff. pa. recipient. BffFullNotificationV1 bffFullNotificationV1Sender;
+
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -60,9 +65,9 @@ public class RicezioneNotificheWebSteps {
     @Value("${pn.external.senderId-ROOT}")
     private String senderIdROOT;
 
-
     @Autowired
-    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient) {
+    public RicezioneNotificheWebSteps(SharedSteps sharedSteps, IPnWebUserAttributesClient iPnWebUserAttributesClient,
+                          IPnBFFRecipientNotificationClient bffRecipientNotificationClient, PnB2bClientTimingConfigs timingConfigs) {
         this.sharedSteps = sharedSteps;
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.b2bUtils = sharedSteps.getB2bUtils();
@@ -70,22 +75,129 @@ public class RicezioneNotificheWebSteps {
         this.iPnWebUserAttributesClient = iPnWebUserAttributesClient;
         this.webPaClient = sharedSteps.getWebPaClient();
         this.externalClient = sharedSteps.getPnExternalServiceClient();
+        this.bffRecipientNotificationClient = bffRecipientNotificationClient;
+        this.timingConfigs = timingConfigs;
     }
 
     @Then("la notifica può essere correttamente recuperata da {string}")
     public void notificationCanBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
         Assertions.assertDoesNotThrow(() -> {
-            webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+            log.info("timeline received: " + fullNotification.getTimeline());
         });
+    }
+
+    @And("lato destinatario vengono letti i dettagli della notifica lato web dal destinatario {string}")
+    public void latoDestinatarioVengonoLettiIDettagliDellaNotificaLatoWeb(String user) {
+        selectUser(user);
+        bffFullNotificationV1Recipient =
+            Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getReceivedNotificationV1WithHttpInfoForRecipient(sharedSteps.getSentNotification().getIun())
+                .getBody());
+        Assertions.assertNotNull(bffFullNotificationV1Recipient);
+        log.info("FULL TIMELINE RECIPIENT: " + bffFullNotificationV1Recipient.getTimeline());
+    }
+
+    @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
+    public void timelineEventWithCategoryAndDeliveryDetailCodeNotPresent(String category, String deliveryDetailCode) {
+
+        Assertions.assertNull(getTimelineElementV23(category, deliveryDetailCode));
+    }
+
+    @And("lato api l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void timelineEventWithCategoryAndDeliveryDetailCodePresent(String category, String deliveryDetailCode) {
+        Assertions.assertNotNull(getTimelineElementV23(category, deliveryDetailCode));
+    }
+
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 getTimelineElementV23(String category, String deliveryDetailCode) {
+        fullNotification.getTimeline().forEach(x -> log.info(x.toString()));
+        return fullNotification.getTimeline().stream()
+                .filter(x -> x.getCategory().toString().equals(category) &&
+                        x.getDetails() != null &&
+                        x.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                .findFirst().orElse(null);
+    }
+
+    @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+        Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertFalse(dato.get().getHidden());
+    }
+
+    @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
+        Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertTrue(dato.get().getHidden());
+    }
+
+    @And("lato destinatario dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
+    public void latoDestinatarioDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈPresente(String category, String deliveryDetailCode) {
+        Optional<BffNotificationDetailTimeline> dato = getNotificationDetailTimeline(category, deliveryDetailCode);
+        Assertions.assertTrue(dato.isEmpty());
+    }
+
+    private Optional<BffNotificationDetailTimeline> getNotificationDetailTimeline(String category, String deliveryDetailCode) {
+        return bffFullNotificationV1Recipient
+                .getTimeline()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(data ->
+                    data.getElementId().contains(category) && data.getDetails() != null &&
+                            data.getDetails().getDeliveryDetailCode() != null &&
+                            data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                .findFirst();
+    }
+
+    @And("lato mittente vengono letti i dettagli della notifica lato web {string}")
+    public void latoMittenteVengonoLettiIDettagliDellaNotificaLatoWebDalDestinatario(String sender) {
+        selectPa(sender);
+        bffFullNotificationV1Sender = Assertions.assertDoesNotThrow(() ->
+                bffRecipientNotificationClient.getSentNotificationV1WithHttpInfoForSender(sharedSteps.getSentNotification().getIun())
+                        .getBody());
+        Assertions.assertNotNull(bffFullNotificationV1Sender);
+        log.info("FULL TIMELINE SENDER: " + bffFullNotificationV1Sender.getTimeline());
+    }
+
+    @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} è visibile")
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeÈVisibile(String category, String deliveryDetailCode) {
+        Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertFalse(dato.get().getHidden());
+    }
+
+    @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è visibile")
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈVisibile(String category, String deliveryDetailCode) {
+        Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
+        Assertions.assertFalse(dato.isEmpty());
+        Assertions.assertTrue(dato.get().getHidden());
+    }
+
+    @And("lato mittente dal web l'elemento di timeline della notifica {string} con deliveryDetailCode {string} non è presente")
+    public void latoMittenteDalWebLElementoDiTimelineDellaNotificaConDeliveryDetailCodeNonÈPresente(String category, String deliveryDetailCode) {
+        Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> dato = getNotificationDetailTimelineSender(category, deliveryDetailCode);
+        Assertions.assertTrue(dato.isEmpty());
+    }
+
+    private Optional<it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.pa.recipient.BffNotificationDetailTimeline> getNotificationDetailTimelineSender(String category, String deliveryDetailCode) {
+        return bffFullNotificationV1Sender
+                .getTimeline()
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(data ->
+                        data.getElementId().contains(category) && data.getDetails() != null &&
+                                data.getDetails().getDeliveryDetailCode() != null &&
+                                data.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                .findFirst();
     }
 
     @Then("la notifica non può essere correttamente recuperata da {string}")
     public void notificationCanNotBeCorrectlyReadby(String recipient) {
         sharedSteps.selectUser(recipient);
-        FullReceivedNotificationV23 fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
+        this.fullNotification = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         Assertions.assertNull(fullNotification);
-
     }
 
     @Then("il documento notificato può essere correttamente recuperato da {string}")
@@ -126,7 +238,6 @@ public class RicezioneNotificheWebSteps {
 
         String iun =sharedSteps.getIunVersionamento();
 
-
         try {
             OffsetDateTime scheduleDate = Objects.requireNonNull(webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.SCHEDULE_REFINEMENT)).findAny().get().getDetails()).getSchedulingDate();
             OffsetDateTime refinementDate = webRecipientClient.getReceivedNotification(iun, null).getTimeline().stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).equals(TimelineElementCategoryV23.REFINEMENT)).findAny().get().getTimestamp();
@@ -165,11 +276,10 @@ public class RicezioneNotificheWebSteps {
                 Sha256.set(b2bUtils.computeSha256(new ByteArrayInputStream(bytes)));
             });
             Assertions.assertEquals(Sha256.get(), Objects.requireNonNull(downloadResponse).getSha256());
-        }else {
+        } else {
             NotificationAttachmentDownloadMetadataResponse finalDownloadResponse = downloadResponse;
                 Assertions.assertDoesNotThrow(() ->
                         b2bUtils.downloadFile(Objects.requireNonNull(finalDownloadResponse).getUrl()));
-
         }
     }
 
@@ -221,9 +331,13 @@ public class RicezioneNotificheWebSteps {
 
     @Then("(il download)(il recupero) non ha prodotto errori")
     public void operationProducedErrorWithStatusCode() {
-        Assertions.assertTrue((this.notificationError == null && sharedSteps.consumeNotificationError() == null) );
+        try {
+            Assertions.assertNull(this.notificationError);
+            Assertions.assertNull(sharedSteps.consumeNotificationError());
+        } catch (AssertionFailedError e) {
+            sharedSteps.throwAssertFailerWithIUN(e);
+        }
     }
-
 
     @And("download attestazione opponibile AAR da parte {string}")
     public void downloadLegalFactIdAARByRecipient(String recipient) {
@@ -538,6 +652,12 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
+    @And("attendo che gli elementi di timeline SEND_ANALOG_PROGRESS vengano ricevuti tutti")
+    public void attendoCheGliElementiDiTimelineSEND_ANALOG_PROGRESSVenganoRicevutiTutti() {
+        Integer waiting = timingConfigs.getWaitMillisForSendAnalogEvents() == null ? waitDefault :  timingConfigs.getWaitMillisForSendAnalogEvents();
+        waitState(waiting);
+    }
+
     private static class NotificationSearchParam {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
@@ -557,5 +677,63 @@ public class RicezioneNotificheWebSteps {
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;
+    }
+
+    public void selectUser(String user) {
+        switch (user.trim().toLowerCase()) {
+            case "mario cucumber", "ettore fieramosca" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_1);
+            }
+            case "mario gherkin", "cristoforo colombo" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_2);
+            }
+            case "gherkinsrl" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_1);
+            }
+            case "cucumberspa" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.PG_2);
+            }
+            case "leonardo da vinci" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_3);
+            }
+            case "dino sauro" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_5);
+            }
+            case "mario cucumber con credenziali non valide" -> {
+                bffRecipientNotificationClient.setRecipientBearerToken(SettableBearerToken.BearerTokenType.USER_SCADUTO);
+            }
+            default -> throw new IllegalArgumentException();
+
+        }
+
+    }
+
+    public void selectPa(String pa){
+        switch (pa) {
+            case "Comune_1" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_1);
+            }
+            case "Comune_2" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.MVP_2);
+            }
+            case "Comune_Multi" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.GA);
+            }
+            case "Comune_Son" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.SON);
+            }
+            case "Comune_Root" -> {
+                this.bffRecipientNotificationClient.setSenderBearerToken(SettableBearerToken.BearerTokenType.ROOT);
+            }
+            default -> throw new IllegalArgumentException();
+        }
+    }
+
+    private static void waitState(Integer waitingStateCsv) {
+        try {
+            Thread.sleep(waitingStateCsv);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

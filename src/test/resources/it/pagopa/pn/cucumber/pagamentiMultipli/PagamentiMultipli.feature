@@ -1498,7 +1498,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And destinatario Mario Cucumber e:
       | payment_pagoPaForm      | NULL                  |
       | payment_f24             | PAYMENT_F24_STANDARD  |
-      | digitalDomicile_address | pectest@pec.pagopa.it |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it |
       | title_payment           | F24_STANDARD_MARIO    |
       | apply_cost_f24          | SI                    |
       | payment_multy_number    | 1                     |
@@ -2814,7 +2814,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 0                           |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
@@ -2852,7 +2852,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy             | DELIVERY_MODE               |
       | paFee                 | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it         |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it         |
       | payment_pagoPaForm      | NULL                          |
       | payment_f24             | PAYMENT_F24_STANDARD          |
       | title_payment           | F24_STANDARD_CLMCST42R12D969Z |
@@ -2889,7 +2889,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | paFee              | 0                           |
     And destinatario Mario Gherkin e:
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
       | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
       | apply_cost_pagopa       | NO                        |
@@ -2924,7 +2924,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | feePolicy          | FLAT_RATE                   |
       | paFee              | 100                         |
     And destinatario Mario Gherkin e:
-      | digitalDomicile_address | pectest@pec.pagopa.it     |
+      | digitalDomicile_address | destinatario@certificatanoprod.notifichedigitali.it     |
       | title_payment           | F24_FLAT_CLMCST42R12D969Z |
       | payment_pagoPaForm      | NULL                      |
       | payment_f24             | PAYMENT_F24_FLAT          |
@@ -2935,7 +2935,7 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW"
 
 
-  @pagamentiMultipli @f24
+  @pagamentiMultipli @f24 @refused
   Scenario: [B2B-PA-PAY_MULTI_95_4] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) - f24Standard.inps.records[0].office must match "^[0-9]{3,4}$" .
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -2952,22 +2952,6 @@ Feature: avanzamento notifiche b2b persona fisica multi pagamento
       | payment_multy_number | 1                                    |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
-  @pagamentiMultipli @f24
-  Scenario: [B2B-PA-PAY_MULTI_95_5] PA - inserimento notifica mono destinatario con un solo F24 STANDARD COMPLETO VALID (Lunghezza e formato) -f24Standard.localTax.records[0].municipality must match "^[0-9A-Z]{4}$" .
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di Palermo           |
-      | feePolicy          | DELIVERY_MODE               |
-      | paFee              | 0                           |
-    And destinatario Mario Gherkin e:
-      #Sezione PagoPA-----------------------------
-      | payment_pagoPaForm   | NULL                                 |
-      | apply_cost_pagopa    | NULL                                 |
-      | payment_f24          | PAYMENT_F24_STANDARD_NO_VALID_ANAG_4 |
-      | title_payment        | F24_STANDARD_AE                      |
-      | apply_cost_f24       | SI                                   |
-      | payment_multy_number | 1                                    |
-    Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi REFUSED
 
 
     #-----------------------ADD TEST F24--------------------------

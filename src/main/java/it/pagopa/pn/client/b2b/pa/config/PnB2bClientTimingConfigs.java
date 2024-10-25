@@ -12,7 +12,9 @@ import java.time.Duration;
 public class PnB2bClientTimingConfigs {
 
     private Integer workflowWaitAcceptedMillis;
+    private Integer workflowWaitAcceptedExtraRapidMillis;
     private Integer workflowWaitMillis;
+    private Integer workflowWaitExtraRapidMillis;
     private Integer waitMillis;
     private Duration schedulingDaysSuccessDigitalRefinement;
     private Duration schedulingDaysFailureDigitalRefinement;
@@ -24,6 +26,12 @@ public class PnB2bClientTimingConfigs {
     private Integer schedulingDeltaMillis;
     private Integer waitingTimingSlowMultiplier;
     private Integer waitMillisShort;
+    private Integer waitMillisExtraRapid;
+    private Integer waitMillisForSendAnalogEvents;
+
+
+    private Integer workflowWaitAcceptedMillisShort;
+    private Integer workflowWaitMillisShort;
 
 
 }

@@ -50,14 +50,14 @@ Feature: avanzamento b2b notifica PG analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
   @dev @workflowAnalogico @testLite @realNR
-  Scenario: [B2B_TIMELINE_7915_5_xxx] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO
+  Scenario: [B2B_TIMELINE_7915_5_1] Invio Notifica mono destinatario a PG con recupero del domicilio fisico - caso KO
     Given viene generata una nuova notifica
       | subject | invio notifica con cucumber |
       | senderDenomination | Comune di milano |
     And destinatario
       | denomination            | Test digitale ok          |
       | recipientType           | PG                        |
-      | taxId                   | 18172040182               |
+      | taxId                   | 01980910440               |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
