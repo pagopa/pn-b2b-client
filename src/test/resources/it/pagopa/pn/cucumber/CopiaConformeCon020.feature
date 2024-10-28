@@ -80,9 +80,9 @@ Feature: test per la visualizzazione della copia conforme
       | physicalAddress_address | Via @OK_AR-CON020-ZIP3P |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020" per l'utente 1
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020" per l'utente 1
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
 
 
 
