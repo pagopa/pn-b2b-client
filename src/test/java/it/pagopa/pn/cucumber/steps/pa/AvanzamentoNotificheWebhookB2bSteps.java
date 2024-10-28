@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -984,6 +985,53 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
         }
     }
+    @Then("vengono letti gli eventi dello stream del {string} fino all'elemento di timeline {string} con la versione V23 con deliveryDetailCode {string}")
+    public void readStreamTimelineElementDelivCodeV23(String pa,String timelineEventCategory , String deliveryDetailCode ) {
+
+            setPaWebhook(pa);
+
+            TimelineElementSearchResult<TimelineElementCategoryV23> timelineForStream = getTimelineEventForStream(V23, timelineEventCategory);
+            TimelineElementCategoryV23 timelineElementCategory = timelineForStream.getTimelineElementCategory();
+            int numCheck = timelineForStream.getNumCheck();
+            int waiting = timelineForStream.getWaiting();
+
+            ProgressResponseElementV23 progressResponseElement = null;
+
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23 timelineElementInternalCategory =
+                    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23.valueOf(timelineElementCategory.name());
+
+
+            boolean finish = checkInternalTimeline(timelineElementCategory.name(),numCheck,waiting);
+            Assertions.assertTrue(finish);
+
+            for (int i = 0; i < 4; i++) {
+                progressResponseElement = searchInWebhookV23(timelineElementCategory,null,0,0);
+                log.debug("PROGRESS-ELEMENT: "+progressResponseElement);
+
+                if (progressResponseElement != null) {
+                    break;
+                }
+                sleepTest();
+            }
+            try{
+                Assertions.assertNotNull(progressResponseElement);
+                ProgressResponseElementV23 finalProgressResponseElement = progressResponseElement;
+                Assertions.assertFalse(sharedSteps.getSentNotification()
+                        .getTimeline()
+                        .stream()
+                        .filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)
+                                //&& elem.getTimestamp().truncatedTo(ChronoUnit.SECONDS).equals(finalProgressResponseElement.getTimestamp().truncatedTo(ChronoUnit.SECONDS)))
+                                && elem.getDetails().getDeliveryDetailCode().equals(deliveryDetailCode))
+                        .findAny()
+                        .isEmpty());
+                log.info("EventProgress: " + progressResponseElement);
+                //sharedSteps.setProgressResponseElement(progressResponseElement);
+            }catch(AssertionFailedError assertionFailedError){
+                String message = assertionFailedError.getMessage()+
+                        "{IUN: "+sharedSteps.getSentNotification().getIun()+" -WEBHOOK: "+this.eventStreamListV23.get(0).getStreamId()+" }";
+                throw new AssertionFailedError(message,assertionFailedError.getExpected(),assertionFailedError.getActual(),assertionFailedError.getCause());
+            }
+        }
 
     @Then("verifica non presenza di eventi nello stream del {string}")
     public void readStreamTimelineElementNotPresent(String pa) {
