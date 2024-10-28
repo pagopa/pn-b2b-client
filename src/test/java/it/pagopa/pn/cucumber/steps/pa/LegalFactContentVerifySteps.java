@@ -139,10 +139,8 @@ public class LegalFactContentVerifySteps {
         PDDocument document = null;
 
         try {
-            //ByteArrayInputStream inputStream = new ByteArrayInputStream(source);
             document = Loader.loadPDF(source);
             int numberOfPages = document.getNumberOfPages();
-            System.out.println("Numero di pagine del PDF: " + numberOfPages);
 
             Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di "+numPage+" pagine!");
 
