@@ -23,7 +23,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
@@ -108,7 +107,6 @@ public class PnRaddAlternativeClientImpl implements IPnRaddAlternativeClient {
         this.aorOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer: " + token);
         this.documentOperationsApi.getApiClient().addDefaultHeader("Authorization", "Bearer: " + token);
     }
-
 
     public ActInquiryResponse actInquiry( String uid, String recipientTaxId, String recipientType, String qrCode, String iun) throws RestClientException {
         return this.actOperationsApi.actInquiryWithHttpInfo(uid, recipientTaxId, recipientType, qrCode, iun).getBody();
