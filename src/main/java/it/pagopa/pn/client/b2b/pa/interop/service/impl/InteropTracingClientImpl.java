@@ -50,12 +50,12 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     }
 
     @Override
-    public RecoverTracingResponse recoverTracing(String tracingId, Resource _file) throws RestClientException {
+    public RecoverTracingResponse recoverTracing(UUID tracingId, Resource _file) throws RestClientException {
         return tracingsApi.recoverTracing(tracingId, _file);
     }
 
     @Override
-    public ReplaceTracingResponse replaceTracing(String tracingId, Resource _file) throws RestClientException {
+    public ReplaceTracingResponse replaceTracing(UUID tracingId, Resource _file) throws RestClientException {
         return tracingsApi.replaceTracing(tracingId, _file);
     }
 

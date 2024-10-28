@@ -160,7 +160,7 @@ public class TracingSteps {
 
     private void recoverError(String tracingId, Resource resource) {
         try {
-            recoverTracingResponse = interopTracingClient.recoverTracing(tracingId, resource);
+            recoverTracingResponse = interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource);
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {
@@ -178,11 +178,11 @@ public class TracingSteps {
 
     @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv: {string}")
     public void replaceTracing(String file) {
-        replaceTracing(submitTracingResponse.getTracingId().toString(), resourceLoader.getResource(selectCsvFile(file)));
+        replaceTracing(submitTracingResponse.getTracingId(), resourceLoader.getResource(selectCsvFile(file)));
     }
 
 
-    private void replaceTracing(String tracingId, Resource resource) {
+    private void replaceTracing(UUID tracingId, Resource resource) {
         try {
             replaceTracingResponse = interopTracingClient.replaceTracing(tracingId, resource);
         } catch (HttpStatusCodeException statusCodeException) {
@@ -208,7 +208,7 @@ public class TracingSteps {
     }
 
     @When("viene sovrascritto il tracing con id: {string}")
-    public void replaceTracingById(String tracingId) {
+    public void replaceTracingById(UUID tracingId) {
         replaceTracing(tracingId, resourceLoader.getResource("corretto"));
     }
 
