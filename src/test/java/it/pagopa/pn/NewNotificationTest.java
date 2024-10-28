@@ -2,18 +2,14 @@ package it.pagopa.pn;
 
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaB2bExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.ApiKeysConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.BearerTokenConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.TimingConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
-
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -21,11 +17,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.awaitility.Awaitility.await;
 
@@ -111,10 +108,10 @@ public class NewNotificationTest {
 
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
+            FullSentNotificationV24 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
-            utils.verifyNotification( newNotification );
+            utils.verifyNotification(newNotification);
         });
     }
 
@@ -139,8 +136,8 @@ public class NewNotificationTest {
                 ;
 
         Assertions.assertDoesNotThrow(() -> {
-            NewNotificationResponse newNotificationRequest = utils.uploadNotification( request );
-            FullSentNotificationV23 newNotification = utils.waitForRequestAcceptation( newNotificationRequest);
+            NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
+            FullSentNotificationV24 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification( newNotification );
         });
