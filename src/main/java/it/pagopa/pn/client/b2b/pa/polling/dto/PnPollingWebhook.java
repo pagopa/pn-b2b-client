@@ -17,6 +17,7 @@ public class PnPollingWebhook {
     private it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20 timelineElementCategoryV20;
     private LinkedList<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElementListV20;
     private NotificationStatus notificationStatusV23;
+    private NotificationStatus notificationStatusV24;
     private TimelineElementCategoryV23 timelineElementCategoryV23;
     private LinkedList<ProgressResponseElementV23> progressResponseElementListV23;
     private LinkedList<ProgressResponseElementV24> progressResponseElementListV24;
