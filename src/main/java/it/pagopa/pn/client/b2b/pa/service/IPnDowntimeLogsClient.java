@@ -16,4 +16,5 @@ public interface IPnDowntimeLogsClient {
     PnStatusResponse status() throws RestClientException;
     PnDowntimeHistoryResponse statusHistory(OffsetDateTime fromTime, OffsetDateTime toTime, List<PnFunctionality> functionality, String page, String size) throws RestClientException;
     void addStatusChangeEvent(String xPagopaPnUid, List<PnStatusUpdateEvent> pnStatusUpdateEvent) throws RestClientException;
+    PnDowntimeHistoryResponse getResolved(Integer year, Integer month) throws RestClientException;
 }
