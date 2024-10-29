@@ -60,10 +60,10 @@ Feature: test per la visualizzazione della copia conforme
     And verifica che il file contenga massimo 2 pagine
     Examples:
       | SEQUENCE                |
-      #|via @OK_AR-CON020-7Z1P |
+      | via @OK_AR-CON020-7Z1P  |
       #|via @OK_AR-CON020-ZIP1P|
       #|via @OK_AR-CON020-7Z2P |
-      #|via @OK_AR-CON020-ZIP2P|
+      | via @OK_AR-CON020-ZIP2P |
       | via @OK_AR-CON020-7Z3P  |
       | via @OK_AR-CON020-ZIP3P |
 
