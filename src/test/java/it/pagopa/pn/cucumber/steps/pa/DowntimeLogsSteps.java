@@ -190,7 +190,7 @@ public class DowntimeLogsSteps {
         Assertions.assertNotNull(legalFact.getRetryAfter());
     }
 
-    @Given("viene chiamata l’API per il download dell'atto opponibile prodotto piu di 120 giorni precedenti")
+    @Given("viene chiamata l’API per il download dell'atto opponibile prodotto piu di 365 giorni precedenti")
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileProdottoPiuDiGiorniPrecedenti() {
         try {
             LocalDate date = LocalDate.now();

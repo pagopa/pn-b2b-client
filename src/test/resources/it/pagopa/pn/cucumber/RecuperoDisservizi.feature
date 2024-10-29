@@ -47,5 +47,5 @@ Feature: Recupero Disservizi
 
   @recuperoDisservizi
   Scenario: [RECUPERO_DISSERVIZI_9] Richiamare l’API per il download dell'atto opponibile ai terzi di malfunzionamento e ripristino trascorsi 365 giorni
-    Given viene chiamata l’API per il download dell'atto opponibile prodotto piu di 120 giorni precedenti
+    Given viene chiamata l’API per il download dell'atto opponibile prodotto piu di 365 giorni precedenti
     Then la chiamata va con successo e la risposta contiene il campo retryAfter popolato
