@@ -53,7 +53,7 @@ Feature: Interop Tracing feature
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-06] Recupero dettaglio errori presenti nel file tracing con identificativo non esistente
     When viene recuperato il dettaglio degli errori per il tracing "bb09726e-5783-4713-aebf-7b5b688bcccc"
-    Then la chiamata fallisce con status code: 400
+    Then la chiamata fallisce con status code: 404
 
   @interopTracingCsv
   Scenario: [INTEROP-TRACING-07] Invio del file CSV tracing contenente errori utilizzando l'identificativo del file di tracing già in errore
@@ -80,7 +80,7 @@ Feature: Interop Tracing feature
     Then la chiamata fallisce con status code: 404
 
   @interopTracingCsv
-  Scenario: [INTEROP-TRACING-11] Invio del file CSV tracing per una stessa data e già in stato completato, in sostituzione a quello già presente
+  Scenario: [INTEROP-TRACING-11] Verifica stato endpoint di health
     When viene invocato l'endpoint di health con successo
 
   @interopTracingCsv @ignore

@@ -1,11 +1,12 @@
 package it.pagopa.pn.client.b2b.pa.interop.config;
 
-import lombok.Data;
+import lombok.*;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "interop.configuration", ignoreUnknownFields = false)
-@Data
+@ConfigurationProperties(prefix = "pn.interop.tracing", ignoreUnknownFields = false)
+@Getter
+@Setter
 public class InteropClientConfigs {
-    private String basePath;
-    private String bearerToken;
+    private String baseUrl;
+    private String bearerToken1;
 }

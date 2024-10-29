@@ -34,8 +34,8 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
 
     private ApiClient createApiClient(InteropClientConfigs interopClientConfigs) {
         ApiClient apiClient = new ApiClient(restTemplate);
-        apiClient.setBasePath(interopClientConfigs.getBasePath());
-        apiClient.setBearerToken(interopClientConfigs.getBearerToken());
+        apiClient.setBasePath(interopClientConfigs.getBaseUrl());
+        apiClient.setBearerToken(interopClientConfigs.getBearerToken1());
         return apiClient;
     }
 

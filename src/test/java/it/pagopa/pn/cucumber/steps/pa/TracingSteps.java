@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.interop.steps;
+package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -124,10 +124,10 @@ public class TracingSteps {
         Assertions.assertNotNull(getTracingErrorsResponse.getResults());
         List<GetTracingErrorsResponseResults> expectedResult = List.of(
                 createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
-                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-10-26) in csv is different from tracing date (%s).", submissionDate.toString()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
                 createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
-                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-10-26) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-08-25) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
         );
         assertThat(getTracingErrorsResponse.getResults()).hasSameElementsAs(expectedResult);
     }
