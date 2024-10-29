@@ -60,7 +60,7 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     }
 
     @Override
-    public SubmitTracingResponse submitTracing(Resource _file, LocalDate date) throws RestClientException {
+    public SubmitTracingResponse submitTracing(Resource _file, String date) throws RestClientException {
         return tracingsApi.submitTracing(_file, date);
     }
 

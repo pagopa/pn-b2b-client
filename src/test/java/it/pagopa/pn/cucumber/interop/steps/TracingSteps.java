@@ -10,50 +10,49 @@ import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnPollingInterop;
 import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnTracingResponse;
 import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
-import it.pagopa.pn.cucumber.interop.domain.TracingCsvFile;
+import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
+import org.springframework.core.io.*;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy.INTEROP_TRACING;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TracingSteps {
     private final PnPollingFactory pnPollingFactory;
     private final IInteropTracingClient interopTracingClient;
-    private TracingCsvFile tracingCsvFile;
+    private final TracingFileUtils tracingFileUtils;
+
     private SubmitTracingResponse submitTracingResponse;
     private GetTracingsResponse getTracingsResponse;
     private GetTracingErrorsResponse getTracingErrorsResponse;
-    private RecoverTracingResponse recoverTracingResponse;
-    private ReplaceTracingResponse replaceTracingResponse;
-    private ResourceLoader resourceLoader;
-    private Resource resource;
     private HttpStatusCodeException httpStatusCodeException;
+    private LocalDate submissionDate;
 
-    public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, ResourceLoader resourceLoader) {
+    public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, TracingFileUtils tracingFileUtils) {
         this.pnPollingFactory = pnPollingFactory;
         this.interopTracingClient = interopTracingClient;
-        this.resourceLoader = resourceLoader;
+        this.tracingFileUtils = tracingFileUtils;
     }
 
-    @Given("l'ente {string} prepara il file CSV {string}")
-    public void createCsv(String operator, String file) {
-//        selectOperator(operator);
-        resource = resourceLoader.getResource(selectCsvFile(file));
+    @Given("viene aggiornato il file CSV con la prima data disponibile")
+    public void updateCsv() {
+        submissionDate = interopTracingClient.getTracings(0, 50, null).getResults().stream()
+                .map(GetTracingsResponseResults::getDate)
+                .min(LocalDate::compareTo)
+                .get().minusDays(1);
+        tracingFileUtils.updateCsv(submissionDate.toString());
     }
 
-    @When("viene sottomesso il file CSV in data {string}")
-    public void uploadCsv(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    @When("viene sottomesso il file CSV {string}")
+    public void uploadCsv(String fileType) {
         try {
-            submitTracingResponse = interopTracingClient.submitTracing(resource, LocalDate.parse(date, formatter));
+            submitTracingResponse = interopTracingClient.submitTracing(tracingFileUtils.getCsvFile(fileType), submissionDate.toString());
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {
@@ -94,22 +93,6 @@ public class TracingSteps {
         Assertions.assertTrue(getTracingsResponse.getResults().isEmpty());
     }
 
-    @Then("^il caricamento del csv viene effettuato con errori")
-    public void verifyUploadWithErrors() {
-        verifyUpload(true);
-    }
-
-    @Then("^il caricamento del csv viene effettuato senza errori")
-    public void verifyUploadWithoutErrors() {
-        verifyUpload(false);
-    }
-
-    private void verifyUpload(boolean hasErrors) {
-        Assertions.assertNotNull(submitTracingResponse, "There was an error while retrieving the tracing response!");
-        Assertions.assertNotNull(submitTracingResponse.getErrors());
-        Assertions.assertEquals(hasErrors, submitTracingResponse.getErrors());
-    }
-
     @Then("la chiamata fallisce con status code: {int}")
     public void checkStatusCode(int statusCode) {
         Assertions.assertEquals(statusCode, httpStatusCodeException.getStatusCode().value());
@@ -140,27 +123,30 @@ public class TracingSteps {
         Assertions.assertNotNull(getTracingErrorsResponse, "There was an error while retrieving the tracing error!");
         Assertions.assertNotNull(getTracingErrorsResponse.getResults());
         List<GetTracingErrorsResponseResults> expectedResult = List.of(
-                createExpectedResponse("errorCode", "message", "purposeId", 10),
-                createExpectedResponse("errorCode", "message", "purposeId", 10)
+                createExpectedResponse("INVALID_STATUS_CODE", "status: Invalid HTTP status code", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-10-26) in csv is different from tracing date (%s).", submissionDate.toString()), "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("PURPOSE_NOT_FOUND", "purpose_id: Invalid purpose id 0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8.", "0e1e4c98-6f2e-4f55-90e3-45f7d3f1dbf8", 1),
+                createExpectedResponse("INVALID_PURPOSE", "purpose_id: Invalid uuid", "", 2),
+                createExpectedResponse("INVALID_DATE", String.format("date: Date field (2024-10-26) in csv is different from tracing date (%s).", submissionDate.toString()), "", 2)
         );
-        Assertions.assertEquals(expectedResult, getTracingErrorsResponse.getResults());
+        assertThat(getTracingErrorsResponse.getResults()).hasSameElementsAs(expectedResult);
     }
 
     @When("gli errori riscontrati vengono corretti passando il csv {string}")
     public void sanitizeErrors(String file) {
         Assertions.assertNotNull(submitTracingResponse, "There was an error while retrieving the tracing response!");
         Assertions.assertNotNull(submitTracingResponse.getTracingId());
-        recoverError(submitTracingResponse.getTracingId().toString(), resourceLoader.getResource(selectCsvFile(file)));
+        recoverError(submitTracingResponse.getTracingId().toString(), tracingFileUtils.getCsvFile(file));
     }
 
     @When("vengono corretti gli errori riscontrati per il tracingId {string}")
     public void sanitizeErrorsForSpecificTracingId(String tracingId) {
-        recoverError(tracingId, resourceLoader.getResource(selectCsvFile("corretto")));
+        recoverError(tracingId, tracingFileUtils.getCsvFile("corretto"));
     }
 
     private void recoverError(String tracingId, Resource resource) {
         try {
-            recoverTracingResponse = interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource);
+            interopTracingClient.recoverTracing(UUID.fromString(tracingId), resource);
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {
@@ -178,13 +164,12 @@ public class TracingSteps {
 
     @Given("viene sovrascritto il tracing aggiunto in precedenza con il csv: {string}")
     public void replaceTracing(String file) {
-        replaceTracing(submitTracingResponse.getTracingId(), resourceLoader.getResource(selectCsvFile(file)));
+        replaceTracing(submitTracingResponse.getTracingId(), tracingFileUtils.getCsvFile(file));
     }
-
 
     private void replaceTracing(UUID tracingId, Resource resource) {
         try {
-            replaceTracingResponse = interopTracingClient.replaceTracing(tracingId, resource);
+            interopTracingClient.replaceTracing(tracingId, resource);
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {
@@ -192,24 +177,9 @@ public class TracingSteps {
         }
     }
 
-    @Then("viene verificato che la sovrascrittura viene effettuata con errori")
-    public void verifyReplaceWithErrors() {
-        verifyReplaceTracingResponse(true);
-    }
-
-    @Then("viene verificato che la sovrascrittura viene effettuata senza errori")
-    public void verifyReplaceWithoutErrors() {
-        verifyReplaceTracingResponse(false);
-    }
-
-    private void verifyReplaceTracingResponse(boolean hasErrors) {
-        Assertions.assertNotNull(replaceTracingResponse, "There was an error while retrieving the replace tracing response!");
-        Assertions.assertEquals(hasErrors, replaceTracingResponse.getErrors());
-    }
-
     @When("viene sovrascritto il tracing con id: {string}")
-    public void replaceTracingById(UUID tracingId) {
-        replaceTracing(tracingId, resourceLoader.getResource("corretto"));
+    public void replaceTracingById(String tracingId) {
+        replaceTracing(UUID.fromString(tracingId), tracingFileUtils.getCsvFile("corretto"));
     }
 
     @When("viene invocato l'endpoint di health con successo")
@@ -217,39 +187,26 @@ public class TracingSteps {
         Assertions.assertDoesNotThrow(interopTracingClient::getHealthStatus);
     }
 
-    @When("viene inviato il csv per la data mancante")
-    public void recoverMissingCsvForDate() {
+    @When("viene inviato il csv {string} per la data mancante")
+    public void recoverMissingCsvForDate(String fileType) {
         Assertions.assertNotNull(getTracingsResponse, "There was an error while retrieving the tracing with MISSING status!");
         Assertions.assertFalse(getTracingsResponse.getResults().isEmpty(), "No tracing with MISSING status found!");
         GetTracingsResponseResults tracingsResponseResults = getTracingsResponse.getResults().get(0);
-        createCsv("", "CORRETTO");
-        uploadCsv(tracingsResponseResults.getDate().toString());
+        tracingFileUtils.updateCsv(tracingsResponseResults.getDate().toString());
+        submissionDate = tracingsResponseResults.getDate();
+        uploadCsv(fileType);
     }
 
     @And("si attende che il file di tracing caricato passi in stato {string}")
     public void waitForStatus(String status) {
-        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(PnPollingStrategy.INTEROP_TRACING);
+        PnPollingInteropTracing interopTracing = (PnPollingInteropTracing) pnPollingFactory.getPollingService(INTEROP_TRACING);
         PnTracingResponse pnTracingResponse = interopTracing.waitForEvent(null,
                 PnPollingParameter.builder()
+                        .value(INTEROP_TRACING)
+                        .pollingType(PnPollingParameter.PollingType.RAPID)
                         .pnPollingInterop(new PnPollingInterop(submitTracingResponse.getTracingId().toString(), TracingState.fromValue(status)))
                         .build());
         Assertions.assertTrue(pnTracingResponse.getResult());
-    }
-
-    private void selectOperator(String operator) {
-        switch (operator.trim().toLowerCase()) {
-            case "operator1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            case "operator2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.PG_1);
-            default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
-        }
-    }
-
-    private String selectCsvFile(String file) {
-        return switch (file.trim().toLowerCase()) {
-            case "corretto" -> "classpath:interop/2024_10_22_OK.csv";
-            case "errato" -> "classpath:interop/2024_10_22_ERROR.csv";
-            default -> throw new IllegalStateException("Unexpected value: " + file.trim().toLowerCase());
-        };
     }
 
     private GetTracingErrorsResponseResults createExpectedResponse(String errorCode, String message, String purposeId, Integer rowNumber) {

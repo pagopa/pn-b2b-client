@@ -18,7 +18,7 @@ public interface IInteropTracingClient extends SettableBearerToken {
 
     ReplaceTracingResponse replaceTracing(UUID tracingId, org.springframework.core.io.Resource _file) throws RestClientException;
 
-    SubmitTracingResponse submitTracing(org.springframework.core.io.Resource _file, LocalDate date) throws RestClientException;
+    SubmitTracingResponse submitTracing(org.springframework.core.io.Resource _file, String date) throws RestClientException;
 
     void getHealthStatus() throws RestClientException;
 }

@@ -72,13 +72,13 @@ public class PnPollingInteropTracing extends PnPollingTemplate<PnTracingResponse
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, false, true);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, false, true);
         return timingResult.waiting() * timingResult.numCheck();
     }
 

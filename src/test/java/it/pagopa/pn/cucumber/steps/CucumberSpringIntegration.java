@@ -19,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.interop.config.springconfig.InteropConfigurati
 import it.pagopa.pn.client.b2b.pa.interop.service.impl.InteropTracingClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.InteropTokenSingleton;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
+import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -117,7 +118,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         InteropConfiguration.class,
         InteropClientConfigs.class,
         InteropTracingClientImpl.class,
-        PnPollingInteropTracing.class
+        PnPollingInteropTracing.class,
+        TracingFileUtils.class
 })
 @EnableScheduling
 @EnableConfigurationProperties
