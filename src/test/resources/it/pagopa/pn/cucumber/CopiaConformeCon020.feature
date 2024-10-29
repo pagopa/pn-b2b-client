@@ -81,30 +81,4 @@ Feature: test per la visualizzazione della copia conforme
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And vengono letti gli eventi fino all'elemento di timeline della notifica "DIGITAL_SUCCESS_WORKFLOW" per l'utente 0
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020" per l'utente 1
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 0
-    #And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT" per l'utente 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      |
 
