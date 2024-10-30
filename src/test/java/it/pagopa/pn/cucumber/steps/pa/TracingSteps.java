@@ -11,6 +11,7 @@ import it.pagopa.pn.client.b2b.pa.interop.polling.dto.PnTracingResponse;
 import it.pagopa.pn.client.b2b.pa.interop.service.impl.PnPollingInteropTracing;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.cucumber.interop.utility.TracingFileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
@@ -24,6 +25,8 @@ import static it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy.INTERO
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TracingSteps {
+    private static final int OFFSET_VALUE = 0;
+    private static final int LIMIT_VALUE = 50;
     private final PnPollingFactory pnPollingFactory;
     private final IInteropTracingClient interopTracingClient;
     private final TracingFileUtils tracingFileUtils;
@@ -34,15 +37,30 @@ public class TracingSteps {
     private HttpStatusCodeException httpStatusCodeException;
     private LocalDate submissionDate;
 
+    /**
+     * Dependency injection
+     * @param pnPollingFactory {@link PnPollingFactory}
+     * @param interopTracingClient {@link IInteropTracingClient}
+     * @param tracingFileUtils {@link TracingFileUtils}
+     */
     public TracingSteps(PnPollingFactory pnPollingFactory, IInteropTracingClient interopTracingClient, TracingFileUtils tracingFileUtils) {
         this.pnPollingFactory = pnPollingFactory;
         this.interopTracingClient = interopTracingClient;
         this.tracingFileUtils = tracingFileUtils;
     }
 
+    @Given("l'utenza {string} effettua le chiamate")
+    public void selectOperator(String operator) {
+        switch (operator.trim().toLowerCase()) {
+            case "tenant1" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_1);
+            case "tenant2" -> interopTracingClient.setBearerToken(SettableBearerToken.BearerTokenType.TENANT_2);
+            default -> throw new IllegalStateException("Unexpected value: " + operator.trim().toLowerCase());
+        }
+    }
+
     @Given("viene aggiornato il file CSV con la prima data disponibile")
     public void updateCsv() {
-        submissionDate = interopTracingClient.getTracings(0, 50, null).getResults().stream()
+        submissionDate = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, null).getResults().stream()
                 .map(GetTracingsResponseResults::getDate)
                 .min(LocalDate::compareTo)
                 .get().minusDays(1);
@@ -73,7 +91,7 @@ public class TracingSteps {
 
     public void retrieveTracing(List<TracingState> statusList) {
         try {
-            getTracingsResponse = interopTracingClient.getTracings(0, 30, statusList);
+            getTracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, statusList);
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {
@@ -110,7 +128,7 @@ public class TracingSteps {
 
     private void getTracingErrors(UUID tracingId) {
         try {
-            getTracingErrorsResponse = interopTracingClient.getTracingErrors(tracingId, 0, 30);
+            getTracingErrorsResponse = interopTracingClient.getTracingErrors(tracingId, OFFSET_VALUE, LIMIT_VALUE);
         } catch (HttpStatusCodeException statusCodeException) {
             httpStatusCodeException = statusCodeException;
         } catch (Exception ex) {

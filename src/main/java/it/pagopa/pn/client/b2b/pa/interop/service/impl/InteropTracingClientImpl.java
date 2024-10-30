@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,18 +23,20 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
     private final TracingsApi tracingsApi;
     private final HealthApi healthApi;
     private final InteropClientConfigs interopClientConfigs;
+    private BearerTokenType bearerTokenSetted;
 
     public InteropTracingClientImpl(RestTemplate restTemplate, InteropClientConfigs interopClientConfigs) {
         this.restTemplate = restTemplate;
         this.interopClientConfigs = interopClientConfigs;
-        this.tracingsApi = new TracingsApi(createApiClient(interopClientConfigs));
-        this.healthApi = new HealthApi(createApiClient(interopClientConfigs));
+        this.tracingsApi = new TracingsApi(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
+        this.healthApi = new HealthApi(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
+        this.bearerTokenSetted = BearerTokenType.TENANT_1;
     }
 
-    private ApiClient createApiClient(InteropClientConfigs interopClientConfigs) {
+    private ApiClient createApiClient(String basePath, String bearerToken) {
         ApiClient apiClient = new ApiClient(restTemplate);
-        apiClient.setBasePath(interopClientConfigs.getBaseUrl());
-        apiClient.setBearerToken(interopClientConfigs.getBearerToken1());
+        apiClient.setBasePath(basePath);
+        apiClient.setBearerToken(bearerToken);
         return apiClient;
     }
 
@@ -71,11 +72,22 @@ public class InteropTracingClientImpl implements IInteropTracingClient {
 
     @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
-        return false;
+        switch (bearerToken) {
+            case TENANT_1 -> {
+                this.tracingsApi.setApiClient(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken1()));
+                this.bearerTokenSetted = BearerTokenType.TENANT_1;
+            }
+            case TENANT_2 -> {
+                this.tracingsApi.setApiClient(createApiClient(interopClientConfigs.getBaseUrl(), interopClientConfigs.getBearerToken2()));
+                this.bearerTokenSetted = BearerTokenType.TENANT_2;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
+        }
+        return true;
     }
 
     @Override
     public BearerTokenType getBearerTokenSetted() {
-        return null;
+        return this.bearerTokenSetted;
     }
 }

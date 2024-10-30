@@ -9,4 +9,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class InteropClientConfigs {
     private String baseUrl;
     private String bearerToken1;
+    private String bearerToken2;
 }
