@@ -57,13 +57,11 @@ Feature: avanzamento b2b notifica PG analogico con chiamata a National Registry 
     And destinatario
       | denomination            | Test digitale ok          |
       | recipientType           | PG                        |
-      | taxId                   | 15376371009               |
+      | taxId                   | 01980910440               |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-
-
 
   @workflowAnalogico @mockNR
   Scenario: [B2B-TEST_1_2] Invio Notifica mono destinatario a PG in stato “irreperibile totale” PG IPA non Trovato INFO non Trovato INAD non Trovato - Mock
