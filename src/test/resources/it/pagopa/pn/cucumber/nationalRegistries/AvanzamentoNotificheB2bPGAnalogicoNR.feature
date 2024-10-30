@@ -57,7 +57,7 @@ Feature: avanzamento b2b notifica PG analogico con chiamata a National Registry 
     And destinatario
       | denomination            | Test digitale ok          |
       | recipientType           | PG                        |
-      | taxId                   | 01980910440               |
+      | taxId                   | 15376371009               |
       | digitalDomicile         | NULL                      |
       | physicalAddress_address | Via@FAIL-Irreperibile_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
