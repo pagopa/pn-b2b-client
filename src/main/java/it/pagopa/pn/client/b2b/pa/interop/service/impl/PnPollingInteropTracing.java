@@ -23,8 +23,10 @@ import java.util.function.Predicate;
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
 public class PnPollingInteropTracing extends PnPollingTemplate<PnTracingResponse> {
+    private static final int OFFSET_VALUE = 0;
+    private static final int LIMIT_VALUE = 50;
     protected final TimingForPolling timingForPolling;
-    private IInteropTracingClient interopTracingClient;
+    private final IInteropTracingClient interopTracingClient;
     private GetTracingsResponse pollingResponse;
 
     public PnPollingInteropTracing(TimingForPolling timingForPolling, IInteropTracingClient interopTracingClient) {
@@ -38,7 +40,7 @@ public class PnPollingInteropTracing extends PnPollingTemplate<PnTracingResponse
             PnTracingResponse pnTracingResponse = new PnTracingResponse();
             GetTracingsResponse getTracingsResponse;
             try {
-                getTracingsResponse = interopTracingClient.getTracings(0, 30, List.of(pnPollingParameter.getPnPollingInterop().getStatus()));
+                getTracingsResponse = interopTracingClient.getTracings(OFFSET_VALUE, LIMIT_VALUE, List.of(pnPollingParameter.getPnPollingInterop().getStatus()));
             } catch (Exception exception) {
                 log.error("There was an error while retrieving all the tracings!");
                 throw new PnPollingException(exception.getMessage());
@@ -84,16 +86,16 @@ public class PnPollingInteropTracing extends PnPollingTemplate<PnTracingResponse
 
     @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
-        return false;
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setApiKey(String apiKey) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public ApiKeyType getApiKeySetted() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }
