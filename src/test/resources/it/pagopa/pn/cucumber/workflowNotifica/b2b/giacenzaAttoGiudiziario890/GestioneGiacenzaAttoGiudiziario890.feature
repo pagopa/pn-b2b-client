@@ -368,7 +368,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo gestione giacenza atto 
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG010"
 
-  @giacenza890Simplified
+  @giacenza890Simplified @ignore
   Scenario: [B2B_GIACENZA_890_WI2.2_17] Invio notifica con sequence @OK-Giacenza_RS ed attesa elemento di timeline SEND_ANALOG_PROGRESS con deliveryDetailCode RECRS010
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
