@@ -1129,3 +1129,29 @@ Feature: verifica validazione sincrona
     Examples:
       | email            | error          |
       | V.S.-SRL@pecOk.it | ECMA 262 regex |
+
+
+#Il test si può integrare al B2B-PA-SYNC_VALIDATION_4 quando sarà definito il messaggio si errore preciso
+  @syncValidation
+  Scenario: [B2B-PA-SYNC_VALIDATION_79] verifica validazione sync taxonomyCode non censito
+    Given viene generata una nuova notifica
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
+      | taxonomyCode       | 000000X                        |
+    And destinatario Mario Cucumber
+    When la notifica viene inviata dal "Comune_1"
+    Then l'operazione ha prodotto un errore con status code "400"
+
+  @syncValidation
+  Scenario: [B2B-PA-SYNC_VALIDATION_80] verifica validazione sync taxonomyCode correttamente censito
+    Given viene generata una nuova notifica
+      | subject            | BS-ACT-3_CAF-CNA|
+      | abstract           | NULL            |
+      | senderDenomination | PagoPa S.p.A.   |
+      | senderTaxId        | 15376371009     |
+      | document           | DOC_BS          |
+      | feePolicy          | DELIVERY_MODE   |
+      | taxonomyCode       | 010203P         |
+    And destinatario Mario Cucumber
+    And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+
