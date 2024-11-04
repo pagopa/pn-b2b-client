@@ -1142,6 +1142,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400"
 
+
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_80] verifica validazione sync taxonomyCode correttamente censito
     Given viene generata una nuova notifica
