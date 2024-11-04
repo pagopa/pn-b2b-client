@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+
 import java.time.OffsetDateTime;
 
 
@@ -18,7 +19,6 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     private final RestTemplate restTemplate;
     private final String basePath;
     private final String userAgent;
-
     private final String bearerTokenCom1;
     private final String bearerTokenCom2;
     private final String bearerTokenSON;
@@ -33,23 +33,23 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
                              @Value("${pn.external.bearer-token-pa-SON}") String bearerTokenSON,
                              @Value("${pn.external.bearer-token-pa-ROOT}") String bearerTokenROOT,
                              @Value("${pn.external.bearer-token-pa-GA}") String bearerTokenGA,
-                             @Value("${pn.webapi.external.user-agent}")String userAgent) {
+                             @Value("${pn.webapi.external.user-agent}") String userAgent) {
         this.bearerTokenCom1 = bearerTokenCom1;
         this.bearerTokenCom2 = bearerTokenCom2;
         this.bearerTokenSON = bearerTokenSON;
         this.bearerTokenROOT = bearerTokenROOT;
         this.bearerTokenGA = bearerTokenGA;
-        this.restTemplate= restTemplate;
-        this.basePath= basePath;
-        this.userAgent=userAgent;
-        this.senderReadWebApi = new SenderReadWebApi( newApiClient( restTemplate, basePath, bearerTokenCom1,userAgent));
+        this.restTemplate = restTemplate;
+        this.basePath = basePath;
+        this.userAgent = userAgent;
+        this.senderReadWebApi = new SenderReadWebApi(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
     }
 
-    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent ) {
-        ApiClient newApiClient = new ApiClient( restTemplate );
-        newApiClient.setBasePath( basePath );
-        newApiClient.addDefaultHeader("user-agent",userAgent);
-        newApiClient.addDefaultHeader("Authorization","Bearer "+bearerToken);
+    private static ApiClient newApiClient(RestTemplate restTemplate, String basePath, String bearerToken, String userAgent) {
+        ApiClient newApiClient = new ApiClient(restTemplate);
+        newApiClient.setBasePath(basePath);
+        newApiClient.addDefaultHeader("user-agent", userAgent);
+        newApiClient.addDefaultHeader("Authorization", "Bearer " + bearerToken);
         return newApiClient;
     }
 
@@ -64,23 +64,23 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
         boolean beenSet = false;
         switch (bearerToken) {
             case MVP_1 -> {
-                this.senderReadWebApi.setApiClient( newApiClient( restTemplate, basePath, bearerTokenCom1,userAgent));
+                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom1, userAgent));
                 beenSet = true;
             }
             case MVP_2 -> {
-                this.senderReadWebApi.setApiClient( newApiClient( restTemplate, basePath, bearerTokenCom2,userAgent));
+                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenCom2, userAgent));
                 beenSet = true;
             }
             case GA -> {
-                this.senderReadWebApi.setApiClient( newApiClient( restTemplate, basePath, bearerTokenGA,userAgent));
+                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenGA, userAgent));
                 beenSet = true;
             }
             case SON -> {
-                this.senderReadWebApi.setApiClient( newApiClient( restTemplate, basePath, bearerTokenSON,userAgent));
+                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenSON, userAgent));
                 beenSet = true;
             }
             case ROOT -> {
-                this.senderReadWebApi.setApiClient( newApiClient( restTemplate, basePath, bearerTokenROOT,userAgent));
+                this.senderReadWebApi.setApiClient(newApiClient(restTemplate, basePath, bearerTokenROOT, userAgent));
                 beenSet = true;
             }
             default -> throw new IllegalStateException("Unexpected value: " + bearerToken);
@@ -91,6 +91,6 @@ public class PnWebPaClientImpl implements IPnWebPaClient {
     @Override
     public BearerTokenType getBearerTokenSetted() {
         return this.bearerTokenSetted;
-           }
+    }
 
 }

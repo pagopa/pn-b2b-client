@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.polling.impl;
+package it.pagopa.pn.client.b2b.pa.polling.impl.v24;
 
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.TIMELINE_EXTRA_RAPID_V23)
+@Service(PnPollingStrategy.STATUS_EXTRA_RAPID)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceTimelineExtraRapidV23 extends PnPollingServiceTimelineRapidV23 {
-    public PnPollingServiceTimelineExtraRapidV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+public class PnPollingServiceStatusExtraRapid extends PnPollingServiceStatusRapid {
+    public PnPollingServiceStatusExtraRapid(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
     }
 

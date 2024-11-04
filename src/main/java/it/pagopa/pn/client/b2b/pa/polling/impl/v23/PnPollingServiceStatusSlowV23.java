@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.polling.impl;
+package it.pagopa.pn.client.b2b.pa.polling.impl.v23;
 
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -8,22 +8,22 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.STATUS_EXTRA_RAPID_V23)
+@Service(PnPollingStrategy.STATUS_SLOW_V23)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceStatusExtraRapidV23 extends PnPollingServiceStatusRapidV23 {
-    public PnPollingServiceStatusExtraRapidV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+public class PnPollingServiceStatusSlowV23 extends PnPollingServiceStatusRapidV23 {
+    public PnPollingServiceStatusSlowV23(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
     }
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, false);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, false);
         return timingResult.waiting() * timingResult.numCheck();
     }
 }

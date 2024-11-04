@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.polling.impl;
+package it.pagopa.pn.client.b2b.pa.polling.impl.v23;
 
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;

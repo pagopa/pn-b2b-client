@@ -6,14 +6,13 @@ import lombok.Setter;
 
 import java.util.List;
 
-
 @Getter
 @Setter
-public class PnPollingResponseV23 extends PnPollingResponse {
-    private FullSentNotificationV23 notification;
+public class PnPollingResponseV25 extends PnPollingResponse {
+    private FullSentNotificationV25 notification;
     private NewNotificationRequestStatusResponseV23 statusResponse;
-    private TimelineElementV23 timelineElement;
+    private TimelineElementV25 timelineElement;
     private NotificationStatusHistoryElement notificationStatusHistoryElement;
-    private List<ProgressResponseElementV23> progressResponseElementList;
-    private ProgressResponseElementV23 progressResponseElement;
+    private List<ProgressResponseElementV25> progressResponseElementList;
+    private ProgressResponseElementV25 progressResponseElement;
 }

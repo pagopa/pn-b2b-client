@@ -11,7 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PnPollingResponseV1 extends PnPollingResponse {
-    //MATTEO
     private FullSentNotification notification;
     private NewNotificationRequestStatusResponse statusResponse;
     private TimelineElement timelineElement;

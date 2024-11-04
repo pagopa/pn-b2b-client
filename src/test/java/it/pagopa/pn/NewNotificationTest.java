@@ -93,9 +93,9 @@ public class NewNotificationTest {
                 .paFee(100)
                 .vat(22)
                 .senderTaxId("00207190257")
-                .notificationFeePolicy( policy )
-                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
-                .paProtocolNumber("" + System.currentTimeMillis())
+                .notificationFeePolicy(policy)
+                .physicalCommunicationType(NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
+                .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( 
                         policy!=NotificationFeePolicy.FLAT_RATE,"Leo ", "DVNLRD52D15M059P","classpath:/sample.pdf",
@@ -109,7 +109,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
-            FullSentNotificationV24 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
+            FullSentNotificationV25 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification(newNotification);
         });
@@ -127,9 +127,9 @@ public class NewNotificationTest {
                 .senderDenomination("Comune di Sapppada")
                 //.senderTaxId("01199250158")
                 .senderTaxId("00207190257")
-                .notificationFeePolicy( NotificationFeePolicy.FLAT_RATE )
-                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
-                .paProtocolNumber("" + System.currentTimeMillis())
+                .notificationFeePolicy(NotificationFeePolicy.FLAT_RATE)
+                .physicalCommunicationType(NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890)
+                .paProtocolNumber(String.valueOf(System.currentTimeMillis()))
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( false,"Leo ", "CNCGPP80A01H501J","classpath:/sample.pdf","classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
                 .addRecipientsItem( newRecipient( false, "Fiera", "FRMTTR76M06B715E","classpath:/sample.pdf","classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.DIGITAL_OK, RECIPIENT_TYPE_ANALOG.ANALOG_OK))
@@ -137,7 +137,7 @@ public class NewNotificationTest {
 
         Assertions.assertDoesNotThrow(() -> {
             NewNotificationResponse newNotificationRequest = utils.uploadNotification(request);
-            FullSentNotificationV24 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
+            FullSentNotificationV25 newNotification = utils.waitForRequestAcceptation(newNotificationRequest);
             await().atMost(10, SECONDS);
             utils.verifyNotification( newNotification );
         });

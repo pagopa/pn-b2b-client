@@ -1,4 +1,4 @@
-package it.pagopa.pn.client.b2b.pa.polling.impl;
+package it.pagopa.pn.client.b2b.pa.polling.impl.v25;
 
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
@@ -7,12 +7,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V23)
+@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceValidationStatusAcceptedShortV23 extends PnPollingServiceValidationStatusV23 {
+public class PnPollingServiceValidationStatusAcceptedShort extends PnPollingServiceValidationStatus {
 
 
-    public PnPollingServiceValidationStatusAcceptedShortV23(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusAcceptedShort(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }
 

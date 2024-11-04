@@ -14,7 +14,6 @@ import java.util.List;
 @Getter
 @Setter
 public class PnPollingResponseV20 extends PnPollingResponse {
-    //MATTEO
     private FullSentNotificationV20 notification;
     private NewNotificationRequestStatusResponse statusResponse;
     private TimelineElementV20 timelineElement;

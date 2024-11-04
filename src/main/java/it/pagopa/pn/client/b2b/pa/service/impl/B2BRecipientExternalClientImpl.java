@@ -4,12 +4,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
-import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,8 +80,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public FullReceivedNotificationV23 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return deepCopy(recipientReadB2BApi.getReceivedNotificationV23(iun, mandateId), FullReceivedNotificationV23.class);
+    public FullReceivedNotificationV24 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV24(iun, mandateId), FullReceivedNotificationV24.class);
     }
 
     @Override
@@ -108,7 +112,7 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     @Override
     public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, String group, String senderId, NotificationStatus status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedDelegatedNotification(
-                startDate.toString(), endDate.toString(), senderId,recipientId, group, iunMatch,  convertStatus(status), size, nextPagesKey);
+                startDate.toString(), endDate.toString(), senderId, recipientId, group, iunMatch, convertStatus(status), size, nextPagesKey);
         return deepCopy(response, NotificationSearchResponse.class);
     }
 
@@ -120,12 +124,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException {
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId) throws RestClientException {
         return deepCopy(legalFactsApi.deliveryPushIunDownloadLegalFactsLegalFactIdGet(iun, legalFactId), LegalFactDownloadMetadataResponse.class);
     }
 
     @Override
-    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
+    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, String documentType, String documentId, String mandateId) throws RestClientException {
         throw new UnsupportedOperationException();
     }
 
@@ -170,13 +174,13 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
                 .orElse(null);
     }
 
-    private <T> T deepCopy( Object obj, Class<T> toClass) {
+    private <T> T deepCopy(Object obj, Class<T> toClass) {
         ObjectMapper objMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         try {
-            String json = objMapper.writeValueAsString( obj );
-            return objMapper.readValue( json, toClass );
+            String json = objMapper.writeValueAsString(obj);
+            return objMapper.readValue(json, toClass);
         } catch (JsonProcessingException exc) {
             throw new PnB2bException(exc.getMessage());
         }
