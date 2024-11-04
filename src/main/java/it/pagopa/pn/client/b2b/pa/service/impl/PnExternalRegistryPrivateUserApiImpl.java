@@ -26,7 +26,7 @@ public class PnExternalRegistryPrivateUserApiImpl implements IPnExternalRegistry
                                                 @Value("${pn.bearer-token.pg5}") String nildeIottiPGBearerToken,
                                                 @Value("${pn.bearer-token.pg3}") String aldameriniPGBearerToken,
                                                 @Value("${pn.bearer-token.pg4}") String mariaMontessoriPGBearerToken,
-                                                @Value("${pn.webapi.external.base-url.pagopa}") String basePath) {
+                                                @Value("${pn.delivery.base-url}") String basePath) {
 
         this.aldameriniPGBearerToken = aldameriniPGBearerToken;
         this.mariaMontessoriPGBearerToken = mariaMontessoriPGBearerToken;
