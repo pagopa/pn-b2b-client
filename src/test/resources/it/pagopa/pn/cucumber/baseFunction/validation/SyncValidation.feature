@@ -1139,7 +1139,7 @@ Feature: verifica validazione sincrona
       | senderDenomination | Comune di milano            |
       | taxonomyCode       | 000000X                        |
     And destinatario Mario Cucumber
-    When la notifica viene inviata dal "Comune_1"
+    When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
 
@@ -1155,4 +1155,3 @@ Feature: verifica validazione sincrona
       | taxonomyCode       | 010203P         |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-
