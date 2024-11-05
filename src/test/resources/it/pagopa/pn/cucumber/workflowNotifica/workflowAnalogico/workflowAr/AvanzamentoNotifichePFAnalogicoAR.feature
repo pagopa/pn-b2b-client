@@ -102,10 +102,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_deliveryDetailCode | CON080 |
-#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-#      | details | NOT_NULL |
-#      | details_recIndex | 0 |
-#      | details_deliveryDetailCode | CON020 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
