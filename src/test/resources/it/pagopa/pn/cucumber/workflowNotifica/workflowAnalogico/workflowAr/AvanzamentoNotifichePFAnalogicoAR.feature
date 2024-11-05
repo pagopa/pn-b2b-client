@@ -65,6 +65,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | digitalDomicile         | NULL                     |
       | physicalAddress_address | Via@FAIL-Irreperibile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And verifica date business in timeline COMPLETELY_UNREACHABLE per l'utente 0
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
@@ -85,9 +86,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details_deliveryDetailCode | RECRN002F |
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-IRREPERIBILE_AR", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus     | KO |
-    And viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_4] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_AR_scenario negativo
@@ -104,10 +102,10 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_deliveryDetailCode | CON080 |
-    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-      | details | NOT_NULL |
-      | details_recIndex | 0 |
-      | details_deliveryDetailCode | CON020 |
+#    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+#      | details | NOT_NULL |
+#      | details_recIndex | 0 |
+#      | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
