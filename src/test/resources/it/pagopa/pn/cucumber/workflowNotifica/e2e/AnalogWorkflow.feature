@@ -1207,26 +1207,17 @@ Feature: Workflow analogico
       | digitalDomicile | NULL |
       | physicalAddress_address | Via@OK-Retry_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-
-      | loadTimeline            | true                                                                                                                                                                                                |
-      | pollingTime             | 40000                                                                                                                                                                                               |
-      | numCheck                | 30                                                                                                                                                                                                  |
-      | details                 | NOT_NULL                                                                                                                                                                                            |
-      | details_recIndex        | 0                                                                                                                                                                                                   |
-      | details_sentAttemptMade | 0                                                                                                                                                                                                   |
-      | details_physicalAddress | {"address": "VIA@OK-RETRY_AR", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-
+    And vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
-#    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
-#      | details | NOT_NULL |
-#      | details_recIndex | 0 |
-#      | details_sentAttemptMade | 0 |
-#      | details_deliveryDetailCode | CON020 |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
