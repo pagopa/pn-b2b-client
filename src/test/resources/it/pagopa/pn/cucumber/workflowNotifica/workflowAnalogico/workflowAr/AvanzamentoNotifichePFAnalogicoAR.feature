@@ -31,7 +31,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_deliveryDetailCode | RECRN001C |
-      | details_responseStatus     | KO |
+      | details_responseStatus     | OK |
 #  @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-CON018.5s-RECRN001A.5s-RECRN001B[DOC:AR;DELAY:1s].5s-RECRN001C"
 
   @workflowAnalogico
@@ -86,6 +86,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | details_physicalAddress    | {"at": "Presso", "address": "VIA@FAIL-IRREPERIBILE_AR", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
       | details_responseStatus     | KO |
     And viene verificato che l'elemento di timeline "COMPLETELY_UNREACHABLE" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_AR_4] Attesa elemento di timeline SEND_ANALOG_FEEDBACK_fail_AR_scenario negativo
@@ -312,13 +314,28 @@ Feature: avanzamento notifiche b2b con workflow cartaceo AR
       | digitalDomicile         | NULL                        |
       | physicalAddress_address | via@OK-NonRendicontabile_AR |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_0.IDX_1"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020" tentativo "ATTEMPT_0.IDX_2"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN013" tentativo "ATTEMPT_0.IDX_3"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON080" tentativo "ATTEMPT_0.IDX_4"
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020" tentativo "ATTEMPT_0.IDX_5"
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN001B" e verifica tipo DOC "AR"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECRN001C"
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON080 |
+    And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN013 |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_deliveryDetailCode | RECRN001B |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_attachments | [{"documentType": "AR"}] |
     #  @sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN013@retry.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECRN001A.5s-RECRN001B[DOC:AR].5s-RECRN001C"    #vedere il discorso Retry presenza due volte di CON080
     #vedere il discorso Retry presenza due volte di CON080
 
