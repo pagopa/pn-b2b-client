@@ -844,10 +844,10 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con deliveryDetailCode {string} tentativo {string}")
     public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCode(String timelineEventCategory, String deliveryDetailCode, String attempt) {
-        PnPollingServiceTimelineSlow timelineRapidV24 =
+        PnPollingServiceTimelineSlow timelineRapid =
                 (PnPollingServiceTimelineSlow)
                         pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW);
-        PnPollingResponseV25 pnPollingResponse = timelineRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingResponseV25 pnPollingResponse = timelineRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .pnPollingPredicate(getPnPollingPredicateForTimeline(timelineEventCategory, deliveryDetailCode, attempt))
@@ -1124,9 +1124,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi fino all'elemento di timeline della notifica {string} verifica numero pagine AAR {int}")
     public void readingEventUpToTheTimelineElementOfNotificationPerVerificaNumPagine(String timelineEventCategory, Integer numPagine) {
-        PnPollingServiceTimelineRapid timelineRapidV24 = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
-
-        PnPollingResponseV25 pnPollingResponse = timelineRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingServiceTimelineRapid timelineRapid = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
+        PnPollingResponseV25 pnPollingResponse = timelineRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .build());
@@ -1145,9 +1144,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string}")
     public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEvento(Integer destinatario, String timelineEventCategory) {
-        PnPollingServiceTimelineRapid timelineRapidV24 = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
-
-        PnPollingResponseV25 pnPollingResponse = timelineRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingServiceTimelineRapid timelineRapid = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
+        PnPollingResponseV25 pnPollingResponse = timelineRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .pnPollingPredicate(getPnPollingPredicateForTimeline(timelineEventCategory, destinatario))
@@ -1199,9 +1197,8 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("vengono letti gli eventi e verifico che l'utente {int} non abbia associato un evento {string} con responseStatus {string}")
     public void vengonoLettiGliEventiVerificoCheUtenteNonAbbiaAssociatoEventoWithResponseStatus(Integer destinatario, String timelineEventCategory, String responseStatus) {
-        PnPollingServiceTimelineRapid timelineRapidV24 = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
-
-        PnPollingResponseV25 pnPollingResponse = timelineRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingServiceTimelineRapid timelineRapid = (PnPollingServiceTimelineRapid) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID);
+        PnPollingResponseV25 pnPollingResponse = timelineRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(timelineEventCategory)
                         .pnPollingPredicate(getPnPollingPredicateForTimeline(timelineEventCategory, destinatario, null, null, null, responseStatus, false, false, null, false, null))
@@ -1329,7 +1326,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+            LegalFactCategory categorySearch = null;//timelineElement.getLegalFactsIds().get(0).getCategory();//(OLD MATTEO pre v25)
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
             if (pa) {
@@ -1343,10 +1340,12 @@ public class AvanzamentoNotificheB2bSteps {
             if (webRecipient) {
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
-                                this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                                        sharedSteps.deepCopy(categorySearch, LegalFactCategory.class),
-                                        finalKeySearch
-                                ));
+                                this.webRecipientClient.getLegalFact(
+                                        sharedSteps.getSentNotification().getIun(),
+                                        null,
+//                                        sharedSteps.deepCopy(categorySearch, LegalFactCategory.class),//(OLD MATTEO pre v25)
+                                        finalKeySearch,
+                                        null));
                 System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
                 return legalFactDownloadMetadataResponse.getUrl();
             }
@@ -1384,9 +1383,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(category, timelineElement.getLegalFactsIds().get(0).getCategory());
-            //OLD VERSION PRE v25
-//            LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
-            String categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+            LegalFactCategory categorySearch = null;//timelineElement.getLegalFactsIds().get(0).getCategory();//(OLD MATTEO pre v25)
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String keySearch = null;
             //TODO Verificare....
@@ -1403,7 +1400,10 @@ public class AvanzamentoNotificheB2bSteps {
 
             String finalKeySearch = keySearch;
             if (pa) {
-                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, finalKeySearch);
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(
+                        sharedSteps.getSentNotification().getIun(),
+                        categorySearch,
+                        finalKeySearch);
                 //System.out.println("NOME FILE PEC RECIPIENT PA"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
@@ -1411,10 +1411,12 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
             if (webRecipient) {
-                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-                        finalKeySearch);
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(
+                        sharedSteps.getSentNotification().getIun(),
+                        null,
+//                        sharedSteps.deepCopy(categorySearch, it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),//(OLD MATTEO pre v25)
+                        finalKeySearch,
+                        null);
                 // System.out.println("NOME FILE PEC RECIPIENT DEST"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse.getFilename());
@@ -1431,14 +1433,9 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
-
-
         TimelineElementV25 timelineElement = null;
-
         for (TimelineElementV25 element : sharedSteps.getSentNotification().getTimeline()) {
-
             if (element.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())) {
                 if (deliveryDetailCode == null) {
                     timelineElement = element;
@@ -1449,15 +1446,12 @@ public class AvanzamentoNotificheB2bSteps {
                 }
             }
         }
-
         try {
             System.out.println("ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            //OLD VERSION PRE v25
-//            LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
-            String categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+            LegalFactCategory categorySearch = null;//timelineElement.getLegalFactsIds().get(0).getCategory();//(OLD MATTEO pre v25)
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
             if (pa) {
@@ -1468,9 +1462,11 @@ public class AvanzamentoNotificheB2bSteps {
                 //        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
             if (webRecipient) {
-                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-                        sharedSteps.deepCopy(categorySearch,
-                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
+                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(
+                        sharedSteps.getSentNotification().getIun(),
+                        null,
+                        null,
+//                        sharedSteps.deepCopy(categorySearch, it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),//(OLD MATTEO pre v25)
                         finalKeySearch));
             }
         } catch (AssertionFailedError assertionFailedError) {
@@ -1481,9 +1477,8 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che la notifica abbia lo stato VIEWED")
     public void checksNotificationViewedStatus() {
         String status = NotificationStatus.VIEWED.getValue();
-        PnPollingServiceStatusRapid statusRapidV24 = (PnPollingServiceStatusRapid) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID);
-
-        PnPollingResponseV25 pnPollingResponse = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingServiceStatusRapid statusRapid = (PnPollingServiceStatusRapid) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID);
+        PnPollingResponseV25 pnPollingResponse = statusRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
@@ -1500,9 +1495,8 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("si verifica che la notifica non abbia lo stato {string}")
     public void checksNotificationNotHaveStatus(String status) {
         //AL MOMENTO NON ESISTE UNO SCENARIO CHE INTEGRA QUESTO STEP
-        PnPollingServiceStatusRapid statusRapidV24 = (PnPollingServiceStatusRapid) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID);
-
-        PnPollingResponseV25 pnPollingResponse = statusRapidV24.waitForEvent(sharedSteps.getSentNotification().getIun(),
+        PnPollingServiceStatusRapid statusRapid = (PnPollingServiceStatusRapid) pnPollingFactory.getPollingService(PnPollingStrategy.STATUS_RAPID);
+        PnPollingResponseV25 pnPollingResponse = statusRapid.waitForEvent(sharedSteps.getSentNotification().getIun(),
                 PnPollingParameter.builder()
                         .value(status)
                         .build());
@@ -1795,10 +1789,8 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (InterruptedException exc) {
             throw new RuntimeException(exc);
         }
-
         PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
         TimelineElementV25 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())).findAny().orElse(null);
-
         try {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
@@ -3300,7 +3292,7 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
         Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
         Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
-        LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+        LegalFactCategory categorySearch = null;//timelineElement.getLegalFactsIds().get(0).getCategory();//(OLD MATTEO pre v25)
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = getKeyLegalFact(key);
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, keySearch);
@@ -3333,8 +3325,6 @@ public class AvanzamentoNotificheB2bSteps {
                                 && (responseStatus == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getResponseStatus().getValue()).equals(responseStatus))
                                 && (!isF24 || Objects.requireNonNull(timelineElement.getDetails()).getIdF24() != null)
                                 && (!isLegalFactEmpty || Objects.nonNull(timelineElement.getLegalFactsIds()) && !timelineElement.getLegalFactsIds().isEmpty())
-                                //OLD VERSION PRE v25
-//                                && (legalFactIdCategory == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getLegalFactsIds()).get(0)).getCategory().getValue().equals(legalFactIdCategory))
                                 && (legalFactIdCategory == null || Objects.requireNonNull(Objects.requireNonNull(timelineElement.getLegalFactsIds()).get(0)).getCategory().equals(legalFactIdCategory))
                                 && (!isAttachmentEmpty || Objects.nonNull(Objects.requireNonNull(timelineElement.getDetails()).getAttachments()) && !timelineElement.getDetails().getAttachments().isEmpty())
                                 && (legalFactIdCategory == null || failureCauses.contains(Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getDeliveryFailureCause())))

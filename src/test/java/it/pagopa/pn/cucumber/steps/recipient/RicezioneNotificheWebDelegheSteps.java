@@ -549,9 +549,16 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectPA(pa);
         sharedSteps.selectUser(recipient);
         try {
-            this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(searchParam.startDate, searchParam.endDate, searchParam.mandateId /*mandateId = null by default*/,
-                    searchParam.senderId, searchParam.status, searchParam.subjectRegExp,
-                    searchParam.iunMatch, searchParam.size, null);
+            this.notificationSearchResponse = webRecipientClient.searchReceivedNotification(
+                    searchParam.startDate,
+                    searchParam.endDate,
+                    searchParam.mandateId /*mandateId = null by default*/,
+                    searchParam.senderId,
+                    searchParam.status,
+                    searchParam.subjectRegExp,
+                    searchParam.iunMatch,
+                    searchParam.size,
+                    null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
@@ -564,9 +571,15 @@ public class RicezioneNotificheWebDelegheSteps {
         sharedSteps.selectUser(user);
         try {
             this.notificationSearchResponse = webRecipientClient.searchReceivedDelegatedNotification(
-                    searchParam.startDate, searchParam.endDate, getRecipientId(recipient),
-                    null, searchParam.senderId, searchParam.status,
-                    searchParam.iunMatch, searchParam.size, null);
+                    searchParam.startDate,
+                    searchParam.endDate,
+                    getRecipientId(recipient),
+                    null,
+                    searchParam.senderId,
+                    searchParam.status,
+                    searchParam.iunMatch,
+                    searchParam.size,
+                    null);
         } catch (HttpStatusCodeException e) {
             this.sharedSteps.setNotificationError(e);
             this.notificationError = e;
