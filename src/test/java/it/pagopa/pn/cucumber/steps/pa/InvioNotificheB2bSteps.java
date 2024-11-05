@@ -19,6 +19,7 @@ import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.payment_info.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow;
+import it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
 import lombok.extern.slf4j.Slf4j;
@@ -242,16 +243,7 @@ public class InvioNotificheB2bSteps {
         AtomicReference<NotificationSearchResponse> notificationByIun = new AtomicReference<>();
         try {
             Assertions.assertDoesNotThrow(() ->
-                    notificationByIun.set(webPaClient.searchSentNotification(
-                            OffsetDateTime.now().minusDays(1),
-                            OffsetDateTime.now(),
-                            null,
-                            notificationInternalStatus,
-                            null,
-                            null,
-                            1,
-                            null))
-            );
+                    notificationByIun.set(webPaClient.searchSentNotification(OffsetDateTime.now().minusDays(1), OffsetDateTime.now(), null, notificationInternalStatus, null, null, 1, null)));
             Assertions.assertNotNull(notificationByIun.get());
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
