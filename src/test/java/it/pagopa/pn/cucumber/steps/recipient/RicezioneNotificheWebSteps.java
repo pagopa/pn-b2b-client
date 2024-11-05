@@ -514,7 +514,7 @@ public class RicezioneNotificheWebSteps {
 
     private boolean searchNotificationWebPA(NotificationSearchParamWebPA searchParam) {
         boolean beenFound;
-        NotificationSearchResponse notificationSearchResponse = webPaClient
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate,
                         searchParam.endDate,
@@ -524,7 +524,7 @@ public class RicezioneNotificheWebSteps {
                         searchParam.iunMatch,
                         searchParam.size,
                         null);
-        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -719,7 +719,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
-        NotificationStatus status;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;

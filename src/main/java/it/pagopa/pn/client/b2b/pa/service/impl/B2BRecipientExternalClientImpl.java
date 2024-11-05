@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentCategory;
@@ -14,6 +13,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPush
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
