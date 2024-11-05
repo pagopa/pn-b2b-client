@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Codebuild for e2e test'
+
+Parameters:
+  ProjectName:
+    Type: String
+    Description: "Name of the project"
+    Default: "Tracing-e2e-test"
+
+Resources:
+
+  CodeBuildRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub ${ProjectName}-cd-pipeline-CodeBuildRole
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - "codebuild.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+
+  RunTestsCodebuildProjectLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/codebuild/${RunTestsCodebuildProject}"
+      RetentionInDays: 14
+
+  RunTestsCodebuildProject:
+    Type: 'AWS::CodeBuild::Project'
+    Properties:
+      Name: !Sub "${ProjectName}-RunE2eTestsCodeBuildProject"
+      ServiceRole: !GetAtt CodeBuildRole.Arn
+      ConcurrentBuildLimit: 2
+      TimeoutInMinutes: 120
+      Source:
+        Type: NO_SOURCE
+        BuildSpec: |
+          version: 0.2
+          phases:
+            pre_build:
+              commands:
+                - echo "### NO PRE_BUILD"
+            build:
+              commands:
+                - |
+                  API_KEY=$( aws secretsmanager get-secret-value --secret-id secretsForTests | jq '.SecretString' | sed -e 's/^"//' -e 's/"$//' -e 's/\\"/"/g' | jq -r '.e2eTestApiKey' )
+                - echo "### CLONE E2E TEST REPOSITORY ###"
+                - echo "#####################"
+                - git clone --depth 1 --branch Interop https://github.com/pagopa/pn-b2b-client pn-b2b-client
+                - |
+                  ( cd pn-b2b-client && ./mvnw -Dtest=it.pagopa.pn.cucumber.${TEST_SUITE:-InteropTracingTest} - '-Dpn.external.api-keys.pagopa-dev-false=${API_KEY}' clean verify )
+          reports:
+            reportGroup:
+              files:
+                - 'pn-b2b-client/target/cucumber-report.json'
+              file-format: CUCUMBERJSON
+          cache:
+            paths:
+              - '/root/.m2/**/*'
+      Artifacts:
+        Type: NO_ARTIFACTS
+      Environment:
+        ComputeType: BUILD_GENERAL1_SMALL
+        Type: LINUX_CONTAINER
+        Image: "aws/codebuild/standard:6.0"
+        EnvironmentVariables:
+          - Name: REGION
+            Type: PLAINTEXT
+            Value: !Ref AWS::Region
+
