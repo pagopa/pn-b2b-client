@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v24;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestStatusResponseV24;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -23,7 +23,7 @@ import java.util.function.Predicate;
 @Slf4j
 public class PnPollingServiceValidationStatus extends PnPollingTemplate<PnPollingResponseV24> {
     private final IPnPaB2bClient b2bClient;
-    private NewNotificationRequestStatusResponseV23 requestStatusResponseV23;
+    private NewNotificationRequestStatusResponseV24 requestStatusResponse;
     private FullSentNotificationV24 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
@@ -37,9 +37,9 @@ public class PnPollingServiceValidationStatus extends PnPollingTemplate<PnPollin
     protected Callable<PnPollingResponseV24> getPollingResponse(String id, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV24 pnPollingResponse = new PnPollingResponseV24();
-            NewNotificationRequestStatusResponseV23 statusResponseV23 = b2bClient.getNotificationRequestStatus(id);
-            pnPollingResponse.setStatusResponse(statusResponseV23);
-            this.requestStatusResponseV23 = statusResponseV23;
+            NewNotificationRequestStatusResponseV24 statusResponse = b2bClient.getNotificationRequestStatus(id);
+            pnPollingResponse.setStatusResponse(statusResponse);
+            this.requestStatusResponse = statusResponse;
 
             if (pnPollingResponse.getStatusResponse().getIun() != null) {
                 FullSentNotificationV24 fullSentNotification;
@@ -82,7 +82,7 @@ public class PnPollingServiceValidationStatus extends PnPollingTemplate<PnPollin
     @Override
     protected PnPollingResponseV24 getException(Exception exception) {
         PnPollingResponseV24 pollingResponse = new PnPollingResponseV24();
-        pollingResponse.setStatusResponse(this.requestStatusResponseV23);
+        pollingResponse.setStatusResponse(this.requestStatusResponse);
         pollingResponse.setNotification(this.fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;

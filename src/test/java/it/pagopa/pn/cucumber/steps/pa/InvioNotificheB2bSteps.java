@@ -630,7 +630,7 @@ public class InvioNotificheB2bSteps {
     }
 
     private void verifyStatus(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        NewNotificationRequestStatusResponseV23 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
+        NewNotificationRequestStatusResponseV24 newNotificationRequestStatusResponse = Assertions.assertDoesNotThrow(() ->
                 this.b2bClient.getNotificationRequestStatusAllParam(notificationRequestId, paProtocolNumber, idempotenceToken));
         Assertions.assertNotNull(newNotificationRequestStatusResponse.getNotificationRequestStatus());
         log.debug(newNotificationRequestStatusResponse.getNotificationRequestStatus());

@@ -399,7 +399,7 @@ public class AvanzamentoNotificheB2bSteps {
         String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
         byte[] decodedBytes = Base64.getDecoder().decode(requestId);
         String iun = new String(decodedBytes);
-        NewNotificationRequestV23 newNotificationRequest = sharedSteps.getNotificationRequest();
+        NewNotificationRequestV24 newNotificationRequest = sharedSteps.getNotificationRequest();
         // get timeline from delivery-push
         NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
         List<TimelineElementV25> timelineElementList = notificationHistory.getTimeline();
@@ -1329,9 +1329,7 @@ public class AvanzamentoNotificheB2bSteps {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
             Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
-            //OLD VERSION PRE v25
-//            LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
-            String categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+            LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
             if (pa) {
@@ -1343,18 +1341,10 @@ public class AvanzamentoNotificheB2bSteps {
                 //  sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
             if (webRecipient) {
-                //OLD VERSION PRE v25
-//                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
-//                        Assertions.assertDoesNotThrow(() ->
-//                                this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-//                                        sharedSteps.deepCopy(categorySearch, LegalFactCategory.class),
-//                                        finalKeySearch
-//                                ));
                 LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse =
                         Assertions.assertDoesNotThrow(() ->
-                                this.webRecipientClient.getLegalFact(
-                                        sharedSteps.getSentNotification().getIun(),
-                                        categorySearch,
+                                this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
+                                        sharedSteps.deepCopy(categorySearch, LegalFactCategory.class),
                                         finalKeySearch
                                 ));
                 System.out.println("NOME FILE PEC RECIPIENT DEST" + legalFactDownloadMetadataResponse.getFilename());
@@ -1421,14 +1411,9 @@ public class AvanzamentoNotificheB2bSteps {
             }
 
             if (webRecipient) {
-                //OLD VERSION PRE v25
-//                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-//                        sharedSteps.deepCopy(categorySearch,
-//                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-//                        finalKeySearch);
-                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(
-                        sharedSteps.getSentNotification().getIun(),
-                        categorySearch,
+                LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
+                        sharedSteps.deepCopy(categorySearch,
+                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
                         finalKeySearch);
                 // System.out.println("NOME FILE PEC RECIPIENT DEST"+legalFactDownloadMetadataResponse.getFilename());
                 Assertions.assertNotNull(legalFactDownloadMetadataResponse);
@@ -1483,17 +1468,10 @@ public class AvanzamentoNotificheB2bSteps {
                 //        sharedSteps.getSentNotification().getRecipients().get(0).getTaxId()));
             }
             if (webRecipient) {
-                //OLD VERSION PRE v25
-//                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
-//                        sharedSteps.deepCopy(categorySearch,
-//                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
-//                        finalKeySearch
-//                ));
-                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(
-                        sharedSteps.getSentNotification().getIun(),
-                        categorySearch,
-                        finalKeySearch
-                ));
+                Assertions.assertDoesNotThrow(() -> this.webRecipientClient.getLegalFact(sharedSteps.getSentNotification().getIun(),
+                        sharedSteps.deepCopy(categorySearch,
+                                it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.LegalFactCategory.class),
+                        finalKeySearch));
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -3322,9 +3300,7 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
         Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
         Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
-        //OLD VERSION PRE v25
-//        LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
-        String categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
+        LegalFactCategory categorySearch = timelineElement.getLegalFactsIds().get(0).getCategory();
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = getKeyLegalFact(key);
         LegalFactDownloadMetadataResponse legalFactDownloadMetadataResponse = this.b2bClient.getLegalFact(sharedSteps.getSentNotification().getIun(), categorySearch, keySearch);
