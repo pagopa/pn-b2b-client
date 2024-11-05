@@ -1,7 +1,9 @@
 package it.pagopa.pn.client.b2b.pa.service;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DocumentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
@@ -31,13 +33,8 @@ public interface IPnWebRecipientClient extends SettableBearerToken {
 
     NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException;
 
-    //OLD VERSION PRE v25
-//    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) throws RestClientException;
+    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId, String mandateId) throws RestClientException;
 
-    LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId) throws RestClientException;
+    DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException;
 
-    //OLD VERSION PRE v25
-//    DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException;
-
-    DocumentDownloadMetadataResponse getDocumentsWeb(String iun, String documentType, String documentId, String mandateId) throws RestClientException;
 }

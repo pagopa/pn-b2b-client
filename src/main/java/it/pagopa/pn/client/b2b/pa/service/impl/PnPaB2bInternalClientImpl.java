@@ -102,14 +102,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return deepCopy(response, NotificationAttachmentDownloadMetadataResponse.class);
     }
 
-    //OLD VERSION PRE v25
-//    @Override
-//    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
-//        return null;
-//    }
-
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId) {
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId) {
         return null;
     }
 
@@ -117,7 +111,6 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     public LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId) {
         return null;
     }
-
 
     @Override
     public NotificationPriceResponse getNotificationPrice(String paTaxId, String noticeCode) throws RestClientException {

@@ -51,10 +51,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationAttachment(String iun, Integer recipientIdx, String attachname, Integer attachmentIdx);
 
-    //OLD VERSION PRE v25
-//    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId);
-
-    LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId);
+    LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId);
 
     LegalFactDownloadMetadataResponse getDownloadLegalFact(String iun, String legalFactId);
 

@@ -38,7 +38,7 @@ public class PnPollingServiceTimelineSlowE2e extends PnPollingServiceTimelineRap
             PnPollingResponseV24 pnPollingResponse = new PnPollingResponseV24();
             FullSentNotificationV24 fullSentNotification;
             try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+                fullSentNotification = pnPaB2bClient.getSentNotificationV24(iun);
             } catch (Exception exception) {
                 log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
                 throw new PnPollingException(exception.getMessage());

@@ -14,9 +14,9 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model
 import it.pagopa.pn.client.b2b.generated.openapi.clients.external.generate.model.external.bff.tos.privacy.ConsentType;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DocumentCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentCategory;
 import it.pagopa.pn.client.b2b.pa.service.*;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
@@ -385,7 +385,7 @@ public class RicezioneNotificheWebSteps {
             }
             String finalKeySearch = "safestorage://" + keySearch;
             try {
-                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), DocumentCategory.AAR.getValue(), finalKeySearch, null);
+                this.webRecipientClient.getDocumentsWeb(sharedSteps.getSentNotification().getIun(), DocumentCategory.AAR, finalKeySearch, null);
             } catch (HttpStatusCodeException e) {
                 this.notificationError = e;
             }
@@ -514,7 +514,7 @@ public class RicezioneNotificheWebSteps {
 
     private boolean searchNotificationWebPA(NotificationSearchParamWebPA searchParam) {
         boolean beenFound;
-        NotificationSearchResponse notificationSearchResponse = webPaClient
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchResponse notificationSearchResponse = webPaClient
                 .searchSentNotification(
                         searchParam.startDate,
                         searchParam.endDate,
@@ -524,7 +524,7 @@ public class RicezioneNotificheWebSteps {
                         searchParam.iunMatch,
                         searchParam.size,
                         null);
-        List<NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
+        List<it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationSearchRow> resultsPage = notificationSearchResponse.getResultsPage();
         beenFound = Objects.requireNonNull(resultsPage).stream().filter(elem -> Objects.requireNonNull(elem.getIun()).equals(sharedSteps.getSentNotification().getIun())).findAny().orElse(null) != null;
         if (!beenFound && Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
             while (Boolean.TRUE.equals(notificationSearchResponse.getMoreResult())) {
@@ -719,7 +719,7 @@ public class RicezioneNotificheWebSteps {
         OffsetDateTime startDate;
         OffsetDateTime endDate;
         String mandateId;
-        NotificationStatus status;
+        it.pagopa.pn.client.web.generated.openapi.clients.webPa.model.NotificationStatus status;
         String subjectRegExp;
         String iunMatch;
         Integer size = 10;

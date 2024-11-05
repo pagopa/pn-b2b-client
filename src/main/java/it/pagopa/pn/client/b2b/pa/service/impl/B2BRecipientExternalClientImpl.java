@@ -6,12 +6,14 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.ApiClient;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.api.RecipientReadB2BApi;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.deliverypushb2b.api.LegalFactsApi;
 import it.pagopa.pn.client.b2b.pa.exception.PnB2bException;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DocumentDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.DocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externaldeliveryPushb2bpa.model_v25.LegalFactDownloadMetadataResponse;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationStatus;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
@@ -124,12 +126,12 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public LegalFactDownloadMetadataResponse getLegalFact(String iun, String legalFactType, String legalFactId) throws RestClientException {
+    public LegalFactDownloadMetadataResponse getLegalFact(String iun, LegalFactCategory legalFactType, String legalFactId, String mandateId) throws RestClientException {
         return deepCopy(legalFactsApi.deliveryPushIunDownloadLegalFactsLegalFactIdGet(iun, legalFactId), LegalFactDownloadMetadataResponse.class);
     }
 
     @Override
-    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, String documentType, String documentId, String mandateId) throws RestClientException {
+    public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
         throw new UnsupportedOperationException();
     }
 

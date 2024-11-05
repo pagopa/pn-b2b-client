@@ -300,7 +300,6 @@ public class InvioNotificheB2bSteps {
         this.notificationMetadataAttachment = notificationDocumentAtomic.get();
     }
 
-
     @Then("viene effettuato un controllo sulla durata della retention di {string} precaricato")
     public void retentionCheckPreload(String documentType) {
         String key = switch (documentType) {
@@ -311,7 +310,6 @@ public class InvioNotificheB2bSteps {
         };
         Assertions.assertTrue(checkRetetion(key, retentionTimePreLoad));
     }
-
 
     @And("viene effettuato un controllo sulla durata della retention di {string}")
     public void retentionCheckLoad(String documentType) {

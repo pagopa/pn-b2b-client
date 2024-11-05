@@ -5,10 +5,8 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebMandateClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -17,6 +15,7 @@ import it.pagopa.pn.client.b2b.pa.service.impl.B2bMandateServiceClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnWebMandateExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalMandate.model.*;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.FullReceivedNotificationV24;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationAttachmentDownloadMetadataResponse;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.NotificationSearchResponse;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -496,8 +495,10 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromBytimeline(String recipient) {
         sharedSteps.selectUser(recipient);
         try {
-            TimelineElementCategoryV23 timelineElementCategoryV23 = TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED;
-            TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_RADD_RETRIEVED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+
             Assertions.assertNotNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -509,8 +510,10 @@ public class RicezioneNotificheWebDelegheSteps {
     public void notificationCanBeCorrectlyReadFromBytimelineNotExist(String recipient) {
         sharedSteps.selectUser(recipient);
         try {
-            TimelineElementCategoryV23 timelineElementCategoryV23 = TimelineElementCategoryV23.NOTIFICATION_VIEWED;
-            TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23 =
+                    it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23.NOTIFICATION_VIEWED;
+            it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 timelineElement = getTimelineElementV23WebRecipient(timelineElementCategoryV23);
+
             Assertions.assertNull(timelineElement);
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -518,7 +521,7 @@ public class RicezioneNotificheWebDelegheSteps {
         webRecipientClient.setBearerToken(baseUser);
     }
 
-    private TimelineElementV23 getTimelineElementV23WebRecipient(TimelineElementCategoryV23 timelineElementCategoryV23) {
+    private it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementV23 getTimelineElementV23WebRecipient(it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.TimelineElementCategoryV23 timelineElementCategoryV23) {
         FullReceivedNotificationV24 result = webRecipientClient.getReceivedNotification(sharedSteps.getSentNotification().getIun(), null);
         log.info("NOTIFICATION_TIMELINE: " + sharedSteps.getSentNotification().getTimeline());
         return result
