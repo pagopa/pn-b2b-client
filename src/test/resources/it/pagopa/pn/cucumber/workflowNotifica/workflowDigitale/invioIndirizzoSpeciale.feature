@@ -55,8 +55,9 @@ Feature: avanzamento b2b notifica digitale con indirizzo speciale
       | senderDenomination | Comune di milano |
     And destinatario Mario Gherkin
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
-    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_DIGITAL_PROGRESS"
+    Then vengono letti gli eventi fino all'elemento di timeline della notifica "SCHEDULE_REFINEMENT"
     And gli eventi di timeline ricevuti sono i seguenti
+    |SEND_DIGITAL_PROGRESS|
     | REQUEST_ACCEPTED |
     | AAR_GENERATION   |
     | GET_ADDRESS      |
