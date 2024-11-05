@@ -13,7 +13,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest);
 
-    NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest);
+    NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest);
 
@@ -33,7 +33,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification getSentNotificationV1(String iun);
 
-    NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId);
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 getNotificationRequestStatus(String notificationRequestId);
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequestStatusResponse getNotificationRequestStatusV1(String notificationRequestId);
 
@@ -41,7 +41,7 @@ public interface IPnPaB2bClient extends SettableApiKey {
 
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestStatusResponseV21 getNotificationRequestStatusV21(String notificationRequestId);
 
-    NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken);
+    it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken);
 
     NotificationAttachmentDownloadMetadataResponse getSentNotificationDocument(String iun, Integer docidx);
 
