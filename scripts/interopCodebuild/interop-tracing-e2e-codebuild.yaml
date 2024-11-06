@@ -76,7 +76,7 @@ Resources:
                 - echo "#####################"
                 - git clone --depth 1 --branch Interop https://github.com/pagopa/pn-b2b-client pn-b2b-client
                 - |
-                  ( cd pn-b2b-client && ./mvnw -Dtest=it.pagopa.pn.cucumber.${TEST_SUITE:-InteropTracingTest} - '-Dpn.interop.tracing.bearerToken-1=${TOKEN_INTEROP_TRACING_1}' '-Dpn.interop.tracing.bearerToken-2=${TOKEN_INTEROP_TRACING_2}' clean verify )
+                  ( cd pn-b2b-client && ./mvnw -Dtest=it.pagopa.pn.cucumber.interop.${TEST_SUITE:-InteropTracingTest} - '-Dpn.interop.tracing.bearerToken-1=${TOKEN_INTEROP_TRACING_1}' '-Dpn.interop.tracing.bearerToken-2=${TOKEN_INTEROP_TRACING_2}' clean verify )
           reports:
             reportGroup:
               files:
