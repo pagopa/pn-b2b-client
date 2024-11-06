@@ -43,4 +43,5 @@ public class PnPollingStrategy {
     public static final String WEBHOOK_V23 = "WEBHOOK_V23";
     public static final String WEBHOOK_V24 = "WEBHOOK_V24";
     public static final String WEBHOOK_V20 = "WEBHOOK_V20";
+    public static final String INTEROP_TRACING = "INTEROP_TRACING";
 }

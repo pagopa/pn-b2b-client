@@ -130,7 +130,10 @@ public class TimingForPolling {
         CANCELLED(11,1),
 
         //TIMING FOR WEBHOOK
-        WEBHOOK(150000, 500);
+        WEBHOOK(150000, 500),
+
+        //TIMING FOR TRACING
+        INTEROP_TRACING(3, 1);
 
         private final int numCheck;
         private final int waitingMultiplier;
