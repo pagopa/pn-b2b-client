@@ -25,7 +25,7 @@
         <spring.boot-version>2.5.2</spring.boot-version>
         <cucumber.version>7.8.1</cucumber.version>
         <open.api.version>develop</open.api.version>
-        <open.api.version.delivery>v2.10.0-RC.3</open.api.version.delivery>
+        <open.api.version.delivery>v2.10.0</open.api.version.delivery>
         <open.api.version.delivery.push>v2.11.0</open.api.version.delivery.push>
         <open.api.version.delivery_v1>v2.0.2</open.api.version.delivery_v1>
         <open.api.version.delivery.push_v1>v2.0.3</open.api.version.delivery.push_v1>
@@ -35,19 +35,15 @@
         <open.api.version.delivery.push_v21>v2.3.2</open.api.version.delivery.push_v21>
         <open.api.version.delivery.push_v23>36069ddec82d35af4a574df944d47db7e24c2c37</open.api.version.delivery.push_v23>
         <open.api.version.user.attributes>v2.8.0</open.api.version.user.attributes>
-        <open.api.version.mandate>v2.4.0</open.api.version.mandate>
+        <open.api.version.mandate>v2.5.0</open.api.version.mandate>
         <open.api.version.apikey.manager>v2.2.0</open.api.version.apikey.manager>
         <open.api.version.downtime.logs>v2.3.0</open.api.version.downtime.logs>
         <open.api.version.radd.fsu>v2.1.5</open.api.version.radd.fsu>
         <open.api.version.radd.alt>v2.7.0-RC.2</open.api.version.radd.alt>
         <open.api.version.external.channels>develop</open.api.version.external.channels>
         <open.api.version.external.registries>v2.4.1</open.api.version.external.registries>
-        <external-bff-recipient.version>105e93e8673d0eff1bfaf98bfb42ab7492eacb10</external-bff-recipient.version>
         <open.api.version.paper.channel>develop</open.api.version.paper.channel>
-        <open.api.version.external.mandate>v2.5.0-RC.1</open.api.version.external.mandate>
-        <open.api.version.external.delivery>v2.10.0-RC.2</open.api.version.external.delivery>
-        <open.api.version.external.bff>v1.3.0-RC.1</open.api.version.external.bff>
-        <open.api.version.b2b.delivery.push>v2.11.0-RC.2</open.api.version.b2b.delivery.push>
+        <open.api.version.external.bff>v1.3.0</open.api.version.external.bff>
     </properties>
 
     <dependencies>
@@ -1469,7 +1465,7 @@
                         </goals>
                         <phase>process-resources</phase>
                         <configuration>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${external-bff-recipient.version}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/${open.api.version.external.bff}/docs/openapi/api-external-pn-bff-recipient-notifications.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1562,7 +1558,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.external.mandate}/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-mandate/${open.api.version.mandate}/docs/openapi/pn-mandate-b2b-pg-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1594,7 +1590,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.external.delivery}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery/${open.api.version.delivery}/docs/openapi/pn-delivery-b2b-pg-external.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
@@ -1802,7 +1798,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.b2b.delivery.push}/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-delivery-push/${open.api.version.delivery.push}/docs/openapi/api-external-pn-delivery-push-b2b-pg.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>resttemplate</library>
                             <generateApiTests>false</generateApiTests>
