@@ -38,14 +38,14 @@ public class PnPollingServiceStatusRapidV24 extends PnPollingTemplate<PnPollingR
         return () -> {
             PnPollingResponseV24 pnPollingResponse = new PnPollingResponseV24();
             FullSentNotificationV24 fullSentNotification;
-            try {
-                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
-            } catch (Exception exception) {
-                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
-                throw new PnPollingException(exception.getMessage());
-            }
-            pnPollingResponse.setNotification(fullSentNotification);
-            this.fullSentNotification = fullSentNotification;
+//            try {
+//                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+//            } catch (Exception exception) {
+//                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+//                throw new PnPollingException(exception.getMessage());
+//            }
+//            pnPollingResponse.setNotification(fullSentNotification);
+//            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }

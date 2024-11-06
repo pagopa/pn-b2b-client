@@ -3,8 +3,8 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.gpd.model.PaymentOptionModel;
@@ -254,14 +254,14 @@ public class AsyncSteps {
 
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int}")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmount(String timelineEventCategory,Integer user) {
-        TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, null);
+        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, null);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
         amountNotifica.set(user,amountNotifica.get(user) + analogCost);
     }
 
     @Then("viene effettuato il controllo del cambiamento del amount nella timeline {string} del (utente)(pagamento) {int} (al tentativo):")
     public void vieneEffettuatoIlControlloDelCambiamentoDelAmountAlTentativo(String timelineEventCategory,Integer user,@Transpose DataTest dataFromTest ) {
-        TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
         int analogCost = Objects.requireNonNull(Objects.requireNonNull(timelineElement.getDetails()).getAnalogCost());
         amountNotifica.set(user, amountNotifica.get(user) + analogCost);
     }
@@ -280,7 +280,7 @@ public class AsyncSteps {
     //se riufiutata amount_gpd
     @Then("viene verificato il costo finale della notifica amount_gpd + costo_base + pafee + analog_cost per ogni elemento di timeline")
     public void vieneVerificatoIlCostoFinaleDellaNotificaAmount_gpdCosto_basePafeeAnalog_costPerOgniElementoDiTimeline() {
-        FullSentNotificationV24 sentNotification = sharedSteps.getSentNotification();
+        FullSentNotificationV25 sentNotification = sharedSteps.getSentNotification();
         Integer costoTotale = getCostoTotale(sentNotification);
 
         String creditorTaxId = Assertions.assertDoesNotThrow(()-> Objects.requireNonNull(Objects.requireNonNull(sentNotification.getRecipients().get(0).getPayments()).get(0).getPagoPa()).getCreditorTaxId());
@@ -345,9 +345,9 @@ public class AsyncSteps {
         }
     }
 
-    private Integer getCostoTotale(FullSentNotificationV24 sentNotification) {
+    private Integer getCostoTotale(FullSentNotificationV25 sentNotification) {
         Integer analogCost = 0;
-        for (TimelineElementV24 timelineElem : sentNotification.getTimeline()) {
+        for (TimelineElementV25 timelineElem : sentNotification.getTimeline()) {
             Integer currentCost = timelineElem.getDetails() == null ? Integer.valueOf(0) : timelineElem.getDetails().getAnalogCost();
             if (currentCost != null && currentCost > 0) analogCost += currentCost;
         }

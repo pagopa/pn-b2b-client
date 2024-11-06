@@ -1629,7 +1629,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24 timelineElement =
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 timelineElement =
                     sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
             if (timelineElement != null) {
                 finish = true;
@@ -1941,7 +1941,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void getTimelineElementVersionB2B(String version) {
         String iun = this.sharedSteps.getSentNotification().getIun();
         if (version.equalsIgnoreCase("V24")) {
-            FullSentNotificationV24 fullSentNotification = b2bClient.getSentNotification(iun);
+            FullSentNotificationV25 fullSentNotification = b2bClient.getSentNotification(iun);
             this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
         } else if (version.equalsIgnoreCase("V23")) {
             FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
@@ -1987,19 +1987,19 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     }
 
     private void checkTimelineElement(Object timeline) {
-        if (timeline instanceof FullSentNotificationV24 fullSentNotificationV24) {
-            fullSentNotificationV24.getTimeline().forEach(timelineElementV24 -> {
-                Assertions.assertNotNull(timelineElementV24.getIngestionTimestamp());
-                Assertions.assertNotNull(timelineElementV24.getNotificationSentAt());
-                Assertions.assertNotNull(timelineElementV24.getEventTimestamp());
-                log.info("Field presence checked for " + timelineElementV24.getCategory().getValue());
-                checkValues(timelineElementV24, fullSentNotificationV24.getTimeline());
+        if (timeline instanceof FullSentNotificationV25 FullSentNotificationV25) {
+            FullSentNotificationV25.getTimeline().forEach(TimelineElementV25 -> {
+                Assertions.assertNotNull(TimelineElementV25.getIngestionTimestamp());
+                Assertions.assertNotNull(TimelineElementV25.getNotificationSentAt());
+                Assertions.assertNotNull(TimelineElementV25.getEventTimestamp());
+                log.info("Field presence checked for " + TimelineElementV25.getCategory().getValue());
+                checkValues(TimelineElementV25, FullSentNotificationV25.getTimeline());
             });
-        } else if (timeline instanceof TimelineElementV24 timelineElementV24) {
-            Assertions.assertNotNull(timelineElementV24.getIngestionTimestamp());
-            Assertions.assertNotNull(timelineElementV24.getNotificationSentAt());
-            Assertions.assertNotNull(timelineElementV24.getEventTimestamp());
-            log.info("Field presence checked for " + timelineElementV24.getCategory().getValue());
+        } else if (timeline instanceof TimelineElementV25 TimelineElementV25) {
+            Assertions.assertNotNull(TimelineElementV25.getIngestionTimestamp());
+            Assertions.assertNotNull(TimelineElementV25.getNotificationSentAt());
+            Assertions.assertNotNull(TimelineElementV25.getEventTimestamp());
+            log.info("Field presence checked for " + TimelineElementV25.getCategory().getValue());
         } else if (timeline instanceof TimelineElementV23 timelineElementV23) {
             Map timelineElementMap = JsonMapper.builder().addModule(new JavaTimeModule()).build().convertValue(timelineElementV23, Map.class);
             Assertions.assertFalse(timelineElementMap.containsKey("ingestionTimeStamp"));
@@ -2009,23 +2009,23 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
-    private void checkValues(TimelineElementV24 timelineElementV24, List<TimelineElementV24> timelineElementV24list) {
-        String category = timelineElementV24.getCategory().getValue();
+    private void checkValues(TimelineElementV25 TimelineElementV25, List<TimelineElementV25> TimelineElementV25list) {
+        String category = TimelineElementV25.getCategory().getValue();
         try {
             switch (category) {
                 case "NOTIFICATION_VIEWED", "REFINEMENT", "PAYMENT", "NOTIFICATION_RADD_RETRIEVED", "SEND_DIGITAL_PROGRESS" -> {
-                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
-                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getEventTimestamp());
+                    Assertions.assertEquals(TimelineElementV25.getTimestamp(), TimelineElementV25.getDetails().getEventTimestamp());
+                    Assertions.assertEquals(TimelineElementV25.getEventTimestamp(), TimelineElementV25.getDetails().getEventTimestamp());
                 }
                 case "SEND_DIGITAL_FEEDBACK", "SEND_ANALOG_FEEDBACK", "SEND_ANALOG_PROGRESS", "SEND_SIMPLE_REGISTERED_LETTER_PROGRESS" -> {
-                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getDetails().getNotificationDate());
-                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getDetails().getNotificationDate());
+                    Assertions.assertEquals(TimelineElementV25.getTimestamp(), TimelineElementV25.getDetails().getNotificationDate());
+                    Assertions.assertEquals(TimelineElementV25.getEventTimestamp(), TimelineElementV25.getDetails().getNotificationDate());
                 }
                 case "ANALOG_SUCCESS_WORKFLOW", "ANALOG_FAILURE_WORKFLOW", "COMPLETELY_UNREACHABLE_CREATION_REQUEST", "COMPLETELY_UNREACHABLE" -> {
-                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                    OffsetDateTime odtAnalogFeedBack = TimelineElementV25list.stream()
                             .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
                             .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
-                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                    OffsetDateTime odtAnalogDomicileFailure = TimelineElementV25list.stream()
                             .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
                             .map(x -> x.getTimestamp()).findFirst().orElse(null);
                     OffsetDateTime mostRecentEvent;
@@ -2036,17 +2036,17 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     } else {
                         mostRecentEvent = odtAnalogFeedBack;
                     }
-                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
-                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(TimelineElementV25.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(TimelineElementV25.getEventTimestamp(), mostRecentEvent);
                 }
                 case "SCHEDULE_REFINEMENT" -> {
-                    OffsetDateTime odtAnalogFeedBack = timelineElementV24list.stream()
+                    OffsetDateTime odtAnalogFeedBack = TimelineElementV25list.stream()
                             .filter(e -> e.getCategory().getValue().equalsIgnoreCase("SEND_ANALOG_FEEDBACK"))
                             .map(x -> x.getDetails().getNotificationDate()).findFirst().orElse(null);
-                    OffsetDateTime odtAnalogDomicileFailure = timelineElementV24list.stream()
+                    OffsetDateTime odtAnalogDomicileFailure = TimelineElementV25list.stream()
                             .filter(e -> e.getCategory().getValue().equalsIgnoreCase("PREPARE_ANALOG_DOMICILE_FAILURE"))
                             .map(x -> x.getTimestamp()).findFirst().orElse(null);
-                    OffsetDateTime mostRecentEvent = timelineElementV24.getTimestamp();
+                    OffsetDateTime mostRecentEvent = TimelineElementV25.getTimestamp();
                     if (odtAnalogFeedBack != null && odtAnalogDomicileFailure != null) {
                         mostRecentEvent = odtAnalogFeedBack.isAfter(odtAnalogDomicileFailure) ? odtAnalogFeedBack : odtAnalogDomicileFailure;
                     } else if (odtAnalogFeedBack == null && odtAnalogDomicileFailure != null) {
@@ -2054,15 +2054,15 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     } else if (odtAnalogFeedBack != null && odtAnalogDomicileFailure == null) {
                         mostRecentEvent = odtAnalogFeedBack;
                     }
-                    Assertions.assertEquals(timelineElementV24.getTimestamp(), mostRecentEvent);
-                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(TimelineElementV25.getTimestamp(), mostRecentEvent);
+                    Assertions.assertEquals(TimelineElementV25.getEventTimestamp(), mostRecentEvent);
                 }
 
                 case "DIGITAL_SUCCESS_WORKFLOW", "DIGITAL_FAILURE_WORKFLOW " -> {
-                    Assertions.assertEquals(timelineElementV24.getTimestamp(), timelineElementV24.getTimestamp());
-                    Assertions.assertEquals(timelineElementV24.getEventTimestamp(), timelineElementV24.getTimestamp());
-                    Assertions.assertEquals(timelineElementV24.getIngestionTimestamp(), timelineElementV24.getNotificationSentAt());
-                    Assertions.assertEquals(timelineElementV24.getNotificationSentAt(), timelineElementV24.getIngestionTimestamp());
+                    Assertions.assertEquals(TimelineElementV25.getTimestamp(), TimelineElementV25.getTimestamp());
+                    Assertions.assertEquals(TimelineElementV25.getEventTimestamp(), TimelineElementV25.getTimestamp());
+                    Assertions.assertEquals(TimelineElementV25.getIngestionTimestamp(), TimelineElementV25.getNotificationSentAt());
+                    Assertions.assertEquals(TimelineElementV25.getNotificationSentAt(), TimelineElementV25.getIngestionTimestamp());
                 }
             }
         } catch (AssertionFailedError e) {

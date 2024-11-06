@@ -131,7 +131,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV24 timelineElement;
+    private TimelineElementV25 timelineElement;
 
     @Getter
     @Setter
@@ -214,7 +214,7 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
     @Getter
     @Setter
-    private FullSentNotificationV24 notificationResponseComplete;
+    private FullSentNotificationV25 notificationResponseComplete;
     @Getter
     @Setter
     private FullSentNotificationV23 notificationResponseCompleteV23;
@@ -402,18 +402,18 @@ public class SharedSteps {
         }
 
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV24> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV25> sentNotifications = new ConcurrentLinkedQueue<>();
 
         for (NewNotificationRequestV23 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
                 threadWait(getWait());
-                FullSentNotificationV24 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
+                FullSentNotificationV25 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
                 Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV24 timelineElement = null;
+                TimelineElementV25 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
@@ -451,7 +451,7 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV24 fullSentNotification : sentNotifications) {
+        for (FullSentNotificationV25 fullSentNotification : sentNotifications) {
             log.info(fullSentNotification.getIun());
         }
         log.debug("End IUN list");
@@ -1717,7 +1717,7 @@ public class SharedSteps {
         }
     }
 
-    public FullSentNotificationV24 getSentNotification() {
+    public FullSentNotificationV25 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -1733,7 +1733,7 @@ public class SharedSteps {
         return notificationResponseCompleteV21;
     }
 
-    public void setSentNotification(FullSentNotificationV24 notificationResponseComplete) {
+    public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -2067,8 +2067,8 @@ public class SharedSteps {
         };
     }
 
-    public TimelineElementV24 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV24> timelineElementList = notificationResponseComplete.getTimeline();
+    public TimelineElementV25 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV25> timelineElementList = notificationResponseComplete.getTimeline();
         String iun;
         if (timelineEventCategory.equals(TimelineElementCategoryV23.REQUEST_REFUSED.getValue())) {
             String requestId = newNotificationResponse.getNotificationRequestId();
