@@ -70,14 +70,13 @@ Resources:
             build:
               commands:
                 - |
-                  API_KEY=$( aws secretsmanager get-secret-value --secret-id secretsForTests | jq '.SecretString' | sed -e 's/^"//' -e 's/"$//' -e 's/\\"/"/g' | jq -r '.e2eTestApiKey' )
                   TOKEN_INTEROP_TRACING_1=$( aws secretsmanager get-secret-value --secret-id secretsForTests | jq '.SecretString' | sed -e 's/^"//' -e 's/"$//' -e 's/\\"/"/g' | jq -r '.e2eTestbearerTokenTracing1' )
                   TOKEN_INTEROP_TRACING_2=$( aws secretsmanager get-secret-value --secret-id secretsForTests | jq '.SecretString' | sed -e 's/^"//' -e 's/"$//' -e 's/\\"/"/g' | jq -r '.e2eTestbearerTokenTracing2' )
                 - echo "### CLONE E2E TEST REPOSITORY ###"
                 - echo "#####################"
                 - git clone --depth 1 --branch Interop https://github.com/pagopa/pn-b2b-client pn-b2b-client
                 - |
-                  ( cd pn-b2b-client && ./mvnw -Dtest=it.pagopa.pn.cucumber.${TEST_SUITE:-InteropTracingTest} - '-Dpn.external.api-keys.pagopa-dev-false=${API_KEY}' '-Dpn.interop.tracing.bearerToken-1=${TOKEN_INTEROP_TRACING_1}' '-Dpn.interop.tracing.bearerToken-2=${TOKEN_INTEROP_TRACING_2}' clean verify )
+                  ( cd pn-b2b-client && ./mvnw -Dtest=it.pagopa.pn.cucumber.${TEST_SUITE:-InteropTracingTest} - '-Dpn.interop.tracing.bearerToken-1=${TOKEN_INTEROP_TRACING_1}' '-Dpn.interop.tracing.bearerToken-2=${TOKEN_INTEROP_TRACING_2}' clean verify )
           reports:
             reportGroup:
               files:
