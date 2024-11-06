@@ -735,7 +735,7 @@ Feature: annullamento notifiche b2b
     And viene verificato che l'elemento di timeline "SEND_COURTESY_MESSAGE" esista
       | loadTimeline | true |
       | details | NOT_NULL |
-      | details_digitalAddress | {"address": "provaemail@test.it", "type": "EMAIL"} |
+      | details_digitalAddress | {"address": "example@pecSuccess.it", "type": "EMAIL"} |
       | details_recIndex | 0 |
     When la notifica può essere annullata dal sistema tramite codice IUN
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLATION_REQUEST"
