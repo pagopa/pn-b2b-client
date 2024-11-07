@@ -290,6 +290,11 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.sendNewNotificationV23( newNotificationRequest );
     }
 
+    public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {
+        refreshAndSetTokenInteropClient();
+        return newNotificationApi.sendNewNotificationV24(newNotificationRequest);
+    }
+
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest) {
         refreshAndSetTokenInteropClient();
         return newNotificationApiV1.sendNewNotification( newNotificationRequest );

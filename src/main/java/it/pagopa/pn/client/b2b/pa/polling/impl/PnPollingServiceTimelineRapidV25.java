@@ -9,6 +9,7 @@ import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
+import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import lombok.extern.slf4j.Slf4j;
@@ -41,14 +42,14 @@ public class PnPollingServiceTimelineRapidV25 extends PnPollingTemplate<PnPollin
         return () -> {
             PnPollingResponseV25 pnPollingResponse = new PnPollingResponseV25();
             FullSentNotificationV25 fullSentNotification;
-//            try {
-//                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
-//            } catch (Exception exception) {
-//                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
-//                throw new PnPollingException(exception.getMessage());
-//            }
-//            pnPollingResponse.setNotification(fullSentNotification);
-//            this.fullSentNotification = fullSentNotification;
+            try {
+                fullSentNotification = pnPaB2bClient.getSentNotification(iun);
+            } catch (Exception exception) {
+                log.error("Error getPollingResponse(), Iun: {}, ApiKey: {}, PnPollingException: {}", iun, pnPaB2bClient.getApiKeySetted().name(), exception.getMessage());
+                throw new PnPollingException(exception.getMessage());
+            }
+            pnPollingResponse.setNotification(fullSentNotification);
+            this.fullSentNotification = fullSentNotification;
             return pnPollingResponse;
         };
     }

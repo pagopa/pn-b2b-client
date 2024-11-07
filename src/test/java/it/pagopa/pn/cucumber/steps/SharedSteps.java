@@ -209,9 +209,11 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
+    private NewNotificationResponse newNotificationResponseV24;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
+    private NewNotificationRequestV24 notificationRequestV24;
     @Getter
     @Setter
     private FullSentNotificationV25 notificationResponseComplete;
@@ -221,6 +223,7 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
+    private FullSentNotificationV25 notificationResponseCompleteV25;
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
@@ -345,6 +348,11 @@ public class SharedSteps {
     @Given("viene generata una nuova notifica V21")
     public void vieneGenerataUnaNotificaV21(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21) {
         this.notificationRequestV21 = notificationRequestV21;
+    }
+
+    @Given("viene generata una nuova notifica V24")
+    public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
+        this.notificationRequestV24 = notificationRequestV24;
     }
 
     @And("destinatario")
@@ -565,6 +573,16 @@ public class SharedSteps {
     @And("destinatario Mario Gherkin V21 e:")
     public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient) {
         this.notificationRequestV21.addRecipientsItem(
+                updateNotificationRecipient(recipient,
+                        "Mario Gherkin",
+                        marioGherkinTaxID,
+                        null,
+                        null));
+    }
+
+    @And("destinatario Mario Gherkin V24 e:")
+    public void destinatarioMarioGherkinParam(@Transpose NotificationRecipientV23 recipient) {
+        this.notificationRequestV24.addRecipientsItem(
                 updateNotificationRecipient(recipient,
                         "Mario Gherkin",
                         marioGherkinTaxID,
@@ -1357,6 +1375,27 @@ public class SharedSteps {
         }
     }
 
+    private void sendNotificationV24() {
+        try {
+            Assertions.assertDoesNotThrow(() -> {
+                notificationCreationDate = OffsetDateTime.now();
+                newNotificationResponseV24 = b2bUtils.uploadNotificationV24(notificationRequestV24);
+
+                threadWait(getWorkFlowWait());
+
+                notificationResponseCompleteV25 = b2bUtils.waitForRequestAcceptationV25(newNotificationResponseV24);
+            });
+
+            threadWait(getWorkFlowWait());
+
+            Assertions.assertNotNull(notificationResponseCompleteV25);
+        } catch (AssertionFailedError assertionFailedError) {
+            String message = assertionFailedError.getMessage() +
+                    "{RequestID: " + (newNotificationResponseV24 == null ? "NULL" : newNotificationResponseV24.getNotificationRequestId()) + " }";
+            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
+        }
+    }
+
     private void sendNotificationAndCancelPreRefused() {
         sendNotificationRapidCancellPreRefused();
     }
@@ -1657,6 +1696,7 @@ public class SharedSteps {
             case "v2" -> this.notificationRequestV2.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
+            case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
 
         }
     }
@@ -1731,6 +1771,10 @@ public class SharedSteps {
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 getSentNotificationV21() {
         return notificationResponseCompleteV21;
+    }
+
+    public FullSentNotificationV25 getSentNotificationV25() {
+        return notificationResponseCompleteV25;
     }
 
     public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
@@ -2113,7 +2157,9 @@ public class SharedSteps {
             return getSentNotificationV21().getIun();
         } else if (getSentNotification() != null) {
             return getSentNotification().getIun();
-        } else {
+        } else if (getSentNotificationV25() != null) {
+            return getSentNotificationV25().getIun();
+        }else {
             return null;
         }
     }
@@ -2151,6 +2197,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
+            case "v24" -> sendNotificationV24();
         }
     }
 
