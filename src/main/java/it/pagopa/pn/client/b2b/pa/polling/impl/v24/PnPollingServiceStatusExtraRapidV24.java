@@ -8,22 +8,22 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 
-@Service(PnPollingStrategy.TIMELINE_SLOW)
+@Service(PnPollingStrategy.STATUS_EXTRA_RAPID_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceTimelineSlow extends PnPollingServiceTimelineRapid {
-    public PnPollingServiceTimelineSlow(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+public class PnPollingServiceStatusExtraRapidV24 extends PnPollingServiceStatusRapidV24 {
+    public PnPollingServiceStatusExtraRapidV24(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         super(timingForPolling, pnPaB2bClient);
     }
 
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true, false);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value,true, true, false);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, true);
         return timingResult.waiting() * timingResult.numCheck();
     }
 }

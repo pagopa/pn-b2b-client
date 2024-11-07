@@ -7,27 +7,19 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT)
+@Service(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceValidationStatusAcceptedShort extends PnPollingServiceValidationStatus {
+public class PnPollingServiceValidationStatusNoAcceptedV24 extends PnPollingServiceValidationStatusV24 {
 
 
-    public PnPollingServiceValidationStatusAcceptedShort(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusNoAcceptedV24(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }
 
     @Override
-    protected Integer getPollInterval(String value) {
-        value = value.concat("_SHORT_VALIDATION");
-        TimingForPolling.TimingResult timingResult = this.getTimingForTimeline().getTimingForStatusValidation(value);
-        return timingResult.waiting();
-    }
-
-    @Override
     protected Integer getAtMost(String value) {
-        value = value.concat("_SHORT_VALIDATION");
+        value = value.replace(value, "NO_ACCEPTED_VALIDATION");
         TimingForPolling.TimingResult timingResult = this.getTimingForTimeline().getTimingForStatusValidation(value);
         return timingResult.numCheck() * timingResult.waiting();
     }
-
 }

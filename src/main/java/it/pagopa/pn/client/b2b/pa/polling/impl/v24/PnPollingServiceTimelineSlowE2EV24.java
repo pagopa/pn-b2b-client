@@ -3,7 +3,6 @@ package it.pagopa.pn.client.b2b.pa.polling.impl.v24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
@@ -19,19 +18,18 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.TIMELINE_RAPID)
+@Service(PnPollingStrategy.TIMELINE_SLOW_E2E_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceTimelineRapid extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceTimelineSlowE2EV24 extends PnPollingServiceTimelineRapidV24 {
 
-    protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotificationV24 fullSentNotification;
 
-
-    public PnPollingServiceTimelineRapid(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
-        this.timingForPolling = timingForPolling;
+    public PnPollingServiceTimelineSlowE2EV24(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+        super(timingForPolling, pnPaB2bClient);
         this.pnPaB2bClient = pnPaB2bClient;
+
     }
 
     @Override
@@ -54,6 +52,8 @@ public class PnPollingServiceTimelineRapid extends PnPollingTemplate<PnPollingRe
     @Override
     protected Predicate<PnPollingResponseV24> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
+
+
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
                 return false;
@@ -77,31 +77,17 @@ public class PnPollingServiceTimelineRapid extends PnPollingTemplate<PnPollingRe
         return pollingResponse;
     }
 
+
     @Override
     protected Integer getPollInterval(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, false);
         return timingResult.waiting();
     }
 
     @Override
     protected Integer getAtMost(String value) {
-        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value);
+        TimingForPolling.TimingResult timingResult = timingForPolling.getTimingForElement(value, true, false);
         return timingResult.waiting() * timingResult.numCheck();
-    }
-
-    @Override
-    public boolean setApiKeys(ApiKeyType apiKey) {
-        return this.pnPaB2bClient.setApiKeys(apiKey);
-    }
-
-    @Override
-    public void setApiKey(String apiKeyString) {
-        this.pnPaB2bClient.setApiKey(apiKeyString);
-    }
-
-    @Override
-    public ApiKeyType getApiKeySetted() {
-        return this.pnPaB2bClient.getApiKeySetted();
     }
 
     private boolean isPresentCategory(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {

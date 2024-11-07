@@ -433,11 +433,11 @@ public class PnPaB2bUtils {
             }
         }
     }
-
+    
     public FullSentNotificationV25 waitForRequestAcceptation(NewNotificationResponse response) {
         PnPollingServiceValidationStatus validationStatus = (PnPollingServiceValidationStatus) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS);
-        PnPollingResponseV25 pollingResponseV25 = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
-        return pollingResponseV25.getNotification() == null ? null : pollingResponseV25.getNotification();
+        PnPollingResponseV25 pollingResponse = validationStatus.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponse.getNotification() == null ? null : pollingResponse.getNotification();
     }
 
     public FullSentNotificationV25 waitForRequestNoAcceptation(NewNotificationResponse response) {

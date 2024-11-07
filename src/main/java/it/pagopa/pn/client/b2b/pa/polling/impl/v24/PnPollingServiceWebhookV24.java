@@ -20,17 +20,17 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.WEBHOOK)
+@Service(PnPollingStrategy.WEBHOOK_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceWebhook extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceWebhookV24 extends PnPollingTemplate<PnPollingResponseV24> {
     private final IPnWebhookB2bClient webhookB2bClient;
     private final TimingForPolling timingForPolling;
     private List<ProgressResponseElementV24> progressResponseElementListV24;
     private String iun;
 
 
-    public PnPollingServiceWebhook(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
+    public PnPollingServiceWebhookV24(TimingForPolling timingForPolling, IPnWebhookB2bClient webhookB2bClient) {
         this.timingForPolling = timingForPolling;
         this.webhookB2bClient = webhookB2bClient;
     }

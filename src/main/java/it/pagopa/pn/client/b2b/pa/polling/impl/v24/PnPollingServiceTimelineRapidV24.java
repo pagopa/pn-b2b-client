@@ -1,7 +1,7 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl.v24;
 
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
@@ -14,27 +14,28 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.STATUS_RAPID)
+@Service(PnPollingStrategy.TIMELINE_RAPID_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceStatusRapid extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceTimelineRapidV24 extends PnPollingTemplate<PnPollingResponseV24> {
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
     private FullSentNotificationV24 fullSentNotification;
 
 
-    public PnPollingServiceStatusRapid(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceTimelineRapidV24(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         this.timingForPolling = timingForPolling;
         this.pnPaB2bClient = pnPaB2bClient;
     }
 
     @Override
-    protected Callable<PnPollingResponseV24> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
+    public Callable<PnPollingResponseV24> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
             PnPollingResponseV24 pnPollingResponse = new PnPollingResponseV24();
             FullSentNotificationV24 fullSentNotification;
@@ -58,7 +59,8 @@ public class PnPollingServiceStatusRapid extends PnPollingTemplate<PnPollingResp
                 return false;
             }
 
-            if (!isEqualStatus(pnPollingResponse, pnPollingParameter)) {
+            if (pnPollingResponse.getNotification().getTimeline().isEmpty() ||
+                    !isPresentCategory(pnPollingResponse, pnPollingParameter)) {
                 pnPollingResponse.setResult(false);
                 return false;
             }
@@ -102,21 +104,23 @@ public class PnPollingServiceStatusRapid extends PnPollingTemplate<PnPollingResp
         return this.pnPaB2bClient.getApiKeySetted();
     }
 
-    private boolean isEqualStatus(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {
-        NotificationStatusHistoryElement notificationStatusHistoryElement = pnPollingResponse.getNotification()
-                .getNotificationStatusHistory()
+    private boolean isPresentCategory(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+        TimelineElementV24 timelineElement = pnPollingResponse
+                .getNotification()
+                .getTimeline()
                 .stream()
                 .filter(pnPollingParameter.getPnPollingPredicate() == null
                         ?
-                        statusHistory -> statusHistory
-                                .getStatus()
-                                .getValue().equals(pnPollingParameter.getValue())
+                        te ->
+                                te.getCategory() != null
+                                        && Objects.requireNonNull(te.getCategory().getValue()).equals(pnPollingParameter.getValue())
                         :
-                        pnPollingParameter.getPnPollingPredicate().getNotificationStatusHistoryElementPredicateV23())
+                        pnPollingParameter.getPnPollingPredicate().getTimelineElementPredicateV24())
                 .findAny()
                 .orElse(null);
-        if (notificationStatusHistoryElement != null) {
-            pnPollingResponse.setNotificationStatusHistoryElement(notificationStatusHistoryElement);
+
+        if (timelineElement != null) {
+            pnPollingResponse.setTimelineElement(timelineElement);
             pnPollingResponse.setResult(true);
             return true;
         }

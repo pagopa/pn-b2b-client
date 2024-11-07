@@ -18,16 +18,16 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.VALIDATION_STATUS)
+@Service(PnPollingStrategy.VALIDATION_STATUS_V24)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceValidationStatus extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceValidationStatusV24 extends PnPollingTemplate<PnPollingResponseV24> {
     private final IPnPaB2bClient b2bClient;
     private NewNotificationRequestStatusResponseV24 requestStatusResponse;
     private FullSentNotificationV24 fullSentNotification;
     private final TimingForPolling timingForPolling;
 
-    public PnPollingServiceValidationStatus(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusV24(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         this.b2bClient = b2bClient;
         this.timingForPolling = timingForPolling;
 
