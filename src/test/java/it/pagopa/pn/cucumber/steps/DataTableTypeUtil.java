@@ -9,10 +9,7 @@ import it.pagopa.pn.cucumber.steps.gestioneCosti.domain.CalculateRequestParamete
 import it.pagopa.pn.cucumber.utils.DataTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
 import static java.util.Optional.ofNullable;
@@ -276,7 +273,7 @@ public class DataTableTypeUtil {
                                         NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
-                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ? null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
+                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ? null : Arrays.asList(getValue(data, ADDITIONAL_LANGUAGES.key).split(",")))
                 .pagoPaIntMode(
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
                                 NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
