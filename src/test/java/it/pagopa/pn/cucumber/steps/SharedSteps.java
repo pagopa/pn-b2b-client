@@ -96,7 +96,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private NewNotificationRequestV23 notificationRequest;
+    private NewNotificationRequestV24 notificationRequest;
 
     @Setter
     @Getter
@@ -331,7 +331,7 @@ public class SharedSteps {
     }
 
     @Given("viene generata una nuova notifica")
-    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV23 notificationRequest) {
+    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
@@ -348,11 +348,6 @@ public class SharedSteps {
     @Given("viene generata una nuova notifica V21")
     public void vieneGenerataUnaNotificaV21(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21) {
         this.notificationRequestV21 = notificationRequestV21;
-    }
-
-    @Given("viene generata una nuova notifica V24")
-    public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
-        this.notificationRequestV24 = notificationRequestV24;
     }
 
     @And("destinatario")
@@ -382,13 +377,13 @@ public class SharedSteps {
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void vengonoInviateNotifichePerLUtenteSignorCasualeConIlESiAspettaFinoAlloStatoCOMPLETELY_UNREACHABLE(int numberOfNotification, String pa) {
-        List<NewNotificationRequestV23> notificationRequests = new LinkedList<>();
+        List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
         for (int i = 0; i < numberOfNotification; i++) {
-            NewNotificationRequestV23 newNotificationRequestV23 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
+            NewNotificationRequestV24 newNotificationRequestV23 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
                     .subject("notifica analogica con cucumber")
                     .senderDenomination("Comune di palermo")
-                    .physicalCommunicationType(NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
+                    .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
 
             HashMap<String, String> notificationRecipientMap = new HashMap<>();
             notificationRecipientMap.put("digitalDomicile", "NULL");
@@ -412,7 +407,7 @@ public class SharedSteps {
         List<Thread> threadList = new LinkedList<>();
         ConcurrentLinkedQueue<FullSentNotificationV25> sentNotifications = new ConcurrentLinkedQueue<>();
 
-        for (NewNotificationRequestV23 notification : notificationRequests) {
+        for (NewNotificationRequestV24 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
@@ -521,7 +516,7 @@ public class SharedSteps {
                 data);
     }
 
-    private void addRecipientToNotification(NewNotificationRequestV23 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
+    private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
 
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(recipientData, PAYMENT.key) != null) {
@@ -573,16 +568,6 @@ public class SharedSteps {
     @And("destinatario Mario Gherkin V21 e:")
     public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient) {
         this.notificationRequestV21.addRecipientsItem(
-                updateNotificationRecipient(recipient,
-                        "Mario Gherkin",
-                        marioGherkinTaxID,
-                        null,
-                        null));
-    }
-
-    @And("destinatario Mario Gherkin V24 e:")
-    public void destinatarioMarioGherkinParam(@Transpose NotificationRecipientV23 recipient) {
-        this.notificationRequestV24.addRecipientsItem(
                 updateNotificationRecipient(recipient,
                         "Mario Gherkin",
                         marioGherkinTaxID,
@@ -894,11 +879,6 @@ public class SharedSteps {
         sendNotificationNoAccept();
     }
 
-    @When("verifica che la notifica inviata tramite api b2b dal {string} non diventi ACCEPTED con la versione {string}")
-    public void laNotificaVieneInviataNoAccept(String paType, String version) {
-        configureAndSendNoAcceptedNotification(paType, version);
-    }
-
     @When("la notifica viene inviata tramite api b2b dal {string} e si controlla con check rapidi che lo stato diventi ACCEPTED")
     public void laNotificaVieneInviataOkRapidCheck(String paType) {
         selectPaAndSenderTaxId(paType, null);
@@ -979,19 +959,6 @@ public class SharedSteps {
     public void laNotificaVieneInviataRefused(String paType) {
         selectPaAndSenderTaxId(paType, null);
         sendNotificationRefused();
-    }
-
-    @When("la notifica viene inviata tramite api b2b dal {string} e si attende che lo stato diventi REFUSED con la versione {string}")
-    public void laNotificaVieneInviataRefusedConVersione(String paType, String version) {
-        configureAndSendNoAcceptedNotification(paType, version);
-    }
-
-    private void configureAndSendNoAcceptedNotification(String paType, String version) {
-        selectPaAndSenderTaxId(paType, version);
-        switch (version.toLowerCase()) {
-            case "v24" -> sendNotificationRefusedV24();
-            default -> sendNotificationRefused();
-        }
     }
 
     /*
@@ -1239,26 +1206,6 @@ public class SharedSteps {
         }
     }
 
-    private void sendNotificationNoAcceptV24() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-
-                threadWait(getWorkFlowWait());
-
-                notificationResponseCompleteV25 = b2bUtils.waitForRequestNoAcceptation(newNotificationResponseV24);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertNull(notificationResponseComplete);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponseV24 == null ? "NULL" : newNotificationResponseV24.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
     private void sendNotificationRapid(int wait) {
         try {
             Assertions.assertDoesNotThrow(() -> {
@@ -1413,27 +1360,6 @@ public class SharedSteps {
         }
     }
 
-    private void sendNotificationV24() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponseV24 = b2bUtils.uploadNotificationV24(notificationRequestV24);
-
-                threadWait(getWorkFlowWait());
-
-                notificationResponseCompleteV25 = b2bUtils.waitForRequestAcceptationV25(newNotificationResponseV24);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertNotNull(notificationResponseCompleteV25);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponseV24 == null ? "NULL" : newNotificationResponseV24.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
     private void sendNotificationAndCancelPreRefused() {
         sendNotificationRapidCancellPreRefused();
     }
@@ -1479,8 +1405,6 @@ public class SharedSteps {
                 this.newNotificationResponseV2 = b2bUtils.uploadNotificationV2(notificationRequestV2);
             } else if (notificationRequestV21 != null) {
                 this.newNotificationResponseV21 = b2bUtils.uploadNotificationV21(notificationRequestV21);
-            } else if (notificationRequestV24 != null) {
-                this.newNotificationResponseV24 = b2bUtils.uploadNotificationV24(notificationRequestV24);
             }
 
         } catch (HttpStatusCodeException | IOException e) {
@@ -1607,24 +1531,6 @@ public class SharedSteps {
         } catch (AssertionFailedError assertionFailedError) {
             String message = assertionFailedError.getMessage() +
                     "{RequestID: " + (newNotificationResponse == null ? "NULL" : newNotificationResponse.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }
-
-    private void sendNotificationRefusedV24() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponseV24 = b2bUtils.uploadNotificationV24(notificationRequestV24);
-                errorCode = b2bUtils.waitForRequestRefused(newNotificationResponseV24);
-            });
-
-            threadWait(getWorkFlowWait());
-            Assertions.assertFalse(errorCode.isEmpty());
-
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponseV24 == null ? "NULL" : newNotificationResponseV24.getNotificationRequestId()) + " }";
             throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
         }
     }
@@ -2255,7 +2161,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            case "v24" -> sendNotificationV24();
+            //case "v24" -> sendNotificationV24();
         }
     }
 

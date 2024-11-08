@@ -83,18 +83,18 @@ public class NewNotificationTest {
         // modificare se si vuole inviare un f24. invia i metadati in base al delivery_mode
         boolean enableF24Attachment = true;
         // modifica pure i parametri a piacimento
-        NewNotificationRequestV23 request = new NewNotificationRequestV23()
+        NewNotificationRequestV24 request = new NewNotificationRequestV24()
                 .subject("Test inserimento " + dateFormat.format(calendar.getTime()))
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sapppada")
-                .pagoPaIntMode(NewNotificationRequestV23.PagoPaIntModeEnum.SYNC)
+                .pagoPaIntMode(NewNotificationRequestV24.PagoPaIntModeEnum.SYNC)
                 .taxonomyCode("010202N")
                 .paFee(100)
                 .vat(22)
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( policy )
-                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( 
@@ -121,14 +121,14 @@ public class NewNotificationTest {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
-        NewNotificationRequestV23 request = new NewNotificationRequestV23()
+        NewNotificationRequestV24 request = new NewNotificationRequestV24()
                 .cancelledIun(null)
                 ._abstract("Abstract della notifica")
                 .senderDenomination("Comune di Sapppada")
                 //.senderTaxId("01199250158")
                 .senderTaxId("00207190257")
                 .notificationFeePolicy( NotificationFeePolicy.FLAT_RATE )
-                .physicalCommunicationType( NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
+                .physicalCommunicationType( NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 )
                 .paProtocolNumber("" + System.currentTimeMillis())
                 .addDocumentsItem( newDocument( "classpath:/sample.pdf" ) )
                 .addRecipientsItem( newRecipient( false,"Leo ", "CNCGPP80A01H501J","classpath:/sample.pdf","classpath:/f24_flat.json", RECIPIENT_TYPE_DIGITAL.NO_DIGITAL, RECIPIENT_TYPE_ANALOG.ANALOG_KO))
