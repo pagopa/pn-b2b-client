@@ -24,8 +24,8 @@ public class DataTableTypeUtil {
     private PnPaB2bUtils utils;
 
     @DataTableType
-    public synchronized NewNotificationRequestV23 convertNotificationRequest(Map<String, String> data){
-        NewNotificationRequestV23 notificationRequest = (new NewNotificationRequestV23()
+    public synchronized NewNotificationRequestV24 convertNotificationRequest(Map<String, String> data){
+        NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
                 .subject(getValue(data,SUBJECT.key))
                 .cancelledIun(getValue(data,CANCELLED_IUN.key))
                 .group(getValue(data,GROUP.key))
@@ -45,20 +45,21 @@ public class DataTableTypeUtil {
                 .physicalCommunicationType(
                         (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
                                 (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
+                                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
+                                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
                 .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
                 .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
+                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ? null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
                 .pagoPaIntMode(
                         (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
-                                NewNotificationRequestV23.PagoPaIntModeEnum.SYNC :
+                                NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
                                 (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV23.PagoPaIntModeEnum.ASYNC:
+                                        NewNotificationRequestV24.PagoPaIntModeEnum.ASYNC:
                                         getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("NONE")?
-                                                NewNotificationRequestV23.PagoPaIntModeEnum.NONE: null
+                                                NewNotificationRequestV24.PagoPaIntModeEnum.NONE: null
                                 ))));
 
-        notificationRequest = addDocument(notificationRequest,data);
+        notificationRequest = addDocumentV24(notificationRequest,data);
 
         try {
             Thread.sleep(2);
@@ -250,7 +251,7 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-    @DataTableType
+/*    @DataTableType
     public synchronized NewNotificationRequestV24 convertNotificationRequestV24(Map<String, String> data){
         NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
                 .subject(getValue(data,SUBJECT.key))
@@ -294,7 +295,7 @@ public class DataTableTypeUtil {
             e.printStackTrace();
         }
         return notificationRequest;
-    }
+    }*/
 
 
     @DataTableType

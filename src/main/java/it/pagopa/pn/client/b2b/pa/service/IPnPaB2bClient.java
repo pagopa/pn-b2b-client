@@ -11,7 +11,7 @@ import java.util.List;
 public interface IPnPaB2bClient extends SettableApiKey {
     String IMPLEMENTATION_TYPE_PROPERTY = "pn.api-type";
     List<PreLoadResponse> presignedUploadRequest(List<PreLoadRequest> preLoadRequest);
-    NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest);
+    NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest);
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse sendNewNotificationV1(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest newNotificationRequest);
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse sendNewNotificationV2(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest newNotificationRequest);
     it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse sendNewNotificationV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 newNotificationRequest);

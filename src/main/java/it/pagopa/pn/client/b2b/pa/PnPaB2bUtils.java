@@ -111,7 +111,7 @@ public class PnPaB2bUtils {
         this.pollingFactory = pollingFactory;
     }
 
-    public NewNotificationResponse uploadNotification(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotification(NewNotificationRequestV24 request) throws IOException {
         //PRELOAD DOCUMENTI NOTIFICA
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
@@ -121,23 +121,14 @@ public class PnPaB2bUtils {
                 Thread.currentThread().interrupt();
                 throw new PnB2bException(e.getMessage());
             }
-            if (doc != null) {
-                newdocs.add(this.preloadDocument(doc));
+            if (doc!= null) {
+                newdocs.add(this.preloadDocumentV24(doc));
             }
         }
         request.setDocuments(newdocs);
         //PRELOAD DOCUMENTI DI PAGAMENTO
-        preloadPayDocumentV23(request);
-        return getAndCheckSendNewNotificationV23(request);
-    }
-
-    private void preloadPayDocumentV23(NewNotificationRequestV23 request) throws IOException {
-        for (NotificationRecipientV23 recipient : request.getRecipients()) {
-            List<NotificationPaymentItem> paymentList = recipient.getPayments();
-            if(paymentList != null){
-                setAttachmentWithSleepV23(paymentList);
-            }
-        }
+        preloadPayDocument(request);
+        return getAndCheckSendNewNotification(request);
     }
 
     private void setAttachmentWithSleepV23(List<NotificationPaymentItem> paymentList) throws IOException {
@@ -215,28 +206,6 @@ public class PnPaB2bUtils {
         return getAndCheckSendNewNotificationV21(request);
     }
 
-    public NewNotificationResponse uploadNotificationV24(NewNotificationRequestV24 request) throws IOException {
-        //PRELOAD DOCUMENTI NOTIFICA
-        List<NotificationDocument> newdocs = new ArrayList<>();
-        for (NotificationDocument doc : request.getDocuments()) {
-            try {
-                Thread.sleep(this.random.nextInt(350));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new PnB2bException(e.getMessage());
-            }
-
-            if (doc!= null) {
-                newdocs.add(this.preloadDocumentV24(doc));
-            }
-        }
-        request.setDocuments(newdocs);
-
-        //PRELOAD DOCUMENTI DI PAGAMENTO
-        preloadPayDocumentV24(request);
-        return getAndCheckSendNewNotificationV24(request);
-    }
-
     private void preloadPayDocumentV21(it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 request) throws IOException {
 
         for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient : request.getRecipients()) {
@@ -264,7 +233,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void preloadPayDocumentV24(NewNotificationRequestV24 request) throws IOException {
+    private void preloadPayDocument(NewNotificationRequestV24 request) throws IOException {
 
         for (NotificationRecipientV23 recipient : request.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
@@ -291,7 +260,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    public NewNotificationResponse uploadNotificationAllegatiUgualiPagamento(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationAllegatiUgualiPagamento(NewNotificationRequestV24 request) throws IOException {
         List<NotificationDocument> newdocs = new ArrayList<>();
         for (NotificationDocument doc : request.getDocuments()) {
             newdocs.add(this.preloadDocument(doc));
@@ -318,7 +287,7 @@ public class PnPaB2bUtils {
         return getAndCheckSendNewNotificationV23(request);
     }
 
-    private NewNotificationResponse getAndCheckSendNewNotificationV23(NewNotificationRequestV23 request) {
+    private NewNotificationResponse getAndCheckSendNewNotificationV23(NewNotificationRequestV24 request) {
         log.info(NEW_NOTIFICATION_REQUEST, request);
         NewNotificationResponse response = client.sendNewNotification(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
@@ -346,7 +315,7 @@ public class PnPaB2bUtils {
         return response;
     }
 
-    private NewNotificationResponse getAndCheckSendNewNotificationV24(NewNotificationRequestV24 request) {
+    private NewNotificationResponse getAndCheckSendNewNotification(NewNotificationRequestV24 request) {
         log.info(NEW_NOTIFICATION_REQUEST, request);
         NewNotificationResponse response = client.sendNewNotificationV24(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
@@ -360,7 +329,7 @@ public class PnPaB2bUtils {
         return response;
     }
 
-    public NewNotificationResponse uploadNotificationNotFindAllegato(NewNotificationRequestV23 request, boolean noUpload) throws IOException {
+    public NewNotificationResponse uploadNotificationNotFindAllegato(NewNotificationRequestV24 request, boolean noUpload) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty() && !noUpload) {
@@ -371,7 +340,7 @@ public class PnPaB2bUtils {
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationNotFindAllegatoJson(NewNotificationRequestV23 request, boolean noUpload) throws IOException {
+    public NewNotificationResponse uploadNotificationNotFindAllegatoJson(NewNotificationRequestV24 request, boolean noUpload) throws IOException {
         NotificationDocument notificationDocument = null;
 
         if ((!request.getRecipients().isEmpty()) && !noUpload) {
@@ -382,7 +351,7 @@ public class PnPaB2bUtils {
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationNotEqualSha(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationNotEqualSha(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty()) {
@@ -396,7 +365,7 @@ public class PnPaB2bUtils {
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationNotEqualShaJson(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationNotEqualShaJson(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getRecipients().isEmpty()) {
@@ -409,7 +378,7 @@ public class PnPaB2bUtils {
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationWrongExtension(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationWrongExtension(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = null;
         if (!request.getDocuments().isEmpty()) {
@@ -420,28 +389,28 @@ public class PnPaB2bUtils {
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationOver15Allegato(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationOver15Allegato(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/sample.pdf");
         composeNewNotification(request, notificationDocument, false, false, 20);
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationOverSizeAllegato(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationOverSizeAllegato(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/200MB_PDF.pdf");
         composeNewNotification(request, notificationDocument, false, false, 1);
         return sendNewNotification(request);
     }
 
-    public NewNotificationResponse uploadNotificationInjectionAllegato(NewNotificationRequestV23 request) throws IOException {
+    public NewNotificationResponse uploadNotificationInjectionAllegato(NewNotificationRequestV24 request) throws IOException {
 //TODO Modificare.............
         NotificationDocument notificationDocument = newDocument("classpath:/sample_injection.xml.pdf");
         composeNewNotification(request, notificationDocument, false, false, 1);
         return sendNewNotification(request);
     }
 
-    private void composeNewNotification(NewNotificationRequestV23 request, NotificationDocument notificationDocument, boolean isAlist, boolean noUpload, int overAllegato) throws IOException {
+    private void composeNewNotification(NewNotificationRequestV24 request, NotificationDocument notificationDocument, boolean isAlist, boolean noUpload, int overAllegato) throws IOException {
         List<NotificationDocument> newdocs = new ArrayList<>();
         if (isAlist) {
             for (NotificationDocument doc : request.getDocuments()) {
@@ -461,14 +430,14 @@ public class PnPaB2bUtils {
         log.info(NEW_NOTIFICATION_REQUEST, request);
     }
 
-    private NewNotificationResponse sendNewNotification(NewNotificationRequestV23 request) {
+    private NewNotificationResponse sendNewNotification(NewNotificationRequestV24 request) {
         NewNotificationResponse response = client.sendNewNotification(request);
         log.info(NEW_NOTIFICATION_REQUEST_RESPONSE, response);
         return response;
     }
 
-    private void setAttachementAndMetadata(NewNotificationRequestV23 newNotificationRequestV23, boolean noUpload) throws IOException {
-        for (NotificationRecipientV23 recipient : newNotificationRequestV23.getRecipients()) {
+    private void setAttachementAndMetadata(NewNotificationRequestV24 newNotificationRequestV24, boolean noUpload) throws IOException {
+        for (NotificationRecipientV23 recipient : newNotificationRequestV24.getRecipients()) {
             List<NotificationPaymentItem> paymentList = recipient.getPayments();
             if (paymentList != null) {
                 for (NotificationPaymentItem paymentInfo : paymentList) {

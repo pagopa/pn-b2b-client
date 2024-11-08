@@ -399,7 +399,7 @@ public class AvanzamentoNotificheB2bSteps {
         String requestId = sharedSteps.getNewNotificationResponse().getNotificationRequestId();
         byte[] decodedBytes = Base64.getDecoder().decode(requestId);
         String iun = new String(decodedBytes);
-        NewNotificationRequestV23 newNotificationRequest = sharedSteps.getNotificationRequest();
+        NewNotificationRequestV24 newNotificationRequest = sharedSteps.getNotificationRequest();
         // get timeline from delivery-push
         NotificationHistoryResponse notificationHistory = this.pnPrivateDeliveryPushExternalClient.getNotificationHistory(iun, newNotificationRequest.getRecipients().size(), sharedSteps.getNotificationCreationDate());
         List<TimelineElementV25> timelineElementList = notificationHistory.getTimeline();

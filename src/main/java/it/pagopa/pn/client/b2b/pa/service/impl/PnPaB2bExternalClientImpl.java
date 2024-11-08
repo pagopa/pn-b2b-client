@@ -285,9 +285,9 @@ public class PnPaB2bExternalClientImpl implements IPnPaB2bClient {
         return newNotificationApi.presignedUploadRequest( preLoadRequest );
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest) {
+    public NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest) {
         refreshAndSetTokenInteropClient();
-        return newNotificationApi.sendNewNotificationV23( newNotificationRequest );
+        return newNotificationApi.sendNewNotificationV24( newNotificationRequest );
     }
 
     public NewNotificationResponse sendNewNotificationV24(NewNotificationRequestV24 newNotificationRequest) {

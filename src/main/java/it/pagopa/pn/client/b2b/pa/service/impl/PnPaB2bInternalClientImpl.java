@@ -202,7 +202,7 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return Arrays.asList( result );
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest) {
+    public NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24 request;
         request = deepCopy( newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24.class );
 
