@@ -17,7 +17,10 @@ import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
-import it.pagopa.pn.client.b2b.pa.service.*;
+import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
+import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
 import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
@@ -44,7 +47,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -295,7 +297,7 @@ public class SharedSteps {
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
-                       PnPollingFactory pollingFactory,IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
+                       PnPollingFactory pollingFactory, IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
@@ -352,6 +354,12 @@ public class SharedSteps {
 
     @Given("viene generata una nuova notifica V24")
     public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
+        this.notificationRequestV24 = notificationRequestV24;
+    }
+
+    @Given("viene generata una nuova notifica con la versione più recente")
+    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
+    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequestV24) {
         this.notificationRequestV24 = notificationRequestV24;
     }
 
@@ -1104,7 +1112,6 @@ public class SharedSteps {
             }
         }
     }
-
 
 
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
@@ -2159,7 +2166,7 @@ public class SharedSteps {
             return getSentNotification().getIun();
         } else if (getSentNotificationV25() != null) {
             return getSentNotificationV25().getIun();
-        }else {
+        } else {
             return null;
         }
     }
