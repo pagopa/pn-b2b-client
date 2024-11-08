@@ -1375,27 +1375,6 @@ public class SharedSteps {
         }
     }
 
-/*    private void sendNotificationV24() {
-        try {
-            Assertions.assertDoesNotThrow(() -> {
-                notificationCreationDate = OffsetDateTime.now();
-                newNotificationResponseV24 = b2bUtils.uploadNotificationV24(notificationRequestV24);
-
-                threadWait(getWorkFlowWait());
-
-                notificationResponseCompleteV25 = b2bUtils.waitForRequestAcceptationV25(newNotificationResponseV24);
-            });
-
-            threadWait(getWorkFlowWait());
-
-            Assertions.assertNotNull(notificationResponseCompleteV25);
-        } catch (AssertionFailedError assertionFailedError) {
-            String message = assertionFailedError.getMessage() +
-                    "{RequestID: " + (newNotificationResponseV24 == null ? "NULL" : newNotificationResponseV24.getNotificationRequestId()) + " }";
-            throw new AssertionFailedError(message, assertionFailedError.getExpected(), assertionFailedError.getActual(), assertionFailedError.getCause());
-        }
-    }*/
-
     private void sendNotificationAndCancelPreRefused() {
         sendNotificationRapidCancellPreRefused();
     }
