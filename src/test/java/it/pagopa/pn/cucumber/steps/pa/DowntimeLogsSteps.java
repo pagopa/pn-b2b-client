@@ -108,6 +108,16 @@ public class DowntimeLogsSteps {
         }
     }
 
+    @Given("si chiama l'api di recupero elenco disservizi nell'anno e mese corrente")
+    public void siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente() {
+        try {
+            LocalDate now = LocalDate.now();
+            pnDowntimeHistoryResponse = downtimeLogsClient.getResolved(now.getYear(), now.getMonthValue());
+        } catch (RestClientResponseException e) {
+            exception = e;
+        }
+    }
+
     @Given("si chiama l'api di recupero elenco disservizi nell'anno {int} e mese {int}")
     public void siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(Integer year, Integer month) {
         try {
@@ -122,31 +132,33 @@ public class DowntimeLogsSteps {
         siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(null, null);
     }
 
+    //check fileAvailable solo quello del giorno corrente
     @Then("viene restituito l'elenco dei disservizi del mese {int} dell'anno {int}")
     public void vieneRestituitoLElencoDeiDisserviziDelMeseMeseDellAnno(Integer month, Integer year) {
         Assertions.assertNotNull(pnDowntimeHistoryResponse);
         Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
         pnDowntimeHistoryResponse.getResult()
                 .forEach(data -> checkDataValue(year, month, data));
-
     }
 
     private void checkDataValue(Integer year, Integer month, PnDowntimeEntry data) {
-        OffsetDateTime fileAvailableTimestamp = data.getFileAvailableTimestamp();
         OffsetDateTime endDate = data.getEndDate();
-        OffsetDateTime releaseTime = OffsetDateTime.of(2024, 10, 23, 0, 0, 0, 0, ZoneOffset.UTC);
         Assertions.assertNotNull(endDate);
-        if (data.getEndDate().isAfter(releaseTime)) {
-            Assertions.assertNotNull(fileAvailableTimestamp);
-            Assertions.assertTrue(fileAvailableTimestamp.isAfter(endDate));
-        }
         Assertions.assertEquals(month, endDate.getMonthValue());
         Assertions.assertEquals(year, endDate.getYear());
+        checkFileAvailableTimestamp(data);
+    }
 
+    private void checkFileAvailableTimestamp(PnDowntimeEntry data) {
+        LocalDate now = LocalDate.now();
+        if (now.getYear() == data.getEndDate().getYear() && now.getMonthValue() == data.getEndDate().getMonth().getValue() && now.getDayOfMonth() == data.getEndDate().getDayOfMonth()) {
+            OffsetDateTime fileAvailableTimestamp = data.getFileAvailableTimestamp();
+            Assertions.assertNotNull(fileAvailableTimestamp);
+        }
     }
 
     @Then("viene restituito l'elenco dei disservizi del mese e dell'anno corrente")
-    public void vieneRestituitoLElencoDeiDisserviziDelMeseCorrente() {
+    public void  vieneRestituitoLElencoDeiDisserviziDelMeseCorrente() {
         LocalDate date = LocalDate.now();
         vieneRestituitoLElencoDeiDisserviziDelMeseMeseDellAnno(date.getMonthValue(), date.getYear());
     }

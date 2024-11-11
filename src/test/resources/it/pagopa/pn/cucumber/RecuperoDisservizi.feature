@@ -3,8 +3,8 @@ Feature: Recupero Disservizi
   #RECUPERO_DISSERVIZI_10
   @recuperoDisservizi
   Scenario: [RECUPERO_DISSERVIZI_1] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi e verificare la presenza del nuovo campo fileAvailableTimestamp correttamente valorizzato
-    Given si chiama l'api di recupero elenco disservizi nell'anno 2024 e mese 10
-    Then viene restituito l'elenco dei disservizi del mese 10 dell'anno 2024
+    Given si chiama l'api di recupero elenco disservizi nell'anno e mese corrente
+    Then viene restituito l'elenco dei disservizi del mese 11 dell'anno 2024
 
   @recuperoDisservizi
   Scenario: [RECUPERO_DISSERVIZI_2] Richiamare l’API per il recupero dell’elenco dei disservizi conclusi senza i query params
