@@ -337,6 +337,12 @@ public class SharedSteps {
         this.notificationRequest = notificationRequest;
     }
 
+    @Given("viene generata una nuova notifica con la versione più recente")
+    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
+    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequest) {
+        this.notificationRequest = notificationRequest;
+    }
+
     @Given("viene generata una nuova notifica V1")
     public void vieneGenerataUnaNotificaV1(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1) {
         this.notificationRequestV1 = notificationRequestV1;
@@ -354,12 +360,6 @@ public class SharedSteps {
 
     @Given("viene generata una nuova notifica V24")
     public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
-        this.notificationRequestV24 = notificationRequestV24;
-    }
-
-    @Given("viene generata una nuova notifica con la versione più recente")
-    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
-    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequestV24) {
         this.notificationRequestV24 = notificationRequestV24;
     }
 
@@ -2183,7 +2183,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            //case "v24" -> sendNotificationV24();
+            case "v25" -> sendNotification();
         }
     }
 
