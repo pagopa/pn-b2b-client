@@ -251,53 +251,6 @@ public class DataTableTypeUtil {
         return notificationRequest;
     }
 
-/*    @DataTableType
-    public synchronized NewNotificationRequestV24 convertNotificationRequestV24(Map<String, String> data){
-        NewNotificationRequestV24 notificationRequest = (new NewNotificationRequestV24()
-                .subject(getValue(data,SUBJECT.key))
-                .cancelledIun(getValue(data,CANCELLED_IUN.key))
-                .group(getValue(data,GROUP.key))
-                .idempotenceToken(getValue(data,IDEMPOTENCE_TOKEN.key))
-                ._abstract(getValue(data,ABSTRACT.key))
-                .senderDenomination(getValue(data,SENDER_DENOMINATION.key))
-                .senderTaxId(getValue(data,SENDER_TAX_ID.key))
-                .paProtocolNumber(getValue(data,PA_PROTOCOL_NUMBER.key))
-                .taxonomyCode(getValue(data,TAXONOMY_CODE.key))
-                .amount(getValue(data, AMOUNT.key) == null ?  null : Integer.parseInt(getValue(data, AMOUNT.key)))
-                .paymentExpirationDate(getValue(data, PAYMENT_EXPIRATION_DATE.key) == null ? null : getValue(data, PAYMENT_EXPIRATION_DATE.key))
-                .notificationFeePolicy(
-                        (getValue(data,NOTIFICATION_FEE_POLICY.key) == null? null :
-                                (getValue(data,NOTIFICATION_FEE_POLICY.key).equalsIgnoreCase("FLAT_RATE")?
-                                        NotificationFeePolicy.FLAT_RATE :
-                                        NotificationFeePolicy.DELIVERY_MODE)))
-                .physicalCommunicationType(
-                        (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key) == null? null :
-                                (getValue(data,PHYSICAL_COMMUNICATION_TYPE.key).equalsIgnoreCase("REGISTERED_LETTER_890")?
-                                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.REGISTERED_LETTER_890 :
-                                        NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER)))
-                .paFee(getValue(data, PA_FEE.key) == null ?  null : Integer.parseInt(getValue(data, PA_FEE.key)))
-                .vat(getValue(data, VAT.key) == null ?  null : Integer.parseInt(getValue(data, VAT.key)))
-                .additionalLanguages(getValue(data, ADDITIONAL_LANGUAGES.key) == null ? null : List.of(getValue(data, ADDITIONAL_LANGUAGES.key)))
-                .pagoPaIntMode(
-                        (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("SYNC")?
-                                NewNotificationRequestV24.PagoPaIntModeEnum.SYNC :
-                                (getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("ASYNC")?
-                                        NewNotificationRequestV24.PagoPaIntModeEnum.ASYNC:
-                                        getValue(data,PAGOPAINTMODE.key).equalsIgnoreCase("NONE")?
-                                                NewNotificationRequestV24.PagoPaIntModeEnum.NONE: null
-                                ))));
-
-        notificationRequest = addDocumentV24(notificationRequest,data);
-
-        try {
-            Thread.sleep(2);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return notificationRequest;
-    }*/
-
-
     @DataTableType
     public synchronized NotificationRecipientV23 convertNotificationRecipient(Map<String, String> data) {
 
