@@ -3464,7 +3464,6 @@ public class AvanzamentoNotificheB2bSteps {
 
     @Then("viene verificata la presenza dell'elemento di timeline {string} introdotto con la versione {int} in tutte le versioni")
     public void checkTimelineElementVersionB2B(String timelineElement, Integer introducingVersion) {
-
         int readingVersion;
 
         //V1
@@ -3520,6 +3519,25 @@ public class AvanzamentoNotificheB2bSteps {
         } else {
             it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.TimelineElementV20 target =
                     timelineElementV21List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
+            Assertions.assertNotNull(target);
+            log.info("TIMELINE ELEMENT FOUND: " + target);
+        }
+
+        //V23
+        PnPollingServiceTimelineSlowV23 timelineSlowV23 = (PnPollingServiceTimelineSlowV23) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_SLOW_V23);
+        PnPollingResponseV23 pnPollingResponseV23 = timelineSlowV23.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineElement)
+                        .build());
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23> timelineElementV23List =
+                pnPollingResponseV23.getNotification().getTimeline();
+        log.info("NOTIFICATION_TIMELINE: " + timelineElementV23List);
+        readingVersion = 23;
+        if (readingVersion < introducingVersion) {
+            Assertions.assertTrue(timelineElementV23List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).toList().isEmpty());
+        } else {
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23 target =
+                    timelineElementV23List.stream().filter(x -> x.getCategory().getValue().equals(timelineElement)).findFirst().orElse(null);
             Assertions.assertNotNull(target);
             log.info("TIMELINE ELEMENT FOUND: " + target);
         }
