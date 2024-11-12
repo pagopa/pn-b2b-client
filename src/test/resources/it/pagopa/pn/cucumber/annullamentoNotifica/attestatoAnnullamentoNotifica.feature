@@ -42,7 +42,7 @@ Feature: produzione del documento di annullamento notifica
     And si predispone 1 nuovo stream denominato "stream-testV10" con eventType "TIMELINE" con versione "V10"
     And si predispone 1 nuovo stream denominato "stream-testV23" con eventType "TIMELINE" con versione "V23"
     And si predispone 1 nuovo stream denominato "stream-testV24" con eventType "TIMELINE" con versione "V24"
-    And si predispone 1 nuovo stream denominato "stream-testV24" con eventType "TIMELINE" con versione "V25"
+    And si predispone 1 nuovo stream denominato "stream-testV25" con eventType "TIMELINE" con versione "V25"
     And Viene creata una nuova apiKey per il comune "Comune_Multi" senza gruppo
     And viene impostata l'apikey appena generata
     And viene aggiornata la apiKey utilizzata per gli stream
