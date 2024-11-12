@@ -22,6 +22,7 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
@@ -103,7 +104,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Autowired
-    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, SharedSteps sharedSteps,
+    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, IPnWebhookB2bClient webhookClientForClean, SharedSteps sharedSteps,
                                                TimingForPolling timingForPolling, PnPollingFactory pollingFactory) {
         this.sharedSteps = sharedSteps;
         this.webhookB2bClient = webhookB2bClient;
@@ -112,7 +113,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.pollingFactory = pollingFactory;
         webhookTestLaunch = true;
-        AvanzamentoNotificheWebhookB2bSteps.webhookClientForClean = webhookB2bClient;
+        this.webhookClientForClean = webhookClientForClean;
     }
 
     //@AfterAll -> problema con esecuzione concorrente
