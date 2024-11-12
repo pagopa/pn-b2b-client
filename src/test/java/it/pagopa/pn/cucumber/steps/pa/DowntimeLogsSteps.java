@@ -17,10 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 
 @Slf4j
@@ -210,13 +207,19 @@ public class DowntimeLogsSteps {
             siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(before.getYear(), before.getMonthValue());
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
-            String legalFactId = pnDowntimeHistoryResponse.getResult()
+            List<PnDowntimeEntry> validResponse = pnDowntimeHistoryResponse.getResult()
+                    .stream()
+                    .filter(data -> data.getEndDate() != null && data.getEndDate().getDayOfMonth() <= before.getDayOfMonth())
+                    .toList();
+            double index = Math.random() * validResponse.size();
+            String legalFactId = validResponse.get((int)index).getLegalFactId();
+                    /*String legalFactId = pnDowntimeHistoryResponse.getResult()
                     .stream()
                     .filter(data -> data.getEndDate() != null && data.getEndDate().getDayOfMonth() <= before.getDayOfMonth())
                     .map(PnDowntimeEntry::getLegalFactId)
                     .filter(Objects::nonNull)
                     .findAny()
-                    .orElse(null);
+                    .orElse(null);*/
             Assertions.assertNotNull(legalFactId, "non è stato trovato nessun legal fact prodotto prima del giorno " + before.getDayOfMonth() + " " + before.getMonth().name() + " anno " + before.getYear());
             legalFact = downtimeLogsClient.getLegalFact(legalFactId);
         } catch (RestClientResponseException e) {
