@@ -24,6 +24,8 @@ import java.util.UUID;
 @Component
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
     private final RestTemplate restTemplate;
     private final RecipientReadApi recipientReadApi;
     private final it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.api_v1.RecipientReadApi recipientReadApiV1;
@@ -81,7 +83,7 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     private static it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.ApiClient newApiClientV25(RestTemplate restTemplate, String basePath, String bearerToken) {
         it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.ApiClient newApiClient = new it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
-//        newApiClient.setBearerToken(bearerToken);
+        newApiClient.addDefaultHeader(AUTHORIZATION, BEARER + bearerToken);
         return newApiClient;
     }
 
@@ -200,6 +202,6 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {
-        return this.documentsWebApi.getDocumentsWeb(iun,documentType,documentId, UUID.fromString(mandateId));
+        return this.documentsWebApi.getDocumentsWeb(iun,documentType,documentId, null);
     }
 }
