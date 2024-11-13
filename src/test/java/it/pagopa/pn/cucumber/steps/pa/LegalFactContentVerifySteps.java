@@ -3,11 +3,11 @@ package it.pagopa.pn.cucumber.steps.pa;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
-import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
-import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
+import it.pagopa.pn.client.b2b.pa.parsing.dto.PnParserParameter;
+import it.pagopa.pn.client.b2b.pa.parsing.dto.impLegalFact.PnLegalFactNotificaPresaInCaricoMultiDestinatario;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAnalogico;
+import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
@@ -16,10 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.lang.reflect.Field;
 
 @Slf4j
 public class LegalFactContentVerifySteps {
@@ -79,7 +80,7 @@ public class LegalFactContentVerifySteps {
                 .filter(map -> map.keySet().stream().noneMatch(key -> key.contains(IPnParserLegalFact.DESTINATARIO) || key.contains(positionFieldName)))
                 .toList();
 
-        if(!listOfMapCleaned.isEmpty()) {
+        if (!listOfMapCleaned.isEmpty()) {
             listOfMapCleaned.forEach((map) -> map.forEach((legalFactField, legalFactValue) -> checkLegalFactFieldValue(source, legalFactField, legalFactValue)));
         }
     }
@@ -88,7 +89,7 @@ public class LegalFactContentVerifySteps {
     public void siVerificaSeIlLegalFactContieneICampi(DataTable dataTable) {
         byte[] source = b2bUtils.downloadFile(legalFactUrl);
 
-        if(IPnParserLegalFact.LegalFactType.valueOf(legalFactType).equals(IPnParserLegalFact.LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO)) {
+        if (IPnParserLegalFact.LegalFactType.valueOf(legalFactType).equals(IPnParserLegalFact.LegalFactType.LEGALFACT_NOTIFICA_PRESA_IN_CARICO_MULTIDESTINATARIO)) {
             //Creation of a list of map for each dataTable pair
             List<Map<String, String>> listOfMap = dataTable
                     .asLists()
@@ -141,7 +142,7 @@ public class LegalFactContentVerifySteps {
         PnParserParameter pnParserParameter;
         PnParserLegalFactResponse pnParserLegalFactResponse;
         boolean isAllField;
-        if(multiDestinatarioPosition == 0) {
+        if (multiDestinatarioPosition == 0) {
             pnParserParameter = PnParserParameter.builder()
                     .legalFactType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType))
                     .build();
@@ -159,7 +160,7 @@ public class LegalFactContentVerifySteps {
     }
 
     private IPnParserResponse parseLegalFact(byte[] source, PnParserParameter pnParserParameter, boolean isAllField) {
-        if(isAllField) {
+        if (isAllField) {
             return pnParserService.extractAllField(source, pnParserParameter);
         } else {
             return pnParserService.extractSingleField(source, pnParserParameter);
@@ -188,17 +189,33 @@ public class LegalFactContentVerifySteps {
         PnLegalFactNotificaPresaInCaricoMultiDestinatario pnLegalFactNotificaPresaInCaricoMultiDestinatario = (PnLegalFactNotificaPresaInCaricoMultiDestinatario) pnParserLegalFactResponse.getResponse().getPnLegalFact();
 
         try {
-            if(multiDestinatarioPosition == 0) {
+            if (multiDestinatarioPosition == 0) {
                 Assertions.assertEquals(destinatarioAnalogicoList.size(), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().size());
                 Assertions.assertTrue(destinatarioAnalogicoList.containsAll(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici())
                         && pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
             } else {
-                Assertions.assertEquals(multiDestinatarioPosition, pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0))+1);
-                Assertions.assertEquals(destinatarioAnalogicoList.get(0), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition-1));
+                Assertions.assertEquals(multiDestinatarioPosition, pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().indexOf(destinatarioAnalogicoList.get(0)) + 1);
+                Assertions.assertEquals(destinatarioAnalogicoList.get(0), pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().get(multiDestinatarioPosition - 1));
                 Assertions.assertTrue(pnLegalFactNotificaPresaInCaricoMultiDestinatario.getDestinatariAnalogici().containsAll(destinatarioAnalogicoList));
             }
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+
+    }
+
+    @Then("il legalFact {string} essere recuperato tramite il suo id richiamando l'api versione {int}")
+    public void downloadLegalFactWithIdUsingApiVersion(String canOrCannot, Integer version) {
+        boolean isPossible = canOrCannot.toUpperCase().equals("PUO'");
+        Assertions.assertNotNull(this.legalFactType);
+        Assertions.assertNotNull(this.legalFactUrl);
+        if (isPossible) {
+            switch (version) {
+                case 25 ->
+                        Assertions.assertDoesNotThrow(() -> sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), legalFactUrl));
+            }
+        } else {
+//            sharedSteps.getB2bClient().getLegalFact()
         }
 
     }

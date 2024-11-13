@@ -3561,4 +3561,17 @@ public class AvanzamentoNotificheB2bSteps {
             log.info("TIMELINE ELEMENT FOUND: " + target);
         }
     }
+
+    @Then("è presente un legalFact con categoria {string}")
+    public void checkLegalFactAllVersions(String legalFactCategory) {
+        List<LegalFactsIdV20> legalFactsList = this.sharedSteps.getSentNotification().getTimeline().stream().filter(
+                x -> x.getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null).getLegalFactsIds();
+        Assertions.assertFalse(legalFactsList.isEmpty());
+        LegalFactsIdV20 legalFact = legalFactsList.stream().filter(x -> x.getCategory().equals(legalFactCategory)).findFirst().orElse(null);
+        Assertions.assertNotNull(legalFact);
+        log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
+        log.info("LEGAL FACT URL: " + legalFact.getKey());
+        this.legalFactContentVerifySteps.setLegalFactType(legalFactCategory);
+        this.legalFactContentVerifySteps.setLegalFactUrl(legalFact.getKey());
+    }
 }

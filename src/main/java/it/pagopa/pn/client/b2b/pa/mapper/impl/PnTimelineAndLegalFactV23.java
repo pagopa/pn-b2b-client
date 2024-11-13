@@ -40,6 +40,11 @@ public class PnTimelineAndLegalFactV23 implements IPnTimelineLegalFactService<Pn
                 timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
                 category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
             }
+            //introdotto con V25 //TODO MATTEO
+            case "NOTIFICATION_CANCELLED" -> {
+                timelineElementInternalCategory = TimelineElementCategoryV23.COMPLETELY_UNREACHABLE;
+                category = LegalFactCategory.ANALOG_FAILURE_DELIVERY;
+            }
             default -> throw new IllegalArgumentException();
         }
         PnTimelineLegalFactV23 pnTimelineLegalFactV23 = new PnTimelineLegalFactV23();
