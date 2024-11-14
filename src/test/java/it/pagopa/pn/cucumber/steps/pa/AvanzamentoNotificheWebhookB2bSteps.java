@@ -2037,6 +2037,25 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("tra gli elementi di timeline versione {string} di categoria {string} nessuno contiene un legalFact con categoria {string}")
+    public void checkTimelineElementVersionLegalFacts(String version, String timelineCategory, String legalFactCategory) {
+        if (version.equalsIgnoreCase("V25")) {
+            Assertions.assertNotNull(this.sharedSteps.getNotificationResponseComplete());
+            TimelineElementV25 timelineElementWithTargetCategory = this.sharedSteps.getNotificationResponseComplete().getTimeline().stream().filter(
+                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
+            Assertions.assertNotNull(timelineElementWithTargetCategory);
+            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
+                    x -> Assertions.assertFalse(x.getCategory().equals(legalFactCategory)));
+        } else if (version.equalsIgnoreCase("V23")) {
+            Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV23());
+            TimelineElementV23 timelineElementWithTargetCategory = this.sharedSteps.getNotificationResponseCompleteV23().getTimeline().stream().filter(
+                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
+            Assertions.assertNotNull(timelineElementWithTargetCategory);
+            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
+                    x -> Assertions.assertFalse(x.getCategory().equals(legalFactCategory)));
+        }
+    }
+
     @Then("gli elementi di timeline restituiti da B2B contengono i campi attesi in accordo alla versione {string}")
     public void checkTimelineElementVersionB2B(String version) {
         if (version.equalsIgnoreCase("V24")) {
