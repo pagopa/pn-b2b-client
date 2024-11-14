@@ -96,8 +96,8 @@ public class TimingForPolling {
         NOTIFICATION_VIEWED_CREATION_REQUEST(2,2),
         NOTIFICATION_VIEWED(2,2),
         PREPARE_ANALOG_DOMICILE(9,1),
-        SEND_ANALOG_DOMICILE(9,1),
-        SEND_ANALOG_PROGRESS(8,2),
+        SEND_ANALOG_DOMICILE(18,1),
+        SEND_ANALOG_PROGRESS(16,2),
         SEND_ANALOG_FEEDBACK(11,1),
         PAYMENT(9,1),
         COMPLETELY_UNREACHABLE(13,1),
@@ -130,7 +130,10 @@ public class TimingForPolling {
         CANCELLED(11,1),
 
         //TIMING FOR WEBHOOK
-        WEBHOOK(150000, 500);
+        WEBHOOK(150000, 500),
+
+        //TIMING FOR TRACING
+        INTEROP_TRACING(3, 1);
 
         private final int numCheck;
         private final int waitingMultiplier;

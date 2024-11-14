@@ -3,13 +3,17 @@ package it.pagopa.pn.client.b2b.pa.service;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model.*;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.FullReceivedNotification;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentCategory;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.DocumentDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactCategory;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
 import org.springframework.web.client.RestClientException;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
 
 public interface IPnWebRecipientClient extends SettableBearerToken {
-    FullReceivedNotificationV23 getReceivedNotification(String iun, String mandateId) throws RestClientException;
+    FullReceivedNotificationV24 getReceivedNotification(String iun, String mandateId) throws RestClientException;
     it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v1.NotificationAttachmentDownloadMetadataResponse getReceivedNotificationAttachment(String iun, String attachmentName, UUID mandateId) throws RestClientException;
     FullReceivedNotification getReceivedNotificationV1(String iun, String mandateId) throws RestClientException;
     it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.model_v2.FullReceivedNotification getReceivedNotificationV2(String iun, String mandateId) throws RestClientException;

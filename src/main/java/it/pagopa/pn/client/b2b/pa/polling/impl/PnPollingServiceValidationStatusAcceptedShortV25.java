@@ -7,12 +7,12 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V24)
+@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V25)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceValidationStatusAcceptedShortV24 extends PnPollingServiceValidationStatusV24 {
+public class PnPollingServiceValidationStatusAcceptedShortV25 extends PnPollingServiceValidationStatusV25 {
 
 
-    public PnPollingServiceValidationStatusAcceptedShortV24(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusAcceptedShortV25(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }
 
