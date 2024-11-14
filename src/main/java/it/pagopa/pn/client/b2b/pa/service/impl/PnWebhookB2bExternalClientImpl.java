@@ -231,6 +231,18 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     }
 
     @Override
+    public List<ProgressResponseElementV25> consumeEventStreamV25(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return this.eventsApiV23.consumeEventStreamV25(streamId, lastEventId);
+    }
+
+    @Override
+    public ResponseEntity<List<ProgressResponseElementV25>> consumeEventStreamHttpV25(UUID streamId, String lastEventId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return this.eventsApiV23.consumeEventStreamV25WithHttpInfo(streamId, lastEventId);
+    }
+
+    @Override
     public boolean setApiKeys(ApiKeyType apiKey) {
         boolean beenSet = false;
         switch (apiKey) {
