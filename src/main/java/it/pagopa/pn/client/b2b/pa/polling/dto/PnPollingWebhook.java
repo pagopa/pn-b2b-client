@@ -3,6 +3,7 @@ package it.pagopa.pn.client.b2b.pa.polling.dto;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV25;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +20,5 @@ public class PnPollingWebhook {
     private LinkedList<ProgressResponseElement> progressResponseElementListV20;
     private LinkedList<ProgressResponseElementV23> progressResponseElementListV23;
     private LinkedList<ProgressResponseElementV24> progressResponseElementListV24;
+    private LinkedList<ProgressResponseElementV25> progressResponseElementListV25;
 }
