@@ -10,6 +10,8 @@ import it.pagopa.pn.client.b2b.pa.parsing.dto.implDestinatario.PnDestinatarioAna
 import it.pagopa.pn.client.b2b.pa.parsing.dto.implResponse.PnParserLegalFactResponse;
 import it.pagopa.pn.client.b2b.pa.parsing.parser.IPnParserLegalFact;
 import it.pagopa.pn.client.b2b.pa.parsing.service.impl.PnParserService;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v25.model.LegalFactListElementV20;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -201,22 +203,30 @@ public class LegalFactContentVerifySteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
-
     }
 
-    @Then("il legalFact {string} essere recuperato tramite il suo id richiamando l'api versione {int}")
-    public void downloadLegalFactWithIdUsingApiVersion(String canOrCannot, Integer version) {
-        boolean isPossible = canOrCannot.toUpperCase().equals("PUO'");
+    @Then("l'utente {string} recupera i legalFacts richiamando l'api versione {int} e tra questi {string} il legalFact con categoria {string}")
+    public void downloadLegalFactWithIdUsingApiVersion(String user, Integer version, String presente, String legalFactCategory) {
+        sharedSteps.selectUser(user);
+        boolean isPresent = presente.toUpperCase().equals("COMPARE");
         Assertions.assertNotNull(this.legalFactType);
-        Assertions.assertNotNull(this.legalFactUrl);
-        if (isPossible) {
-            switch (version) {
-                case 25 ->
-                        Assertions.assertDoesNotThrow(() -> sharedSteps.getB2bClient().getDownloadLegalFact(sharedSteps.getSentNotification().getIun(), legalFactUrl));
+        Assertions.assertEquals(legalFactCategory, this.legalFactType);
+        switch (version) {
+            case 1 -> {
+                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(this.sharedSteps.getSentNotification().getIun(), null, this.legalFactUrl);
             }
-        } else {
-//            sharedSteps.getB2bClient().getLegalFact()
+            case 20 -> {
+                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(
+                        this.sharedSteps.getSentNotification().getIun(), null);
+                Assertions.assertNotNull(legalFactV20list);
+                LegalFactListElementV20 target = legalFactV20list.stream().filter(
+                        x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);
+                if (isPresent) {
+                    Assertions.assertNotNull(target);
+                } else {
+                    Assertions.assertNull(target);
+                }
+            }
         }
-
     }
 }

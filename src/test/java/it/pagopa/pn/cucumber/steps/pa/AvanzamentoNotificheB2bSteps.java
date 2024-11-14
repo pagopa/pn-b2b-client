@@ -180,7 +180,7 @@ public class AvanzamentoNotificheB2bSteps {
 
     private void checkTimelineElementEquality(String timelineEventCategory, TimelineElementV25 elementFromNotification, DataTest dataFromTest) {
         TimelineElementV23 elementFromTest = dataFromTest.getTimelineElement();
-        TimelineElementDetailsV23 detailsFromNotification = elementFromNotification.getDetails();
+        TimelineElementDetailsV25 detailsFromNotification = elementFromNotification.getDetails();
         TimelineElementDetailsV23 detailsFromTest = elementFromTest.getDetails();
         DelegateInfo delegateInfoFromTest = detailsFromTest != null ? detailsFromTest.getDelegateInfo() : null;
         DelegateInfo delegateInfoFromNotification = detailsFromNotification != null ? detailsFromNotification.getDelegateInfo() : null;
@@ -3562,16 +3562,16 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    @Then("è presente un legalFact con categoria {string}")
-    public void checkLegalFactAllVersions(String legalFactCategory) {
+    @Then("tra gli elementi di timeline con categoria {string} è presente un legalFact con categoria {string}")
+    public void checkLegalFactAllVersions(String timelineElementCategory, String legalFactCategory) {
         List<LegalFactsIdV20> legalFactsList = this.sharedSteps.getSentNotification().getTimeline().stream().filter(
-                x -> x.getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null).getLegalFactsIds();
+                x -> x.getCategory().getValue().equals(timelineElementCategory)).findFirst().orElse(null).getLegalFactsIds();
         Assertions.assertFalse(legalFactsList.isEmpty());
         LegalFactsIdV20 legalFact = legalFactsList.stream().filter(x -> x.getCategory().equals(legalFactCategory)).findFirst().orElse(null);
         Assertions.assertNotNull(legalFact);
-        log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
-        log.info("LEGAL FACT URL: " + legalFact.getKey());
         this.legalFactContentVerifySteps.setLegalFactType(legalFactCategory);
         this.legalFactContentVerifySteps.setLegalFactUrl(legalFact.getKey());
+        log.info("LEGAL FACT CATEGORY = " + legalFact.getCategory());
+        log.info("LEGAL FACT URL: " + legalFact.getKey());
     }
 }

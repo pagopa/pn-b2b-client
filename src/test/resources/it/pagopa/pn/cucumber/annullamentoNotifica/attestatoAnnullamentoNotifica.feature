@@ -11,13 +11,12 @@ Feature: produzione del documento di annullamento notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
-    Then è presente un legalFact con categoria "NOTIFICATION_CANCELLED"
-    And il legalFact "PUO'" essere recuperato tramite il suo id richiamando l'api versione 25
-
+    Then tra gli elementi di timeline con categoria "NOTIFICATION_CANCELLED" è presente un legalFact con categoria "NOTIFICATION_CANCELLED"
+    And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 20 e tra questi "COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
 
   @attestatoAnnullamentoNotificaIgnore @precondition @webhook2
-    # NOTA: il nuovo elemento di Timeline NOTIFICATION_CANCELLED_DOCUMENT_CREATION_REQUEST è nascosto lato API
-      # Questo test (ignorato dalla suite) è al solo scopo di verifica della presenza a DB tramite test manuale
+    # NOTA: il nuovo elemento di Timeline NOTIFICATION_CANCELLED_DOCUMENT_CREATION_REQUEST è nascosto lato API.
+      # Questo test (ignorato dalla suite) deve solo essere eseguito al momento della verifica a DB lato manuale
   Scenario: [ATTESTATO_ANNULLAMENTO_WEBHOOK]
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10"
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
