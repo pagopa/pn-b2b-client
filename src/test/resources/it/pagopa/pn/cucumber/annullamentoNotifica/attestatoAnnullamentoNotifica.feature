@@ -13,6 +13,7 @@ Feature: produzione del documento di annullamento notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then tra gli elementi di timeline con categoria "NOTIFICATION_CANCELLED" è presente un legalFact con categoria "NOTIFICATION_CANCELLED"
     And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 20 e tra questi "COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
+    And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 1 e tra questi "NON COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
 
   @attestatoAnnullamentoNotifica
   Scenario: [ATTESTATO_ANNULLAMENTO_VERSIONE_PRECEDENTE] Recuperando la timeline con versioni anteriori alla V25, in seguito all'annullamento di una notifica non devono esserci elementi aventi legalFacts con categoria "NOTIFICATION_CANCELLED"
@@ -25,11 +26,12 @@ Feature: produzione del documento di annullamento notifica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     And la notifica può essere annullata dal sistema tramite codice IUN dal comune "Comune_Multi"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
+    When si invoca l'api B2B versione "V24" per ottenere gli elementi di timeline di tale notifica
+    Then tra gli elementi di timeline versione "V24" di categoria "NOTIFICATION_CANCELLED" nessuno contiene un legalFact con categoria "NOTIFICATION_CANCELLED"
     When si invoca l'api B2B versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then tra gli elementi di timeline versione "V23" di categoria "NOTIFICATION_CANCELLED" nessuno contiene un legalFact con categoria "NOTIFICATION_CANCELLED"
 
-  @attestatoAnnullamentoNotifica @precondition @webhook2
-  #@cleanWebhook
+  @attestatoAnnullamentoNotifica @precondition @webhook2 @cleanWebhook
     # NOTA: il nuovo elemento di Timeline NOTIFICATION_CANCELLED_DOCUMENT_CREATION_REQUEST è nascosto lato API.
       # In fase di test manuale, commentare l'annotation @cleanWebhook per consentire al tester di avere il tempo materiale di controllare a DB la versione degli stream
   Scenario: [ATTESTATO_ANNULLAMENTO_WEBHOOK]

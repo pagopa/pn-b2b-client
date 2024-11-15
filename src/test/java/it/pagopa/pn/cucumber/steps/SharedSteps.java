@@ -240,6 +240,9 @@ public class SharedSteps {
     private FullSentNotificationV23 notificationResponseCompleteV23;
 
     //V24
+    @Getter
+    @Setter
+    private FullSentNotificationV24 notificationResponseCompleteV24;
     private NewNotificationRequestV24 notificationRequestV24;
 
     //V25

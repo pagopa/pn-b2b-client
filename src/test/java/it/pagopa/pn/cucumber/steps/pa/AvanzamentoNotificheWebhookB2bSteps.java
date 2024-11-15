@@ -2022,9 +2022,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     @When("si invoca l'api B2B versione {string} per ottenere gli elementi di timeline di tale notifica")
     public void getTimelineElementVersionB2B(String version) {
         String iun = this.sharedSteps.getSentNotification().getIun();
-        if (version.equalsIgnoreCase("V24")) {
+        if (version.equalsIgnoreCase("V25")) {
             FullSentNotificationV25 fullSentNotification = b2bClient.getSentNotification(iun);
             this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
+        }
+        if (version.equalsIgnoreCase("V24")) {
+            FullSentNotificationV24 fullSentNotification = b2bClient.getSentNotificationV24(iun);
+            this.sharedSteps.setNotificationResponseCompleteV24(fullSentNotification);
         } else if (version.equalsIgnoreCase("V23")) {
             FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);
             this.sharedSteps.setNotificationResponseCompleteV23(fullSentNotification);
@@ -2064,6 +2068,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         if (version.equalsIgnoreCase("V25")) {
             Assertions.assertNotNull(this.sharedSteps.getNotificationResponseComplete());
             TimelineElementV25 timelineElementWithTargetCategory = this.sharedSteps.getNotificationResponseComplete().getTimeline().stream().filter(
+                    x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
+            Assertions.assertNotNull(timelineElementWithTargetCategory);
+            timelineElementWithTargetCategory.getLegalFactsIds().forEach(
+                    x -> Assertions.assertFalse(x.getCategory().equals(legalFactCategory)));
+        } else if (version.equalsIgnoreCase("V24")) {
+            Assertions.assertNotNull(this.sharedSteps.getNotificationResponseCompleteV24());
+            TimelineElementV24 timelineElementWithTargetCategory = this.sharedSteps.getNotificationResponseCompleteV24().getTimeline().stream().filter(
                     x -> x.getCategory().getValue().equals(timelineCategory)).findFirst().orElse(null);
             Assertions.assertNotNull(timelineElementWithTargetCategory);
             timelineElementWithTargetCategory.getLegalFactsIds().forEach(
