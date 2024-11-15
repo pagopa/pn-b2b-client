@@ -50,6 +50,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
 
   @e2e @giacenza890Complex
+    # TODO c'è scritto OK-GiacenzaDelegato-lte10_890 nello scenario ma si manda un @OK-PersonaAbilitata_890 nell'address, è giusto?
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -67,13 +68,18 @@ Feature: Workflow analogico
       | details                 | NOT_NULL                                                                                                                                                                                                        |
       | details_recIndex        | 0                                                                                                                                                                                                               |
       | details_sentAttemptMade | 0                                                                                                                                                                                                               |
-      | details_physicalAddress | {"address": "VIA@OK-PERSONAABILITATA_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@OK-PERSONAABILITATA_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -86,6 +92,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG002C |
+      | details_physicalAddress    | {"at": "Presso", "address": "VIA@OK-PERSONAABILITATA_890", "addressDetails": "SCALA B", "zip": "87100", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "province": "CS", "foreignState": "ITALIA"} |
+      | details_responseStatus | OK |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
       | pollingTime | 30000 |
@@ -122,6 +130,11 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -285,6 +298,11 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -1452,6 +1470,11 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryDetailCode | CON020 |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

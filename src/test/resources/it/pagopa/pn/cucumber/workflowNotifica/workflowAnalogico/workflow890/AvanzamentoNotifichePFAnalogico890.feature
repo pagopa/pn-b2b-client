@@ -26,6 +26,11 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | physicalAddress_address | Via@fail_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
 
 
   @workflowAnalogico
@@ -246,8 +251,60 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG003E" e verifica tipo DOC "Plico" tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG003F" e deliveryFailureCause "M03" tentativo "ATTEMPT_1"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
-    #"@sequence.5s-CON080.5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
 
+    # TODO lascia solo ultima riga e sostituisci con le seguenti
+    # TODO questo test potrebbe essere vittima del bug Plico + Indagine, verificare non sia il caso di cambiare test
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON080 |
+    #  | details_sentAttemptMade | 0 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON020 |
+    #  | details_sentAttemptMade | 0 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003E |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_attachments | [{"documentType": "Plico"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003E |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_attachments | [{"documentType": "Indagine"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003F |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryFailureCause | M03 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON080 |
+    #  | details_sentAttemptMade | 1 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON020 |
+    #  | details_sentAttemptMade | 1 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003E |
+    #  | details_sentAttemptMade | 1 |
+    #  | details_attachments | [{"documentType": "Plico"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003F |
+    #  | details_sentAttemptMade | 1 |
+    #  | details_deliveryFailureCause | M03 |
+    #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
 
   @workflowAnalogico
   Scenario: [B2B_TIMELINE_ANALOG_890_15] Attesa elemento di timeline REFINEMENT con physicalAddress OK-WO-011B
@@ -292,4 +349,45 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG003F" e deliveryFailureCause "M03" tentativo "ATTEMPT_0"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG001B" e verifica tipo DOC "23L" tentativo "ATTEMPT_1"
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG001C" tentativo "ATTEMPT_1"
+    # TODO lascia solo l'ultima riga e sostituisci le altre con le seguenti
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON080 |
+    #  | details_sentAttemptMade | 0 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON020 |
+    #  | details_sentAttemptMade | 0 |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003E |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_attachments | [{"documentType": "Indagine"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003E |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_attachments | [{"documentType": "Plico"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG003F |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryFailureCause | M03 |
+    ##And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #    #  | details | NOT_NULL |
+    #    #  | details_recIndex | 0 |
+    #    #  | details_deliveryDetailCode | RECAG001B |
+    #    #  | details_sentAttemptMade | 1 |
+    #    #  | details_attachments | [{"documentType": "23L"}] |
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_FEEDBACK" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG001C |
+    #  | details_sentAttemptMade | 1 |
+    # IN CORSO...
 

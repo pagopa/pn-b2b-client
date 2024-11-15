@@ -35,6 +35,11 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
       | physicalAddress_address | Via@fail-Discovery_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
+    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_deliveryDetailCode | CON080 |
 
 
   @workflowAnalogico @mockNR
