@@ -571,6 +571,14 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 Assertions.assertNotNull(eventStreamV23.getStreamId());
                 log.info("EVENTSTREAM: {}", eventStreamV23);
             }
+            case V25 -> {
+                StreamMetadataResponseV25 eventStreamV25 = Assertions.assertDoesNotThrow(() ->
+                        webhookB2bClient.retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId()));
+                sharedSteps.setEventStreamV25(eventStreamV25);
+                Assertions.assertNotNull(eventStreamV25);
+                Assertions.assertNotNull(eventStreamV25.getStreamId());
+                log.info("EVENTSTREAM: {}", eventStreamV25);
+            }
         }
     }
 
