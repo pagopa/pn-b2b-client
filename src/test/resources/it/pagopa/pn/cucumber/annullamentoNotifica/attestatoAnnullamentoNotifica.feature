@@ -1,7 +1,7 @@
 Feature: produzione del documento di annullamento notifica
 
   @attestatoAnnullamentoNotifica
-  Scenario: [ATTESTATO_ANNULLAMENTO_LEGAL_FACT]
+  Scenario: [ATTESTATO_ANNULLAMENTO_LEGAL_FACT] Verifica della presenza del nuovo legalFact avente categoria NOTIFICATION_CANCELLED in seguito all'annullamento di una notifica
     Given viene generata una nuova notifica con la versione più recente
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
@@ -15,7 +15,7 @@ Feature: produzione del documento di annullamento notifica
     And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 20 e tra questi "COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
 
   @attestatoAnnullamentoNotifica
-  Scenario: [ATTESTATO_ANNULLAMENTO_V23]
+  Scenario: [ATTESTATO_ANNULLAMENTO_VERSIONE_PRECEDENTE] Recuperando la timeline con versioni anteriori alla V25, in seguito all'annullamento di una notifica non devono esserci elementi aventi legalFacts con categoria "NOTIFICATION_CANCELLED"
     Given viene generata una nuova notifica con la versione più recente
       | subject            | notifica analogica con cucumber |
       | senderDenomination | Comune_Multi                    |
@@ -28,9 +28,9 @@ Feature: produzione del documento di annullamento notifica
     When si invoca l'api B2B versione "V23" per ottenere gli elementi di timeline di tale notifica
     Then tra gli elementi di timeline versione "V23" di categoria "NOTIFICATION_CANCELLED" nessuno contiene un legalFact con categoria "NOTIFICATION_CANCELLED"
 
-  @attestatoAnnullamentoNotificaIgnore @precondition @webhook2
+  @attestatoAnnullamentoNotifica @precondition @webhook2 @cleanWebhook
     # NOTA: il nuovo elemento di Timeline NOTIFICATION_CANCELLED_DOCUMENT_CREATION_REQUEST è nascosto lato API.
-      # Questo test (ignorato dalla suite) deve solo essere eseguito al momento della verifica a DB lato manuale
+      # In fase di test manuale, commentare l'annotation @cleanWebhook per consentire al tester di avere il tempo materiale di controllare a DB la versione degli stream
   Scenario: [ATTESTATO_ANNULLAMENTO_WEBHOOK]
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V10"
     Given vengono cancellati tutti gli stream presenti del "Comune_Multi" con versione "V23"
