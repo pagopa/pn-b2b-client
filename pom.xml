@@ -1913,7 +1913,38 @@
                         </configuration>
                     </execution>
 
-
+                    <execution>
+                        <id>generate-external-templates-engine-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/91162eb38d66248b206727844a5ed1d397f0097f/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>resttemplate</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <configOptions>
+                                <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templates-engine.api</apiPackage>
+                                <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templates-engine.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                            <apiPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templates-engine.api</apiPackage>
+                            <modelPackage>it.pagopa.pn.client.b2b.generated.openapi.clients.templates-engine.model</modelPackage>
+                        </configuration>
+                    </execution>
 
                 </executions>
             </plugin>
