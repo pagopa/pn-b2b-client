@@ -202,13 +202,13 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
         return Arrays.asList( result );
     }
 
-    public NewNotificationResponse sendNewNotification(NewNotificationRequestV23 newNotificationRequest) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV23 request;
-        request = deepCopy( newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV23.class );
+    public NewNotificationResponse sendNewNotification(NewNotificationRequestV24 newNotificationRequest) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24 request;
+        request = deepCopy( newNotificationRequest, it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestV24.class );
 
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationResponse response;
 
-        response = newNotificationApi.sendNewNotificationV23(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups,null,null);
+        response = newNotificationApi.sendNewNotificationV24(operatorId, CxTypeAuthFleet.PA, paId, "B2B", request, groups,null,null);
 
         return deepCopy( response, NewNotificationResponse.class );
     }
@@ -228,10 +228,10 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     }
 
     @Override
-    public FullSentNotificationV24 getSentNotification(String iun) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV24 resp;
-        resp = senderReadB2BApi.getSentNotificationV24(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
-        return deepCopy(resp, FullSentNotificationV24.class);
+    public FullSentNotificationV25 getSentNotification(String iun) {
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.FullSentNotificationV25 resp;
+        resp = senderReadB2BApi.getSentNotificationV25(operatorId, CxTypeAuthFleet.PA, paId, iun, groups);
+        return deepCopy(resp, FullSentNotificationV25.class);
     }
 
     @Override
@@ -258,8 +258,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
     @Override
     public NewNotificationRequestStatusResponseV23 getNotificationRequestStatus(String notificationRequestId) {
 
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV23 resp;
-        resp = senderReadB2BApi.getNotificationRequestStatusV23(
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
+        resp = senderReadB2BApi.getNotificationRequestStatusV24(
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,
@@ -287,8 +287,8 @@ public class PnPaB2bInternalClientImpl implements IPnPaB2bClient {
 
     @Override
     public NewNotificationRequestStatusResponseV23 getNotificationRequestStatusAllParam(String notificationRequestId, String paProtocolNumber, String idempotenceToken) {
-        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV23 resp;
-        resp = senderReadB2BApi.getNotificationRequestStatusV23(
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.internalb2bpa.model.NewNotificationRequestStatusResponseV24 resp;
+        resp = senderReadB2BApi.getNotificationRequestStatusV24(
                 operatorId,
                 CxTypeAuthFleet.PA,
                 paId,

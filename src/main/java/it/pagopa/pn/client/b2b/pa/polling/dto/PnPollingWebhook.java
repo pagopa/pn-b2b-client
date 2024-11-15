@@ -1,9 +1,6 @@
 package it.pagopa.pn.client.b2b.pa.polling.dto;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,4 +17,5 @@ public class PnPollingWebhook {
     private TimelineElementCategoryV23 timelineElementCategoryV23;
     private LinkedList<ProgressResponseElementV23> progressResponseElementListV23;
     private LinkedList<ProgressResponseElementV24> progressResponseElementListV24;
+    private LinkedList<ProgressResponseElementV25> progressResponseElementListV25;
 }
