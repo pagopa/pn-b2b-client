@@ -2851,7 +2851,7 @@ public class AvanzamentoNotificheB2bSteps {
             TimelineElementV25 timelineElement = pnPollingResponseV25.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress());
-            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:@' \\[\\] ]*$"));
+            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:;@' \\[\\] ]*$"));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
