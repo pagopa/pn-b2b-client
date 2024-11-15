@@ -139,6 +139,11 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
+    public LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return null;
+    }
+
+    @Override
     public boolean setBearerToken(BearerTokenType bearerToken) {
         switch (bearerToken) {
             case USER_1 -> {

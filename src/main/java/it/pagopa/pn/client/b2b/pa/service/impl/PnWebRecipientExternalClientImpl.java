@@ -205,7 +205,12 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
 
     @Override
     public List<LegalFactListElementV20> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException {
-        return this.legalFactsApi.retrieveNotificationLegalFactsV20(iun, null);
+        return this.legalFactsApi.retrieveNotificationLegalFactsV20(iun, mandateId);
+    }
+
+    @Override
+    public LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException {
+        return this.legalFactsApi.downloadLegalFactById(iun, legalFactId, mandateId);
     }
 
     public DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException {

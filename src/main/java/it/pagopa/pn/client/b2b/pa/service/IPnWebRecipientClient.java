@@ -35,6 +35,8 @@ public interface IPnWebRecipientClient extends SettableBearerToken {
 
     List<LegalFactListElementV20> getLegalFactsV20(String iun, UUID mandateId) throws RestClientException;
 
+    LegalFactDownloadMetadataResponse downloadLegalFactById(String iun, String legalFactId, UUID mandateId) throws RestClientException;
+
     DocumentDownloadMetadataResponse getDocumentsWeb(String iun, DocumentCategory documentType, String documentId, String mandateId) throws RestClientException;
 
 }

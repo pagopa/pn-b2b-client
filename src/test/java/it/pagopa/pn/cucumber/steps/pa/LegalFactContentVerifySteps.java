@@ -208,16 +208,18 @@ public class LegalFactContentVerifySteps {
     @Then("l'utente {string} recupera i legalFacts richiamando l'api versione {int} e tra questi {string} il legalFact con categoria {string}")
     public void downloadLegalFactWithIdUsingApiVersion(String user, Integer version, String presente, String legalFactCategory) {
         sharedSteps.selectUser(user);
+        String iun = this.sharedSteps.getSentNotification().getIun();
         boolean isPresent = presente.toUpperCase().equals("COMPARE");
         Assertions.assertNotNull(this.legalFactType);
+        Assertions.assertNotNull(this.legalFactUrl);
         Assertions.assertEquals(legalFactCategory, this.legalFactType);
         switch (version) {
             case 1 -> {
-                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(this.sharedSteps.getSentNotification().getIun(), null, this.legalFactUrl);
+                LegalFactDownloadMetadataResponse response = sharedSteps.getWebRecipientClient().getLegalFact(iun, null, this.legalFactUrl);
+                sharedSteps.getWebRecipientClient().downloadLegalFactById(iun, this.legalFactUrl, null);
             }
             case 20 -> {
-                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(
-                        this.sharedSteps.getSentNotification().getIun(), null);
+                List<LegalFactListElementV20> legalFactV20list = sharedSteps.getWebRecipientClient().getLegalFactsV20(iun, null);
                 Assertions.assertNotNull(legalFactV20list);
                 LegalFactListElementV20 target = legalFactV20list.stream().filter(
                         x -> x.getLegalFactsId().getCategory().getValue().equals(legalFactCategory)).findFirst().orElse(null);

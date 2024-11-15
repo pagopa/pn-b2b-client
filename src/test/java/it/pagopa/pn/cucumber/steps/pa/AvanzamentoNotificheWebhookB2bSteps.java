@@ -318,6 +318,11 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     deleteStreamWrapper(V23, pa, eventStream.getStreamId());
                 }
             }
+            case V25 -> {
+                for (StreamMetadataResponseV25 eventStream : eventStreamListV25) {
+                    deleteStreamWrapper(V25, pa, eventStream.getStreamId());
+                }
+            }
             default -> throw new IllegalArgumentException();
         }
     }
@@ -544,6 +549,13 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                     Assertions.assertNull(streamListElementV23);
                 }
                 break;
+            case "V25":
+                List<StreamListElement> streamListElementsV25 = webhookB2bClient.listEventStreamsV25();
+                for (StreamMetadataResponseV25 eventStream : eventStreamListV25) {
+                    StreamListElement streamListElementV25 = streamListElementsV25.stream().filter(elem -> elem.getStreamId() == eventStream.getStreamId()).findAny().orElse(null);
+                    Assertions.assertNull(streamListElementV25);
+                }
+                break;
             default:
                 throw new IllegalArgumentException();
         }
@@ -595,6 +607,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             switch (streamVersion) {
                 case V10 -> webhookB2bClient.getEventStream(this.eventStreamList.get(0).getStreamId());
                 case V23 -> webhookB2bClient.getEventStreamV23(this.eventStreamListV23.get(0).getStreamId());
+                case V25 -> webhookB2bClient.retrieveEventStreamV25(this.eventStreamListV25.get(0).getStreamId());
             }
         } catch (HttpStatusCodeException e) {
             this.notificationError = e;
@@ -1915,6 +1928,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V10 -> webhookB2bClient.deleteEventStream(streamID);
                 case V23 -> webhookB2bClient.deleteEventStreamV23(streamID);
                 case V24 -> webhookB2bClient.deleteEventStreamV24(streamID);
+                case V25 -> webhookB2bClient.deleteEventStreamV25(streamID);
             }
             return true;
         } catch (HttpStatusCodeException e) {
