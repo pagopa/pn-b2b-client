@@ -148,7 +148,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
 
 
-  @dev @giacenza890Complex
+  @dev @giacenza890Complex @con020 @con020OldTestSuccessful
   Scenario: [B2B_TIMELINE_ANALOG_GIACENZA_890_11] Invio notifica ed attesa elemento di timeline SEND_ANALOG_FEEDBACK con deliveryDetailCode PNAG012 positivo PN-5820
     Given viene generata una nuova notifica
       | subject            | notifica analogica con cucumber |
@@ -163,7 +163,29 @@ Feature: avanzamento notifiche b2b con workflow cartaceo giacenza 890
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG011A"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECAG007B" e verifica tipo DOC "Plico"
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con deliveryDetailCode "RECAG007C" e verifica data delay più 0
-  #"@sequence.5s-CON080.5s-RECAG010.5s-RECAG011A.5s-RECAG012[DELAY:+5d].5s-RECAG007A[DELAY:+5d].5s-RECAG007B[DOC:ARCAD;DOC:Plico;DELAY:+5d].5s-RECAG007C[DELAY:+5d]"
+    # TODO lascia l'ultima linea e sostituisci le altre con le seguenti
+    # And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON080 |
+    #  | details_sentAttemptMade | 0 |
+    # And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | CON020 |
+    #  | details_sentAttemptMade | 0 |
+    # And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG011A |
+    #  | details_sentAttemptMade | 0 |
+    # And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+    #  | details | NOT_NULL |
+    #  | details_recIndex | 0 |
+    #  | details_deliveryDetailCode | RECAG007B |
+    #  | details_sentAttemptMade | 0 |
+    #  | details_attachments | [{"documentType": "Plico"}] |
+    #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.30s-RECAG007A.5s-RECAG007B[DOC:ARCAD;DOC:Plico].5s-RECAG007C"
 
 
   @dev @giacenza890Complex

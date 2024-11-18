@@ -49,7 +49,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e @giacenza890Complex
+  @e2e @giacenza890Complex @con020 @con020success
     # TODO c'è scritto OK-GiacenzaDelegato-lte10_890 nello scenario ma si manda un @OK-PersonaAbilitata_890 nell'address, è giusto?
   Scenario: [E2E-WF-ANALOG-2] Invio notifica con percorso analogico. Successo giacenza delegato 890 (OK-GiacenzaDelegato-lte10_890).
     Given viene generata una nuova notifica
@@ -105,7 +105,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e
+  @e2e @con020 @con020OldTestFailed
   Scenario: [E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -273,7 +273,7 @@ Feature: Workflow analogico
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
 
-  @e2e @giacenza890Complex
+  @e2e @giacenza890Complex @con020 @con020OldTestFailed
   Scenario: [E2E-WF-ANALOG-7] Invio notifica con percorso analogico. Successo giacenza lte 890 (OK-Giacenza-lte10_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -1446,7 +1446,7 @@ Feature: Workflow analogico
       | details | NOT_NULL |
       | details_recIndex | 0 |
 
-  @e2e @ignore
+  @e2e @ignore @con020untested
   Scenario: [E2E-WF-ANALOG-29] Invio notifica con percorso analogico. Fallimento irreperibile 890 (FAIL-Irreperibile_890).
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

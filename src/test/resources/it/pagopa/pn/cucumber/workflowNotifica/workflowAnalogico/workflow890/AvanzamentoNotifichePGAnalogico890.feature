@@ -25,7 +25,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_FEEDBACK" con responseStatus "OK"
 
 
-  @workflowAnalogico @mockNR
+  @workflowAnalogico @mockNR @con020 @con020OldTestSuccessful
   Scenario: [B2B_TIMELINE_PG_ANALOG_890_3] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-Discovery_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

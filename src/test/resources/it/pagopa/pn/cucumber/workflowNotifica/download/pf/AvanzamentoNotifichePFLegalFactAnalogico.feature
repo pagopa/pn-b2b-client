@@ -37,7 +37,7 @@ Feature: Download legalFact analogico
     And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002B"
     Then la PA richiede il download dell'attestazione opponibile "SEND_ANALOG_PROGRESS" con deliveryDetailCode "RECRN002B"
 
-  @dev @legalFact
+  @dev @legalFact @con020 @con020success
   Scenario: [B2B_PA_ANALOGICO_LEGALFACT_4] Invio notifica con @ok_890 e download atto opponibile collegato a SEND_ANALOG_PROGRESS positivo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
