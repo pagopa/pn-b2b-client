@@ -120,7 +120,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
         InteropClientConfigs.class,
         InteropTracingClientImpl.class,
         PnPollingInteropTracing.class,
-        TracingFileUtils.class
+        TracingFileUtils.class,
+        TemplateEngineClientImpl.class
 })
 @EnableScheduling
 @EnableConfigurationProperties

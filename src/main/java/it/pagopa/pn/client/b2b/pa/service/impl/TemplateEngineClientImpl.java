@@ -5,11 +5,16 @@ import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.api.Te
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.*;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 
+@Component
+@Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class TemplateEngineClientImpl implements ITemplateEngineClient {
     private final String basePath;
     private RestTemplate restTemplate;
@@ -48,7 +53,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException {
+    public File notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException {
         return templateApi.notificationAAR(xLanguage, notificationAAR);
     }
 
@@ -68,7 +73,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException {
+    public File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException {
         return templateApi.notificationAARRADDalt(xLanguage, notificationAARRADDalt);
     }
 

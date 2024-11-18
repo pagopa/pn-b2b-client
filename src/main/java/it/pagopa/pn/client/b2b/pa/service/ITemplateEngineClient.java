@@ -14,7 +14,7 @@ public interface ITemplateEngineClient {
 
     File legalFactMalfunction(LanguageEnum xLanguage, LegalFactMalfunction legalFactMalfunction) throws RestClientException;
 
-    String notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException;
+    File notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException;
 
     String notificationAARForEMAIL(LanguageEnum xLanguage, NotificationAARForEMAIL notificationAARForEMAIL) throws RestClientException;
 
@@ -22,7 +22,7 @@ public interface ITemplateEngineClient {
 
     String notificationAARForSMS(LanguageEnum xLanguage, NotificationAARForSMS notificationAARForSMS) throws RestClientException;
 
-    String notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException;
+    File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException;
 
     String notificationAARSubject(LanguageEnum xLanguage, NotificationAARSubject notificationAARSubject) throws RestClientException;
 
