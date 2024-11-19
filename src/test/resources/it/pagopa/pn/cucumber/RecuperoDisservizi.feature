@@ -37,7 +37,7 @@ Feature: Recupero Disservizi
 
   @recuperoDisservizi
   Scenario Outline: [RECUPERO_DISSERVIZI_7] Richiamare l’API per il download dell'atto opponibile ai terzi di malfunzionamento e ripristino specificando un id inesistente o errato
-    Given viene chiamata l’API per il download dell'atto opponibile ai terzi con id "ERRATO"
+    Given viene chiamata l’API per il download dell'atto opponibile ai terzi con id "<idType>"
     Then si controlla che l'api restituisce un codice di errore 400
     Examples:
     | idType |

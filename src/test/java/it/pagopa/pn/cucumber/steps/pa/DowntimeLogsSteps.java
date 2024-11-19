@@ -176,7 +176,7 @@ public class DowntimeLogsSteps {
     @Given("viene chiamata l’API per il download dell'atto opponibile ai terzi con id {string}")
     public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileAiTerziConId(String idType) {
         try {
-            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(2024, 10);
+            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
             Assertions.assertNotNull(pnDowntimeHistoryResponse);
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
