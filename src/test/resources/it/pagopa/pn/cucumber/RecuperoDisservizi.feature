@@ -43,7 +43,6 @@ Feature: Recupero Disservizi
     | idType |
     | null   |
     | ERRATO |
-    |        |
 
   @recuperoDisservizi
   Scenario: [RECUPERO_DISSERVIZI_9] Richiamare l’API per il download dell'atto opponibile ai terzi di malfunzionamento e ripristino trascorsi 365 giorni
