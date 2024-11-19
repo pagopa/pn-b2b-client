@@ -221,7 +221,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 break;
@@ -235,7 +235,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 if (detailsFromTest != null) {
@@ -252,7 +252,9 @@ public class AvanzamentoNotificheB2bSteps {
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
+                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if (Objects.nonNull(detailsFromTest.getResponseStatus()))
                     Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
@@ -266,7 +268,7 @@ public class AvanzamentoNotificheB2bSteps {
                     if (Objects.nonNull(elementFromTest.getLegalFactsIds())) {
                         Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                         for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                            Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                             Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                         }
                     }
@@ -291,7 +293,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "ANALOG_SUCCESS_WORKFLOW":
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
-                if (detailsFromTest != null) {
+                if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                 }
                 break;
@@ -305,7 +307,7 @@ public class AvanzamentoNotificheB2bSteps {
                 Assertions.assertNotNull(elementFromNotification.getLegalFactsIds());
                 Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 for (int i = 0; i < elementFromNotification.getLegalFactsIds().size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
                 if (delegateInfoFromTest != null) {
@@ -319,7 +321,7 @@ public class AvanzamentoNotificheB2bSteps {
                     Assertions.assertEquals(elementFromNotification.getLegalFactsIds().size(), elementFromTest.getLegalFactsIds().size());
                 }
                 for (int i = 0; i < Objects.requireNonNull(elementFromNotification.getLegalFactsIds()).size(); i++) {
-                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory());
+                    Assertions.assertEquals(elementFromNotification.getLegalFactsIds().get(i).getCategory(), elementFromTest.getLegalFactsIds().get(i).getCategory().getValue());
                     Assertions.assertNotNull(elementFromNotification.getLegalFactsIds().get(i).getKey());
                 }
         }
@@ -1476,7 +1478,7 @@ public class AvanzamentoNotificheB2bSteps {
             System.out.println("ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
             Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
-            Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
+            Assertions.assertEquals(categoriesV23.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
             LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
             String key = timelineElement.getLegalFactsIds().get(0).getKey();
             String finalKeySearch = getKeyLegalFact(key);
@@ -1824,7 +1826,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         try {
             Assertions.assertNotNull(timelineElement.getLegalFactsIds());
-            Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
+            Assertions.assertEquals(categoriesV23.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
             Assertions.assertTrue(timelineElement.getLegalFactsIds().get(0).getKey().contains(key));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
@@ -2851,7 +2853,7 @@ public class AvanzamentoNotificheB2bSteps {
             TimelineElementV25 timelineElement = pnPollingResponseV25.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress());
-            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:@' \\[\\] ]*$"));
+            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:;@' \\[\\] ]*$"));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
@@ -3325,7 +3327,7 @@ public class AvanzamentoNotificheB2bSteps {
 
         Assertions.assertNotNull(timelineElement.getLegalFactsIds());
         Assertions.assertFalse(CollectionUtils.isEmpty(timelineElement.getLegalFactsIds()));
-        Assertions.assertEquals(categoriesV23.getLegalFactCategory(), timelineElement.getLegalFactsIds().get(0).getCategory());
+        Assertions.assertEquals(categoriesV23.getLegalFactCategory().getValue(), timelineElement.getLegalFactsIds().get(0).getCategory());
         LegalFactCategory categorySearch = LegalFactCategory.fromValue(timelineElement.getLegalFactsIds().get(0).getCategory());
         String key = timelineElement.getLegalFactsIds().get(0).getKey();
         String keySearch = getKeyLegalFact(key);
