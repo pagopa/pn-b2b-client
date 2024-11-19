@@ -180,7 +180,7 @@ public class DowntimeLogsSteps {
             Assertions.assertNotNull(pnDowntimeHistoryResponse);
             Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
             Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
-            String legalFactId = getLegalFactId(idType, pnDowntimeHistoryResponse);
+            String legalFactId = getLegalFactId(idType);
             legalFact = downtimeLogsClient.getLegalFact(idType.equals("null") ? null : legalFactId);
         } catch (RestClientResponseException e) {
             exception = e;
@@ -213,13 +213,6 @@ public class DowntimeLogsSteps {
                     .toList();
             double index = Math.random() * validResponse.size();
             String legalFactId = validResponse.get((int)index).getLegalFactId();
-                    /*String legalFactId = pnDowntimeHistoryResponse.getResult()
-                    .stream()
-                    .filter(data -> data.getEndDate() != null && data.getEndDate().getDayOfMonth() <= before.getDayOfMonth())
-                    .map(PnDowntimeEntry::getLegalFactId)
-                    .filter(Objects::nonNull)
-                    .findAny()
-                    .orElse(null);*/
             Assertions.assertNotNull(legalFactId, "non è stato trovato nessun legal fact prodotto prima del giorno " + before.getDayOfMonth() + " " + before.getMonth().name() + " anno " + before.getYear());
             legalFact = downtimeLogsClient.getLegalFact(legalFactId);
         } catch (RestClientResponseException e) {
@@ -227,7 +220,7 @@ public class DowntimeLogsSteps {
         }
     }
 
-    private String getLegalFactId(String type,  PnDowntimeHistoryResponse legalFact) {
+    private String getLegalFactId(String type) {
         switch (type) {
             case "ERRATO" -> {
                 return "1234567890";
