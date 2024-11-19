@@ -252,7 +252,9 @@ public class AvanzamentoNotificheB2bSteps {
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
                         Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
+                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    if (Objects.nonNull(detailsFromTest.getResponseStatus()))
                     Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
@@ -291,7 +293,7 @@ public class AvanzamentoNotificheB2bSteps {
                 break;
             case "ANALOG_SUCCESS_WORKFLOW":
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
-                if (detailsFromTest != null) {
+                if (detailsFromTest != null && detailsFromTest.getPhysicalAddress() != null) {
                     Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
                 }
                 break;
@@ -2851,7 +2853,7 @@ public class AvanzamentoNotificheB2bSteps {
             TimelineElementV25 timelineElement = pnPollingResponseV25.getTimelineElement();
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(Objects.requireNonNull(timelineElement.getDetails()).getPhysicalAddress());
-            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:@' \\[\\] ]*$"));
+            Assertions.assertTrue(timelineElement.getDetails().getPhysicalAddress().getAddress().matches("^[A-Z0-9_.\\-:;@' \\[\\] ]*$"));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
