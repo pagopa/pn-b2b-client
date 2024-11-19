@@ -1,17 +1,51 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
+import static java.time.OffsetDateTime.now;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.awaitility.Awaitility.await;
+
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DelegateInfo;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.PaymentEventsRequestPagoPa;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ServiceLevel;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
-import it.pagopa.pn.client.b2b.pa.polling.dto.*;
-import it.pagopa.pn.client.b2b.pa.polling.impl.*;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV24;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -22,7 +56,28 @@ import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush
 import it.pagopa.pn.client.b2b.web.generated.openapi.clients.privateDeliveryPush.model.ResponsePaperNotificationFailedDto;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.DataTest;
+import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -32,22 +87,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpStatusCodeException;
-
-import java.time.Duration;
-import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.time.OffsetDateTime.now;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static org.awaitility.Awaitility.await;
 
 
 @Slf4j
@@ -251,9 +290,9 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
-                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
+                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
+                    Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
                         Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
@@ -2519,6 +2558,38 @@ public class AvanzamentoNotificheB2bSteps {
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
                 checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
             }
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+    @Then("viene verificato soltanto che l'elemento di timeline {string} esista")
+    public void vieneVerificatoSoloElementoTimeline(String timelineEventCategory) {
+        vieneVerificatoElementoTimeline(timelineEventCategory, null);
+    }
+
+    // TODO scrivere javadoc
+    @And("viene verificato che l'elemento di timeline {string} con evento {string} abbia un valore per il campo {string} compatibile con l'espressione regolare {string}")
+    public void vieneVerificatoCheElementoTimelineConEventoAbbiaUnValorePerIlCampoCompatibileConRegex(String timelineEventCategory, String eventId, String fieldPath, String regex) {
+        DataTest dataTest = new DataTest();
+        TimelineElementV23 testTimelineElement = new TimelineElementV23();
+        TimelineElementDetailsV23 timelineElementDetails = new TimelineElementDetailsV23();
+
+        timelineElementDetails.deliveryDetailCode(eventId);
+        testTimelineElement.details(timelineElementDetails);
+        dataTest.setTimelineElement(testTimelineElement);
+
+        TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
+        try {
+            Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
+
+            String sanitizedFieldPath = fieldPath.replace("_", ".");
+            String fieldValue = BeanUtils.getProperty(timelineElement, sanitizedFieldPath);
+            Assertions.assertNotNull(fieldValue, "Field %s has NULL value in timeline element".formatted(fieldPath));
+
+            Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            sharedSteps.throwAssertFailerWithIUN(new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
