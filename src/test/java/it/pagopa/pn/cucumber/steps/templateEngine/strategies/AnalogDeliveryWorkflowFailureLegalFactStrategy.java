@@ -17,9 +17,9 @@ public class AnalogDeliveryWorkflowFailureLegalFactStrategy implements ITemplate
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         AnalogDeliveryWorkflowFailureLegalFact legalFact = new  AnalogDeliveryWorkflowFailureLegalFact();
-        File file = templateEngineClient. analogDeliveryWorkflowFailureLegalFact(selectLanguage(language), legalFact);
+        File file = templateEngineClient.analogDeliveryWorkflowFailureLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }
 }

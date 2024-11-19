@@ -14,7 +14,7 @@ public class NotificationAARForPECStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationAARForPEC legalFact = new  NotificationAARForPEC();
         String file = templateEngineClient.notificationAARForPEC(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);

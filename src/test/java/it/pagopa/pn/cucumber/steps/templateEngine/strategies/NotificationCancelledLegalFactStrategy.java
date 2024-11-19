@@ -17,7 +17,7 @@ public class NotificationCancelledLegalFactStrategy implements ITemplateEngineSt
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationCancelledLegalFact legalFact = new  NotificationCancelledLegalFact();
         File file = templateEngineClient.notificationCancelledLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);

@@ -14,7 +14,7 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationAARForEMAIL legalFact = new  NotificationAARForEMAIL();
         String result = templateEngineClient.notificationAARForEMAIL(selectLanguage(language), legalFact);
         return new TemplateEngineResult(result);

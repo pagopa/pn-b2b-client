@@ -15,7 +15,7 @@ public class NotificationAARForSMSStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationAARForSMS notificationAARForSMS = new NotificationAARForSMS();
         String file = templateEngineClient.notificationAARForSMS(selectLanguage(language), notificationAARForSMS);
         return new TemplateEngineResult(file);

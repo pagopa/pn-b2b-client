@@ -5,7 +5,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineResult;
 
 public interface ITemplateEngineStrategy {
 
-    public TemplateEngineResult retrieveTemplate(String language);
+    public TemplateEngineResult retrieveTemplate(String language, boolean body);
 
     default LanguageEnum selectLanguage(String language) {
         return switch (language.toUpperCase()) {

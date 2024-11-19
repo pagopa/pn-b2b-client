@@ -17,7 +17,7 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         PecDeliveryWorkflowLegalFact legalFact = new PecDeliveryWorkflowLegalFact();
         File file = templateEngineClient.pecDeliveryWorkflowLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);

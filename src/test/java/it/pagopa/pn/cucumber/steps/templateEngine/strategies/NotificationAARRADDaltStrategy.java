@@ -17,7 +17,7 @@ public class NotificationAARRADDaltStrategy implements ITemplateEngineStrategy {
 
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationAARRADDalt legalFact = new  NotificationAARRADDalt();
         File file= templateEngineClient. notificationAARRADDalt(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);

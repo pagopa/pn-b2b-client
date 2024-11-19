@@ -14,7 +14,7 @@ public class PecBodyRejectStrategy implements ITemplateEngineStrategy{
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         String file = templateEngineClient.pecbodyreject(selectLanguage(language));
         return new TemplateEngineResult(file);
     }

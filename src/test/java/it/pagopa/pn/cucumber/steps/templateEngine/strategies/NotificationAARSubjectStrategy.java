@@ -15,7 +15,7 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         NotificationAARSubject subject = new NotificationAARSubject();
         String file = templateEngineClient.notificationAARSubject(selectLanguage(language), subject);
         return new TemplateEngineResult(file);

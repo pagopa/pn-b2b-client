@@ -14,9 +14,9 @@ public class ValidPecBodyStrategy implements ITemplateEngineStrategy{
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
-        Pecbody body = new Pecbody();
-        String file = templateEngineClient.pecbodyconfirm(selectLanguage(language), body);
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
+        Pecbody pecBody = new Pecbody();
+        String file = templateEngineClient.pecbodyconfirm(selectLanguage(language), pecBody);
         return new TemplateEngineResult(file);
     }
 }

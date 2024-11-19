@@ -14,7 +14,7 @@ public class ConfirmSmsBodyStrategy implements ITemplateEngineStrategy{
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         String file = templateEngineClient.smsbody(selectLanguage(language));
         return new TemplateEngineResult(file);
     }

@@ -16,7 +16,7 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
         this.templateEngineClient = templateEngineClient;
     }
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
         LegalFactMalfunction legalFact = new  LegalFactMalfunction();
         File file = templateEngineClient.legalFactMalfunction(selectLanguage(language), legalFact);
         return new  TemplateEngineResult(file);

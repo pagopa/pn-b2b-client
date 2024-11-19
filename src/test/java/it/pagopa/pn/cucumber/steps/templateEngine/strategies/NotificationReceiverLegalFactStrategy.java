@@ -17,8 +17,8 @@ public class NotificationReceiverLegalFactStrategy implements ITemplateEngineStr
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
-        NotificationReceiverLegalFact legalFact = new NotificationReceiverLegalFact();
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
+        NotificationReceiverLegalFact legalFact = body ? new NotificationReceiverLegalFact() : null;
         File file = templateEngineClient.notificationReceivedLegalFact(selectLanguage(language), legalFact);
         return new TemplateEngineResult(file);
     }

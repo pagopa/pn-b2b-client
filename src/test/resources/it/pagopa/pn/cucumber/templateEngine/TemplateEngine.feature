@@ -13,8 +13,12 @@ Feature: Template engine
 
   @templateEngine #22 - 23 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario: [TEMPLATE-ENGINE_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - lingua errata - lingua vuota
-    #essendo un enum non posso mandare una lingua sbagliata, posso mandare solo null
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" in lingua "null"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #86 /templates-engine-private/v1/templates/notification-received-legal-fact
+  Scenario: [TEMPLATE-ENGINE_2_1] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - body vuoto
+    When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" in lingua "italiano" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #24 25 26 27 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
@@ -33,6 +37,11 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" in lingua "null"
     Then verifico che la chiamata sia andata in "400" error
 
+  @templateEngine #87 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
+  Scenario: [TEMPLATE-ENGINE_4_1] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body vuoto
+    When recupero il template per "attestazione opponibile a terzi di notifica digitale" in lingua "italiana" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
+
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" in lingua "<language>"
@@ -49,7 +58,12 @@ Feature: Template engine
     When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" in lingua "null"
     Then verifico che la chiamata sia andata in "400" error
 
-  @templateEngine #34 35 36 37 /templates-engine-private/v1/templates/legal-fact-malfuntion
+  @templateEngine #88 /templates-engine-private/v1/templates/notification-viewed-legal-fact
+  Scenario: [TEMPLATE-ENGINE_6_1] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - body vuoto
+    When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" in lingua "italiana" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #34 35 36 37 /templates-engine-private/v1/templates/legal-fact-malfunction
   Scenario Outline: [TEMPLATE-ENGINE_7] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "attestazione opponibile a terzi di malfunzionamento e ripristino" in lingua "<language>"
     Then verifico che il template è in formato ".pdf"
@@ -60,9 +74,14 @@ Feature: Template engine
       | slovena  |
       | francese |
 
-  @templateEngine #38 /templates-engine-private/v1/templates/legal-fact-malfuntion
+  @templateEngine #38 /templates-engine-private/v1/templates/legal-fact-malfunction
   Scenario: [TEMPLATE-ENGINE_8] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - lingua errata
     When recupero il template per "attestazione opponibile a terzi di malfunzionamento e ripristino" in lingua "null"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #89 /templates-engine-private/v1/templates/legal-fact-malfunction
+  Scenario: [TEMPLATE-ENGINE_8_1] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - body vuoto
+    When recupero il template per "attestazione opponibile a terzi di malfunzionamento e ripristino" in lingua "italiana" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #39 40 41 42 /templates-engine-private/v1/templates/notification-cancelled-legal-fact
@@ -81,6 +100,11 @@ Feature: Template engine
     When recupero il template per "dichiarazione di annullamento notifica" in lingua "null"
     Then verifico che la chiamata sia andata in "400" error
 
+  @templateEngine #90 /templates-engine-private/v1/templates/notification-cancelled-legal-fact
+  Scenario: [TEMPLATE-ENGINE_10_1] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - body vuoto
+    When recupero il template per "dichiarazione di annullamento notifica" in lingua "italiana" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
+
   @templateEngine #44 45 46 47 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_11] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "deposito di avvenuta ricezione" in lingua "<language>"
@@ -97,6 +121,11 @@ Feature: Template engine
     When recupero il template per "deposito di avvenuta ricezione" in lingua "null"
     Then verifico che la chiamata sia andata in "400" error
 
+  @templateEngine #91 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
+  Scenario: [TEMPLATE-ENGINE_12_1] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - body vuoto
+    When recupero il template per "deposito di avvenuta ricezione" in lingua "italiana" con il body "null"
+    Then verifico che la chiamata sia andata in "400" error
+
   @templateEngine #49 50 51 52 /templates-engine-private/v1/templates/notification-aar
   Scenario Outline: [TEMPLATE-ENGINE_13] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
     When recupero il template per "avviso di avvenuta ricezione" in lingua "<language>"
@@ -111,6 +140,11 @@ Feature: Template engine
   @templateEngine #53 /templates-engine-private/v1/templates/notification-aar
   Scenario: [TEMPLATE-ENGINE_14] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - lingua errata
     When recupero il template per "avviso di avvenuta ricezione" in lingua "null"
+    Then verifico che la chiamata sia andata in "400" error
+
+  @templateEngine #92 /templates-engine-private/v1/templates/notification-aar
+  Scenario: [TEMPLATE-ENGINE_14_1] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - body vuoto
+    When recupero il template per "avviso di avvenuta ricezione" in lingua "italiana" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #54 55 56 57 /templates-engine-private/v1/templates/notification-aar-radd-alt

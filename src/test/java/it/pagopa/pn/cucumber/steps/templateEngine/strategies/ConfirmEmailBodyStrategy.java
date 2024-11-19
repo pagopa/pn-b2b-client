@@ -14,9 +14,9 @@ public class ConfirmEmailBodyStrategy implements ITemplateEngineStrategy {
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language) {
-        Emailbody body = new  Emailbody();
-        String file = templateEngineClient.emailbody(selectLanguage(language), body);
+    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
+        Emailbody emailBody = new  Emailbody();
+        String file = templateEngineClient.emailbody(selectLanguage(language), emailBody);
         return new TemplateEngineResult(file);
     }
 }
