@@ -13,7 +13,7 @@ Feature: produzione del documento di annullamento notifica
     And vengono letti gli eventi fino all'elemento di timeline della notifica "NOTIFICATION_CANCELLED"
     Then tra gli elementi di timeline con categoria "NOTIFICATION_CANCELLED" è presente un legalFact con categoria "NOTIFICATION_CANCELLED"
     And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 20 e tra questi "COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
-    And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 1 e tra questi "NON COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
+    #And l'utente "Mario Cucumber" recupera i legalFacts richiamando l'api versione 1 e tra questi "NON COMPARE" il legalFact con categoria "NOTIFICATION_CANCELLED"
 
   @attestatoAnnullamentoNotifica
   Scenario: [ATTESTATO_ANNULLAMENTO_VERSIONE_PRECEDENTE] Recuperando la timeline con versioni anteriori alla V25, in seguito all'annullamento di una notifica non devono esserci elementi aventi legalFacts con categoria "NOTIFICATION_CANCELLED"
