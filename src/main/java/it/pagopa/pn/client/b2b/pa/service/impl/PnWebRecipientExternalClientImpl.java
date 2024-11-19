@@ -163,8 +163,8 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.bearerTokenSetted;
     }
 
-    public FullReceivedNotificationV24 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return recipientReadApi.getReceivedNotificationV24(iun, mandateId);
+    public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return recipientReadApi.getReceivedNotificationV25(iun, mandateId);
     }
 
     @Override
@@ -188,11 +188,11 @@ public class PnWebRecipientExternalClientImpl implements IPnWebRecipientClient {
         return recipientReadApi.getReceivedNotificationDocument(iun, docIdx, mandateId);
     }
 
-    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         return recipientReadApi.searchReceivedNotification(startDate, endDate, mandateId, senderId, status, subjectRegExp, iunMatch, size, nextPagesKey);
     }
 
-    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String senderId, String recipientId,String group, NotificationStatus status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String senderId, String recipientId,String group, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         return recipientReadApi.searchReceivedDelegatedNotification(startDate, endDate, senderId, recipientId, group, iunMatch, status, size, nextPagesKey);
     }
 

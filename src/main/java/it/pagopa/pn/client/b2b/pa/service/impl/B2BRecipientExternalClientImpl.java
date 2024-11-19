@@ -80,8 +80,8 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public FullReceivedNotificationV24 getReceivedNotification(String iun, String mandateId) throws RestClientException {
-        return deepCopy(recipientReadB2BApi.getReceivedNotificationV24(iun, mandateId), FullReceivedNotificationV24.class);
+    public FullReceivedNotificationV25 getReceivedNotification(String iun, String mandateId) throws RestClientException {
+        return deepCopy(recipientReadB2BApi.getReceivedNotificationV25(iun, mandateId), FullReceivedNotificationV25.class);
     }
 
     @Override
@@ -110,14 +110,14 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, String group, String senderId, NotificationStatus status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public NotificationSearchResponse searchReceivedDelegatedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String recipientId, String group, String senderId, NotificationStatusV26 status, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedDelegatedNotification(
                 startDate.toString(), endDate.toString(), senderId,recipientId, group, iunMatch,  convertStatus(status), size, nextPagesKey);
         return deepCopy(response, NotificationSearchResponse.class);
     }
 
     @Override
-    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatus status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
+    public NotificationSearchResponse searchReceivedNotification(OffsetDateTime startDate, OffsetDateTime endDate, String mandateId, String senderId, NotificationStatusV26 status, String subjectRegExp, String iunMatch, Integer size, String nextPagesKey) throws RestClientException {
         it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationSearchResponse response = recipientReadB2BApi.searchReceivedNotification(startDate.toString(), endDate.toString(), mandateId,
                 senderId, convertStatus(status), subjectRegExp, iunMatch, size, nextPagesKey);
         return deepCopy(response, NotificationSearchResponse.class);
@@ -167,10 +167,10 @@ public class B2BRecipientExternalClientImpl implements IPnWebRecipientClient {
         return this.bearerTokenSetted;
     }
 
-    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus convertStatus(NotificationStatus status) {
+    private it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26 convertStatus(NotificationStatusV26 status) {
         return Optional.ofNullable(status)
-                .map(NotificationStatus::getValue)
-                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatus::fromValue)
+                .map(NotificationStatusV26::getValue)
+                .map(it.pagopa.pn.client.b2b.generated.openapi.clients.delivery2b.model.NotificationStatusV26::fromValue)
                 .orElse(null);
     }
 

@@ -660,7 +660,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest(waiting);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 finded = true;
@@ -711,7 +711,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             sleepTest(waiting);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
 
             if (notificationStatusHistoryElement != null) {
                 finded = true;
@@ -793,7 +793,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             log.debug("PROGRESS-ELEMENT: "+progressResponseElement);
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            NotificationStatusHistoryElement notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
+            NotificationStatusHistoryElementV26 notificationStatusHistoryElement = sharedSteps.getSentNotification().getNotificationStatusHistory().stream().filter(elem -> elem.getStatus().equals(notificationInternalStatus)).findAny().orElse(null);
             if (notificationStatusHistoryElement != null && !finded) {
                 wait = i + 4;
                 finded = true;
@@ -1461,7 +1461,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
-        TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
+        TimelineElementDetailsV26 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
         TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(timelineElementDetails);
@@ -1629,7 +1629,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
             }
 
             sharedSteps.setSentNotification(b2bClient.getSentNotification(sharedSteps.getSentNotification().getIun()));
-            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25 timelineElement =
+            it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV26 timelineElement =
                     sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(timelineElementInternalCategory)).findAny().orElse(null);
             if (timelineElement != null) {
                 finish = true;
@@ -1941,7 +1941,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
     public void getTimelineElementVersionB2B(String version) {
         String iun = this.sharedSteps.getSentNotification().getIun();
         if (version.equalsIgnoreCase("V24")) {
-            FullSentNotificationV25 fullSentNotification = b2bClient.getSentNotification(iun);
+            FullSentNotificationV26 fullSentNotification = b2bClient.getSentNotification(iun);
             this.sharedSteps.setNotificationResponseComplete(fullSentNotification);
         } else if (version.equalsIgnoreCase("V23")) {
             FullSentNotificationV23 fullSentNotification = b2bClient.getSentNotificationV23(iun);

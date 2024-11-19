@@ -429,14 +429,45 @@ public class PnPaB2bUtils {
         }
     }
 
-    public FullSentNotificationV25 waitForRequestAcceptation(NewNotificationResponse response) {
+    public FullSentNotificationV26 waitForRequestAcceptation(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusV26 validationStatusV26 = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
+    }
+
+    public FullSentNotificationV26 waitForRequestNoAcceptation(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusNoAcceptedV26 validationStatusNoAcceptedV23 = (PnPollingServiceValidationStatusNoAcceptedV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusNoAcceptedV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
+    }
+
+    public FullSentNotificationV26 waitForRequestAcceptationShort(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusAcceptedShortV26 validationStatusAcceptedShortV26 = (PnPollingServiceValidationStatusAcceptedShortV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusAcceptedShortV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+        return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
+    }
+
+    public FullSentNotificationV26 waitForRequestAcceptationExtraRapid(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusAcceptedExtraRapidV26 validationStatusAcceptedExtraRapidV26 = (PnPollingServiceValidationStatusAcceptedExtraRapidV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusAcceptedExtraRapidV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
+
+        return pollingResponseV26.getNotification() == null ? null : pollingResponseV26.getNotification();
+    }
+
+    public boolean waitForRequestNotRefused(NewNotificationResponse response) {
+        PnPollingServiceValidationStatusV26 validationStatusV26 = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusV26.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        return pollingResponseV26.getResult();
+    }
+
+    public FullSentNotificationV25 waitForRequestAcceptationV25(NewNotificationResponse response) {
         PnPollingServiceValidationStatusV25 validationStatusV25 = (PnPollingServiceValidationStatusV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V25);
         PnPollingResponseV25 pollingResponseV25 = validationStatusV25.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
         return pollingResponseV25.getNotification() == null ? null : pollingResponseV25.getNotification();
     }
 
-    public FullSentNotificationV25 waitForRequestNoAcceptation(NewNotificationResponse response) {
+    public FullSentNotificationV25 waitForRequestNoAcceptationV25(NewNotificationResponse response) {
         PnPollingServiceValidationStatusNoAcceptedV25 validationStatusNoAcceptedV23 = (PnPollingServiceValidationStatusNoAcceptedV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V25);
         PnPollingResponseV25 pollingResponseV24 = validationStatusNoAcceptedV23.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
@@ -444,7 +475,7 @@ public class PnPaB2bUtils {
     }
 
 
-    public FullSentNotificationV25 waitForRequestAcceptationShort(NewNotificationResponse response) {
+    public FullSentNotificationV25 waitForRequestAcceptationShortV25(NewNotificationResponse response) {
 
         PnPollingServiceValidationStatusAcceptedShortV25 validationStatusAcceptedShortV24 = (PnPollingServiceValidationStatusAcceptedShortV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_SHORT_V25);
         PnPollingResponseV25 pollingResponseV24 = validationStatusAcceptedShortV24.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
@@ -452,12 +483,29 @@ public class PnPaB2bUtils {
     }
 
 
-    public FullSentNotificationV25 waitForRequestAcceptationExtraRapid(NewNotificationResponse response) {
+    public FullSentNotificationV25 waitForRequestAcceptationExtraRapidV25(NewNotificationResponse response) {
 
         PnPollingServiceValidationStatusAcceptedExtraRapidV25 validationStatusAcceptedExtraRapidV24 = (PnPollingServiceValidationStatusAcceptedExtraRapidV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V25);
         PnPollingResponseV25 pollingResponseV24 = validationStatusAcceptedExtraRapidV24.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(ACCEPTED).build());
 
         return pollingResponseV24.getNotification() == null ? null : pollingResponseV24.getNotification();
+    }
+
+    public String waitForRequestRefused(NewNotificationResponse response) {
+        log.info("Request status for " + response.getNotificationRequestId());
+        long startTime = System.currentTimeMillis();
+        PnPollingServiceValidationStatusV26 validationStatusV25 = (PnPollingServiceValidationStatusV26) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V26);
+        PnPollingResponseV26 pollingResponseV26 = validationStatusV25.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
+        long endTime = System.currentTimeMillis();
+        log.info("Execution time {}ms", (endTime - startTime));
+        StringBuilder error = new StringBuilder();
+        if (pollingResponseV26.getStatusResponse() != null && pollingResponseV26.getStatusResponse().getErrors() != null && !pollingResponseV26.getStatusResponse().getErrors().isEmpty()) {
+            for (ProblemError err : pollingResponseV26.getStatusResponse().getErrors()) {
+                error.append(" ").append(err.getDetail());
+            }
+        }
+        log.info("Detail status {}", error);
+        return error.toString();
     }
 
     public it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification searchForRequestV1( it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse response) {
@@ -491,7 +539,7 @@ public class PnPaB2bUtils {
         return pollingResponseV20.getNotification() == null ? null : pollingResponseV20.getNotification();
     }
 
-    public boolean waitForRequestNotRefused( NewNotificationResponse response) {
+    public boolean waitForRequestNotRefusedV25(NewNotificationResponse response) {
 
         PnPollingServiceValidationStatusV25 validationStatusV25 = (PnPollingServiceValidationStatusV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V25);
         PnPollingResponseV25 pollingResponseV25 = validationStatusV25.waitForEvent(response.getNotificationRequestId(), PnPollingParameter.builder().value(REFUSED).build());
@@ -507,7 +555,7 @@ public class PnPaB2bUtils {
         return pollingResponseV21.getNotification() == null ? null : pollingResponseV21.getNotification();
     }
 
-    public String waitForRequestRefused( NewNotificationResponse response) {
+    public String waitForRequestRefusedV25(NewNotificationResponse response) {
         log.info("Request status for " + response.getNotificationRequestId());
         long startTime = System.currentTimeMillis();
         PnPollingServiceValidationStatusV25 validationStatusV25 = (PnPollingServiceValidationStatusV25) pollingFactory.getPollingService(PnPollingStrategy.VALIDATION_STATUS_V25);
@@ -524,14 +572,14 @@ public class PnPaB2bUtils {
         return error.toString();
     }
 
-    public void verifyNotification(FullSentNotificationV25 fsn) throws IllegalStateException {
+    public void verifyNotification(FullSentNotificationV26 fsn) throws IllegalStateException {
         verifySha256NotificationV23(fsn);
         getSentNotificationAttachment(fsn);
         verifyLegalFactFormat(fsn.getIun(), Objects.requireNonNull(fsn.getTimeline().get(0).getLegalFactsIds()));
         checkNotificationStatus(fsn.getNotificationStatus());
     }
 
-    private void getSentNotificationAttachment(FullSentNotificationV25 fsn) {
+    private void getSentNotificationAttachment(FullSentNotificationV26 fsn) {
         fsn.getRecipients().stream()
                 .filter(recipient -> recipient.getPayments() != null && !recipient.getPayments().isEmpty())
                 .forEach(recipient -> {
@@ -540,7 +588,7 @@ public class PnPaB2bUtils {
                 });
     }
 
-    private void extractAttachment(FullSentNotificationV25 fsn, NotificationRecipientV23 recipient) {
+    private void extractAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getF24() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), F_24, 0);
             if (resp != null && resp.getRetryAfter() != null && resp.getRetryAfter() > 0) {
@@ -555,7 +603,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void extractAndCheckAttachment(FullSentNotificationV25 fsn, NotificationRecipientV23 recipient) {
+    private void extractAndCheckAttachment(FullSentNotificationV26 fsn, NotificationRecipientV23 recipient) {
         if (Objects.requireNonNull(recipient.getPayments()).get(0).getPagoPa() != null) {
             NotificationAttachmentDownloadMetadataResponse resp = client.getSentNotificationAttachment(fsn.getIun(), fsn.getRecipients().indexOf(recipient), PAGOPA, 0);
             checkAttachment(resp);
@@ -596,7 +644,7 @@ public class PnPaB2bUtils {
         checkNotificationStatusV2(fsn.getNotificationStatus());
     }
 
-    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV25 fsn, String attachment) throws IllegalStateException {
+    public void verifyNotificationAndSha256AllegatiPagamento(FullSentNotificationV26 fsn, String attachment) throws IllegalStateException {
         verifySha256NotificationV23(fsn);
         for (int i = 0; i < fsn.getRecipients().size(); i++) {
             NotificationRecipientV23 recipient = fsn.getRecipients().get(i);
@@ -615,7 +663,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void verifySha256NotificationV23(FullSentNotificationV25 fsn) {
+    private void verifySha256NotificationV23(FullSentNotificationV26 fsn) {
         for (NotificationDocument doc : fsn.getDocuments()) {
             int docIdx = Integer.parseInt(Objects.requireNonNull(doc.getDocIdx()));
             checkSha256Notification(getSentNotificationDocument(fsn.getIun(), docIdx), docIdx);
@@ -630,7 +678,7 @@ public class PnPaB2bUtils {
         }
     }
 
-    private void checkNotificationStatus(NotificationStatus notificationStatus) {
+    private void checkNotificationStatus(NotificationStatusV26 notificationStatus) {
         if (notificationStatus.equals(NotificationStatus.REFUSED)) {
             throw new IllegalStateException(WRONG_STATUS + notificationStatus);
         }
@@ -1071,7 +1119,7 @@ public class PnPaB2bUtils {
         return Base64Utils.encodeToString(hash);
     }
 
-    public FullSentNotificationV25 getNotificationByIun(String iun) {
+    public FullSentNotificationV26 getNotificationByIun(String iun) {
         return client.getSentNotification(iun);
     }
 
