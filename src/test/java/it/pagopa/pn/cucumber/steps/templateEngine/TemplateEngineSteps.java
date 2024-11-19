@@ -30,7 +30,7 @@ public class TemplateEngineSteps {
         this.templateEngineStrategy = templateEngineStrategy;
     }
 
-    @When("scarico il template {string} in lingua {string}")
+    @When("recupero (il template)(l'oggetto) per {string} in lingua {string}")
     public void scaricoIlTemplateInLingua(String templateType, String language) {
         try {
             result = templateEngineStrategy.get(templateType.toUpperCase()).retrieveTemplate(language);

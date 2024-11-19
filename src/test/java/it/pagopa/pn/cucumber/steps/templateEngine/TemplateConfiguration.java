@@ -1,6 +1,5 @@
 package it.pagopa.pn.cucumber.steps.templateEngine;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.*;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,17 @@ public class TemplateConfiguration {
         map.put("AVVISO DI AVVENUTA RICEZIONE RADD", new NotificationAARRADDaltStrategy(templateEngineClient));
         map.put("AVVISO DI CORTESIA EMAIL",new NotificationAARForEMAILStrategy(templateEngineClient));
         map.put("AVVISO DI CORTESIA PEC", new NotificationAARForPECStrategy(templateEngineClient));
-        map.put("OTP DI CONFERMA EMAIL", new EmailbodyStrategy(templateEngineClient));
+        map.put("OTP DI CONFERMA EMAIL", new ConfirmEmailBodyStrategy(templateEngineClient));
         map.put("OTP DI CONFERMA PEC", new ConfirmPecBodyStrategy(templateEngineClient));
         map.put("PEC VALIDA", new ValidPecBodyStrategy(templateEngineClient));
         map.put("PEC NON VALIDA", new PecBodyRejectStrategy(templateEngineClient));
         map.put("AVVISO DI CORTESIA SMS", new NotificationAARForSMSStrategy(templateEngineClient));
         map.put("OTP DI CONFERMA SMS", new ConfirmSmsBodyStrategy(templateEngineClient));
         map.put("AVVISO DI CORTESIA PER L’SMS", new NotificationAARSubjectStrategy(templateEngineClient));
+        map.put("OTP DI CONFERMA EMAIL OBJECT", new ConfirmEmailBodyObjectStrategy(templateEngineClient));
+        map.put("ALL’OTP DI CONFERMA PEC OBJECT", new ConfirmPecBodyObjectStrategy(templateEngineClient));
+        map.put("PEC VALIDA OBJECT", new ValidPecBodyObjectStrategy(templateEngineClient));
+        map.put("PEC NON VALIDA OBJECT", new PecBodyRejectObjectStrategy(templateEngineClient));
         return map;
     }
 }
