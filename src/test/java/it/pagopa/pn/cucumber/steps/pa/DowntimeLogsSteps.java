@@ -211,6 +211,7 @@ public class DowntimeLogsSteps {
                     .stream()
                     .filter(data -> data.getEndDate() != null && data.getEndDate().getDayOfMonth() <= before.getDayOfMonth())
                     .toList();
+            Assertions.assertFalse(validResponse.isEmpty(), "nella data " + before.getMonth().name() + " anno " + before.getYear() + " non è stato trovato nessun disservizio risolto");
             double index = Math.random() * validResponse.size();
             String legalFactId = validResponse.get((int)index).getLegalFactId();
             Assertions.assertNotNull(legalFactId, "non è stato trovato nessun legal fact prodotto prima del giorno " + before.getDayOfMonth() + " " + before.getMonth().name() + " anno " + before.getYear());
