@@ -46,6 +46,7 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class ApiServiceDeskSteps {
+    public static final String IUN_ERRATO = "JRDT-XAPH-JQYW-202312-J-1";
     private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
     private final IPServiceDeskClientImpl ipServiceDeskClient;
@@ -76,6 +77,7 @@ public class ApiServiceDeskSteps {
     private List<PaSummary> listPa = null;
     private HttpStatusCodeException notificationError;
     private SearchNotificationsResponse searchNotificationsResponse;
+    private NotificationRecipientDetailResponse notificationRecipientDetailResponse;
     private SearchNotificationsRequest searchNotificationsRequest;
     private ProfileRequest profileRequest;
     private ProfileResponse profileResponse;
@@ -761,13 +763,16 @@ public class ApiServiceDeskSteps {
     public void comeOperatoreDevoAccedereAiDettagliDiUnaNotificaDiCuiConoscoLIdentificativoIUN(String iun) {
         try {
             profileRequest = new ProfileRequest();
-            if ("NULL".equalsIgnoreCase(iun)) {
+            String iunParameter = iun.equals("NULL") ? null : iun.equals("VUOTO") ? "" : iun;
+            notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iunParameter);
+
+            /*if ("NULL".equalsIgnoreCase(iun)) {
                 notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(null);
             } else if ("VUOTO".equalsIgnoreCase(iun)) {
                 notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN("");
             } else {
                 notificationDetailResponse = ipServiceDeskClient.getNotificationFromIUN(iun);
-            }
+            }*/
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
         }
@@ -1481,5 +1486,64 @@ public class ApiServiceDeskSteps {
             log.error("Await error exception");
             throw exception;
         }
+    }
+
+    @When("come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun {string} associata all' utente {string}")
+    public void comeOperatoreDevoAccedereAiDettagliDeiPagamentiDiUnaNotificaConUnoIun(String iun, String taxId) {
+        String taxIdRequest = createTaxId(taxId);
+        try {
+            notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest));
+        } catch (HttpStatusCodeException e) {
+            notificationError = e;
+        }
+    }
+
+    @Then("controllo che la risposta del servizio contenta una lista {string}")
+    public void controlloCheLaRispostaDelServizioContentaUnaLista(String listType) {
+        Assertions.assertNotNull(notificationRecipientDetailResponse);
+        Assertions.assertNotNull(notificationRecipientDetailResponse.getRecipient());
+        Assertions.assertNotNull(notificationRecipientDetailResponse.getRecipient().getPayments());
+        if (listType.equals("VUOTA")) {
+            Assertions.assertTrue(notificationRecipientDetailResponse.getRecipient().getPayments().isEmpty());
+        } else {
+            Assertions.assertFalse(notificationRecipientDetailResponse.getRecipient().getPayments().isEmpty());
+        }
+    }
+
+    private String createIUN(String iun) {
+        return  switch (iun.toUpperCase()) {
+            case "VUOTO" -> {
+                yield "";
+            }
+            case "INESISTENTE" -> {
+                yield IUN_ERRATO;
+            }
+            case "ASSOCIATO A PAGAMENTO PAGOPA" -> {
+                yield "s";
+            }
+            case "ASSOCIATO A PAGAMENTO F24" -> {
+                yield "c";
+            }
+            case "NOTIFICA SENZA PAGAMENTI" -> {
+                yield "g";
+            }
+            default -> {
+                yield iun;
+            }
+        };
+    }
+
+    private String createTaxId(String user) {
+        return switch (user.toUpperCase()) {
+            case "VUOTO" -> {
+                yield "";
+            }
+            case "ERRATO" -> {
+                yield CF_errato;
+            }
+            default -> {
+                yield setTaxID(user);
+            }
+        };
     }
 }

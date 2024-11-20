@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
-
 @Component
 public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
     //Call Center Evoluto....
@@ -29,7 +28,6 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
     private final PaApi paApi;
     private final ProfileApi profileApi;
     private final String operatorId;
-
 
     public PnServiceDeskClientImpl(RestTemplate restTemplate,
                                    @Value("${pn.delivery.base-url}") String deliveryBasePath ,
@@ -63,7 +61,6 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
 
     public NotificationsUnreachableResponse notification(NotificationRequest notificationRequest) throws RestClientException {
         return notification.numberOfUnreachableNotifications(operatorId, notificationRequest);
-
     }
 
     public OperationsResponse createOperation(CreateOperationRequest createOperationRequest)throws RestClientException {
@@ -76,7 +73,6 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
 
     public SearchResponse searchOperationsFromTaxId(SearchNotificationRequest searchNotificationRequest){
          return operation.searchOperationsFromTaxId(operatorId, searchNotificationRequest);
-
     }
 
     //Integration Cruscotto Assistenza....
@@ -118,5 +114,10 @@ public class PnServiceDeskClientImpl implements IPServiceDeskClientImpl {
 
     public ProfileResponse getProfileFromTaxId(ProfileRequest profileRequest) throws RestClientException {
         return profileApi.getProfileFromTaxId(operatorId, profileRequest);
+    }
+
+    @Override // xPagopaPnUid, da chiedere la verifica
+    public NotificationRecipientDetailResponse getNotificationRecipientDetail(String iun, NotificationRecipientDetailRequest notificationRecipientDetailRequest) throws RestClientException {
+        return notificationAndMessageApi.getNotificationRecipientDetail(null, iun, notificationRecipientDetailRequest);
     }
 }
