@@ -2200,7 +2200,6 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            case "v25" -> sendNotificationV24();
         }
     }
 
