@@ -1,4 +1,4 @@
-package it.pagopa.pn.cucumber.steps.templateEngine;
+package it.pagopa.pn.cucumber.steps.templateEngine.data;
 
 import lombok.Data;
 

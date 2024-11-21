@@ -1,9 +1,10 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.NotificationAARSubject;
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Pecbody;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.PecDeliveryWorkflowLegalFact;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
-import it.pagopa.pn.cucumber.steps.templateEngine.TemplateEngineResult;
+import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
+import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,9 +16,17 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
     }
 
     @Override
-    public TemplateEngineResult retrieveTemplate(String language, boolean body) {
-        NotificationAARSubject subject = new NotificationAARSubject();
+    public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
+        NotificationAARSubject subject = createRequest(body, context);
         String file = templateEngineClient.notificationAARSubject(selectLanguage(language), subject);
         return new TemplateEngineResult(file);
+    }
+
+    private NotificationAARSubject createRequest(boolean body, TemplateRequestContext context) {
+        if (!body)
+            return null;
+
+        return new NotificationAARSubject()
+                .notification(context.getNotification());
     }
 }
