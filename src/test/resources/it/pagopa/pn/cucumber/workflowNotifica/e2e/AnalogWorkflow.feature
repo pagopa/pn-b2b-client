@@ -80,6 +80,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON020 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -153,6 +154,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
       | pollingTime | 30000 |
@@ -291,7 +293,7 @@ Feature: Workflow analogico
       | details                 | NOT_NULL                                                                                                                                                                                                      |
       | details_recIndex        | 0                                                                                                                                                                                                             |
       | details_sentAttemptMade | 0                                                                                                                                                                                                             |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
 
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |

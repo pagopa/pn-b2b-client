@@ -110,6 +110,8 @@ public class AvanzamentoNotificheB2bSteps {
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
 
+    private TimelineElementV24 lastTimelineElement;
+
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
                                         TimingForPolling timingForPolling,
@@ -290,12 +292,12 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
-                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
-                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
-                    Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode(), "DeliveryDetailCode not match. IUN: " + sharedSteps.getSentNotification().getIun());
+                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress(), "PhysicalAddress not match. IUN: " + sharedSteps.getSentNotification().getIun());
+                    Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue(), "ResponseStatus not match. IUN: " + sharedSteps.getSentNotification().getIun());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
-                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()));
+                        Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getSentNotification().getIun());
                     }
                 }
                 break;
@@ -318,7 +320,7 @@ public class AvanzamentoNotificheB2bSteps {
 
                         for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
                             List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
-                            Assertions.assertTrue(documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()));
+                            Assertions.assertTrue(documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()), "IUN: " + sharedSteps.getSentNotification().getIun());
                         }
                     }
 
@@ -331,7 +333,7 @@ public class AvanzamentoNotificheB2bSteps {
             case "ANALOG_SUCCESS_WORKFLOW":
             case "PREPARE_SIMPLE_REGISTERED_LETTER":
                 if (detailsFromTest != null) {
-                    Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                    Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                 }
                 break;
             case "SEND_SIMPLE_REGISTERED_LETTER":
@@ -879,8 +881,8 @@ public class AvanzamentoNotificheB2bSteps {
 
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV24.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV24.getResult());
-            Assertions.assertNotNull(pnPollingResponseV24.getTimelineElement());
+            Assertions.assertTrue(pnPollingResponseV24.getResult(), "Polling failed. IUN: " + sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(pnPollingResponseV24.getTimelineElement(), "L'elemento di timeline non è stato trovato. IUN: " + sharedSteps.getSentNotification().getIun());
             sharedSteps.setSentNotification(pnPollingResponseV24.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV24.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
@@ -2552,6 +2554,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
 
             TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
+            this.lastTimelineElement = timelineElement;
 
             log.info("TIMELINE_ELEMENT: " + timelineElement);
             Assertions.assertNotNull(timelineElement);
@@ -2594,6 +2597,32 @@ public class AvanzamentoNotificheB2bSteps {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
     }
+
+    // TODO scrivere javadoc
+    @And("abbia anche un valore per il campo {string} compatibile con l'espressione regolare {string}")
+    public void vieneVerificatoCheElementoTimelineConEventoAbbiaUnValorePerIlCampoCompatibileConRegex(String fieldPath, String regex) {
+        try {
+            Assertions.assertNotNull(lastTimelineElement,
+                "There is no time element to analyze. Remember that this proposition is made "
+                    + "to be called after another that get a timeline event, such as "
+                    + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
+
+            String sanitizedFieldPath = fieldPath.replace("_", ".");
+            String fieldValue = BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);
+            Assertions.assertNotNull(fieldValue,
+                "Field %s has NULL value in timeline element".formatted(fieldPath));
+
+            Assertions.assertTrue(fieldValue.matches(regex),
+                "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue,
+                    regex));
+        } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            sharedSteps.throwAssertFailerWithIUN(
+                new AssertionFailedError("Error accessing field %s".formatted(fieldPath)));
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
 
     @Then("viene verificato che la data della timeline REFINEMENT sia ricezione della raccomandata + 10gg")
     public void verificationDateScheduleRefinementWithRefinementPlus10Days() {
