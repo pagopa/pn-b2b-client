@@ -38,8 +38,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     private final StreamsApi streamsApi;
     private final it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.EventsApi eventsApiV23;
     private final it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.StreamsApi streamsApiV23;
-    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.EventsApi eventsApiV24;
-    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.StreamsApi streamsApiV24;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.EventsApi eventsApiV25;
+    private final it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.StreamsApi streamsApiV25;
     private final String apiKeyMvp1;
     private final String apiKeyMvp2;
     private final String apiKeyGa;
@@ -70,8 +70,8 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.streamsApi = new StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.eventsApiV23 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.EventsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
         this.streamsApiV23 = new it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.api_v2_3.StreamsApi(newApiClient(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop,enableInterop));
-        this.eventsApiV24 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.EventsApi(newApiClientV24(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
-        this.streamsApiV24 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.StreamsApi(newApiClientV24(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.eventsApiV25 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.EventsApi(newApiClientV25(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
+        this.streamsApiV25 = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.api.StreamsApi(newApiClientV25(restTemplate, devBasePath, apiKeyMvp1, bearerTokenInterop, enableInterop));
         this.apiKeySetted = ApiKeyType.MVP_1;
     }
 
@@ -100,7 +100,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         return newApiClient;
     }
 
-    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClientV24(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
+    private static it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClientV25(RestTemplate restTemplate, String basePath, String apikey, String bearerToken, String enableInterop) {
         it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient newApiClient = new it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.ApiClient(restTemplate);
         newApiClient.setBasePath(basePath);
         newApiClient.addDefaultHeader("x-api-key", apikey);
@@ -193,61 +193,73 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
     @Override
     public StreamMetadataResponseV24 createEventStreamV24(StreamCreationRequestV24 streamCreationRequestV24) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV24.createEventStreamV24(streamCreationRequestV24);
+        return this.streamsApiV25.createEventStreamV24(streamCreationRequestV24);
     }
 
     @Override
     public StreamMetadataResponseV24 disableEventStreamV24(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV24.disableEventStreamV24(streamId);
+        return this.streamsApiV25.disableEventStreamV24(streamId);
     }
 
     @Override
     public List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement> listEventStreamsV24() throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV24.listEventStreamsV24();
+        return this.streamsApiV25.listEventStreamsV24();
     }
 
     @Override
     public void deleteEventStreamV24(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        this.streamsApiV24.removeEventStreamV24(streamId);
+        this.streamsApiV25.removeEventStreamV24(streamId);
     }
 
     @Override
     public StreamMetadataResponseV24 retrieveEventStreamV24(UUID streamId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV24.retrieveEventStreamV24(streamId);
+        return this.streamsApiV25.retrieveEventStreamV24(streamId);
     }
 
     @Override
     public StreamMetadataResponseV24 updateEventStreamV24(UUID streamId, StreamRequestV24 streamRequestV24) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.streamsApiV24.updateEventStreamV24(streamId, streamRequestV24);
+        return this.streamsApiV25.updateEventStreamV24(streamId, streamRequestV24);
     }
 
     @Override
     public List<ProgressResponseElementV24> consumeEventStreamV24(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV24.consumeEventStreamV24(streamId, lastEventId);
+        return this.eventsApiV25.consumeEventStreamV24(streamId, lastEventId);
     }
 
     @Override
     public ResponseEntity<List<ProgressResponseElementV24>> consumeEventStreamHttpV24(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV24.consumeEventStreamV24WithHttpInfo(streamId, lastEventId);
+        return this.eventsApiV25.consumeEventStreamV24WithHttpInfo(streamId, lastEventId);
+    }
+
+    @Override
+    public StreamMetadataResponseV25 retrieveEventStreamV25(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        return this.streamsApiV25.retrieveEventStreamV25(streamId);
     }
 
     @Override
     public List<ProgressResponseElementV25> consumeEventStreamV25(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV24.consumeEventStreamV25(streamId, lastEventId);
+        return this.eventsApiV25.consumeEventStreamV25(streamId, lastEventId);
     }
 
     @Override
     public ResponseEntity<List<ProgressResponseElementV25>> consumeEventStreamHttpV25(UUID streamId, String lastEventId) throws RestClientException {
         refreshAndSetTokenInteropClient();
-        return this.eventsApiV24.consumeEventStreamV25WithHttpInfo(streamId, lastEventId);
+        return this.eventsApiV25.consumeEventStreamV25WithHttpInfo(streamId, lastEventId);
+    }
+
+    @Override
+    public void deleteEventStreamV25(UUID streamId) throws RestClientException {
+        refreshAndSetTokenInteropClient();
+        this.streamsApiV25.removeEventStreamV25(streamId);
     }
 
     @Override
@@ -289,7 +301,7 @@ public class PnWebhookB2bExternalClientImpl implements IPnWebhookB2bClient {
         this.streamsApi.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
         this.eventsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
         this.streamsApiV23.setApiClient(newApiClient(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.eventsApiV24.setApiClient(newApiClientV24(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
-        this.streamsApiV24.setApiClient(newApiClientV24(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.eventsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
+        this.streamsApiV25.setApiClient(newApiClientV25(restTemplate, devBasePath, apiKey, bearerTokenInterop, enableInterop));
     }
 }
