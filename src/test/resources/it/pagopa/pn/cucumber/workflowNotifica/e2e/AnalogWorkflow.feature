@@ -106,7 +106,7 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
 
-  @e2e @con020 @con020OldTestFailed
+  @e2e @con020 @con020success
   Scenario: [E2E-WF-ANALOG-3] Invio notifica con percorso analogico 890. Successo al secondo tentativo invio 890.
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -119,23 +119,22 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-Retry_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-
       | loadTimeline            | true                                                                                                                                                                                                 |
       | details                 | NOT_NULL                                                                                                                                                                                             |
       | details_recIndex        | 0                                                                                                                                                                                                    |
       | details_sentAttemptMade | 0                                                                                                                                                                                                    |
       | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-
     And viene verificato che il numero di elementi di timeline "SEND_ANALOG_PROGRESS" sia di 2
       | details | NOT_NULL |
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | CON080 |
-    #And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
-    #  | details | NOT_NULL |
-    #  | details_recIndex | 0 |
-    #  | details_sentAttemptMade | 0 |
-    #  | details_deliveryDetailCode | CON020 |
+    And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
+      | details | NOT_NULL |
+      | details_recIndex | 0 |
+      | details_sentAttemptMade | 0 |
+      | details_deliveryDetailCode | CON020 |
+    And abbia anche un valore per il campo "details_attachments[0]_url" compatibile con l'espressione regolare ".+PN_PRINTED.+\.pdf"
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -154,7 +153,8 @@ Feature: Workflow analogico
       | details_recIndex | 0 |
       | details_sentAttemptMade | 0 |
       | details_deliveryDetailCode | RECAG001C |
-      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_physicalAddress | {"address": "VIA@OK-RETRY_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus | OK |
     And viene verificato che l'elemento di timeline "REFINEMENT" esista
       | loadTimeline | true |
       | pollingTime | 30000 |
@@ -288,13 +288,11 @@ Feature: Workflow analogico
       | physicalAddress_address | Via@OK-Giacenza-lte10_890 |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then viene verificato che l'elemento di timeline "ANALOG_SUCCESS_WORKFLOW" esista
-
       | loadTimeline            | true                                                                                                                                                                                                          |
       | details                 | NOT_NULL                                                                                                                                                                                                      |
       | details_recIndex        | 0                                                                                                                                                                                                             |
       | details_sentAttemptMade | 0                                                                                                                                                                                                             |
-      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "COSENZA", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
-
+      | details_physicalAddress | {"address": "VIA@OK-GIACENZA-LTE10_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

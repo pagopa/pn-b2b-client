@@ -279,7 +279,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG013@retry.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG001A.5s-RECAG001B[DOC:23L].5s-RECAG001C"
 
 
-  @workflowAnalogico @con020 @con020OldTestSuccessful
+  @workflowAnalogico @con020 @con020success
   Scenario: [B2B_TIMELINE_ANALOG_890_14] Attesa elemento di timeline ANALOG_SUCCESS_WORKFLOW_FAIL-DiscoveryIrreperibile_890_scenario positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -326,6 +326,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG003F |
       | details_sentAttemptMade | 0 |
       | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILE_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus | KO |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |
@@ -348,6 +350,9 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG003F |
       | details_sentAttemptMade | 1 |
       | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "via@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F", "municipality": "Milano", "municipalityDetails": null, "at": null, "addressDetails": null, "province": "MI", "zip": "20121", "foreignState": "Italia"} |
+      | details_responseStatus | KO |
+    # TODO 21/11/2024 questo è il physicalAddress restituito dalla pittaforma; verificare che sia effettivamente il risultato atteso
     #"@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[DISCOVERY;FAILCAUSE:M03].5s-RECAG003E[DOC:Plico;DOC:Indagine].5s-RECAG003F@discovered.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG003D[FAILCAUSE:M03].5s-RECAG003E[DOC:Plico].5s-RECAG003F"
 
   @workflowAnalogico
@@ -400,7 +405,7 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_sentAttemptMade | 0 |
     # "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG008A.5s-RECAG008B[DOC:ARCAD;DOC:23L].5s-RECAG012.5s-RECAG008C"
 
-  @workflowAnalogico @uatEnvCondition @con020 @con020OldTestSuccessful
+  @workflowAnalogico @uatEnvCondition @con020 @con020success
   # 20/11/2024: al momento pare soffra del noto bug Indagine + Plico del consonlidatore
   Scenario: [B2B_TIMELINE_ANALOG_890_17]  PA mittente: invio notifica analogica FAIL-DiscoveryIrreperibileBadCAP_890 - PN-10146
     Given viene generata una nuova notifica
@@ -445,6 +450,8 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
       | details_deliveryDetailCode | RECAG003F |
       | details_sentAttemptMade | 0 |
       | details_deliveryFailureCause | M03 |
+      | details_physicalAddress | {"address": "VIA@FAIL-DISCOVERYIRREPERIBILEBADCAP_890", "municipality": "COSENZA", "municipalityDetails": "", "at": "Presso", "addressDetails": "SCALA B", "province": "CS", "zip": "87100", "foreignState": "ITALIA"} |
+      | details_responseStatus | KO |
     And viene verificato che l'elemento di timeline "SEND_ANALOG_PROGRESS" esista
       | details | NOT_NULL |
       | details_recIndex | 0 |

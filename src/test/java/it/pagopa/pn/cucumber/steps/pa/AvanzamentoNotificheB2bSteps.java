@@ -2,6 +2,7 @@ package it.pagopa.pn.cucumber.steps.pa;
 
 import static java.time.OffsetDateTime.now;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 import io.cucumber.datatable.DataTable;
@@ -9,6 +10,7 @@ import io.cucumber.java.Transpose;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DelegateInfo;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
@@ -320,7 +322,13 @@ public class AvanzamentoNotificheB2bSteps {
 
                         for (int i = 0; i < detailsFromNotification.getAttachments().size(); i++) {
                             List<String> documentTypes = Arrays.asList(detailsFromTest.getAttachments().get(i).getDocumentType().split(" "));
-                            Assertions.assertTrue(documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()), "IUN: " + sharedSteps.getSentNotification().getIun());
+                            Assertions.assertTrue(
+                                documentTypes.contains(detailsFromNotification.getAttachments().get(i).getDocumentType()),
+                                "DocumentType not match. Actual document types: %s, Expected document types: %s. IUN: %s".formatted(
+                                    detailsFromNotification.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                    detailsFromTest.getAttachments().stream().map(AttachmentDetails::getDocumentType).toList(),
+                                    sharedSteps.getSentNotification().getIun()
+                                ));
                         }
                     }
 
@@ -2552,15 +2560,37 @@ public class AvanzamentoNotificheB2bSteps {
             loadTimeline(timelineEventCategory, true, dataFromTest);
         }
         try {
+            List<TimelineElementV24> timelineElements = sharedSteps.getTimelineElementsByEventId(timelineEventCategory, dataFromTest);
+            assertThat(timelineElements)
+                .withFailMessage("Not found a time element '%s'. IUN: %s".formatted(timelineEventCategory, sharedSteps.getSentNotification().getIun()))
+                .isNotEmpty();
 
-            TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataFromTest);
-            this.lastTimelineElement = timelineElement;
-
-            log.info("TIMELINE_ELEMENT: " + timelineElement);
-            Assertions.assertNotNull(timelineElement);
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
-                checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
+                boolean atLeastOneSuccessful = false;
+                AssertionFailedError assertionFailedError = null;
+                for(TimelineElementV24 timelineElement : timelineElements) {
+                    try {
+
+                        this.lastTimelineElement = timelineElement;
+                        log.info("TIMELINE_ELEMENT: " + timelineElement);
+                        checkTimelineElementEquality(timelineEventCategory, timelineElement, dataFromTest);
+
+                        // se si arriva a questo punto, allora l'ultimo check ha avuto successo e non è necessario continuare
+                        atLeastOneSuccessful = true;
+                        break;
+                    } catch (AssertionFailedError e) {
+                        // se si arriva a questo punto allora l'ultimo check ha fallito e ci si prepara al prossimo
+                        assertionFailedError = e;
+                    }
+                }
+
+                // se nessun confronto ha avuto successo allora di certo sarà stata lanciata un'eccezione
+                if(!atLeastOneSuccessful) {
+                    // si rilancia l'ultima eccezione catturata
+                    throw assertionFailedError;
+                }
             }
+
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
