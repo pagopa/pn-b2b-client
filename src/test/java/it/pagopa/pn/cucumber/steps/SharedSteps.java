@@ -58,6 +58,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClient
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
@@ -137,7 +139,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private NewNotificationRequestV23 notificationRequest;
+    private NewNotificationRequestV24 notificationRequest;
 
     @Setter
     @Getter
@@ -172,7 +174,7 @@ public class SharedSteps {
 
     @Getter
     @Setter
-    private TimelineElementV24 timelineElement;
+    private TimelineElementV25 timelineElement;
 
     @Getter
     @Setter
@@ -250,18 +252,21 @@ public class SharedSteps {
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
+    private NewNotificationResponse newNotificationResponseV24;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
+    private NewNotificationRequestV24 notificationRequestV24;
     @Getter
     @Setter
-    private FullSentNotificationV24 notificationResponseComplete;
+    private FullSentNotificationV25 notificationResponseComplete;
     @Getter
     @Setter
     private FullSentNotificationV23 notificationResponseCompleteV23;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
+    private FullSentNotificationV25 notificationResponseCompleteV25;
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
@@ -369,7 +374,7 @@ public class SharedSteps {
     }
 
     @Given("viene generata una nuova notifica")
-    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV23 notificationRequest) {
+    public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
@@ -415,13 +420,13 @@ public class SharedSteps {
      */
     @Given("vengono inviate {int} notifiche per l'utente Signor casuale con il {string} e si aspetta fino allo stato COMPLETELY_UNREACHABLE")
     public void vengonoInviateNotifichePerLUtenteSignorCasualeConIlESiAspettaFinoAlloStatoCOMPLETELY_UNREACHABLE(int numberOfNotification, String pa) {
-        List<NewNotificationRequestV23> notificationRequests = new LinkedList<>();
+        List<NewNotificationRequestV24> notificationRequests = new LinkedList<>();
         String generatedFiscalCode = generateCF(System.currentTimeMillis());
         for (int i = 0; i < numberOfNotification; i++) {
-            NewNotificationRequestV23 newNotificationRequestV23 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
+            NewNotificationRequestV24 newNotificationRequestV23 = dataTableTypeUtil.convertNotificationRequest(new HashMap<>())
                     .subject("notifica analogica con cucumber")
                     .senderDenomination("Comune di palermo")
-                    .physicalCommunicationType(NewNotificationRequestV23.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
+                    .physicalCommunicationType(NewNotificationRequestV24.PhysicalCommunicationTypeEnum.AR_REGISTERED_LETTER);
 
             HashMap<String, String> notificationRecipientMap = new HashMap<>();
             notificationRecipientMap.put("digitalDomicile", "NULL");
@@ -443,18 +448,18 @@ public class SharedSteps {
         }
 
         List<Thread> threadList = new LinkedList<>();
-        ConcurrentLinkedQueue<FullSentNotificationV24> sentNotifications = new ConcurrentLinkedQueue<>();
+        ConcurrentLinkedQueue<FullSentNotificationV25> sentNotifications = new ConcurrentLinkedQueue<>();
 
-        for (NewNotificationRequestV23 notification : notificationRequests) {
+        for (NewNotificationRequestV24 notification : notificationRequests) {
             Thread t = new Thread(() -> {
                 //INVIO NOTIFICA ED ATTESA ACCEPTED
                 NewNotificationResponse internalNotificationResponse = Assertions.assertDoesNotThrow(() -> b2bUtils.uploadNotification(notification));
                 threadWait(getWait());
-                FullSentNotificationV24 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
+                FullSentNotificationV25 fullSentNotificationV23 = b2bUtils.waitForRequestAcceptation(internalNotificationResponse);
                 Assertions.assertNotNull(fullSentNotificationV23);
 
                 //ATTESA ELEMENTO DI TIMELINE
-                TimelineElementV24 timelineElement = null;
+                TimelineElementV25 timelineElement = null;
                 for (int i = 0; i < 33; i++) {
                     threadWait(getWorkFlowWait());
                     fullSentNotificationV23 = b2bClient.getSentNotification(fullSentNotificationV23.getIun());
@@ -492,7 +497,7 @@ public class SharedSteps {
         Assertions.assertEquals(sentNotifications.size(), numberOfNotification);
         log.debug("NOTIFICATION LIST: {}", sentNotifications);
         log.debug("IUN: ");
-        for (FullSentNotificationV24 fullSentNotification : sentNotifications) {
+        for (FullSentNotificationV25 fullSentNotification : sentNotifications) {
             log.info(fullSentNotification.getIun());
         }
         log.debug("End IUN list");
@@ -554,7 +559,7 @@ public class SharedSteps {
                 data);
     }
 
-    private void addRecipientToNotification(NewNotificationRequestV23 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
+    private void addRecipientToNotification(NewNotificationRequestV24 notificationRequest, NotificationRecipientV23 notificationRecipient, Map<String, String> recipientData) {
 
         if (notificationRequest.getNotificationFeePolicy() == NotificationFeePolicy.DELIVERY_MODE
                 && NotificationValue.getValue(recipientData, PAYMENT.key) != null) {
@@ -1698,6 +1703,7 @@ public class SharedSteps {
             case "v2" -> this.notificationRequestV2.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v21" -> this.notificationRequestV21.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
             case "v23" -> this.notificationRequest.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
+            case "v24" -> this.notificationRequestV24.setSenderTaxId(getSenderTaxIdFromProperties(settedPa));
 
         }
     }
@@ -1758,7 +1764,7 @@ public class SharedSteps {
         }
     }
 
-    public FullSentNotificationV24 getSentNotification() {
+    public FullSentNotificationV25 getSentNotification() {
         return notificationResponseComplete;
     }
 
@@ -1774,7 +1780,11 @@ public class SharedSteps {
         return notificationResponseCompleteV21;
     }
 
-    public void setSentNotification(FullSentNotificationV24 notificationResponseComplete) {
+    public FullSentNotificationV25 getSentNotificationV25() {
+        return notificationResponseCompleteV25;
+    }
+
+    public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
         this.notificationResponseComplete = notificationResponseComplete;
     }
 
@@ -2109,8 +2119,8 @@ public class SharedSteps {
     }
 
     // very similar to getTimelineElementsByEventId, but it returns a list of compatible timeline elements
-    public List<TimelineElementV24> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
-        List<TimelineElementV24> timelineElementList = notificationResponseComplete.getTimeline();
+    public List<TimelineElementV25> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
+        List<TimelineElementV25> timelineElementList = notificationResponseComplete.getTimeline();
         String iun = getIun(timelineEventCategory);
         if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
             // get timeline event id
@@ -2170,7 +2180,9 @@ public class SharedSteps {
             return getSentNotificationV21().getIun();
         } else if (getSentNotification() != null) {
             return getSentNotification().getIun();
-        } else {
+        } else if (getSentNotificationV25() != null) {
+            return getSentNotificationV25().getIun();
+        }else {
             return null;
         }
     }
@@ -2208,6 +2220,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
+            //case "v24" -> sendNotificationV24();
         }
     }
 
