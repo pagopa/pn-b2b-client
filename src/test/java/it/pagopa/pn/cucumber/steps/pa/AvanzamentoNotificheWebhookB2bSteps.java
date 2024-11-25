@@ -967,6 +967,24 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("verifica presenza SERCQ")
+    public void verifySercqPresent() {
+        Assertions.assertTrue(sharedSteps.getProgressResponseElementsV23().stream()
+                .map(ProgressResponseElementV23::getElement)
+                .filter(timelineElementV23 -> timelineElementV23.getElementId().contains("SEND_DIGITAL_FEEDBACK"))
+                .map(TimelineElementV23::getDetails)
+                .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getResponseStatus().toString()) && "SERCQ".equals(elementDetailsV23.getDigitalAddress().getType())
+        ));
+    }
+
+    @Then("verifica la non presenza di SERCQ")
+    public void verifySercqIsNotPresent() {
+        Assertions.assertTrue(sharedSteps.getProgressResponseElements().stream()
+                .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
+                .allMatch(progressResponseElement -> "PEC".equals(progressResponseElement.getChannel())
+        ));
+    }
+
     @Then("verifica non presenza di eventi nello stream del {string}")
     public void readStreamTimelineElementNotPresent(String pa) {
         verifyNotEventInStream(pa, V10);

@@ -10,11 +10,14 @@ import it.pagopa.pn.client.b2b.pa.service.IPnDowntimeLogsClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
-import java.io.ByteArrayInputStream;
-import java.time.OffsetDateTime;
-import java.util.Collections;
-import java.util.List;
+import org.springframework.web.client.RestClientResponseException;
 
+import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 
 
 @Slf4j
@@ -26,7 +29,7 @@ public class DowntimeLogsSteps {
     private PnDowntimeEntry pnDowntimeEntry;
     private String sha256;
     private LegalFactDownloadMetadataResponse legalFact;
-
+    private RestClientResponseException exception;
 
     @Autowired
     public DowntimeLogsSteps(IPnDowntimeLogsClient downtimeLogsClient, PnPaB2bUtils b2bUtils, LegalFactContentVerifySteps legalFactContentVerifySteps) {
@@ -54,7 +57,6 @@ public class DowntimeLogsSteps {
         this.pnDowntimeHistoryResponse = downtimeLogsClient.statusHistory(OffsetDateTime.now().minusDays(time), OffsetDateTime.now(),
                 pnFunctionalities, "0", "50");
     }
-
 
     @When("viene individuato se presente l'evento più recente")
     public void vieneIndividuatoSePresenteLEventoPiùRecente() {
@@ -100,6 +102,140 @@ public class DowntimeLogsSteps {
             byte[] content = Assertions.assertDoesNotThrow(() -> b2bUtils.downloadFile(legalFact.getUrl()));
             legalFactContentVerifySteps.setLegalFactUrl(legalFact.getUrl());
             legalFactContentVerifySteps.checkLegalFactType(content, legalFactType);
+        }
+    }
+
+    @Given("si chiama l'api di recupero elenco disservizi nell'anno e mese corrente")
+    public void siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente() {
+        try {
+            LocalDate now = LocalDate.now();
+            pnDowntimeHistoryResponse = downtimeLogsClient.getResolved(now.getYear(), now.getMonthValue());
+        } catch (RestClientResponseException e) {
+            exception = e;
+        }
+    }
+
+    @Given("si chiama l'api di recupero elenco disservizi nell'anno {int} e mese {int}")
+    public void siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(Integer year, Integer month) {
+        try {
+            pnDowntimeHistoryResponse = downtimeLogsClient.getResolved(year, month);
+        } catch (RestClientResponseException e) {
+            exception = e;
+        }
+    }
+
+    @Given("si chiama l'api di recupero elenco disservizi con mese e anno vuoti")
+    public void siChiamaLApiDiRecuperoElencoDisserviziConMeseEAnnoVuoti() {
+        siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(null, null);
+    }
+
+    //check fileAvailable solo quello del giorno corrente
+    @Then("viene restituito l'elenco dei disservizi del mese {int} dell'anno {int}")
+    public void vieneRestituitoLElencoDeiDisserviziDelMeseMeseDellAnno(Integer month, Integer year) {
+        Assertions.assertNotNull(pnDowntimeHistoryResponse);
+        Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+        pnDowntimeHistoryResponse.getResult()
+                .forEach(data -> checkDataValue(year, month, data));
+    }
+
+    private void checkDataValue(Integer year, Integer month, PnDowntimeEntry data) {
+        OffsetDateTime endDate = data.getEndDate();
+        Assertions.assertNotNull(endDate);
+        Assertions.assertEquals(month, endDate.getMonthValue());
+        Assertions.assertEquals(year, endDate.getYear());
+        checkFileAvailableTimestamp(data);
+    }
+
+    private void checkFileAvailableTimestamp(PnDowntimeEntry data) {
+        LocalDate now = LocalDate.now();
+        if (now.getYear() == data.getEndDate().getYear() && now.getMonthValue() == data.getEndDate().getMonth().getValue() && now.getDayOfMonth() == data.getEndDate().getDayOfMonth()) {
+            OffsetDateTime fileAvailableTimestamp = data.getFileAvailableTimestamp();
+            Assertions.assertNotNull(fileAvailableTimestamp);
+        }
+    }
+
+    @Then("viene restituito l'elenco dei disservizi del mese e dell'anno corrente")
+    public void  vieneRestituitoLElencoDeiDisserviziDelMeseCorrente() {
+        LocalDate date = LocalDate.now();
+        vieneRestituitoLElencoDeiDisserviziDelMeseMeseDellAnno(date.getMonthValue(), date.getYear());
+    }
+
+    @Then("si controlla che l'api restituisce un codice di errore {int}")
+    public void siControllaCheLApiRestituisceUnCodiceDiErrore(Integer errorCode) {
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals(errorCode, exception.getRawStatusCode());
+    }
+
+    @Then("viene restituito un elenco di disservizi vuoto")
+    public void vieneRestituitoUnElencoDiDisserviziVuoto() {
+        Assertions.assertNotNull(pnDowntimeHistoryResponse);
+        Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+        Assertions.assertTrue(pnDowntimeHistoryResponse.getResult().isEmpty());
+    }
+
+    @Given("viene chiamata l’API per il download dell'atto opponibile ai terzi con id {string}")
+    public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileAiTerziConId(String idType) {
+        try {
+            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMeseCorrente();
+            Assertions.assertNotNull(pnDowntimeHistoryResponse);
+            Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+            Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            String legalFactId = getLegalFactId(idType);
+            legalFact = downtimeLogsClient.getLegalFact(idType.equals("null") ? null : legalFactId);
+        } catch (RestClientResponseException e) {
+            exception = e;
+        }
+    }
+
+    @Then("viene scaricato l'atto opponibile ai terzi di malfunzionamento e ripristino")
+    public void vieneScaricatoLAttoOpponibileAiTerziDiMalfunzionamentoERipristino() {
+        Assertions.assertNotNull(legalFact);
+        Assertions.assertNotNull(legalFact.getUrl());
+    }
+
+    @Then("la chiamata va con successo e la risposta contiene il campo retryAfter popolato")
+    public void laChiamataVaConSuccessoELaRispostaContieneIlCampoPopolato() {
+        Assertions.assertNotNull(legalFact);
+        Assertions.assertNotNull(legalFact.getRetryAfter());
+    }
+
+    @Given("viene chiamata l’API per il download dell'atto opponibile prodotto piu di 365 giorni precedenti")
+    public void vieneChiamataLAPIPerIlDownloadDellAttoOpponibileProdottoPiuDiGiorniPrecedenti() {
+        try {
+            LocalDate date = LocalDate.now();
+            LocalDate before = date.minusDays(365);
+            siChiamaLApiDiRecuperoElencoDisserviziNellAnnoEMese(before.getYear(), before.getMonthValue());
+            Assertions.assertNotNull(pnDowntimeHistoryResponse.getResult());
+            Assertions.assertFalse(pnDowntimeHistoryResponse.getResult().isEmpty());
+            List<PnDowntimeEntry> validResponse = pnDowntimeHistoryResponse.getResult()
+                    .stream()
+                    .filter(data -> data.getEndDate() != null && data.getEndDate().getDayOfMonth() <= before.getDayOfMonth())
+                    .toList();
+            Assertions.assertFalse(validResponse.isEmpty(), "nella data " + before.getMonth().name() + " anno " + before.getYear() + " non è stato trovato nessun disservizio risolto");
+            double index = Math.random() * validResponse.size();
+            String legalFactId = validResponse.get((int)index).getLegalFactId();
+            Assertions.assertNotNull(legalFactId, "non è stato trovato nessun legal fact prodotto prima del giorno " + before.getDayOfMonth() + " " + before.getMonth().name() + " anno " + before.getYear());
+            legalFact = downtimeLogsClient.getLegalFact(legalFactId);
+        } catch (RestClientResponseException e) {
+            exception = e;
+        }
+    }
+
+    private String getLegalFactId(String type) {
+        switch (type) {
+            case "ERRATO" -> {
+                return "1234567890";
+            }
+            case "null" -> {
+                return null;
+            }
+            case "" -> {
+                return "";
+            }
+            case "CORRETTO" -> {
+                return pnDowntimeHistoryResponse.getResult().get(0).getLegalFactId();
+            }
+            default -> throw new IllegalArgumentException();
         }
     }
 }
