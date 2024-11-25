@@ -864,8 +864,68 @@ Feature: Api Service Cruscotto Assitenza
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "REFINEMENT"
     And viene chiamato service desk e si controlla la presenza dell'elemento "REFINEMENT" nella response
 
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del profilo destinatario che ha effettuato modifiche solo al recapito email
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "diversi" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_2] Recupero del profilo destinatario che non ha effettuato modifiche al recapito email
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
+    And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_3] Recupero del profilo destinatario che non ha effettuato modifiche al recapito legale PEC
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_4] Recupero del profilo destinatario che ha effettuato modifiche al recapito legale PEC
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    And viene inserito un recapito legale "example3@pecSuccess.it"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    And viene inserito un recapito legale "example2@pecSuccess.it"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_5] Recupero del profilo destinatario che ha selezionato il Domicilio Digitale come recapito legale
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
+    #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "uguali" tra di loro
+
+  @evolutiveCruscottoAssistenza @addressBook1
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale
+    Given si predispone addressbook per l'utente "Galileo Galilei"
+    And vengono rimossi eventuali recapiti presenti per l'utente
+    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene verificato che Sercq sia "abilitato" per il comune "default"
+    Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
+    And viene disabilitato il servizio SERCQ SEND per il comune di "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "vuoti" .
+
   @evolutiveCruscottoAssistenza
-  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_1] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente
+  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>"
     Then il servizio risponde con errore "<ERROR>"
     Examples:
@@ -876,7 +936,8 @@ Feature: Api Service Cruscotto Assitenza
     | ERRATO        | CORRETTO    | 400   |
 
   @evolutiveCruscottoAssistenza
-  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_2] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
+  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_8] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
+   #IUN delle notifiche specifiche
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>"
     Then controllo che la risposta del servizio contenta una lista "<LIST_TYPE>"
     Examples:
@@ -885,5 +946,9 @@ Feature: Api Service Cruscotto Assitenza
     | Mario Gherkin | NOTIFICA SENZA PAGAMENTI      | VUOTA      |
     | Mario Gherkin | ASSOCIATO A PAGAMENTO F24     | VUOTA      |
 
-
+  @evolutiveCruscottoAssistenza
+  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_9] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN e un taxId che non corrispondono tra di loro
+    #c'è da capire l errore aspettato
+    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "ASSOCIATO A PAGAMENTO PAGOPA" associata all' utente "Mario Gerkin"
+    Then il servizio risponde con errore "error"
 

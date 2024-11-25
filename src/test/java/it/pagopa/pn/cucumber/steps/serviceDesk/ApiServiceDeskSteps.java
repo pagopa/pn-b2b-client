@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.await;
 
@@ -1387,6 +1388,7 @@ public class ApiServiceDeskSteps {
             case "Mario Cucumber" -> sharedSteps.getMarioCucumberTaxID();
             case "CucumberSpa" -> sharedSteps.getCucumberSpataxId();
             case "GherkinSrl" -> sharedSteps.getGherkinSrltaxId();
+            case "Galileo Galilei" -> sharedSteps.getGalileoGalileiTaxID();
             default -> null;
         };
         return result;
@@ -1546,4 +1548,38 @@ public class ApiServiceDeskSteps {
             }
         };
     }
+
+
+    @Then("controllo che i timestamp di creazione e modifica del recapito {string} {string} siano {string} (tra di loro)(.)")
+    public void controlloCheITimestampDiCreazioneEModificaDelRecapitoDiSianoDiversiTraDiLoro(String addressType, String addressCategory, String verificationType) {
+        Assertions.assertNotNull(profileResponse);
+        Assertions.assertNotNull(profileResponse.getUserAddresses());
+        Assertions.assertFalse(profileResponse.getUserAddresses().isEmpty());
+        List<Address> addressRetrieved = profileResponse.getUserAddresses()
+                .stream()
+                .filter(data -> checkAddressAndChannelType(addressType, addressCategory, data))
+                .toList();
+        Assertions.assertFalse(addressRetrieved.isEmpty());
+        Assertions.assertEquals(1, addressRetrieved.size());
+        Address address = addressRetrieved.get(0);
+
+        if (verificationType.equals("vuoti")) {
+            Assertions.assertNull(address.getCreated());
+            Assertions.assertNull(address.getLastModified());
+        } else {
+            Assertions.assertNotNull(address.getCreated());
+            Assertions.assertNotNull(address.getLastModified());
+            Assertions.assertEquals(verificationType.equals("uguali"), address.getCreated().equals(address.getLastModified()), "i timestamp non sono " + verificationType + " come previsto dallo scenario del test");
+
+        }
+    }
+
+    private boolean checkAddressAndChannelType(String addressType, String addressCategory,  Address data) {
+        if (addressType.equals("cortesia")) {
+            return data.getCourtesyValue() != null && data.getCourtesyChannelType().equals(CourtesyChannelType.fromValue(addressCategory.toUpperCase()));
+        } else if (addressType.equals("legale")) {
+            return data.getLegalValue() != null && data.getLegalChannelType().equals(LegalChannelType.fromValue(addressCategory.toUpperCase()));
+        } else throw new IllegalArgumentException("addressType not valid");
+    }
+
 }
