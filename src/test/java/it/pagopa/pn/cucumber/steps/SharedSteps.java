@@ -22,6 +22,8 @@ import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.RequestNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalApiKeyManager.model.ResponseNewApiKey;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.CourtesyDigitalAddress;
@@ -349,11 +351,6 @@ public class SharedSteps {
         this.notificationRequestV21 = notificationRequestV21;
     }
 
-    @Given("viene generata una nuova notifica V24")
-    public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
-        this.notificationRequestV24 = notificationRequestV24;
-    }
-
     @And("destinatario")
     public void destinatario(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
         addRecipientToNotification(this.notificationRequest, dataTableTypeUtil.convertNotificationRecipient(data), data);
@@ -572,16 +569,6 @@ public class SharedSteps {
     @And("destinatario Mario Gherkin V21 e:")
     public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient) {
         this.notificationRequestV21.addRecipientsItem(
-                updateNotificationRecipient(recipient,
-                        "Mario Gherkin",
-                        marioGherkinTaxID,
-                        null,
-                        null));
-    }
-
-    @And("destinatario Mario Gherkin V24 e:")
-    public void destinatarioMarioGherkinParam(@Transpose NotificationRecipientV23 recipient) {
-        this.notificationRequestV24.addRecipientsItem(
                 updateNotificationRecipient(recipient,
                         "Mario Gherkin",
                         marioGherkinTaxID,
