@@ -352,11 +352,6 @@ public class SharedSteps {
         this.notificationRequestV21 = notificationRequestV21;
     }
 
-    @Given("viene generata una nuova notifica V24")
-    public void vieneGenerataUnaNotificaV25(@Transpose NewNotificationRequestV24 notificationRequestV24) {
-        this.notificationRequestV24 = notificationRequestV24;
-    }
-
     @And("destinatario")
     public void destinatario(Map<String, String> data) { //@Transpose NotificationRecipientV21 recipient
         addRecipientToNotification(this.notificationRequest, dataTableTypeUtil.convertNotificationRecipient(data), data);
@@ -575,16 +570,6 @@ public class SharedSteps {
     @And("destinatario Mario Gherkin V21 e:")
     public void destinatarioMarioGherkinParam(@Transpose it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NotificationRecipientV21 recipient) {
         this.notificationRequestV21.addRecipientsItem(
-                updateNotificationRecipient(recipient,
-                        "Mario Gherkin",
-                        marioGherkinTaxID,
-                        null,
-                        null));
-    }
-
-    @And("destinatario Mario Gherkin V24 e:")
-    public void destinatarioMarioGherkinParam(@Transpose NotificationRecipientV23 recipient) {
-        this.notificationRequestV24.addRecipientsItem(
                 updateNotificationRecipient(recipient,
                         "Mario Gherkin",
                         marioGherkinTaxID,
