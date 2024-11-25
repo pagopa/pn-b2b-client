@@ -32,8 +32,7 @@ public class PecDeliveryWorkflowLegalFactStrategy implements ITemplateEngineStra
                 .deliveries(context.getDeliveries())
                 .iun(context.getIun())
                 .endWorkflowDate(context.getEndWorkflowDate())
-                .endWorkflowStatus(context.getEndWorkflowStatus())
-                .deliveries(context.getDeliveries());
+                .endWorkflowStatus(context.getEndWorkflowStatus());
     }
 
 }

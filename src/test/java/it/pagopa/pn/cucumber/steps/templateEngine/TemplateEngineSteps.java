@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -20,6 +21,7 @@ public class TemplateEngineSteps {
     private static final String BODY_CORRETTO = "CORRETTO";
 
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
+    Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
     private TemplateEngineResult result;
 
@@ -33,23 +35,37 @@ public class TemplateEngineSteps {
 
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")
     public void recuperoIlTemplatePerInLinguaConIlBody(String templateType, String language, String body) {
-        retrieveTemplate(templateType, language, body, new HashMap<>());
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        retrieveTemplate(templateTypeObject, language, body, new HashMap<>());
     }
 
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string}")
     public void recuperoIlTemplatePerInLingua(String templateType, String language) {
-        retrieveTemplate(templateType, language, BODY_CORRETTO, new HashMap<>());
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        retrieveTemplate(templateTypeObject, language, BODY_CORRETTO, new HashMap<>());
     }
 
     @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body:")
     public void recuperoIlTemplateConIValoriNelRequestBody(String templateType, Map<String, String> parameters) {
-        retrieveTemplate(templateType, "italiana", BODY_CORRETTO, parameters);
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, parameters);
     }
 
-    private void retrieveTemplate(String templateType, String language, String body, Map<String, String> parameters) {
+    @When("recupero (il template)(l'oggetto) per {string} con i valori nel request body errati")
+    public void recuperoIlTemplateConIValoriNelRequestBodyErrati(String templateType) {
+        TemplateType templateTypeObject = TemplateType.fromValue(templateType.toUpperCase());
+        templateEngineObjectFields.get(templateTypeObject)
+                .forEach(data -> {
+                    Map<String, String> parameters = new HashMap<>();
+                    parameters.put(data, "null");
+                    retrieveTemplate(templateTypeObject, "italiana", BODY_CORRETTO, parameters);
+                });
+    }
+
+    private void retrieveTemplate(TemplateType templateType, String language, String body, Map<String, String> parameters) {
         try {
             TemplateRequestContext context = contextFactory.createContext(parameters);
-            result = templateEngineStrategy.get(TemplateType.fromValue(templateType.toUpperCase())).retrieveTemplate(language, body.equals(BODY_CORRETTO), context);
+            result = templateEngineStrategy.get(templateType).retrieveTemplate(language, body.equals(BODY_CORRETTO), context);
         } catch (HttpClientErrorException e) {
             templateFileException = e;
         }
@@ -66,8 +82,9 @@ public class TemplateEngineSteps {
         }
     }
 
-    @Then("verifico che la chiamata sia andata in {string} error")
+    @Then("verifico che (tutte le chiamate)(la chiamata) (sia)(siano) (andata)(andate) in {string} error(.)( e che nessuna abbia ricevuto una risposta)")
     public void verificoCheLaChiamataSiaAndataInError(String errorCode) {
+        Assertions.assertNull(result);
         Assertions.assertNotNull(templateFileException);
         Assertions.assertEquals(errorCode, String.valueOf(templateFileException.getRawStatusCode()));
     }

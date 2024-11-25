@@ -23,9 +23,8 @@ Feature: Template engine
 
   @templateEngine #106 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario: [TEMPLATE-ENGINE_2_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - body errato
-    When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body:
-    | notification_subject | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #24 25 26 27 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -50,9 +49,8 @@ Feature: Template engine
 
   @templateEngine #107 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario: [TEMPLATE-ENGINE_4_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body errato
-    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body:
-      | delivery_ok | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -77,9 +75,8 @@ Feature: Template engine
 
   @templateEngine #108 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario: [TEMPLATE-ENGINE_6_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - body errato
-    When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" con i valori nel request body:
-      | context_when | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "attestazione opponibile a terzi di avvenuto accesso" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #34 35 36 37 /templates-engine-private/v1/templates/legal-fact-malfunction
   Scenario Outline: [TEMPLATE-ENGINE_7] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
