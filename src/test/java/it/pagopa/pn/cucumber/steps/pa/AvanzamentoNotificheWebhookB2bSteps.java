@@ -22,12 +22,23 @@ import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceWebhookV23;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebhookB2bClient;
+import it.pagopa.pn.client.b2b.pa.service.impl.PnWebhookB2bExternalClientImpl;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamCreationRequest;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.StreamMetadataResponse;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.TimelineElementCategoryV20;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.*;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.NotificationStatus;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.ProgressResponseElementV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamCreationRequestV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamListElement;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamMetadataResponseV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.StreamRequestV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementCategoryV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23;
+import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementV23;
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import it.pagopa.pn.cucumber.utils.GroupPosition;
 import lombok.Data;
@@ -93,7 +104,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
 
     @Autowired
-    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, SharedSteps sharedSteps,
+    public AvanzamentoNotificheWebhookB2bSteps(IPnWebhookB2bClient webhookB2bClient, IPnWebhookB2bClient webhookClientForClean, SharedSteps sharedSteps,
                                                TimingForPolling timingForPolling, PnPollingFactory pollingFactory) {
         this.sharedSteps = sharedSteps;
         this.webhookB2bClient = webhookB2bClient;
@@ -102,7 +113,7 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         this.b2bClient = sharedSteps.getB2bClient();
         this.pollingFactory = pollingFactory;
         webhookTestLaunch = true;
-        AvanzamentoNotificheWebhookB2bSteps.webhookClientForClean = webhookB2bClient;
+        this.webhookClientForClean = webhookClientForClean;
     }
 
     //@AfterAll -> problema con esecuzione concorrente
@@ -206,8 +217,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
 
         //DELETE V2.4
-        List<StreamListElement> streamListElementsV24 = webhookClientForClean.listEventStreamsV24();
-        for (StreamListElement elem : streamListElementsV24) {
+        List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement> streamListElementsV24 = webhookClientForClean.listEventStreamsV24();
+        for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement elem : streamListElementsV24) {
             try {
                 webhookClientForClean.deleteEventStreamV24(elem.getStreamId());
             } catch (HttpStatusCodeException statusCodeException) {
@@ -956,6 +967,24 @@ public class AvanzamentoNotificheWebhookB2bSteps {
         }
     }
 
+    @Then("verifica presenza SERCQ")
+    public void verifySercqPresent() {
+        Assertions.assertTrue(sharedSteps.getProgressResponseElementsV23().stream()
+                .map(ProgressResponseElementV23::getElement)
+                .filter(timelineElementV23 -> timelineElementV23.getElementId().contains("SEND_DIGITAL_FEEDBACK"))
+                .map(TimelineElementV23::getDetails)
+                .allMatch(elementDetailsV23 -> "OK".equals(elementDetailsV23.getResponseStatus().toString()) && "SERCQ".equals(elementDetailsV23.getDigitalAddress().getType())
+        ));
+    }
+
+    @Then("verifica la non presenza di SERCQ")
+    public void verifySercqIsNotPresent() {
+        Assertions.assertTrue(sharedSteps.getProgressResponseElements().stream()
+                .filter(progressResponseElement -> progressResponseElement.getTimelineEventCategory().getValue().contains("SEND_DIGITAL_FEEDBACK"))
+                .allMatch(progressResponseElement -> "PEC".equals(progressResponseElement.getChannel())
+        ));
+    }
+
     @Then("verifica non presenza di eventi nello stream del {string}")
     public void readStreamTimelineElementNotPresent(String pa) {
         verifyNotEventInStream(pa, V10);
@@ -1339,8 +1368,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 }
                 break;
             case "V24":
-                List<StreamListElement> streamListElementsV24 = webhookB2bClient.listEventStreamsV24();
-                for (StreamListElement elem : streamListElementsV24) {
+                List<it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement> streamListElementsV24 = webhookB2bClient.listEventStreamsV24();
+                for (it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamListElement elem : streamListElementsV24) {
                     System.out.println(elem);
                     deleteStreamWrapper(V24, pa, elem.getStreamId());
                 }
@@ -1461,8 +1490,8 @@ public class AvanzamentoNotificheWebhookB2bSteps {
 
     @And("verifica corrispondenza tra i detail del webhook e quelli della timeline")
     public void verificaCorrispondenzaTraIDetailDelWebhookEQuelliDellaTimeline() throws JsonProcessingException {
-        TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
-        TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
+        it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23 timelineElementDetails = sharedSteps.getTimelineElement().getDetails();//PERCHè NON TENERLO NELLA CLASSE ?!
+        it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2_3.TimelineElementDetailsV23 timelineElementWebhookDetails = sharedSteps.getProgressResponseElementV23().getElement().getDetails();
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         String json = ow.writeValueAsString(timelineElementDetails);
         System.out.println(json);
