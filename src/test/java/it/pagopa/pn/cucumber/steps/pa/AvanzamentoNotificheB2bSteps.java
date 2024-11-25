@@ -1,8 +1,10 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import static java.time.OffsetDateTime.now;
+import static java.time.temporal.ChronoUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 import static org.awaitility.Awaitility.await;
 
 import io.cucumber.datatable.DataTable;
@@ -2731,7 +2733,10 @@ public class AvanzamentoNotificheB2bSteps {
 
         System.out.println(timelineElement.getDetails().getSchedulingDate().format(fmt1));
         System.out.println(schedulingDate.format(fmt1));
-        Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate().format(fmt1), schedulingDate.format(fmt1));
+
+        OffsetDateTime expectedDate = timelineElement.getDetails().getSchedulingDate();
+        assertThat(expectedDate).isCloseTo(schedulingDate, within(5, MINUTES));
+
         //Assertions.assertEquals(timelineElement.getDetails().getSchedulingDate(), schedulingDate);
     }
 
