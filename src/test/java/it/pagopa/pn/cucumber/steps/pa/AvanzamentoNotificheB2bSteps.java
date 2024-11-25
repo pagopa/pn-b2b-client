@@ -14,10 +14,10 @@ import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.AttachmentDetails;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DelegateInfo;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactCategory;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.LegalFactDownloadMetadataResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPriceResponseV23;
@@ -30,7 +30,7 @@ import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
 import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
@@ -40,16 +40,16 @@ import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingPredicate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV1;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV20;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV21;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV24;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceStatusRapidV25;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineExtraRapidV25;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV1;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV20;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV21;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineRapidV25;
 import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV1;
-import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV24;
+import it.pagopa.pn.client.b2b.pa.polling.impl.PnPollingServiceTimelineSlowV25;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnPrivateDeliveryPushExternalClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
@@ -114,7 +114,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Value("${pn.consolidatore.requestId}")
     private String requestIdConsolidator;
 
-    private TimelineElementV24 lastTimelineElement;
+    private TimelineElementV25 lastTimelineElement;
 
     @Autowired
     public AvanzamentoNotificheB2bSteps(SharedSteps sharedSteps,
@@ -2572,7 +2572,7 @@ public class AvanzamentoNotificheB2bSteps {
             if (dataFromTest != null && dataFromTest.getTimelineElement() != null) {
                 boolean atLeastOneSuccessful = false;
                 AssertionFailedError assertionFailedError = null;
-                for(TimelineElementV24 timelineElement : timelineElements) {
+                for(TimelineElementV25 timelineElement : timelineElements) {
                     try {
 
                         this.lastTimelineElement = timelineElement;
@@ -2616,7 +2616,7 @@ public class AvanzamentoNotificheB2bSteps {
         testTimelineElement.details(timelineElementDetails);
         dataTest.setTimelineElement(testTimelineElement);
 
-        TimelineElementV24 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
+        TimelineElementV25 timelineElement = sharedSteps.getTimelineElementByEventId(timelineEventCategory, dataTest);
         try {
             Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
 

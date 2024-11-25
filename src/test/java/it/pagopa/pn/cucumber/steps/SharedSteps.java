@@ -26,21 +26,19 @@ import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV23;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipientV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.ProgressResponseElementV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
@@ -2139,7 +2137,7 @@ public class SharedSteps {
         return timelineElementList.stream().filter(elem -> Objects.requireNonNull(elem.getCategory()).getValue().equals(timelineEventCategory)).toList();
     }
 
-    public TimelineElementV24 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
+    public TimelineElementV25 getTimelineElementByEventId(String timelineEventCategory, DataTest dataFromTest) {
         return getTimelineElementsByEventId(timelineEventCategory, dataFromTest).stream()
             .findAny()
             .orElse(null);
