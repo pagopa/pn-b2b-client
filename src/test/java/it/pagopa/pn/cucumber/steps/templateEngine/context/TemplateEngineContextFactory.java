@@ -31,7 +31,7 @@ public class TemplateEngineContextFactory {
         context.setPhysicalAddressAndDenomination(getParameter(parameters, "context_physicalAddressAndDenomination"));
         context.setWhen(getParameter(parameters, "context_when"));
         context.setDelegate(delegateValue != null ? delegateValue.equals("null") ? null : getDelegate(parameters) : getDelegate(parameters));
-        context.setRecipient(recipientValue != null ? recipientValue.equals("null") ? null : getRecipients(parameters) : getRecipients(parameters));
+        context.setRecipient(recipientValue != null ? recipientValue.equals("null") ? null : getRecipients(parameters, "") : getRecipients(parameters, ""));
         context.setEndDate(getParameter(parameters, "context_endDate"));
         context.setStartDate(getParameter(parameters, "context_startDate"));
         context.setEndWorkflowTime(getParameter(parameters, "context_endWorkflowTime"));
@@ -50,6 +50,7 @@ public class TemplateEngineContextFactory {
         context.setLogoBase64(getParameter(parameters, "context_logoBase64"));
         context.setRecipientType(getParameter(parameters, "context_recipientType"));
         context.setVerificationCode(getParameter(parameters, "context_verificationCode"));
+        context.setRaddPhoneNumber(getParameter(parameters, "context_raddPhoneNumber"));
 
         return context;
     }
@@ -60,16 +61,16 @@ public class TemplateEngineContextFactory {
         return new Notification()
                 .iun(getParameter(parameters, "notification_iun"))
                 .subject(getParameter(parameters, "notification_subject"))
-                .recipients(recipientsValue != null ? recipientsValue.equals("null") ? null : List.of(getRecipients(parameters)) : List.of(getRecipients(parameters)))
+                .recipients(recipientsValue != null ? recipientsValue.equals("null") ? null : List.of(getRecipients(parameters, "notification_")) : List.of(getRecipients(parameters, "notification_")))
                 .sender(senderValue != null ? senderValue.equals("null") ? null : getNotificationSender(parameters) : getNotificationSender(parameters));
     }
 
-    private Recipient getRecipients(Map<String, String> parameters) {
+    private Recipient getRecipients(Map<String, String> parameters, String suffix) {
         return new Recipient()
-                .recipientType(getParameter(parameters, "notification_recipient_recipientType"))
-                .denomination(getParameter(parameters, "notification_recipient_denomination"))
-                .taxId(getParameter(parameters, "notification_recipient_taxId"))
-                .physicalAddress(getParameter(parameters, "notification_recipient_physicalAddress"))
+                .recipientType(getParameter(parameters, suffix + "recipient_recipientType"))
+                .denomination(getParameter(parameters, suffix + "recipient_denomination"))
+                .taxId(getParameter(parameters, suffix + "recipient_taxId"))
+                .physicalAddress(getParameter(parameters, suffix + "recipient_physicalAddress"))
                 .digitalDomicile(getDigitalDomicile(parameters));
     }
 

@@ -101,9 +101,8 @@ Feature: Template engine
 
   @templateEngine #109 /templates-engine-private/v1/templates/legal-fact-malfunction
   Scenario: [TEMPLATE-ENGINE_8_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di malfunzionamento e ripristino - body errato
-    When recupero il template per "attestazione opponibile a terzi di malfunzionamento e ripristino" con i valori nel request body:
-      | context_endDate | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "attestazione opponibile a terzi di malfunzionamento e ripristino" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #39 40 41 42 /templates-engine-private/v1/templates/notification-cancelled-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_9] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -128,9 +127,8 @@ Feature: Template engine
 
   @templateEngine #110 /templates-engine-private/v1/templates/notification-cancelled-legal-fact
   Scenario: [TEMPLATE-ENGINE_10_2] Richiamare l’API per il recupero del template della dichiarazione di annullamento notifica - body errato
-    When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body:
-      | notification_subject | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "dichiarazione di annullamento notifica" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #44 45 46 47 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_11] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -155,9 +153,8 @@ Feature: Template engine
 
   @templateEngine #111 /templates-engine-private/v1/templates/analog-delivery-workflow-failure-legal-fact
   Scenario: [TEMPLATE-ENGINE_12_2] Richiamare l’API per il recupero del template del deposito di avvenuta ricezione - body errato
-    When recupero il template per "deposito di avvenuta ricezione" con i valori nel request body:
-      | context_endWorkflowTime | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "deposito di avvenuta ricezione" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #49 50 51 52 /templates-engine-private/v1/templates/notification-aar
   Scenario Outline: [TEMPLATE-ENGINE_13] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -182,9 +179,8 @@ Feature: Template engine
 
   @templateEngine #112 /templates-engine-private/v1/templates/notification-aar
   Scenario: [TEMPLATE-ENGINE_14_2] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione - body errato
-    When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body:
-      | notification | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "avviso di avvenuta ricezione" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #54 55 56 57 /templates-engine-private/v1/templates/notification-aar-radd-alt
   Scenario Outline: [TEMPLATE-ENGINE_15] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -209,9 +205,8 @@ Feature: Template engine
 
   @templateEngine #113 /templates-engine-private/v1/templates/notification-aar-radd-alt
   Scenario: [TEMPLATE-ENGINE_16_2] Richiamare l’API per il recupero del template di avviso di avvenuta ricezione RADD - body errato
-    When recupero il template per "avviso di avvenuta ricezione RADD" con i valori nel request body:
-      | context_raddPhoneNumber | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "avviso di avvenuta ricezione RADD" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #59 60 61 62 templates-engine-private/v1/templates/notification-aar-for-email
   Scenario Outline: [TEMPLATE-ENGINE_17] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -235,10 +230,9 @@ Feature: Template engine
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #114 /templates-engine-private/v1/templates/notificationAARForEMAIL
-  Scenario: [TEMPLATE-ENGINE_18_2] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body error
-    When recupero il template per "avviso di cortesia EMAIL" con i valori nel request body:
-      | context_sendLogoLink | null |
-    Then verifico che la chiamata sia andata in "500" error
+  Scenario: [TEMPLATE-ENGINE_18_2] Richiamare l’API per il recupero del template di avviso di cortesia EMAIL - body errato
+    When recupero il template per "avviso di cortesia EMAIL" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #64 65 66 67 /templates-engine-private/v1/templates/notification-aar-for-pec
   Scenario Outline: [TEMPLATE-ENGINE_19] Richiamare l’API per il recupero del template di avviso di cortesia PEC - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -262,10 +256,9 @@ Feature: Template engine
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #115 /templates-engine-private/v1/templates/notification-aar-for-pec
-  Scenario: [TEMPLATE-ENGINE_20_2] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body error
-    When recupero il template per "avviso di cortesia PEC" con i valori nel request body:
-      | context_recipientType | null |
-    Then verifico che la chiamata sia andata in "500" error
+  Scenario: [TEMPLATE-ENGINE_20_2] Richiamare l’API per il recupero del template di avviso di cortesia PEC - body errato
+    When recupero il template per "avviso di cortesia PEC" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #69 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_21] Richiamare l’API per il recupero del template di OTP di conferma email - lingua italiana
@@ -284,9 +277,8 @@ Feature: Template engine
 
   @templateEngine #116 /templates-engine-private/v1/templates/emailbody
   Scenario: [TEMPLATE-ENGINE_22_2] Richiamare l’API per il recupero del template di OTP di conferma email - body errato
-    When recupero il template per "OTP di conferma email" con i valori nel request body:
-      | context_verificationCode | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "OTP di conferma email" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #71 /templates-engine-private/v1/templates/pecbody
   Scenario: [TEMPLATE-ENGINE_23] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua italiana
@@ -304,10 +296,9 @@ Feature: Template engine
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #117 /templates-engine-private/v1/templates/pecbody
-  Scenario: [TEMPLATE-ENGINE_24_2] Richiamare l’API per il recupero del template di OTP di conferma pec - body error
-    When recupero il template per "OTP di conferma pec" con i valori nel request body:
-      | context_verificationCode | null |
-    Then verifico che la chiamata sia andata in "500" error
+  Scenario: [TEMPLATE-ENGINE_24_2] Richiamare l’API per il recupero del template di OTP di conferma pec - body errato
+    When recupero il template per "OTP di conferma pec" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #73 /templates-engine-private/v1/templates/pecbodyconfirm
   Scenario: [TEMPLATE-ENGINE_25] Richiamare l’API per il recupero del template di PEC valida - lingua italiana
@@ -325,10 +316,9 @@ Feature: Template engine
     Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #118 /templates-engine-private/v1/templates/pecbodyconfirm
-  Scenario: [TEMPLATE-ENGINE_26_2] Richiamare l’API per il recupero del template di PEC valida - body error
-    When recupero il template per "PEC valida" con i valori nel request body:
-      | context_logoBase64 | null |
-    Then verifico che la chiamata sia andata in "500" error
+  Scenario: [TEMPLATE-ENGINE_26_2] Richiamare l’API per il recupero del template di PEC valida - body errato
+    When recupero il template per "PEC valida" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #75 /templates-engine-private/v1/templates/pecbodyreject
   Scenario: [TEMPLATE-ENGINE_27] Richiamare l’API per il recupero del template di PEC non valida - lingua italiana
@@ -357,9 +347,8 @@ Feature: Template engine
 
   @templateEngine #119 /templates-engine-private/v1/templates/notification-aar-for-sms
   Scenario: [TEMPLATE-ENGINE_30_2] Richiamare l’API per il recupero del template di avviso di cortesia SMS - body errato
-    When recupero il template per "avviso di cortesia SMS" con i valori nel request body:
-      | notification_recipient_taxId | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero il template per "avviso di cortesia SMS" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #79 /templates-engine-private/v1/templates/smsbody
   Scenario: [TEMPLATE-ENGINE_31] Richiamare l’API per il recupero del template di OTP di conferma sms - lingua italiana
@@ -383,14 +372,13 @@ Feature: Template engine
 
   @templateEngine #100 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_2] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body vuoto
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body:
-      | notification_recipient | null |
-    Then verifico che la chiamata sia andata in "500" error
+    When recupero l'oggetto per "avviso di cortesia per l’SMS object" in lingua "italiana" con il body "vuoto"
+    Then verifico che la chiamata sia andata in "400" error
 
   @templateEngine #120 /templates-engine-private/v1/templates/notification-aar-subject
   Scenario: [TEMPLATE-ENGINE_33_3] Richiamare l’API per il recupero dell’oggetto relativo all’avviso di cortesia per l’SMS - body errato
-    When recupero l'oggetto per "avviso di cortesia per l’SMS object" in lingua "italiana" con il body "francese"
-    Then verifico che la chiamata sia andata in "400" error
+    When recupero l'oggetto per "avviso di cortesia per l’SMS object" con i valori nel request body errati
+    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #82 #83 #84 #85 /templates-engine-private/v1/templates/emailsubject
   Scenario: [TEMPLATE-ENGINE_34] Richiamare l’API per il recupero dell’oggetto relativo all’OTP di conferma email

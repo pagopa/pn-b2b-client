@@ -39,17 +39,17 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
 
     @Override
     public String emailbody(LanguageEnum xLanguage, Emailbody emailbody) throws RestClientException {
-        return templateApi.emailbody(xLanguage, emailbody);
+        return templateApi.mailVerificationCodeBody(xLanguage, emailbody);
     }
 
     @Override
     public String emailsubject(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.emailsubject(xLanguage);
+        return templateApi.mailVerificationCodeSubject(xLanguage);
     }
 
     @Override
     public File legalFactMalfunction(LanguageEnum xLanguage, LegalFactMalfunction legalFactMalfunction) throws RestClientException {
-        return templateApi.legalFactMalfunction(xLanguage, legalFactMalfunction);
+        return templateApi.malfunctionLegalFact(xLanguage, legalFactMalfunction);
     }
 
     @Override
@@ -104,36 +104,36 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
 
     @Override
     public String pecbody(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException {
-        return templateApi.pecbody(xLanguage, pecbody);
+        return templateApi.pecVerificationCodeBody(xLanguage, pecbody);
     }
 
     @Override
     public String pecbodyconfirm(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException {
-        return templateApi.pecbodyconfirm(xLanguage, pecbody);
+        return templateApi.pecValidationContactsSuccessBody(xLanguage, pecbody);
     }
 
     @Override
     public String pecbodyreject(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecbodyreject(xLanguage);
+        return templateApi.pecValidationContactsRejectBody(xLanguage);
     }
 
     @Override
     public String pecsubject(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecsubject(xLanguage);
+        return templateApi.pecVerificationCodeSubject(xLanguage);
     }
 
     @Override
     public String pecsubjectconfirm(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecsubjectconfirm(xLanguage);
+        return templateApi.pecValidationContactsSuccessSubject(xLanguage);
     }
 
     @Override
     public String pecsubjectreject(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.pecsubjectreject(xLanguage);
+        return templateApi.pecValidationContactsRejectSubject(xLanguage);
     }
 
     @Override
     public String smsbody(LanguageEnum xLanguage) throws RestClientException {
-        return templateApi.smsbody(xLanguage);
+        return templateApi.smsVerificationCodeBody(xLanguage);
     }
 }
