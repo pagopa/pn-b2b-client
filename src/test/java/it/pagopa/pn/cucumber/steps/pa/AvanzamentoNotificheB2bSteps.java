@@ -2605,9 +2605,17 @@ public class AvanzamentoNotificheB2bSteps {
         vieneVerificatoElementoTimeline(timelineEventCategory, null);
     }
 
-    // TODO scrivere javadoc
+    /** Checks that a certain timeline element has a field with a text value compatible with the specified regular expression.
+     * @param timelineEventCategory the category of the timeline element, e.g. "SEND_ANALOG_PROGRESS"
+     * @param eventId the event id of the timeline element, e.g. "CON020"
+     * @param fieldPath the field path of the timeline element object. Each nested field is separated
+     *                  by an underscore, e.g. "details_deliveryDetailCode".
+     *                  If a field is a sequence of element - like a List - the index of the element must be
+     *                  specified with square brackets, e.g. "details_attachments[0]_url"
+     * @param regex the regular expression that the field value must match
+     */
     @And("viene verificato che l'elemento di timeline {string} con evento {string} abbia un valore per il campo {string} compatibile con l'espressione regolare {string}")
-    public void vieneVerificatoCheElementoTimelineConEventoAbbiaUnValorePerIlCampoCompatibileConRegex(String timelineEventCategory, String eventId, String fieldPath, String regex) {
+    public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String timelineEventCategory, String eventId, String fieldPath, String regex) {
         DataTest dataTest = new DataTest();
         TimelineElementV23 testTimelineElement = new TimelineElementV23();
         TimelineElementDetailsV23 timelineElementDetails = new TimelineElementDetailsV23();
@@ -2620,8 +2628,7 @@ public class AvanzamentoNotificheB2bSteps {
         try {
             Assertions.assertNotNull(timelineElement, "Not found the time element (%s,%s)".formatted(timelineEventCategory, eventId));
 
-            String sanitizedFieldPath = fieldPath.replace("_", ".");
-            String fieldValue = BeanUtils.getProperty(timelineElement, sanitizedFieldPath);
+            String fieldValue = getProperty(fieldPath, timelineElement);
             Assertions.assertNotNull(fieldValue, "Field %s has NULL value in timeline element".formatted(fieldPath));
 
             Assertions.assertTrue(fieldValue.matches(regex), "Field %s with value %s does not match regex %s".formatted(fieldPath, fieldValue, regex));
@@ -2632,17 +2639,23 @@ public class AvanzamentoNotificheB2bSteps {
         }
     }
 
-    // TODO scrivere javadoc
+    /** Very similar to {@link #vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String, String, String, String)},
+     * but it uses the last timeline element loaded.
+     * @param fieldPath the field path of the timeline element object. Each nested field is separated
+     *                  by an underscore, e.g. "details_deliveryDetailCode".
+     *                  If a field is a sequence of element - like a List - the index of the element must be
+     *                  specified with square brackets, e.g. "details_attachments[0]_url"
+     * @param regex the regular expression that the field value must match
+     */
     @And("abbia anche un valore per il campo {string} compatibile con l'espressione regolare {string}")
-    public void vieneVerificatoCheElementoTimelineConEventoAbbiaUnValorePerIlCampoCompatibileConRegex(String fieldPath, String regex) {
+    public void vieneVerificatoCheElementoTimelineAbbiaUnValoreDiCampoCompatibileConRegex(String fieldPath, String regex) {
         try {
             Assertions.assertNotNull(lastTimelineElement,
                 "There is no time element to analyze. Remember that this proposition is made "
                     + "to be called after another that get a timeline event, such as "
                     + "'it.pagopa.pn.cucumber.steps.pa.AvanzamentoNotificheB2bSteps.vieneVerificatoElementoTimeline'");
 
-            String sanitizedFieldPath = fieldPath.replace("_", ".");
-            String fieldValue = BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);
+            String fieldValue = getProperty(fieldPath, lastTimelineElement);
             Assertions.assertNotNull(fieldValue,
                 "Field %s has NULL value in timeline element".formatted(fieldPath));
 
@@ -2655,6 +2668,12 @@ public class AvanzamentoNotificheB2bSteps {
         } catch (AssertionFailedError assertionFailedError) {
             sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
         }
+    }
+
+    private String getProperty(String fieldPath, TimelineElementV25 lastTimelineElement)
+        throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        String sanitizedFieldPath = fieldPath.replace("_", ".");
+        return BeanUtils.getProperty(lastTimelineElement, sanitizedFieldPath);
     }
 
 

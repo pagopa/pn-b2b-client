@@ -2116,7 +2116,10 @@ public class SharedSteps {
         };
     }
 
-    // very similar to getTimelineElementsByEventId, but it returns a list of compatible timeline elements
+    /** Get all timeline elements that match the given event category and data from test
+     * @param timelineEventCategory the category of the timeline event
+     * @param dataFromTest the data filters
+     * @return a list of timeline elements that match the given event category and data from test */
     public List<TimelineElementV25> getTimelineElementsByEventId(String timelineEventCategory, DataTest dataFromTest) {
         List<TimelineElementV25> timelineElementList = notificationResponseComplete.getTimeline();
         String iun = getIun(timelineEventCategory);
