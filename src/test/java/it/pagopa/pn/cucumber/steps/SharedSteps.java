@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.cucumber.java.Before;
-import io.cucumber.java.BeforeAll;
-import io.cucumber.java.Scenario;
-import io.cucumber.java.Transpose;
+import io.cucumber.java.*;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -46,7 +43,9 @@ import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -265,6 +264,8 @@ public class SharedSteps {
     private static final String FILE_PDF_INVALID_ERROR = "FILE_PDF_INVALID_ERROR";
     private static final String NOT_VALID_ADDRESS = "NOT_VALID_ADDRESS";
 
+    private String courtesySavedAddress = null;
+    private String legalSavedAddress = null;
 
     public HashMap<String, String> getMapAllegatiNotificaSha256() {
         return mapAllegatiNotificaSha256;
@@ -325,6 +326,11 @@ public class SharedSteps {
     @Before("@integrationTest")
     public void doSomethingAfter() {
         this.groupToSet = false;
+    }
+
+    @Before("@sercq")
+    public void saveAddress() {
+        this.saveUserAddress("Galileo Galilei");
     }
 
     @Given("viene generata una nuova notifica")
@@ -2217,5 +2223,26 @@ public class SharedSteps {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
         addRecipientToNotification(this.notificationRequest,
                 notificationRecipientV23, new HashMap<>());
+    }
+
+
+    public void saveUserAddress(String user) {
+        selectUser(user);
+        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+
+        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
+             courtesySavedAddress = addressesByRecipient.getCourtesy().get(0).getValue();
+        }
+        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
+            legalSavedAddress = addressesByRecipient.getLegal().get(0).getValue();
+        }
+
+    }
+
+    @After("@raddAlt")
+    public void restoreAddress() {
+       // this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address)));
+
     }
 }
