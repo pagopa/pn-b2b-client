@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.await;
 
@@ -1498,14 +1497,18 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    @When("come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun {string} associata all' utente {string}")
-    public void comeOperatoreDevoAccedereAiDettagliDeiPagamentiDiUnaNotificaConUnoIun(String iun, String taxId) {
+    @When("come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun {string} associata all' utente {string} con uid {string}")
+    public void comeOperatoreDevoAccedereAiDettagliDeiPagamentiDiUnaNotificaConUnoIun(String iun, String taxId, String xPagopaPnUid) {
         String taxIdRequest = createTaxId(taxId);
         try {
-            notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest));
+            notificationRecipientDetailResponse = ipServiceDeskClient.getNotificationRecipientDetail(createUid(xPagopaPnUid), createIUN(iun), new NotificationRecipientDetailRequest().taxId(taxIdRequest));
         } catch (HttpStatusCodeException e) {
             notificationError = e;
         }
+    }
+
+    private String createUid(String xPagopaPnUid) {
+        return xPagopaPnUid.equals("vuoto") ? null : "ZenDesk";
     }
 
     @Then("controllo che la risposta del servizio contenta una lista {string}")
@@ -1562,19 +1565,17 @@ public class ApiServiceDeskSteps {
     public void controlloCheITimestampDiCreazioneEModificaDelRecapitoDiSianoDiversiTraDiLoro(String addressType, String addressCategory, String verificationType) {
         Assertions.assertNotNull(profileResponse);
         Assertions.assertNotNull(profileResponse.getUserAddresses());
-        Assertions.assertFalse(profileResponse.getUserAddresses().isEmpty());
         List<Address> addressRetrieved = profileResponse.getUserAddresses()
                 .stream()
                 .filter(data -> checkAddressAndChannelType(addressType, addressCategory, data))
                 .toList();
-        Assertions.assertFalse(addressRetrieved.isEmpty());
-        Assertions.assertEquals(1, addressRetrieved.size());
-        Address address = addressRetrieved.get(0);
 
         if (verificationType.equals("vuoti")) {
-            Assertions.assertNull(address.getCreated());
-            Assertions.assertNull(address.getLastModified());
+            Assertions.assertTrue(addressRetrieved.isEmpty());
         } else {
+            Assertions.assertFalse(addressRetrieved.isEmpty());
+            Assertions.assertEquals(1, addressRetrieved.size());
+            Address address = addressRetrieved.get(0);
             Assertions.assertNotNull(address.getCreated());
             Assertions.assertNotNull(address.getLastModified());
             Assertions.assertEquals(verificationType.equals("uguali"), address.getCreated().equals(address.getLastModified()), "i timestamp non sono " + verificationType + " come previsto dallo scenario del test");

@@ -912,7 +912,7 @@ Feature: Api Service Cruscotto Assitenza
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
-    Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "uguali" tra di loro
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "uguali" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_6] Recupero del profilo destinatario che ha rimosso il Domicilio Digitale come recapito legale
@@ -922,25 +922,26 @@ Feature: Api Service Cruscotto Assitenza
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     And viene disabilitato il servizio SERCQ SEND per il comune di "default"
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
-    Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "vuoti" .
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
+    Then controllo che i timestamp di creazione e modifica del recapito "legale" "SERCQ" siano "vuoti" .
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente - IUN non associato allo User
-    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>"
+    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "<UID>"
     Then il servizio risponde con errore "<ERROR>"
     Examples:
-    | USER            |  IUN                        | ERROR |
-    | Mario Gherkin   | VUOTO                       | 400   |
-    | Mario Gherkin   | INESISTENTE                 | 404   |
-    |                 | NOTIFICA SENZA PAGAMENTI    | 400   |
-    | ERRATO          | NOTIFICA SENZA PAGAMENTI    | 400   |
-    | Mario Cucumber  | NOTIFICA SENZA PAGAMENTI    | 400   |
+    | USER            |  IUN                        | UID      | ERROR |
+    | Mario Gherkin   | VUOTO                       | corretto | 400   |
+    | Mario Gherkin   | INESISTENTE                 | corretto | 404   |
+    |                 | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | ERRATO          | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | Mario Cucumber  | NOTIFICA SENZA PAGAMENTI    | corretto | 400   |
+    | Mario Gherkin   | NOTIFICA SENZA PAGAMENTI    | vuoto    | 400   |
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_8] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
    #IUN delle notifiche specifiche
-    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>"
+    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>" con uid "corretto"
     Then controllo che la risposta del servizio contenta una lista "<LIST_TYPE>"
     Examples:
     | USER          | IUN                           | LIST_TYPE |
