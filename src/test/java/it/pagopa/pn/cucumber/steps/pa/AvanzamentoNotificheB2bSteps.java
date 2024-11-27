@@ -97,7 +97,7 @@ public class AvanzamentoNotificheB2bSteps {
     @Then("vengono letti gli eventi fino allo stato della notifica {string}")
     public void readingEventUpToTheStatusOfNotification(String status) {
         PnPollingPredicate pnPollingPredicate = new PnPollingPredicate();
-        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV23(
+        pnPollingPredicate.setNotificationStatusHistoryElementPredicateV26(
                 statusHistory -> statusHistory
                         .getStatus()
                         .getValue().equals(status)
