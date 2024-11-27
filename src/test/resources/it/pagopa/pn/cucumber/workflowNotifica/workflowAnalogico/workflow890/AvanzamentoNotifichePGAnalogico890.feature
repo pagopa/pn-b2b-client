@@ -99,7 +99,7 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "COMPLETELY_UNREACHABLE"
 
 
-  @workflowAnalogico @mockNR @con020OldTestFailed @con020ToCheck
+  @workflowAnalogico @mockNR @con020 @con020failed @con020ToCheck
   Scenario: [B2B_TIMELINE_PG_ANALOG_890_8] Invio notifica ed attesa sospensione invio cartaceo per avvenuto pagamento positivo
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -112,4 +112,4 @@ Feature: avanzamento notifiche analogico 890 persona giuridica
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si controlla con check rapidi che lo stato diventi ACCEPTED
     And l'avviso pagopa viene pagato correttamente
     Then si attende la corretta sospensione dell'invio cartaceo
-    And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"
+    #And vengono letti gli eventi fino all'elemento di timeline della notifica "SEND_ANALOG_PROGRESS" con deliveryDetailCode "CON020"

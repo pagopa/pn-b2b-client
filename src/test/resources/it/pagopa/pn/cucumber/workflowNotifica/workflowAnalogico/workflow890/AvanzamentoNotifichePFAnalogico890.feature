@@ -389,7 +389,6 @@ Feature: avanzamento notifiche b2b con workflow cartaceo 890
     # "@sequence.5s-CON080.5s-CON020[DOC:7ZIP;PAGES:3].5s-RECAG010.5s-RECAG011A.5s-RECAG008A.5s-RECAG008B[DOC:ARCAD;DOC:23L].5s-RECAG012.5s-RECAG008C"
 
   @workflowAnalogico @uatEnvCondition @con020 @con020success
-  # 20/11/2024: al momento pare soffra del noto bug Indagine + Plico del consonlidatore
   Scenario: [B2B_TIMELINE_ANALOG_890_17]  PA mittente: invio notifica analogica FAIL-DiscoveryIrreperibileBadCAP_890 - PN-10146
     Given viene generata una nuova notifica
       | subject               | notifica analogica con cucumber |

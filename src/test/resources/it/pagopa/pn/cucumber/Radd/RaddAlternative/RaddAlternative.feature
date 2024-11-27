@@ -376,8 +376,7 @@ Feature: Radd Alternative
     And l'operazione di download degli atti si conclude correttamente su radd alternative
     And viene conclusa la visualizzati di atti ed attestazioni della notifica su radd alternative
 
-  @raddAlt @uatEnvCondition @con020 @con020OldTestSuccessful
-    # TODO la sequenza OK_890_ZIP sembra non produrre un evento CON020. IUN: DHAU-TZTU-GEYH-202411-L-1
+  @raddAlt @uatEnvCondition
   Scenario: [RADD-ALT_ACT-82] Inserimento notifica indirizzata a PG con sequence OK_890_ZIP  - verifica presenza elemento di timeline contenente la ricevuta di postalizzazione in formato zip
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |

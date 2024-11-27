@@ -296,11 +296,11 @@ public class AvanzamentoNotificheB2bSteps {
             case "SEND_ANALOG_FEEDBACK":
                 if (detailsFromTest != null) {
                     if (Objects.nonNull(detailsFromTest.getDeliveryDetailCode()))
-                        Assertions.assertEquals(detailsFromNotification.getDeliveryDetailCode(), detailsFromTest.getDeliveryDetailCode());
+                        Assertions.assertEquals(detailsFromTest.getDeliveryDetailCode(), detailsFromNotification.getDeliveryDetailCode());
                     if (Objects.nonNull(detailsFromTest.getPhysicalAddress()))
-                        Assertions.assertEquals(detailsFromNotification.getPhysicalAddress(), detailsFromTest.getPhysicalAddress());
+                        Assertions.assertEquals(detailsFromTest.getPhysicalAddress(), detailsFromNotification.getPhysicalAddress());
                     if (Objects.nonNull(detailsFromTest.getResponseStatus()))
-                    Assertions.assertEquals(detailsFromNotification.getResponseStatus().getValue(), detailsFromTest.getResponseStatus().getValue());
+                        Assertions.assertEquals(detailsFromTest.getResponseStatus().getValue(), detailsFromNotification.getResponseStatus().getValue());
                     if (Objects.nonNull(detailsFromTest.getDeliveryFailureCause())) {
                         List<String> failureCauses = Arrays.asList(detailsFromTest.getDeliveryFailureCause().split(" "));
                         Assertions.assertTrue(failureCauses.contains(elementFromNotification.getDetails().getDeliveryFailureCause()), "DeliveryFailureCause not match. IUN: " + sharedSteps.getSentNotification().getIun());
@@ -491,12 +491,13 @@ public class AvanzamentoNotificheB2bSteps {
             List<TimelineElementV25> timelineElementList = sharedSteps.getSentNotification().getTimeline();
 
             log.info("NOTIFICATION_TIMELINE: " + timelineElementList);
-            Assertions.assertNotNull(timelineElementList);
-            Assertions.assertNotEquals(0, timelineElementList.size());
+            String iun = sharedSteps.getSentNotification().getIun();
+            Assertions.assertNotNull(timelineElementList, "timelineElementList is null. IUN: " + iun);
+            Assertions.assertNotEquals(0, timelineElementList.size(), "timelineElementList is empty. IUN: " + iun);
             if (existCheck) {
-                Assertions.assertNotNull(timelineElement);
+                Assertions.assertNotNull(timelineElement, "timelineElement is null. IUN: " + iun);
             } else {
-                Assertions.assertNull(timelineElement);
+                Assertions.assertNull(timelineElement, "timelineElement is not null. IUN: " + iun);
             }
         } else {
             //GESTIONE LOAD TIMELINE E RECUPERO NOTIFICA CON CLIENT DI DELIVERY PUSH
@@ -925,8 +926,9 @@ public class AvanzamentoNotificheB2bSteps {
                         .build());
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
         try {
-            Assertions.assertTrue(pnPollingResponseV25.getResult());
-            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement());
+            String iun = sharedSteps.getSentNotification().getIun();
+            Assertions.assertTrue(pnPollingResponseV25.getResult(), "Polling failed. IUN: " + iun);
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement(), "Timeline element not found. IUN: " + iun);
             sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV25.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
