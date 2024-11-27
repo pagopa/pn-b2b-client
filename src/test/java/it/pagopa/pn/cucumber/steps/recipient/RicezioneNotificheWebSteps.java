@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.recipient;
 
+import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.Transpose;
@@ -68,6 +69,9 @@ public class RicezioneNotificheWebSteps {
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
 
+    private String courtesySavedAddress = "";
+    private String legalSavedAddress = "";
+
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -87,6 +91,49 @@ public class RicezioneNotificheWebSteps {
             sharedSteps.setWebRecipientClient(webRecipientClient);
         }
     }
+
+
+    //--------------------------------------------------------------------------
+
+    @Before("@sercq")
+    public void saveAddress() {
+        this.saveUserAddress("Galileo Galilei");
+    }
+
+    public void saveUserAddress(String user) {
+        selectUser(user);
+        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
+            courtesySavedAddress = addressesByRecipient.getCourtesy().get(0).getValue();
+        }
+        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
+            legalSavedAddress = addressesByRecipient.getLegal().get(0).getValue();
+        }
+
+    }
+
+    @After("@sercq")
+    public void restoreAddress(String user) {
+        selectUser(user);
+
+
+     //   postRecipientLegalAddress("default", LegalChannelType.PEC, (new AddressVerification().value(address)));
+
+
+
+     //   postRecipientCourtesyAddress("default", email, CourtesyChannelType.EMAIL, "00000", false);
+
+    }
+
+
+
+
+
+
+
+
+
 
     @Autowired
     public RicezioneNotificheWebSteps(ApplicationContext context, SharedSteps sharedSteps, PnWebUserAttributesExternalClientImpl iPnWebUserAttributesClient,

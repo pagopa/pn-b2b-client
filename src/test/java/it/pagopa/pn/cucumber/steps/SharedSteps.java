@@ -264,8 +264,6 @@ public class SharedSteps {
     private static final String FILE_PDF_INVALID_ERROR = "FILE_PDF_INVALID_ERROR";
     private static final String NOT_VALID_ADDRESS = "NOT_VALID_ADDRESS";
 
-    private String courtesySavedAddress = null;
-    private String legalSavedAddress = null;
 
     public HashMap<String, String> getMapAllegatiNotificaSha256() {
         return mapAllegatiNotificaSha256;
@@ -293,7 +291,7 @@ public class SharedSteps {
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
-                       PnPollingFactory pollingFactory,IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
+                       PnPollingFactory pollingFactory, IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
@@ -328,10 +326,6 @@ public class SharedSteps {
         this.groupToSet = false;
     }
 
-    @Before("@sercq")
-    public void saveAddress() {
-        this.saveUserAddress("Galileo Galilei");
-    }
 
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV23 notificationRequest) {
@@ -1092,7 +1086,6 @@ public class SharedSteps {
             }
         }
     }
-
 
 
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
@@ -2223,26 +2216,5 @@ public class SharedSteps {
         NotificationRecipientV23 notificationRecipientV23 = dataTableTypeUtil.convertNotificationRecipient(new HashMap<>());
         addRecipientToNotification(this.notificationRequest,
                 notificationRecipientV23, new HashMap<>());
-    }
-
-
-    public void saveUserAddress(String user) {
-        selectUser(user);
-        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
-
-
-        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
-             courtesySavedAddress = addressesByRecipient.getCourtesy().get(0).getValue();
-        }
-        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
-            legalSavedAddress = addressesByRecipient.getLegal().get(0).getValue();
-        }
-
-    }
-
-    @After("@raddAlt")
-    public void restoreAddress() {
-       // this.iPnWebUserAttributesClient.postRecipientLegalAddress(senderIdPa, LegalChannelType.SERCQ, (new AddressVerification().value(address)));
-
     }
 }
