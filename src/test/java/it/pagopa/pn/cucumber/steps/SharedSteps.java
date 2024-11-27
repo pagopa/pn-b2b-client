@@ -175,6 +175,10 @@ public class SharedSteps {
     @Setter
     private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
 
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
+
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
 

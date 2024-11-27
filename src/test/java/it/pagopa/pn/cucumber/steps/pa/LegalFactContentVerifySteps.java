@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.pa;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.parsing.dto.IPnParserResponse;
@@ -15,6 +16,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalWebRecipient.v2
 import it.pagopa.pn.cucumber.steps.SharedSteps;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.Loader;
 import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,14 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.lang.reflect.Field;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import java.io.IOException;
+
+
+
+
+
 
 @Slf4j
 public class LegalFactContentVerifySteps {
@@ -120,7 +130,38 @@ public class LegalFactContentVerifySteps {
         checkLegalFactFieldValue(source, legalFactField, legalFactValue);
     }
 
-    public void checkLegalFactType(byte[] source, String legalFactType) {
+    @And("verifica che il file contenga massimo {int} pagine")
+    public void siVerificaSeIlLegalFactContieneNPagine(int numPagine) {
+        checkPdfPagesFromBytes(numPagine);
+
+    }
+
+
+    public void checkPdfPagesFromBytes(int numPage) {
+        byte[] source = b2bUtils.downloadFile(legalFactUrl);
+
+        PDDocument document = null;
+
+        try {
+            document = Loader.loadPDF(source);
+            int numberOfPages = document.getNumberOfPages();
+
+            Assertions.assertTrue(numberOfPages <= numPage, "Il PDF contiene più di "+numPage+" pagine!");
+
+        } catch (IOException e) {
+            Assertions.fail("Errore durante la lettura del PDF: " + e.getMessage());
+        } finally {
+            if (document != null) {
+                try {
+                    document.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+public void checkLegalFactType(byte[] source, String legalFactType) {
         PnParserParameter pnParserParameter = PnParserParameter.builder()
                 .legalFactType(IPnParserLegalFact.LegalFactType.valueOf(legalFactType))
                 .legalFactField(IPnParserLegalFact.LegalFactField.valueOf(IPnParserLegalFact.LegalFactField.TITLE.name()))

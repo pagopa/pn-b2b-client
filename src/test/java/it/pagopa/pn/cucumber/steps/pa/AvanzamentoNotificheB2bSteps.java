@@ -1419,6 +1419,8 @@ public class AvanzamentoNotificheB2bSteps {
                 keySearch = key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
             } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
                 keySearch = key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
+            } else if (key.contains("PN_PRINTED")) {
+                keySearch = key.substring(key.indexOf("PN_PRINTED"));
             } else if (key.contains("PN_F24")) {
                 keySearch = key.substring(key.indexOf("PN_F24"));
             }
@@ -3292,6 +3294,8 @@ public class AvanzamentoNotificheB2bSteps {
             return key.substring(key.indexOf("PN_NOTIFICATION_ATTACHMENTS"));
         } else if (key.contains("PN_EXTERNAL_LEGAL_FACTS")) {
             return key.substring(key.indexOf("PN_EXTERNAL_LEGAL_FACTS"));
+        } else if (key.contains("PN_PRINTED")) {
+            return key.substring(key.indexOf("PN_PRINTED"));
         } else if (key.contains("PN_F24")) {
             return key.substring(key.indexOf("PN_F24"));
         }
@@ -3462,6 +3466,35 @@ public class AvanzamentoNotificheB2bSteps {
                 sharedSteps.getSentNotification().getIun(), timestampNext, timeStampPrevious, diffMillis, delta);
         Assertions.assertTrue(diffMillis <= delta);
     }
+
+    @And("vengono letti gli eventi fino all'elemento di timeline della notifica {string} con deliveryDetailCode {string} per l'utente {int}")
+    public void readingEventUpToTheTimelineElementOfNotificationWithDeliveryDetailCodeAndDestinatario(String timelineEventCategory, String deliveryDetailCode, int destinatario) {
+        PnPollingServiceTimelineRapidV25 timelineRapidV25 = (PnPollingServiceTimelineRapidV25) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V25);
+
+        PnPollingResponseV25 pnPollingResponseV25 = timelineRapidV25.waitForEvent(sharedSteps.getSentNotification().getIun(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .pnPollingPredicate(getPnPollingPredicateForTimelineV25(timelineEventCategory, destinatario, deliveryDetailCode, null, null, null, false, false, null, false, null))
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
+        try {
+            Assertions.assertTrue(pnPollingResponseV25.getResult());
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement());
+            sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
+            TimelineElementV25 timelineElementV25 = pnPollingResponseV25.getTimelineElement();
+            log.info("TIMELINE_ELEMENT: " + timelineElementV25);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+    }
+
+
+    @And("ricerca ed effettua download del legalFact con la categoria {string} con DetailCode {string}")
+    public void ricercaEdEffettuaDownloadDelLegalFactConLaCategoria(String legalFactCategory, String deliveryDetailCode) {
+        String legalFactUrl = downloadLegalFact(legalFactCategory, false, false, true, deliveryDetailCode);
+        legalFactContentVerifySteps.setLegalFactUrl(legalFactUrl);
+    }
+
 
 
     @Then("viene verificata la presenza dell'elemento di timeline {string} introdotto con la versione {int} in tutte le versioni")
