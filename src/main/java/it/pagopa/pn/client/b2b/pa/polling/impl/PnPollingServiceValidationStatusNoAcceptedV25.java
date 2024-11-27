@@ -7,27 +7,19 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-@Service(PnPollingStrategy.VALIDATION_STATUS_ACCEPTATION_EXTRA_RAPID_V24)
+@Service(PnPollingStrategy.VALIDATION_STATUS_NO_ACCEPTATION_V25)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PnPollingServiceValidationStatusAcceptedExtraRapidV24 extends PnPollingServiceValidationStatusV24 {
+public class PnPollingServiceValidationStatusNoAcceptedV25 extends PnPollingServiceValidationStatusV25 {
 
 
-    public PnPollingServiceValidationStatusAcceptedExtraRapidV24(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
+    public PnPollingServiceValidationStatusNoAcceptedV25(IPnPaB2bClient b2bClient, TimingForPolling timingForPolling) {
         super(b2bClient, timingForPolling);
     }
 
     @Override
-    protected Integer getPollInterval(String value) {
-        value = value.concat("_EXTRA_RAPID_VALIDATION");
-        TimingForPolling.TimingResult timingResult = this.getTimingForTimeline().getTimingForStatusValidation(value);
-        return timingResult.waiting();
-    }
-
-    @Override
     protected Integer getAtMost(String value) {
-        value = value.concat("_EXTRA_RAPID_VALIDATION");
+        value = value.replace(value, "NO_ACCEPTED_VALIDATION");
         TimingForPolling.TimingResult timingResult = this.getTimingForTimeline().getTimingForStatusValidation(value);
         return timingResult.numCheck() * timingResult.waiting();
     }
-
 }

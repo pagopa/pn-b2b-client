@@ -46,7 +46,7 @@ Feature: Verifica del contenuto dei differenti tipi di legalFact prodotti nei wo
       | DESTINATARIO_CODICE_FISCALE               | CLMCST42R12D969Z                                                         |
       | DESTINATARIO_DOMICILIO_DIGITALE           | non fornito dalla PA                                                     |
       | DESTINATARIO_TIPO_DOMICILIO_DIGITALE      | non fornito dalla PA                                                     |
-      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA@OK_890 87100 COSENZA CS ITALIA  |
+      | DESTINATARIO_INDIRIZZO_FISICO             | Mario Gherkin Presso SCALA B VIA@OK_890 87100 COSENZA COSENZA CS ITALIA  |
       # SECONDO DESTINATARIO
       | DESTINATARIO_NOME_COGNOME_RAGIONE_SOCIALE | Mario Cucumber                                                           |
       | DESTINATARIO_CODICE_FISCALE               | FRMTTR76M06B715E                                                         |
