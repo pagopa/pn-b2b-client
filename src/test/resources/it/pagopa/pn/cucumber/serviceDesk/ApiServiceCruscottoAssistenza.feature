@@ -908,7 +908,7 @@ Feature: Api Service Cruscotto Assitenza
   Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_5] Recupero del profilo destinatario che ha selezionato il Domicilio Digitale come recapito legale
     Given si predispone addressbook per l'utente "Galileo Galilei"
     And vengono rimossi eventuali recapiti presenti per l'utente
-    Then viene attivato il servizio SERCQ SEND per recapito principale
+    And viene attivato il servizio SERCQ SEND per il comune "default"
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
     When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"

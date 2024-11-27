@@ -724,14 +724,6 @@ public class ApiServiceDeskSteps {
         }
     }
 
-    private static void waitFor(Integer waitingStateCsv) {
-        try {
-            Thread.sleep(waitingStateCsv);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void checkElencoDelleNotificheRicevuteSteps(String taxId, String recipientType, String searchPageSize, String searchNextPagesKey, String startDate, String endDate) {
         try {
             Integer size = setSearchPageSize(searchPageSize);
