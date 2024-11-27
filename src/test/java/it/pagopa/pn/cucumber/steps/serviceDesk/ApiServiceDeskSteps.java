@@ -47,6 +47,15 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 public class ApiServiceDeskSteps {
+    @Value("${pn.iun.withf24Payment.colombo.pagopa}")
+    private String iunWithF24Payment;
+
+    @Value("${pn.iun.withPagoPaPayment.colombo}")
+    private String iunWithPagoPAPayment;
+
+    @Value("${pn.iun.withoutPayment.colombo}")
+    private String iunWithoutPayment;
+
     public static final String IUN_ERRATO = "JRDT-XAPH-JQYW-202312-J-1";
     private final PnPaB2bUtils b2bUtils;
     private final SharedSteps sharedSteps;
@@ -687,7 +696,7 @@ public class ApiServiceDeskSteps {
     }
 
     @Given("come operatore devo accedere ai dati del profilo di un utente \\(PF e PG) di Piattaforma Notifiche con taxId {string} e recipientType  {string}")
-    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) {
+    public void comeOperatoreDevoAccedereAiDatiDelProfiloDiUnUtentePFEPGDiPiattaformaNotifiche(String taxId, String recipientType) throws InterruptedException {
         try {
             profileRequest = new ProfileRequest();
             if ("NULL".equalsIgnoreCase(taxId)) {
@@ -708,11 +717,18 @@ public class ApiServiceDeskSteps {
             if (!"NULL".equalsIgnoreCase(recipientType)) {
                 setRecipientType(recipientType);
             }
-
             profileResponse = ipServiceDeskClient.getProfileFromTaxId(profileRequest);
             Assertions.assertNotNull(profileResponse);
         } catch (HttpStatusCodeException exception) {
             this.notificationError = exception;
+        }
+    }
+
+    private static void waitFor(Integer waitingStateCsv) {
+        try {
+            Thread.sleep(waitingStateCsv);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -1521,13 +1537,13 @@ public class ApiServiceDeskSteps {
                 yield IUN_ERRATO;
             }
             case "ASSOCIATO A PAGAMENTO PAGOPA" -> {
-                yield "s";
+                yield iunWithPagoPAPayment;
             }
             case "ASSOCIATO A PAGAMENTO F24" -> {
-                yield "c";
+                yield iunWithF24Payment;
             }
             case "NOTIFICA SENZA PAGAMENTI" -> {
-                yield "g";
+                yield iunWithoutPayment;
             }
             default -> {
                 yield iun;

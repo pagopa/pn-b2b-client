@@ -872,7 +872,7 @@ Feature: Api Service Cruscotto Assitenza
     And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
     And viene inserita l'email di cortesia "provaemail2@test.it" per il comune "default"
     And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "diversi" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
@@ -881,7 +881,7 @@ Feature: Api Service Cruscotto Assitenza
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserita l'email di cortesia "provaemail@test.it" per il comune "default"
     And viene verificata la presenza di 1 recapiti di cortesia inseriti per l'utente "Galileo Galilei"
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "cortesia" "email" siano "uguali" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
@@ -890,7 +890,7 @@ Feature: Api Service Cruscotto Assitenza
     And vengono rimossi eventuali recapiti presenti per l'utente
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "uguali" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
@@ -900,7 +900,8 @@ Feature: Api Service Cruscotto Assitenza
     And viene inserito un recapito legale "example3@pecSuccess.it"
     And viene controllato che siano presenti pec verificate inserite per il comune "default"
     And viene inserito un recapito legale "example2@pecSuccess.it"
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    And viene controllato che siano presenti pec verificate inserite per il comune "default"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "PEC" siano "diverse" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
@@ -910,7 +911,7 @@ Feature: Api Service Cruscotto Assitenza
     Then viene attivato il servizio SERCQ SEND per recapito principale
     And viene verificato che Sercq sia "abilitato" per il comune "default"
     #Then l'utente "Galileo Galilei" "ACCETTA" i tos per sercq
-    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "Galileo Galilei"
+    When come operatore devo accedere ai dati del profilo di un utente (PF e PG) di Piattaforma Notifiche con taxId "Galileo Galilei" e recipientType  "PF"
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "uguali" tra di loro
 
   @evolutiveCruscottoAssistenza @addressBook1
@@ -925,15 +926,16 @@ Feature: Api Service Cruscotto Assitenza
     Then controllo che i timestamp di creazione e modifica del recapito "legale" "APPIO" siano "vuoti" .
 
   @evolutiveCruscottoAssistenza
-  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente
+  Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_7] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN vuoto - IUN inesistente - IUN non associato allo User
     When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "<IUN>" associata all' utente "<USER>"
     Then il servizio risponde con errore "<ERROR>"
     Examples:
-    | USER          |  IUN        | ERROR |
-    | Mario Gherkin | VUOTO       | 400   |
-    | Mario Gherkin | INESISTENTE | 404   |
-    |               | CORRETTO    | 400   |
-    | ERRATO        | CORRETTO    | 400   |
+    | USER            |  IUN                        | ERROR |
+    | Mario Gherkin   | VUOTO                       | 400   |
+    | Mario Gherkin   | INESISTENTE                 | 404   |
+    |                 | NOTIFICA SENZA PAGAMENTI    | 400   |
+    | ERRATO          | NOTIFICA SENZA PAGAMENTI    | 400   |
+    | Mario Cucumber  | NOTIFICA SENZA PAGAMENTI    | 400   |
 
   @evolutiveCruscottoAssistenza
   Scenario Outline: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_8] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN associato ad una notifica di pagamento pagoPA - f24 - notifica semplice
@@ -945,10 +947,3 @@ Feature: Api Service Cruscotto Assitenza
     | Mario Gherkin | ASSOCIATO A PAGAMENTO PAGOPA  | COMPILATA |
     | Mario Gherkin | NOTIFICA SENZA PAGAMENTI      | VUOTA      |
     | Mario Gherkin | ASSOCIATO A PAGAMENTO F24     | VUOTA      |
-
-  @evolutiveCruscottoAssistenza
-  Scenario: [EVOLUTIVE_CRUSCOTTO_ASSISTENZA_9] Recupero del dettaglio della notifica con i pagamenti associati con l’utilizzo di uno IUN e un taxId che non corrispondono tra di loro
-    #c'è da capire l errore aspettato
-    When come operatore devo accedere ai dettagli dei pagamenti di una notifica con uno iun "ASSOCIATO A PAGAMENTO PAGOPA" associata all' utente "Mario Gerkin"
-    Then il servizio risponde con errore "error"
-
