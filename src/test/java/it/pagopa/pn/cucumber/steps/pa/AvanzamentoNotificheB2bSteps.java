@@ -3463,4 +3463,40 @@ public class AvanzamentoNotificheB2bSteps {
         Assertions.assertTrue(diffMillis <= delta);
     }
 
+    @Then("esiste l'elemento di timeline della notifica {string} abbia notificationCost ugauale a {string} per l'utente {int}")
+    public void TimelineElementOfNotification2(String timelineEventCategory, String cost, Integer destinatario) {
+        TimelineElementV26 event = readingEventUpToTheTimelineElementOfNotificationForCategoryUser(timelineEventCategory, destinatario);
+        Long notificationCost = event.getDetails().getNotificationCost();
+
+        if (cost.equalsIgnoreCase("null")) {
+            Assertions.assertNull(notificationCost);
+        } else if (cost.equalsIgnoreCase("NotNull")) {
+            Assertions.assertNotNull(notificationCost);
+        } else {
+            Assertions.assertEquals(Long.parseLong(cost), notificationCost);
+        }
+    }
+
+    public TimelineElementV26 readingEventUpToTheTimelineElementOfNotificationForCategoryUser(String timelineEventCategory, Integer destinatario) {
+        PnPollingServiceTimelineSlowV26 timelineSlowV26 = (PnPollingServiceTimelineSlowV26) pnPollingFactory.getPollingService(PnPollingStrategy.TIMELINE_RAPID_V26);
+
+        PnPollingResponseV26 pnPollingResponseV26 = timelineSlowV26.waitForEvent(sharedSteps.getIunVersionamento(),
+                PnPollingParameter.builder()
+                        .value(timelineEventCategory)
+                        .pnPollingPredicate(getPnPollingPredicateForTimelineV26(timelineEventCategory, destinatario))
+                        .build());
+        log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV26.getNotification().getTimeline());
+        try {
+            Assertions.assertTrue(pnPollingResponseV26.getResult());
+            Assertions.assertNotNull(pnPollingResponseV26.getTimelineElement());
+            sharedSteps.setSentNotification(pnPollingResponseV26.getNotification());
+            TimelineElementV26 timelineElement = pnPollingResponseV26.getTimelineElement();
+            log.info("TIMELINE_ELEMENT: " + timelineElement);
+            sharedSteps.setTimelineElement(timelineElement);
+        } catch (AssertionFailedError assertionFailedError) {
+            sharedSteps.throwAssertFailerWithIUN(assertionFailedError);
+        }
+        return pnPollingResponseV26.getTimelineElement();
+    }
+
 }
