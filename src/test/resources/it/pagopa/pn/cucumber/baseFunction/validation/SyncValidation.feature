@@ -27,7 +27,6 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "409"
 
 
-
   @B2Btest @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_2] verifica validazione codice fiscale del creditore e codice avviso
     Given viene generata una nuova notifica
@@ -59,7 +58,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-      | taxonomyCode       | <taxonomyCode>                        |
+      | taxonomyCode       | <taxonomyCode>              |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
@@ -73,8 +72,8 @@ Feature: verifica validazione sincrona
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_5] Invio notifica digitale mono destinatario e controllo paProtocolNumber con diverse pa_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     And si verifica la corretta acquisizione della notifica
@@ -97,8 +96,8 @@ Feature: verifica validazione sincrona
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_7] Invio notifica mono destinatario con max numero allegati scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
     And destinatario Mario Cucumber
     And aggiungo 16 numero allegati
     When la notifica viene inviata dal "Comune_Multi"
@@ -107,8 +106,8 @@ Feature: verifica validazione sincrona
   @SmokeTest @testLite @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_8] Invio notifica digitale mono destinatario con noticeCode ripetuto prima notifica rifiutata
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Mario Cucumber
     When la notifica viene inviata tramite api b2b senza preload allegato dal "Comune_Multi" e si attende che lo stato diventi REFUSED
     Then viene generata una nuova notifica valida con uguale codice fiscale del creditore e uguale codice avviso
@@ -119,22 +118,22 @@ Feature: verifica validazione sincrona
   @SmokeTest  @testLite @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_9] Invio notifica multi destinatario senza pagamento_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Gherkin spa e:
       | digitalDomicile_address | testpagopa1@pec.pagopa.it |
-      | payment | NULL |
+      | payment                 | NULL                      |
     And destinatario Mario Cucumber e:
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
-      | payment | NULL |
+      | payment                 | NULL                           |
     When la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Then la notifica può essere correttamente recuperata dal sistema tramite codice IUN dalla PA "Comune_Multi"
 
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_10] Invio notifica multi destinatario uguale codice avviso_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Gherkin spa
     And destinatario "Mario Cucumber" con uguale codice avviso del destinario numero 1
       | digitalDomicile_address | FRMTTR76M06B715E@pec.pagopa.it |
@@ -144,8 +143,8 @@ Feature: verifica validazione sincrona
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_11] Invio notifica multi destinatario destinatario duplicato_scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica GA cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica GA cucumber |
+      | senderDenomination | Comune di palermo          |
     And destinatario Mario Gherkin
     And destinatario Mario Gherkin
     When la notifica viene inviata dal "Comune_Multi"
@@ -154,51 +153,51 @@ Feature: verifica validazione sincrona
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_12] Invion notifica multidestinatario max recipient_scenario negativo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di palermo |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di palermo           |
     And destinatario
-      | taxId        | DVNLRD52D15M059P |
+      | taxId | DVNLRD52D15M059P |
     And destinatario
-      | taxId        | LNALNI80A01H501T |
+      | taxId | LNALNI80A01H501T |
     And destinatario
-      | taxId        | GRBGPP87L04L741X |
+      | taxId | GRBGPP87L04L741X |
     And destinatario
-      | taxId        | LVLDAA85T50G702B |
+      | taxId | LVLDAA85T50G702B |
     And destinatario
-      | taxId        | FNTLCU80T25F205R |
+      | taxId | FNTLCU80T25F205R |
     And destinatario
-      | taxId        | CLMCST42R12D969Z |
+      | taxId | CLMCST42R12D969Z |
     And destinatario
-      | taxId        | DRCGNN12A46A326K |
+      | taxId | DRCGNN12A46A326K |
     And destinatario
-      | taxId        | FRMTTR76M06B715E |
+      | taxId | FRMTTR76M06B715E |
     And destinatario
-      | taxId        | FLPCPT69A65Z336P |
+      | taxId | FLPCPT69A65Z336P |
     And destinatario
-      | taxId        | PLOMRC01P30L736Y |
+      | taxId | PLOMRC01P30L736Y |
     And destinatario
-      | taxId        | MNDLCU98T68C933T |
+      | taxId | MNDLCU98T68C933T |
     And destinatario
-      | taxId        | MNZLSN99E05F205J |
+      | taxId | MNZLSN99E05F205J |
     And destinatario
-      | taxId        | RMSLSO31M04Z404R |
+      | taxId | RMSLSO31M04Z404R |
     And destinatario
-      | taxId        | MNTMRA03M71C615V |
+      | taxId | MNTMRA03M71C615V |
     And destinatario
-      | taxId        | LTTSRT16T12H501Y |
+      | taxId | LTTSRT16T12H501Y |
     And destinatario
-      | taxId        | DSRDNI00A01A225I |
+      | taxId | DSRDNI00A01A225I |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Max recipient count reached"
 
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_13] Invio notifica digitale mono destinatario con payment senza PagopaForm_scenario positivo
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario Cucumber Society e:
       | payment_creditorTaxId | 77777777777 |
-      | payment_pagoPaForm | NOALLEGATO |
+      | payment_pagoPaForm    | NOALLEGATO  |
     When la notifica viene inviata tramite api b2b dal "Comune_1" e si attende che lo stato diventi ACCEPTED
     Then si verifica la corretta acquisizione della notifica
     And la notifica può essere correttamente recuperata dal sistema tramite codice IUN
@@ -206,23 +205,23 @@ Feature: verifica validazione sincrona
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_14] verifica errore PG con CF alfanumerico
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | denomination  | PgErrore          |
-      | taxId         | GLLGLL64B15G702I  |
-      |recipientType  | PG                |
+      | denomination  | PgErrore         |
+      | taxId         | GLLGLL64B15G702I |
+      | recipientType | PG               |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "SEND accepts only numerical taxId for PG"
 
   @syncValidation
   Scenario: [B2B-PA-SYNC_VALIDATION_15] Invio notifica  mono destinatario con Piva errata
     Given viene generata una nuova notifica
-      | subject | invio notifica con cucumber |
-      | senderDenomination | Comune di milano |
+      | subject            | invio notifica con cucumber |
+      | senderDenomination | Comune di milano            |
     And destinatario
-      | recipientType    | PG                  |
-      | taxId            | 1266681029H    |
+      | recipientType | PG          |
+      | taxId         | 1266681029H |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "ECMA 262 regex"
 
@@ -285,11 +284,11 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
     Examples:
-      | localita                     |
+      | localita           |
       #| ãsåéØaìnò dæonà ñ'di pi`aève |
-      | Milano '-/.@_                |
-      | PARIGI                       |
-      | MILANO 01234 56789           |
+      | Milano '-/.@_      |
+      | PARIGI             |
+      | MILANO 01234 56789 |
 
   @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_20] validazione sincrona campo taxId
@@ -485,7 +484,7 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
-      | physicalAddress_State    | ITALIA    |
+      | physicalAddress_State    | ITALIA     |
       | physicalAddress_province | <province> |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
@@ -501,8 +500,8 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di palermo           |
     And destinatario Mario Gherkin e:
-      | physicalAddress_State    | FRANCIA    |
-      | physicalAddress_province | NULL |
+      | physicalAddress_State    | FRANCIA |
+      | physicalAddress_province | NULL    |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
 
@@ -511,7 +510,7 @@ Feature: verifica validazione sincrona
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_32] Invio notifica digitale con mono destinatario con denomination errata scenario negativo
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
-      | senderDenomination | comune di milano               |
+      | senderDenomination | comune di milano            |
     And destinatario
       | denomination | <denomination>   |
       | taxId        | FRMTTR76M06B715E |
@@ -552,13 +551,13 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then si verifica la corretta acquisizione della richiesta di invio notifica
     Examples:
-      | zip_code   | comune               | province | state   |
-      | 1212_      | Paris                | Paris    | FRANCIA |
-      | ZONA 1     | Paris                | Paris    | FRANCIA |
-      | 0123456789 | Paris                | Paris    | FRANCIA |
-      | 20019      |  SETTIMO MILANESE    | MI       | ITALIA  |
-      | 20121      | Milano               | MI       | ITALIA  |
-      | 87076      | VILLAPIANA LIDO      | CS       | ITALIA  |
+      | zip_code   | comune           | province | state   |
+      | 1212_      | Paris            | Paris    | FRANCIA |
+      | ZONA 1     | Paris            | Paris    | FRANCIA |
+      | 0123456789 | Paris            | Paris    | FRANCIA |
+      | 20019      | SETTIMO MILANESE | MI       | ITALIA  |
+      | 20121      | Milano           | MI       | ITALIA  |
+      | 87076      | VILLAPIANA LIDO  | CS       | ITALIA  |
 
   @validation @syncValidation
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_35] Invio notifica digitale mono destinatario con physicalAddress_province corretto (p.fisica)_scenario positivo
@@ -717,7 +716,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
-      | feePolicy          | NULL                            |
+      | feePolicy          | NULL                        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -743,7 +742,7 @@ Feature: verifica validazione sincrona
     Given viene generata una nuova notifica
       | subject               | invio notifica con cucumber |
       | senderDenomination    | comune di milano            |
-      | physicalCommunication | NULL    |
+      | physicalCommunication | NULL                        |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null) does not match any allowed primitive type"
@@ -1056,7 +1055,7 @@ Feature: verifica validazione sincrona
       | senderDenomination | comune di milano            |
     And destinatario
       | denomination | Fieramosca pipe\| |
-      | taxId        | FRMTTR76M06B715E |
+      | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "Field denomination in recipient 0 contains invalid characters."
 
@@ -1066,8 +1065,8 @@ Feature: verifica validazione sincrona
       | subject            | invio notifica con cucumber |
       | senderDenomination | comune di milano            |
     And destinatario
-      | denomination | Ettore Fieramosca  |
-      | taxId        | FRMTTR76M06B715E |
+      | denomination | Ettore Fieramosca |
+      | taxId        | FRMTTR76M06B715E  |
     When la notifica viene inviata dal "Comune_Multi"
     Then l'invio della notifica non ha prodotto errori
 
@@ -1113,8 +1112,8 @@ Feature: verifica validazione sincrona
       | digitalDomicile_address | <email> |
     Then la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
     Examples:
-      | email            |
-      | V.S.-SRL@pecOk.it|
+      | email             |
+      | V.S.-SRL@pecOk.it |
 
     #Test utilizzato per verificare l'errore prima della fix
   @syncValidation @ignore
@@ -1127,31 +1126,40 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
-      | email            | error          |
+      | email             | error          |
       | V.S.-SRL@pecOk.it | ECMA 262 regex |
 
 
-#Il test si può integrare al B2B-PA-SYNC_VALIDATION_4 quando sarà definito il messaggio si errore preciso
-  @syncValidation
+  #Il test si può integrare al B2B-PA-SYNC_VALIDATION_4 quando sarà definito il messaggio si errore preciso
+  @syncValidation @syncValidTaxonomy
   Scenario: [B2B-PA-SYNC_VALIDATION_79] verifica validazione sync taxonomyCode non censito
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
       | senderDenomination | Comune di milano            |
-      | taxonomyCode       | 000000X                        |
+      | taxonomyCode       | 000000X                    |
     And destinatario Mario Cucumber
     When la notifica viene inviata dal "Comune_Multi"
     Then l'operazione ha prodotto un errore con status code "400"
 
 
-  @syncValidation
-  Scenario: [B2B-PA-SYNC_VALIDATION_80] verifica validazione sync taxonomyCode correttamente censito
+  @syncValidation @syncValidTaxonomy
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_80] verifica validazione sync taxonomyCode correttamente censito
     Given viene generata una nuova notifica
-      | subject            | BS-ACT-3_CAF-CNA|
-      | abstract           | NULL            |
-      | senderDenomination | PagoPa S.p.A.   |
-      | senderTaxId        | 15376371009     |
-      | document           | DOC_BS          |
-      | feePolicy          | DELIVERY_MODE   |
-      | taxonomyCode       | 010203P         |
+      | subject            | BS-ACT-3_CAF-CNA |
+      | abstract           | NULL             |
+      | senderDenomination | PagoPa S.p.A.    |
+      | senderTaxId        | 15376371009      |
+      | document           | DOC_BS           |
+      | feePolicy          | DELIVERY_MODE    |
+      | taxonomyCode       | <taxonomyCode>   |
     And destinatario Mario Cucumber
     And la notifica viene inviata tramite api b2b dal "Comune_Multi" e si attende che lo stato diventi ACCEPTED
+    Examples:
+      | taxonomyCode |
+      | 100105P      |
+      | 080102N      |
+      | 010702N      |
+      | 030801N      |
+      | 030202N      |
+      | 100102N      |
+      | 010401N     |
