@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Assertions;
 import org.opentest4j.AssertionFailedError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpStatusCodeException;
 
 import java.time.OffsetDateTime;
@@ -2069,11 +2070,26 @@ public class AvanzamentoNotificheWebhookB2bSteps {
                 case V25 -> webhookB2bClient.deleteEventStreamV25(streamID);
             }
             return true;
-        } catch (HttpStatusCodeException e) {
+        }catch (HttpStatusCodeException e){
+            return handleException(e, streamVersion, pa, streamID);
+        }
+    }
+
+    private boolean handleException(HttpStatusCodeException e, StreamVersion streamVersion, String pa, UUID streamID) {
+        try {
+            switch (streamVersion) {
+                case V10 -> webhookB2bClient.getEventStream(streamID);
+                case V23 -> webhookB2bClient.getEventStreamV23(streamID);
+                case V24 -> webhookB2bClient.retrieveEventStreamV24(streamID);
+                case V25 -> webhookB2bClient.retrieveEventStreamV25(streamID);
+            }
             this.notificationError = e;
             sharedSteps.setNotificationError(e);
             log.error("ERROR IN DELETE STREAM id {} streamVersion{} pa {}", streamID, streamVersion.name(), pa);
             return false;
+        } catch (HttpStatusCodeException ex) {
+            log.info("Not needed to remove since stream found has different version!");
+            return true;
         }
     }
 
