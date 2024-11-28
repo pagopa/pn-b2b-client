@@ -53,7 +53,7 @@ Feature: verifica validazione sincrona
     When la notifica viene inviata dal "Comune_1"
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "instance type (null)"
 
-  @syncValidation
+  @syncValidation @syncValidTaxonomy
   Scenario Outline: [B2B-PA-SYNC_VALIDATION_4] verifica validazione sync taxonomyCode
     Given viene generata una nuova notifica
       | subject            | invio notifica con cucumber |
@@ -64,6 +64,7 @@ Feature: verifica validazione sincrona
     Then l'operazione ha prodotto un errore con status code "400" con messaggio di errore "<error>"
     Examples:
       | taxonomyCode | error                |
+      | 000000X      | INVALIDPARAMETER_TAXONOMYCODE |
       | NULL         | instance type (null) |
       | 6_CHAR       | too short            |
       | 8_CHAR       | too long             |
@@ -1130,20 +1131,8 @@ Feature: verifica validazione sincrona
       | V.S.-SRL@pecOk.it | ECMA 262 regex |
 
 
-  #Il test si può integrare al B2B-PA-SYNC_VALIDATION_4 quando sarà definito il messaggio si errore preciso
   @syncValidation @syncValidTaxonomy
-  Scenario: [B2B-PA-SYNC_VALIDATION_79] verifica validazione sync taxonomyCode non censito
-    Given viene generata una nuova notifica
-      | subject            | invio notifica con cucumber |
-      | senderDenomination | Comune di milano            |
-      | taxonomyCode       | 000000X                    |
-    And destinatario Mario Cucumber
-    When la notifica viene inviata dal "Comune_Multi"
-    Then l'operazione ha prodotto un errore con status code "400"
-
-
-  @syncValidation @syncValidTaxonomy
-  Scenario Outline: [B2B-PA-SYNC_VALIDATION_80] verifica validazione sync taxonomyCode correttamente censito
+  Scenario Outline: [B2B-PA-SYNC_VALIDATION_79] verifica validazione sync taxonomyCode correttamente censito
     Given viene generata una nuova notifica
       | subject            | BS-ACT-3_CAF-CNA |
       | abstract           | NULL             |
