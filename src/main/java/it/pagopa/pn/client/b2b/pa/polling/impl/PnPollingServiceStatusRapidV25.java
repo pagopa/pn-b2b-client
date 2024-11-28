@@ -1,11 +1,11 @@
 package it.pagopa.pn.client.b2b.pa.polling.impl;
 
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV24;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationStatusHistoryElement;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingTemplate;
 import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingParameter;
-import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV24;
+import it.pagopa.pn.client.b2b.pa.polling.dto.PnPollingResponseV25;
 import it.pagopa.pn.client.b2b.pa.polling.exception.PnPollingException;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.utils.TimingForPolling;
@@ -18,26 +18,26 @@ import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 
 
-@Service(PnPollingStrategy.STATUS_RAPID_V24)
+@Service(PnPollingStrategy.STATUS_RAPID_V25)
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Slf4j
-public class PnPollingServiceStatusRapidV24 extends PnPollingTemplate<PnPollingResponseV24> {
+public class PnPollingServiceStatusRapidV25 extends PnPollingTemplate<PnPollingResponseV25> {
 
     protected final TimingForPolling timingForPolling;
     private final IPnPaB2bClient pnPaB2bClient;
-    private FullSentNotificationV24 fullSentNotification;
+    private FullSentNotificationV25 fullSentNotification;
 
 
-    public PnPollingServiceStatusRapidV24(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
+    public PnPollingServiceStatusRapidV25(TimingForPolling timingForPolling, IPnPaB2bClient pnPaB2bClient) {
         this.timingForPolling = timingForPolling;
         this.pnPaB2bClient = pnPaB2bClient;
     }
 
     @Override
-    protected Callable<PnPollingResponseV24> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
+    protected Callable<PnPollingResponseV25> getPollingResponse(String iun, PnPollingParameter pnPollingParameter) {
         return () -> {
-            PnPollingResponseV24 pnPollingResponse = new PnPollingResponseV24();
-            FullSentNotificationV24 fullSentNotification;
+            PnPollingResponseV25 pnPollingResponse = new PnPollingResponseV25();
+            FullSentNotificationV25 fullSentNotification;
             try {
                 fullSentNotification = pnPaB2bClient.getSentNotification(iun);
             } catch (Exception exception) {
@@ -51,7 +51,7 @@ public class PnPollingServiceStatusRapidV24 extends PnPollingTemplate<PnPollingR
     }
 
     @Override
-    protected Predicate<PnPollingResponseV24> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
+    protected Predicate<PnPollingResponseV25> checkCondition(String iun, PnPollingParameter pnPollingParameter) {
         return pnPollingResponse -> {
             if (pnPollingResponse.getNotification() == null) {
                 pnPollingResponse.setResult(false);
@@ -68,8 +68,8 @@ public class PnPollingServiceStatusRapidV24 extends PnPollingTemplate<PnPollingR
     }
 
     @Override
-    protected PnPollingResponseV24 getException(Exception exception) {
-        PnPollingResponseV24 pollingResponse = new PnPollingResponseV24();
+    protected PnPollingResponseV25 getException(Exception exception) {
+        PnPollingResponseV25 pollingResponse = new PnPollingResponseV25();
         pollingResponse.setNotification(this.fullSentNotification);
         pollingResponse.setResult(false);
         return pollingResponse;
@@ -102,7 +102,7 @@ public class PnPollingServiceStatusRapidV24 extends PnPollingTemplate<PnPollingR
         return this.pnPaB2bClient.getApiKeySetted();
     }
 
-    private boolean isEqualStatus(PnPollingResponseV24 pnPollingResponse, PnPollingParameter pnPollingParameter) {
+    private boolean isEqualStatus(PnPollingResponseV25 pnPollingResponse, PnPollingParameter pnPollingParameter) {
         NotificationStatusHistoryElement notificationStatusHistoryElement = pnPollingResponse.getNotification()
                 .getNotificationStatusHistory()
                 .stream()

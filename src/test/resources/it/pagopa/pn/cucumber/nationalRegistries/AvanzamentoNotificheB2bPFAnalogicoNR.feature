@@ -49,7 +49,7 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     Then vengono letti gli eventi fino all'elemento di timeline della notifica "ANALOG_SUCCESS_WORKFLOW"
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 
-  @workflowAnalogico @realNR
+  @workflowAnalogico @realNR @uatEnvCondition
   Scenario: [B2B_TIMELINE_ANALOG_76_1]  PA mittente: invio notifica analogica con restituzione indirizzo fisico italiano da ANPR Real
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
@@ -65,7 +65,7 @@ Feature: avanzamento b2b notifica PF analogico con chiamata a National Registry 
     And vengono letti gli eventi fino allo stato della notifica "DELIVERED" dalla PA "Comune_Multi"
 
 
-  @workflowAnalogico @realNR
+  @workflowAnalogico @realNR @uatEnvCondition
   Scenario: [B2B_TIMELINE_ANALOG_76_2]  PA mittente: invio notifica analogica con restituzione indirizzo fisico estero da ANPR Real
     Given viene generata una nuova notifica
       | subject | notifica analogica con cucumber |
