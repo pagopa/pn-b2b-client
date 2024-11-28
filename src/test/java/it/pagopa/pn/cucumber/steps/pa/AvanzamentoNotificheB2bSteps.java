@@ -6,8 +6,8 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
-import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV23;
-import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV23;
+import it.pagopa.pn.client.b2b.pa.mapper.impl.PnTimelineAndLegalFactV26;
+import it.pagopa.pn.client.b2b.pa.mapper.model.PnTimelineLegalFactV26;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingStrategy;
 import it.pagopa.pn.client.b2b.pa.polling.dto.*;
@@ -62,7 +62,7 @@ public class AvanzamentoNotificheB2bSteps {
     private HttpStatusCodeException notificationError;
     @Value("${pn.external.costo_base_notifica}")
     private Integer costoBaseNotifica;
-    private final PnTimelineAndLegalFactV23 pnTimelineAndLegalFactV23;
+    private final PnTimelineAndLegalFactV26 pnTimelineAndLegalFactV26;
     private final PnPollingFactory pnPollingFactory;
     private final TimingForPolling timingForPolling;
     private final LegalFactContentVerifySteps legalFactContentVerifySteps;
@@ -79,7 +79,7 @@ public class AvanzamentoNotificheB2bSteps {
         this.sharedSteps = sharedSteps;
         this.pnPrivateDeliveryPushExternalClient = pnPrivateDeliveryPushExternalClient;
         this.externalClient = sharedSteps.getPnExternalServiceClient();
-        this.pnTimelineAndLegalFactV23 = new PnTimelineAndLegalFactV23();
+        this.pnTimelineAndLegalFactV26 = new PnTimelineAndLegalFactV26();
         this.b2bClient = sharedSteps.getB2bClient();
         this.webRecipientClient = sharedSteps.getWebRecipientClient();
         this.pnPollingFactory = sharedSteps.getPollingFactory();
@@ -1326,7 +1326,7 @@ public class AvanzamentoNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
+        PnTimelineLegalFactV26 categoriesV23 = pnTimelineAndLegalFactV26.getCategory(legalFactCategory);
         TimelineElementV26 timelineElement = null;
 
         for (TimelineElementV26 element : sharedSteps.getSentNotification().getTimeline()) {
@@ -1456,7 +1456,7 @@ public class AvanzamentoNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
+        PnTimelineLegalFactV26 categoriesV23 = pnTimelineAndLegalFactV26.getCategory(legalFactCategory);
 
 
         TimelineElementV26 timelineElement = null;
@@ -1821,7 +1821,7 @@ public class AvanzamentoNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
+        PnTimelineLegalFactV26 categoriesV23 = pnTimelineAndLegalFactV26.getCategory(legalFactCategory);
         TimelineElementV26 timelineElement = sharedSteps.getSentNotification().getTimeline().stream().filter(elem -> elem.getCategory().equals(categoriesV23.getTimelineElementInternalCategory())).findAny().orElse(null);
 
         try {
@@ -3305,7 +3305,7 @@ public class AvanzamentoNotificheB2bSteps {
             throw new RuntimeException(exc);
         }
 
-        PnTimelineLegalFactV23 categoriesV23 = pnTimelineAndLegalFactV23.getCategory(legalFactCategory);
+        PnTimelineLegalFactV26 categoriesV23 = pnTimelineAndLegalFactV26.getCategory(legalFactCategory);
 
         TimelineElementV26 timelineElement = null;
 
