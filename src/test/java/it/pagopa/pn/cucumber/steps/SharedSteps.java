@@ -1,13 +1,5 @@
 package it.pagopa.pn.cucumber.steps;
 
-import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.DOCUMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.PAYMENT_PAGOPA_FORM;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getDefaultValue;
-import static it.pagopa.pn.cucumber.utils.NotificationValue.getValue;
-import static org.awaitility.Awaitility.await;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -23,36 +15,13 @@ import io.cucumber.java.en.When;
 import it.pagopa.pn.client.b2b.pa.PnPaB2bUtils;
 import it.pagopa.pn.client.b2b.pa.config.PnB2bClientTimingConfigs;
 import it.pagopa.pn.client.b2b.pa.config.springconfig.RestTemplateConfiguration;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.DigitalAddressSource;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.FullSentNotificationV25;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationRequestV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NewNotificationResponse;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationDigitalAddress;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationFeePolicy;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationPaymentItem;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.NotificationRecipientV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.RequestStatus;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.StreamMetadataResponseV24;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementCategoryV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementDetailsV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV23;
-import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.TimelineElementV25;
+import it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model.*;
 import it.pagopa.pn.client.b2b.pa.polling.design.PnPollingFactory;
 import it.pagopa.pn.client.b2b.pa.service.IPnPaB2bClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebPaClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebRecipientClient;
 import it.pagopa.pn.client.b2b.pa.service.IPnWebUserAttributesClient;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.B2BUserAttributesExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.IPnTosPrivacyClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnExternalServiceClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnGPDClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnPaymentInfoClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnServiceDeskClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebRecipientExternalClientImpl;
-import it.pagopa.pn.client.b2b.pa.service.impl.PnWebUserAttributesExternalClientImpl;
+import it.pagopa.pn.client.b2b.pa.service.impl.*;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableApiKey;
 import it.pagopa.pn.client.b2b.pa.service.utils.SettableBearerToken;
 import it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement;
@@ -64,25 +33,7 @@ import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalAndUnverifiedDigitalAddress;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.LegalChannelType;
 import it.pagopa.pn.client.web.generated.openapi.clients.externalUserAttributes.addressBook.model.UserAddresses;
-import it.pagopa.pn.cucumber.utils.DataTest;
-import it.pagopa.pn.cucumber.utils.EventId;
-import it.pagopa.pn.cucumber.utils.GroupPosition;
-import it.pagopa.pn.cucumber.utils.NotificationValue;
-import it.pagopa.pn.cucumber.utils.TimelineEventId;
-import java.io.IOException;
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
+import it.pagopa.pn.cucumber.utils.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -98,6 +49,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.client.HttpStatusCodeException;
+
+import java.io.IOException;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.OffsetDateTime;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.TimeUnit;
+
+import static it.pagopa.pn.cucumber.utils.FiscalCodeGenerator.generateCF;
+import static it.pagopa.pn.cucumber.utils.NotificationValue.*;
+import static org.awaitility.Awaitility.await;
 
 
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -192,6 +155,10 @@ public class SharedSteps {
 
     @Getter
     @Setter
+    private StreamMetadataResponseV25 eventStreamV25;
+
+    @Getter
+    @Setter
     private List<it.pagopa.pn.client.b2b.webhook.generated.openapi.clients.externalb2bwebhook.model_v2.ProgressResponseElement> progressResponseElements = null;
 
     @Getter
@@ -207,6 +174,10 @@ public class SharedSteps {
     @Getter
     @Setter
     private List<ProgressResponseElementV23> progressResponseElementsV23 = null;
+
+    @Getter
+    @Setter
+    private List<ProgressResponseElementV24> progressResponseElementsV24 = null;
 
     @Value("${pn.interop.base-url}")
     private String interopBaseUrl;
@@ -247,24 +218,45 @@ public class SharedSteps {
     private final DataTableTypeUtil dataTableTypeUtil;
     private final List<String> iuvGPD;
     private IPnWebUserAttributesClient iPnWebUserAttributesClient;
+
+    //V1
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationResponse newNotificationResponseV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
-    private NewNotificationResponse newNotificationResponseV24;
     private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.NewNotificationRequest notificationRequestV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
-    private NewNotificationRequestV24 notificationRequestV24;
     @Getter
     @Setter
-    private FullSentNotificationV25 notificationResponseComplete;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
+
+    //V20
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationResponse newNotificationResponseV2;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.NewNotificationRequest notificationRequestV2;
+    @Getter
+    @Setter
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
+
+    //V21
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationResponse newNotificationResponseV21;
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.NewNotificationRequestV21 notificationRequestV21;
+    @Getter
+    @Setter
+    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
+
+    //V23
     @Getter
     @Setter
     private FullSentNotificationV23 notificationResponseCompleteV23;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v1.FullSentNotification notificationResponseCompleteV1;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v2.FullSentNotificationV20 notificationResponseCompleteV2;
-    private it.pagopa.pn.client.b2b.pa.generated.openapi.clients.externalb2bpa.model_v21.FullSentNotificationV21 notificationResponseCompleteV21;
-    private FullSentNotificationV25 notificationResponseCompleteV25;
+
+    //V24
+    @Getter
+    @Setter
+    private FullSentNotificationV24 notificationResponseCompleteV24;
+    private NewNotificationRequestV24 notificationRequestV24;
+
+    //V25
+    @Getter
+    @Setter
+    private FullSentNotificationV25 notificationResponseComplete;
+
+
     private String settedPa = "Comune_1";
     private boolean groupToSet = true;
     private String errorCode = null;
@@ -336,7 +328,7 @@ public class SharedSteps {
                        PnServiceDeskClientImpl serviceDeskClient,
                        PnGPDClientImpl pnGPDClientImpl,
                        PnPaymentInfoClientImpl pnPaymentInfoClientImpl, PnB2bClientTimingConfigs timingConfigs,
-                       PnPollingFactory pollingFactory,IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
+                       PnPollingFactory pollingFactory, IPnTosPrivacyClientImpl iPnTosPrivacyClientImpl) {
         this.context = context;
         this.dataTableTypeUtil = dataTableTypeUtil;
         this.b2bClient = b2bClient;
@@ -373,6 +365,12 @@ public class SharedSteps {
 
     @Given("viene generata una nuova notifica")
     public void vieneGenerataUnaNotifica(@Transpose NewNotificationRequestV24 notificationRequest) {
+        this.notificationRequest = notificationRequest;
+    }
+
+    @Given("viene generata una nuova notifica con la versione più recente")
+    //TODO al rilascio di una nuova versione, aggiornare il metodo sottostante con l'ultima versione
+    public void vieneGenerataUnaNotificaMostRecentVersion(@Transpose NewNotificationRequestV24 notificationRequest) {
         this.notificationRequest = notificationRequest;
     }
 
@@ -1132,7 +1130,6 @@ public class SharedSteps {
     }
 
 
-
     @And("viene verificata la presenza di pec inserite per l'utente {string}")
     public void viewedPecDiPiattaformaDi(String user) {
         selectUser(user);
@@ -1779,7 +1776,7 @@ public class SharedSteps {
     }
 
     public FullSentNotificationV25 getSentNotificationV25() {
-        return notificationResponseCompleteV25;
+        return notificationResponseComplete;
     }
 
     public void setSentNotification(FullSentNotificationV25 notificationResponseComplete) {
@@ -2183,7 +2180,7 @@ public class SharedSteps {
             return getSentNotification().getIun();
         } else if (getSentNotificationV25() != null) {
             return getSentNotificationV25().getIun();
-        }else {
+        } else {
             return null;
         }
     }
@@ -2221,7 +2218,7 @@ public class SharedSteps {
             case "v1" -> sendNotificationV1();
             case "v2" -> sendNotificationV2();
             case "v21" -> sendNotificationV21();
-            //case "v24" -> sendNotificationV24();
+            case "v25" -> sendNotification();
         }
     }
 
