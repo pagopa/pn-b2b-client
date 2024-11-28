@@ -8,11 +8,11 @@ import java.io.File;
 public interface ITemplateEngineClient {
     File analogDeliveryWorkflowFailureLegalFact(LanguageEnum xLanguage, AnalogDeliveryWorkflowFailureLegalFact analogDeliveryWorkflowFailureLegalFact) throws RestClientException;
 
-    String emailbody(LanguageEnum xLanguage, Emailbody emailbody) throws RestClientException;
+    String emailbody(LanguageEnum xLanguage, MailVerificationCodeBody emailbody) throws RestClientException;
 
     String emailsubject(LanguageEnum xLanguage) throws RestClientException;
 
-    File legalFactMalfunction(LanguageEnum xLanguage, LegalFactMalfunction legalFactMalfunction) throws RestClientException;
+    File legalFactMalfunction(LanguageEnum xLanguage, MalfunctionLegalFact legalFactMalfunction) throws RestClientException;
 
     File notificationAAR(LanguageEnum xLanguage, NotificationAAR notificationAAR) throws RestClientException;
 
@@ -24,7 +24,7 @@ public interface ITemplateEngineClient {
 
     File notificationAARRADDalt(LanguageEnum xLanguage, NotificationAARRADDalt notificationAARRADDalt) throws RestClientException;
 
-    String notificationAARSubject(LanguageEnum xLanguage, NotificationAARSubject notificationAARSubject) throws RestClientException;
+    String notificationAARSubject(LanguageEnum xLanguage, NotificationAARForSubject notificationAARSubject);
 
     File notificationCancelledLegalFact(LanguageEnum xLanguage, NotificationCancelledLegalFact notificationCancelledLegalFact) throws RestClientException;
 
@@ -34,9 +34,9 @@ public interface ITemplateEngineClient {
 
     File pecDeliveryWorkflowLegalFact(LanguageEnum xLanguage, PecDeliveryWorkflowLegalFact pecDeliveryWorkflowLegalFact) throws RestClientException;
 
-    String pecbody(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException;
+    String pecbody(LanguageEnum xLanguage, PecVerificationCodeBody pecbody) throws RestClientException;
 
-    String pecbodyconfirm(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException;
+    String pecbodyconfirm(LanguageEnum xLanguage, PecValidationContactsSuccessBody pecbody) throws RestClientException;
 
     String pecbodyreject(LanguageEnum xLanguage) throws RestClientException;
 

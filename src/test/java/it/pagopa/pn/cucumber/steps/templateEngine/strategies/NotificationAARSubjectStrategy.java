@@ -1,5 +1,6 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.NotificationAARForSubject;
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.NotificationAARSubject;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
@@ -16,16 +17,16 @@ public class NotificationAARSubjectStrategy implements ITemplateEngineStrategy{
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        NotificationAARSubject subject = createRequest(body, context);
+        NotificationAARForSubject subject = createRequest(body, context);
         String file = templateEngineClient.notificationAARSubject(selectLanguage(language), subject);
         return new TemplateEngineResult(file);
     }
 
-    private NotificationAARSubject createRequest(boolean body, TemplateRequestContext context) {
+    private NotificationAARForSubject createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new NotificationAARSubject()
+        return new NotificationAARForSubject()
                 .notification(context.getNotification());
     }
 }

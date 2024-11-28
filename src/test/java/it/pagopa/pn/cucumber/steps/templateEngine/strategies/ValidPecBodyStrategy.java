@@ -1,6 +1,6 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
-import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.Pecbody;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.PecValidationContactsSuccessBody;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
@@ -16,17 +16,16 @@ public class ValidPecBodyStrategy implements ITemplateEngineStrategy{
 
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        Pecbody pecBody = createRequest(body, context);
+        PecValidationContactsSuccessBody pecBody = createRequest(body, context);
         String file = templateEngineClient.pecbodyconfirm(selectLanguage(language), pecBody);
         return new TemplateEngineResult(file);
     }
 
-    private Pecbody createRequest(boolean body, TemplateRequestContext context) {
+    private PecValidationContactsSuccessBody createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new Pecbody()
-                .verificationCode(context.getVerificationCode())
-                .logoBase64(context.getLogoBase64());
+        return new PecValidationContactsSuccessBody()
+                .verificationCode(context.getVerificationCode());
     }
 }

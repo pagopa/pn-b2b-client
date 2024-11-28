@@ -116,11 +116,11 @@ public class TemplateConfiguration {
                 "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
                 "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_qrCodeQuickAccessLink",
                 "context_piattaformaNotificheURL", "context_perfezionamentoURL", "context_pnFaqSendURL", "recipient_recipientType", "recipient_denomination", "recipient_taxId", "recipient_physicalAddress",
-                "recipient_digitalDomicile_address", "context_logoBase64", "context_recipientType");
+                "recipient_digitalDomicile_address", "context_recipientType");
     }
 
     @Bean
-    public List<String> confirmEmailBodyFields() {
+    public List<String> confirmBodyFields() {
         return List.of("context_verificationCode");
     }
 
@@ -138,16 +138,11 @@ public class TemplateConfiguration {
                 "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId");
     }
 
-    @Bean
-    public List<String> pecBodyFields() {
-        return List.of("context_verificationCode",  "context_logoBase64");
-    }
-
     public Map<TemplateType, List<String>> templateEngineObjectFields(List<String> notificationReceiverLegalFactFields, List<String> pecDeliveryWorkflowLegalFactFields,
                                                                       List<String> notificationViewedLegalFactFields, List<String> legalFactMalfunctionFields, List<String> notificationCancelledLegalFactFields,
                                                                       List<String> analogDeliveryWorkflowFailureLegalFactFields, List<String> notificationAARFields, List<String> notificationAARRADDaltFields,
-                                                                      List<String> notificationAARForEMAILFields, List<String> notificationAARForPECFields, List<String> confirmEmailBodyFields,
-                                                                      List<String> notificationAARForSMSFields, List<String> notificationAARSubjectFields, List<String> pecBodyFields) {
+                                                                      List<String> notificationAARForEMAILFields, List<String> notificationAARForPECFields, List<String> notificationAARForSMSFields,
+                                                                      List<String> notificationAARSubjectFields, List<String> confirmBodyFields) {
         Map<TemplateType, List<String>> map = new HashMap<>();
         map.put(TemplateType.AAR_PRESA_IN_CARICO, notificationReceiverLegalFactFields);
         map.put(TemplateType.AAR_NOTIFICA_DIGITALE, pecDeliveryWorkflowLegalFactFields);
@@ -159,11 +154,11 @@ public class TemplateConfiguration {
         map.put(TemplateType.AVVISO_AVVENUTA_RICEZIONE_RADD, notificationAARRADDaltFields);
         map.put(TemplateType.AVVISO_CORTESIA_EMAIL, notificationAARForEMAILFields);
         map.put(TemplateType.AVVISO_CORTESIA_PEC, notificationAARForPECFields);
-        map.put(TemplateType.OTP_CONFERMA_EMAIL, confirmEmailBodyFields);
+        map.put(TemplateType.OTP_CONFERMA_EMAIL, confirmBodyFields);
         map.put(TemplateType.AVVISO_CORTESIA_SMS, notificationAARForSMSFields);
         map.put(TemplateType.AVVISO_CORTESIA_SMS_OBJECT, notificationAARSubjectFields);
-        map.put(TemplateType.OTP_CONFERMA_PEC, pecBodyFields);
-        map.put(TemplateType.PEC_VALIDA, pecBodyFields);
+        map.put(TemplateType.OTP_CONFERMA_PEC, confirmBodyFields);
+        map.put(TemplateType.PEC_VALIDA, confirmBodyFields);
 
         return map;
     }

@@ -38,7 +38,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String emailbody(LanguageEnum xLanguage, Emailbody emailbody) throws RestClientException {
+    public String emailbody(LanguageEnum xLanguage, MailVerificationCodeBody emailbody) throws RestClientException {
         return templateApi.mailVerificationCodeBody(xLanguage, emailbody);
     }
 
@@ -48,7 +48,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public File legalFactMalfunction(LanguageEnum xLanguage, LegalFactMalfunction legalFactMalfunction) throws RestClientException {
+    public File legalFactMalfunction(LanguageEnum xLanguage, MalfunctionLegalFact legalFactMalfunction) throws RestClientException {
         return templateApi.malfunctionLegalFact(xLanguage, legalFactMalfunction);
     }
 
@@ -78,8 +78,8 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String notificationAARSubject(LanguageEnum xLanguage, NotificationAARSubject notificationAARSubject) throws RestClientException {
-        return templateApi.notificationAARSubject(xLanguage, notificationAARSubject);
+    public String notificationAARSubject(LanguageEnum xLanguage, NotificationAARForSubject notificationAARSubject) throws RestClientException {
+        return templateApi.notificationAARForSubject(xLanguage, notificationAARSubject);
     }
 
     @Override
@@ -103,12 +103,12 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     }
 
     @Override
-    public String pecbody(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException {
+    public String pecbody(LanguageEnum xLanguage, PecVerificationCodeBody pecbody) throws RestClientException {
         return templateApi.pecVerificationCodeBody(xLanguage, pecbody);
     }
 
     @Override
-    public String pecbodyconfirm(LanguageEnum xLanguage, Pecbody pecbody) throws RestClientException {
+    public String pecbodyconfirm(LanguageEnum xLanguage, PecValidationContactsSuccessBody pecbody) throws RestClientException {
         return templateApi.pecValidationContactsSuccessBody(xLanguage, pecbody);
     }
 

@@ -27,7 +27,6 @@ public class NotificationAARForEMAILStrategy implements ITemplateEngineStrategy 
 
         return new NotificationAARForEMAIL()
                 .notification(context.getNotification())
-                .sendLogoLink(context.getSendLogoLink())
                 .pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
                 .piattaformaNotificheURL(context.getPiattaformaNotificheURL())

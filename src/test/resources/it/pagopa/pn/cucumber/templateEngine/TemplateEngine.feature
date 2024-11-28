@@ -280,25 +280,25 @@ Feature: Template engine
     When recupero il template per "OTP di conferma email" con i valori nel request body errati
     Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
 
-  @templateEngine #71 /templates-engine-private/v1/templates/pecbody
+  @templateEngine #71 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_23] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua italiana
     When recupero il template per "OTP di conferma pec" in lingua "italiana"
     Then verifico che il template è in formato "html"
 
-  @templateEngine #72 /templates-engine-private/v1/templates/pecbody
+  @templateEngine #72 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24] Richiamare l’API per il recupero del template di OTP di conferma pec - lingua errata
     When recupero il template per "OTP di conferma pec" in lingua "slovena"
     Then verifico che la chiamata sia andata in "400" error
 
-  @templateEngine #97 /templates-engine-private/v1/templates/pecbody
+  @templateEngine #97 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24_1] Richiamare l’API per il recupero del template di OTP di conferma pec - body vuoto
     When recupero il template per "OTP di conferma pec" in lingua "italiana" con il body "null"
     Then verifico che la chiamata sia andata in "400" error
 
-  @templateEngine #117 /templates-engine-private/v1/templates/pecbody
+  @templateEngine #117 /templates-engine-private/v1/templates/pec-verification-code-body
   Scenario: [TEMPLATE-ENGINE_24_2] Richiamare l’API per il recupero del template di OTP di conferma pec - body errato
     When recupero il template per "OTP di conferma pec" con i valori nel request body errati
-    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #73 /templates-engine-private/v1/templates/pecbodyconfirm
   Scenario: [TEMPLATE-ENGINE_25] Richiamare l’API per il recupero del template di PEC valida - lingua italiana

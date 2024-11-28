@@ -27,7 +27,6 @@ public class NotificationAARForPECStrategy implements ITemplateEngineStrategy {
 
         return new NotificationAARForPEC()
                 .notification(context.getNotification())
-                .logoBase64(context.getLogoBase64())
                 .pnFaqSendURL(context.getPnFaqSendURL())
                 .quickAccessLink(context.getQrCodeQuickAccessLink())
                 .piattaformaNotificheURL(context.getPiattaformaNotificheURL())

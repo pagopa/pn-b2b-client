@@ -1,6 +1,7 @@
 package it.pagopa.pn.cucumber.steps.templateEngine.strategies;
 
 import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.LegalFactMalfunction;
+import it.pagopa.pn.client.b2b.generated.openapi.clients.templates_engine.model.MalfunctionLegalFact;
 import it.pagopa.pn.client.b2b.pa.service.ITemplateEngineClient;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateEngineResult;
 import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateRequestContext;
@@ -18,16 +19,16 @@ public class LegalFactMalfunctionStrategy implements ITemplateEngineStrategy {
     }
     @Override
     public TemplateEngineResult retrieveTemplate(String language, boolean body, TemplateRequestContext context) {
-        LegalFactMalfunction legalFact = createRequest(body, context);
+        MalfunctionLegalFact legalFact = createRequest(body, context);
         File file = templateEngineClient.legalFactMalfunction(selectLanguage(language), legalFact);
         return new  TemplateEngineResult(file);
     }
 
-    private LegalFactMalfunction createRequest(boolean body, TemplateRequestContext context) {
+    private MalfunctionLegalFact createRequest(boolean body, TemplateRequestContext context) {
         if (!body)
             return null;
 
-        return new LegalFactMalfunction()
+        return new MalfunctionLegalFact()
                 .endDate(context.getEndDate())
                 .startDate(context.getStartDate())
                 .timeReferenceStartDate(context.getTimeReferenceStartDate())
