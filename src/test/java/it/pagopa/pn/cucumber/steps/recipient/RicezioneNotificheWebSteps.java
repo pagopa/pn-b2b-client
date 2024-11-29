@@ -97,11 +97,11 @@ public class RicezioneNotificheWebSteps {
     public void saveAddress() {
         saveUser4Address();
     }
+
     @After("@sercq")
     public void restoreAddress() {
         restoreUser4Address();
     }
-
 
 
     @Autowired
@@ -1033,13 +1033,17 @@ public class RicezioneNotificheWebSteps {
         if (legalSavedAddressList != null && !legalSavedAddressList.isEmpty()) {
             for (LegalAndUnverifiedDigitalAddress legalSavedAddress : legalSavedAddressList) {
 
-                postRecipientLegalAddress(legalSavedAddress.getSenderId(), legalSavedAddress.getValue(), null, true);
+                if (LegalChannelType.PEC.equals(legalSavedAddress.getChannelType())) {
+                    postRecipientLegalAddress(legalSavedAddress.getSenderId(), legalSavedAddress.getValue(), null, true);
+                }
             }
         }
         if (courtesySavedAddressList != null && !courtesySavedAddressList.isEmpty()) {
             for (CourtesyDigitalAddress courtesySavedAddress : courtesySavedAddressList) {
 
-                postRecipientLegalAddress(courtesySavedAddress.getSenderId(), courtesySavedAddress.getValue(), null, true);
+                if (CourtesyChannelType.EMAIL.equals(courtesySavedAddress.getChannelType())) {
+                    postRecipientCourtesyAddress(courtesySavedAddress.getSenderId(), courtesySavedAddress.getValue(), courtesySavedAddress.getChannelType(), null, true);
+                }
             }
         }
     }
