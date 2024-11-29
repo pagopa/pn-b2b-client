@@ -900,7 +900,7 @@ public class AvanzamentoNotificheB2bSteps {
         log.info("NOTIFICATION_TIMELINE: " + pnPollingResponseV25.getNotification().getTimeline());
         try {
             Assertions.assertTrue(pnPollingResponseV25.getResult(), "Polling failed. IUN: " + sharedSteps.getSentNotification().getIun());
-            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement(), "L'elemento di timeline non è stato trovato. IUN: " + sharedSteps.getSentNotification().getIun());
+            Assertions.assertNotNull(pnPollingResponseV25.getTimelineElement(), "The timeline element was not found. IUN: " + sharedSteps.getSentNotification().getIun());
             sharedSteps.setSentNotification(pnPollingResponseV25.getNotification());
             log.info("TIMELINE_ELEMENT: " + pnPollingResponseV25.getTimelineElement());
         } catch (AssertionFailedError assertionFailedError) {
