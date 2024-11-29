@@ -70,6 +70,9 @@ public class RicezioneNotificheWebSteps {
     private static final String TOS_VERSION = "2";
     private static final String ACCEPT_TOS = "ACCETTA";
 
+    List<CourtesyDigitalAddress> courtesySavedAddressList;
+    List<LegalAndUnverifiedDigitalAddress> legalSavedAddressList;
+
     @Value("${pn.external.senderId}")
     private String senderId;
     @Value("${pn.external.senderId-2}")
@@ -90,96 +93,14 @@ public class RicezioneNotificheWebSteps {
         }
     }
 
-
-    //--------------------------------------------------------------------------
-
-    List<CourtesyDigitalAddress> courtesySavedAddressList;
-    List<LegalAndUnverifiedDigitalAddress> legalSavedAddressList;
-
-
     @Before("@sercq")
     public void saveAddress() {
-        saveUserAddress();
+        saveUser4Address();
     }
-
     @After("@sercq")
     public void restoreAddress() {
-        restoreUserAddress();
+        restoreUser4Address();
     }
-
-
-    public void saveUserAddress() {
-
-        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
-
-        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
-            courtesySavedAddressList = addressesByRecipient.getCourtesy();
-        }
-        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
-            legalSavedAddressList = addressesByRecipient.getLegal();
-        }
-
-    }
-
-
-    public void restoreUserAddress() {
-
-        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
-
-        //  delateLegalAddressForUser();
-        //  delateCourtesyAddressForUser();
-        cleanLegalAddressForUser();
-
-        if (legalSavedAddressList != null && !legalSavedAddressList.isEmpty()) {
-            for (LegalAndUnverifiedDigitalAddress legalSavedAddress : legalSavedAddressList) {
-
-                postRecipientLegalAddress(legalSavedAddress.getSenderId(), legalSavedAddress.getValue(), null, true);
-            }
-        }
-        if (courtesySavedAddressList != null && !courtesySavedAddressList.isEmpty()) {
-            for (CourtesyDigitalAddress courtesySavedAddress : courtesySavedAddressList) {
-
-                postRecipientLegalAddress(courtesySavedAddress.getSenderId(), courtesySavedAddress.getValue(), null, true);
-            }
-        }
-    }
-
-
-    public void delateLegalAddressForUser() {
-        try {
-            List<LegalAndUnverifiedDigitalAddress> legalAddressByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient().getLegal();
-            if (legalAddressByRecipient != null && !legalAddressByRecipient.isEmpty()) {
-                legalAddressByRecipient.stream()
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientLegalAddress(address.getSenderId(), address.getChannelType());
-                            log.info("Cancellato indirizzo di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
-            }
-
-        } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI LEGAL FALLITA:\n" + e);
-        }
-    }
-
-    public void delateCourtesyAddressForUser() {
-        try {
-            List<CourtesyDigitalAddress> courtesyDigitalAddresses = this.iPnWebUserAttributesClient.getAddressesByRecipient().getCourtesy();
-            if (courtesyDigitalAddresses != null && !courtesyDigitalAddresses.isEmpty()) {
-                courtesyDigitalAddresses.stream()
-                        .forEach(address -> {
-                            this.iPnWebUserAttributesClient.deleteRecipientCourtesyAddress(address.getSenderId(), address.getChannelType());
-                            log.info("Cancellato indirizzo di cortesia di tipo " + address.getChannelType() + " per il comune " + address.getSenderId());
-                        });
-            }
-        } catch (Exception e) {
-            log.error("RIMOZIONE RECAPITI CORTESIA FALLITA:\n" + e);
-        }
-    }
-
-    //--------------------------------------------------------------------------
-
-
 
 
 
@@ -1087,6 +1008,40 @@ public class RicezioneNotificheWebSteps {
             Assertions.assertNotNull(data.getConsentType().equals(ConsentType.TOS_SERCQ));
             Assertions.assertEquals(data.getAccepted(), tosStatus.equalsIgnoreCase("positiva"));
         });
+    }
+
+
+    public void saveUser4Address() {
+
+        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+        UserAddresses addressesByRecipient = this.iPnWebUserAttributesClient.getAddressesByRecipient();
+
+        if (addressesByRecipient.getCourtesy() != null && !addressesByRecipient.getCourtesy().isEmpty()) {
+            courtesySavedAddressList = addressesByRecipient.getCourtesy();
+        }
+        if (addressesByRecipient.getLegal() != null && !addressesByRecipient.getLegal().isEmpty()) {
+            legalSavedAddressList = addressesByRecipient.getLegal();
+        }
+    }
+
+    public void restoreUser4Address() {
+
+        this.iPnWebUserAttributesClient.setBearerToken(SettableBearerToken.BearerTokenType.USER_4);
+
+        cleanLegalAddressForUser();
+
+        if (legalSavedAddressList != null && !legalSavedAddressList.isEmpty()) {
+            for (LegalAndUnverifiedDigitalAddress legalSavedAddress : legalSavedAddressList) {
+
+                postRecipientLegalAddress(legalSavedAddress.getSenderId(), legalSavedAddress.getValue(), null, true);
+            }
+        }
+        if (courtesySavedAddressList != null && !courtesySavedAddressList.isEmpty()) {
+            for (CourtesyDigitalAddress courtesySavedAddress : courtesySavedAddressList) {
+
+                postRecipientLegalAddress(courtesySavedAddress.getSenderId(), courtesySavedAddress.getValue(), null, true);
+            }
+        }
     }
 }
 
