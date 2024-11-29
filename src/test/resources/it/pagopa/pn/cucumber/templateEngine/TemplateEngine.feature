@@ -24,7 +24,13 @@ Feature: Template engine
   @templateEngine #106 /templates-engine-private/v1/templates/notification-received-legal-fact
   Scenario: [TEMPLATE-ENGINE_2_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - body errato
     When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body errati
-    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
+
+  @templateEngine #106 /templates-engine-private/v1/templates/notification-received-legal-fact
+  Scenario: [TEMPLATE-ENGINE_2_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica presa in carico - "context_physicalAddressAndDenomination" null
+    When recupero il template per "attestazione opponibile a terzi di notifica presa in carico" con i valori nel request body:
+      | context_physicalAddressAndDenomination | null |
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #24 25 26 27 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_3] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese
@@ -50,7 +56,7 @@ Feature: Template engine
   @templateEngine #107 /templates-engine-private/v1/templates/pec-delivery-workflow-legal-fact
   Scenario: [TEMPLATE-ENGINE_4_2] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di notifica digitale - body errato
     When recupero il template per "attestazione opponibile a terzi di notifica digitale" con i valori nel request body errati
-    Then verifico che tutte le chiamate siano andate in "500" error e che nessuna abbia ricevuto una risposta
+    Then verifico che tutte le chiamate siano andate in "400" error e che nessuna abbia ricevuto una risposta
 
   @templateEngine #29 30 31 32 /templates-engine-private/v1/templates/notification-viewed-legal-fact
   Scenario Outline: [TEMPLATE-ENGINE_5] Richiamare l’API per il recupero del template dell’attestazione opponibile a terzi di avvenuto accesso - lingua italiana - lingua italiana e tedesca - lingua italiana e slovena - lingua italiana e francese

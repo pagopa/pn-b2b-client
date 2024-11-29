@@ -9,6 +9,7 @@ import it.pagopa.pn.cucumber.steps.templateEngine.data.TemplateType;
 import it.pagopa.pn.cucumber.steps.templateEngine.strategies.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.opentest4j.AssertionFailedError;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
@@ -21,16 +22,17 @@ public class TemplateEngineSteps {
     private static final String BODY_CORRETTO = "CORRETTO";
 
     private final Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy;
-    Map<TemplateType, List<String>> templateEngineObjectFields;
+    private final Map<TemplateType, List<String>> templateEngineObjectFields;
     private final TemplateEngineContextFactory contextFactory;
     private TemplateEngineResult result;
 
     private HttpClientErrorException templateFileException;
 
     public TemplateEngineSteps(Map<TemplateType, ITemplateEngineStrategy> templateEngineStrategy,
-                               TemplateEngineContextFactory contextFactory) {
+                               TemplateEngineContextFactory contextFactory, Map<TemplateType, List<String>> templateEngineObjectFields) {
         this.templateEngineStrategy = templateEngineStrategy;
         this.contextFactory = contextFactory;
+        this.templateEngineObjectFields = templateEngineObjectFields;
     }
 
     @When("recupero (il template)(l'oggetto) per {string} in lingua {string} con il body {string}")

@@ -20,7 +20,7 @@ public class TemplateEngineClientImpl implements ITemplateEngineClient {
     private RestTemplate restTemplate;
     private TemplateApi templateApi;
 
-    public TemplateEngineClientImpl(RestTemplate restTemplate, @Value("${pn.template.engine.base-path}") String basePath) {
+    public TemplateEngineClientImpl(RestTemplate restTemplate, @Value("${pn.delivery.base-url}") String basePath) {
         this.restTemplate = restTemplate;
         this.basePath = basePath;
         this.templateApi = new TemplateApi(apiClient());

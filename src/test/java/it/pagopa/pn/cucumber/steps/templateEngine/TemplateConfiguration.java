@@ -46,14 +46,15 @@ public class TemplateConfiguration {
 
     @Bean
     public List<String> notificationReceiverLegalFactFields() {
-        return List.of("context_physicalAddressAndDenomination", "context_senddate", "context_subject", "notification_iun", "notification_subject", "notification_recipient_recipientType",
+        return List.of("context_senddate", "context_subject", "notification_iun", "notification_subject", "notification_recipient_recipientType",
             "notification_recipient_recipientType", "notification_recipient_denomination", "notification_recipient_taxId", "notification_recipient_physicalAddress",
                 "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId", "context_digest");
+        /*"context_physicalAddressAndDenomination"*/
     }
 
     @Bean
     public List<String> pecDeliveryWorkflowLegalFactFields() {
-        return List.of("context_iun", "context_endWorkflowDate", "context_endWorkflowStatus", "delivery_address", "delivery_ok", "delivery_type",
+        return List.of("context_iun", "context_endWorkflowDate", "context_endWorkflowStatus", "delivery_ok", "delivery_type",
                 "delivery_addressSource", "delivery_responseDate", "delivery_denomination");
     }
 
@@ -138,6 +139,7 @@ public class TemplateConfiguration {
                 "notification_sender_paDenomination", "notification_sender_paId", "notification_sender_paTaxId");
     }
 
+    @Bean
     public Map<TemplateType, List<String>> templateEngineObjectFields(List<String> notificationReceiverLegalFactFields, List<String> pecDeliveryWorkflowLegalFactFields,
                                                                       List<String> notificationViewedLegalFactFields, List<String> legalFactMalfunctionFields, List<String> notificationCancelledLegalFactFields,
                                                                       List<String> analogDeliveryWorkflowFailureLegalFactFields, List<String> notificationAARFields, List<String> notificationAARRADDaltFields,
